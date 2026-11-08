@@ -105,8 +105,10 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .seg{display:flex;padding:3px;border-radius:var(--pill);background:var(--bg);border:1px solid var(--line)}
 .seg span{flex:1;height:28px;border-radius:var(--pill);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted)}
 .seg span.on{background:var(--blue);color:#fff}
-.chiprow{display:flex;gap:6px;flex-wrap:wrap}
-.chip{height:28px;padding:0 12px;border-radius:var(--pill);border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;background:#fff}
+.chiprow{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chiprow::-webkit-scrollbar{display:none}
+.chip{height:28px;padding:0 10px;border-radius:var(--pill);border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;background:#fff;flex:none;white-space:nowrap}
+.chip svg{width:12px;height:12px;flex:none;display:block}
 .chip.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue-deep)}
 .toggle{width:38px;height:22px;border-radius:12px;background:var(--line);position:relative;flex:none}
 .toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
@@ -116,7 +118,8 @@ footer{padding:48px 0 72px;color:var(--muted);font-size:12px;text-align:center}
 .pcard .pn{font-weight:700;font-size:11.5px;margin-top:6px;line-height:1.25}
 .pcard .pm{font-size:10px;color:var(--muted);margin-top:2px}
 .pcard .badge{position:absolute;top:10px;left:10px}
-.ph{height:72px;border-radius:8px;background:linear-gradient(135deg,#dbeaf7,#e8f6ef)}
+.ph{height:72px;border-radius:8px;background:#f3f6f9;overflow:hidden;display:grid;place-items:center}
+.ph img{width:100%;height:100%;object-fit:contain;display:block}
 .ph.sm{width:40px;height:40px;flex:none}
 .ph.md{width:52px;height:52px;flex:none}
 .ph.hero{height:140px;margin:0 -14px 10px;border-radius:0}
@@ -306,12 +309,18 @@ th{color:var(--muted);font-weight:600}
   <div class="top brand"><span class="wm sm"><b>notinhas</b><i>.shop</i></span><span class="sp"></span><button class="ibtn" data-go="T-51" aria-label="Perfil e configurações"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div>
   <div class="inp mb8" data-go="T-11">⌕ Buscar produto ou EAN</div>
   <div class="chiprow mb8">
-    <span class="chip on">Todas</span>
-    <span class="chip">Mercearia</span>
-    <span class="chip">Bebidas</span>
-    <span class="chip">Limpeza</span>
-    <span class="chip">Higiene</span>
-    <span class="chip">Filtros</span>
+    <span class="chip on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>Todas</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></svg>Mercearia</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8.5V19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8.5"/><path d="M8 8.5c0-2.5 1.5-5.5 4-5.5s4 3 4 5.5"/><path d="M8 12h8"/></svg>Bebidas</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Hortifruti</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8"/><path d="M9 2v2.79a4 4 0 0 0 .5 1.91l.62.94a4 4 0 0 1 .5 1.91V16a4 4 0 0 0 4 4"/></svg>Frios</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 7.5 3 3"/><path d="m10.2 11.8 6.5-6.5a2.12 2.12 0 0 1 3 3l-6.5 6.5"/><path d="M3 20c0-2.5 1.8-4 4-4h2"/></svg>Limpeza</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>Higiene</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Doces</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 9.18 0A4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>Snacks</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>Pet</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><circle cx="12" cy="12" r="9"/></svg>Bebê</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>Filtros</span>
   </div>
   <div class="map-banner" data-go="T-15" aria-label="Mapa de produtos">
     <div class="fmap">
@@ -331,16 +340,16 @@ th{color:var(--muted);font-weight:600}
   <p class="sec">Destaques</p>
   <p class="xs muted mb8">Preço bem abaixo da média · SJP · há 12 min</p>
   <div class="pgrid">
-    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite Integral 1L</p><p class="pp">R$ 4,29</p><p class="avg">média R$ 4,85 · <b>−12%</b></p><p class="pm">Condor · hoje</p><span class="badge g">destaque</span></div>
-    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz Tipo 1 5kg</p><p class="pp">R$ 22,90</p><p class="avg">média R$ 26,40 · <b>−13%</b></p><p class="pm">Muffato · ontem</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14" data-ean="3000054721644"><div class="ph"><img src="media/3000054721644.jpg" alt=""></div><p class="pn">Monster Ultra Fiesta Mango Zero</p><p class="pp">R$ 13,99</p><p class="avg">média R$ 15,40 · <b>−9%</b></p><p class="pm">Dimed · hoje</p><span class="badge g">destaque</span></div>
+    <div class="pcard" data-go="T-14" data-ean="7896004006277"><div class="ph"><img src="media/7896004006277.webp" alt=""></div><p class="pn">Pringles Original 104g</p><p class="pp">R$ 11,99</p><p class="avg">média R$ 13,20 · <b>−9%</b></p><p class="pm">Formosa · hoje</p><span class="badge g">destaque</span></div>
   </div>
   <p class="sec">Produtos</p>
   <p class="xs muted mb8">Catálogo com EAN · ordenar por menor preço</p>
   <div class="pgrid">
-    <div class="pcard" data-go="T-14"><div class="ph g3"></div><p class="pn">Café Torrado 500g</p><p class="pp">R$ 18,49</p><p class="pm">Mercadorama · 2d</p></div>
-    <div class="pcard" data-go="T-14"><div class="ph g4"></div><p class="pn">Sabão em Pó 1,6kg</p><p class="pp">R$ 21,99</p><p class="pm">Condor · hoje</p></div>
-    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Óleo de Soja 900ml</p><p class="pp">R$ 6,89</p><p class="pm">Muffato · hoje</p></div>
-    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Feijão Carioca 1kg</p><p class="pp">R$ 7,49</p><p class="pm">Condor · ontem</p></div>
+    <div class="pcard" data-go="T-14" data-ean="7898367984018"><div class="ph"><img src="media/7898367984018.jpg" alt=""></div><p class="pn">Eisenbahn Pilsen 350ml</p><p class="pp">R$ 3,99</p><p class="pm">Formosa · hoje</p></div>
+    <div class="pcard" data-go="T-14" data-ean="3000054355283"><div class="ph"><img src="media/3000054355283.webp" alt=""></div><p class="pn">Monster Zero Açúcar 473ml</p><p class="pp">R$ 13,99</p><p class="pm">Dimed · hoje</p></div>
+    <div class="pcard" data-go="T-14" data-ean="7896004006284"><div class="ph"><img src="media/7896004006284.webp" alt=""></div><p class="pn">Pringles Queijo 109g</p><p class="pp">R$ 11,99</p><p class="pm">Formosa · hoje</p></div>
+    <div class="pcard" data-go="T-14" data-ean="7895144853734"><div class="ph"><img src="media/7895144853734.jpg" alt=""></div><p class="pn">Mentos Pure Fresh Strong</p><p class="pp">R$ 2,99</p><p class="pm">Formosa · hoje</p></div>
   </div>
 </div>
 <div class="tabbar">
@@ -353,16 +362,30 @@ th{color:var(--muted);font-weight:600}
 <template data-id="T-11" data-name="Busca" data-accent="blue" data-us="US-02.03,US-02.04" data-notes="Busca por EAN ou nome + filtros/categorias. Sem EAN: confiança menor. Anônimo ok.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><div class="inp f grow">leite integral</div></div>
-  <div class="chiprow mb8"><span class="chip on">Todas</span><span class="chip">Mercearia</span><span class="chip">Bebidas</span><span class="chip">Filtros</span></div>
-  <p class="xs muted mb8">3 resultados · SJP</p>
-  <div class="lrow" data-go="T-14"><div class="ph sm"></div><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">EAN 7891000100103</p></div><div class="col end"><p class="pp">R$ 4,29</p><p class="xs muted">Condor</p></div></div>
-  <div class="lrow" data-go="T-14"><div class="ph sm g2"></div><div class="grow"><p class="b sm">Leite Desnatado 1L</p><p class="xs muted">EAN 7891000100202</p></div><div class="col end"><p class="pp">R$ 4,09</p><p class="xs muted">Muffato</p></div></div>
-  <div class="lrow"><div class="ph sm g3"></div><div class="grow"><p class="b sm">Leite zero lactose</p><p class="xs muted">sem EAN · baixa confiança</p></div><div class="col end"><p class="pp">R$ 5,49</p><p class="xs muted">—</p></div></div>
+  <div class="chiprow mb8">
+    <span class="chip on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>Todas</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></svg>Mercearia</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8.5V19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8.5"/><path d="M8 8.5c0-2.5 1.5-5.5 4-5.5s4 3 4 5.5"/><path d="M8 12h8"/></svg>Bebidas</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Hortifruti</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8"/><path d="M9 2v2.79a4 4 0 0 0 .5 1.91l.62.94a4 4 0 0 1 .5 1.91V16a4 4 0 0 0 4 4"/></svg>Frios</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 7.5 3 3"/><path d="m10.2 11.8 6.5-6.5a2.12 2.12 0 0 1 3 3l-6.5 6.5"/><path d="M3 20c0-2.5 1.8-4 4-4h2"/></svg>Limpeza</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>Higiene</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Doces</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 9.18 0A4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>Snacks</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>Pet</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><circle cx="12" cy="12" r="9"/></svg>Bebê</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>Filtros</span>
+  </div>
+  <p class="xs muted mb8">4 resultados · base real</p>
+  <div class="lrow" data-go="T-14" data-ean="3000054721644"><div class="ph sm"><img src="media/3000054721644.jpg" alt=""></div><div class="grow"><p class="b sm">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">EAN 3000054721644</p></div><div class="col end"><p class="pp">R$ 13,99</p><p class="xs muted">Dimed</p></div></div>
+  <div class="lrow" data-go="T-14" data-ean="7896004006277"><div class="ph sm"><img src="media/7896004006277.webp" alt=""></div><div class="grow"><p class="b sm">Pringles Original 104g</p><p class="xs muted">EAN 7896004006277</p></div><div class="col end"><p class="pp">R$ 11,99</p><p class="xs muted">Formosa</p></div></div>
+  <div class="lrow" data-go="T-14" data-ean="7898367984018"><div class="ph sm"><img src="media/7898367984018.jpg" alt=""></div><div class="grow"><p class="b sm">Eisenbahn Pilsen 350ml</p><p class="xs muted">EAN 7898367984018</p></div><div class="col end"><p class="pp">R$ 3,99</p><p class="xs muted">Formosa</p></div></div>
+  <div class="lrow" data-go="T-14" data-ean="3000054355283"><div class="ph sm"><img src="media/3000054355283.webp" alt=""></div><div class="grow"><p class="b sm">Monster Zero Açúcar 473ml</p><p class="xs muted">EAN 3000054355283</p></div><div class="col end"><p class="pp">R$ 13,99</p><p class="xs muted">Dimed</p></div></div>
 </div></template>
 <template data-id="T-12" data-name="Comparação" data-accent="green" data-us="US-02.05" data-notes="Mesmo EAN entre lojas. Menor preço verde + loja + data. RN-03.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Comparar</span></div>
-  <div class="flex gap8 mb12"><div class="ph md"></div><div><p class="b">Leite Integral 1L</p><p class="xs muted">7891000100103</p></div></div>
+  <div class="flex gap8 mb12"><div class="ph md"></div><div><p class="b">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">7891000100103</p></div></div>
   <div class="ncard g pad mb8">
     <div class="flex between"><span class="badge g">menor preço</span><span class="pp">R$ 4,29</span></div>
     <p class="sm mt4">Condor Centro · hoje 08:12</p>
@@ -378,7 +401,7 @@ th{color:var(--muted);font-weight:600}
 <template data-id="T-13" data-name="Histórico" data-accent="green" data-us="US-02.06" data-notes="Série temporal por EAN (e por loja). Pontos = observações de nota.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Histórico</span></div>
-  <p class="b mb4">Leite Integral 1L</p>
+  <p class="b mb4">Monster Ultra Fiesta Mango Zero</p>
   <p class="xs muted mb12">Últimos 30 dias · SJP</p>
   <div class="chart">
     <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:35%" class="low"></i><i style="height:42%"></i>
@@ -387,54 +410,37 @@ th{color:var(--muted);font-weight:600}
   <div class="card pad mt16"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
   <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
 </div></template>
-<template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Tudo expandido na página: comparação, histórico e perto — sem accordion. Conta só se for avaliar.">
+<template data-id="T-14" data-name="Detalhe produto" data-accent="green" data-us="US-02.07" data-notes="Produto real da base (foto ean-fotos). Comparação/histórico/perto expandidos.">
 <div class="body tb">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="sp"></span><button class="ibtn" data-go="T-40">+</button></div>
-  <div class="ph hero"></div>
-  <h1 class="h1" style="font-size:20px">Leite Integral 1L</h1>
-  <p class="xs muted">EAN 7891000100103</p>
-  <div class="ncard g pad mt12">
-    <div class="flex between"><div><p class="xs">Menor agora</p><p class="pp">R$ 4,29</p><p class="xs muted">Condor · hoje</p></div><span class="badge g">−12% vs média</span></div>
-    <p class="avg mt4">média região R$ 4,85</p>
-  </div>
-
+  <div class="ph hero"><img src="media/3000054721644.jpg" alt=""></div>
+  <p class="b">Monster Ultra Fiesta Mango Zero</p>
+  <p class="xs muted">EAN 3000054721644 · Monster</p>
+  <p class="pp" style="font-size:22px;margin-top:6px">R$ 13,99</p>
+  <p class="xs muted">Dimed · hoje · da base notinhas</p>
   <div class="sec-block">
-    <p class="sec" style="margin-top:0">Comparação entre lojas</p>
-    <div class="ncard g pad mb8">
-      <div class="flex between"><span class="badge g">menor</span><span class="pp">R$ 4,29</span></div>
-      <p class="sm mt4">Condor Centro · hoje 08:12 · 650 m</p>
-    </div>
-    <div class="card pad mb8 flex between"><div><p class="b sm">Super Muffato</p><p class="xs muted">ontem · 1,2 km</p></div><p class="b">R$ 4,59</p></div>
-    <div class="card pad mb8 flex between"><div><p class="b sm">Mercadorama</p><p class="xs muted">há 3 dias · 2,1 km</p></div><p class="b">R$ 4,79</p></div>
+    <p class="sec">Comparação</p>
+    <div class="lrow"><div class="av">D</div><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">hoje</p></div><p class="pp">R$ 13,99</p></div>
+    <div class="lrow"><div class="av g">F</div><div class="grow"><p class="b sm">Formosa</p><p class="xs muted">ontem</p></div><p class="b">R$ 14,49</p></div>
+    <button class="btn s sm mt8" data-go="T-12">Ver todas as lojas</button>
   </div>
-
   <div class="sec-block">
-    <p class="sec" style="margin-top:0">Histórico de preços</p>
-    <p class="xs muted mb8">Últimos 30 dias · SJP</p>
-    <div class="chart">
-      <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:35%" class="low"></i><i style="height:42%"></i>
-    </div>
-    <div class="flex between xs muted"><span>04 out</span><span>hoje</span></div>
-    <div class="card pad mt8"><p class="xs muted">Menor no período</p><p class="pp">R$ 4,19 · Condor · 12 out</p></div>
-    <div class="card pad mt8"><p class="xs muted">Mediana 14d</p><p class="b">R$ 4,55</p></div>
+    <p class="sec">Histórico</p>
+    <div class="chart"><i style="height:40%"></i><i class="low" style="height:55%"></i><i style="height:48%"></i><i class="low" style="height:62%"></i><i class="low" style="height:70%"></i></div>
+    <button class="btn s sm mt8" data-go="T-13">Abrir série</button>
   </div>
-
   <div class="sec-block">
-    <p class="sec" style="margin-top:0">Onde comprar perto</p>
-    <div class="chiprow mb8"><span class="chip on">2 km</span><span class="chip">5 km</span><span class="chip">10 km</span></div>
-    <div class="lrow" data-go="T-33"><div class="av">C</div><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">650 m · hoje</p></div><p class="pp">R$ 4,29</p></div>
-    <div class="lrow" data-go="T-33"><div class="av g">M</div><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">1,2 km · ontem</p></div><p class="b">R$ 4,59</p></div>
-    <div class="lrow"><div class="av">R</div><div class="grow"><p class="b sm">Mercadorama</p><p class="xs muted">2,1 km · 3d</p></div><p class="b">R$ 4,79</p></div>
-    <button class="btn s sm mt8" data-go="T-32">Ver no mapa</button>
+    <p class="sec">Perto de você</p>
+    <div class="lrow" data-go="T-33"><div class="av">D</div><div class="grow"><p class="b sm">Dimed</p><p class="xs muted">1,1 km · hoje</p></div><p class="pp">R$ 13,99</p></div>
+    <button class="btn s sm mt8" data-go="T-30">Ver no mapa</button>
   </div>
-
-  <div class="stack mt16 mb8">
+  <div class="foot">
     <button class="btn p" data-go="T-40">Adicionar à lista</button>
     <button class="btn s" data-go="T-23">Vincular / corrigir EAN</button>
   </div>
 </div>
 <div class="tabbar">
-  <div class="tab" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
+  <div class="tab on" data-go="T-10"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>Produtos</div>
   <div class="tab" data-go="T-31"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg></span>Lojas</div>
   <div class="tab fab" data-go="T-20"><span class="fabbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>Nota</div>
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
@@ -504,7 +510,7 @@ th{color:var(--muted);font-weight:600}
 <template data-id="T-30" data-name="Onde comprar perto" data-accent="green" data-us="US-03.01" data-notes="Item → lojas no raio com distância + preço + frescor.">
 <div class="body tb">
   <div class="top"><button class="ibtn" data-go="back">‹</button><span class="t">Perto de mim</span></div>
-  <div class="inp mb8">Leite Integral 1L</div>
+  <div class="inp mb8">Monster Ultra Fiesta Mango Zero</div>
   <div class="chiprow mb12"><span class="chip on">2 km</span><span class="chip">5 km</span><span class="chip">10 km</span><span class="chip">Preço</span></div>
   <div class="lrow" data-go="T-33"><div class="av">C</div><div class="grow"><p class="b sm">Condor Centro</p><p class="xs muted">650 m · hoje</p></div><p class="pp">R$ 4,29</p></div>
   <div class="lrow" data-go="T-33"><div class="av g">M</div><div class="grow"><p class="b sm">Super Muffato</p><p class="xs muted">1,2 km · ontem</p></div><p class="b">R$ 4,59</p></div>
@@ -559,9 +565,8 @@ th{color:var(--muted);font-weight:600}
     <span class="pin sm g" style="left:32%;top:62%"></span>
   </div>
   <div class="sheet-mini">
-    <p class="b sm">Leite Integral 1L</p>
-    <p class="xs muted">Condor Centro · R$ 4,29 · destaque</p>
-    <p class="xs muted mt4">Neste local: 3 produtos com pin</p>
+    <div class="flex gap8 mb8"><div class="ph sm"><img src="media/3000054721644.jpg" alt=""></div><div class="grow"><p class="b sm">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">Dimed · R$ 13,99</p></div></div>
+    <p class="xs muted">Pins = produtos da busca · foto da base</p>
     <button class="btn p sm mt8" data-go="T-14">Ver produto</button>
   </div>
 </div></template>
@@ -604,8 +609,8 @@ th{color:var(--muted);font-weight:600}
   <div class="lrow"><div class="ph sm g4"></div><div class="grow"><p class="b sm">Óleo 900ml</p><p class="xs muted">cód. interno 12004</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
   <p class="sec">Com EAN</p>
   <div class="pgrid">
-    <div class="pcard" data-go="T-14"><div class="ph"></div><p class="pn">Leite 1L</p><p class="pp">R$ 4,29</p></div>
-    <div class="pcard" data-go="T-14"><div class="ph g2"></div><p class="pn">Arroz 5kg</p><p class="pp">R$ 23,90</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph"><img src="media/7898367984018.jpg" alt=""></div><p class="pn">Eisenbahn Pilsen 350ml</p><p class="pp">R$ 3,99</p></div>
+    <div class="pcard" data-go="T-14"><div class="ph"><img src="media/7896004006277.webp" alt=""></div><p class="pn">Pringles Original 104g</p><p class="pp">R$ 11,99</p></div>
   </div>
 </div></template>
 <template data-id="T-40" data-name="Minhas listas" data-accent="green" data-us="US-04.01,US-04.02" data-notes="Várias listas (REQ-051). Cotação sem split: totais por loja. Persistência fingerprint.">
@@ -720,7 +725,7 @@ th{color:var(--muted);font-weight:600}
   <div class="lrow"><div class="grow"><p class="b sm">Café Torrado 500g</p><p class="xs muted">×1 · cód. 88421</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
   <div class="lrow"><div class="grow"><p class="b sm">Sabão em Pó 1,6kg</p><p class="xs muted">×1 · cód. 33102</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
   <p class="sec">Com EAN</p>
-  <div class="lrow"><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">×2 · EAN 789…0103</p></div><p class="b">R$ 8,58</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Monster Ultra Fiesta Mango Zero</p><p class="xs muted">×2 · EAN 789…0103</p></div><p class="b">R$ 8,58</p></div>
   <div class="lrow"><div class="grow"><p class="b sm">Arroz Tipo 1 5kg</p><p class="xs muted">×1 · EAN 789…2201</p></div><p class="b">R$ 22,90</p></div>
   <p class="xs muted mt12">+ 8 itens</p>
   <button class="btn p mt16" data-go="T-23">Vincular EANs pendentes</button>

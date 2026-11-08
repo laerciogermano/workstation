@@ -1,0 +1,28 @@
+---
+description: Obriga o design system anti-slop em todo UI deste workspace
+alwaysApply: true
+---
+
+# Design: seguir o design system
+
+Em **qualquer** HTML/CSS/UI/landing/dashboard/protótipo visual neste workspace:
+
+1. **Padrão:** [`.cursor/design-refs/DESIGN-SYSTEM.md`](../design-refs/DESIGN-SYSTEM.md) (Editorial Bold)
+2. Skill: [`.cursor/skills/frontend-anti-slop/SKILL.md`](../skills/frontend-anti-slop/SKILL.md)
+3. Motion / tendência 2026 (React): [`.cursor/skills/modern-ui-motion/SKILL.md`](../skills/modern-ui-motion/SKILL.md) → [`modern-2026/`](../design-refs/modern-2026/MODERN-UI-MOTION.md)
+4. Refs brutas: [`.cursor/design-refs/SOURCES.md`](../design-refs/SOURCES.md)
+5. Marca de produto em `*/marca/` vence o default quando existir
+
+## Critérios
+
+- Tokens/componentes do DS; sem dark mint, Instrument Serif italic, pill/eyebrow, purple gradient, Inter/Geist default
+- Declarar direção se sair do Editorial Bold
+- Se parecer SaaS genérico sem o logo → refazer
+- Copy: seguir também [`copy-sem-narracao-ia.mdc`](copy-sem-narracao-ia.mdc) — sem lede/meta/CTA óbvio de IA
+
+## Exemplos
+
+```text
+✅ Cards paper/ink + Lucide + accent #e0402b (index.html)
+❌ Dark #0f1419 + #3ecf8e + ícone em caixa + fade-up
+```

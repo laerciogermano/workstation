@@ -446,7 +446,7 @@ th{color:var(--muted);font-weight:600}
   <button class="btn p mt16" data-go="T-22">Usar esta imagem</button>
   <button class="btn gh" data-go="T-20">Voltar à câmera</button>
 </div></template>
-<template data-id="T-22" data-name="Nota ingerida" data-accent="green" data-us="US-01.08,US-01.10" data-notes="Sucesso: empresa + N itens. Dedupe por chave_acesso. CTA vincular EAN pendentes.">
+<template data-id="T-22" data-name="Nota ingerida" data-accent="green" data-us="US-01.08,US-01.10" data-notes="Sucesso + progresso EAN da nota (feitos/faltam). Dedupe chave_acesso.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="T-10">✕</button></div>
   <div class="ok-hero"><div class="ok-circle">✓</div><h1 class="h1">Nota salva</h1></div>
@@ -455,11 +455,16 @@ th{color:var(--muted);font-weight:600}
     <p class="xs muted">CNPJ 79.xxx · 03/11/2026</p>
     <p class="sm mt8">18 itens · R$ 246,70</p>
   </div>
-  <div class="ncard pad mt12"><p class="sm"><b>12 itens</b> ainda sem EAN. Vincular melhora a comparação.</p></div>
+  <div class="prog-card mt12">
+    <p class="b sm">Progresso desta nota</p>
+    <div class="prog mt8"><div class="prog-bar"><i class="ok" style="width:33%"></i><i class="miss" style="width:67%"></i></div>
+      <div class="prog-meta"><span><b>6</b> com EAN</span><span><b>12</b> faltam</span></div>
+    </div>
+  </div>
   <p class="xs muted mt8">Salva em Minhas notas · IP e fingerprint registrados</p>
   <button class="btn p mt16" data-go="T-23">Vincular códigos de barras</button>
   <button class="btn s mt8" data-go="T-50">Ver Minhas notas</button>
-  <button class="btn gh mt8" data-go="T-10">Ir para destaques</button>
+  <button class="btn gh mt8" data-go="T-10">Ir para produtos</button>
 </div></template>
 <template data-id="T-23" data-name="Vincular EAN" data-accent="blue" data-us="US-01.11" data-notes="Câmera já aberta ao entrar. Clique só para foto/galeria ou digitar. UNIQUE (empresa, codigo_unidade).">
 <div class="body flush scan">
@@ -622,21 +627,30 @@ th{color:var(--muted);font-weight:600}
   <p class="xs muted">Deslocamento não incluso.</p>
   <button class="btn p mt16" data-go="T-32">Ver lojas no mapa</button>
 </div></template>
-<template data-id="T-50" data-name="Minhas notas" data-accent="blue" data-us="US-04.04" data-notes="Tab Minhas notas. Histórico fingerprint/conta. REQ-051. Perfil/config no topo.">
+<template data-id="T-50" data-name="Minhas notas" data-accent="blue" data-us="US-04.04" data-notes="Tab Minhas notas + progresso EAN por nota (feitos/faltam). REQ-046/051.">
 <div class="body tb">
   <div class="top"><span class="t">Minhas notas</span><span class="sp"></span><button class="btn sm p" data-go="T-20">+ Nota</button><button class="ibtn" data-go="T-51" aria-label="Perfil"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div>
   <div class="seg mb12"><span class="on">Todas</span><span>Nov</span><span>Out</span></div>
   <div class="note-row" data-go="T-55">
     <div class="flex between"><p class="b sm">Condor Centro</p><p class="pp">R$ 87,40</p></div>
     <p class="xs muted">hoje · 12 itens · NFC-e</p>
+    <div class="prog"><div class="prog-bar"><i class="ok" style="width:67%"></i><i class="miss" style="width:33%"></i></div>
+      <div class="prog-meta"><span><b>8</b> com EAN</span><span><b>4</b> faltam</span></div>
+    </div>
   </div>
   <div class="note-row" data-go="T-55">
     <div class="flex between"><p class="b sm">Super Muffato</p><p class="pp">R$ 142,10</p></div>
     <p class="xs muted">ontem · 18 itens</p>
+    <div class="prog"><div class="prog-bar"><i class="ok" style="width:33%"></i><i class="miss" style="width:67%"></i></div>
+      <div class="prog-meta"><span><b>6</b> com EAN</span><span><b>12</b> faltam</span></div>
+    </div>
   </div>
   <div class="note-row" data-go="T-55">
     <div class="flex between"><p class="b sm">Mercadorama</p><p class="pp">R$ 54,90</p></div>
     <p class="xs muted">03/11 · 7 itens</p>
+    <div class="prog"><div class="prog-bar"><i class="ok" style="width:100%"></i><i class="miss" style="width:0%"></i></div>
+      <div class="prog-meta"><span><b>7</b> com EAN</span><span>completo</span></div>
+    </div>
   </div>
   <button class="btn s mt16" data-go="T-52">Ver gastos do mês</button>
   <p class="meta-fp mt12">fp · a3f9…c21 · IP 191.36.x.x</p>
@@ -648,16 +662,25 @@ th{color:var(--muted);font-weight:600}
   <div class="tab" data-go="T-40"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg></span>Listas</div>
   <div class="tab on" data-go="T-50"><span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg></span>Notas</div>
 </div></template>
-<template data-id="T-55" data-name="Detalhe da nota" data-accent="blue" data-us="US-04.04" data-notes="Cupom da nota do histórico pessoal.">
+<template data-id="T-55" data-name="Detalhe da nota" data-accent="blue" data-us="US-04.04" data-notes="Cupom + progresso EAN da nota (feitos/faltam). REQ-046.">
 <div class="body">
   <div class="top"><button class="ibtn" data-go="T-50">‹</button><span class="t">Nota</span></div>
   <p class="b">Condor Centro</p>
   <p class="xs muted">08/11/2026 · 12 itens · R$ 87,40</p>
-  <div class="lrow mt12"><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">×2 · UN</p></div><p class="b">R$ 8,58</p></div>
-  <div class="lrow"><div class="grow"><p class="b sm">Arroz Tipo 1 5kg</p><p class="xs muted">×1</p></div><p class="b">R$ 22,90</p></div>
-  <div class="lrow"><div class="grow"><p class="b sm">Café Torrado 500g</p><p class="xs muted">×1</p></div><p class="b">R$ 18,49</p></div>
-  <p class="xs muted mt12">+ 9 itens</p>
-  <button class="btn s mt16" data-go="T-23">Vincular EANs pendentes</button>
+  <div class="prog-card mt12">
+    <p class="b sm">Progresso desta nota</p>
+    <div class="prog mt8"><div class="prog-bar"><i class="ok" style="width:67%"></i><i class="miss" style="width:33%"></i></div>
+      <div class="prog-meta"><span><b>8</b> com EAN (67%)</span><span><b>4</b> faltam</span></div>
+    </div>
+  </div>
+  <p class="sec">Sem EAN</p>
+  <div class="lrow"><div class="grow"><p class="b sm">Café Torrado 500g</p><p class="xs muted">×1 · cód. 88421</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Sabão em Pó 1,6kg</p><p class="xs muted">×1 · cód. 33102</p></div><button class="btn s sm" data-go="T-23">+ EAN</button></div>
+  <p class="sec">Com EAN</p>
+  <div class="lrow"><div class="grow"><p class="b sm">Leite Integral 1L</p><p class="xs muted">×2 · EAN 789…0103</p></div><p class="b">R$ 8,58</p></div>
+  <div class="lrow"><div class="grow"><p class="b sm">Arroz Tipo 1 5kg</p><p class="xs muted">×1 · EAN 789…2201</p></div><p class="b">R$ 22,90</p></div>
+  <p class="xs muted mt12">+ 8 itens</p>
+  <button class="btn p mt16" data-go="T-23">Vincular EANs pendentes</button>
 </div></template>
 <template data-id="T-52" data-name="Gastos do mês" data-accent="blue" data-us="US-04.05,US-04.06" data-notes="Análise a partir de Minhas notas (fingerprint ou conta).">
 <div class="body">

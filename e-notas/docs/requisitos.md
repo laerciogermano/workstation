@@ -429,10 +429,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-046 — Progresso da loja: notas, itens e EAN (2026-11-08)
 
 - Em cada **card** da lista de estabelecimentos, **popup do mapa** e **cabeçalho/vitrine** da loja: progresso do que já foi concluído vs o que falta.
-- Métricas: **notas** ingeridas; **itens** distintos; **EAN** vinculados vs pendentes (SKU interno sem código de barras).
+- Também em **cada nota** (Minhas notas / detalhe / pós-ingestão): progresso dos itens daquela NFC-e com EAN vs faltando.
+- Métricas loja: **notas** ingeridas; **itens** distintos; **EAN** vinculados vs pendentes.
+- Métricas nota: itens da nota com EAN / sem EAN; CTA vincular pendentes.
 - Contagem por SKU interno (`codigo`) da loja: total, com EAN, sem EAN.
 - **Verde** = com EAN; **vermelho** = faltam EAN; texto `N com EAN (X%) · M faltam · T itens · N notas`.
-- Protótipo: T-31 / T-32 / T-33. PRD §5.4 · RF-E03-17.
+- Protótipo: T-22 / T-31 / T-32 / T-33 / T-50 / T-55. PRD §5.4 / §5.10 · RF-E03-17.
 - Antes: só chip “N itens” / progresso só de EAN implícito. Depois: barra + notas/itens/faltantes na UI e no PRD.
 - Rollback: remover `eanProgressLoja` / `htmlEanProgress` / blocos do protótipo e bullets do PRD.
 

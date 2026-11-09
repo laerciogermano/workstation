@@ -14,6 +14,7 @@
 - Gestos: `installAppGestures()` bloqueia pinch/double-tap/Ctrl± (mapa Leaflet pode pinçar)
 - CSS: `html`/`body`/`#root` sem overflow do browser; scroll no `.shell`; inputs **16px**
 - Manifest: `display: standalone` + `display_override` + `orientation: portrait-primary`
+- Ícone / favicon: `apps/web/public/favicon.svg` — fundo **#00984B** + tiras brancas (antes: azul+verde sem fundo). Manifest `theme_color` / `background_color` = `#00984B`. Rollback: restaurar SVG azul `#014380` + verde `#00984B` sem `rect` e theme `#F6F6F4`.
 
 **Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  
 **Rollback:** reverter `apps/web/index.html`, `src/main.tsx`, `src/lib/app-gestures.ts`, `src/styles/app.css`, `vite.config.ts`.

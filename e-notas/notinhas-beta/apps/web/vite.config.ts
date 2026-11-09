@@ -17,8 +17,8 @@ export default defineConfig({
         description: 'Menor preço a partir do QR da nota fiscal',
         lang: 'pt-BR',
         dir: 'ltr',
-        theme_color: '#F6F6F4',
-        background_color: '#F6F6F4',
+        theme_color: '#00984B',
+        background_color: '#00984B',
         display: 'standalone',
         display_override: ['standalone', 'minimal-ui'],
         orientation: 'portrait-primary',
@@ -26,7 +26,11 @@ export default defineConfig({
         scope: '/',
         categories: ['shopping', 'lifestyle'],
         prefer_related_applications: false,
-        icons: [{ src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
+        // Mesmo asset do favicon: fundo verde #00984B + tiras brancas (logo v2 · ícone Verde)
+        icons: [
+          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
+        ],
       },
       workbox: {
         cleanupOutdatedCaches: true,

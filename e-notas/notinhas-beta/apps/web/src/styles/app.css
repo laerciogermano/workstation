@@ -88,15 +88,6 @@ img { max-width: 100%; }
   container-type: size;
   container-name: shellbody;
 }
-/* Snap só com .snap-y (após rolagem p/ baixo). home-top = alvo p/ voltar ao mapa/busca. */
-.shell-body.snap-y {
-  scroll-snap-type: y mandatory;
-  scroll-padding-top: 0;
-}
-/* Altura natural (mapa/busca); snap de volta ao topo é assistido em JS a partir de Promoções */
-.home-top {
-  scroll-snap-align: start;
-}
 .main {
   max-width: 560px;
   margin: 0 auto;
@@ -355,42 +346,17 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .hscroll::-webkit-scrollbar { display: none; }
 .hscroll .pc { scroll-snap-align: start; }
 
-/* Home: cada seção = 1 tela (altura do shell-body) × largura total do scrollport */
+/* Home: seções com altura natural (scroll vertical livre; snap-x só no carrossel de cards). */
 .home-sec {
   box-sizing: border-box;
-  width: 100cqw;
-  max-width: 100cqw;
-  height: 100cqh;
-  max-height: 100cqh;
-  margin-left: calc(50% - 50cqw);
-  margin-right: calc(50% - 50cqw);
-  padding: 8px 16px 16px;
+  width: 100%;
+  padding: 8px 0 16px;
   display: flex;
   flex-direction: column;
-  scroll-snap-align: start;
-  overflow: hidden;
 }
 .home-sec .sec { margin-top: 8px; flex: none; }
 .home-sec .hscroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100cqw;
-  max-width: 100cqw;
-  margin-left: -16px;
-  margin-right: -16px;
-  padding-left: 16px;
-  padding-right: 16px;
   align-content: start;
-}
-.home-sec .hscroll.view-list {
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: auto;
-  max-width: none;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0;
 }
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 .pgrid.view-sm { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }

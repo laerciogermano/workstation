@@ -4,7 +4,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 | Tela | Rota | Componente | API | Regras |
 |---|---|---|---|---|
-| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 · home sem seletor sm/md/lista (só chips de seção); modo de grade ainda segue `nt:product-view` se definido em busca/loja |
+| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 · `ProductViewToggle` compact na `.search-row`; scroll vertical normal (sem snap-y); chips de seção |
 | T-73 Carregando | (qualquer) | `app/Shell › PageSkeleton` | — | skeleton, sem spinner |
 | T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · tabbar some só com busca ativa (`q`/`categoria`); cache limpo ao limpar/sair (`clearSearchCache`, sem `placeholderData`) |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` na seção Perto de você → mapa; Alterar código / Trocar foto) | `GET /produtos/:gtin` (+ `links[]`) | RN-05, Q3, REQ-047/058/067 · mapa sai do topo e fica junto de Perto de você |

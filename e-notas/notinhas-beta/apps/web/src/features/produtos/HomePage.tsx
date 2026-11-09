@@ -12,6 +12,7 @@ import { Empty, ErrorBanner } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import { ProductCard } from '../../ui/ProductCard';
+import { ProductViewToggle } from '../../ui/ProductViewToggle';
 import { Wordmark } from '../../ui/Wordmark';
 import { ThemePicker } from '../../ui/ThemePicker';
 import { AddToListSheet } from '../listas/AddToListSheet';
@@ -73,85 +74,7 @@ export function HomePage() {
       ]
     : [];
 
-  // Snap só após rolar p/ baixo. Topo fica com altura natural; subir de Promoções → #topo via JS.
-  useEffect(() => {
-    const body = document.querySelector('.shell-body');
-    if (!(body instanceof HTMLElement)) return;
-
-    const stickTop = () => {
-      body.scrollTop = 0;
-    };
-    stickTop();
-    requestAnimationFrame(stickTop);
-    const t1 = window.setTimeout(stickTop, 50);
-    const t2 = window.setTimeout(stickTop, 200);
-
-    let armed = false;
-    let touchY = 0;
-
-    const firstSecAtTop = () => {
-      const first = body.querySelector('.home-sec');
-      if (!(first instanceof HTMLElement)) return false;
-      const br = body.getBoundingClientRect();
-      const fr = first.getBoundingClientRect();
-      return fr.top >= br.top - 12 && fr.top <= br.top + 96;
-    };
-
-    const goTop = () => {
-      const top = body.querySelector('.home-top');
-      if (top instanceof HTMLElement) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      else body.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const armSnap = () => {
-      if (armed) return;
-      armed = true;
-      body.classList.add('snap-y');
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
-        armSnap();
-        return;
-      }
-      if (armed && e.deltaY < 0 && firstSecAtTop()) {
-        e.preventDefault();
-        goTop();
-      }
-    };
-
-    const onScroll = () => {
-      if (body.scrollTop > 32) armSnap();
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      touchY = e.touches[0]?.clientY ?? 0;
-    };
-
-    const onTouchEnd = (e: TouchEvent) => {
-      if (!armed) return;
-      const y = e.changedTouches[0]?.clientY ?? touchY;
-      const dy = y - touchY; // dedo para baixo = conteúdo sobe
-      if (dy > 48 && firstSecAtTop()) goTop();
-    };
-
-    body.addEventListener('wheel', onWheel, { passive: false });
-    body.addEventListener('scroll', onScroll, { passive: true });
-    body.addEventListener('touchstart', onTouchStart, { passive: true });
-    body.addEventListener('touchend', onTouchEnd, { passive: true });
-
-    return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-      body.classList.remove('snap-y');
-      body.removeEventListener('wheel', onWheel);
-      body.removeEventListener('scroll', onScroll);
-      body.removeEventListener('touchstart', onTouchStart);
-      body.removeEventListener('touchend', onTouchEnd);
-    };
-  }, []);
-
-  // chips acompanham a rolagem
+  // chips acompanham a rolagem (scroll normal — sem snap vertical)
   useEffect(() => {
     const root = document.querySelector('.shell-body');
     const io = new IntersectionObserver(
@@ -198,21 +121,24 @@ export function HomePage() {
           </div>
         )}
 
-        <label className="search" style={{ viewTransitionName: 'search' }}>
-          <Icon name="search" />
-          <input
-            type="search"
-            readOnly
-            value=""
-            placeholder="Buscar produto ou código de barras"
-            aria-label="Buscar produto ou código de barras"
-            inputMode="search"
-            enterKeyHint="search"
-            autoComplete="off"
-            onFocus={openSearch}
-            onClick={openSearch}
-          />
-        </label>
+        <div className="search-row">
+          <label className="search" style={{ viewTransitionName: 'search' }}>
+            <Icon name="search" />
+            <input
+              type="search"
+              readOnly
+              value=""
+              placeholder="Buscar produto ou código de barras"
+              aria-label="Buscar produto ou código de barras"
+              inputMode="search"
+              enterKeyHint="search"
+              autoComplete="off"
+              onFocus={openSearch}
+              onClick={openSearch}
+            />
+          </label>
+          <ProductViewToggle compact />
+        </div>
 
         {anchor.mode === 'padrao' && (
           <Link to="/perfil/localizacao" className="banner">

@@ -1,0 +1,390 @@
+Philosophy essay writing guide — School of Historical and Philosophical Studies | Faculty of Arts
+
+# Philosophy essay writing guide
+
+## Introduction
+
+This guide is intended to give new students of philosophy some preliminary advice about writing philosophy essays at university. For many of you, writing a philosophy essay will be something of a new experience, and no doubt many of you will be a little unsure of what to expect, or of what is expected of you. Most of you will have written essays in school for English, History, etc. A philosophy essay is something a little different again. However, it is not an unfathomable, mysterious affair, nor one where anything goes.
+
+Just what a philosophy essay is will depend a lot, as you'd expect, on just what philosophy is. Defining philosophy is always a more or less controversial business, but one way to think of what is done in university philosophy departments is to think of the difference between having a philosophy and doing philosophy. Virtually everyone "has a philosophy" in the sense that we have many basic beliefs about the world and ourselves and use certain key concepts to articulate those beliefs. Many of us initially come to thus "have a philosophy" (or elements of several philosophies) often only unconsciously, or by following "what's obvious" or "what everybody knows", or by adopting a view because it sounds exciting or is intellectually fashionable.
+
+"Doing philosophy", on the other hand, is a self-conscious unearthing and rigorous examination of these basic beliefs and key concepts. In doing so, we try to clarify the meanings of those beliefs and concepts and to evaluate critically their rational grounds or justification. Thus, rather than having their heads in the clouds, philosophers are really more under the surface of our thinking, examining the structures that support - or fail to support - those who trust that they have their feet on the ground. Such examination may even help to develop new and firmer ground.
+
+Doing philosophy, then, begins with asking questions about the fundamental ideas and concepts that inform our ways of looking at the world and ourselves, and proceeds by developing responses to those questions which seek to gain insight into those ideas and concepts - and part of that development consists in asking further questions, giving further responses, and so on. Human beings across the world have been engaged in this sort of dialogue of question and response for many centuries - even millennia - and a number of great traditions of reflection and inquiry have evolved that have fundamentally influenced the development of religion, art, science and politics in many cultures. The influence of philosophical thinking on Western civilization, in particular, can be traced back more than 2,500 years to the Ancient Greeks.
+
+In philosophy, a good essay is one that, among other things, displays a good sense of this dialectic of question and response by asking insightful, probing questions, and providing reasoned, well-argued responses. This means that you should not rest content with merely an unintegrated collection of assertions, but should instead work at establishing logical relations between your thoughts. You are assessed not on the basis of what you believe, but on how well you argue for the position you adopt in your essay, and on how interesting and insightful your discussion of the issues is. That is to say, you are assessed on how well you do philosophy, not on what philosophy you end up having. Nonetheless, you ought to make sure that your essay's discussion is relevant to the topic. (See Section 5.2 below on relevance.)
+
+It is hoped that you enjoy the activity of essay writing. If you have chosen to study Arts, it is likely that you will have a particular interest in - even a passion for - ideas and the variety of forms and genres in which ideas are expressed and explored. The argumentative or discursive formal academic essay is one such form, and one which can be a pleasure to read and to write. Thus, the assessment that is set in philosophy courses is primarily an invitation to you to pursue what is already (or, hopefully, soon to be) your own interest in writing to explore ideas. However, your immediate goal in writing an academic philosophy essay ought not to be to write a personal testament, confession or polemic. Rather, you should primarily aim at articulating, clearly and relatively dispassionately, your philosophical thinking on the topic at hand. Nevertheless, the kind and degree of personal development one can gain from taking up the challenge to think and to write carefully, clearly and thoroughly is certainly something to be greatly valued.
+
+This guide is intended to help you get started in the business of writing philosophy essays. As you practise your philosophical writing skills, you will develop your own technique, and learn what is appropriate in each particular case. So you may well come to "work around" many of these guidelines. Nonetheless, it is important that you pass through that which you seek to pass beyond.* In addition to your own writing, your reading of other philosophers will help you to develop your sense of what constitutes good philosophical writing. As you read, note the various styles and techniques that philosophical authors employ in their treatment of philosophical issues. Practice and studying good examples, then, are the most valuable ways to develop your essay writing skills.
+
+This guide is, moreover, only one of many publications that introduce philosophy students to essay writing. Some others you may like to consult include:
+
+- A. P. Martinich, Philosophical Writing, 2nd ed. (Oxford: Blackwell, 1997)
+- J. Feinberg and R. Shafer-Landau, Doing Philosophy: A Guide to the Writing of Philosophy Papers, 2nd ed. (Belmont, Calif.: Wadsworth, 2001)
+- Z. Seech, Writing Philosophy Papers, 4th ed. (Belmont, Calif.: Wadsworth, 2003)
+- R. Solomon, "Writing Philosophy", Appendix to his The Big Questions: A Short Introduction to Philosophy, 6th ed. (Belmont, Calif.: Wadsworth, 2001)
+- S. Gorovitz et al., Philosophical Analysis: An Introduction to its Language and Techniques, 3rd ed. (New York: Random House, 1979)
+
+Also, the websites of many philosophy departments in universities around Australia and the world contain downloadable essay writing guides or links to them.
+
+*This phrase is adapted from Jacques Bouveresse, "Why I am so very unFrench", in Alan Montefiore, ed., Philosophy in France Today (Cambridge: Cambridge University Press, 1983), p. 12.
+
+## What do I do in a Philosophy essay?
+
+Philosophy essay topics are not designed to provide an intellectual obstacle course that trips you up so as to delight a malicious marker. They are designed to invite you to "grapple with" with some particular philosophical problem or issue. That is to say, they are designed to offer you an opportunity to demonstrate your understanding of a particular philosophical problem or issue, and to exhibit your own philosophical skills of analysis, argumentation, etc. These twin goals are usually best achieved by ensuring that your essay performs two basic functions (your understanding and your skills apply to both):
+
+an exposition of the problem or issue in question (often as it is posed in some particular text); and a critical discussion of the problem or text
+
+These two functions can, but need not always, correspond to physically or structurally distinct sections of your essay. See Section 5.1.
+
+Exposition
+
+The expository ("setting forth") aspect of your essay is where you should make clear what the issue is and why it is an issue. Where you are dealing with an issue as it is presented in some particular text, your aim should be to make clear what it is that the author in question meant in their text, what they see as the issue and why they see it as an issue. This does not involve merely quoting or paraphrasing a text. Of course, occasional quotation and paraphrase may be appropriate - sometimes necessary - but these ought not to constitute the sole or major content of your exposition. Where you do quote or paraphrase, make sure you attribute your sources in footnotes or endnotes. (See Section 7.)
+
+Exposition is, then, primarily a matter of developing in your own words what you think the issue is or what you think the text means. In all expository work you should always try to give a fair and accurate account of a text or problem, even when the exposition becomes more interpretive rather than simply descriptive. You ought to be patient and sympathetic in your exposition, even if you intend later to criticise heavily the philosopher in question. Indeed, the better the exposition in this regard, usually the more effective the critique.
+
+An important part of exposition is your analysis of the text or issue. Here you should try to "break down" the text, issue or problem into its constitutive elements by distinguishing its different parts. (E.g. "There are two basic kinds of freedom in question when we speak of freedom of the will. First, … . Second, …", or "There are three elements in Plato's conception of the soul, namely... He establishes these three elements by means of the following two arguments... ") This also involves showing the relationships between those elements, relationships which make them "parts of the whole".
+
+As well as laying out these elements within a text or issue, you can also (when appropriate or relevant) show how a text or issue "connects up with" other texts, issues, or philosophical and/or historical developments, which can help to shed further light on the matter by giving it a broader context. (eg "Freedom of the will is importantly connected to the justification of punishment", or "Plato's tripartite theory of the soul bears interesting resemblances to Freud's analysis of the psyche", or "Kant's transcendental idealism can be seen as reconciling the preceding rationalist and empiricist accounts of knowledge".)
+
+An exposition of a text need not always simply follow the author's own view of what it means. You should, of course, demonstrate that you understand how the author themself understands their work, but an exposition can sometimes go beyond this, giving another reading of the text. (eg "Heidegger might deny it, but his Being and Time can be read as developing a pragmatist account of human understanding.") A given text or issue may well be susceptible to a number of plausible or reasonable interpretations. An exposition should aim to be sensitive to such variety. When appropriate, you should defend your interpretations against rivals and objections. Your interpretation ought, though, to be aimed at elucidating the meaning or meanings of the text or issue and not serve merely as a "coat-hanger" for presenting your own favoured views on the matter in question, which should be left to your ...
+
+Critical discussion
+
+This is where your thought gets more of the centre stage. Here you should attempt to develop a response to the issues which your exposition has made clear, and/or, in the case of a discussion of some particular text, attempt to give a critical appraisal of the author's treatment of the issue. In developing a response to a philosophical problem, argumentation is, again, of central importance. Avoid making unsupported assertions; back up your claims with reasons, and connect up your ideas so that they progress logically toward your conclusions. Consider some of the various objections to and questions about your views that others might or have put forward, and try to respond to them in defence of your own line of thinking. Your goal here should be to discuss what you have expounded so as to come to some conclusion or judgement about it. ("Critical" is derived from the Ancient Greek for "to decide, to judge".) Critical discussion is thus not necessarily "destructive" or "negative"; it can be quite constructive and positive.
+
+In the case of a critical appraisal of a particular author's text, you can negatively criticise the author's arguments by pointing out questionable assumptions, invalid reasoning, etc. If, on the other hand, you think that the text is good, then your critical discussion can be positive. This can be done by revealing its "hidden virtues" (that is, by showing that there is more to the author's arguments and views than what lies on the surface) and/or by defending an author against possible and/or actual criticisms. (eg "Norman Malcolm argues that Descartes is mistaken in assuming that dreams and waking episodes have the same content.* However, Malcolm fails to appreciate the subtlety of Descartes' argument in the First Meditation, which allows Descartes to claim . . .") Just to expound an author's arguments and then say "I disagree" or "That seems right" is not really enough - you need to "have something to say" about it. Of course, by all means go on, after finding fault with some philosopher, to answer in your own way the questions tackled or raised by the author. (eg "Simone de Beauvoir's analysis of women's oppression in The Second Sex suffers from serious weaknesses, as I have shown in Section 2 above. A better way to approach the issue, I shall now argue, is to . . .".)
+
+Where you are not primarily concerned with evaluating or responding to a particular text, your critical discussion can be more focused on your own constructive response to the issue. (eg "Having used Dworkin's account to clarify the meanings of the concepts of 'the sanctity of life' and 'voluntariness', I shall now argue that voluntary euthanasia is morally permissible because its voluntariness respects what is of value in the notion of the sanctity of life" - where you now leave Dworkin behind as a source and move on to give your own account.)
+
+* See Norman Malcolm, "Dreaming and Skepticism", in Willis Doney, ed., Descartes: A Collection of Critical Essays (London: Macmillan, 1967), p. 56.
+
+## Guide to researching and writing Philosophy essays
+
+5th edition by Steven Tudor, for the Philosophy program, University of Melbourne, 2003.
+
+This fifth edition of How to Write a Philosophy Essay: A Guide for Students (previous editions titled A Guide to Researching and Writing Philosophy Essays) was prepared in consultation with members of the Philosophy program, the University of Melbourne. For advice and assistance on this and earlier editions, thanks are due to Graham Priest, Barry Taylor, Christopher Cordner, Doug Adeney, Josie Winther, Linda Burns, Marion Tapper, Kimon Lycos, Brendan Long, Jeremy Moss, Tony Coady, Will Barrett, Brian Scarlett, and Megan Laverty. Some use was also made of materials prepared by the Philosophy Departments of La Trobe University, the University of Queensland, and The Australian National University.
+
+### Disclaimer: University, Faculty and program rules
+
+Please note: this booklet does not provide authoritative statements of the official policies or rules of the University of Melbourne, the Faculty of Arts, or the Philosophy program with regard to student essays and examinations or any other matters. Students should, therefore, not rely on this booklet for such information, for which they should consult the various appropriate notice boards, handbooks, websites, and/or members of staff.
+
+## Essay topics
+
+What do philosophy essay topics look like? There are, very roughly, two basic kinds of philosophy essay topics: "text-focused" topics and "problem-focused" topics. Text-focused topics ask you to consider some particular philosopher's writing on some issue. (eg "Discuss critically David Hume's account of causation in Part III of Book I of his A Treatise of Human Nature" or "Was Wittgenstein right to say that 'the meaning of a word is its use in the language', in his Philosophical Investigations, Sec. 43?"). Problem-focused topics are more directly about a particular philosophical problem or issue, without reference to any particular philosopher's text. (eg "Is voluntary euthanasia morally permissible?" or "What is scientific method?")
+
+There is another sort of topic, one which presents a statement and asks you to discuss it, where that statement is a "made up" or, at least, unattributed quote. (eg. "'Without belief in God, people cannot be moral'. Discuss.") I shall regard these as variations of the problem-focused type of topic. Where you are asked to discuss some such statement "with reference to" some specified text or philosopher, then that topic becomes more text-focused. (eg "'Without belief in God, people cannot be moral'. Discuss with reference to J.L. Mackie's Ethics: Inventing Right and Wrong.") Occasionally, a topic presents an unattributed statement, but the statement is, in fact, a quote from a particular philosopher you've been studying, or, at least, a good paraphrase of their thinking. (An example of the latter: "'All the ideas in our minds originate from either sense perception or our reflection upon sensory information.' Discuss.", in a course devoted to John Locke, whose views are summed up in the quoted statement, though those words are not actually his.) Should you take such topics as problem- or text-focused? Rather unhelpfully, I'll say only that it depends on the case. You might ask your lecturer or tutor about it. Whichever way you do take it, be clear in your essay which way you are taking it.
+
+The difference between text-focused and problem-focused essay topics is, however, not very radical. This is because, on the one hand, any particular philosopher's text is about some philosophical problem or question, while, on the other hand, most philosophical problems (certainly virtually all those you will be given as essay topics at university) will have been written about by previous philosophers.
+
+The basic way to approach text-focused topics, then, is to treat the nominated text as an attempt by one philosopher to deal with a particular philosophical problem or issue. The essay topic will, generally speaking, be inviting you to do philosophy with that philosopher, to engage with them in thinking about the issue, whether that engagement proves to be as an ally or an adversary. The chosen text will usually be one which has been (or deserves to be) influential or significant in the history of philosophy, but the task is not to pay homage to past masters. But, even if homage is your thing, the best way to do that here is to engage with the master philosophically.
+
+With regard to problem-focused topics, you will often find your exploration of the problem aided by taking some text or texts which have dealt with it as reference points or prompts. This is not always strictly necessary, but many of you starting out in philosophy will find it helpful to do so - it can help you give focus to your response to the question. (Thus, you might, in an essay on the topic "Is voluntary euthanasia morally permissible?" take it upon yourself to use, for example, Ronald Dworkin's Life's Dominion and Peter Singer's Practical Ethics as reference points. Or, in an essay on the topic "What is scientific method?", you might set up your answer via a comparison of the two different accounts in Karl Popper's The Logic of Scientific Discovery and Paul Feyerabend's Against Method.*) How will you know which texts to adopt as reference points or prompts, if none is mentioned in the essay topic itself? One way is to consider what texts have already been mentioned with regard to the topic in your course reading guide and in lectures and tutorials. Another way is to do some of your own research. On this see Section 4 below.
+
+* In this guide, in giving examples of how to go about answering an essay question, I am not necessarily giving any concrete or reliable advice for any particular topic. The examples are primarily to do with the form or style or strategy you might find helpful.
+
+## Research
+
+To do research for your philosophy essay you need to do only two things: read and think. Actually, for problem-focused essays, thinking is the only truly necessary bit, but it's highly likely that you will find your thinking much assisted if you do some reading as well. Philosophical research at university is a little different to research in most other disciplines (especially the natural sciences), in that it is not really about "collecting data" to support or refute explanatory theories. Rather, the thinking that's involved in philosophical research (as part of one's preparation for philosophical writing) is more a matter of reflecting critically upon the problems in front of one. Researching the writings of other philosophers should, therefore, be primarily directed towards helping you with that reflection rather than aiming at gathering together and reporting on "the relevant findings" on a particular topic. In many other disciplines, a "literature review" is an important research skill, and sometimes philosophy academics do such reviews - but it is rare that philosophy students are asked to do one.
+
+What, then, to read? It should be clear from your lectures and tutorials what some starting points for your reading might be. (All courses provide reading guides; many also have booklets of reading material.) Your tutor and lecturer are also available for consultation on what readings you might begin with for any particular topic in that subject. Independent research can also uncover useful sources, and evidence of this in your essay can be a pleasing sign of intellectual independence. Make sure, though, that what you come up with is relevant to the topic. (See Section 5.2 below on relevance.) Whichever way you proceed, your reading should be purposive and selective.
+
+In the case of essay questions that refer to a particular text, you should familiarise yourself thoroughly with this text. Usually, such a text will be a primary text, i.e. one in which a philosopher writes directly about a philosophical issue. Texts on or about a primary text are called secondary texts. (Many philosophical works will combine these two tasks, and discuss other philosophical texts while also dealing directly with a philosophical issue.) Some secondary texts can be helpful to students. However, don't think you will only ever understand a primary text if you have a nice friendly secondary text to take you by the hand through the primary text. More often than not, you need to have a good grasp of the primary text in order to make sense of the secondary text.
+
+How much to read? The amount of reading you do should be that which maximises the quality of your thinking - that is, you should not swamp yourself with vast slabs of text that you can't digest, but nor should you starve your mind of ideas to chew over. There is, of course, no simple rule for determining this optimal amount. Be wary, though, of falling into the vice of looking for excuses not to read some philosopher or text, as in "Oh, that's boring old religious stuff" or "She's one of those obscure literary feminist types", or "In X Department they laugh at you if you mention those authors in tutes". If someone wants a reason not to think, they'll soon come up with one.
+
+## Philosophical writings
+
+Most philosophical writings come in either of two forms: books or articles. Articles appear either in books that are edited anthologies or in academic journals, such as Philosophical Quarterly or Australasian Journal of Philosophy. Some academic journals are also on the internet. Most articles in the journals are written by professional philosophers for professional philosophers; similarly with many books. But by no means let this put you off. Everyone begins philosophy at the deep end - it's really the only kind there is!
+
+There are, however, many books written for student audiences. Some of these are general introductions to philosophy as a whole; others are introductions to particular areas or issues (eg biomedical ethics or philosophy of science). Among the general introductions are various philosophical dictionaries, encyclopedias and "companions". These reference works collect short articles on a wide range of topics and can be very useful starting points for newcomers to a topic. Among the most useful of the general reference works are:
+
+- Edward Craig, ed., The Routledge Encyclopedia of Philosophy (10 vols.) (London: Routledge, 1998)
+- Paul Edwards, ed., The Encyclopedia of Philosophy (8 vols.) (New York: Macmillan, 1967)
+- Robert Audi, ed., The Cambridge Dictionary of Philosophy, 2nd ed. (Cambridge: Cambridge University Press, 1999)
+- Ted Honderich, ed., The Oxford Companion to Philosophy (Oxford: Oxford University Press, 1995)
+- Simon Blackburn, The Oxford Dictionary of Philosophy (Oxford: Oxford University Press, 1996)
+- Thomas Mautner, ed., The Penguin Dictionary of Philosophy (London: Penguin, 1998)
+- J.O. Urmson and Jonathan Ree, eds., The Concise Encyclopedia of Western Philosophy and Philosophers (London: Routledge, 1993)
+- Edward N. Zalta, ed., The Stanford Encyclopedia of Philosophy (an internet-based reference work: plato.stanford.edu/)
+
+## Note taking
+
+Note taking, like your reading, should not be random, but ought to be guided by the topic in question and by your particular lines of response to the issues involved. Note taking for philosophy is very much an individual art, which you develop as you progress. By and large it is not of much use to copy out reams of text as part of your researches. Nor is it generally helpful to read a great number of pages without making any note of what they contain for future reference. But between these two extremes it is up to you to find the mean that best helps you in getting your thoughts together.
+
+## Libraries and electronic resources
+
+The University's Baillieu Library (including the Institute of Education Resource Centre), which is open to all members of the University, contains more than 2,500 years' worth of philosophical writings. The best way to become acquainted with them is by using them, including using the catalogues (including the Baillieu's on-line catalogues and subject resources web-pages), following up a work's references (and references in the references), intelligent browsing of the shelves, etc.
+
+In the main Baillieu Library, the philosophical books are located (mostly) between 100–199 in the Dewey decimal system, and philosophical journals are located in the basement. The Reference section on the ground floor also has some relevant works. The Education Resource Centre also has a good philosophy collection.
+
+In addition to hard-copy philosophical writings, there is also a variety of electronic resources in philosophy, mostly internet-based. The Stanford Encyclopedia of Philosophy was already mentioned above. Links to other useful internet sites (such as the Australasian Association of Philosophy website) can be found through the Baillieu Library's web-page and the Philosophy Department's web-page.
+
+A strong word of warning, however, for the would-be philosophical web-surfer: because anyone can put material on a website, all kinds of stuff, of varying levels of quality, is out there - and new-comers to philosophy are usually not well placed to sort their way through it. Unless you have a very good understanding of what you're looking for - and what you're not looking for - most of you will be much better off simply carefully reading and thinking about a central text for your course, eg Descartes' First Meditation, rather than wandering about the internet clicking on all the hits for "Descartes". Exercise your mind, not your index finger.
+
+## Planning and structuring your essay
+
+It is very important that you plan your essay, so that you have an idea of what you are going to write before you start to write it. Of course, you will most likely alter things in later drafts, but you should still start off by having a plan. Planning your essay includes laying out a structure. It is very important that your essay has a clearly discernible structure, ie that it is composed of parts and that these parts are logically connected. This helps both you and your reader to be clear about how your discussion develops, stage by stage, as you work through the issues at hand.
+
+Poor essay structure is one of the most common weaknesses in student philosophy essays. Taking the time to work on the structure of your essay is time well spent, especially since skill in structuring your thoughts for presentation to others should be among the more enduring things you learn at university. A common trap that students fall into is to start their essay by writing the first sentence, then writing another one that seems to follow that one, then another one that sort of fits after that one, then another that might or might not have some connection with the previous one, and so on until the requisite 1,500 words are used up. The result is usually a weak, rambling essay.
+
+There are, of course, no hard and fast rules about how to structure a philosophy essay. Again, it is a skill you develop through practice, and much will depend on the particular topic at hand. Nonetheless, it might be helpful to begin by developing an essay structure around the basic distinction between your exposition and your critical discussion (as discussed above). In this it will be important that you make clear who is putting forward which point, that is, make it clear whether you are presenting your own thoughts or are expounding someone else's. (Again, confusion in this regard is a common problem in student essays.) It can often help your structuring if you provide headings for different sections (possibly numbered or lettered). Again, this helps both your reader to follow your discussion and you to develop your thoughts. At each stage, show clearly the logical relations between and the reasons for your points, so that your reader can see clearly why you say what you say and can see clearly the development in your discussion.
+
+Another key to structuring your essay can be found in the old adage "Tell 'em what you're gonna tell 'em. Tell 'em. Then tell 'em what you've told 'em", which provides you with a ready-made structure: Introduction, Main Body, and Conclusion.
+
+In your Introduction, first introduce the issues the essay is concerned with. In doing so, try to state briefly just what the problem is and (if there is space) why it is a problem. This also applies, of course, to issues covered in text-focused essay topics. Next, tell the reader what it is that you are going to do about those problems in the Main Body. This is usually done by giving a brief sketch or overview of the main points you will present, a "pre-capitulation", so to speak, of your essay's structure. This is one way of showing your reader that you have a grasp (indeed, it helps you get a grasp) of your essay as a structured and integrated whole, and gives them some idea of what to expect by giving them an idea of how you have decided to answer the question. Of course, for reasons of space, your Introduction might not be very long, but something along these lines is likely to be useful.
+
+In your Main Body, do what you've said you'll do. Here is where you should present your exposition(s) and your critical discussion(s). Thus, it is here that the main philosophical substance of your essay is to be found. Of course, what that substance is and how you will present it will depend on the particular topic before you. But, whatever the topic, make clear at each stage just what it is you are doing. You can be quite explicit about this. (eg "I shall now present Descartes' ontological argument for the existence of God, as it is presented in his Fifth Meditation. There will be three stages to this presentation.") Don't think that such explicitness must be a sign of an unsophisticated thinker.
+
+A distinct Conclusion is perhaps not always necessary, if your Main Body has clearly "played out" your argument. So you don't always have to present a grand summation or definitive judgement at the end. Still, often for your own sake, try to state to yourself what it is your essay has achieved and see if it would be appropriate to say so explicitly. Don't feel that you must come up with earth-shattering conclusions. Of course, utter banality or triviality are not good goals, either. Also, your essay doesn't always have to conclude with a "solution" to a problem. Sometimes, simply clarifying an issue or problem is a worthy achievement and can merit first-class honours. A good conclusion to a philosophy essay, then, will usually combine a realistic assessment of the ambit and cogency of its claims with a plausible proposal that those claims have some philosophical substance.
+
+## Relevance
+
+What you write in your essay should always be relevant to the question posed. This is another common problem in student essays, so continually ask yourself "Am I addressing the question here?" First-class answers to a question can vary greatly, but you must make sure that your essay responds to the question asked, even if you go on to argue that the question as posed is itself problematic. (eg "To ask ‘What is scientific method?' presupposes that science follows one basic method. However, I shall argue that there are, in fact, several different scientific methods and that these are neither unified nor consistent.") Be wary, however, of twisting a topic too far out of shape in order to fit your favoured theme. (You would be ill-advised, for example, to proceed thus: "What is scientific method? This is a question asked by many great minds. But what is a mind? In this essay, I shall discuss the views of Thomas Aquinas on the nature of mind.")
+
+This requirement of relevance is not intended as an authoritarian constraint on your intellectual freedom. It is part of the skill of paying sustained and focused attention to something put before you - which is one of the most important skills you can develop at university. If you do have other philosophical interests that you want to pursue (such as Aquinas on mind), then please do pursue them, in addition to writing your essay on the set topic. At no stage does the requirement of relevance prevent you from pursuing your other interests.
+
+## Citing Philosophical "Authorities"
+
+There might be occasions when you want to quote other philosophers and writers apart from when you are quoting them because they are the subject of your essay. There are two basic reasons why you might want to do this. First, you might quote someone because their words constitute a good or exemplary expression or articulation of an idea you are dealing with, whether as its proponent, critic, or simply its chronicler. (eg "As Nietzsche succinctly put the point, 'There are no moral phenomena at all, only a moral interpretation of phenomena'.*") You may or may not want to endorse the idea whose good expression you have quoted, but simply want to use the philosopher as a spokesperson for or example of that view. But be clear about what you think the quote means and be careful about what you are doing with the quote. It won't do all the work for you.
+
+The second reason you might want to quote a philosopher is because you think their words constitute an "authoritative statement" of a view. Here you want to use the fact that, eg Bertrand Russell maintained that there are two kinds of knowledge of things (namely, knowledge by acquaintance and knowledge by description) in support of your claim that there are two such kinds of knowledge of things. However, be very careful in doing this, for the nature of philosophical authority is not so simple here. That is to say, what really matters is not that Bertrand Russell the man held that view; what matters are his reasons for holding that view. So, when quoting philosophers for this second reason, be careful that you appreciate in what exactly the authority lies - which means that you should show that you appreciate why Russell maintained that thesis. Of course, you can't provide long arguments for every claim you make or want to make use of; every essay will have its enabling but unargued assumptions. But at least be clear about these. (eg "For the purposes of this essay, I shall adopt Russell's thesis* that ...").
+
+* Friedrich Nietzsche, Beyond Good and Evil, trans. R.J. Hollingdale (Harmondsworth: Penguin, 1973 [first German ed.1886]), Sec. 108.
+
+* See Bertrand Russell, The Problems of Philosophy (Oxford: Oxford University Press, 1967 [first pub. 1912]), Ch. 5.
+
+## Examples
+
+Philosophy is by its nature a relatively abstract and generalising business. (Note that abstractness and generality are not the same thing. Nor do vagueness and obscurity automatically attend them.) Sometimes a longish series of general ideas and abstract reasonings can become difficult for the reader (and often the writer) to follow. It can often help, therefore, to use some concrete or specific examples in your discussion. (Note that there can be different levels of concreteness and specificity in examples.)
+
+Examples can be taken from history, current events, literature, and so on, or can be entirely your own invention. Exactly what examples you employ and just how and why you use them will, of course, depend on the case. Some uses might be: illustration of a position, problem or idea to help make it clearer; evidence for, perhaps even proof of, a proposition; a counter-example; a case-study to be returned to at various points during the essay; or a problem for a theory or viewpoint to be applied to. Again, be clear about what the example is and how and why you use it. Be careful not to get distracted by, or bogged down in, your examples. Brevity is usually best.
+
+## English expression
+
+There's another old saying: "If you can't say what you mean, then you can't mean what you say" - and this very much applies to philosophical writing. Thus, in writing philosophically, you must write clearly and precisely. This means that good philosophical writing requires a good grasp of the language in which it is written, including its grammar and vocabulary. (See Section 9.3 for advice for people from non-English speaking backgrounds.) A high standard of writing skills is to be expected of Arts graduates. Indeed, this sort of skill will last longer than your memory of, for example, the three parts of the Platonic soul (though it is also hoped that some of the content of what you study will also stick). So use your time at university (in all your subjects) to develop these skills further.
+
+Having a mastery of a good range of terms, being sensitive to the subtleties of their meaning, and being able to construct grammatically correct and properly punctuated sentences are essential to the clear articulation and development of your thoughts. Think of grammar, not as some old-fashioned set of rules of linguistic etiquette, but rather as the "internal logic" of a sentence, that is, as the relationships between the words within a sentence which enable them to combine to make sense.
+
+Virtually all sentences in philosophical writing are declarative (ie. make statements), as opposed to interrogative, imperative or exclamatory types of sentences. There is some place, though, for interrogative sentences, ie. questions. (Note that, in contrast, this guide, which is not in the essay genre, contains many imperative sentences, ie. commands.) As you craft each (declarative) sentence in your essay, remember the basics of sentence construction. Make clear what the sentence is about (its subject) and what you are saying about it (the predicate). Make clear what the principal verb is in the predicate, since it is what usually does the main work in saying something about the subject. Where a sentence consists of more than one clause (as many do in philosophical writing), make clear what work each clause is doing. Attend closely, then, to each and every sentence you write so that its sense is clear and is the sense you intend it to have. Think carefully about what it is you want each particular sentence to do (in relation to both those sentences immediately surrounding it and the essay as a whole) and structure your sentence so that it does what you want it to do. To help you with your own sentence construction skills, when reading others' philosophical works (or indeed any writing) attend closely to the construction of each sentence so as to be alive to all the subtleties of the text.
+
+Good punctuation is an essential part of sentence construction. Its role is to help to display the grammar of a sentence so that its meaning is clear. As an example of how punctuation can fundamentally change the grammar and, hence, meaning of a sentence, compare (i) "Philosophers, who argue for the identity of mind and brain, often fail to appreciate the radical consequences of that thesis." and (ii) "Philosophers who argue for the identity of mind and brain often fail to appreciate the radical consequences of that thesis." In the first sentence it is asserted (falsely, as it happens) that all philosophers argue for the identity of mind and brain; in the second, only some philosophers are said to argue for the identity of mind and brain. Only the punctuation differs in the two strings of identical words, and yet the meanings of the sentences are very different. Confusions over this sort of thing are common weaknesses in student essays, and leave readers asking themselves "What exactly is this student trying to say?"
+
+It will be assumed that you can spell - which is not a matter of pressing the "spell-check" key on a word-processor. A good dictionary and a good thesaurus should always be within reach as you write your essay.
+
+Also, try to shorten and simplify sentences where you can do so without sacrificing the subtlety and inherent complexity of the discussion. Where a sentence is becoming too long or complex, it is likely that too many ideas are being bundled up together too closely. Stop and separate your ideas out. If an idea is a good or important one, it will usually deserve its own sentence.
+
+Your "intra-sentential logic" should work very closely with the "inter-sentential logic" of your essay, ie. with the logical relations between your sentences. (This "inter-sentential logic" is what "logic" is usually taken to refer to.) For example, to enable sentences P and Q to work together to yield sentence R as a conclusion, you need to make clear that there are elements within P and Q which connect up to yield R. Consider the following example: "Infanticide is the intentional killing of a human being. However, murder is regarded by all cultures as morally abhorrent. Therefore, people who commit infanticide should be punished." This doesn't work as an argument, because the writer has not constructed sentences which provide the connecting concepts in the various subjects and predicates, even though each sentence is grammatically correct (and possibly even true).
+
+If you are concerned to write not only clearly and precisely, but also with some degree of grace and style (and I hope you are), it's still best to get the clarity and precision right first, in a plain, straightforward way, and then to polish things up afterwards to get the style and grace you want. But don't sacrifice clarity and precision for the sake of style and grace - be prepared to sacrifice that beautiful turn of phrase if its presence is going to send your discussion down an awkward path of reasoning. Aim to hit the nail on the head rather than make a loud bang. What you are likely to find, however, is that a philosophy essay which really is clear and precise will have a large measure of grace and style in its very clarity and precision.
+
+Remember that obscurity is not a sign of profundity. (Some profound thought may well be difficult to follow, but that doesn't mean that one can achieve profundity merely through producing obscure, difficult-to-read writing.) Your marker is interested in what's actually in your essay, not what's possibly inside your head (or indeed what's possibly in some book you happen to have referred to in your essay). So avoid hinting at or alluding suggestively to ideas, especially where they are meant to do some important work in your essay. Instead, lay them out explicitly and directly. Of course, you won't have space to spell out every single idea, so work out which ideas do the most important work and make sure that you at least get those ideas clearly articulated. In expounding a text or problem that ultimately just is vague, muddled, or obscure, try to convey such vagueness, muddle or obscurity clearly, rather than simply reproducing it in your own writing. That is, be clear that and how a text or problem has such features, and then perhaps do your best to make matters clearer.
+
+Despite these stern pronouncements, don't be afraid of sometimes saying things which happen to sound a little odd, if you have tried various formulations and think you have now expressed your ideas just as they should be expressed. Philosophy is often an exploratory business, and new ways of seeing and saying things can sometimes be a part of that exploration.
+
+The need for clarity and precision in philosophical writing sometimes means that you need to stipulate your own meaning for a term. When you want to use a particular word in a particular way for the purposes of your essay - as a "technical term" - be clear about it. (eg "In this essay, I shall intend ‘egoism' to mean ...") Also, be consistent in your technical meanings, or else note when you are not. Be wary, though, of inventing too many neologisms or being too idiosyncratic in your stipulations.
+
+With regard to what "authorial pronoun" to adopt in a philosophy essay, it's standard to write plainly in the first person singular ("I", "me", "my", etc.) rather than use the royal "we" (as in "we shall argue that ..."), or the convoluted quasi-legal indirect form ("It is submitted that ..."), or the scientific objectivity of a physics experimental report. Nonetheless, stick closer to "I argue", "I suggest", "my definition", etc., than to "I wish", "I hate", "my feeling", etc. A philosophy essay is still something more intellectual and formal than a personal reminiscence, polemic, or proclamation. In terms of audience, it's probably best to think of your reader as someone who is intelligent, open to discussion and knows a little about the topic you're writing on, but perhaps is not quite clear or decided about the issues, or needs convincing of the view you want to put forward, or is curious about what you think about the issues.
+
+Try also to use non-discriminatory language, ie. language which does not express or imply inequality of worth between people on the basis of sex, gender, race, ethnicity, sexuality, and so on. As you write, you will be considering carefully your choice of words to express your thoughts. You will almost always find that it is possible to avoid discriminatory language by rephrasing your sentences.
+
+Other things to avoid:
+
+- waffle and padding
+- vagueness and ambiguity
+- abbreviations (this guide I'm writing isn't an eg. of what's req'd. in a phil. essay)
+- colloquialisms (which can really get up your reader's nose)
+- writing whose syntax merely reflects the patterns of informal speech
+- unnecessary abstractness or indirectness
+- unexplained jargon
+- flattery and invective
+- overly-rhetorical questions (do you really need me to tell you what they are?) and other flourishes
+
+There are many guides to good writing available. Anyone who writes (whether in the humanities or the sciences, whether beginners or experienced professionals) will do well to have some on hand. Most good bookshops and libraries will have some. Among the most consulted works are (check for the latest editions):
+
+- J. M. Williams and G. C. Colomb, Style: Toward Clarity and Grace (Chicago: University of Chicago Press, 1995)
+- W. Strunk and E. B. White, The Elements of Style, 4th ed. (New York: Longman, 2000) 
+- E. Gowers, The Complete Plain Words, 3rd ed. (Harmondsworth: Penguin, 1987)
+- R. W. Burchfield, ed., The New Fowler's Modern English Usage (Oxford: Oxford University Press, 1996) 
+- Pam Peters, The Cambridge Australian English Style Guide (Melbourne: Cambridge University Press, 1995) 
+- Australian Government Publishing Service, Style Manual for Authors, Editors and Printers, 5th ed. (Canberra: AGPS, 1995)
+
+## Vocabulary of logical argument
+
+Closely related to the above points about English expression is the importance of having a good grasp of what can rather generally be called "the vocabulary of logical argument". These sorts of terms are crucial in articulating clearly and cogently a logical line of argument. Such argumentation will, of course, be of central importance in whatever discipline you are studying, indeed in any sphere of life that requires effective thinking and communication. I have in mind terms such as these (grouped a little loosely):
+
+all, any, every, most, some, none, a, an, the that, this, it, he, she, they if . . . , then. . . ; if and only if . . . , then . . . ; unless either . . . or . . .; neither . . . nor . . . not, is, are therefore, thus, hence, so, because, since, follows, entails, implies, infer, consequence, conditional upon moreover, furthermore which, that, whose and, but, however, despite, notwithstanding, nevertheless, even, though, still possibly, necessarily, can, must, may, might, ought, should true, false, probable, certain sound, unsound, valid, invalid, fallacious, supported, proved, contradicted, rebutted, refuted, negated logical, illogical, reasonable, unreasonable, rational, irrational assumption, premise, belief, claim, proposition argument, reason, reasoning, evidence, proof
+
+Most of these are quite simple terms, but they are crucial in argumentative or discursive writing of all kinds. (Many are themselves the subject of study in logic, a branch of philosophy). The sloppy use of these sorts of terms is another common weakness in students' philosophy essays. Pay close and careful attention to how you employ them. Moreover, pay close and careful attention to how the authors you read use them. For further discussion of some of these terms and others, see:
+
+- Basic Philosophical Vocabulary, prepared by the staff of the Philosophy Department and available from the programs Office
+- Wesley C. Salmon, Logic, 2nd ed. (Englewood Cliffs, NJ: Prentice Hall, 1973)
+- Antony Flew, Thinking About Thinking (London: Fontana, 1985)
+- Graham Priest, Logic: A Very Short Introduction (Oxford: Oxford University Press, 2000)
+- Joel Rudinow and Vincent E. Barry, Invitation to Critical Thinking, 4th ed. (Fort Worth, Texas: Harcourt Brace, 1999)
+
+## Revising your essay
+
+It is virtually essential that you write a first draft of your essay and then work on that draft to work towards your finished essay. Indeed, several drafts may well be necessary in order to produce your best possible work. It is a rare philosopher indeed who can get things perfectly right on the first attempt, so be prepared to revise and re-develop what you write. Don't be too precious about what you have written, if it appears that it should be sacrificed in the revision process. There is usually a very marked difference between essays which are basically first draft rush-jobs done the night before they are due and those which have been revised and polished. Give yourself time to revise by starting writing early on. For most philosophy students, the greater part of the work in essay writing is in the writing, not in the preliminary researches and planning stages. So be wary of thinking "I've done all the research. I only need to write up my notes, which I can do the night before the essay's due". This is likely to lead to a weak, perhaps non-existent, essay (and very likely a sleepless night).
+
+## Word limit
+
+Stick to the word limit given for your essay. Why are word limits imposed? First, to give the markers a fair basis for comparing student essays. Second, to give you the opportunity to practise the discipline of working creatively under constraints. Skill in this discipline will stand you in very good stead in any sphere where circumstances impose limitations. Again, word limits are not constraints on your intellectual freedom. Outside your essay you are free to write without limit. But even there you'll probably find that your creativity is improved by working under a self-imposed discipline.
+
+As a general rule, most student essays that fall well short of the word limit are weak or lazy attempts at the task, and most essays that go well over the limit are not much stronger or the result of much harder work - the extra length is often due to unstructured waffle or padding which the writer hasn't thought enough about so as to edit judiciously. If you structure your essay clearly, you'll find it easier to revise and edit, whether in order to contract or expand it. ("Hmm, let's see: section 2 is much longer than section 4, but is not as important, so I'll cut it down. And I should expand section 3, because that's a crucial step. And I can shift that third paragraph in the Introduction to the Conclusion.")
+
+## Plagiarism
+
+Plagiarism is essentially a form of academic dishonesty or cheating. At university level, such dishonesty is not tolerated and is dealt with severely, usually by awarding zero marks for a plagiarised essay or, in some cases, dismissing a student from the university.
+
+When you submit your essay, you are implicitly stating that the essay is your own original and independent work, that you have not submitted the same work for assessment in another subject, and that where you have made use of other people's work, this is properly acknowledged. If you know that this is not in fact the case, you are being dishonest. (In a number of university departments, students are in fact required to sign declarations of academic honesty.)
+
+Plagiarism is the knowing but unacknowledged use of work by someone else (including work by another student, and indeed oneself - see below) and which is being presented as one's own work. It can take a number of forms, including:
+
+- copying: exactly reproducing another's words
+- paraphrasing: expressing the meaning of another's words in different words
+- summarising: reproducing the main points of another's argument
+- cobbling: copying, paraphrasing or summarising the work of a number of different people and piecing them together to produce one body of text
+- submitting one's own work when it has already been submitted for assessment in another subject
+- collusion: presenting an essay as your own independent work when in fact it has been produced, in whole or part, in collusion with one or more other people
+
+None of the practices of copying, paraphrasing, summarizing or cobbling is wrong in itself, but when one or more is done without proper acknowledgment it constitutes plagiarism. Therefore, all sources must be adequately and accurately acknowledged in footnotes or endnotes. (See Section 7.) Plagiarism from the internet in particular can be a temptation for a certain kind of student. However, be warned: there is a number of very good internet and software tools for identifying plagiarism.
+
+With regard to collusion, it's undoubtedly often very helpful to discuss one's work with others, be it other students, family members, friends or teachers. Indeed, philosophy thrives on dialogue. However, don't kid yourself that you would simply be extending that process if you were to ask your interlocutor to join with you in the writing of your essay, whether by asking them to tell you what you should write or to write down some of their thoughts for you to reproduce in your essay. At the end of the day, you must be the one to decide what goes into your essay.
+
+## Originality
+
+Students sometimes worry about whether they will be able to develop "original ideas", especially in light of the fact that nearly every philosophical idea one comes up with seems to have been thought of before by someone else. There is no denying that truly original work in philosophy is well rewarded, but your first aim should be to develop ideas that you think are good and not merely different. If, after arguing for what you believe is right, and arguing in way that you think is good, you then discover that someone else has had the same idea, don't throw your work away - you should feel vindicated to some extent that your thinking has been congruent with that of another (possibly great) philosopher. (If you have not yet handed your essay in when you make this discovery, make an appropriately placed note to that effect.) Don't be fooled, however, into thinking that plagiarism can be easily passed off as congruent thinking. Of course, if that other philosopher's ideas have helped you to develop your ideas, then this is not a matter of congruent ideas but rather of derivative ideas, and this must be adequately acknowledged. If, after developing your ideas, you discover that they are original, then that is an added bonus. But remember that it is more important to be a good philosopher than an original one.
+
+## Quotations
+
+Quotations in your essay should be kept to a minimum. The markers know the central texts pretty well already and so don't need to have pages thereof repeated in front of them. Of course, some quotation will usually be important and useful - sometimes essential - in both exposition and critical discussion.
+
+When you quote the words of someone else directly, you must make the quotation clearly distinct from your own text, using quotation marks. (eg "Descartes said that 'it is prudent never to trust completely those who have deceived us even once.'* He makes this claim …" - where the words quoted from Descartes are in 'single quotation marks'. Note that it is relatively arbitrary whether one uses 'single' or "double" quotation marks for "first order" quotations, but whichever style you adopt, use it consistently in the one essay.) Alternatively, where the quoted passage is greater than three lines, put the quoted words in a separate indented paragraph, so that your essay would look like this:
+
+In his First Meditation, Descartes argues as follows:
+
+> Whatever I have up till now accepted as most true I have acquired either from the senses or through the senses. But from time to time I have found that the senses deceive, and it is prudent never to trust completely those who have deceived us even once.*
+> 
+> 
+> 
+> In this essay I shall argue that prudence does not in fact require us to distrust our senses and that Descartes's sceptical method is therefore seriously flawed.
+
+In both cases, the quotations must be given proper referencingin a footnote or endnote.
+
+When you are not quoting another person directly, but are still making use of their work - as in indirect quotations (eg "Descartes says that it is wise not to trust something that has deceived us before"*), paraphrases, summaries, and cobblings - you must still acknowledge your debts, using footnotes or endnotes.
+
+* Rene Descartes, Meditations on First Philosophy, trans. John Cottingham (Cambridge: Cambridge University Press, 1986 [first French ed., 1641]), p. 12.
+
+## Footnotes and endnotes
+
+Footnotes appear at the foot of the same page on which the cited material appears, clearly separated from the main body of the text, each one clearly numbered. Endnotes appear at the end of the essay, again clearly separated from the main body of text, numbered and headed "Endnotes" or "Notes". Either method is acceptable, but you should choose one and stick with it throughout the one essay.
+
+Below are some examples of how to put the relevant referencing information in footnotes and endnotes. This is not intended as an exercise in pedantry, but as a guide to how to provide the information needed for adequate referencing. The reason we provide this information is to enable our readers to find the sources we use in order to verify them and to allow them to pursue the material further if it interests them. In your own researches you will come to value good referencing in the texts you read as a helpful source of further references on a topic. Again, it is this sort of research skill that an Arts graduate will be expected to have mastered.
+
+There are various conventions for writing up footnotes and endnotes. The Philosophy Department does not require that any particular convention be followed, only that you be consistent in your use of the convention that you do choose. For other conventions see the style guides mentioned above, or simply go to some texts published by reputable publishers and see what formats they employ.
+
+Imagine, then, that the following are endnotes at the end of your essay. I will explain them below.
+
+### Endnotes
+
+1. James Rachels, The Elements of Moral Philosophy, 2nd ed. (New York: McGraw-Hill, 1993), p. 25.
+2. Philippa Foot, "Moral Relativism", in Michael Krausz and Jack W. Meiland, eds., Relativism: Cognitive and Moral (Notre Dame, Indiana: University of Notre Dame Press, 1982), p. 155.
+3. Ibid.
+4. Ibid., p. 160.
+5. Immanuel Kant, Groundwork of the Metaphysic of Morals, trans. H. J. Paton (New York: Harper and Row, 1964 [first German ed., 1785]), p. 63.
+6. Thomas Hobbes, Leviathan, (London: Dent, 1973 [first pub. 1651]),p. 65.
+7. Rachels, The Elements, p. 51.
+8. Peter Winch, "The Universalizability of Moral Judgements", The Monist 49 (1965), p. 212.
+9. Antony Duff, "Legal Punishment", The Stanford Encyclopedia of Philosophy (Spring 2001 Edition), Edward N. Zalta (ed.), plato.stanford.edu/archives/spr2001/entries/legal-punishment/ at 15 June 2003, sec. 6.
+
+### Notes explained
+
+1. This is your first reference to a book called The Elements of Moral Philosophy. The title is given in full and in italics. If you are unable to use italics, then you should underline the title. The book's author is James Rachels. It's the 2nd edition of that book, which was published in New York, by the publishers McGraw-Hill, in 1993. The page you have referred to in your main text is page 25
+2. This is your first reference to Philippa Foot's article, "Moral Relativism", the title of which is put in "quotation marks". This article appeared in a book (title in italics) which is an anthology of different articles, and which was edited by Krausz and Meiland (names in full). The rest is in the same style as note (1)
+3. "Ibid." is short for "ibidem", which means "in the same place" in Latin. Use it on its own when you want to refer to exactly the same work and page number as in the immediately preceding note. So here the reference is again to Foot's article at page 155
+4. Ditto, except this time you refer to a different page in Foot's article, namely page 160
+5. This is reference to a book by Kant. Same book details as per note (1), except that, because this is a translation, you include the translator's name, and the date of the first edition in the original language
+6. This is a book reference again, so it's the same as note (1), except that, because it's an old book, you include the date of the original edition. (How old does a book have to be before it merits this treatment? There is no settled view. Note, though, that this convention is not usually followed for ancient authors)
+7. Here you are referring to Rachels' book again, but, because you are not in the very next note after a reference to it, you can't use "ibid.". Simply give the author's surname and a short title of the book, plus page reference. There is also a common alternative to this, whereby you give the surname, and write "op. cit." (which is short for "opere citato", which is Latin for "in the work already cited") and page reference (eg "Rachels, op. cit., p. 51.") Your reader then has to scan back over the notes to see what that "op." was exactly. The first option (author plus short title) is usually easier on the reader
+8. This is a reference to an article by Peter Winch in a journal called The Monist. The article's title is in "quotes", the journal title is in italics. The volume of the journal is 49, the year of publication is 1965, the page referred to is p. 212
+9. This is a reference to an article in the internet-based Stanford Encyclopedia of Philosophy. The article is titled "Legal Punishment" and was written by Antony Duff. The Encyclopedia was edited by Edward N. Zalta. Note that I have basically followed the mode of citation that the Encyclopedia itself recommends. (This is one sign of the site being a reputable one. Where a site makes such a recommendation, it's best to follow it.) I have, however, also added the date on which the article was retrieved from the site, and put the author's given name first, to be consistent with the other footnotes. I have also added the reference to section 6, in an effort to be more precise as to where in the article the material I used came from. Since web pages aren't numbered in the manner of hard copy works, it will help if you are able to refer to some other feature, such as paragraphs or sections, so as to pin-point your reference. In the absence of a site recommending a mode of citation to its own material, the basic information needed for adequate citation of internet-based material is (where identifiable) the author, the document title, the year the document was created, the website name, the uniform resource locator (URL) in, date of retrieval, and a pin-point reference*
+
+* I am here following the mode of citation of internet materials recommended in Melbourne University Law Review Association Inc, Australian Guide to Legal Citation, 2nd ed. (Melbourne: Melbourne University Law Review Association Inc, 2002), pp. 70-73. I have, though, added the desirability of a pin-point reference.
+
+## Bibliography
+
+At the end of your essay (after your endnotes, if used) you should list in a bibliography all of the works referred to in your notes, as well as any other works you consulted in researching and writing your essay. The list should be in alphabetical order, going by authors' surnames. The format should be the same as for your notes, except that you drop the page references and should put surnames first. So the bibliography of our mock-essay above would look like this:
+
+- Duff, Antony, "Legal Punishment", The Stanford Encyclopedia of Philosophy (Spring 2001 Edition), Edward N. Zalta (ed.), plato.stanford.edu/archives/spr2001/entries/legal-punishment/ at 15 June 2003
+- Foot, Philippa, "Moral Relativism", in Michael Krausz and Jack Meiland, eds., Relativism: Cognitive and Moral (Notre Dame, Indiana: University of Notre Dame Press, 1982)
+- Hobbes, Thomas, Leviathan (London: Dent, 1973 [first pub.1651])
+- Kant, Immanuel, Groundwork of the Metaphysic of Morals, trans. H.J. Paton (New York: Harper and Row, 1964 [first German ed. 1785])
+- Rachels, James, The Elements of Moral Philosophy, 2nd ed., (New York: McGraw-Hill, 1993)
+- Winch, Peter, "The Universalizability of Moral Judgements", The Monist 49 (1965)
+
+## Format
+
+Generally, you should present an essay that is legible (hand-writing is OK, but typed or word-processed essays are preferable), in English, on one side of pieces of paper that are somewhere in the vicinity of A4 size and are fixed together. You should attach a completed Cover Sheet provided by the Philosophy program. Plastic document covers, spiral binding and other forms of presentational paraphernalia are not necessary (nor are they usually even desirable, as they mostly just get in the marker's way).
+
+## Late essays
+
+Late essays are penalised. (For details of penalties consult the Philosophy program's notice board.)
+
+## Essays not handed in
+
+Essays not handed in at all get zero marks. An essay that is handed in but gets a mark below 50 (and so is technically a "failed" essay) still gets some marks. (At least, it will so long as it's not so extremely late that the deducted marks wipe out all the marks it would have received if handed in on time.) All marks received for your essay (whether pass or fail) go toward your final score in the subject. Therefore, even if you think your essay is bound to fail (but please let your marker be the judge of that), or the due date has already passed, or both, it is still in your interests to hand your essay in.
+
+## Tutors and lecturers
+
+Philosophy staff are not there just to be listened to by you; they are also there to listen to you. So don't hesitate to contact your tutor or lecturer to discuss questions or problems you have concerning your work.
+
+If you have a legitimate excuse, you may be granted an extension on the due date for your essay by the lecturer in charge. Similarly, special consideration may also be granted when illness or other circumstances adversely affect your work. Applications for special consideration are made online via the Special Consideration web page.
+
+## Student counselling
+
+Some personal or non-philosophical academic difficulties you might have you might want to discuss with someone other than your tutor or lecturer. Student Counselling and Psychological Services are there for you to discuss all sorts of problems you might encounter. Please consult your student diary for details on the counselling service.
+
+## English language assistance
+
+As noted above, good philosophical writing requires a good grasp of the language in which it is written. If you are from a non-English speaking background and are having difficulties with your English expression in an academic context, you might like to make use of the services provided by Student Services Academic Skills. Many native English speakers, too, can benefit from short "refresher" courses and workshops run by the Centre. Please consult your student diary for details about this service.
+
+## A bit on Philosophy exams
+
+Essays of the sort discussed so far in this guide are not the only form of assessment in the Philosophy program - examinations are also set. What is to be said about them?
+
+First, not much that is different from what's been said above about philosophy essays. This is because what you write in a philosophy exam is none other than a philosophy essay. Have a look at past philosophy exam papers, in the Gibson and Baillieu libraries, to get a feel for them. The only basic difference between essays and exams is the matter of what constraints you're working under. Essays have word limits; exams have time limits. Again, stick to them. (Actually, you'll be made to stick to them by the exam invigilators.)
+
+It's best, then, to think about how long to spend writing on an exam essay topic, rather than about how many words to write on it. Simple arithmetic will tell you how much time to spend on each exam question. (eg if you have a 2-hour exam and have to answer 3 questions, each worth one-third of the exam mark, then spend 40 minutes on each question.) Avoid the trap of "borrowing time" from a later question in order to perfect your answer to an earlier question, and then working faster on the later questions to catch up on lost time - this is likely to get you in a tangle. There are no word limits in philosophy exam essays, but don't think that the more you scrawl across the page, the more marks you'll get. Nonetheless, use the time you've got so as to maximise your display of your philosophical understanding and skills in answering the question.
+
+Planning and structuring remain very important in exam essays. With regard to the niceties of footnotes, endnotes and bibliographies, etc., these are not necessary, so don't waste time on these. However, if you quote or refer to a specific passage from a text, do indicate clearly that it is a quotation or reference. (The principle of being clear as to who is saying what remains central.) If you have the reference handy, just put it briefly in the text of your exam essay. (eg "As Descartes says in Meditation I (p. 12), . . ." or "'[I]t is prudent never to trust completely those who have deceived us even once' (Descartes, Meditation I, p. 12)".) Generally speaking, you will show your familiarity with any relevant texts by how you handle them in your discussion. This is also true for your non-exam essays.
+
+Your preparation for the exam should have been done well before entering the exam hall. Note that various subjects have restrictions on what texts and other items can be brought into the exam hall. (Consult the Philosophy program's notice board for details.) Many subjects will have "closed book" exams. Even if an exam is "open book", if you are properly prepared, you should not need to spend much time at all consulting texts or notes during the exam itself.
+
+You won't have time for redrafting and revising your exam essay (which makes planning and structuring your answers before you start writing all the more important). If you do want to delete something, just cross it out clearly. Don't waste time with liquid paper or erasers. Write legibly. Don't wr. "point form" sav. time. Diff. kn. mean. use incomp. sent.
+
+Finally, read the instructions at the beginning of the exam paper. They are important. (eg it's not a good strategy to answer two questions from Part A, when the Instructions tell you to answer two questions, one from Part A and one from Part B.) Note the (somewhat quaint) University practice of starting Reading Time some time before the stated time for the exam. Philosophy exams usually have 15 minutes of reading time. (Check for each of your exams.) So, if your exam timetable says the exam is at 2.15 pm, with reading time of 15 minutes, then the reading time starts at 2.00 pm and the writing time starts at 2.15pm - so get to the exam hall well before 2.00 pm. Reading time is very important. Use it to decide which questions you'll answer and to start planning your answers.
+
+## Checklist of questions
+
+- Do I understand the essay question? Do I know when the essay is due?
+- Do I know which texts to consult? Do I know where to find them?
+- Have I made useful notes from my reading of the relevant texts?
+- Have I made a plan of how I'll approach the question in my essay?
+- Have I given myself enough time to draft and redraft my essay?
+- Have I written a clearly structured essay? Is it clear what each stageis doing? Do I do what I say I'll do in my Introduction?
+- Have I clearly distinguished exposition and critical discussion? Have I given a fair and accurate account of the author(s) in question?
+- Is my response to the topic relevant? Do I answer the question? Have I kept my essay within the general bounds of the topic?
+- Have I displayed a good grasp of the vocabulary of logical argument? Are my arguments logically valid and sound? Are my claims supported by reasons? Am I consistent within my essay?
+- Is my English expression clear and precise? Are my grammar, punctuation and spelling correct? Have I said what I meant to say? Is my writing legible?
+- Have I fully acknowledged all my sources in footnotes or endnotes? Are my quotations accurate? Have I included a bibliography?
+- Do I need to revise any part of my essay again?
+- Have I made a copy or photocopy of my essay for myself?
+- Have I kept the receipt for my handed-in essay?
+
+Contact details
+
+ Phone 13 MELB (13 6352) International +61 3 9035 5511 
+
+ Address The University of Melbourne Grattan Street, Parkville Victoria 3010 Australia

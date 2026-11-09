@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" preload>
+
+<link rel="stylesheet" href="/js/ijaboCropTool.min.css" />
+
+<link href='/editorworld/resources/assets/fonts/stylesheet.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="/editorworld/resources/assets/sass/nomad_header_design.scss">
+
+<link rel="stylesheet" type="text/css" href="/editorworld/resources/assets/sass/knowmad_design.scss?v=1789153477">
+<link rel="stylesheet" type="text/css" href="/editorworld/resources/assets/sass/media_queries.scss">
+
+<!-- <link rel="stylesheet" type="text/css" href="/css/app.css" > -->
+<!-- NOTE link to the minified file instead -->
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/editorworld/resources/assets/css/app.min.css">
+<link rel="stylesheet" type="text/css" href="/editorworld/resources/assets/css/app.ext.css?v=1790949501">
+
+
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-5PJFGJK');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    
+    <!-- Metadata from CmsDataContent & CmsDataHeader should already be merged / overridden at this point from views.layouts.app logic -->
+            <title>How to Write a Novel: A Section-by-Section Guide | Editor World</title>
+
+                    <meta name="description" content="How to write a novel: a section-by-section structural guide walking you through the beginning, middle, and end with named beats inside each.">
+        
+                    <meta name="keywords" content="how to write a novel">
+        
+                    <link rel="canonical" href="https://www.editorworld.com/article/how-to-write-a-novel">
+            
+    <meta name="author" content="Editor World LLC">
+    <meta name="copyright" content="Editor World LLC 2010-2026">
+            <meta name="robots" content="index, follow">
+    
+    
+        <meta property="og:title" content="How to Write a Novel: A Section-by-Section Guide | Editor World">
+    <meta property="og:description" content="How to write a novel: a section-by-section structural guide walking you through the beginning, middle, and end with named beats inside each.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.editorworld.com/article/how-to-write-a-novel">
+    <meta property="og:image" content="https://www.editorworld.com/img/homePage/Editor-World-Logo-2022.png">
+    <meta property="og:site_name" content="Editor World">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Write a Novel: A Section-by-Section Guide | Editor World">
+    <meta name="twitter:description" content="How to write a novel: a section-by-section structural guide walking you through the beginning, middle, and end with named beats inside each.">
+    <meta name="twitter:image" content="https://www.editorworld.com/img/homePage/Editor-World-Logo-2022.png">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="SamSvS15RaHkHQoxLZBR6sxFm7TIpZsx9N1XP8b2">
+
+    <meta name="editorworld logo" content=<img src="https://www.editorworld.com/img/homePage/Editor-World-Logo-2022.png"
+        class="img-responsive" alt="Editor World Small Logo" style="max-width: 200px; width: 100%;">
+
+
+    <!-- Web Fonts -->
+    <link rel="shortcut icon" href="">
+    <link rel="shortcut icon" alt="Editor World Favicon" href="https://www.editorworld.com/img/favicon.ico" type="image/x-icon">
+
+    <!-- Scripts -->
+    <script>
+        window.Laravel = {"csrfToken":"SamSvS15RaHkHQoxLZBR6sxFm7TIpZsx9N1XP8b2"}    </script>
+
+
+    
+    
+    
+</head>
+
+<script>
+    var base_url = 'https://www.editorworld.com';
+</script>
+
+<body class="">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5PJFGJK" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="amazon-root"></div>
+    <script type="text/javascript">
+        var client = "";
+
+        window.onAmazonLoginReady = function() {
+            amazon.Login.setClientId(client);
+        };
+        (function(d) {
+            var a = d.createElement('script');
+            a.type = 'text/javascript';
+            a.async = true;
+            a.id = 'amazon-login-sdk';
+            a.src = 'https://assets.loginwithamazon.com/sdk/na/login1.js';
+            d.getElementById('amazon-root').appendChild(a);
+        })(document);
+    </script>
+        <div class="body" style="max-width: 1680px; margin: 0 auto;width: 100%">
+        <div>
+            <div>
+
+                <header>
+
+
+                    <script type="module" src="/js/header.js" type="text/javascript"></script>
+
+<!-- Facebook Pixel Code -->
+<script>
+    ! function(f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function() {
+            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '277126312639902');
+    fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=277126312639902&ev=PageView&noscript=1" /></noscript>
+<!-- End Facebook Pixel Code -->
+<script>
+    var screenwidth = $(window).width();
+
+    window.pusherKey = '31c53d4b392fe954d263';
+    window.pusherCluster = 'mt1';
+
+
+    // $(document).ready(function() {
+
+
+    //     $.ajax({
+
+    //         url: 'public.editors.screenSize',
+    //         data: {
+    //             screenwidth: screenwidth
+    //         },
+    //         success: function(data) {
+
+    //         }
+
+    //     });
+
+    // });
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+
+
+
+<div id="nomadHeader">
+    <div class="grid-container_header">
+        
+        <div class="grid-item" style="padding-bottom: 5px">
+            <div style="text-align: right; min-width: 218px;">
+                <a href="/#" style="text-decoration: none; color: #001a66 !important;">
+
+                    <div id="headerTitle">Editor World</div>
+                    <div id="headerSubTitle">Your Words. <b>Perfected.</b></div>
+                </a>
+
+            </div>
+
+
+
+        </div>
+        
+        <div class="grid-item tabs">
+            
+            <button type="button" class="btn btn-responsive-nav knowmad_btn_blue knowmad_btn"
+                style="max-width: 50px; margin-right: 8px;" data-bs-toggle="collapse"
+                data-bs-target="#public-navigation" aria-controls="public-navigation"
+                aria-expanded="false" aria-label="Main menu">
+                <i class="icon fa fa-bars" aria-hidden="true"></i>
+            </button>
+            <div id="public-navigation" class="navbar-collapse nav-main-collapse collapse" style="max-width: 780px; padding-left: unset;">
+
+            
+                <nav class="nav-main mega-menu" id="nav" style="float: left; width: 100%">
+                    <ul class="nav nav-pills nav-main" id="mainMenu">
+
+                        <li id="About_tab" class="dropdown sm"
+                             style="margin-right: 8px">
+                            <a href="/about" style="color: navy">About<i
+                                    class="fa fa-angle-down"></i></a>
+                            <ul id="howitworks_menu" class="dropdown-menu">
+                                <li >
+                                    <a href="https://www.editorworld.com/transaction-process">Editing Process</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/transaction-process-writing">Writing Process</a>
+                                </li>
+
+                                <li ><a href="https://www.editorworld.com/about">Who We Are</a></li>
+                                <li ><a href="https://www.editorworld.com/news">News</a></li>
+                                <li ><a href="https://www.editorworld.com/resources">Resources</a>
+                                </li>
+                                <!--<li ><a href="https://www.editorworld.com/corporate">Corporate Accounts</a>-->
+                                </li>
+                                <!--<li ><a href="https://www.editorworld.com/site/reviews">Reviews</a></li>-->
+                            </ul>
+                        </li>
+                        <li  style="margin-right: 8px"><a style="color: navy"
+                                href="/prices">Prices</a></li>
+                        <li id="services_tab" class="dropdown sm"  style="margin-right: 8px">
+                            <a href="/services" style="color: navy">Services<i class="fa fa-angle-down"></i></a>
+                            <ul id="services_menu" class="dropdown-menu">
+                                <li >
+                                    <a href="https://www.editorworld.com/writing-services">Writing</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/rewriting-services">Rewriting/Paraphrasing</a>
+
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/developmental-editing">Developmental Editing</a>
+
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/academic-editing">Academic Editing</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/dissertation-editing-services">Dissertation Editing</a>
+                                </li>
+                               <li >
+                                    <a href="https://www.editorworld.com/journal-article-editing">Journal Article Editing</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/book-editing-services">Book Editing</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/business-document-editing">Business or Corporate Editing</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/ESL-editing">English Language Editing</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/same-day-editing">Same-Day Editing</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/professional-proofreading-services">Professional Proofreading</a>
+                                </li>
+
+                                <li >
+                                    <a href="https://www.editorworld.com/essay-editing-services">Essay Editing</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/writing-editing-and-proofreading-services">All Services</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="citations_tab" class="dropdown sm"
+                            
+                            style="margin-right: 8px">
+                            <a href="/citation-generator" style="color: navy">Citations<i
+                                    class="fa fa-angle-down"></i></a>
+                            <ul id="citations_menu" class="dropdown-menu">
+                                <li >
+                                    <a href="https://www.editorworld.com/citation-generator">Citation Generator</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/apa-citation-generator">APA 7</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/mla-citation-generator">MLA 9</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/chicago-citation-generator">Chicago 17</a>
+                                </li>
+                                <li >
+                                    <a href="https://www.editorworld.com/harvard-citation-generator">Harvard</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li  style="margin-right: 8px"><a style="color: navy"
+                                href="/editors">Editors</a></li>
+                        <li  style="margin-right: 8px"><a style="color: navy"
+                                href="/writers">Writers</a></li>
+                        <li  style="margin-right: 8px"><a style="color: navy"
+                                href="/FAQ">FAQs</a></li>
+                        <li  style="margin-right: 8px"><a style="color: navy"
+                                href="/contact">Contact</a></li>
+
+                        
+
+                    </ul>
+                </nav>
+                
+                <nav id="mobile_menu" class="mobile">
+                    <ul>
+                        <li><a href="/#">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/editors">Browse Editors</a></li>
+                        <li><a href="/writers">Browse Writers</a></li>
+                        <li><a href="/transaction-process">How it Works</a></li>
+                        <li><a href="/proofreading-and-editing-services">Editing Services</a></li>
+                        <li><a href="/writing-services">Writing Services</a></li>
+                        <li><a href="/rewriting-services">Rewriting Services</a></li>
+                        <li><a href="/prices">Prices</a></li>
+                        <li><a href="/FAQ">FAQ</a></li>
+                        <li><a href="/resources">Resources</a></li>
+                        <li><a href="/citation-generator">Citation Generator</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                                                    <li style="cursor: pointer;">
+
+                                <span id="mobile_account_menu_toggle">My Account <span
+                                        style="font-size: x-small;">▼</span></span>
+                                <div id="mobile_account_menu" style="padding-left: 15px; display: none;">
+
+                                    <a href="/login" style="text-decoration: none; padding: 5px; display: block;">-Sign
+                                        in</a>
+
+                                    <a href="/register"
+                                        style="text-decoration: none; padding: 5px; display: block;">-Register as a
+                                        Client</a>
+                                </div>
+                            </li>
+                                            </ul>
+                </nav>
+            </div>
+
+        </div>
+
+        
+        <div class="grid-item signin">
+            <ul class="nav nav-pills nav-main" style="width: fit-content; display: inline-flex;">
+                                    <li class="dropdown mega-menu-item mega-menu-signin signin" id="headerAccount" style="width: 100%;">
+                        <ul style="padding-left: unset; list-style: none; width: 100%;">
+                            <li style="margin-left: 18px; float: right">
+
+                                <a class="btn knowmad_btn knowmad_btn_blue" href="/editors">Submit a Document</a>
+
+                            </li>
+                            <li style="float: right; padding-top: 10px;">
+                                <a href="#" id="signInToggle-lg-ux" style="text-decoration: unset">
+                                    <img src="/img/homePage/profile_icon.png" alt="Profile Icon"> Sign In
+                                    
+                                </a>
+                            </li>
+
+                        </ul>
+                        
+                        <ul class="dropdown-menu" style="box-shadow: 1px 2px navy; left: -80px">
+                            <li>
+                                <div class="mega-menu-content">
+                                    <div class="row">
+                                        <div class="col-md-12" style="width: 400px;">
+                                            <div id="signIn_container">
+                                                <form autocomplete="off" class="form-horizontal" id="login"
+                                                    role="form" method="POST" action="https://www.editorworld.com/login">
+                                                    <input type="hidden" name="_token" value="SamSvS15RaHkHQoxLZBR6sxFm7TIpZsx9N1XP8b2" autocomplete="off">
+
+                                                    <div class="signin-form" style="font-size: medium;">
+                                                        <span class="mega-menu-sub-title">Sign In</span>
+                                                        <span id="close_btn" class="mega-menu-sub-title"
+                                                            style="float: right; cursor: pointer">x</span>
+                                                        <div id="error">
+
+                                                        </div>
+                                                        <div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <label>Username or Email Address</label>
+                                                                    <input autocomplete="off" type="text"
+                                                                        class="form-control input-lg" name="username"
+                                                                        id="usernamelogin" tabindex=1>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <a class="pull-right" id="headerRecover"
+                                                                        href="#">(Lost Password?)</a>
+                                                                    <label>Password</label>
+                                                                    <input autocomplete="off" type="password"
+                                                                        class="form-control input-lg" name="password"
+                                                                        id="passwordlogin" tabindex=2>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                                                                                                                                        <div>
+                                                            <div class="col-md-6">
+                                                                <span class="remember-box checkbox">
+                                                                    <label for="rememberme">
+                                                                        <input type="checkbox" id="rememberme"
+                                                                            name="rememberme">Remember Me
+                                                                    </label>
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="submit" value="Login"
+                                                                    style="margin-right: unset;"
+                                                                    class="btn knowmad_btn_blue knowmad_btn pull-right push-bottom"
+                                                                    data-loading-text="Loading...">
+                                                            </div>
+                                                        </div>
+                                                        <p class="sign-up-info sign-up-text-responsive">Don't have an
+                                                            account yet? <a
+                                                                href="https://www.editorworld.com/register"><strong>Sign
+                                                                    Up!</strong></a></p>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <div id="signUp_container">
+                                                <form action="" id="signUp_form" type="post"
+                                                    class="form-horizontal">
+                                                    <div class="signup-form">
+                                                        <span class="mega-menu-sub-title">Create Account</span>
+                                                        <div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <label>Email Address</label>
+                                                                    <input type="text" value=""
+                                                                        class="form-control input-lg">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-6">
+                                                                    <label>Password</label>
+                                                                    <input type="password" value=""
+                                                                        class="form-control input-lg">
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>Re-enter Password</label>
+                                                                    <input type="password" value=""
+                                                                        class="form-control input-lg">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="col-md-12">
+                                                                <input type="submit" value="Create Account"
+                                                                    style="margin-right: unset;"
+                                                                    class="btn knowmad_btn_blue knowmad_btn pull-right push-bottom"
+                                                                    data-loading-text="Loading...">
+                                                            </div>
+                                                        </div>
+                                                        <p class="log-in-info">Already have an account? <a
+                                                                href="#" id="headerSignIn">Log In!</a></p>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+
+                                            <div id="recovery_container">
+                                                <form name="forgotPasswordForm" id="forgotPasswordForm"
+                                                    class="validate form-horizontal" role="form" method="POST"
+                                                    action="https://www.editorworld.com/password/email">
+                                                    <div class="recover-form">
+                                                        <span class="mega-menu-sub-title">Reset My Password</span>
+                                                        <p class="sign-up-text-responsive">Complete the form below to
+                                                            receive an
+                                                            email with the authorization code needed to reset your
+                                                            password.
+                                                        </p>
+
+                                                        <input type="hidden" name="_token" value="SamSvS15RaHkHQoxLZBR6sxFm7TIpZsx9N1XP8b2" autocomplete="off">
+                                                        <div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <label for="email">Email Address<span
+                                                                            class="required_input">*</span></label>
+
+                                                                    <input type="email"
+                                                                        class="form-control input-lg required email"
+                                                                        name="email" id="reset_email">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="col-md-12">
+                                                                <input type="submit" value="Submit"
+                                                                    style="margin-right: unset;"
+                                                                    class="btn knowmad_btn_blue knowmad_btn pull-right push-bottom"
+                                                                    data-loading-text="Loading...">
+                                                            </div>
+                                                        </div>
+
+                                                        <p class="log-in-info sign-up-text-responsive">Already have an
+                                                            account?
+                                                            <a href="#" id="headerRecoverCancel">Log In!</a>
+                                                        </p>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                            </ul>
+        </div>
+    </div>
+
+
+
+
+    
+    
+</div>
+                </header>
+                                                    <section id="breadcrumbs" class="page-top">
+                        <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="breadcrumb">
+                <li><a href="https://www.editorworld.com">Home</a></li><li><a href="https://www.editorworld.com/resources">Resources</a></li><li class='active'>Articles &amp; Writing Help</li>            </ul>
+        </div>
+        <!-- <div class="col-md-6">
+        <div class="container" align="right">
+	<div class="row" align="right">
+		<p>
+		
+		<div class="col-md-6" align="right" style="float:right; color: white;">
+		
+		"As a doctoral student, there are many chances to submit papers. Through Editor World's professional editing services, I saved a lot of time in editing which increased my paper acceptance rates." -Rick, Kansas City, Missouri		
+		</div>
+		
+		</p>
+	</div>
+	
+</div>        </div> -->
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <label id="breadcrumb_style" style="">
+                Articles &amp; Writing Help
+            </label>
+
+        </div>
+        
+        <div class="col-md-4" style="color: white">
+                                                <div  >
+            <div style="color: white; margin-top: 10px;">
+      
+                        <a class="btn knowmad_btn knowmad_btn_yellow_border drk_bckgrnd" href="/register" style="position: relative; float: right; bottom: 0;">Become a Client</a>
+                    </div>
+            </div>
+            
+                                          </div>
+    </div>
+</div>
+                    </section>
+                
+
+                
+                <!-- check for flash error message -->
+        
+        <!-- check for flash notification message -->
+        
+        <!-- check for flash success message -->
+        
+        
+        
+        
+        
+
+                <div role="main" class="main">
+                        
+    <div class="container">
+        <div class="col-md-12">
+            <body><section id="ihowtowritenovel" class="bdg-sect"><h1 class="heading">How to Write a Novel: A Section-by-Section Guide
+    </h1><p class="paragraph">Most advice on 
+      <strong>how to write a novel</strong> is either too abstract to act on or too prescriptive to fit your book. This guide takes a middle path. It walks you through what each structural section of a novel needs to accomplish. It names the beats inside each section. And it explains the work the writer is doing at each stage. It's organized as a section-by-section guide because that's the shape a novel actually has. Three large movements, beginning, middle, and end, with named beats inside each that experienced novelists hit (sometimes consciously, sometimes by instinct) regardless of genre or style.
+    </p><br/><p class="paragraph">This article is the structural blueprint. For the broader orientation to fiction craft, see our 
+      <a href="https://www.editorworld.com/article/fiction-writing-guide">fiction writing guide</a>. For the components that make up fiction (character, plot, point of view, dialogue, setting, voice, theme), see 
+      <a href="https://www.editorworld.com/article/elements-of-fiction">the elements of fiction</a>. This guide assumes you have an idea you want to develop into a novel. You're trying to understand what that novel actually needs to do, from page one to the last page.
+    </p><br/><!-- TL;DR box --><div class="tldr-box"><h2 class="heading">Quick Answer: The Structural Map of a Novel
+      </h2><p class="paragraph"><strong>The Beginning (roughly the first 25%).</strong> The opening hooks the reader. The protagonist and their world get established. The inciting incident breaks the status quo. The protagonist crosses a threshold and commits to the story.
+      </p><p class="paragraph"><strong>The Middle (roughly 50%).</strong> Rising action piles on complications. The midpoint shifts the protagonist's understanding of what they're really facing. Things fall apart. The protagonist hits the dark night of the soul, the lowest point before the turn.
+      </p><p class="paragraph"><strong>The End (roughly the final 25%).</strong> The climax delivers the final confrontation. The resolution shows what's left after the storm. The final image leaves the reader with the feeling the book is meant to leave them with.
+      </p></div><br/><h2 class="heading">Before You Start: A Few Decisions
+    </h2><p class="paragraph">Before you write the first scene, you'll save yourself months of revision by making a few decisions deliberately rather than discovering them by accident.
+    </p><br/><p class="paragraph"><strong>Point of view.</strong> Decide who's telling the story and from how close. First person, third person limited, and third person omniscient each produce a different novel. Changing midstream costs you a full revision pass. For the full breakdown, see our guide on 
+      <a href="https://www.editorworld.com/article/point-of-view-in-fiction">point of view in fiction</a>.
+    </p><br/><p class="paragraph"><strong>Genre.</strong> Genre carries reader expectations about pace, tone, word count, and how the structure unfolds. A literary novel and a thriller use the same skeleton, but they pace it differently and weight the sections differently. Knowing your genre lets you meet conventions deliberately rather than fight them by accident.
+    </p><br/><p class="paragraph"><strong>Word count target.</strong> Most adult novels run 80,000 to 100,000 words. Literary fiction can come in shorter. Fantasy and science fiction often run longer, 90,000 to 120,000. Knowing your target lets you plan section lengths roughly: 20,000 to 25,000 words for the beginning, 40,000 to 50,000 for the middle, 20,000 to 25,000 for the end.
+    </p><br/><p class="paragraph"><strong>Outlining or not.</strong> Some novelists outline every scene before drafting. Others discover the book by writing it. Both work. The structural map below applies either way. If you outline, the map tells you what each section needs to contain. If you draft without outlining, the map tells you what to look for in revision.
+    </p><br/><h2 class="heading">The Beginning (Roughly the First 25%)
+    </h2><p class="paragraph">The beginning of a novel does three jobs at once. It establishes the protagonist and their world so the reader cares about what's at stake. It introduces the disturbance that sets the story in motion. And it commits the protagonist to a course of action that the rest of the book will follow. For an 80,000-word novel, the beginning runs roughly 20,000 words, the first quarter of the book.
+    </p><br/><h3 class="heading">The opening
+    </h3><p class="paragraph">The opening (the first page, the first chapter, the first three chapters depending on how you count) has to do something specific. Establish a voice the reader wants to keep reading. Drop them into a moment that feels alive. Make them care, fast, about the person on the page. The opening doesn't need a dramatic event. It needs specific, vivid, concrete writing that signals the book is in the hands of a writer who knows what they're doing. For more on this, see our guide on 
+      <a href="https://www.editorworld.com/article/how-to-write-a-strong-opening-chapter">how to write a strong opening chapter</a>.
+    </p><br/><h3 class="heading">Establishing the protagonist and their world
+    </h3><p class="paragraph">In the early chapters, the reader meets the protagonist before the story disturbs them. We learn what their life looks like, what they want, what they're avoiding, what they don't yet know about themselves. This isn't backstory dump territory. It's specific scenes that let the reader feel the texture of this person's ordinary life. For more, see our guide on 
+      <a href="https://www.editorworld.com/article/how-to-write-a-protagonist">how to write a protagonist</a>.
+    </p><br/><h3 class="heading">The inciting incident
+    </h3><p class="paragraph">Somewhere in the first 10 to 15 percent of the book, something happens that breaks the protagonist's status quo. A letter arrives. A body washes up. A secret comes out. A choice has to be made. The inciting incident is the moment the story starts being a story rather than an introduction. If the inciting incident is too late, the opening feels slow. If it's on page one, the reader doesn't yet care enough about the protagonist to feel the disturbance.
+    </p><br/><h3 class="heading">Crossing the threshold
+    </h3><p class="paragraph">The end of the beginning section is the moment the protagonist commits. They take the case. They board the plane. They make the call they swore they wouldn't make. Whatever the specifics, they cross from the world they knew into the world the story will take place in. After this moment, there's no going back to the life they had on page one. This typically happens around the 20 to 25 percent mark. Until the protagonist crosses the threshold, the story hasn't fully started. Once they do, the middle begins.
+    </p><br/><!-- Six-stat trust block --><div id="ihowtowritenovel-stats"><div id="ihowtowritenovel-stats-grid"><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">100%
+          </p><p class="paragraph ihowtowritenovel-stat-label">Human editing, no AI
+          </p></div><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">2 Hours
+          </p><p class="paragraph ihowtowritenovel-stat-label">Fastest turnaround
+          </p></div><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">5.0/5
+          </p><p class="paragraph ihowtowritenovel-stat-label">Google Reviews rating
+          </p></div><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">BBB A+
+          </p><p class="paragraph ihowtowritenovel-stat-label">Accredited since 2010
+          </p></div><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">65+
+          </p><p class="paragraph ihowtowritenovel-stat-label">Countries served
+          </p></div><div class="ihowtowritenovel-stat"><p class="paragraph ihowtowritenovel-stat-fig">24/7
+          </p><p class="paragraph ihowtowritenovel-stat-label">Available year-round
+          </p></div></div></div><br/><h2 class="heading">The Middle (Roughly 50%)
+    </h2><p class="paragraph">The middle is the longest section of a novel and the place where most first drafts fall apart. The protagonist has crossed the threshold. They have a goal, an obstacle, and rising stakes. The middle's job is to escalate, complicate, and force the protagonist into deeper trouble than they expected. For an 80,000-word novel, the middle is roughly 40,000 words.
+    </p><br/><h3 class="heading">Rising action
+    </h3><p class="paragraph">The first half of the middle layers on complications. The protagonist makes progress, but every step forward reveals a new problem. Allies turn out to have agendas. Plans don't survive contact with reality. The world the protagonist crossed into proves more dangerous, more morally complicated, or more emotionally costly than they understood from outside. Rising action is the section where the reader settles into the book, learns the rules of the world, and starts trusting that the writer knows where the story is going.
+    </p><br/><h3 class="heading">The midpoint shift
+    </h3><p class="paragraph">Around the 50 percent mark, something changes that recasts everything that came before. The protagonist learns what they're really facing, or who they're really up against, or what they actually want. The midpoint shift transforms the story's question. What began as "Can I solve this case?" becomes "Can I survive what I'm finding?" What began as "Can I get the boy?" becomes "Do I even want the life this requires?" Without a strong midpoint, the middle stalls. With one, the second half of the middle has new urgency.
+    </p><br/><h3 class="heading">Falling apart
+    </h3><p class="paragraph">In the second half of the middle, things get worse. The protagonist's strategies stop working. Relationships strain. Costs mount. The reader feels the pressure building toward something. The discipline of this section is to let the protagonist fail in specific, costly ways. A protagonist who never genuinely struggles isn't a protagonist; they're a tour guide. The middle's job is to put real cost on the table.
+    </p><br/><h3 class="heading">The dark night of the soul
+    </h3><p class="paragraph">At the end of the middle, around the 75 percent mark, the protagonist hits bottom. Whatever they thought would work has failed. Whoever they thought would help is gone or compromised. They're alone with the worst version of the situation. This is the moment before the turn, and it's where the reader feels the book is most genuinely at risk of ending badly. The darker the dark night, the more weight the climax can carry.
+    </p><br/><h2 class="heading">The End (Roughly the Final 25%)
+    </h2><p class="paragraph">The end of a novel resolves the question the rest of the book has been asking. It's roughly 20,000 words for an 80,000-word novel, the final quarter. Three movements happen here: the climax, the resolution, and the final image.
+    </p><br/><h3 class="heading">The climax
+    </h3><p class="paragraph">The climax is the moment the central conflict is decided. The protagonist confronts the antagonist, or the dilemma, or the truth they've been avoiding. They make the choice that defines them. They take the action that determines the outcome. The climax should be the highest-stakes scene in the book. Everything earlier was preparation. Everything after is consequence. A weak climax usually means the middle didn't escalate enough; the protagonist hasn't been pushed hard enough to make the final choice feel earned.
+    </p><br/><h3 class="heading">The resolution
+    </h3><p class="paragraph">After the climax, the resolution shows the reader what the world looks like now. Relationships shift. Costs are counted. The protagonist faces who they've become. The resolution can be short or long depending on the genre and the story, but it has to exist. Skipping straight from the climax to the final page leaves the reader without time to feel what just happened. The resolution gives them that time.
+    </p><br/><h3 class="heading">The final image
+    </h3><p class="paragraph">The last page, the last paragraph, the last sentence. The final image is what the reader carries away from the book. It should rhyme in some way with the opening, not as a cheap callback but as a sign that the journey has been a deliberate one. A novel that opens with the protagonist arriving at a place and ends with them leaving it (or refusing to leave it) earns a different kind of resonance. A novel that simply stops when the plot is finished does not. The final image is small in word count and disproportionate in weight.
+    </p><br/><h2 class="heading">Common Structural Mistakes
+    </h2><ul><li class="paragraph"><strong>The beginning is too long.</strong> The protagonist doesn't cross the threshold until 35 or 40 percent of the way in. The book feels like setup for a story that hasn't started. Cut backstory and push the inciting incident earlier.
+      </li><li class="paragraph"><strong>The middle sags.</strong> Scenes happen but they don't escalate. Asking "what does this scene make harder for the protagonist?" keeps the middle from drifting, and a strong midpoint shift fixes most sagging in revision.
+      </li><li class="paragraph"><strong>The climax is undercooked.</strong> The final confrontation happens, but the protagonist hasn't been pushed hard enough to make the moment land. The fix is usually upstream: a darker dark night and higher costs in the middle.
+      </li><li class="paragraph"><strong>The resolution rushes.</strong> The climax happens, then the book ends in two pages. Give the resolution room. A few scenes that show the world after the climax do more than any summary ever can.
+      </li><li class="paragraph"><strong>The protagonist is passive.</strong> Things happen to them. They react. They don't choose. Make sure the climax is driven by the protagonist's active choice, not by circumstance.
+      </li></ul><br/><h2 class="heading">When to Worry About Structure (and When Not To)
+    </h2><p class="paragraph">In a first draft, don't overthink it. Write the book. The structural map is a tool for revision and for not getting lost mid-draft, not a checklist to obey while drafting. Many of the strongest novels were written by writers who discovered the structure in the writing, then sharpened it in revision.
+    </p><br/><p class="paragraph">In revision, structure is where the heaviest lifting happens. Reading your draft against the structural map is one of the most useful diagnostic tools available. If the middle sags, you'll see it. If the inciting incident is too late, you'll see it. If the climax doesn't earn its weight, you'll see it. For the full revision process, see our guide on 
+      <a href="https://www.editorworld.com/article/how-to-revise-a-novel">how to revise a novel</a>.
+    </p><br/><!-- Woman-founded mission box --><div id="ihowtowritenovel-mission"><h3 id="ihowtowritenovel-mission-h" class="heading">Woman-Founded. Purpose-Driven. People First.
+      </h3><p id="ihowtowritenovel-mission-p" class="paragraph">Editor World was founded in 2010 by Patti Fisher, a professor of consumer economics and graduate of The Ohio State University, after seeing firsthand the need for high-quality, personalized editing support for writers at every level. Every client who submits a document at Editor World connects directly with a real editor, receives a personal response, and is treated as an individual rather than a transaction. That is the mission Editor World has maintained for 15 years, and it is reflected in every review we receive.
+      </p></div><br/><h2 class="heading">Getting Editorial Help on Structure
+    </h2><p class="paragraph">When a novel is ready for outside eyes, the kind of editor you want depends on what your draft needs. For big-picture structural feedback (whether the middle sags, whether the inciting incident lands, whether the climax earns its weight), 
+      <a href="https://www.editorworld.com/developmental-editing">developmental editing</a> is the right service. For full editorial support across structure, prose, and pacing, our 
+      <a href="https://www.editorworld.com/book-editing-services">book editing services</a> cover fiction and nonfiction at every stage. Authors writing genre fiction can also see our dedicated 
+      <a href="https://www.editorworld.com/novel-editing-services">novel editing service</a>, which matches you with editors who specialize in your genre. Browse 
+      <a href="https://www.editorworld.com/editors">available editors</a> by genre experience and verified client ratings, or use the 
+      <a href="https://www.editorworld.com/prices">instant price calculator</a> to see your exact cost. A free sample edit of up to 300 words is available on request.
+    </p><br/><!-- CTA buttons --><div id="ihowtowritenovel-cta"><a href="https://www.editorworld.com/editors" class="ihowtowritenovel-cta-btn">Choose Your Editor
+      </a><a href="https://www.editorworld.com/prices" class="ihowtowritenovel-cta-btn">Get a Quote
+      </a><a href="https://www.editorworld.com/register" class="ihowtowritenovel-cta-btn">Get Started
+      </a></div><br/><hr/><h2 class="heading">Frequently Asked Questions
+    </h2><div itemtype="https://schema.org/FAQPage" itemscope=""><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">How long should a novel be?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">Most adult novels run 80,000 to 100,000 words. Literary fiction can come in shorter, sometimes as low as 65,000 to 75,000. Fantasy and science fiction often run longer, 90,000 to 120,000 or more for epic and series openers. Young adult novels typically run 50,000 to 90,000, and middle grade 30,000 to 50,000. Knowing the convention for your genre matters because agents and publishers register manuscripts that fall outside the range as a signal about whether the writer knows the market.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">Do I have to outline before writing a novel?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">No. Some novelists outline every scene before drafting. Others discover the book by writing it. Both approaches produce strong novels. The structural map of beginning, middle, and end applies either way. If you outline, the map tells you what each section needs to contain. If you draft without outlining, the map gives you a diagnostic tool for revision, showing where the structure is working and where it has collapsed. The right approach is the one that lets you finish drafts.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">Where should the inciting incident go in a novel?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">Somewhere in the first 10 to 15 percent of the book. For an 80,000-word novel, that's roughly between the 8,000 and 12,000 word mark. The inciting incident is the event that breaks the protagonist's status quo and sets the story in motion. Earlier than that, the reader doesn't yet care about the protagonist enough to feel the disturbance. Later, the opening feels slow and the reader may put the book down before the story has started.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">What is the midpoint of a novel and why does it matter?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">The midpoint is a structural beat that occurs around the 50 percent mark of the novel. Something happens that shifts the protagonist's understanding of what they're facing, or who they are, or what they actually want. The midpoint matters because it transforms the story's central question and gives the second half of the middle new urgency. Without a midpoint shift, the middle of the novel often stalls, with rising action that doesn't escalate and a reader who loses momentum.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">What is the dark night of the soul in a novel?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">The dark night of the soul is the lowest point of the story, occurring around the 75 percent mark. The protagonist's strategies have failed, allies have left or compromised, and the worst version of the situation has come true. It's the moment before the turn, the point at which the reader feels the book is most genuinely at risk of ending badly. A darker dark night gives the climax more weight, because the protagonist has further to come back from.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">How do you write the climax of a novel?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">The climax is the moment the central conflict is decided. The protagonist confronts the antagonist, the dilemma, or the truth they've been avoiding, and the choice they make determines the outcome of the story. A strong climax is driven by the protagonist's active choice rather than by circumstance. It's the highest-stakes scene in the book, with everything earlier as preparation. If the climax feels weak, the cause is usually upstream: the middle didn't push the protagonist hard enough for the final choice to feel earned.
+          </p></div></div><br/><div itemprop="mainEntity" itemtype="https://schema.org/Question" itemscope=""><h3 itemprop="name" class="heading">When should I worry about structure while drafting a novel?
+        </h3><div itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" itemscope=""><p itemprop="text" class="paragraph">Less than you probably think while drafting, and more than you might want in revision. In a first draft, focus on finishing. The structural map is a tool for diagnosis, not a checklist to obey while drafting. Many of the strongest novels were written by writers who discovered the structure in the writing and sharpened it in revision. In revision, however, structure is where the heaviest lifting happens. Reading your draft against the structural map is one of the most useful tools available for identifying what's working and what has collapsed.
+          </p></div></div></div><br/><h2 class="heading">More from Editor World
+    </h2><p class="paragraph">For the broader orientation to fiction craft, see our 
+      <a href="https://www.editorworld.com/article/fiction-writing-guide">fiction writing guide</a>. For the components that make up fiction, see 
+      <a href="https://www.editorworld.com/article/elements-of-fiction">the elements of fiction</a>. For specific structural pieces in more depth, see 
+      <a href="https://www.editorworld.com/article/how-to-write-a-strong-opening-chapter">how to write a strong opening chapter</a>, 
+      <a href="https://www.editorworld.com/article/how-to-write-a-protagonist">how to write a protagonist</a>, and 
+      <a href="https://www.editorworld.com/article/point-of-view-in-fiction">point of view in fiction</a>. For revision, see 
+      <a href="https://www.editorworld.com/article/how-to-revise-a-novel">how to revise a novel</a>. For genre-specific structural conventions, see our guides on 
+      <a href="https://www.editorworld.com/article/how-to-write-a-fantasy-novel">how to write a fantasy novel</a> and 
+      <a href="https://www.editorworld.com/article/how-to-write-a-science-fiction-novel">how to write a science fiction novel</a>.
+    </p><br/><hr/><p class="paragraph"><em>Reviewed by an Editor World fiction editor with an MFA in Creative Writing. Editor World, founded in 2010 by Patti Fisher, PhD, provides professional editing services for novelists, authors, and writers worldwide. BBB A+ accredited since 2010 with 5.0/5 Google Reviews and 5.0/5 Facebook Reviews. More than 100 million words edited for over 8,000 clients in 65+ countries. Stevie Award winner: Gold 2019, Bronze 2018 and 2025. Native English editors from the United States, the United Kingdom, and Canada. 100% human editing, no AI at any stage. Less than 5% of applicants are accepted to the editor panel. Recommended by the Boston University Economics Department. Page last reviewed June 2026.</em></p></section></body><style>* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin:0;}:root{--blue:#3e50f7;--navy:#001a66;--yellow:#ffb800;--light-bg:#f5f7ff;--body-text:#2c2c2a;--hover-blue:#7a86fa;}#ihowtowritenovel{color:var(--body-text);}#ihowtowritenovel a{color:var(--blue);}#ihowtowritenovel a:hover{color:var(--hover-blue);}#ihowtowritenovel h1, #ihowtowritenovel h2, #ihowtowritenovel h3{color:var(--navy);}#ihowtowritenovel .tldr-box{border:2px solid var(--blue);margin:1.5rem 0;padding:1.5rem 1.75rem;background:var(--light-bg);border-radius:6px;}#ihowtowritenovel .tldr-box h2.heading{margin-top:0;}#ihowtowritenovel .tldr-box p{margin:0.5rem 0;}#ihowtowritenovel-stats{margin:24px 0;padding:32px 24px;background:var(--navy);}#ihowtowritenovel-stats-grid{gap:32px;display:flex;flex-wrap:wrap;text-align:center;justify-content:center;}.ihowtowritenovel-stat{flex:0 0 auto;min-width:140px;}.ihowtowritenovel-stat-fig{color:var(--yellow);margin:0;font-size:1.8rem;font-weight:bold;}.ihowtowritenovel-stat-label{color:#ffffff;margin:4px 0 0;font-size:2rem;}#ihowtowritenovel-mission{margin:24px 0;padding:20px 24px;background:var(--light-bg);border-left:4px solid var(--yellow);}#ihowtowritenovel-mission-h{color:var(--navy);margin:0 0 8px;font-size:2.2rem;font-weight:bold;}#ihowtowritenovel-mission-p{color:var(--body-text);margin:0;}#ihowtowritenovel-cta{margin:24px 0;text-align:center;}.ihowtowritenovel-cta-btn{color:var(--navy);margin:8px;display:inline-block;padding:12px 32px;font-size:1.6rem;background:var(--yellow);font-weight:bold;border-radius:4px;text-decoration:none;}</style>
+
+                                </div>
+    </div>
+
+    
+                </div>
+
+                <footer style="width: 100%">
+                    <div id="footer_list" class="mobile">
+        <ul>
+            <li style="font-size: 23px; font-family: nib pro; font-weight: 700;">Services</li>
+            <li><a href="/writing-services">Writing Services</a></li>
+            <li><a href="/rewriting-services">Rewriting Services</a></li>
+            <li><a href="/developmental-editing">Developmental Editing Services</a></li>
+            <li><a href="/academic-editing">Academic Editing Services</a></li>
+            <li><a href="/citation-generator">Free Citation Generator</a></li>
+            <li><a href="/dissertation-editing-services">Dissertation Editing Services</a></li>
+            <li><a href="/book-editing-services">Book Editing Services</a></li>
+            <li><a href="/business-document-editing">Business Editing Services</a></li>
+            <li><a href="/ESL-editing">English Language Editing Services</a></li>
+            <li><a href="/same-day-editing">Same-Day Editing Services</a></li>
+            <li><a href="/professional-proofreading-services">Professional Proofreading Services</a></li>
+
+            <li style="font-size: 23px; font-family: nib pro; font-weight: 700; padding-top: 20px">FAQ</li>
+
+            <li><a href="/FAQ">FAQ</a></li>
+            <li><a href="/FAQ/topic/265">Payment Questions</a></li>
+            <li><a href="/FAQ/topic/239">Technical Questions</a></li>
+
+            <li style="font-size: 23px; font-family: nib pro; font-weight: 700; padding-top:20px">Clients</li>
+
+            <li><a href="/testimonials">Testimonials</a></li>
+            <li><a href="/login">My Account</a></li>
+            <li><a href="/register">Register</a></li>
+            <li><a href="https://www.editorworld.com/contact">Contact Us</a></li>
+
+            <li>
+                <div id="headerTitle" style="padding-top: 20px">Editor World</div>
+            </li>
+
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/transaction-process">How it Works</a></li>
+            <li><a href="/editors">Available Editors</a></li>
+            <li><a href="/writers">Available Writers</a></li>
+            <li><a href="/prices">Prices</a></li>
+            <li><a href="/application">Freelance Jobs</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms-of-use">Terms of Use</a></li>
+            <li><a href="/sitemap">Sitemap</a></li>
+
+
+        </ul>
+    </div>
+<div class="footerBigbox no-margin-top">
+
+
+    <div class="row">
+        <div class="col-lg-3 hide_on_mobile" style="min-width: 226px;">
+            <div>
+                <div class="logo"
+                    style="text-align: right; width: fit-content; margin-left: 55px; white-space: nowrap;">
+                    <a href="/#" style="text-decoration: none; color: white;">
+
+                        <div id="headerTitle">Editor World</div>
+                        <div id="headerSubTitle">Your Words. <b>Perfected.</b></div>
+                    </a>
+
+
+                </div>
+            </div>
+
+            <p class="footerDesc">Editor World is a professional writing, proofreading, and editing marketplace founded in 2010. Our native English writers and editors come from the USA, UK, and Canada. Pick your own provider by qualifications, education, skills, and verified client ratings. Available 24/7 and BBB A+ accredited since 2010. 100% human, no AI.</p>
+            <br>
+            <div class="footerCopyRight">Copyright © 2026. Editor World LLC. All Rights Reserved.
+            </div>
+
+
+        </div>
+        <div class="col-lg-6 hide_on_mobile">
+            <div style="margin: 10px auto; width: fit-content;">
+                <nav>
+                    <ul id="menu_links" styl>
+                        
+                        <li class="menuLi"><a class="reviewEditorFooterLink" href="https://www.editorworld.com/transaction-process">How
+                                It Works</a></li>
+                        <li class="menuLi"><a class="testimonialsFooterLink" href="https://www.editorworld.com/prices">Prices</a>
+                        </li>
+                        <li class="menuLi"> <a class="resourcesFooterLink" href="https://www.editorworld.com/resources">Resources</a>
+                        </li>
+                        <li class="menuLi"><a class="resourcesFooterLink" href="https://www.editorworld.com/citation-generator">Citation Generator</a>
+                        </li>
+                        <li class="menuLi"><a class="becomeAnEditorFooterLink" href="https://www.editorworld.com/services">Services</a>
+                        </li>
+
+                        <li class="menuLi"><a class="privacyPolicyFooterLink" href="https://www.editorworld.com/editors">Editors</a>
+                        </li>
+
+                        <li class="menuLi"><a class="privacyPolicyFooterLink" href="https://www.editorworld.com/writers">Writers</a>
+                        </li>
+
+                        <li class="menuLi"><a class="sitemapFooterLink" href="https://www.editorworld.com/FAQ">FAQs</a></li>
+
+                    </ul>
+                </nav>
+                <div style="margin-top: 72px">
+                    <a href="https://www.editorworld.com/writers" class="btn knowmad_btn knowmad_btn_blue_border_footer"
+                        style="margin-right: 24.7px;">Find Your Writer</a>
+                    <a href="https://www.editorworld.com/editors" class="btn knowmad_btn knowmad_btn_yellow_border drk_bckgrnd">Find
+                        Your
+                        Editor</a>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="col-lg-3">
+
+            <ul class="contactDesc">
+                <li>
+                    <span class="contactUsText">Contact Us</span>
+                </li>
+                <li class="menuLi">
+                    <p style="margin-top: 13px;"><strong>Headquarters:</strong> Virginia, USA</p>
+                </li>
+                <li class="menuLi">
+                    <p><strong>U.S. Mailing Address:</strong> 11815
+                        Fountain Way Ste 300, Newport News, VA 23606</p>
+                </li>
+                <li class="menuLi">
+                    <p><strong>UK Address:</strong> 167-169 Great Portland St, London W1W 5PF, UK</p>
+                </li>
+                <li class="menuLi">
+                    <label style="margin-top: 30px; font-weight: 400;"><strong>Email:</strong> <a
+                            style="color: #FFFFFF !important;"
+                            href="mailto:info@editorworld.com">info@editorworld.com</a></label>
+                </li>
+                <li class="menuLi">
+                    <p><strong>U.S. Phone:</strong> 1 (855)-511-EDIT (3348)</p>
+                </li>
+                <li>
+                    <ul class="social-icons">
+                        <li class="facebook" style="margin-bottom: 37px;"><a
+                                href="https://www.facebook.com/editorworldllc" target="_blank"
+                                title="Facebook">Facebook</a></li>
+                        <li class="instagram"><a href="https://www.instagram.com/editorworldllc/" target="_blank"
+                                title="Instagram">Instagram</a></li>
+                        <li class="twitter"><a href="https://twitter.com/EditorWorld" target="_blank"
+                                title="Twitter">Twitter</a></li>
+
+                        <li class="linkedin"><a
+                                href="https://www.linkedin.com/company/editor-world-english-editing-proofreading-services/"
+                                target="_blank" title="LinkedIn">LinkedIn</a></li>
+                        <!--<li class="constantcontact" style="background-size: cover; background-position: center;">
+                            <a href="https://www.editorworld.com/constantcontact" target="_blank"
+                                title="Constant Contact">Constant Contact</a>
+                        </li>
+                         <li class="pinterest"><a href="http://www.pinterest.com/editorworld/" target="_blank" title="Pinterest">Pinterest</a></li> -->
+                    </ul>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+
+
+
+    
+</div>
+
+<div class="footerLinksRow no-margin-top hide_on_mobile">
+
+    <div class="row">
+        <div class="col-lg-9" style="padding-right: unset;">
+            <nav id="sub-menu" style="margin-top: 22px;">
+                <ul id="menu_links_bottom">
+                    
+                    <li class="menuLi"> <a class="llminfoFooterLink" href="https://www.editorworld.com/llm-info">LLM Info</a>
+                    </li>
+                    <li class="menuLi"><a class="reviewEditorFooterLink" href="https://www.editorworld.com/contact">Contact Us
+                            </a></li>
+                    <li class="menuLi"><a class="testimonialsFooterLink"
+                            href="https://www.editorworld.com/testimonials">Testimonials</a></li>
+                    <li class="menuLi"><a class="becomeAnEditorFooterLink"
+                            href="https://www.editorworld.com/application">Freelance Jobs</a></li>
+
+                    <li class="menuLi"><a class="privacyPolicyFooterLink"
+                            href="https://www.editorworld.com/privacy">Privacy Policy</a></li>
+
+                    <li class="menuLi"><a class="sitemapFooterLink" href="https://www.editorworld.com/sitemap">Site
+                            Map</a></li>
+                    <li class="menuLi">
+                        <a class="termsOfUseFooterLink" href="https://www.editorworld.com/terms-of-use">Terms of Use</a></li>
+
+
+
+                </ul>
+            </nav>
+        </div>
+
+        <div class="col-lg-3">
+            <a href="https://www.bbb.org/us/va/blacksburg/profile/editorial-services/editor-world-editing-services---proofreading-services-0613-90003675" target="_blank" rel="noopener noreferrer">
+                <img src="/img/homePage/bbb_A+.png" class="hide_on_small" alt="BBB A+"
+                    style="max-width: 246.64px; width: 100%; height: 63.38px; margin-top: 11.4px; margin-bottom: 11.4px;">
+            </a>
+        </div>
+    </div>
+
+
+
+</div>
+                </footer>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="/js/formatters.js"></script>
+    
+    <script src="/minified_js/alljs.min.js"></script>
+    <script type="module" src="/minified_js/echo.min.js"></script>
+
+
+        <script src="/js/helpers/timezone-helper.js" type="text/javascript">
+        getTimeZone();
+    </script>
+            </body>
+
+</html>

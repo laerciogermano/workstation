@@ -1,0 +1,269 @@
+How to Write a Book Proposal (With Example)
+
+ Contents 
+
+- 1. Understand the purpose of a proposal
+- 2. Start with the title page
+- 3. Craft a strong overview
+- 4. Address your target market and audience
+- 5. Include comparative titles
+- 6. Adapt your author bio to the subject matter
+- 7. Present marketing plan and platform
+- 8. Create a chapter-by-chapter outline
+- 9. Select your sample chapter(s)
+- 10. Wrap up with logistics and specifications
+- 11. Submit your book proposal to agents and publishers
+
+ Posted on Sep 18, 2026 
+
+# How to Write a Book Proposal (With Example) 
+
+ Written by Noah Charney
+
+ Noah Charney 
+
+ Dr Noah Charney is a bestselling author of 30+ books, including a Pulitzer finalist, and the author of The 12-Hour Author. He teaches writing and art history for institutions including Yale, the Smithsonian, and Reedsy Learning. 
+
+I learned about book proposals the hard way. My first book, a novel called The Art Thief, was pretty successful — my agent scored me a big advance and the book became a bestseller in five countries. I then wanted to write a nonfiction follow-up, so I drafted 60,000 words about the Ghent Altarpiece, the most frequently stolen artwork in history.
+
+When I showed the manuscript to my agent, though, she wanted to see the proposal. I went back to the drawing board and painfully figured out how to pitch the book from scratch. 
+
+Since that time, I’ve written proposals for over thirty nonfiction books, taught this material in Guardian Masterclasses, and ghostwritten books and book proposals for many clients. Eventually I gathered all the lessons I’ve learned on the job into another book, The 12-Hour Author. This post is a condensed version of what I share in that guide. 
+
+To make the advice more concrete, you can download the proposal for my book The Art of Forgery, originally titled Fakes, which I successfully pitched to art publisher Phaidon Press. Use it as a case study as we work through each section.
+
+## 1. Understand the purpose of a proposal
+
+A book proposal outlines what a future, as-yet-unwritten nonfiction book will be about. It should be short enough for an editor or agent to read in one sitting and decide whether the project interests them.
+
+The big surprise is this: if you are writing nonfiction, don’t write the whole book first. You normally need a proposal and a sample chapter. For a substantial trade proposal, think roughly 5,000 words of proposal and another 5,000 words of sample material. Fiction works differently. Agents and editors expect you to have written the whole novel, even if they initially ask to see only the opening chapters and a synopsis.
+
+But in nonfiction, you may be able to sell a 70,000-word book having written only 10,000 words of it. This means there are actually two strategic reasons not to write your book in advance: firstly, it’s more efficient in general, and secondly, your editor may have ideas that make the book better.
+
+As you can see in the proposal sample I shared, when I pitched The Art of Forgery, my original plan was to divide it in two. The first half would be a chronological history of famous forgers. The second would be a playful how-to section, looking at techniques and recipes that had worked for past forgers.
+
+After the book was contracted, my editors and I reconsidered the whole structure. We organized it instead around the “minds, methods, and motivations” of forgers. The psychological angle provided the through line, and the book was better for it.
+
+Had I already written the entire thing, I would have had a lot of dismantling to do.
+
+### Tailor your proposal to its type 
+
+There are different kinds of proposals. Academic proposals focus on how a book might be used by students and researchers, while translation proposals must establish the value of the original work and make the case for an English edition. 
+
+This article is about trade nonfiction proposals, the most common type, which are about pitching an engaging perspective on a subject with a viable readership. 
+
+Below, we’ll go over the core sections you’ll need to include in your proposal (regardless of its type), along with notes on how to approach each one. Think of it as a questionnaire that helps you define what your book will be — and persuade an acquisitions editor or agent that it deserves to exist.
+
+ 
+
+## 2. Start with the title page
+
+The first page simply introduces the book’s details. For example: 
+
+- Book Title: Fakes
+- Subtitle: A History and How-To of Art Forgery
+- Author Name: Noah Charney 
+
+This is a working title. It can change later, and probably will (as mine did). Still, the title should give the reader an immediate sense of the book. The subtitle can do the explanatory work if the main title is more playful or intriguing. Don’t spend three weeks deciding whether one adjective in the subtitle is exactly right. There are harder parts coming.
+
+From ❌ Fakes: A History and How-To of Art Forgery to ✅ The Art of Forgery: The Minds, Motives and Methods of Master Forgers
+
+## 3. Craft a strong overview
+
+This is the section that answers the obvious question: Why should this book exist? Try first to describe it in one sentence. For Stealing the Mystic Lamb, my one-liner might have been: “The true story of the world’s most stolen artwork, which is also arguably the most influential painting ever made.” 
+
+Then I could expand it: “Anything bad that can happen to an artwork has happened to this painting. It was stolen repeatedly, looted by Napoleon and the Nazis, forged, dismembered, smuggled, partly burned and nearly blown up. One of its twelve panels is still missing.” That is the sort of thing an acquisitions editor will remember.
+
+This matters because the editor who likes your proposal then has to pitch it to their colleagues. They may be the only person at the meeting who has actually read the whole thing. You want to make it very easy for them to say, in two minutes, what the book is, why it is interesting and why their publishing house should acquire it.
+
+For trade nonfiction, I also like to include a narrative hook. Start in the middle of something good. Put the reader into a scene. Plant a question. Then, if you can get away with it, cut away before answering the question.
+
+I did this in the proposal for Stealing the Mystic Lamb. I opened with members of the Austrian Resistance waiting in a forest outside a salt mine full of stolen masterpieces while an SS flamethrower detachment was reportedly on its way to destroy them. Then I stopped.
+
+Cheeky? A little. But the idea is simple: make the editor want to know what happened next.
+
+## 4. Address your target market and audience
+
+Who is going to buy this book? “Everyone” is not a useful answer. Try to picture actual readers — demographics, interests, other books they’ve loved. Are they people who buy popular history? Entrepreneurs? Parents? True crime readers? Gardeners? Museum visitors? Students taking a particular kind of course?
+
+For a trade nonfiction book, the assumption is that the reader comes to the subject without specialist knowledge. They chose the book because the subject interested them and they hope they’ll enjoy reading about it. Your proposal should show that you understand this.
+
+For The Art of Forgery, I first identified a broad nonfiction audience interested in famous artworks, art forgery, and crime. I then identified a secondary academic audience: students of art, conservation, forensic science, and archaeology.
+
+If your book is primarily academic, you should think about courses, university departments, researchers, libraries and the academic level of the intended reader. The publisher is trying to work out whether there is a market. Your job is to help them see it.
+
+#### Q: How can authors effectively identify and describe their target audience for a book proposal? 
+
+ Alice C. (Editor) 
+
+Start by imagining your target audience as one person—not a vague crowd. Who is this book really for? Give that reader a name, an age, a life stage. Begin with demographics like age, gender, marital status, profession, or family situation. Then dig deeper into psychographics: What do they care about? What values shape their decisions? What do they believe about themselves or the world?
+
+Most importantly, ask:
+
+1. What problem do they want to solve that your book helps address?
+2. What keeps them up at night?
+3. What do they dream about changing in their life?
+
+Once you’ve gathered this picture, write it out as if you’re introducing that person to an agent or editor. For example: “Meet Sarah, a 42-year-old teacher who…” The more specific and relatable you make this description, the easier it is for publishers (and ultimately readers) to connect with your book.
+
+ Sally A. (Editor) 
+
+Authors should read books in the category and genre they are shooting for. There is that old tale about how people in the banks learn to spot counterfeit money--by handling legit money. If you are reading in your target category and genre, you should be able to tell if you book is fitting into that category and genre. That's how you identify your audience, I think. It's time consuming, but I don't think there is a shortcut. 
+
+Then to effectively tell an agent who your audience is you might say something like, 
+
+XXX is a 30,000-word, MG, mystery novel. Readers who love Taryn Souders' books should like XXX as well.
+
+Just give the word count, the category, the genre, and some comp books. The agent will understand the audience. 
+
+ Sally is available to hire on Reedsy 
+
+ Tamson W. (Editor) 
+
+When describing the target audience of a book, age range (for children’s picture books, middle grade and YA), genre, and sub-genre provide the first macro view of a project and will often give an agent, publisher, or reader a sense of whether the project is right for them. Once you have established whether book is nonfiction, memoir, graphic novel, fiction, and then historical fiction, science fiction, fantasy, romance, thriller, metafiction, literary fiction, new adult, etc, comparative titles, or comp titles, will further clarify the audience. Agents and editors look for comp titles in a description of the book, not just to get a sense of the manuscript they are about to consider, but to understand the potential market for the book, to get a sense of how familiar the author is with this potential market, and finally, should the book be acquired, to provide a foundation for pitching the book in various situations and creating compelling marketing copy. An author publishing independently will find comparative titles useful for the very same reason. Hopefully as an author you have read widely within your own genre anyway, but here is yet another reason to do so. Recent successful titles and older, established favorites are both useful in this capacity. A careful reader can also help describe your future audience. 
+
+ Tamson is available to hire on Reedsy 
+
+## 5. Include comparative titles
+
+Publishers will ask for “comps,” meaning books that are comparable to yours and might appeal to the same reader. Look for around three to five recent books, ideally from the past five to seven years. 
+
+Give the title, author, publisher, and publication date of each comp, then explain how your book combines them all to create something unique. Do not use this section to explain why all the other books are terrible. Successful books on your subject are actually good news. They demonstrate that people buy books of this sort.
+
+The question is why somebody who bought those books would also want yours.
+
+Maybe your approach is slightly different. Maybe you cover material they leave out. Maybe the existing books are academic and yours is for a general reader. Maybe they focus on a single aspect of the subject and yours pulls everything together.
+
+When I proposed The 12-Hour Author, for instance, I found plenty of books about writing well and several about making a living from writing. What I could not find was one book that combined writing advice with the practical mechanics of becoming a professional writer: proposals, article pitches, agents, contracts, payment, publishing and promotion.
+
+#### Q: How should authors select comp titles for a book proposal to position their book? 
+
+ Christine M. (Editor) 
+
+For a nonfiction book proposal, I advise authors to aim for around five recent books that have sold reasonably well. Of course, if there's a popular or well-known book in the same category as yours, you'll want to include that, but I also encourage authors to think creatively and consider some less-obvious choices. Remember that ultimately, the goal is to establish that there is an eager audience out there for your book. For example, for a recent "small-space entertaining" guide/cookbook, in addition to several general entertaining guides and cookbooks, we also included a small-space decor book as a comp title to highlight the many small-apartment dwellers out there who are looking for resources on how to use their space. 
+
+ Matt B. (Editor) 
+
+Comp titles can be hard because most authors don't have the same tools that publishing professionals do when they are evaluating comps (like access to individual titles' sales). 
+
+What you should aim for in a proposal is a number of titles, at least 5-7 that are from a variety of different publishers and all have a good sales track without being bestsellers. Again, nothing about this is easy: you as the author should read as many of these books as you can so that you understand the market and where your future book will fit in. It will also help you describe, in the proposal itself, why you've chosen these comps and what makes your books similar but unique in its own right. 
+
+Every publisher will want to see at least one comp from their company. You can use things like Amazon reviews or Goodreads to get some sort of baseline as to the popularity of a given book. Amazon's "Customers also bought or read" and "More items to explore" tools can help you find additional titles. 
+
+But more than browsing titles and short descriptions, the single best tool you can access is reading widely in the genre you're writing. There simply isn't a better way to know the market than truly knowing the market by reading, reading, and more reading!
+
+## 6. Adapt your author bio to the subject matter
+
+The proposal has to persuade the editor of two things: 1) this is a good book idea, and 2) you are the right person to write it. So tailor your bio to the book. If you are proposing a book about astrophysics and your main qualification is that you once wrote a very good cookbook, the editor may have questions.
+
+Here’s how I opened my bio for my book on art forgery:
+
+> “I am a professor and an international author of fiction and nonfiction, specializing in the fields of art history and art crime. I am the founder and president of ARCA, the Association for Research into Crimes against Art, a non-profit research group.”
+
+Your expertise might come from formal education, your profession, previous books, journalism, unusual access to the subject, or personal experience. Whatever the route, show why this project logically belongs to you.
+
+This is also the time to toot your own horn. Mention relevant books, awards, articles, teaching, media work, professional positions and other credentials. If The New York Times once called you “the world’s greatest walrus trainer,” this is where that goes, provided your proposed book has something to do with walruses.
+
+Write the author bio in the third person, as it might appear on the back of your book. The rest of a book proposal is usually in the first person: “I will do this...”
+
+## 7. Present marketing plan and platform
+
+Publishers do promotion, but authors are expected to help. Sometimes a lot. The most useful question is: What can you personally do to bring attention to the book? Could you write related articles? Give talks? Appear on podcasts? Teach a course connected to the subject? Reach members of a professional association? Speak at conferences? 
+
+Think about what you already do. In the proposal for The Art of Forgery, I could point to a regular column about art history with around 20,000 monthly readers, appearances as an art-crime expert on BBC television and radio, public talks, university teaching, relationships with museums and professional associations, and more.
+
+Try to keep this section realistic. “I will go on The Tonight Show” is not much use unless Jimmy Fallon has already been in touch.
+
+For your platform, list the things that might actually help sell books: a website, newsletter, substantial social media following, speaking schedule, teaching, podcast, professional organization or regular media presence. Numbers are valuable. “I have 42,000 newsletter subscribers” means something. “I have a strong online presence” does not mean very much.
+
+## 8. Create a chapter-by-chapter outline
+
+This is the part that takes the most work. You may be able to answer the questions about your audience, your background and why the book is needed in one sitting. But the chapter outline forces you to sit down and work out what the book really is.
+
+List the tentative chapters and give each one a paragraph or two explaining what it will contain. The summaries should let an editor see how the book progresses. What does each chapter do? What stories, examples or arguments will it contain? Why does it belong where it does? Think of the chapter summaries together as a miniature version of the book.
+
+I often use a short proposal as a sandbox when developing an idea. If I can produce ten or twelve convincing chapter summaries, I probably have a book. If I get to chapter five and start thinking, “Erm, maybe another chapter about the same thing?” then I probably have more thinking to do. 
+
+You don’t need to have completed all the research in advance — only enough to create a compelling outline. Your proposal should show that you have thought deeply and intelligently about the whole book, while acknowledging that the specifics may change as you research and write.
+
+## 9. Select your sample chapter(s)
+
+The proposal says that you can write the book. The sample proves it. For trade nonfiction, choose material that shows you at your best. I like narrative material because it immediately shows an editor that you can hold a reader’s attention. As I mentioned earlier, ideally you leave them wanting more.
+
+If the book grew out of an article you already published, that article may work as sample material. A sufficiently substantial opening narrative inside the proposal can sometimes do the same job.
+
+For an academic book, nobody needs you to open with explosions, Nazis, or missing masterpieces. What matters is that you know your subject and can explain it in a clear, intelligent way. 
+
+This is true for any kind of proposal: clean is better than overwritten. I say this as someone who has certainly been guilty of overwriting. Your goal is to show the editor that you can write well enough to tell your story. That means clean, intelligible prose. You don’t need anything fancy (and fancy is often unwanted in nonfiction).
+
+## 10. Wrap up with logistics and specifications
+
+Now for the practical bits. How long will the book be? For most nonfiction, 60,000 to 80,000 words is a perfectly normal range. Image-heavy books can be shorter. Once you start pushing 120,000 words, publishers may get nervous because more words mean more pages and more pages cost more money.
+
+When can you finish it? Give yourself a realistic deadline. Remember that you still have to research and write the thing after everyone congratulates you on the contract. It is normal for a proposal to state that you would need one year from the contract signing to finish the book. Publishers will be a bit suspicious if you say you can write it too quickly. I’d say don’t offer to finish it in less than 9 months.
+
+Then consider the visuals. Will the book need photographs, maps, charts, illustrations, or tables? How many? Do they need to be in color, or would black and white work? And do you own the rights to use them?
+
+Color printing is more expensive: a single page containing color can cost up to ten times as much as a grayscale page. Images add to the cost, and image rights can be costly too (although this is the only expense authors are expected to cover, even with a traditional publishing deal).
+
+That’s why publishers ask these questions. A proposal may describe an exciting book, but someone at the publishing house is also working out the numbers.
+
+## 11. Submit your book proposal to agents and publishers
+
+Now you need somebody to read the thing. If you are querying literary agents, keep the accompanying email short and let you and your book idea be the interesting part. I recommend three paragraphs:
+
+1. Introduce yourself and explain why you are writing to this particular agent.
+2. Describe the book, your relevant qualifications or publications, and why the project will interest readers.
+3. Thank them and ask whether they would like to see the proposal.
+
+You should query multiple agents at the same time. They may take months to reply, if they reply at all, and rejection rates are brutal. Life is too short to send one query, wait three months, receive a no and then send another.
+
+I have a rule for rejection. Every time I receive a no, I immediately send several fresh queries.
+
+That takes one negative response and turns it into several possible yeses before I have time to sit around feeling sorry for myself.
+
+And remember that you do not necessarily need an agent. Plenty of university presses, academic publishers, independent presses and specialist publishers accept submissions directly from authors.
+
+Whether the proposal goes first to an agent or straight to an editor, its task is the same.
+
+You want someone to finish reading it and think: I want this book. This is the right person to write it. And I know how I’m going to pitch it to everyone else. That’s the proposal doing its job.
+
+#### Q: Do you have any words of encouragement for authors struggling in the querying trenches? 
+
+ Suggested answer 
+
+ Kim L. (Editor) 
+
+Querying is so tough these days! There's more agents than ever before, but yet imprints are folding, combining, etc. so the number of projects being sold hasn't increased, making it harder to catch an agent's eye.
+
+There may be any number of reasons you're not getting full requests--your query letter doesn't capture the unique quality of your book making it stand out, your first pages fall flat and don't pique the agent's interest, or, quite simply, the agent isn't interested in your characters or plot. And there's nothing you can do about that last one. Every book isn't for every person. Every agent has meh topics they rather not read about. If an agent isn't into mermaids, they're unlikely to request a full from a query that describes a book about mermaids. That query was never going to land a full, and there was absolutely nothing about the query or your writing that could have changed that.
+
+So, concentrate on what you can control and push aside the rest. Querying is not a comment on your worth as a human or as a writer. Publishing is a fiesty marathon. If your current project isn't getting bites, write the next thing. You'll improve with each project. Trust that the stars will eventually align when your idea and words will pack a punch. How can you make your project stand out as unique? What tropes can you put a spin on? Create characters we can't help but root for. Lean into what you--your background, your hobbies, your experience, can bring to a project that springs it to life in a way that can't be replicated.
+
+But above all, know that it's not just you--the struggle is real for many, and the only thing you can do is simply keep writing.
+
+ Amy D. (Editor) 
+
+Don't lose faith!
+
+I know that's easier said than done but try not to let rejections get you too demoralized. Most best-selling authors had the same struggle and likely went through many rejections before securing a deal. Unfortunately, it's all part of the process.
+
+If you are getting form rejections then it is likely you are either choosing the wrong agents or there are issues with your query pack, so make sure you put as much work as possible into researching who you want to pitch to and refining your documents. Don't rush into querying. This is your one shot to catch the attention of that agent, so you want to get it right. 
+
+If you are getting requests for your full manuscript then you are likely on the right track and have a good submission pack. Don't be afraid to ask for feedback, but agents are very busy so you may not always get it. 
+
+I would also encourage you to keep writing while querying. Authors often get their second or third book picked up instead of the first one they queried, so don't lose hope. If you are tired of the rejections then use any feedback you have been given to write something new. There are no guarantees, but keep working at it and hopefully you will find your perfect agent eventually. 
+
+Finally, be kind to yourself. A rejection doesn't mean your book is rubbish - it just means that the agent can't see a place for it at this point in time. Many, many, many brilliant books have been turned down initially and then had great success when they found the right home. Don't give up hope. 
+
+ Alice C. (Editor) 
+
+First of all: don’t give up. Rejection isn’t the end of the story—it’s part of it. Every “no” is simply a redirection toward the right “yes.”
+
+Publishing is absolutely a business, but it’s also deeply relational. Editors and agents love working with people they genuinely like and trust. That means: go to writers’ conferences. Join a critique group or hire an author coach. Get to know professionals in the industry, not just for what they can do for you, but for how you can show up as generous, authentic, and collaborative. You never know when a writer friend might one day endorse your book, or when a connection you make over coffee might become a career breakthrough.
+
+And here’s the bigger truth: querying is more than chasing contracts. It’s also a personal growth journey. You’ll discover your resilience, refine your craft, and grow into the writer you’re meant to be. One author I know literally turned her pile of rejection letters into a lampshade and said they helped light her way to publishing three novels.
+
+Need more inspiration? Catherine Stockett, author of The Help, was rejected by 50 agents before one finally said yes. That “yes” led to a book deal, a bestseller, and eventually, a movie.
+
+So hold fast to your dream. If you feel called to write, you probably are. Keep writing. Keep connecting. Keep becoming the kind of author people want to root for. The path may be long, but you’ll be stronger, wiser, and more yourself because of it.

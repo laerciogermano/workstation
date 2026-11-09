@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "book-editor",
+  "displayName": "Book Editor",
+  "version": "1.1.0",
+  "description": "A full editor for memoir, narrative non-fiction, and literary fiction. Assesses the manuscript first, then edits in staged passes (developmental, line, voice, copyedit, proofread), auto-fixing mechanics and proposing substantive changes for approval.",
+  "author": {
+    "name": "nuwrldnf8r"
+  },
+  "homepage": "https://github.com/nuwrldnf8r/book_editor_skill",
+  "repository": "https://github.com/nuwrldnf8r/book_editor_skill",
+  "license": "MIT",
+  "keywords": ["editing", "writing", "memoir", "fiction", "manuscript", "coaching"],
+  "dependencies": ["humanizer"]
+}

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Prompt AI to Write a Novel Chapter | ZenStory AI</title>
+<meta name="description" content="Give the AI a defined task, chapter beats, current character state and limits on what may be revealed. Includes a filled prompt and focused revision requests.">
+<link rel="canonical" href="https://zenstory.ai/oh-story/ai-novel-writing-prompts">
+<link rel="alternate" hreflang="en" href="https://zenstory.ai/oh-story/ai-novel-writing-prompts">
+<link rel="alternate" hreflang="zh-CN" href="https://zenstory.ai/zh/oh-story/ai-novel-writing-prompts">
+<link rel="alternate" hreflang="zh" href="https://zenstory.ai/zh/oh-story/ai-novel-writing-prompts">
+<link rel="alternate" hreflang="x-default" href="https://zenstory.ai/oh-story/ai-novel-writing-prompts">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ZenStory AI">
+<meta property="og:title" content="How to Prompt AI to Write a Novel Chapter | ZenStory AI">
+<meta property="og:description" content="Give the AI a defined task, chapter beats, current character state and limits on what may be revealed. Includes a filled prompt and focused revision requests.">
+<meta property="og:url" content="https://zenstory.ai/oh-story/ai-novel-writing-prompts">
+<meta property="og:image" content="https://zenstory.ai/brand/og-zenstory-ai.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#081431">
+<link rel="stylesheet" href="/org/org.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://zenstory.ai/#org","name":"ZenStory AI","url":"https://zenstory.ai","sameAs":["https://github.com/zenstory-ai"],"logo":"https://zenstory.ai/brand/zenstory-ai-mark.svg"},{"@type":"Article","@id":"https://zenstory.ai/oh-story/ai-novel-writing-prompts#article","url":"https://zenstory.ai/oh-story/ai-novel-writing-prompts","headline":"How to Prompt AI to Write a Novel Chapter","description":"Give the AI a defined task, chapter beats, current character state and limits on what may be revealed. Includes a filled prompt and focused revision requests.","inLanguage":"en","datePublished":"2026-09-29","dateModified":"2026-11-08","image":"https://zenstory.ai/brand/og-zenstory-ai.png","author":{"@id":"https://zenstory.ai/#org"},"publisher":{"@id":"https://zenstory.ai/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ZenStory AI","item":"https://zenstory.ai/"},{"@type":"ListItem","position":2,"name":"Oh Story","item":"https://zenstory.ai/oh-story"},{"@type":"ListItem","position":3,"name":"How to Prompt AI to Write a Novel Chapter","item":"https://zenstory.ai/oh-story/ai-novel-writing-prompts"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="/"><img src="/brand/zenstory-ai-mark.svg" alt="" width="28" height="28"><span class="wordmark">ZenStory AI</span></a>
+    <nav aria-label="Site">
+      <a href="/projects">Projects</a>
+      <a href="/guides" aria-current="page">Guides</a>
+      <a href="https://github.com/zenstory-ai">GitHub</a>
+    </nav>
+    <div class="top-tools">
+      <div class="lang-switch" role="group" aria-label="Language">
+      <a href="/oh-story/ai-novel-writing-prompts" lang="en" hreflang="en" aria-current="true">EN</a>
+      <a href="/zh/oh-story/ai-novel-writing-prompts" lang="zh-CN" hreflang="zh-CN">中文</a>
+    </div>
+      <a class="nav-app" href="https://app.zenstory.ai/login?lang=en&amp;source=org_header">Open app<span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+<article class="guide article">
+  <header class="guide-head">
+  <p class="eyebrow"><a href="/guides/getting-started">Start writing with AI</a></p>
+  <h1>How to Prompt AI to Write a Novel Chapter</h1>
+  <p class="facts">Oh Story · Updated 2026-11-08</p>
+  
+  <div class="pair answer"><div class="l-en"><p>State whether you want planning, prose or a local revision. Supply required beats, current character state, the previous stopping point and information that must remain unrevealed. Use a short style sample and ask for missing facts to be identified. Separate settled story decisions from details the model may invent.</p></div></div>
+  <p class="method-strip"><span class="method-label">Method from</span><a class="skill-chip" href="https://github.com/zenstory-ai/oh-story-claudecode/blob/4a50d5583590eb7f207037e35136c1168bc02201/skills/story-long-write/SKILL.md"><code>story-long-write</code></a><span class="sep" aria-hidden="true"> · </span><a href="https://github.com/zenstory-ai/oh-story-claudecode/blob/4a50d5583590eb7f207037e35136c1168bc02201/skills/story-long-write/references/workflow-chapter.md">Chapter preparation and checks</a><span class="sep" aria-hidden="true"> · </span><a href="https://github.com/zenstory-ai/oh-story-claudecode/blob/4a50d5583590eb7f207037e35136c1168bc02201/skills/story-long-write/references/writer-prompt-fallback.md">Task scope and prompt assembly</a></p>
+  </header>
+  <nav class="guide-contents" aria-label="On this page"><details><summary><b>On this page</b><span class="toc-count">7 sections</span></summary>
+    <ul><li><a href="#task-and-material">Define the task before assembling relevant material</a></li><li><a href="#filled-prompt">A filled prompt that separates decisions from freedom</a></li><li><a href="#focused-revision">Use revision requests that name the actual defect</a></li><li><a href="#skill-use">Use the skill through an author-facing request</a></li><li><a href="#faq">FAQ</a></li><li><a href="#use-the-skill">Do it with the skill</a></li><li><a href="#related">Related reading</a></li></ul>
+  </details><script>if(matchMedia('(min-width: 961px)').matches)document.currentScript.previousElementSibling.open=true</script></nav>
+  <div class="guide-body article-body">
+  <section aria-labelledby="task-and-material">
+  <h2 id="task-and-material">Define the task before assembling relevant material</h2>
+  <p>Oh Story’s chapter workflow checks the outline, reads relevant characters and setting, connects to the previous ending, and defines the chapter’s purpose. Its manual assembly method puts the task and scope first rather than beginning with elaborate role praise.</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="Table: Material / Record"><table><thead><tr><th scope="col">Material</th><th scope="col">Record</th></tr></thead><tbody><tr><td>Task</td><td>Question to answer: Planning or prose? Which chapter or passage? Where must it stop?; Do not include by default: Unrelated whole-book tasks</td></tr><tr><td>Beats</td><td>Question to answer: What must happen, in what order, with what outcome?; Do not include by default: Unapproved subplots</td></tr><tr><td>Current state</td><td>Question to answer: Who is present, what do they know and hold?; Do not include by default: Every character’s full biography</td></tr><tr><td>Connection</td><td>Question to answer: What happened at the previous stopping point?; Do not include by default: The entire earlier manuscript</td></tr><tr><td>Knowledge limit</td><td>Question to answer: What truth must remain unrevealed?; Do not include by default: Every later ending detail</td></tr><tr><td>Expression</td><td>Question to answer: POV, rhythm, a short sample and length range; Do not include by default: Conflicting general style slogans</td></tr></tbody></table></div>
+<p>Relevant, accurate material is easier to execute than a long contradictory brief. Brevity does not justify omitting an old fact that affects the scene.</p>
+  </section>
+  <section aria-labelledby="filled-prompt">
+  <h2 id="filled-prompt">A filled prompt that separates decisions from freedom</h2>
+  <p>This is an original story example. The length range is this author’s request, not a universal standard.</p>
+<blockquote><p>Write chapter 4 only, in 900–1,200 English words, following bicycle mechanic Luo Ning. Do not continue into chapter 5.</p><p>Previous stopping point: Min asked to take three bikes. Luo stopped the keys and required test rides first.</p><p>Required events: Min explains the race start time; Luo has the apprentice perform the arranged basic checks, identifying a loose brake cable on the second bike before any ride of that bike; after the first and third pass their basic checks, Luo personally rechecks them and carries out the test rides required in the previous chapter against the example’s established delivery conditions; he explains the delay, and Min actually accepts those two first. Preserve this outcome.</p><p>Current state: Luo risks losing part of his fee but will not release an unsafe bike. Tao can perform basic checks but cannot sign final acceptance alone. Min knows the race arrangements, not Luo’s old accident. The keys remain on the counter; no bike has been delivered.</p><p>Do not reveal: the complete old accident or knowledge of it that Min does not have.</p><p>May invent: brief actions in the basic checks or already authorized tests, plus one-use repair details. Suggest, rather than silently add, recurring characters, a changed accident truth or a different delivery outcome.</p><p>Style: use my attached original sample. Keep natural dialogue; do not attach gestures to every line or end with a moral summary. Stop as Min prepares to take two bikes and receives a call changing the race venue.</p><p>After the draft, identify where each required event appears. List missing necessary facts before drafting if needed.</p></blockquote>
+<p>In a workspace with file access, supply real paths and ask for them to be read. In ordinary chat, supply relevant excerpts. A path name alone does not give access to its contents.</p>
+<p>This check order is an author’s plot choice, not a bicycle repair tutorial. Finding a fault does not give the apprentice final acceptance capability, and Min’s willingness does not replace Luo’s recheck or the required rides; the second bike does not enter a ride before its fault is repaired and checks are passed. The ending remains at preparation to take two bikes and the venue-change call, without declaring arrival at the new venue.</p>
+  </section>
+  <section aria-labelledby="focused-revision">
+  <h2 id="focused-revision">Use revision requests that name the actual defect</h2>
+  <div class="table-wrap" role="region" tabindex="0" aria-label="Table: Draft problem / Focused request"><table><thead><tr><th scope="col">Draft problem</th><th scope="col">Focused request</th></tr></thead><tbody><tr><td>The apprentice becomes an expert</td><td>“Tao only performs basic checks. Revise actions beyond that ability and return final acceptance to Luo.”</td></tr><tr><td>The accident is revealed early</td><td>“Remove the full accident account but keep Luo’s refusal. Do not invent a replacement secret.”</td></tr><tr><td>Every paragraph repeats the pressure</td><td>“Merge repeated rent explanations, keep one clear cost, and preserve the basic-check discovery.”</td></tr><tr><td>The draft is short but covers the beats</td><td>“Identify underdeveloped scene work without adding a main event. Wait for my choice before expanding.”</td></tr><tr><td>The ending continues into the next chapter</td><td>“Stop at the venue-change call. Remove the new-location sequence.”</td></tr></tbody></table></div>
+<p>Supply the original passage and revision boundaries. Preserve settled facts, choices and outcomes. Restore missing required events first; do not fill a length target by inventing plot.</p>
+  </section>
+  <section aria-labelledby="skill-use">
+  <h2 id="skill-use">Use the skill through an author-facing request</h2>
+  <p>In a configured Oh Story workspace, an author-facing request can be brief: “Use the existing outline to write chapter 4 only, in this book’s style; stop at the venue-change call.” The skill handles its own preparation and checks. This template helps communicate facts and boundaries; it does not require authors to reproduce internal fields or scripts.</p>
+<p>Confirm that the workspace contains the book’s setting, outline and continuation state. Supply missing planning material before continuing. After delivery, check required events, character knowledge and the stopping point; formatting and automated checks cannot replace that reading judgment.</p>
+<p>This page is an author’s brief, not the complete native writer_prompt.md assembly format. The cited writer-prompt-fallback.md applies only when the assembly script cannot run or the author expressly chooses not to use it; data errors require repair rather than bypass through this template. A chat prompt likewise does not establish project deployment, file reading, or tracking commit.</p>
+  </section>
+  <section aria-labelledby="faq">
+  <h2 id="faq">FAQ</h2>
+  <h3>Are longer prompts better?</h3>
+  <p>No. Prioritize facts that would change the scene if misunderstood and remove conflicting style requirements. Keep relevant old constraints without pasting all unrelated material.</p>
+  <h3>Is “avoid AI-sounding prose” enough?</h3>
+  <p>It is too vague. Supply your own short sample and identify the actual issue: repeated motive explanations, gestures after every line or a moralizing ending. Specify the revision range and events to preserve.</p>
+  </section>
+  <section class="use-skill" aria-labelledby="use-the-skill">
+  <h2 id="use-the-skill">Do it with the skill</h2>
+  <p>Give story-long-write your settled scope, required events and stopping point. To discuss the prompt first, request a writing brief only and stop before prose. Ask for the chapter once the materials are ready.</p>
+  
+  <p class="actions"><a class="btn ghost" href="/oh-story">Install and use Oh Story<span class="arrow" aria-hidden="true">→</span></a></p>
+  </section>
+  
+  <section aria-labelledby="related">
+  <h2 id="related">Related reading</h2>
+  <ul class="guide-list"><li><a href="/oh-story/outline-to-chapter"><span class="guide-title">How to Draft a Novel Chapter from an Outline</span><span class="arrow" aria-hidden="true">→</span></a></li><li><a href="/oh-story/long-novel-continuity"><span class="guide-title">AI Keeps Forgetting Your Novel? Track Characters and Plot</span><span class="arrow" aria-hidden="true">→</span></a></li><li><a href="/oh-story/preserve-author-voice"><span class="guide-title">Keep your writing voice when AI continues your novel</span><span class="arrow" aria-hidden="true">→</span></a></li></ul>
+  </section>
+  <p class="actions guide-end"><a class="btn ghost" href="/guides">All guides<span class="arrow" aria-hidden="true">→</span></a></p>
+  </div>
+</article>
+</main>
+
+<footer class="bottom">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><img src="/brand/zenstory-ai-mark.svg" alt="" width="28" height="28"><span class="wordmark">ZenStory AI</span></a>
+        <p class="foot-desc">Create stories. Adapt them. Ship them.</p>
+        <p class="foot-desc">Open-source tools for creating and adapting stories: MIT skill packs and an AGPL-3.0 workbench.</p>
+        <p><a href="https://github.com/zenstory-ai">GitHub<span class="arrow" aria-hidden="true">↗</span></a></p>
+      </div>
+      <nav aria-label="Footer: projects">
+        <p class="foot-h">Projects</p>
+        <ul><li><a href="/oh-story">Oh Story</a></li><li><a href="/drama-skills">Drama Skills</a></li><li><a href="/novel-to-game">Novel to Game</a></li><li><a href="/video-recap">Video Recap Skills</a></li><li><a href="/dsh">Oh Story DSH</a></li><li><a href="/workbench">ZenStory Workbench</a></li></ul>
+      </nav>
+      <nav aria-label="Footer: learn">
+        <p class="foot-h">Learn</p>
+        <ul>
+          <li><a href="/guides">Guides</a></li>
+          <li><a href="/glossary">Glossary</a></li>
+          <li><a href="/llms.txt">llms.txt</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Footer: workbench">
+        <p class="foot-h">Workbench</p>
+        <ul>
+          <li><a href="https://app.zenstory.ai/login?lang=en&amp;source=org_footer">Open app</a></li>
+          <li><a href="/docs">Workbench docs</a></li>
+          <li><a href="/privacy-policy">Privacy policy</a></li>
+          <li><a href="/terms-of-service">Terms of service</a></li>
+          <li><a href="mailto:support@zenstory.ai">Support: support@zenstory.ai</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="copyright">© 2026 ZenStory AI</p>
+  </div>
+</footer>
+<script>(function(){if(navigator.clipboard&&navigator.clipboard.writeText){var c=document.querySelectorAll('button.copy');for(var j=0;j<c.length;j++){c[j].hidden=false;c[j].addEventListener('click',function(){var s=this;if(!(navigator.clipboard&&navigator.clipboard.writeText))return;navigator.clipboard.writeText(s.getAttribute('data-copy')).then(function(){var l=s.querySelector('.copy-idle'),d=s.querySelector('.copy-done');l.hidden=true;d.hidden=false;setTimeout(function(){l.hidden=false;d.hidden=true},1600)},function(){})})}}})()</script>
+<script>(function(){
+var form=document.querySelector('[data-guide-search]');if(!form)return;
+var input=form.querySelector('input'),status=form.querySelector('[data-search-status]'),results=document.querySelector('[data-search-results]'),ul=results.querySelector('ul'),browse=document.querySelectorAll('[data-library-browse]');
+var FILLER=/怎么样|怎么|如何|怎样|为什么|什么|哪些|哪个|能不能|可以|请问|一下|吗|呢|吧|啊|的|了/g;
+var STOP={how:1,to:1,a:1,an:1,the:1,do:1,i:1,my:1,for:1,in:1,of:1,with:1,what:1,is:1,and:1,or:1,write:1};
+var ALIAS={'拆文':['拆书','拆解'],'拆书':['拆文','拆解'],'开头':['开篇','黄金三章','第一章'],'开篇':['开头','黄金三章'],'扫榜':['榜单'],'对白':['对话','台词'],'对话':['对白','台词'],'台词':['对白','对话'],'人设':['人物','角色'],'角色':['人物','人设'],'人物':['角色','人设'],'剪映':['capcut'],'capcut':['剪映'],'卡文':['写不下去'],'续写':['接着写'],'opening':['first chapter','hook'],'dialogue':['dialog'],'storyboard':['shot list']};
+function norm(v){return (v||'').normalize('NFKC').toLocaleLowerCase();}
+var data=[].slice.call(ul.children).map(function(row,i){return {row:row,i:i,title:norm(row.getAttribute('data-search-title')),body:norm(row.getAttribute('data-search-body')),topic:norm(row.getAttribute('data-search-topic'))};});
+function words(q){var ws=norm(q).replace(FILLER,' ').split(/[\s,，。？?！!、;；:：]+/).map(function(w){return /^[写做改用学找][\u4e00-\u9fff]{2,}$/.test(w)?w.slice(1):w;}).filter(function(w){return w&&!STOP[w];}),multi=ws.filter(function(w){return !/^[\u4e00-\u9fff]$/.test(w);});return multi.length?multi:ws;}
+function hit(text,w){var f=[w].concat(ALIAS[w]||[]);for(var k=0;k<f.length;k++)if(text.indexOf(f[k])!==-1)return true;return false;}
+function strong(d,w){return hit(d.title,w)?10:hit(d.body,w)?3:0;}
+function grams(list){var out=[];list.forEach(function(w){if(/^[\u4e00-\u9fff]{3,}$/.test(w)){for(var k=0;k+2<=w.length;k++)out.push(w.slice(k,k+2));}else out.push(w);});return out;}
+function update(){
+var raw=input.value.trim(),list=words(raw),ranked=[],related=false;
+if(list.length){
+var weak=list.map(function(w){return !data.some(function(d){return strong(d,w);});});
+data.forEach(function(d){var s=0;for(var k=0;k<list.length;k++){var v=strong(d,list[k])||(weak[k]&&hit(d.topic,list[k])?1:0);if(!v)return;s+=v;}ranked.push({d:d,s:s});});
+if(!ranked.length){related=true;var g=grams(list);data.forEach(function(d){var s=0;g.forEach(function(w){s+=strong(d,w);});if(s)ranked.push({d:d,s:s});});}
+}
+ranked.sort(function(a,b){return b.s-a.s||a.d.i-b.d.i;});if(related)ranked=ranked.slice(0,20);
+data.forEach(function(d){d.row.hidden=true;});ranked.forEach(function(r){r.d.row.hidden=false;ul.appendChild(r.d.row);});
+results.hidden=!raw;for(var j=0;j<browse.length;j++)browse[j].hidden=!!raw&&ranked.length>0;
+status.textContent=!raw?'':!ranked.length?status.getAttribute('data-empty'):related?status.getAttribute('data-related').replace('{n}',ranked.length):ranked.length+' '+status.getAttribute('data-count');
+var url=new URL(location.href);if(raw)url.searchParams.set('q',raw);else url.searchParams.delete('q');history.replaceState(null,'',url.pathname+url.search+url.hash);}
+form.addEventListener('submit',function(event){event.preventDefault();update();});input.addEventListener('input',update);
+form.addEventListener('reset',function(){input.value='';update();input.focus();});
+window.addEventListener('popstate',function(){input.value=new URL(location.href).searchParams.get('q')||'';update();});
+input.value=new URL(location.href).searchParams.get('q')||'';form.hidden=false;update();
+})()</script>
+<script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.lang-switch a[hreflang]');if(!a)return;document.cookie='zs_lang='+(a.getAttribute('hreflang')==='en'?'en':'zh')+';path=/;max-age=31536000;samesite=lax'+(location.protocol==='https:'?';secure':'')})</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "humanizer",
+  "displayName": "Humanizer",
+  "version": "3.1.0",
+  "description": "Voice-first editor that strips AI tells (em dashes, reflective-summary endings, telling-not-showing, stock cliches, course boilerplate) while protecting the author's voice. Includes an enforced mechanical checker.",
+  "author": {
+    "name": "nuwrldnf8r"
+  },
+  "homepage": "https://github.com/nuwrldnf8r/book_editor_skill",
+  "repository": "https://github.com/nuwrldnf8r/book_editor_skill",
+  "license": "MIT",
+  "keywords": ["editing", "writing", "voice", "ai-tells", "humanizer"]
+}

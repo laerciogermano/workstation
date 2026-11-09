@@ -46,7 +46,8 @@ Novo cap. 6 Claude (O conhecimento secreto, mesmo formato dos caps. 1 e 2): [`no
 **Versão 2.0 do texto:** [`v2/eternos-mutaveis-v2.pdf`](v2/eternos-mutaveis-v2.pdf) · capítulos em `v2/capitulo-1..7.md` ← `v2/_build_v2.py` (títulos A Era Adâmica · A Busca · O Inferno Cíclico · O Insight · O Erro · A Gnose · A Superação Adâmica; cada capítulo abre com uma gravura renascentista; sem imagens repetidas). Os capítulos 1.0 continuam em `novo-capitulo-N-claude.md`. Apagar `v2/` reverte.  
 **Versão 3.0:** [`livro-v3.html`](livro-v3.html) · [`v3/eternos-mutaveis-v3.pdf`](v3/eternos-mutaveis-v3.pdf) ← `v3/_build_v3.py` (texto 1.0 com as leituras dos banners; banners em gravura P&B em `assets/banners-gravura/`; sem imagens repetidas). Apagar `v3/`, `assets/banners-gravura/` e `livro-v3.html` reverte.  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
-Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
+Regras para a IA: [`config/config-ia.md`](config/config-ia.md).  
+Craft de livro (público, outline, ensaio, prompts, skills): [`../core/escrever-livros/README.md`](../core/escrever-livros/README.md).
 
 ---
 

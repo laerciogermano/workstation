@@ -38,14 +38,18 @@ Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993).
 **Antes → depois:** `mail.clozzy` + `mail.notinhas` → `mail.conectmax.email` + `mail.brsupply.email` (+ domínios/`contato@`).
 **Rollback hostname brsupply/conectmax:** tirar o `mail.*` do nginx/`ADDITIONAL_SAN`; apagar domínio/mailbox no Mailcow; DNS A/MX do `mail` na Hostinger.
 
-### Domínio `brsupply.email` (Mailcow Contabo 2026-11-03)
+### Domínio `brsupply.email` (Mailcow Contabo)
 
-1. Mailcow: domínio + DKIM + `contato@brsupply.email`
-2. `ADDITIONAL_SAN` + nginx vhost `mail.brsupply.email`
-3. DNS Hostinger: A `mail` → `144.126.154.90`; MX `@` → `mail.brsupply.email`; TXT SPF/DKIM/DMARC
-4. Após propagar A `mail`: expand LE com `-d mail.brsupply.email`
+**Atual (2026-11-09):** Mailcow reinstalado em `185.250.37.82` (`MAILCOW_HOSTNAME=mail.brsupply.email`, HTTP `8080` / HTTPS `8443`; nginx host faz proxy `:443` → `8443`). DNS Hostinger: A `mail` → **`185.250.37.82`**; MX `@` → `mail.brsupply.email`; SPF `ip4:185.250.37.82`; DKIM do Mailcow novo; LE `mail.brsupply.email`.
 
-**Rollback:** apagar mailbox/domínio; remover DNS Hostinger; reverter nginx/`ADDITIONAL_SAN`.
+**Antes (2026-11-03 / legado):** stack em `144.126.154.90` (offline) + A `mail`/`ip4` no SPF apontando para `144…`.
+
+1. Mailcow: domínio + DKIM + mailbox (ex. `benchmarking@` / `contato@`)
+2. nginx host: site `mail-brsupply` (proxy TLS)
+3. DNS Hostinger: A `mail` → `185.250.37.82`; MX/SPF/DKIM/DMARC
+4. `certbot certonly --webroot -w /var/www/html -d mail.brsupply.email`
+
+**Rollback:** A `mail` + SPF → `144.126.154.90` (só se o host legado voltar); `docker compose down` em `/opt/mailcow-dockerized`; `rm` site nginx `mail-brsupply`.
 
 ### Domínio `conectmax.email` (Mailcow Contabo 2026-11-03)
 

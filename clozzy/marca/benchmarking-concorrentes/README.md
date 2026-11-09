@@ -58,6 +58,8 @@ Cadastro + prints de todas as telas + inventário de funcionalidades (Backlog Cl
 
 Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/` (`prints/` + `funcionalidades.md` + `ia.md` + `README.md`).
 
+**Privacy (2026-11-09):** pasta [`privacy/`](privacy/README.md) — CDP `benchmarking` :9263; cadastro fan `benchclozzy342` + prints desktop/mobile + inventário.
+
 ## Insights p/ identidade visual
 
 - Mercado: dark + ciano/rosa/roxo; OF = azul utilitário; Privacy = verde BR; Patreon = coral membership.

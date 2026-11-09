@@ -16,6 +16,7 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-juliana-martins.sh                     # CDP :9228 (Juliana Martins / LI)
 ./start-camila-ferreira.sh                     # CDP :9229 (Camila Ferreira / LI)
 ./start-germano.sh                             # CDP :9230 (Germano / Hostinger rolego)
+# human-cdp createCdp benchmarking             # CDP :9263 — Clozzy benchmarking (Privacy primeiro)
 ./start-germano-firefox.sh                     # Firefox isolado (sem CDP; perfil ~/firefox-profiles/germano)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 # opcional URL: ./start-germano-firefox.sh https://tinder.com

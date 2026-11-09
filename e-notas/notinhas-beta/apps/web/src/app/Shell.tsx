@@ -17,7 +17,7 @@ const MENU: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
   { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
   { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
-  { to: '/nota', icon: 'scan', label: 'Nota', match: /^\/nota(\/|$)/ },
+  { to: '/nota', icon: 'qr', label: 'Nota', match: /^\/nota(\/|$)/ },
   { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
   { to: '/gastos', icon: 'chart', label: 'Gastos', match: /^\/gastos/ },
   { to: '/perfil', icon: 'user', label: 'Perfil', match: /^\/(perfil|conta)/ },
@@ -118,7 +118,7 @@ export function Shell() {
                 to={t.to}
                 viewTransition
                 className={`tab ${addNota ? 'fab' : ''} ${on ? 'on' : ''}`}
-                aria-label={addNota ? 'Escanear nota' : undefined}
+                aria-label={addNota ? 'Adicionar nota' : undefined}
               >
                 {addNota ? (
                   <span className="fabbtn">

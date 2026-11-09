@@ -12,7 +12,6 @@ import { Empty, ErrorBanner } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import { ProductCard } from '../../ui/ProductCard';
-import { ProductViewToggle } from '../../ui/ProductViewToggle';
 import { Wordmark } from '../../ui/Wordmark';
 import { ThemePicker } from '../../ui/ThemePicker';
 import { AddToListSheet } from '../listas/AddToListSheet';
@@ -199,25 +198,21 @@ export function HomePage() {
           </div>
         )}
 
-        <div className="search-row">
-          <label className="search" style={{ viewTransitionName: 'search' }}>
-            <Icon name="search" />
-            <input
-              type="search"
-              readOnly
-              value=""
-              placeholder="Buscar produto ou código de barras"
-              aria-label="Buscar produto ou código de barras"
-              inputMode="search"
-              enterKeyHint="search"
-              autoComplete="off"
-              onFocus={openSearch}
-              onClick={openSearch}
-            />
-          </label>
-          {/* sm/md/lista — só ícones, compacto (mesmo tamanho que antes na secbar / lojas). */}
-          <ProductViewToggle compact />
-        </div>
+        <label className="search" style={{ viewTransitionName: 'search' }}>
+          <Icon name="search" />
+          <input
+            type="search"
+            readOnly
+            value=""
+            placeholder="Buscar produto ou código de barras"
+            aria-label="Buscar produto ou código de barras"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            onFocus={openSearch}
+            onClick={openSearch}
+          />
+        </label>
 
         {anchor.mode === 'padrao' && (
           <Link to="/perfil/localizacao" className="banner">
@@ -241,16 +236,14 @@ export function HomePage() {
         <ErrorBanner error={home.error} />
 
         {home.data && sections.length > 0 && (
-          <div className="secbar">
-            <nav className="chips" aria-label="Seções">
-              {sections.map((s) => (
-                <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-                  <Icon name={s.icon} />
-                  {s.name}
-                </button>
-              ))}
-            </nav>
-          </div>
+          <nav className="chips" aria-label="Seções">
+            {sections.map((s) => (
+              <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                <Icon name={s.icon} />
+                {s.name}
+              </button>
+            ))}
+          </nav>
         )}
 
         {home.data && home.data.promotions.length === 0 && (

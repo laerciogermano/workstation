@@ -2,14 +2,6 @@ import type { HomeDTO, ProductCardDTO, StoreRankDTO } from '@notinhas/contracts'
 import { brl } from './format';
 import type { MapPin } from '../ui/MapView';
 
-/** Espalha pins no mesmo lat/lng (vários produtos numa loja) — mesmo delta do protótipo T-15. */
-export function jitter(lat: number, lng: number, i: number): { lat: number; lng: number } {
-  return {
-    lat: lat + ((i % 3) - 1) * 0.0012,
-    lng: lng + (i % 2 ? 0.0014 : -0.001),
-  };
-}
-
 export function pricePinText(cents: number): string {
   return brl(cents).replace(/^R\$\s?/, '');
 }
@@ -36,7 +28,11 @@ function coordsByStore(ranking: StoreRankDTO[] | undefined): Map<number, { name:
   return m;
 }
 
-/** Pins de produto (preço) — um por item; vários no mesmo estabelecimento saem espalhados. */
+/**
+ * Pins de produto (preço) — lat/lng = coordenada exata da loja do melhor preço
+ * (`best.store` → ranking/`stores.lat|lng`). Sem jitter: vários produtos na mesma
+ * loja compartilham o ponto (antes o protótipo espalhava ~120–140 m).
+ */
 export function productPricePins(
   products: ProductCardDTO[],
   ranking: StoreRankDTO[] | undefined,
@@ -44,21 +40,19 @@ export function productPricePins(
 ): MapPin[] {
   const coords = coordsByStore(ranking);
   const placed: { p: ProductCardDTO; pin: Omit<MapPin, 'kind'> }[] = [];
-  let i = 0;
   for (const p of products) {
     if (opts.limit !== undefined && placed.length >= opts.limit) break;
     const best = p.best;
     if (!best) continue;
     const s = coords.get(best.store.id);
     if (!s) continue;
-    const at = jitter(s.lat, s.lng, i++);
     const gtin = p.gtin;
     placed.push({
       p,
       pin: {
         id: gtin,
-        lat: at.lat,
-        lng: at.lng,
+        lat: s.lat,
+        lng: s.lng,
         text: pricePinText(best.priceCents),
         label: `${p.title} · ${s.name}`,
         photoUrl: p.photoUrl,

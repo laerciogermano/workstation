@@ -181,18 +181,19 @@ img { max-width: 100%; }
 .btn.xs { height: 32px; font-size: 12px; width: auto; padding: 0 12px; flex: none; }
 .btn:disabled { opacity: 0.4; pointer-events: none; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-/* Sticky no fundo do .shell-body (tabbar já está no fluxo abaixo) — bottom:0 cola perto do menu;
-   padding-top dá ar acima do botão. Antes: bottom:96px (era folga p/ tabbar fixed) → botão alto demais. */
+/* Sticky no fundo do .shell-body (tabbar no fluxo abaixo).
+   bottom:6px = folga curta acima do menu; z-index acima do mapa, abaixo de sheet/scrim (41/40). */
 .footbar {
   position: sticky;
-  bottom: 0;
+  bottom: 6px;
   margin-top: 8px;
   padding: 20px 0 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   background: linear-gradient(180deg, transparent, var(--nt-canvas) 28%);
-  z-index: 5;
+  z-index: 30;
+  isolation: isolate;
 }
 
 .search { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 16px; border-radius: 999px; background: var(--nt-surface); border: 1px solid var(--nt-line); color: var(--nt-muted); width: 100%; margin-bottom: 10px; font-size: 15px; text-align: left; }
@@ -496,7 +497,7 @@ dt { color: var(--nt-muted); }
 .mapbox .leaflet-container { width: 100%; height: 100%; background: var(--nt-line-2); font-family: var(--nt-font); }
 .mapbanner { position: relative; display: block; height: 200px; border-radius: 16px; overflow: hidden; border: 1px solid var(--nt-line); margin-bottom: 12px; color: inherit; }
 .mapbanner .mapbox.inbanner .leaflet-container { pointer-events: none; }
-.mapbanner .cap { position: absolute; left: 10px; bottom: 10px; z-index: 500; display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: color-mix(in srgb, var(--nt-surface) 88%, transparent); backdrop-filter: blur(8px); pointer-events: none; }
+.mapbanner .cap { position: absolute; left: 10px; bottom: 10px; z-index: 2; display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: color-mix(in srgb, var(--nt-surface) 88%, transparent); backdrop-filter: blur(8px); pointer-events: none; }
 .mapbanner .cap .i { width: 14px; height: 14px; }
 .mpin { display: grid; place-items: center; }
 .mpin span { display: inline-block; padding: 4px 8px; border-radius: 999px; background: var(--nt-surface); color: var(--nt-ink); font-size: 11.5px; font-weight: 800; border: 1px solid var(--nt-line); white-space: nowrap; font-variant-numeric: tabular-nums; box-shadow: 0 2px 6px var(--nt-shadow); transform: translate(-50%, -50%); }
@@ -600,7 +601,7 @@ dt { color: var(--nt-muted); }
   .main.narrow { max-width: 640px; }
   .cols2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .hscroll { grid-auto-columns: 176px; margin: 0; padding: 0 0 4px; }
-  .footbar { bottom: 0; }
+  .footbar { bottom: 6px; }
   .toast { bottom: 28px; }
   .sheet { bottom: auto; top: 50%; transform: translate(-50%, -50%); border-radius: 24px; animation-name: fade; }
   .mapbox.tall { height: calc(100dvh - 160px); }

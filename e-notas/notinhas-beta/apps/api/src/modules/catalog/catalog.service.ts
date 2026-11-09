@@ -165,6 +165,7 @@ export function productDetail(snap: IndexSnapshot, gtin: string, anchor: Coordin
     highlight: h ? { medianCents: h.medianCents, ratio: h.ratio } : null,
     comparison,
     history,
+    links: [], // preenchido na rota com barcode_links (REQ-067)
   };
 }
 

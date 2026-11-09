@@ -1,6 +1,7 @@
+import type { ProductBarcodeLinkDTO } from '@notinhas/contracts';
 import { CATEGORIES } from '@notinhas/domain';
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { brl, dateShort, km, pct, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
 import { pricePinText } from '../../lib/map-pins';
@@ -10,8 +11,10 @@ import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import type { MapPin } from '../../ui/MapView';
 import { PriceChart } from '../../ui/PriceChart';
+import { Sheet } from '../../ui/Sheet';
 import { TopBar } from '../../ui/TopBar';
 import { AddToListSheet } from '../listas/AddToListSheet';
+import { LinkEanSheet, PhotoPickerSheet, type LinkTarget } from '../nota/LinkEanSheet';
 
 const FRESH = [
   { d: 7, label: '7 dias' },
@@ -20,14 +23,31 @@ const FRESH = [
   { d: 0, label: 'Todos' },
 ];
 
+const ORIGIN: Record<string, string> = { barcode_scan: 'scan', suggestion: 'sugestão', manual: 'manual', import: 'import' };
+
+function toTarget(link: ProductBarcodeLinkDTO, currentGtin: string): LinkTarget {
+  return {
+    storeId: link.storeId,
+    storeCode: link.storeCode,
+    description: link.description,
+    displayName: link.displayName,
+    replace: true,
+    currentGtin,
+  };
+}
+
 /** T-14 (+T-13 histórico, T-12 registros, T-30 perto) — ficha canônica, não o texto cru da DANFE. */
 export default function ProductPage() {
   const { gtin = '' } = useParams();
+  const navigate = useNavigate();
   const q = useProduct(gtin);
   const anchor = useAnchor();
   const [adding, setAdding] = useState(false);
   const [fresh, setFresh] = useState(30);
   const [now] = useState(() => Date.now());
+  const [pickLinks, setPickLinks] = useState(false);
+  const [target, setTarget] = useState<LinkTarget | null>(null);
+  const [photoOpen, setPhotoOpen] = useState(false);
   const d = q.data;
 
   const pins = useMemo<MapPin[]>(() => {
@@ -64,9 +84,22 @@ export default function ProductPage() {
     );
 
   const p = d.product;
+  const links = d.links ?? [];
   const catName = CATEGORIES.find((c) => c.id === p.category)?.short ?? p.category;
   const nearest = [...d.comparison].filter((c) => c.distanceKm !== null).sort((a, b) => (a.distanceKm ?? 0) - (b.distanceKm ?? 0)).slice(0, 2);
   const records = d.history.filter((h) => !fresh || now - new Date(h.observedAt).getTime() <= fresh * 86_400_000);
+
+  function startAlter() {
+    if (links.length === 0) {
+      setPhotoOpen(true);
+      return;
+    }
+    if (links.length === 1) {
+      setTarget(toTarget(links[0]!, p.gtin));
+      return;
+    }
+    setPickLinks(true);
+  }
 
   return (
     <>
@@ -80,6 +113,16 @@ export default function ProductPage() {
           <p className="meta">
             {[p.brand, catName, p.subcategory].filter(Boolean).join(' · ')} · EAN <span className="mono">{p.gtin}</span>
           </p>
+          <div className="duo mt12">
+            <button type="button" className="btn s" onClick={startAlter}>
+              <Icon name="barcode" />
+              Alterar código
+            </button>
+            <button type="button" className="btn gh" onClick={() => setPhotoOpen(true)}>
+              <Icon name="image" />
+              Trocar foto
+            </button>
+          </div>
 
           {d.best ? (
             <div className="bestbox">
@@ -215,6 +258,49 @@ export default function ProductPage() {
         </button>
       </div>
       <AddToListSheet product={adding ? { gtin: p.gtin, title: p.title } : null} onClose={() => setAdding(false)} />
+
+      <Sheet open={pickLinks} onClose={() => setPickLinks(false)} title="Qual vínculo corrigir?">
+        <p className="meta">Este EAN está ligado a {links.length} códigos de loja. Escolha qual reescanear — igual na nota fiscal.</p>
+        <div className="card list mt12">
+          {links.map((l) => (
+            <button
+              key={`${l.storeId}:${l.storeCode}`}
+              type="button"
+              className="li"
+              onClick={() => {
+                setPickLinks(false);
+                setTarget(toTarget(l, p.gtin));
+              }}
+            >
+              <Icon name="barcode" />
+              <div className="grow">
+                <p className="b">{l.displayName}</p>
+                <p className="meta">
+                  {l.storeName} · cód. {l.storeCode}
+                  {l.origin ? ` · ${ORIGIN[l.origin] ?? l.origin}` : ''}
+                </p>
+              </div>
+              <Icon name="next" />
+            </button>
+          ))}
+        </div>
+      </Sheet>
+
+      <LinkEanSheet
+        key={target ? `${target.storeId}:${target.storeCode}` : 'none'}
+        target={target}
+        onClose={() => setTarget(null)}
+        onLinked={(r) => {
+          setTarget(null);
+          if (r.product.gtin && r.product.gtin !== p.gtin) {
+            navigate(`/produto/${r.product.gtin}`, { replace: true });
+          } else {
+            void q.refetch();
+          }
+        }}
+      />
+
+      {photoOpen && <PhotoPickerSheet gtin={p.gtin} onClose={() => { setPhotoOpen(false); void q.refetch(); }} />}
     </>
   );
 }

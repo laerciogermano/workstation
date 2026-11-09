@@ -634,3 +634,13 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Catálogo local: `LIMIT 50` (antes 12).
 - Antes → depois: sheet com poucas opções → lista longa rolável (≥50 quando o SI5/catálogo tiver).
 - Rollback: `slice(0, 8)` + `byDescription(…, 8)` + cap `n≤24` + score `≥0.35`; em `si5.js` voltar a uma URL sem `page`.
+
+## REQ-067 — Alterar código de barras na ficha do produto (2026-11-09)
+
+- Na página do produto (T-14): botão **Alterar código** (mesmo fluxo da nota: câmera / digitar / sugestões com `replace`).
+- `GET /produtos/:gtin` inclui `links[]` (`barcode_links` deste EAN: loja, cód. interno, descrição).
+- 1 vínculo → abre `LinkEanSheet` direto; vários → sheet para escolher qual corrigir; nenhum → atalho **Trocar foto**.
+- Também **Trocar foto** (PhotoPickerSheet) na ficha.
+- Após substituir o EAN, navega para a ficha do novo código.
+- Antes: Alterar só na nota/vitrine. Depois: também no detalhe do produto.
+- Rollback: remover `links` da API/DTO e os botões em `ProductPage.tsx`.

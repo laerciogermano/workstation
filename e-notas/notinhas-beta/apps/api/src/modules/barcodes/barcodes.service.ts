@@ -1,4 +1,4 @@
-import type { BarcodeOrigin, LinkResultDTO, SuggestionDTO } from '@notinhas/contracts';
+import type { BarcodeOrigin, LinkResultDTO, ProductBarcodeLinkDTO, SuggestionDTO } from '@notinhas/contracts';
 import { classifyProduct, descriptionSimilarity, humanizeDescription } from '@notinhas/domain';
 import type { Db, Queryable } from '../../shared/db.js';
 import { withTx } from '../../shared/db.js';
@@ -14,6 +14,39 @@ async function itemDescription(db: Queryable, storeId: number, storeCode: string
     [storeId, storeCode],
   );
   return rows[0]?.description ?? null;
+}
+
+/** Vínculos (loja, cód.) deste EAN — ficha do produto / Alterar código (REQ-067). */
+export async function linksForGtin(db: Queryable, gtin: string): Promise<ProductBarcodeLinkDTO[]> {
+  const { rows } = await db.query<{
+    store_id: string;
+    store_code: string;
+    origin: string;
+    store_name: string;
+    description: string | null;
+  }>(
+    `SELECT bl.store_id, bl.store_code, bl.origin, s.display_name AS store_name,
+            (SELECT ri.description FROM receipt_items ri
+              WHERE ri.store_id = bl.store_id AND ri.store_code = bl.store_code
+              ORDER BY ri.id DESC LIMIT 1) AS description
+     FROM barcode_links bl
+     JOIN stores s ON s.id = bl.store_id
+     WHERE bl.gtin = $1
+     ORDER BY bl.updated_at DESC, bl.id DESC
+     LIMIT 50`,
+    [gtin],
+  );
+  return rows.map((r) => {
+    const description = (r.description || '').trim() || r.store_code;
+    return {
+      storeId: Number(r.store_id),
+      storeCode: r.store_code,
+      storeName: r.store_name,
+      description,
+      displayName: humanizeDescription(description),
+      origin: (r.origin as BarcodeOrigin) || null,
+    };
+  });
 }
 
 /** Garante a ficha canônica do EAN (REQ-047). Rede fora de transação. */

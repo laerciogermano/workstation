@@ -82,6 +82,16 @@ export interface ComparisonRowDTO extends OfferDTO {
   isBest: boolean;
 }
 
+/** Vínculo (loja, cód. interno) → este EAN — base do “Alterar código” na ficha (REQ-067). */
+export interface ProductBarcodeLinkDTO {
+  storeId: number;
+  storeCode: string;
+  storeName: string;
+  description: string;
+  displayName: string;
+  origin: BarcodeOrigin | null;
+}
+
 export interface ProductDetailDTO {
   product: {
     gtin: string;
@@ -99,6 +109,8 @@ export interface ProductDetailDTO {
   comparison: ComparisonRowDTO[];
   /** todas as observações (NFC-e) — histórico e “últimos registros” */
   history: OfferDTO[];
+  /** vínculos barcode_links deste EAN (para reescanear / Alterar) */
+  links: ProductBarcodeLinkDTO[];
 }
 
 export interface ReceiptItemDTO {

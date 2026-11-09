@@ -4,6 +4,7 @@ import { CATEGORIES } from '@notinhas/domain';
 import { GeoQuerySchema, GtinSchema, SearchQuerySchema, VitrineQuerySchema } from '@notinhas/contracts';
 import type { Deps } from '../../shared/deps.js';
 import { parse } from '../../shared/http/validate.js';
+import { linksForGtin } from '../barcodes/barcodes.service.js';
 import { productPhotoRoutes } from '../barcodes/barcodes.routes.js';
 import { anchorOf, home, productDetail, search, storeRanking, storeVitrine } from './catalog.service.js';
 
@@ -29,7 +30,9 @@ export function catalogRoutes(deps: Deps): Router {
   r.get('/produtos/:gtin', async (req, res) => {
     const gtin = parse(GtinSchema, req.params.gtin);
     const q = parse(GeoQuerySchema, req.query);
-    res.set('Cache-Control', cache).json(productDetail(await deps.index.get(), gtin, anchorOf(q)));
+    const detail = productDetail(await deps.index.get(), gtin, anchorOf(q));
+    const links = await linksForGtin(deps.db, gtin);
+    res.set('Cache-Control', cache).json({ ...detail, links });
   });
 
   r.use('/produtos/:gtin/fotos', productPhotoRoutes(deps));

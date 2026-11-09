@@ -103,7 +103,7 @@ export default function StorePage() {
           <Icon name="search" />
           <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={`Buscar em ${s.name}`} aria-label="Buscar nesta loja" />
         </label>
-        {tab === 'com' && d.withEan.length > 0 && <ProductViewToggle />}
+        {tab === 'com' && d.withEan.length > 0 && <ProductViewToggle compact />}
       </div>
 
       {tab === 'com' &&

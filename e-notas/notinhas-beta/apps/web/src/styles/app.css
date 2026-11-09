@@ -236,13 +236,8 @@ img { max-width: 100%; }
 .search-row .viewbar {
   flex: none;
   margin: 0;
-  max-width: min(100%, 280px);
 }
-.search-row .viewbar .seg button { padding: 0 8px; font-size: 11.5px; }
-@media (max-width: 420px) {
-  .search-row { flex-wrap: wrap; }
-  .search-row .viewbar { width: 100%; max-width: none; justify-content: flex-end; }
-}
+.search-row .viewbar.compact { margin: 0; padding: 0; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 16px 12px; margin: 0 -16px; scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
 .chips.wrap { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0 0 10px; }

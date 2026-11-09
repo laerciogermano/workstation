@@ -215,8 +215,8 @@ export function HomePage() {
               onClick={openSearch}
             />
           </label>
-          {/* Mesmo seletor sm/md/lista da vitrine da loja (com rótulos), ao lado da busca. */}
-          <ProductViewToggle />
+          {/* sm/md/lista — só ícones, compacto (mesmo tamanho que antes na secbar / lojas). */}
+          <ProductViewToggle compact />
         </div>
 
         {anchor.mode === 'padrao' && (

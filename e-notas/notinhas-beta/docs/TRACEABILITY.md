@@ -7,7 +7,8 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 |
 | T-73 Carregando | (qualquer) | `app/Shell › PageSkeleton` | — | skeleton, sem spinner |
 | T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 (sem EAN = confiança menor) |
-| T-14 Detalhe · T-13 Histórico · T-12 Registros · T-30 Perto | `/produto/:gtin` | `features/produtos/ProductPage` (mapa no topo) | `GET /produtos/:gtin` | RN-05, Q3 (desatualizado > 14 d), REQ-047/058 |
+| T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` → mapa) | `GET /produtos/:gtin` | RN-05, Q3, REQ-047/058 |
+| T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
 | T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins = produtos (vários por local) |
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |

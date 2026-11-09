@@ -560,8 +560,8 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Origem: prompt 041.
 - T-14 (detalhe do produto): ordem **foto/título/preço → mapa → histórico** — um pino por loja com o preço; menor preço em verde; raio conforme o filtro.
-- **Atual (2026-11-09):** mapa fica entre a apresentação (título/preço) e o histórico; “Perto de você” só com as 2 lojas mais próximas.
-- Rollback: devolver o `MapView` para baixo de “Perto de você” (commit anterior).
+- **Atual (2026-11-09):** faixa clicável (`MapBanner`) entre preço e histórico; toque abre `/produto/:gtin/mapa` (T-30, mapa cheio). “Perto de você” na ficha só lista as 2 lojas mais próximas.
+- Rollback: `MapView` estático sem rota de expansão (commit anterior).
 
 ## REQ-059 — Projeto Beta front + back (`notinhas-beta/`) (2026-11-09)
 
@@ -591,7 +591,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Estabelecimentos (`/lojas`, T-31): faixa de mapa no topo com **1 pin por estabelecimento** (posição no ranking); toque abre `/lojas/mapa`.
 - Mapa `/lojas/mapa` (T-32): só estabelecimentos (não pins de produto).
 - Vitrine da loja (`/lojas/:id`, T-33): faixa de mapa no topo com **pin do estabelecimento** + **pins de produto** (preço nesta loja, espalhados); toque abre `/lojas/mapa`.
-- Detalhe do produto (`/produto/:gtin`, T-14): mapa **sempre no topo** (REQ-058 atualizado).
+- Detalhe do produto (`/produto/:gtin`, T-14): faixa `MapBanner` entre preço e histórico; **toque expande** para `/produto/:gtin/mapa` (T-30), igual home e estabelecimentos.
 - Rollback: remover `MapBanner` das páginas e voltar `ProductsMapPage` ao agregado por loja.
 
 ## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)

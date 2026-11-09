@@ -8,6 +8,7 @@ import { HomePage } from '../features/produtos/HomePage';
 const SearchPage = lazy(() => import('../features/produtos/SearchPage'));
 const ProductPage = lazy(() => import('../features/produtos/ProductPage'));
 const ProductsMapPage = lazy(() => import('../features/produtos/ProductsMapPage'));
+const ProductNearbyMapPage = lazy(() => import('../features/produtos/ProductNearbyMapPage'));
 const ScanPage = lazy(() => import('../features/nota/ScanPage'));
 const ReceiptResultPage = lazy(() => import('../features/nota/ReceiptResultPage'));
 const StoresPage = lazy(() => import('../features/lojas/StoresPage'));
@@ -33,7 +34,8 @@ export const router = createBrowserRouter([
       { path: '/', element: <HomePage /> }, // T-10 · T-73
       { path: '/busca', element: <SearchPage /> }, // T-11 · T-72
       { path: '/mapa', element: <ProductsMapPage /> }, // T-15
-      { path: '/produto/:gtin', element: <ProductPage /> }, // T-14 · T-12 · T-13 · T-30
+      { path: '/produto/:gtin/mapa', element: <ProductNearbyMapPage /> }, // T-30 expansão
+      { path: '/produto/:gtin', element: <ProductPage /> }, // T-14 · T-12 · T-13
       { path: '/nota', element: <ScanPage /> }, // T-20 · T-21 · T-70 · T-25 · T-27
       { path: '/notas/:id', element: <ReceiptResultPage /> }, // T-22 · T-26 · T-55 · T-23 · T-24
       { path: '/notas', element: <MyReceiptsPage /> }, // T-50

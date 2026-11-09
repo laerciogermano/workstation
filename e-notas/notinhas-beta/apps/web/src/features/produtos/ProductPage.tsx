@@ -7,7 +7,8 @@ import { pricePinText } from '../../lib/map-pins';
 import { useProduct } from '../../lib/queries';
 import { Chip, ErrorBanner, Photo, Price, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
-import { MapView, type MapPin } from '../../ui/MapView';
+import { MapBanner } from '../../ui/MapBanner';
+import type { MapPin } from '../../ui/MapView';
 import { PriceChart } from '../../ui/PriceChart';
 import { TopBar } from '../../ui/TopBar';
 import { AddToListSheet } from '../listas/AddToListSheet';
@@ -41,9 +42,8 @@ export default function ProductPage() {
         kind: c.isBest ? 'best' : 'price',
         label: `${c.store.name}: ${brl(c.priceCents)}`,
       }));
-    return [...ps, { id: 'you', lat: anchor.lat, lng: anchor.lng, text: '', kind: 'you', label: 'Você' }];
-  }, [d, anchor]);
-  const hasMap = pins.some((p) => p.kind !== 'you');
+    return ps;
+  }, [d]);
 
   if (q.isPending)
     return (
@@ -106,7 +106,13 @@ export default function ProductPage() {
             <p className="banner warn mt12">Sem preço nos últimos meses.</p>
           )}
 
-          {hasMap && <MapView pins={pins} center={anchor} radiusKm={Math.min(anchor.radiusKm, 4)} />}
+          <MapBanner
+            to={`/produto/${p.gtin}/mapa`}
+            pins={pins}
+            center={anchor}
+            radiusKm={Math.min(anchor.radiusKm, 4)}
+            caption={`${pins.length} loja${pins.length === 1 ? '' : 's'} com este produto`}
+          />
 
           <div className="sec">
             <h2>Histórico</h2>

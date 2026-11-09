@@ -11,7 +11,7 @@ import { useToast } from '../ui/Toast';
 import { Skel } from '../ui/bits';
 
 const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
-  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
+  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ }, // inclui /produto/:gtin/mapa
   { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
   { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
   { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/(notas|gastos)/ },

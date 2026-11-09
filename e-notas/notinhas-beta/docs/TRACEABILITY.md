@@ -14,7 +14,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
 | T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe | `/notas/:id` | `features/nota/ReceiptResultPage` | `GET /notas/:id` | RN-02, RN-03, RN-06, REQ-046 |
 | T-23 Vincular EAN | sheet | `features/nota/LinkEanSheet` | `POST /codigos-barras` (`replace?`), `GET /codigos-barras/sugestoes`, `GET /imagens/proxy` | RN-12, Q2, REQ-043; Alterar sobrescreve |
-| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (+ SI5) | REQ-040; sempre após vincular |
+| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (SI5 + Google Imagens CDP) | REQ-040/042; sempre após vincular |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
 | T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: estabelecimento + pins de produto |
@@ -50,7 +50,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 ## Fora deste corte (próximos passos)
 
-- Google Imagens (REQ-042) ainda não; fotos das sugestões vêm do SI5 (`image_url`) + Open Food Facts na ficha.
+- Google Imagens (REQ-042): candidatas em `GET /produtos/:gtin/fotos` via ean-serp `/ean/google-imagens` + Chrome CDP `:9223` (`notinhas-chrome`). Se Google `/sorry/` (IP datacenter) → Bing Images.
 - Alertas de preço por e-mail (Mailcow está pronto no `Mailer`; falta a feature).
 - (feito em REQ-060: os 6 temas do protótipo com seletor por bolinha)
 
@@ -59,7 +59,8 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 - `GET /codigos-barras/sugestoes?storeId&storeCode&q?` → catálogo local (pg_trgm) **+** `ean-serp` `/ean/si5` (`EanSuggestPort`)
 - Sheet `LinkEanSheet`: campo de texto editável + lista (toque vincula) + câmera + digitação
 - Env: `EAN_SERP_URL` (default `http://127.0.0.1:4180`); vazio = só catálogo
-- Contabo: unit `ean-serp` em `:4180` + `EAN_SERP_URL` no `.env` do Beta
+- Contabo: units `notinhas-chrome` (`:9223`) + `ean-serp` (`:4180`) + `EAN_SERP_URL` no `.env`
+- Fotos pós-vínculo: SI5 + `GET /ean/google-imagens` (sem CDP → só SI5/OFF)
 
 **Antes → depois:** sugestões quase sempre vazias (catálogo pequeno) → lista SI5 pela descrição da nota.  
-**Rollback:** `EAN_SERP_URL=` (noop) ou `systemctl stop ean-serp`; reverter `ean-suggest.port.ts` / `LinkEanSheet`.
+**Rollback:** `EAN_SERP_URL=` (noop) ou `systemctl stop ean-serp notinhas-chrome`; reverter `ean-suggest.port.ts` / `LinkEanSheet`. Sem Chrome → fotos só SI5/OFF.

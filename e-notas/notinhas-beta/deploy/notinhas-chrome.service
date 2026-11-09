@@ -1,0 +1,30 @@
+# /etc/systemd/system/notinhas-chrome.service — Chrome headless CDP p/ Google Imagens (ean-serp)
+# Usa google-chrome-stable (.deb); snap chromium não roda sob notinhas + NoNewPrivileges.
+[Unit]
+Description=Chrome CDP (Google Imagens / ean-serp)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=notinhas
+Group=notinhas
+Environment=HOME=/var/lib/notinhas-chrome
+WorkingDirectory=/var/lib/notinhas-chrome
+ExecStart=/usr/bin/google-chrome-stable \
+  --headless=new \
+  --no-sandbox \
+  --disable-gpu \
+  --disable-dev-shm-usage \
+  --remote-debugging-address=127.0.0.1 \
+  --remote-debugging-port=9223 \
+  --user-data-dir=/var/lib/notinhas-chrome/profile \
+  about:blank
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillSignal=SIGTERM
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

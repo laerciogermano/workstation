@@ -1,14 +1,15 @@
-# /etc/systemd/system/ean-serp.service — sugestão EAN (SI5) para notinhas-api
+# /etc/systemd/system/ean-serp.service — sugestão EAN (SI5) + Google Imagens p/ notinhas-api
 [Unit]
-Description=ean-serp (SI5 EAN by description)
-After=network-online.target
-Wants=network-online.target
+Description=ean-serp (SI5 + Google Imagens)
+After=network-online.target notinhas-chrome.service
+Wants=network-online.target notinhas-chrome.service
 
 [Service]
 Type=simple
 User=notinhas
 WorkingDirectory=/opt/ean-serp
 Environment=NODE_ENV=production PORT=4180 HOST=127.0.0.1
+Environment=CDP_URL=http://127.0.0.1:9223
 ExecStart=/usr/bin/node server.js
 Restart=on-failure
 RestartSec=3

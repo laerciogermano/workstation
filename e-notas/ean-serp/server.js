@@ -6,6 +6,7 @@ import {
   resolveEanSi5,
   resolveEanSi5Stream,
 } from './src/resolve.js';
+import { searchGoogleImagens } from './src/providers/google-imagens.js';
 
 const app = express();
 app.use(express.json({ limit: '64kb' }));
@@ -132,6 +133,22 @@ app.post('/ean/google-cdp', handleGoogleCdp);
 app.get('/api/ean/google-cdp', handleGoogleCdp);
 app.post('/api/ean/google-cdp', handleGoogleCdp);
 
+/** Google Imagens (tbm=isch via CDP) — candidatas de foto por EAN/descrição. */
+async function handleGoogleImagens(req, res) {
+  const { descricao, limit } = parseCommon(req);
+  const q = descricao || '';
+  try {
+    const imagens = await searchGoogleImagens(q, { n: limit ? Number(limit) : 24 });
+    res.json({ ok: true, fonte: 'google-imagens', descricao: q, imagens });
+  } catch (err) {
+    res.status(err.status || 500).json({ ok: false, error: err.message || String(err) });
+  }
+}
+app.get('/ean/google-imagens', handleGoogleImagens);
+app.post('/ean/google-imagens', handleGoogleImagens);
+app.get('/api/ean/google-imagens', handleGoogleImagens);
+app.post('/api/ean/google-imagens', handleGoogleImagens);
+
 app.get('/ean', handleResolve);
 app.post('/ean', handleResolve);
 app.get('/api/ean', handleResolve);
@@ -141,4 +158,5 @@ app.listen(PORT, () => {
   console.log(`[ean-serp] SI5  http://127.0.0.1:${PORT}/ean/si5?descricao=…`);
   console.log(`[ean-serp] SI5 SSE http://127.0.0.1:${PORT}/ean/si5/stream?descricao=…`);
   console.log(`[ean-serp] Google CDP http://127.0.0.1:${PORT}/ean/google-cdp?descricao=…`);
+  console.log(`[ean-serp] Google Imagens http://127.0.0.1:${PORT}/ean/google-imagens?descricao=…`);
 });

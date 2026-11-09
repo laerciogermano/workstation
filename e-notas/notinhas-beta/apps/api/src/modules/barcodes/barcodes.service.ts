@@ -155,17 +155,14 @@ export async function suggestBarcodes(
   return [...byGtin.values()].sort((a, b) => b.score - a.score).slice(0, 8);
 }
 
-/** SI5 CDN bloqueia hotlink no browser — já devolve URL same-origin. */
+/** SI5 / Google / CDNs — devolve URL same-origin via proxy. */
 function proxyPhotoUrl(url: string | null): string | null {
   if (!url) return null;
   if (url.startsWith('/media/') || url.startsWith('/api/')) return url;
   try {
     const u = new URL(url);
     if (u.protocol !== 'https:') return null;
-    if (/(^|\.)si5\.com\.br$/i.test(u.hostname)) {
-      return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
-    }
-    return url;
+    return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
   } catch {
     return null;
   }

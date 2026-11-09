@@ -2,7 +2,8 @@
 
 **URL:** https://notinhas.shop/ · https://www.notinhas.shop/  
 **Host:** Contabo `185.250.37.82` · código `/opt/notinhas-beta` · unit `notinhas-api` · Node `127.0.0.1:4174`  
-**ean-serp:** `/opt/ean-serp` · unit `ean-serp` · `127.0.0.1:4180` (REQ-044 sugestões SI5; `EAN_SERP_URL` no `.env`)  
+**ean-serp:** `/opt/ean-serp` · unit `ean-serp` · `127.0.0.1:4180` (SI5 + Google Imagens; `EAN_SERP_URL`)  
+**Chrome CDP:** unit `notinhas-chrome` · `127.0.0.1:9223` (REQ-042 fotos)  
 **nginx:** `sites-available/notinhas` — `/` → `apps/web/dist`; `/api/` → API; `/enotas/` → lab `:4175`  
 **Postgres:** schema `notinhas` no Docker `postgres-db-1` (`connectmax`)  
 **Cert LE:** `/etc/letsencrypt/live/notinhas.shop/` (já emitido)
@@ -46,7 +47,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@185.250.37.82 '
 
 Arquivos de referência: [`nginx.conf`](nginx.conf) · [`notinhas-api.service`](notinhas-api.service) · [`ean-serp.service`](ean-serp.service).
 
-### ean-serp (primeira vez / atualizar)
+### ean-serp + Chrome CDP (primeira vez / atualizar)
 
 ```bash
 SRC_SERP=/Users/laerciogermano/Documents/works/e-notas/ean-serp
@@ -55,12 +56,23 @@ sshpass -e rsync -az --delete --exclude node_modules --exclude .git \
   "$SRC_SERP/" root@185.250.37.82:/opt/ean-serp/
 
 sshpass -e ssh -o StrictHostKeyChecking=no root@185.250.37.82 '
+  # Google Chrome .deb (snap chromium não serve p/ CDP sob user notinhas)
+  if [ ! -x /usr/bin/google-chrome-stable ]; then
+    curl -fsSL -o /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/google-chrome.deb
+  fi
+  install -d -o notinhas -g notinhas /var/lib/notinhas-chrome
   cd /opt/ean-serp && npm ci --omit=dev
   chown -R notinhas:notinhas /opt/ean-serp
+  cp /opt/notinhas-beta/deploy/notinhas-chrome.service /etc/systemd/system/notinhas-chrome.service
   cp /opt/notinhas-beta/deploy/ean-serp.service /etc/systemd/system/ean-serp.service
   grep -q EAN_SERP_URL /opt/notinhas-beta/.env || echo "EAN_SERP_URL=http://127.0.0.1:4180" >> /opt/notinhas-beta/.env
-  systemctl daemon-reload && systemctl enable --now ean-serp
-  systemctl restart notinhas-api
+  systemctl daemon-reload
+  systemctl enable --now notinhas-chrome
+  sleep 2
+  curl -sf http://127.0.0.1:9223/json/version >/dev/null
+  systemctl enable --now ean-serp
+  systemctl restart ean-serp notinhas-api
 '
 ```
 

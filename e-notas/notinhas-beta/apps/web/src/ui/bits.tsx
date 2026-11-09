@@ -3,18 +3,17 @@ import { CATEGORIES } from '@notinhas/domain';
 import { brl } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 
-/** `/media/` é estático do Beta; SI5/CDN exige proxy (hotlink 403). */
+/** `/media/` estático; SI5 / Google / CDNs passam pelo proxy (hotlink / CORS). */
 export function photoSrc(url: string | null | undefined): string | null {
   if (!url) return null;
   if (url.startsWith('/media/') || url.startsWith('/api/')) return url;
   if (!/^https:\/\//i.test(url)) return null;
   try {
-    const host = new URL(url).hostname;
-    if (/(^|\.)si5\.com\.br$/i.test(host)) return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
+    new URL(url);
   } catch {
     return null;
   }
-  return url;
+  return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
 }
 
 export function Photo({

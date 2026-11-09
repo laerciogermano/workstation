@@ -178,7 +178,8 @@ export function HomePage() {
             style={{ scrollMarginTop: 12 }}
           >
             <div className="sec">
-              <h2 className="h1" style={{ fontSize: 22 }}>
+              <h2 className="h1 sechead" style={{ fontSize: 22 }}>
+                <Icon name={s.icon} />
                 {s.name}
               </h2>
               <span className="meta-r">{s.sub}</span>

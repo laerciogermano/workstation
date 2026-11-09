@@ -72,7 +72,7 @@ apps/
       ui/        componentes do DS (tokens --nt-*), mapa, gráfico, sheet, toast
       lib/       api (CSRF, fingerprint, refresh), sessão, localização, queries
       styles/    tokens.css (DESIGN.md v2 + escuro preto) e app.css
-docs/            ARCHITECTURE.md (lean C4), adr/, TRACEABILITY.md
+docs/            ARCHITECTURE.md (lean C4), adr/, TRACEABILITY.md, FUTURE.md
 deploy/          nginx, systemd, Dockerfile
 ```
 

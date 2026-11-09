@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { brl, dateShort, km, pct, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
+import { pricePinText } from '../../lib/map-pins';
 import { useProduct } from '../../lib/queries';
 import { Chip, ErrorBanner, Photo, Price, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
@@ -32,9 +33,17 @@ export default function ProductPage() {
     if (!d) return [];
     const ps: MapPin[] = d.comparison
       .filter((c) => c.lat !== null && c.lng !== null)
-      .map((c) => ({ id: c.store.id, lat: c.lat ?? 0, lng: c.lng ?? 0, text: brl(c.priceCents), kind: c.isBest ? 'best' : 'price', label: `${c.store.name}: ${brl(c.priceCents)}` }));
+      .map((c) => ({
+        id: c.store.id,
+        lat: c.lat ?? 0,
+        lng: c.lng ?? 0,
+        text: pricePinText(c.priceCents),
+        kind: c.isBest ? 'best' : 'price',
+        label: `${c.store.name}: ${brl(c.priceCents)}`,
+      }));
     return [...ps, { id: 'you', lat: anchor.lat, lng: anchor.lng, text: '', kind: 'you', label: 'Você' }];
   }, [d, anchor]);
+  const hasMap = pins.some((p) => p.kind !== 'you');
 
   if (q.isPending)
     return (
@@ -62,6 +71,7 @@ export default function ProductPage() {
   return (
     <>
       <TopBar title="" right={<button className="ib" onClick={() => setAdding(true)} aria-label="Adicionar à lista"><Icon name="list" /></button>} />
+      {hasMap && <MapView pins={pins} center={anchor} radiusKm={Math.min(anchor.radiusKm, 4)} />}
       <div className="cols2">
         <div>
           <div className="hero">
@@ -154,7 +164,6 @@ export default function ProductPage() {
               {anchor.mode === 'gps' ? 'GPS' : anchor.label.split(',')[0]}
             </Link>
           </div>
-          {pins.length > 1 && <MapView pins={pins} center={anchor} />}
           {nearest.map((c) => (
             <div key={c.store.id} className="row">
               <Icon name="pin" />

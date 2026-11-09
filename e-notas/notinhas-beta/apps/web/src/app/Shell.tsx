@@ -17,13 +17,14 @@ const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
 ];
 
-/** Desktop sidenav — exatamente 6 itens, nesta ordem. */
+/** Desktop sidenav — exatamente 7 itens, nesta ordem. */
 const SIDE: { to: string; icon: IconName; label: string; match: RegExp }[] = [
-  { to: '/', icon: 'grid', label: 'Produto', match: /^\/($|produto|busca|mapa)/ },
-  { to: '/lojas', icon: 'store', label: 'Loja', match: /^\/lojas/ },
-  { to: '/nota', icon: 'qr', label: 'Nota', match: /^\/nota(\/|$)/ },
-  { to: '/listas', icon: 'list', label: 'Lista', match: /^\/listas/ },
-  { to: '/notas', icon: 'receipt', label: 'Minhas notas', match: /^\/notas/ },
+  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
+  { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
+  { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
+  { to: '/nota', icon: 'qr', label: 'Adicionar nota', match: /^\/nota(\/|$)/ },
+  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
+  { to: '/gastos', icon: 'chart', label: 'Gasto do mês', match: /^\/gastos/ },
   { to: '/perfil', icon: 'user', label: 'Perfil', match: /^\/(perfil|conta)/ },
 ];
 

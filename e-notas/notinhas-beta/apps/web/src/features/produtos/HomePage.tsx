@@ -158,7 +158,6 @@ export function HomePage() {
 
       {home.data && sections.length > 0 && (
         <>
-          <ProductViewToggle />
           <nav className="chips" aria-label="Seções">
             {sections.map((s) => (
               <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
@@ -167,6 +166,7 @@ export function HomePage() {
               </button>
             ))}
           </nav>
+          <ProductViewToggle />
         </>
       )}
 

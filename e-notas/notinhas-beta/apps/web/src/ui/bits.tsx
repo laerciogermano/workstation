@@ -4,10 +4,12 @@ import { brl } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 
 export function Photo({ url, category, size = '', alt = '' }: { url: string | null | undefined; category?: string | undefined; size?: '' | 'sm' | 'xs' | 'xl'; alt?: string }) {
-  if (url)
+  // só https absoluto — paths locais do lab (/media/…) quebram no Beta; no-referrer evita hotlink 403 em CDN
+  const src = url && /^https:\/\//i.test(url) ? url : null;
+  if (src)
     return (
       <div className={`ph ${size}`}>
-        <img src={url} alt={alt} loading="lazy" decoding="async" />
+        <img src={src} alt={alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
       </div>
     );
   const icon = (CATEGORIES.find((c) => c.id === category)?.icon ?? 'box') as IconName;

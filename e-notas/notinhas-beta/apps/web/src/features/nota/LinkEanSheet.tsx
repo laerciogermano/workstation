@@ -82,49 +82,8 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />
         <Viewfinder mode="ean" hit={hit} />
-        <p>{state === 'live' ? 'Aponte para o código de barras da embalagem' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — use uma sugestão ou digite.'}</p>
+        <p>{state === 'live' ? 'Aponte para o código de barras da embalagem' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — digite o código ou use uma sugestão abaixo.'}</p>
       </div>
-
-      <label className="lbl" htmlFor="ean-suggest-q">
-        Buscar sugestões pelo texto
-      </label>
-      <div className="field">
-        <span>
-          <Icon name="search" />
-        </span>
-        <input
-          id="ean-suggest-q"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Ex.: Pringles Original 100g"
-          autoComplete="off"
-          enterKeyHint="search"
-        />
-      </div>
-
-      <p className="lbl">Sugestões {sugg.isFetching ? '· buscando…' : sugg.data?.length ? `· ${sugg.data.length}` : ''}</p>
-      {sugg.isPending && !sugg.data ? (
-        <p className="hint">Buscando pelo texto da nota…</p>
-      ) : (sugg.data?.length ?? 0) > 0 ? (
-        sugg.data?.map((s) => (
-          <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
-            <Photo url={s.photoUrl} size="xs" />
-            <span className="grow">
-              <span className="b">{s.title}</span>
-              <span className="meta mono" style={{ display: 'block' }}>
-                {s.gtin} · {Math.round(s.score * 100)}% · {s.source === 'si5' ? 'SI5' : s.source}
-              </span>
-              <span className="score">
-                <i style={{ width: `${Math.round(s.score * 100)}%` }} />
-              </span>
-            </span>
-            <Icon name="check" />
-          </button>
-        ))
-      ) : (
-        <p className="hint">Nenhuma sugestão ainda — refine o texto acima ou escaneie o código da embalagem.</p>
-      )}
-      <ErrorBanner error={sugg.error} />
 
       <label className="lbl" htmlFor="ean-typed">
         Ou digite os números
@@ -140,6 +99,40 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       <button className="btn p" disabled={!typedOk || link.isPending} onClick={() => submit(clean, 'manual')}>
         Vincular
       </button>
+
+      <label className="lbl" htmlFor="ean-suggest-q">
+        Sugestões pela descrição
+      </label>
+      <div className="field">
+        <span>
+          <Icon name="search" />
+        </span>
+        <input
+          id="ean-suggest-q"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Ex.: Pringles Original 100g"
+          autoComplete="off"
+          enterKeyHint="search"
+        />
+      </div>
+      <p className="hint">{sugg.isFetching ? 'Buscando…' : sugg.data?.length ? `${sugg.data.length} resultado${sugg.data.length === 1 ? '' : 's'} — toque para vincular` : 'Nenhuma sugestão — refine o texto ou escaneie.'}</p>
+      {sugg.data?.map((s) => (
+        <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
+          <Photo url={s.photoUrl} size="xs" />
+          <span className="grow">
+            <span className="b">{s.title}</span>
+            <span className="meta mono" style={{ display: 'block' }}>
+              {s.gtin} · {Math.round(s.score * 100)}% · {s.source === 'si5' ? 'SI5' : s.source}
+            </span>
+            <span className="score">
+              <i style={{ width: `${Math.round(s.score * 100)}%` }} />
+            </span>
+          </span>
+          <Icon name="check" />
+        </button>
+      ))}
+      <ErrorBanner error={sugg.error} />
     </Sheet>
   );
 }

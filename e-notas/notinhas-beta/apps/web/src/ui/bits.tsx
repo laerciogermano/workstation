@@ -17,12 +17,31 @@ function photoSrc(url: string | null | undefined): string | null {
   return url;
 }
 
-export function Photo({ url, category, size = '', alt = '' }: { url: string | null | undefined; category?: string | undefined; size?: '' | 'sm' | 'xs' | 'xl'; alt?: string }) {
+export function Photo({
+  url,
+  category,
+  size = '',
+  alt = '',
+  eager = false,
+}: {
+  url: string | null | undefined;
+  category?: string | undefined;
+  size?: '' | 'sm' | 'xs' | 'xl';
+  alt?: string;
+  /** Sheet/overflow: lazy + IntersectionObserver muitas vezes não dispara. */
+  eager?: boolean;
+}) {
   const src = photoSrc(url);
   if (src)
     return (
       <div className={`ph ${size}`}>
-        <img src={src} alt={alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+        <img
+          src={src}
+          alt={alt}
+          loading={eager || size === 'xs' || size === 'sm' ? 'eager' : 'lazy'}
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
       </div>
     );
   const icon = (CATEGORIES.find((c) => c.id === category)?.icon ?? 'box') as IconName;

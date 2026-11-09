@@ -146,11 +146,27 @@ export async function suggestBarcodes(
     if (!prev || s.score > prev.score || (!prev.photoUrl && s.photoUrl)) {
       byGtin.set(s.gtin, {
         ...s,
-        photoUrl: s.photoUrl ?? prev?.photoUrl ?? null,
+        photoUrl: proxyPhotoUrl(s.photoUrl ?? prev?.photoUrl ?? null),
         title: s.title || prev?.title || s.gtin,
         score: Math.max(s.score, prev?.score ?? 0),
       });
     }
   }
   return [...byGtin.values()].sort((a, b) => b.score - a.score).slice(0, 8);
+}
+
+/** SI5 CDN bloqueia hotlink no browser — já devolve URL same-origin. */
+function proxyPhotoUrl(url: string | null): string | null {
+  if (!url) return null;
+  if (url.startsWith('/media/') || url.startsWith('/api/')) return url;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== 'https:') return null;
+    if (/(^|\.)si5\.com\.br$/i.test(u.hostname)) {
+      return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
+    }
+    return url;
+  } catch {
+    return null;
+  }
 }

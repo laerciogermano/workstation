@@ -136,7 +136,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       <p className="hint">{sugg.isFetching ? 'Buscando…' : sugg.data?.length ? `${sugg.data.length} resultado${sugg.data.length === 1 ? '' : 's'} — toque para vincular` : 'Nenhuma sugestão — refine o texto ou escaneie.'}</p>
       {sugg.data?.map((s) => (
         <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
-          <Photo url={s.photoUrl} size="xs" />
+          <Photo url={s.photoUrl} size="xs" eager />
           <span className="grow">
             <span className="b">{s.title}</span>
             <span className="meta mono" style={{ display: 'block' }}>

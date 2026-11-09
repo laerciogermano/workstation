@@ -114,7 +114,7 @@ export default function StorePage() {
 
       {tab === 'sem' && (
         <>
-          <p className="lede">A nota fiscal não traz código de barras. Vincule o código da embalagem para esse preço entrar na comparação entre lojas.</p>
+          <p className="lede">A nota não traz EAN — só o código interno da loja. Um vínculo vale para todas as notas com aquele cód. nesta loja.</p>
           {d.withoutEan.length === 0 && <Empty icon="check" title="Todos os itens já têm código de barras." />}
           {d.withoutEan.map((u) => (
             <UnlinkedRow

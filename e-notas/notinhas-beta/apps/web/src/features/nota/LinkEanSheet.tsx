@@ -75,12 +75,19 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
     setTyped('');
     setHit(false);
     if (r.status === 'flagged') {
-      toast({ text: 'Esse item já tinha outro código. Mandamos para revisão — obrigado!' });
+      toast({ text: 'Esse código de loja já tinha outro EAN. Mandamos para revisão — obrigado!' });
       finish(r);
       return;
     }
-    if (r.status === 'replaced') toast({ text: 'Código de barras atualizado' });
-    else toast({ text: r.pointsAwarded ? `Vinculado · +${r.pointsAwarded} pontos` : 'Código vinculado' });
+    if (r.status === 'replaced') {
+      toast({ text: `Código atualizado · vale para o cód. ${target.storeCode} em todas as notas desta loja` });
+    } else {
+      toast({
+        text: r.pointsAwarded
+          ? `Vinculado · cód. ${target.storeCode} em todas as notas desta loja · +${r.pointsAwarded}`
+          : `Vinculado · cód. ${target.storeCode} em todas as notas desta loja`,
+      });
+    }
 
     const seeds: { url: string; source: string }[] = [];
     if (from?.photoUrl) seeds.push({ url: unwrapProxy(from.photoUrl), source: from.source === 'si5' ? 'SI5' : 'sugestão' });
@@ -124,14 +131,16 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   return (
     <Sheet open={!!target} onClose={onClose} title={replacing ? 'Alterar código de barras' : 'Vincular código de barras'}>
       <p className="meta">
-        {target?.displayName} · <span className="mono">{target?.description}</span> · cód. {target?.storeCode}
+        {target?.displayName} · <span className="mono">{target?.description}</span> · cód. interno{' '}
+        <span className="mono">{target?.storeCode}</span>
         {replacing && target?.currentGtin ? (
           <>
-            {' · atual '}
+            {' · EAN atual '}
             <span className="mono">{target.currentGtin}</span>
           </>
         ) : null}
       </p>
+      <p className="hint">O vínculo é por código interno da loja: uma vez ligado, todas as notas com este cód. herdam o mesmo EAN.</p>
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />
         <Viewfinder mode="ean" hit={hit} />

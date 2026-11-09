@@ -635,6 +635,14 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes → depois: sheet com poucas opções → lista longa rolável (≥50 quando o SI5/catálogo tiver).
 - Rollback: `slice(0, 8)` + `byDescription(…, 8)` + cap `n≤24` + score `≥0.35`; em `si5.js` voltar a uma URL sem `page`.
 
+## REQ-068 — Vínculo EAN por código interno (propagação) (2026-11-09)
+
+- Chave do vínculo: **`(loja, código interno)` → EAN** (`barcode_links`), nunca por linha de nota.
+- Ao vincular/alterar, **todas** as linhas históricas e futuras daquela loja com o mesmo cód. interno herdam o EAN (`v_price_observations` / join — RF-E01-12 / RN-12).
+- UI: fila da nota deduplica por cód. interno; toasts e textos deixam a regra explícita.
+- Antes → depois: usuário podia achar que vinculava só a linha da nota; copy + fila reforçam a propagação.
+- Rollback: reverter copy/toasts/dedupe na web; o schema já era por `(store_id, store_code)`.
+
 ## REQ-067 — Alterar código de barras na ficha do produto (2026-11-09)
 
 - Na página do produto (T-14): botão **Alterar código** (mesmo fluxo da nota: câmera / digitar / sugestões com `replace`).

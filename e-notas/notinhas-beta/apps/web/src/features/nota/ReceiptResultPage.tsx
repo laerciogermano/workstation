@@ -40,7 +40,16 @@ export default function ReceiptResultPage() {
       </>
     );
 
-  const pendingItems = r.items.filter((i) => !i.gtin);
+  /** Pendentes por código interno (RN-12 / RF-E01-12): um vínculo cobre todas as linhas com o mesmo cód. */
+  const pendingByCode = (() => {
+    const seen = new Set<string>();
+    return r.items.filter((i) => {
+      if (i.gtin || seen.has(i.storeCode)) return false;
+      seen.add(i.storeCode);
+      return true;
+    });
+  })();
+  const pendingItems = pendingByCode;
   const toTarget = (i: ReceiptItemDTO, replace = false): LinkTarget => ({
     storeId: r.store.id,
     storeCode: i.storeCode,
@@ -55,9 +64,10 @@ export default function ReceiptResultPage() {
     setQueue(rest);
     setTarget(toTarget(first));
   };
-  const next = () => {
-    const [first, ...rest] = queue;
-    setQueue(rest);
+  const next = (linkedCode?: string) => {
+    const rest = linkedCode ? queue.filter((i) => i.storeCode !== linkedCode) : queue;
+    const [first, ...tail] = rest;
+    setQueue(tail);
     setTarget(first ? toTarget(first) : null);
   };
 
@@ -125,7 +135,11 @@ export default function ReceiptResultPage() {
 
       <div className="sec">
         <h2>Itens</h2>
-        <span className="meta-r">{pendingItems.length ? `${pendingItems.length} sem código de barras` : 'todos com código de barras'}</span>
+        <span className="meta-r">
+          {pendingItems.length
+            ? `${pendingItems.length} cód. interno${pendingItems.length === 1 ? '' : 's'} sem EAN`
+            : 'todos os códigos internos com EAN'}
+        </span>
       </div>
       <div className="card list">
         {r.items.map((i) => (
@@ -166,7 +180,7 @@ export default function ReceiptResultPage() {
         {pendingItems.length > 0 && (
           <button className="btn p" onClick={startQueue}>
             <Icon name="barcode" />
-            Vincular {pendingItems.length} pendente{pendingItems.length > 1 ? 's' : ''}
+            Vincular {pendingItems.length} cód. interno{pendingItems.length > 1 ? 's' : ''}
           </button>
         )}
         <Link to="/notas" className="btn gh">
@@ -182,8 +196,13 @@ export default function ReceiptResultPage() {
           setQueue([]);
         }}
         onLinked={() => {
-          if (!queue.length) return;
-          next();
+          const code = target?.storeCode;
+          const rest = code ? queue.filter((i) => i.storeCode !== code) : queue;
+          if (!rest.length) {
+            setQueue([]);
+            return;
+          }
+          next(code);
           return 'next';
         }}
       />

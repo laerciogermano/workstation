@@ -259,8 +259,10 @@ export default function ProductPage() {
       </div>
       <AddToListSheet product={adding ? { gtin: p.gtin, title: p.title } : null} onClose={() => setAdding(false)} />
 
-      <Sheet open={pickLinks} onClose={() => setPickLinks(false)} title="Qual vínculo corrigir?">
-        <p className="meta">Este EAN está ligado a {links.length} códigos de loja. Escolha qual reescanear — igual na nota fiscal.</p>
+      <Sheet open={pickLinks} onClose={() => setPickLinks(false)} title="Qual código de loja corrigir?">
+        <p className="meta">
+          O vínculo é por <b>código interno</b> da loja. Ao alterar, todas as notas com aquele cód. nesta loja passam a usar o novo EAN.
+        </p>
         <div className="card list mt12">
           {links.map((l) => (
             <button

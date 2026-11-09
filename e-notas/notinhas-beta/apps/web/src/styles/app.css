@@ -404,6 +404,12 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
   gap: 0;
 }
 .viewbar.compact .seg .i { width: 15px; height: 15px; }
+/* Opção ativa do seletor sm/md/lista: fundo preto + ícone branco. */
+.viewbar .seg button.on { color: var(--nt-white); }
+.viewbar .seg button.on .segpill {
+  background: var(--nt-black);
+  box-shadow: none;
+}
 .seg.icons button { font-size: 0; }
 .pc { position: relative; background: var(--nt-surface); border: 1px solid var(--nt-line); border-radius: var(--nt-r-md); padding: 8px 9px 11px; display: flex; flex-direction: column; gap: 2px; color: inherit; transition: transform var(--dur-micro) var(--spring), border-color var(--dur-micro); }
 .pc.pc-sm { padding: 6px 7px 9px; }

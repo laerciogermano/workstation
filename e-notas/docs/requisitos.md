@@ -581,8 +581,9 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Origem: prompt 043.
 - App `notinhas-beta`: botão em forma de bolinha (metade cor de ação, metade cor de menor preço) abre a lista dos 6 temas do protótipo v2 (REQ-055): Institucional, Escuro, Petróleo + lima, Grafite + esmeralda, Feira, Papel de nota.
 - Fica no topo da home (celular), na barra lateral (desktop) e no Perfil.
-- Escolha salva no aparelho; sem escolha, segue o sistema (escuro = fundo preto). Troca animada, sem animação com movimento reduzido.
-- Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts`.
+- Escolha salva no aparelho; **sem escolha, padrão = Grafite + esmeralda** (`grafite`) — antes: seguia o sistema (institucional / escuro).
+- Troca animada, sem animação com movimento reduzido.
+- Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts` (ou restaurar default `institucional`/`escuro` por `prefers-color-scheme`).
 
 ## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)
 

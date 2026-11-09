@@ -15,11 +15,11 @@ const KEY = 'nt_theme';
 const listeners = new Set<() => void>();
 const isTheme = (v: unknown): v is ThemeId => THEMES.some((t) => t.id === v);
 
-/** Sem escolha salva: segue o sistema (escuro = preto, nunca azul). */
+/** Sem escolha salva: Grafite + esmeralda (padrão do produto). */
 function initial(): ThemeId {
   const saved = localStorage.getItem(KEY);
   if (isTheme(saved)) return saved;
-  return matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'institucional';
+  return 'grafite';
 }
 
 function paint(id: ThemeId) {
@@ -46,7 +46,7 @@ export function useTheme(): ThemeId {
       listeners.add(l);
       return () => listeners.delete(l);
     },
-    () => (document.documentElement.dataset['theme'] as ThemeId | undefined) ?? 'institucional',
-    () => 'institucional',
+    () => (document.documentElement.dataset['theme'] as ThemeId | undefined) ?? 'grafite',
+    () => 'grafite',
   );
 }

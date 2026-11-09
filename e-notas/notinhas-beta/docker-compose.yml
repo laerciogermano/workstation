@@ -1,0 +1,15 @@
+# Postgres limpo para quem não tem o container do lab. Use DATABASE_URL=postgres://notinhas:notinhas@127.0.0.1:5433/notinhas
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: notinhas
+      POSTGRES_PASSWORD: notinhas
+      POSTGRES_DB: notinhas
+    ports: ['127.0.0.1:5433:5432']
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U notinhas']
+      interval: 5s
+volumes:
+  pgdata:

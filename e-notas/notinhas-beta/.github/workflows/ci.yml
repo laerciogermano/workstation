@@ -1,0 +1,22 @@
+# Vale quando o projeto estiver no próprio repositório; no monorepo `works`, copie para a raiz com working-directory.
+name: ci
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: ci, POSTGRES_PASSWORD: ci, POSTGRES_DB: ci }
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U ci" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://ci:ci@127.0.0.1:5432/ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run verify
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high

@@ -1,0 +1,99 @@
+/* notinhas.shop — tokens (DESIGN.md v2 · prefixo --nt-*).
+   Gramática da marca: 1 cor de ação (azul), 1 cor só para “menor preço” (verde), texto, fundo, hairline.
+   Componentes NUNCA usam hex solto: só var(--nt-*) (08 §7). */
+
+:root,
+[data-theme='institucional'] {
+  --nt-canvas: #f5f7fa;
+  --nt-surface: #ffffff;
+  --nt-ink: #0b1f33;
+  --nt-muted: #5a6b7d;
+  --nt-line: #d5dee8;
+  --nt-line-2: #e8eef4;
+  --nt-blue: #0069b4;
+  --nt-blue-deep: #014380;
+  --nt-blue-soft: #e3f2fb;
+  --nt-green: #00984b;
+  --nt-green-deep: #007a3d;
+  --nt-green-soft: #e6f6ee;
+  --nt-err: #c62828;
+  --nt-err-soft: #fdecec;
+  --nt-warn: #d97706;
+  --nt-warn-soft: #fef3c7;
+  --nt-warn-ink: #8a3b05;
+  --nt-black: #000000;
+  --nt-white: #ffffff;
+  --nt-scan: #000000;
+  --nt-scan-hint: #7ee2a8;
+  --nt-scrim: rgb(11 31 51 / 0.4);
+  --nt-shadow: rgb(11 31 51 / 0.12);
+  color-scheme: light;
+}
+
+/* Escuro = fundo preto, cinzas neutros; azul nunca como fundo (memória de marca). */
+[data-theme='escuro'] {
+  color-scheme: dark;
+  --nt-canvas: #000000;
+  --nt-surface: #121212;
+  --nt-ink: #f5f5f5;
+  --nt-muted: #a1a1a6;
+  --nt-line: #2c2c2e;
+  --nt-line-2: #1c1c1e;
+  --nt-blue: #2f86e8;
+  --nt-blue-deep: #8cc4ff;
+  --nt-blue-soft: #1c1c1e;
+  --nt-green: #34d27f;
+  --nt-green-deep: #6be6a3;
+  --nt-green-soft: #102a1c;
+  --nt-err: #ff6b6b;
+  --nt-err-soft: #2a1414;
+  --nt-warn: #f5a524;
+  --nt-warn-soft: #2a2010;
+  --nt-warn-ink: #f8c46a;
+  --nt-scrim: rgb(0 0 0 / 0.6);
+  --nt-shadow: rgb(0 0 0 / 0.5);
+}
+
+/* Temas para escolha (REQ-055) — mesma gramática: ação, menor preço, texto, fundo, hairline */
+[data-theme='petroleo'] {
+  --nt-canvas: #f2f5f4; --nt-surface: #ffffff; --nt-ink: #10272b; --nt-muted: #557074; --nt-line: #d2dedd; --nt-line-2: #e5edec;
+  --nt-blue: #0e6170; --nt-blue-deep: #08434e; --nt-blue-soft: #ddeff1; --nt-green: #3f9e1f; --nt-green-deep: #2f7a15; --nt-green-soft: #eaf5e2;
+}
+[data-theme='grafite'] {
+  --nt-canvas: #f6f6f4; --nt-surface: #ffffff; --nt-ink: #16181d; --nt-muted: #5f646e; --nt-line: #ddddd8; --nt-line-2: #ecece8;
+  --nt-blue: #1f2430; --nt-blue-deep: #111318; --nt-blue-soft: #ecedef; --nt-green: #00995a; --nt-green-deep: #007a48; --nt-green-soft: #e3f5ec;
+}
+[data-theme='feira'] {
+  --nt-canvas: #fbf7f2; --nt-surface: #ffffff; --nt-ink: #2a1a0e; --nt-muted: #7a6656; --nt-line: #eadfd3; --nt-line-2: #f3ebe2;
+  --nt-blue: #dc5a07; --nt-blue-deep: #9c400a; --nt-blue-soft: #fdebdd; --nt-green: #1f8a3a; --nt-green-deep: #176c2d; --nt-green-soft: #e5f4e8;
+}
+[data-theme='papel'] {
+  --nt-canvas: #f3efe6; --nt-surface: #fffdf8; --nt-ink: #1e1c18; --nt-muted: #6e675b; --nt-line: #ddd5c4; --nt-line-2: #eae4d7;
+  --nt-blue: #23446b; --nt-blue-deep: #172e49; --nt-blue-soft: #e3e8ee; --nt-green: #2d7a3e; --nt-green-deep: #215c2e; --nt-green-soft: #e4efe2;
+}
+
+:root,
+[data-theme] {
+  --nt-on-primary: var(--nt-white);
+  --nt-line-strong: color-mix(in srgb, var(--nt-line) 70%, var(--nt-ink) 30%);
+  --nt-skel-a: var(--nt-line-2);
+  --nt-skel-b: color-mix(in srgb, var(--nt-line-2) 40%, var(--nt-surface));
+  --nt-bar: color-mix(in srgb, var(--nt-blue) 26%, var(--nt-surface));
+  --nt-miss: color-mix(in srgb, var(--nt-err) 62%, var(--nt-surface));
+  --nt-logo-a: var(--nt-blue-deep);
+  --nt-logo-b: var(--nt-green);
+
+  --nt-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --nt-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --nt-r-sm: 8px;
+  --nt-r-md: 14px;
+  --nt-r-lg: 20px;
+
+  /* motion (core/definir-projeto-moderno/03-design-ui-motion): explica estado, CSS primeiro */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.4%, 1.077 22.3%, 1.104 25.4%, 1.1 28%, 1.059 34%, 1.017 40%, 0.996 47%, 0.995 56%, 1.002 70%, 1);
+  --spring-soft: linear(0, 0.05, 0.2 8%, 0.6 18%, 0.86 28%, 0.97 38%, 1.01 48%, 1.012 58%, 1.003 75%, 1);
+  --dur-micro: 160ms;
+  --dur-ui: 280ms;
+  --dur-route: 380ms;
+}

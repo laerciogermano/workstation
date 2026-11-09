@@ -191,10 +191,10 @@ Curadoria: [`../marca/benchmarking-solucoes/README.md`](../marca/benchmarking-so
 
 - Domínio **notinhas.shop** (Hostinger) aponta para a Contabo (registro A `@`; `www` via CNAME ou A).
 - **Atual (2026-11-08):** A `@` / `www` / `mail` → **`185.250.37.82`** (VDS `vmi3645369`). Legado `144.126.154.90` offline.
-- Site: protótipo v2 em `/opt/notinhas-v2` (nginx `:443` + redirect `:80`→HTTPS); app lab em `/enotas/` → `enotas.service` `:4174`.
-- nginx site `notinhas`: `/` → arquivos v2; `/enotas/` → proxy Node `127.0.0.1:4174`.
+- Site (**atual 2026-11-09**): Beta em `/opt/notinhas-beta` (nginx `:443`); lab em `/enotas/` → `enotas.service` `:4175`. Protótipo v2 permanece em `/opt/notinhas-v2` só para rollback.
+- nginx site `notinhas`: `/` → Beta dist; `/api/` → `127.0.0.1:4174`; `/enotas/` → `127.0.0.1:4175` (REQ-061).
 - HTTPS: Certbot LE `notinhas.shop` + `www` (emitido 2026-11-08; renew `certbot.timer`) — ver [`../deploy/README.md`](../deploy/README.md).
-- Rollback: desabilitar site `notinhas`; DNS A `@` → parking Hostinger `2.57.91.91`; `certbot delete --cert-name notinhas.shop`.
+- Rollback: ver REQ-061 / [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md); DNS A `@` → parking Hostinger `2.57.91.91`; `certbot delete --cert-name notinhas.shop`.
 
 ## REQ-023 — Marca v2 DESIGN.md notinhas.shop (2026-11-01)
 
@@ -545,3 +545,51 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Cabeçalho fixo (logo, mapa, perfil, busca) + chips das seções: tocar pula para a seção; rolar atualiza o chip ativo.
 - Card: foto, % vs mediana, nome, preço menor (verde), loja · data · distância e botão “+” para adicionar à lista. Só produtos com EAN (REQ-045).
 - Rollback: restaurar a T-10 anterior (carrossel de destaques + grade de menores preços) em `beta-docs/prototipos/v2/js/screens.js`.
+
+## REQ-057 — Web desktop no mesmo modelo do celular (2026-11-08)
+
+- Protótipo v2.0 ganha a versão **web desktop** (telas `D-xx`, navegador 1440×900) com os mesmos dados, estado, regras (RN), temas e cenários do celular.
+- Navegação no topo (Produtos, Lojas, Listas, Notas, busca, pontos/entrar, **Depositar nota**, perfil).
+- Home no mesmo modelo de REQ-056: seções da altura da janela (Promoções → Mais comprados → categorias), 2 linhas de cards com rolagem horizontal, chips e setas ‹ ›.
+- Layout de desktop onde ajuda: busca com filtros laterais; produto em duas colunas (gráfico de histórico acima da comparação em tabela); lojas = ranking + mapa grande; vitrine com tabela de itens sem EAN; lista + cotação (uma loja / dividir) lado a lado; notas em mestre-detalhe; gastos em painel; perfil em três colunas; entrar/criar conta em abas.
+- Depositar nota no desktop: arrastar foto do cupom, colar link do QR ou webcam; mesmo pipeline (processando → recebida → vincular EAN → foto) e avisos (duplicada, SEFAZ lenta, link inválido) numa tela.
+- Alternância celular ↔ desktop na mesma tela (botão e tecla `D`).
+- Rollback: remover `js/desktop.js`, o `<script>` em `index.html`, o bloco “web desktop” de `styles.css` e os ajustes `web` em `js/app.js`.
+
+## REQ-058 — Mapa na página de produto (2026-11-08)
+
+- Origem: prompt 041.
+- T-14 (detalhe do produto), seção “Perto de você”: mapa no mesmo modelo de Lojas (T-31), com um pino por loja que tem o produto mostrando o preço; o menor preço fica em verde; raio desenhado conforme o filtro.
+- Tocar no mapa abre T-30 (Onde comprar perto); abaixo do mapa continuam as 2 lojas mais próximas.
+- Desktop (D-14) já mostra o mapa no card “Perto de você”.
+- Rollback: remover o `mapbanner` da T-14 em `beta-docs/prototipos/v2/js/screens.js`.
+
+## REQ-059 — Projeto Beta front + back (`notinhas-beta/`) (2026-11-09)
+
+- Origem: prompt 042.
+- Implementação nova e separada do lab, em `notinhas-beta/`, seguindo `core/definir-projeto-moderno` (lean C4 + ADR, TypeScript `strict`, Postgres por convenção, UI/motion) e `beta-docs/` (PRD, contratos, regras RN-01..15).
+- Todas as telas do protótipo v2 (T-02…T-73, T-61..63) implementadas; desktop pelo mesmo componente com layout responsivo (REQ-057).
+- Regras de preço (RN-10, RN-11, RN-13), GTIN e chave NFC-e em funções puras compartilhadas por API e web, com testes.
+- Banco: schema próprio `notinhas` (bigint + uuid público, centavos, `timestamptz`), item único por linha da nota, posse da nota fora do índice público (RN-06); importador idempotente da base do lab.
+- Identidade: fingerprint guardado só como HMAC + IP do servidor; merge ao criar conta/entrar (REQ-050); JWT 15 min + refresh rotativo com detecção de reuso.
+- Nota com falha na SEFAZ guarda o dono e entra em Minhas notas quando a nova tentativa der certo.
+- Fora deste corte: sugestão via `ean-serp`/Google Imagens (REQ-042/044), alertas por e-mail, 4 dos 6 temas (REQ-055).
+- Rollback: remover a pasta `notinhas-beta/` e o schema `notinhas` (`DROP SCHEMA notinhas CASCADE` — só com confirmação humana).
+
+## REQ-060 — Seletor de tema por bolinha no app (2026-11-09)
+
+- Origem: prompt 043.
+- App `notinhas-beta`: botão em forma de bolinha (metade cor de ação, metade cor de menor preço) abre a lista dos 6 temas do protótipo v2 (REQ-055): Institucional, Escuro, Petróleo + lima, Grafite + esmeralda, Feira, Papel de nota.
+- Fica no topo da home (celular), na barra lateral (desktop) e no Perfil.
+- Escolha salva no aparelho; sem escolha, segue o sistema (escuro = fundo preto). Troca animada, sem animação com movimento reduzido.
+- Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts`.
+
+## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)
+
+- Publicar `notinhas-beta/` na Contabo (`185.250.37.82`) e servir em **https://notinhas.shop/** (e `www`).
+- Path `/opt/notinhas-beta`; unit `notinhas-api` em `127.0.0.1:4174`; schema Postgres `notinhas`; nginx: `/` → `apps/web/dist`, `/api/` → API.
+- Lab permanece em **https://notinhas.shop/enotas/** na porta `:4175` (antes `:4174`).
+- Seed demo aplicado na primeira publicação; SMTP pode ficar vazio até a caixa Mailcow estar no mesmo host.
+- Docs: [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md) · [`../deploy/README.md`](../deploy/README.md).
+- Rollback: restaurar nginx root `/opt/notinhas-v2` + lab `:4174`; `systemctl disable --now notinhas-api` (detalhe no deploy do Beta).
+

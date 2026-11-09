@@ -5,17 +5,17 @@ Convive com **conect tec** (HTTP `:80`) e **mailcow** (HTTPS `:443`).
 | App | URL |
 |-----|-----|
 | VDS atual (2026-11-08) | `185.250.37.82` (`vmi3645369`) |
-| Protótipo v2 | **https://notinhas.shop/** · **https://www.notinhas.shop/** (LE `notinhas.shop`, redirect HTTP→HTTPS) |
-| App lab | **https://notinhas.shop/enotas/** (proxy → `:4174`) |
+| **Beta (atual)** | **https://notinhas.shop/** · **https://www.notinhas.shop/** — SPA + `/api/` ([`notinhas-beta/deploy/`](../notinhas-beta/deploy/README.md)) |
+| App lab | **https://notinhas.shop/enotas/** (proxy → `:4175`) |
+| Protótipo v2 (arquivo) | `/opt/notinhas-v2` (não é mais o `root` do nginx) |
 | Legado offline | `144.126.154.90` (`vmi3645318`) |
 
 | Item | Valor |
 |------|--------|
-| Código app | `/opt/e-notas` |
-| Protótipo v2 | `/opt/notinhas-v2` ← sync de `beta-docs/prototipos/v2/` |
-| Unit | `enotas.service` |
-| Node | `127.0.0.1:4174` (`USE_HTTP=1`) |
-| nginx domínio | `/etc/nginx/sites-available/notinhas` — `/` → v2; `/enotas/` → Node; `:443` Certbot |
+| Código Beta | `/opt/notinhas-beta` · unit `notinhas-api` · Node `127.0.0.1:4174` · schema `notinhas` |
+| Código lab | `/opt/e-notas` · unit `enotas.service` · Node `127.0.0.1:4175` (`USE_HTTP=1`) |
+| Protótipo v2 | `/opt/notinhas-v2` ← sync de `beta-docs/prototipos/v2/` (rollback do root) |
+| nginx domínio | `/etc/nginx/sites-available/notinhas` — `/` → Beta dist; `/api/` → `:4174`; `/enotas/` → `:4175`; `:443` Certbot |
 | Cert LE | `/etc/letsencrypt/live/notinhas.shop/` · renew via `certbot.timer` |
 | DNS alvo | Hostinger: A `@` / `www` / `mail` → **`185.250.37.82`** (TTL 300) |
 | DNS legado | A `@` → `144.126.154.90` (offline) |
@@ -68,21 +68,22 @@ Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993).
 ## Domínio `notinhas.shop`
 
 1. DNS Hostinger: A `@` / `www` / `mail` → Contabo **`185.250.37.82`**
-2. Site nginx: `sites-available/notinhas` — `root /opt/notinhas-v2`; `/enotas/` → `:4174`
+2. Site nginx: `sites-available/notinhas` — `root /opt/notinhas-beta/apps/web/dist`; `/api/` → `:4174`; `/enotas/` → `:4175`
 3. **HTTPS (feito 2026-11-08):** Certbot LE `notinhas.shop` + `www`; HTTP→HTTPS; renew `certbot.timer`
-4. **Mail** — domínio + DKIM no Mailcow (legado `144…` ou reapontar); DNS:
+4. **Beta no ar (2026-11-09):** ver [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md)
+5. **Mail** — domínio + DKIM no Mailcow (legado `144…` ou reapontar); DNS:
    - A `mail` → `185.250.37.82` (web) — MX/SPF do mail ainda podem apontar ao host Mailcow ativo
    - MX `@` → `mail.notinhas.shop` (prio 10)
    - TXT `@` → `v=spf1 mx a:mail.notinhas.shop ip4:185.250.37.82 ~all` (ajustar se Mailcow permanecer no IP legado)
    - TXT `dkim._domainkey` / `_dmarc` conforme Mailcow
    - Webmail: https://mail.notinhas.shop/SOGo/
 
-### Deploy / refresh do protótipo v2
+### Deploy / refresh do protótipo v2 (só arquivos; não é o root atual)
 
 ```bash
 # local → Contabo
 rsync -az --delete e-notas/beta-docs/prototipos/v2/ root@185.250.37.82:/opt/notinhas-v2/
-ssh root@185.250.37.82 'chown -R www-data:www-data /opt/notinhas-v2 && nginx -t && systemctl reload nginx'
+ssh root@185.250.37.82 'chown -R www-data:www-data /opt/notinhas-v2'
 ```
 
 ### Emitir / renovar SSL (VDS atual)
@@ -94,8 +95,8 @@ ssh root@185.250.37.82 'certbot --nginx -d notinhas.shop -d www.notinhas.shop --
 
 Script legado (IP antigo): [`issue-ssl-notinhas.sh`](issue-ssl-notinhas.sh).
 
-**Antes → depois (domínio):** HTTP só no IP → `https://notinhas.shop/` com LE + redirect; root = protótipo v2.
-**Rollback domínio:** `rm /etc/nginx/sites-enabled/notinhas` + `nginx -t && systemctl reload nginx`; DNS A `@` → parking Hostinger. SSL: `certbot delete --cert-name notinhas.shop`.
+**Antes → depois (domínio):** root v2 → root Beta (`/opt/notinhas-beta`); lab `:4174`→`:4175` em `/enotas/`.
+**Rollback domínio / Beta:** ver [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md). SSL: `certbot delete --cert-name notinhas.shop` (só se for tirar o domínio).
 
 ## Rollback
 

@@ -5,7 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) → pacote **[`beta-docs/`](beta-docs/README.md)** (PRD MoSCoW, histórias Gherkin, protótipos T-xx, plano BETA-nnn). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/README.md).  
-**Beta 1.0 (construir do zero):** [`beta-docs/README.md`](beta-docs/README.md) · [protótipos](beta-docs/prototipos/index.html) · card [jhxFUqLz](https://trello.com/c/jhxFUqLz).  
+**Beta 1.0 no ar:** https://notinhas.shop/ · código [`notinhas-beta/`](notinhas-beta/README.md) · deploy [`notinhas-beta/deploy/README.md`](notinhas-beta/deploy/README.md) · **docs:** [`beta-docs/README.md`](beta-docs/README.md) · [protótipo v2.0](beta-docs/prototipos/v2/index.html) · [v1](beta-docs/prototipos/index.html) · card [jhxFUqLz](https://trello.com/c/jhxFUqLz).  
 Requisitos / regras: [`docs/requisitos.md`](docs/requisitos.md).  
 Categorias canônicas: [`docs/categorias-produtos.md`](docs/categorias-produtos.md).  
 Identidade anônima (fingerprint → conta): [`docs/identidade-anonima-fingerprint.md`](docs/identidade-anonima-fingerprint.md).  

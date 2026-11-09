@@ -1,0 +1,24 @@
+# /etc/systemd/system/notinhas-api.service — API atrás do nginx (127.0.0.1:4174)
+[Unit]
+Description=notinhas.shop API (Beta)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=notinhas
+WorkingDirectory=/opt/notinhas-beta/apps/api
+EnvironmentFile=/opt/notinhas-beta/.env
+Environment=NODE_ENV=production HOST=127.0.0.1 PORT=4174
+ExecStart=/usr/bin/node dist/main.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+KillSignal=SIGTERM
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -585,6 +585,14 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Troca animada, sem animação com movimento reduzido.
 - Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts` (ou restaurar default `institucional`/`escuro` por `prefers-color-scheme`).
 
+## REQ-062 — Mapa no topo: produtos (pins) e estabelecimentos (2026-11-09)
+
+- Home Produtos (`/`): faixa de mapa no topo com **pins de produto** (preço); vários pins no mesmo estabelecimento ficam espalhados; toque abre `/mapa`.
+- Mapa cheio `/mapa` (T-15): mesmo critério — pin = produto, não agregado por loja.
+- Estabelecimentos (`/lojas`, T-31): faixa de mapa no topo com **1 pin por estabelecimento** (posição no ranking); toque abre `/lojas/mapa`.
+- Mapa `/lojas/mapa` (T-32): só estabelecimentos (não pins de produto).
+- Rollback: remover `MapBanner` das páginas e voltar `ProductsMapPage` ao agregado por loja.
+
 ## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)
 
 - Publicar `notinhas-beta/` na Contabo (`185.250.37.82`) e servir em **https://notinhas.shop/** (e `www`).

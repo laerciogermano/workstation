@@ -301,7 +301,12 @@ dt { color: var(--nt-muted); }
 /* mapa (Leaflet) */
 .mapbox { position: relative; height: 180px; border-radius: 16px; overflow: hidden; border: 1px solid var(--nt-line); margin-bottom: 12px; isolation: isolate; }
 .mapbox.tall { height: calc(100dvh - 210px); min-height: 360px; }
+.mapbox.banner { height: 132px; margin: 0; border: 0; border-radius: 0; }
 .mapbox .leaflet-container { width: 100%; height: 100%; background: var(--nt-line-2); font-family: var(--nt-font); }
+.mapbanner { position: relative; display: block; height: 132px; border-radius: 16px; overflow: hidden; border: 1px solid var(--nt-line); margin-bottom: 12px; color: inherit; }
+.mapbanner .mapbox.banner .leaflet-container { pointer-events: none; }
+.mapbanner .cap { position: absolute; left: 10px; bottom: 10px; z-index: 500; display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: color-mix(in srgb, var(--nt-surface) 88%, transparent); backdrop-filter: blur(8px); pointer-events: none; }
+.mapbanner .cap .i { width: 14px; height: 14px; }
 .mpin { display: grid; place-items: center; }
 .mpin span { display: inline-block; padding: 4px 8px; border-radius: 999px; background: var(--nt-surface); color: var(--nt-ink); font-size: 11.5px; font-weight: 800; border: 1px solid var(--nt-line); white-space: nowrap; font-variant-numeric: tabular-nums; box-shadow: 0 2px 6px var(--nt-shadow); transform: translate(-50%, -50%); }
 .mpin.g span { background: var(--nt-green); color: var(--nt-on-primary); border-color: var(--nt-green); }

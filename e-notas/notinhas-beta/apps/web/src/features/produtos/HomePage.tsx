@@ -1,13 +1,15 @@
 import type { ProductCardDTO } from '@notinhas/contracts';
 import { CATEGORIES } from '@notinhas/domain';
 import type { IconName } from '../../ui/Icon';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { PageSkeleton } from '../../app/Shell';
 import { useAnchor } from '../../lib/location';
-import { useHome, useMe } from '../../lib/queries';
+import { homeProducts, productPricePins } from '../../lib/map-pins';
+import { useHome, useMe, useRanking } from '../../lib/queries';
 import { Empty, ErrorBanner } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
+import { MapBanner } from '../../ui/MapBanner';
 import { ProductCard } from '../../ui/ProductCard';
 import { Wordmark } from '../../ui/Wordmark';
 import { ThemePicker } from '../../ui/ThemePicker';
@@ -16,11 +18,16 @@ import { AddToListSheet } from '../listas/AddToListSheet';
 /** T-10 · REQ-056: Promoções → Mais comprados → categorias; grade de 2 linhas rolando na horizontal. */
 export function HomePage() {
   const home = useHome();
+  const ranking = useRanking();
   const me = useMe();
   const anchor = useAnchor();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [active, setActive] = useState('promocoes');
   const refs = useRef(new Map<string, HTMLElement>());
+  const productPins = useMemo(
+    () => productPricePins(homeProducts(home.data), ranking.data, { limit: 24 }),
+    [home.data, ranking.data],
+  );
 
   const sections = home.data
     ? [
@@ -81,6 +88,14 @@ export function HomePage() {
           <Icon name="next" />
         </Link>
       )}
+
+      <MapBanner
+        to="/mapa"
+        pins={productPins}
+        center={anchor}
+        radiusKm={Math.min(anchor.radiusKm, 4)}
+        caption={`${productPins.length} produto${productPins.length === 1 ? '' : 's'} perto`}
+      />
 
       {home.isPending && <PageSkeleton bare />}
       <ErrorBanner error={home.error} />

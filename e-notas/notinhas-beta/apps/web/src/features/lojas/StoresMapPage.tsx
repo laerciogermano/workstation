@@ -1,35 +1,26 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { km } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
+import { establishmentPins, youPin } from '../../lib/map-pins';
 import { useRanking } from '../../lib/queries';
-import { MapView, type MapPin } from '../../ui/MapView';
+import { MapView } from '../../ui/MapView';
 import { TopBar } from '../../ui/TopBar';
 import { rankText } from './StoreRow';
 
-/** T-32 — lojas no mapa com a posição do ranking; toque abre o resumo. */
+/** T-32 — 1 pin por estabelecimento (não produto); popup com ranking. */
 export default function StoresMapPage() {
   const anchor = useAnchor();
   const q = useRanking();
   const [sel, setSel] = useState<number | null>(null);
-  const pins: MapPin[] = [
-    ...(q.data ?? [])
-      .filter((r) => r.store.lat !== null && r.store.lng !== null)
-      .map((r) => ({
-        id: r.store.id,
-        lat: r.store.lat ?? 0,
-        lng: r.store.lng ?? 0,
-        text: r.position ? String(r.position) : '·',
-        kind: r.position === 1 ? ('best' as const) : ('store' as const),
-        label: `${r.store.name}, ${rankText(r)}`,
-        onClick: () => setSel(r.store.id),
-      })),
-    { id: 'you', lat: anchor.lat, lng: anchor.lng, text: '', kind: 'you', label: 'Você' },
-  ];
+  const pins = useMemo(
+    () => [...establishmentPins(q.data, { selectedId: sel, onSelect: setSel }), youPin(anchor)],
+    [q.data, sel, anchor],
+  );
   const s = q.data?.find((r) => r.store.id === sel);
   return (
     <>
-      <TopBar title="Mapa de lojas" sub={`raio de ${anchor.radiusKm} km`} />
+      <TopBar title="Mapa de estabelecimentos" sub={`raio de ${anchor.radiusKm} km · 1 pin por loja`} />
       <div style={{ position: 'relative' }}>
         <MapView pins={pins} center={anchor} radiusKm={anchor.radiusKm} className="tall" />
         {s && (

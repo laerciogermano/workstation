@@ -8,14 +8,14 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-73 Carregando | (qualquer) | `app/Shell › PageSkeleton` | — | skeleton, sem spinner |
 | T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 (sem EAN = confiança menor) |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros · T-30 Perto | `/produto/:gtin` | `features/produtos/ProductPage` | `GET /produtos/:gtin` | RN-05, Q3 (desatualizado > 14 d), REQ-047/058 |
-| T-15 Mapa de produtos | `/mapa` | `features/produtos/ProductsMapPage` | home + ranking | RN-09 |
+| T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins = produtos (vários por local) |
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
 | T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe | `/notas/:id` | `features/nota/ReceiptResultPage` | `GET /notas/:id` | RN-02, RN-03, RN-06, REQ-046 |
 | T-23 Vincular EAN | sheet | `features/nota/LinkEanSheet` | `POST /codigos-barras`, `GET /codigos-barras/sugestoes` | RN-12, Q2, REQ-043 |
 | T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` | REQ-040 |
-| T-31 Lojas · mais baratas | `/lojas` | `features/lojas/StoresPage` | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 |
-| T-32 Mapa de lojas | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 |
+| T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
+| T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
 | T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` | `GET /lojas/:id` | REQ-039/043/045 |
 | T-40 Minhas listas | `/listas` | `features/listas/ListsPage` | `GET/POST /listas` | REQ-051 |
 | T-42 Uma loja · T-41 Dividir · T-54 Gate | `/listas/:id` | `features/listas/ListPage` | `GET /listas/:id`, `PUT /listas/:id/itens/:gtin` | RN-13, REQ-052 |

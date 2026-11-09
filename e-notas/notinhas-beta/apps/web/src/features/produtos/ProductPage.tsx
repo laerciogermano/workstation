@@ -71,7 +71,6 @@ export default function ProductPage() {
   return (
     <>
       <TopBar title="" right={<button className="ib" onClick={() => setAdding(true)} aria-label="Adicionar à lista"><Icon name="list" /></button>} />
-      {hasMap && <MapView pins={pins} center={anchor} radiusKm={Math.min(anchor.radiusKm, 4)} />}
       <div className="cols2">
         <div>
           <div className="hero">
@@ -106,6 +105,8 @@ export default function ProductPage() {
           ) : (
             <p className="banner warn mt12">Sem preço nos últimos meses.</p>
           )}
+
+          {hasMap && <MapView pins={pins} center={anchor} radiusKm={Math.min(anchor.radiusKm, 4)} />}
 
           <div className="sec">
             <h2>Histórico</h2>

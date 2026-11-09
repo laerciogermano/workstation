@@ -559,8 +559,8 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-058 — Mapa na página de produto (2026-11-08)
 
 - Origem: prompt 041.
-- T-14 (detalhe do produto): mapa **no topo** (abaixo da barra), de cara — um pino por loja com o preço; menor preço em verde; raio conforme o filtro.
-- **Atual (2026-11-09):** mapa sai da seção “Perto de você” (embaixo) e fica sempre na parte superior; “Perto de você” fica só com as 2 lojas mais próximas.
+- T-14 (detalhe do produto): ordem **foto/título/preço → mapa → histórico** — um pino por loja com o preço; menor preço em verde; raio conforme o filtro.
+- **Atual (2026-11-09):** mapa fica entre a apresentação (título/preço) e o histórico; “Perto de você” só com as 2 lojas mais próximas.
 - Rollback: devolver o `MapView` para baixo de “Perto de você” (commit anterior).
 
 ## REQ-059 — Projeto Beta front + back (`notinhas-beta/`) (2026-11-09)

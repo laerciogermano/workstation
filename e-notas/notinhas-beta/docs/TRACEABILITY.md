@@ -17,7 +17,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (SI5 + Google/Bing) | REQ-040/042/069; confirmar no topo; onError remove |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
-| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: só pin do estabelecimento · item sem EAN: clique abre `LinkEanSheet` (mesmo sheet do fluxo sem código / nota) — sem sugestão inline no card |
+| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: só pin do estabelecimento · item sem EAN: clique abre `LinkEanSheet`; após vínculo `onLinked` → `q.refetch()` (lista atualiza sem F5). `api` fetch usa `cache: 'no-store'` p/ não reusar GET com max-age=30 da API |
 | T-40 Minhas listas | `/listas` | `features/listas/ListsPage` | `GET/POST /listas` | REQ-051 |
 | T-42 Uma loja · T-41 Dividir · T-54 Gate | `/listas/:id` | `features/listas/ListPage` | `GET /listas/:id`, `PUT /listas/:id/itens/:gtin` | RN-13, REQ-052 |
 | (Adicionar à lista) | sheet | `features/listas/AddToListSheet` | `PUT /listas/:id/itens/:gtin` | — |

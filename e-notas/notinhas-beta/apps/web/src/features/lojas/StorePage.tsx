@@ -125,7 +125,14 @@ export default function StorePage() {
         </>
       )}
       <AddToListSheet product={adding} onClose={() => setAdding(null)} />
-      <LinkEanSheet target={target} onClose={() => setTarget(null)} />
+      <LinkEanSheet
+        target={target}
+        onClose={() => setTarget(null)}
+        onLinked={() => {
+          setTarget(null);
+          void q.refetch();
+        }}
+      />
     </>
   );
 }

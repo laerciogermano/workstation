@@ -60,6 +60,8 @@ async function rawFetch(path: string, opts: Opts): Promise<Response> {
     method: opts.method ?? 'GET',
     headers,
     credentials: 'same-origin',
+    // React Query é o cache; sem isso o browser reusa GET por max-age=30 da API após mutações.
+    cache: 'no-store',
     ...(opts.body !== undefined ? { body: JSON.stringify(opts.body) } : {}),
     ...(opts.signal ? { signal: opts.signal } : {}),
   });

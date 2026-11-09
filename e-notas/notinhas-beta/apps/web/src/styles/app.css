@@ -370,10 +370,15 @@ dt { color: var(--nt-muted); }
 .sug .b { font-size: 13.5px; line-height: 1.3; }
 .score { display: block; height: 4px; border-radius: 9px; background: var(--nt-line-2); margin-top: 6px; overflow: hidden; width: 100%; }
 .score i { display: block; height: 100%; background: var(--nt-blue); }
+.photopick-bar { position: sticky; top: -10px; z-index: 3; background: var(--nt-surface); padding: 0 0 10px; margin: 0 0 10px; border-bottom: 1px solid var(--nt-line); }
+.photopick-row { display: flex; align-items: center; gap: 10px; }
+.photopick-row .grow { flex: 1; min-width: 0; }
+.photopick-thumb { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; background: var(--nt-white); border: 1px solid var(--nt-line); flex: none; }
+.photopick-thumb.empty { display: block; background: var(--nt-canvas); }
 .photogrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .cand { position: relative; border-radius: var(--nt-r-md); overflow: hidden; border: 2px solid var(--nt-line); background: var(--nt-white); aspect-ratio: 1; transition: border-color var(--dur-micro), transform var(--dur-micro) var(--spring); }
 .cand:active { transform: scale(0.97); }
-.cand img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.cand img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--nt-canvas); }
 .cand > span { position: absolute; left: 8px; bottom: 8px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: color-mix(in srgb, var(--nt-surface) 92%, transparent); color: var(--nt-ink); }
 .cand.on { border-color: var(--nt-blue); box-shadow: 0 0 0 3px var(--nt-blue-soft); }
 .state { text-align: center; padding: 28px 8px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; }

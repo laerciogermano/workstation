@@ -222,6 +222,7 @@ export function PhotoPickerSheet({
 }) {
   const q = usePhotoCandidates(gtin);
   const [sel, setSel] = useState<string | null>(null);
+  const [broken, setBroken] = useState<Set<string>>(() => new Set());
   const [saving, setSaving] = useState(false);
   const toast = useToast();
 
@@ -235,12 +236,22 @@ export function PhotoPickerSheet({
       const u = unwrapProxy(c.url);
       if (u && !map.has(u)) map.set(u, { url: u, source: c.source });
     }
-    return [...map.values()];
+    return [...map.values()].filter((c) => !broken.has(c.url));
   })();
 
   useEffect(() => {
     if (!sel && candidates[0]) setSel(candidates[0].url);
+    else if (sel && !candidates.some((c) => c.url === sel)) setSel(candidates[0]?.url ?? null);
   }, [candidates, sel]);
+
+  function markBroken(url: string) {
+    setBroken((prev) => {
+      if (prev.has(url)) return prev;
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  }
 
   async function save() {
     if (!sel) return onClose();
@@ -254,33 +265,54 @@ export function PhotoPickerSheet({
     }
   }
 
+  const canConfirm = !!sel && !saving && candidates.length > 0;
+  const selSrc = sel ? photoSrc(sel) : null;
+
   return (
     <Sheet open onClose={onClose} title="Escolher foto do produto">
-      <p className="meta">Toque na foto que melhor representa o produto. Ela vale para todas as lojas.</p>
-      {q.isPending && candidates.length === 0 && <p className="hint mt12">Buscando fotos…</p>}
+      {/* Ações fixas no topo — confirma sem rolar a grade (REQ-069). */}
+      <div className="photopick-bar">
+        <div className="photopick-row">
+          {selSrc ? <img className="photopick-thumb" src={selSrc} alt="" /> : <span className="photopick-thumb empty" />}
+          <div className="duo grow">
+            <button className="btn s" type="button" onClick={onClose}>
+              Pular
+            </button>
+            <button className="btn p" type="button" onClick={save} disabled={!canConfirm}>
+              {saving ? 'Salvando…' : 'Usar esta'}
+            </button>
+          </div>
+        </div>
+        <p className="hint">Toque numa foto abaixo — confirme aqui em cima, sem descer.</p>
+      </div>
+
+      {q.isPending && candidates.length === 0 && <p className="hint">Buscando fotos…</p>}
       {!q.isPending && candidates.length === 0 && (
-        <p className="meta mt12">Nenhuma foto encontrada para esse código. Tudo bem — o produto já está vinculado.</p>
+        <p className="meta">Nenhuma foto carregou para esse código. Pode pular — o produto já está vinculado.</p>
       )}
-      <div className="photogrid mt12">
+      <div className="photogrid">
         {candidates.map((c) => {
           const src = photoSrc(c.url);
           return (
             <button key={c.url} className={`cand ${sel === c.url ? 'on' : ''}`} onClick={() => setSel(c.url)} aria-pressed={sel === c.url} type="button">
-              {src ? <img src={src} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" /> : <span className="ph-empty" />}
+              {src ? (
+                <img
+                  src={src}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onError={() => markBroken(c.url)}
+                />
+              ) : (
+                <span className="ph-empty" />
+              )}
               <span>{c.source}</span>
             </button>
           );
         })}
       </div>
       <ErrorBanner error={q.error} />
-      <div className="duo mt16">
-        <button className="btn s" type="button" onClick={onClose}>
-          Pular
-        </button>
-        <button className="btn p" type="button" onClick={save} disabled={!sel || saving || candidates.length === 0}>
-          Usar esta foto
-        </button>
-      </div>
     </Sheet>
   );
 }

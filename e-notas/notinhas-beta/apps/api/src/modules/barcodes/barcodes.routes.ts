@@ -78,7 +78,7 @@ export function productPhotoRoutes(deps: Deps): Router {
 
   r.post('/', async (req, res) => {
     const gtin = parse(GtinSchema, (req.params as { gtin: string }).gtin);
-    const raw = parse(z.object({ url: z.string().min(1).max(2000) }), req.body).url;
+    const raw = parse(z.object({ url: z.string().min(1).max(8000) }), req.body).url;
     const url = unwrapPhotoUrl(raw);
     if (!isAllowedPhotoUrl(url)) throw new AppError('VALIDATION_FAILED', 'Foto fora da lista de candidatas.');
     const { allowed } = await photoCandidates(deps, gtin);

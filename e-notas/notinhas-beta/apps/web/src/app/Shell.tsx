@@ -32,6 +32,8 @@ export function Shell() {
   const online = useOnline();
   const me = useMe();
   const isDark = pathname === '/nota' || pathname.startsWith('/nota/ler');
+  /** Busca em tela cheia: some a tabbar; volta ao sair de /busca (voltar / cancelar). */
+  const hideTabbar = isDark || pathname === '/busca' || pathname.startsWith('/busca?');
 
   useEffect(() => {
     document.documentElement.classList.remove('back');
@@ -112,7 +114,7 @@ export function Shell() {
         </main>
       </div>
 
-      {!isDark && (
+      {!hideTabbar && (
         <nav className="tabbar" aria-label="Principal">
           {TABS.slice(0, 2).map((t) => (
             <NavLink key={t.to} to={t.to} viewTransition className={`tab ${t.match.test(pathname) ? 'on' : ''}`}>

@@ -18,13 +18,13 @@ const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
 ];
 
-/** Desktop sidenav: produtos → lojas → listas → nota → notas → gasto → (fixixo embaixo) pontuação + perfil. */
+/** Desktop sidenav: Produtos → Lojas → Lista → Nota → Minhas notas → Gasto do mês; embaixo pontuação + Perfis. */
 const SIDE: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
   { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
-  { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
+  { to: '/listas', icon: 'list', label: 'Lista', match: /^\/listas/ },
   { to: '/nota', icon: 'qr', label: 'Nota', match: /^\/nota(\/|$)/ },
-  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
+  { to: '/notas', icon: 'receipt', label: 'Minhas notas', match: /^\/notas/ },
   { to: '/gastos', icon: 'chart', label: 'Gasto do mês', match: /^\/gastos/ },
 ];
 
@@ -106,7 +106,7 @@ export function Shell() {
           }
         >
           <Icon name="user" />
-          Perfil e configurações
+          Perfis
         </NavLink>
         {me.data?.user?.role === 'admin' && (
           <NavLink to="/admin" className="dnav">

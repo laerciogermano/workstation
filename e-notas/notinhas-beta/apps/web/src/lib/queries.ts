@@ -139,7 +139,7 @@ export function useIngest() {
 export function useLinkBarcode() {
   const inv = useInvalidateAll();
   return useMutation({
-    mutationFn: (b: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin }) =>
+    mutationFn: (b: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean }) =>
       api<LinkResultDTO>('/codigos-barras', { method: 'POST', body: b }),
     onSuccess: () => inv(),
   });

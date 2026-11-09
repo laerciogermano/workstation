@@ -14,6 +14,9 @@ export interface LinkTarget {
   storeCode: string;
   description: string;
   displayName: string;
+  /** Já tem EAN — fluxo “Alterar” sobrescreve o vínculo. */
+  replace?: boolean;
+  currentGtin?: string | null;
 }
 
 /**
@@ -29,6 +32,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   const [hit, setHit] = useState(false);
   const [photoFor, setPhotoFor] = useState<string | null>(null);
   const toast = useToast();
+  const replacing = !!target?.replace;
 
   useEffect(() => {
     if (!target) return;
@@ -36,7 +40,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
     setDebounced(target.displayName || target.description);
     setTyped('');
     setHit(false);
-  }, [target?.storeId, target?.storeCode, target?.description, target?.displayName]);
+  }, [target?.storeId, target?.storeCode, target?.description, target?.displayName, target?.replace]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(search.trim()), 350);
@@ -47,13 +51,20 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
 
   async function submit(gtin: string, origin: BarcodeOrigin) {
     if (!target || link.isPending) return;
-    const r = await link.mutateAsync({ storeId: target.storeId, storeCode: target.storeCode, gtin, origin });
+    const r = await link.mutateAsync({
+      storeId: target.storeId,
+      storeCode: target.storeCode,
+      gtin,
+      origin,
+      replace: replacing || undefined,
+    });
     setTyped('');
     setHit(false);
     if (r.status === 'flagged') toast({ text: 'Esse item já tinha outro código. Mandamos para revisão — obrigado!' });
+    else if (r.status === 'replaced') toast({ text: 'Código de barras atualizado' });
     else toast({ text: r.pointsAwarded ? `Vinculado · +${r.pointsAwarded} pontos` : 'Código vinculado' });
     if (onLinked?.(r) === 'next') return;
-    if (!r.product.photoUrl && r.status === 'linked') setPhotoFor(r.product.gtin);
+    if (!r.product.photoUrl && (r.status === 'linked' || r.status === 'replaced')) setPhotoFor(r.product.gtin);
     else onClose();
   }
 
@@ -75,9 +86,15 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   if (photoFor) return <PhotoPickerSheet gtin={photoFor} onClose={() => { setPhotoFor(null); onClose(); }} />;
 
   return (
-    <Sheet open={!!target} onClose={onClose} title="Vincular código de barras">
+    <Sheet open={!!target} onClose={onClose} title={replacing ? 'Alterar código de barras' : 'Vincular código de barras'}>
       <p className="meta">
         {target?.displayName} · <span className="mono">{target?.description}</span> · cód. {target?.storeCode}
+        {replacing && target?.currentGtin ? (
+          <>
+            {' · atual '}
+            <span className="mono">{target.currentGtin}</span>
+          </>
+        ) : null}
       </p>
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />

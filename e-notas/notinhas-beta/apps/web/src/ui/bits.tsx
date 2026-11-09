@@ -3,9 +3,22 @@ import { CATEGORIES } from '@notinhas/domain';
 import { brl } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 
+/** SI5/CDN bloqueia hotlink no browser → mesma origem via proxy da API. */
+function photoSrc(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith('/api/')) return url;
+  if (!/^https:\/\//i.test(url)) return null;
+  try {
+    const host = new URL(url).hostname;
+    if (/(^|\.)si5\.com\.br$/i.test(host)) return `/api/v1/imagens/proxy?u=${encodeURIComponent(url)}`;
+  } catch {
+    return null;
+  }
+  return url;
+}
+
 export function Photo({ url, category, size = '', alt = '' }: { url: string | null | undefined; category?: string | undefined; size?: '' | 'sm' | 'xs' | 'xl'; alt?: string }) {
-  // só https absoluto — paths locais do lab (/media/…) quebram no Beta; no-referrer evita hotlink 403 em CDN
-  const src = url && /^https:\/\//i.test(url) ? url : null;
+  const src = photoSrc(url);
   if (src)
     return (
       <div className={`ph ${size}`}>

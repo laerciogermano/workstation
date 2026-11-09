@@ -32,11 +32,12 @@ export async function ensureProduct(db: Db, lookup: ProductLookupPort, gtin: str
 
 /**
  * US-01.10 · RN-12 · Q2 — UPSERT em (loja, cód. interno).
- * Primeiro vínculo vale; divergência posterior vira pendência de moderação (não sobrescreve).
+ * Default: primeiro vínculo vale; divergência → moderação.
+ * Com `replace: true` (fluxo “Alterar”): sobrescreve e registra o antigo em moderação.
  */
 export async function linkBarcode(
   deps: { db: Db; productLookup: ProductLookupPort },
-  input: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin },
+  input: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean },
   owner: Owner | null,
 ): Promise<LinkResultDTO> {
   const { db } = deps;
@@ -62,6 +63,27 @@ export async function linkBarcode(
       return { status: 'linked' as const, points };
     }
     if (existing.gtin === input.gtin) return { status: 'unchanged' as const, points: 0 };
+    if (input.replace) {
+      await tx.query(
+        `INSERT INTO moderation_flags (kind, store_id, store_code, current_gtin, proposed_gtin, summary)
+         VALUES ('ean_divergent', $1, $2, $3, $4, $5)
+         ON CONFLICT (kind, store_id, store_code, proposed_gtin) WHERE status = 'open' DO NOTHING`,
+        [
+          input.storeId,
+          input.storeCode,
+          existing.gtin,
+          input.gtin,
+          `alterado: cód. ${input.storeCode} (${desc}) ${existing.gtin} → ${input.gtin}`,
+        ],
+      );
+      await tx.query(
+        `UPDATE barcode_links
+         SET gtin = $3, origin = $4, linked_by_visitor_id = $5, linked_by_user_id = $6
+         WHERE store_id = $1 AND store_code = $2`,
+        [input.storeId, input.storeCode, input.gtin, input.origin, owner?.visitorId ?? null, owner?.userId ?? null],
+      );
+      return { status: 'replaced' as const, points: 0 };
+    }
     await tx.query(
       `INSERT INTO moderation_flags (kind, store_id, store_code, current_gtin, proposed_gtin, summary)
        VALUES ('ean_divergent', $1, $2, $3, $4, $5)

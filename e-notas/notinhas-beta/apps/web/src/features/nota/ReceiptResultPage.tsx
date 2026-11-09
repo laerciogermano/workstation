@@ -41,7 +41,14 @@ export default function ReceiptResultPage() {
     );
 
   const pendingItems = r.items.filter((i) => !i.gtin);
-  const toTarget = (i: ReceiptItemDTO): LinkTarget => ({ storeId: r.store.id, storeCode: i.storeCode, description: i.description, displayName: i.displayName });
+  const toTarget = (i: ReceiptItemDTO, replace = false): LinkTarget => ({
+    storeId: r.store.id,
+    storeCode: i.storeCode,
+    description: i.description,
+    displayName: i.displayName,
+    replace,
+    currentGtin: i.gtin,
+  });
   const startQueue = () => {
     const [first, ...rest] = pendingItems;
     if (!first) return;
@@ -137,9 +144,9 @@ export default function ReceiptResultPage() {
               </p>
             </div>
             {i.gtin ? (
-              <span className="okdot" aria-label="Com código de barras">
-                <Icon name="check" />
-              </span>
+              <button className="btn s xs" onClick={() => setTarget(toTarget(i, true))} aria-label="Alterar código de barras">
+                Alterar
+              </button>
             ) : (
               <button className="btn s xs" onClick={() => setTarget(toTarget(i))}>
                 Vincular

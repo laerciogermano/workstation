@@ -154,7 +154,7 @@ export interface SuggestionDTO {
   source: 'catalogo' | 'openfoodfacts' | 'si5';
 }
 
-export type LinkStatus = 'linked' | 'unchanged' | 'flagged';
+export type LinkStatus = 'linked' | 'replaced' | 'unchanged' | 'flagged';
 export interface LinkResultDTO {
   status: LinkStatus;
   pointsAwarded: number;

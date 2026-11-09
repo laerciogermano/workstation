@@ -11,6 +11,7 @@ import { identify } from './modules/identity/identity.middleware.js';
 import { authRoutes, meRoutes } from './modules/identity/auth.routes.js';
 import { receiptsRoutes } from './modules/receipts/receipts.routes.js';
 import { barcodesRoutes } from './modules/barcodes/barcodes.routes.js';
+import { imageProxyHandler } from './modules/barcodes/image-proxy.js';
 import { catalogRoutes } from './modules/catalog/catalog.routes.js';
 import { listsRoutes } from './modules/lists/lists.routes.js';
 import { pointsRoutes, spendingRoutes } from './modules/spending/spending.routes.js';
@@ -29,7 +30,7 @@ export function createApp(deps: Deps) {
         res.setHeader('x-request-id', id);
         return id;
       },
-      autoLogging: { ignore: (req) => req.url === '/health' },
+      autoLogging: { ignore: (req) => req.url === '/health' || req.url?.startsWith('/api/v1/imagens/') },
     }),
   );
   app.use(
@@ -54,6 +55,9 @@ export function createApp(deps: Deps) {
       res.status(503).json({ ok: false, db: 'down' });
     }
   });
+
+  // Público: <img> não envia fingerprint/CSRF — só hosts allowlist (SI5 etc.)
+  app.get('/api/v1/imagens/proxy', rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false }), imageProxyHandler());
 
   const limiter = (limit: number, windowMs = 60_000) =>
     rateLimit({

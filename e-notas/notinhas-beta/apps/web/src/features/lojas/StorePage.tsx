@@ -3,7 +3,6 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { brl, km, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
-import { jitter, pricePinText } from '../../lib/map-pins';
 import { useStore, useSuggestions } from '../../lib/queries';
 import { Chip, Empty, ErrorBanner, Progress, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
@@ -16,39 +15,24 @@ import { AddToListSheet } from '../listas/AddToListSheet';
 import { LinkEanSheet, type LinkTarget } from '../nota/LinkEanSheet';
 import { rankText } from './StoreRow';
 
-/** Pins da vitrine: produtos com preço nesta loja (espalhados no mesmo ponto) + pin do estabelecimento. */
-function storeVitrinePins(
-  store: { id: number; name: string; lat: number | null; lng: number | null; position: number | null },
-  products: { gtin: string; title: string; here: { priceCents: number } }[],
-): MapPin[] {
+/** Na página da loja: só o pin do estabelecimento (sem pins de produto). */
+function storeOnlyPin(store: {
+  id: number;
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  position: number | null;
+}): MapPin[] {
   if (store.lat === null || store.lng === null) return [];
-  const lat = store.lat;
-  const lng = store.lng;
-  const productPins: MapPin[] = products.slice(0, 24).map((p, i) => {
-    const at = jitter(lat, lng, i + 1);
-    return {
-      id: p.gtin,
-      lat: at.lat,
-      lng: at.lng,
-      text: pricePinText(p.here.priceCents),
-      kind: 'price' as const,
-      label: `${p.title} · ${store.name}`,
-    };
-  });
-  const min = Math.min(...productPins.map((p) => products.find((x) => x.gtin === p.id)?.here.priceCents ?? Infinity));
   return [
     {
       id: `store-${store.id}`,
-      lat,
-      lng,
+      lat: store.lat,
+      lng: store.lng,
       text: store.position ? String(store.position) : '·',
       kind: 'store',
       label: store.name,
     },
-    ...productPins.map((p) => ({
-      ...p,
-      kind: (products.find((x) => x.gtin === p.id)?.here.priceCents === min ? 'best' : 'price') as MapPin['kind'],
-    })),
   ];
 }
 
@@ -66,7 +50,7 @@ export default function StorePage() {
   const [open, setOpen] = useState<string | null>(focus);
   const d = q.data;
   const pins = useMemo(
-    () => (d ? storeVitrinePins({ ...d.rank.store, position: d.rank.position }, d.withEan) : []),
+    () => (d ? storeOnlyPin({ ...d.rank.store, position: d.rank.position }) : []),
     [d],
   );
 
@@ -93,11 +77,7 @@ export default function StorePage() {
         pins={pins}
         center={mapCenter}
         radiusKm={Math.min(anchor.radiusKm, 4)}
-        caption={
-          pins.length > 1
-            ? `${d.withEan.length} produto${d.withEan.length === 1 ? '' : 's'} neste estabelecimento`
-            : s.name
-        }
+        caption={s.name}
       />
       <div className="card pad">
         <p className="meta">{s.address}</p>

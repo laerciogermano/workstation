@@ -45,6 +45,8 @@ export const LinkBarcodeSchema = z.object({
   storeCode: z.string().trim().min(1).max(60),
   gtin: GtinSchema,
   origin: z.enum(BARCODE_ORIGINS),
+  /** Explicitamente alterar vínculo já existente (grava o antigo em moderação e sobrescreve). */
+  replace: z.boolean().optional().default(false),
 });
 
 export const SearchQuerySchema = GeoQuerySchema.extend({

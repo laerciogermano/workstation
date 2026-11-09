@@ -13,7 +13,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
 | T-23/T-24 Scan EAN + VOCR | sheet câmera / foto | `scanner.tsx` `useCameraScanner` / `decodeImageFile` | `POST /codigos-barras` (+ `vocr`) | zxing + OCR (tesseract) em paralelo; OCR sozinho aceita GTIN válido se barras falham |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
-| T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe (+ T-41/T-42 cotação) | `/notas/:id` | `features/nota/ReceiptResultPage` + `ui/QuotePanel` | `GET /notas/:id` (+ geo · quote/credits) | RN-02, RN-03, RN-06, RN-13, REQ-046 |
+| T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe (+ T-41/T-42 cotação) | `/notas/:id` | `features/nota/ReceiptResultPage` + `ui/QuotePanel` | `GET /notas/:id` (+ geo · quote/credits) | RN-02, RN-03, RN-06, RN-13, REQ-046 · layout: info → Comparar preços → Itens |
 | T-23 Vincular EAN | sheet | `features/nota/LinkEanSheet` | `POST /codigos-barras` (`replace?`), `GET /codigos-barras/sugestoes`, `GET /imagens/proxy` | RN-12, Q2, REQ-043/068; vínculo por cód. interno (propaga) |
 | T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos?q=` (SI5 + Google/Bing) | REQ-040/042/069; ≥30 candidatas; campo `q` editável; voto em `photo_registrations`; principal = mais votada |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |

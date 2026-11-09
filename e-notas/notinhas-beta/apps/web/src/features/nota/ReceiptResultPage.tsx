@@ -134,6 +134,19 @@ export default function ReceiptResultPage() {
 
       <Progress done={r.eanProgress.done} total={r.eanProgress.total} />
 
+      {/* Ordem: info da nota (acima) → comparar preços → lista de itens. */}
+      <div className="sec">
+        <h2>Comparar preços</h2>
+      </div>
+      <QuotePanel
+        quote={r.quote}
+        credits={r.credits}
+        hasItems={r.items.length > 0}
+        needEanHint={r.eanProgress.done === 0}
+        title={(g) => r.items.find((i) => i.gtin === g)?.displayName ?? g}
+        photo={(g) => r.items.find((i) => i.gtin === g)?.photoUrl ?? null}
+      />
+
       <div className="sec">
         <h2>Itens</h2>
         <span className="meta-r">
@@ -142,56 +155,39 @@ export default function ReceiptResultPage() {
             : 'todos os códigos internos com EAN'}
         </span>
       </div>
-      <div className="cols2">
-        <div>
-          <div className="card list">
-            {r.items.map((i) => (
-              <div className="li" key={i.id}>
-                <Photo url={i.photoUrl} size="xs" />
-                <div className="grow">
-                  {i.gtin ? (
-                    <Link to={`/produto/${i.gtin}`} className="b" style={{ color: 'inherit', display: 'block' }}>
-                      {i.displayName}
-                    </Link>
-                  ) : (
-                    <p className="b">{i.displayName}</p>
-                  )}
-                  <p className="meta tnum">
-                    {i.quantity} × {brl(i.unitCents)} · cód. {i.storeCode} {i.origin && <Chip kind="meta">{ORIGIN[i.origin]}</Chip>}
-                  </p>
-                </div>
-                {i.gtin ? (
-                  <button className="btn s xs" onClick={() => setTarget(toTarget(i, true))} aria-label="Alterar código de barras">
-                    Alterar
-                  </button>
-                ) : (
-                  <button className="btn s xs" onClick={() => setTarget(toTarget(i))}>
-                    Vincular
-                  </button>
-                )}
-              </div>
-            ))}
-            {r.totalCents !== null && (
-              <div className="li">
-                <span className="grow b">Total</span>
-                <span className="price tnum">{brl(r.totalCents)}</span>
-              </div>
+      <div className="card list">
+        {r.items.map((i) => (
+          <div className="li" key={i.id}>
+            <Photo url={i.photoUrl} size="xs" />
+            <div className="grow">
+              {i.gtin ? (
+                <Link to={`/produto/${i.gtin}`} className="b" style={{ color: 'inherit', display: 'block' }}>
+                  {i.displayName}
+                </Link>
+              ) : (
+                <p className="b">{i.displayName}</p>
+              )}
+              <p className="meta tnum">
+                {i.quantity} × {brl(i.unitCents)} · cód. {i.storeCode} {i.origin && <Chip kind="meta">{ORIGIN[i.origin]}</Chip>}
+              </p>
+            </div>
+            {i.gtin ? (
+              <button className="btn s xs" onClick={() => setTarget(toTarget(i, true))} aria-label="Alterar código de barras">
+                Alterar
+              </button>
+            ) : (
+              <button className="btn s xs" onClick={() => setTarget(toTarget(i))}>
+                Vincular
+              </button>
             )}
           </div>
-        </div>
-        <div>
-          <div className="sec">
-            <h2>Comparar preços</h2>
+        ))}
+        {r.totalCents !== null && (
+          <div className="li">
+            <span className="grow b">Total</span>
+            <span className="price tnum">{brl(r.totalCents)}</span>
           </div>
-          <QuotePanel
-            quote={r.quote}
-            credits={r.credits}
-            hasItems={r.items.length > 0}
-            needEanHint={r.eanProgress.done === 0}
-            title={(g) => r.items.find((i) => i.gtin === g)?.displayName ?? g}
-            photo={(g) => r.items.find((i) => i.gtin === g)?.photoUrl ?? null}
-          />
-        </div>
+        )}
       </div>
 
       <div className="footbar">

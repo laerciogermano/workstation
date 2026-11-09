@@ -165,7 +165,7 @@ export function HomePage() {
       <ErrorBanner error={home.error} />
 
       {home.data && sections.length > 0 && (
-        <>
+        <div className="secbar">
           <nav className="chips" aria-label="Seções">
             {sections.map((s) => (
               <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
@@ -174,8 +174,8 @@ export function HomePage() {
               </button>
             ))}
           </nav>
-          <ProductViewToggle />
-        </>
+          <ProductViewToggle compact />
+        </div>
       )}
 
       {home.data && home.data.promotions.length === 0 && (

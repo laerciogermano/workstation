@@ -221,6 +221,26 @@ img { max-width: 100%; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 16px 12px; margin: 0 -16px; scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
 .chips.wrap { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0 0 10px; }
+/* Home: chips à esquerda + toggle compacto à direita, mesma linha */
+.secbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -16px 4px;
+  padding: 0 0 0 0;
+  min-width: 0;
+}
+.secbar .chips {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 2px 8px 10px 16px;
+}
+.secbar .viewbar.compact {
+  flex: none;
+  margin: 0 12px 8px 0;
+  padding: 0;
+}
 .chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--nt-line); background: var(--nt-surface); font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--nt-ink); flex: none; transition: background var(--dur-micro), color var(--dur-micro), transform var(--dur-micro) var(--spring); }
 button.chip:active { transform: scale(0.95); }
 .chip .i { width: 16px; height: 16px; }
@@ -351,6 +371,21 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .viewbar { display: flex; justify-content: flex-end; margin: 4px 0 12px; }
 .viewbar .seg { margin: 0; width: auto; max-width: 100%; }
 .viewbar .seg button { padding: 0 10px; font-size: 12px; gap: 4px; }
+.viewbar.compact .seg {
+  margin: 0;
+  padding: 3px;
+  background: var(--nt-surface);
+  border: 1px solid var(--nt-line);
+}
+.viewbar.compact .seg button {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  gap: 0;
+}
+.viewbar.compact .seg .i { width: 15px; height: 15px; }
+.seg.icons button { font-size: 0; }
 .pc { position: relative; background: var(--nt-surface); border: 1px solid var(--nt-line); border-radius: var(--nt-r-md); padding: 8px 9px 11px; display: flex; flex-direction: column; gap: 2px; color: inherit; transition: transform var(--dur-micro) var(--spring), border-color var(--dur-micro); }
 .pc.pc-sm { padding: 6px 7px 9px; }
 .pc.pc-sm .pn { font-size: 11.5px; min-height: 2.4em; }

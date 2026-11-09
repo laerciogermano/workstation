@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       // registro via `virtual:pwa-register` em main.tsx (com reload no update)
       injectRegister: false,
-      includeAssets: ['favicon.svg', 'media/*'],
+      includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'media/*'],
       manifest: {
         id: '/',
         name: 'notinhas.shop',
@@ -26,10 +26,11 @@ export default defineConfig({
         scope: '/',
         categories: ['shopping', 'lifestyle'],
         prefer_related_applications: false,
-        // Mesmo asset do favicon: fundo verde #00984B + tiras brancas (logo v2 · ícone Verde)
+        // Fundo verde #00984B + tiras brancas só (sem azul). PNG p/ iOS/Android; SVG cache-bust no HTML.
         icons: [
-          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
+          { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {

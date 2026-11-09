@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img">
   <title>notinhas.shop</title>
-  <!-- Ícone app/PWA: fundo verde marca (#00984B) + tiras brancas (logo v2 · opção Verde) -->
-  <rect width="256" height="256" rx="58" fill="#00984B"/>
+  <!-- Fundo verde sólido (sem transparência/cantos) — o SO arredonda; maskable não pode ter alpha. -->
+  <rect width="256" height="256" fill="#00984B"/>
   <g transform="translate(32 32) scale(0.75)">
     <path fill="#ffffff" d="M52 52 A12 12 0 0 1 64 40 L104 40 A12 12 0 0 1 116 52 L116 216 L84 184 L52 216 Z"/>
     <path fill="#ffffff" d="M140 52 A12 12 0 0 1 152 40 L192 40 A12 12 0 0 1 204 52 L204 136 L172 104 L140 136 Z"/>

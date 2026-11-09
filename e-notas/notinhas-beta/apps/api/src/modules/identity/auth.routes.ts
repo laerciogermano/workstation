@@ -98,6 +98,12 @@ export function authRoutes(deps: Deps): Router {
       if (!s) throw new AppError('UNAUTHENTICATED');
       // reuso: a revogação precisa ser gravada (commit), então não lançamos aqui dentro
       if (s.replaced_at || s.revoked_at) {
+        // corrida entre abas/SW nos primeiros segundos: não mata a família (REQ-071).
+        // ageMs pode ser negativo se o relógio do Postgres estiver um pouco à frente.
+        if (s.replaced_at && !s.revoked_at) {
+          const ageMs = Date.now() - new Date(s.replaced_at).getTime();
+          if (ageMs < 15_000) return { race: true } as const;
+        }
         await tx.query('UPDATE sessions SET revoked_at = now() WHERE family_id = $1 AND revoked_at IS NULL', [s.family_id]);
         return { reused: s.family_id } as const;
       }
@@ -105,6 +111,11 @@ export function authRoutes(deps: Deps): Router {
       await tx.query('UPDATE sessions SET replaced_at = now() WHERE id = $1', [s.session_id]);
       return { token: await issueSession(tx, req, res, s, s.family_id) } as const;
     });
+    if ('race' in out) {
+      // outra aba já rotacionou; cookie antigo some sem derrubar a sessão boa
+      res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth' });
+      throw new AppError('UNAUTHENTICATED');
+    }
     if ('reused' in out) {
       log.warn({ family: out.reused }, 'refresh token reutilizado: família revogada');
       res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth' });

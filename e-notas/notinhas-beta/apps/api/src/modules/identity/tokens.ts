@@ -1,7 +1,9 @@
 import { SignJWT, jwtVerify, errors } from 'jose';
 import { AppError } from '../../shared/http/problem.js';
 
-export const ACCESS_TTL_S = 15 * 60;
+/** Access JWT curto (memória no front). A sessão “fica logado” é o refresh. */
+export const ACCESS_TTL_S = 60 * 60;
+/** Cookie HttpOnly: 30 dias (faixa pedida 15–30). Sliding a cada refresh bem-sucedido. */
 export const REFRESH_TTL_DAYS = 30;
 export const REFRESH_COOKIE = 'nt_rt';
 

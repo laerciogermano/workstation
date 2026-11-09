@@ -570,7 +570,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Todas as telas do protótipo v2 (T-02…T-73, T-61..63) implementadas; desktop pelo mesmo componente com layout responsivo (REQ-057).
 - Regras de preço (RN-10, RN-11, RN-13), GTIN e chave NFC-e em funções puras compartilhadas por API e web, com testes.
 - Banco: schema próprio `notinhas` (bigint + uuid público, centavos, `timestamptz`), item único por linha da nota, posse da nota fora do índice público (RN-06); importador idempotente da base do lab.
-- Identidade: fingerprint guardado só como HMAC + IP do servidor; merge ao criar conta/entrar (REQ-050); JWT 15 min + refresh rotativo com detecção de reuso.
+- Identidade: fingerprint guardado só como HMAC + IP do servidor; merge ao criar conta/entrar (REQ-050); JWT 60 min + refresh 30 dias (REQ-071); reuso fora da janela de graça revoga a família.
 - Nota com falha na SEFAZ guarda o dono e entra em Minhas notas quando a nova tentativa der certo.
 - Fora deste corte: sugestão via `ean-serp`/Google Imagens (REQ-042/044), alertas por e-mail, 4 dos 6 temas (REQ-055).
 - Rollback: remover a pasta `notinhas-beta/` e o schema `notinhas` (`DROP SCHEMA notinhas CASCADE` — só com confirmação humana).
@@ -613,7 +613,8 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Estabelecimentos (`/lojas`, T-31): faixa de mapa no topo com **1 pin por estabelecimento** (posição no ranking); toque abre `/lojas/mapa`.
 - Mapa `/lojas/mapa` (T-32): só estabelecimentos (não pins de produto).
 - Vitrine da loja (`/lojas/:id`, T-33): faixa de mapa no topo com **pin do estabelecimento** + **pins de produto** (preço nesta loja, espalhados); toque abre `/lojas/mapa`.
-- Detalhe do produto (`/produto/:gtin`, T-14): `MapBanner` em **Perto de você**; **toque expande** para `/produto/:gtin/mapa` (T-30).
+- Detalhe do produto (`/produto/:gtin`, T-14): `MapBanner` **no topo da página, antes da foto** (prompt 047), um pin de preço por loja (menor em verde); **toque expande** para `/produto/:gtin/mapa` (T-30). “Perto de você” mantém as 2 lojas mais próximas.
+- O mapa da faixa usa a classe `inbanner` (não `banner`, que é o estilo de aviso e encolhia o mapa).
 - Rollback: remover `MapBanner` das páginas e voltar `ProductsMapPage` ao agregado por loja.
 
 ## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)
@@ -667,3 +668,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Após substituir o EAN, navega para a ficha do novo código.
 - Antes: Alterar só na nota/vitrine. Depois: também no detalhe do produto.
 - Rollback: remover `links` da API/DTO e os botões em `ProductPage.tsx`.
+
+## REQ-071 — Sessão longa + menu mobile (2026-11-09)
+
+- Sessão logada permanece **30 dias** (faixa 15–30): cookie `nt_rt` HttpOnly com `REFRESH_TTL_DAYS=30`, renovado (sliding) a cada refresh bem-sucedido.
+- Access JWT em memória: **60 min** (antes 15); boot/visibility sem token tenta refresh pelo cookie.
+- Reuso de refresh **nos primeiros 15 s** após rotação = corrida (abas/SW) → 401 sem revogar a família; reuso depois disso continua revogando (roubo).
+- Tabbar: FAB “adicionar nota” não pode ficar cortado (`overflow-x` só na row interna + padding-top); itens do menu um pouco menores; rótulos curtos (Nota / Gastos).
+- Home: sem ícone de Perfil no topo — Perfil só no menu de baixo (e sidenav).
+- Rollback: `ACCESS_TTL_S=15*60`; reuso sempre `REFRESH_REUSED`; tabbar com overflow no container; ícone user de volta no `HomePage`.

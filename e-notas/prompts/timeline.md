@@ -54,3 +54,5 @@ Como registrar: [`README.md`](README.md).
 | 044 | 2026-11-09 | Publicar Beta Contabo | [044-2026-11-09-publicar-notinhas-beta-contabo.md](044-2026-11-09-publicar-notinhas-beta-contabo.md) | `notinhas-beta` no ar em https://notinhas.shop/; lab em `/enotas/` `:4175`; REQ-061. |
 | 045 | 2026-11-09 | Mapa produtos + estabelecimentos | [045-2026-11-09-mapa-produtos-estabelecimentos.md](045-2026-11-09-mapa-produtos-estabelecimentos.md) | Faixa de mapa no topo; pins de produto na home/T-15; 1 pin por estabelecimento em T-31/T-32; REQ-062. |
 | 046 | 2026-11-09 | Viewport PWA app-like | [046-2026-11-09-viewport-pwa-app-like.md](046-2026-11-09-viewport-pwa-app-like.md) | Espelha RoleGo: sem zoom, metas apple, gestos, shell scroll; REQ-063. |
+| 047 | 2026-11-09 | Mapa no topo do produto | [047-2026-11-09-mapa-topo-produto.md](047-2026-11-09-mapa-topo-produto.md) | Produto: mapa no topo; faixa de mapa sem encolher (classe `inbanner`). |
+| 048 | 2026-11-09 | Tabbar, sessão, Perfil | [048-2026-11-09-tabbar-sessao-perfil.md](048-2026-11-09-tabbar-sessao-perfil.md) | FAB sem corte; menu menor; sessão 30 dias (REQ-071); Perfil só no menu de baixo. |

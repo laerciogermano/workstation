@@ -101,9 +101,6 @@ export function HomePage() {
             <Icon name="pin" />
           </Link>
           <ThemePicker />
-          <Link to="/perfil" viewTransition className="ib" aria-label="Perfil e configurações">
-            <Icon name="user" />
-          </Link>
         </header>
 
         {betaOpen && (

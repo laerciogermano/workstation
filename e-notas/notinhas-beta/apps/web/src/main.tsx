@@ -9,6 +9,7 @@ import { refreshSession } from './lib/api';
 import { ApiError } from './lib/api';
 import { installAppGestures } from './lib/app-gestures';
 import { clearChunkReloadFlag } from './lib/lazy-page';
+import { session } from './lib/session';
 import { installViewportHeightLock } from './lib/viewport-height';
 import { ToastProvider } from './ui/Toast';
 import { applyTheme } from './lib/theme';
@@ -29,8 +30,12 @@ applyTheme();
 clearChunkReloadFlag();
 // autoUpdate: novo SW → skipWaiting + reload (evita shell antigo pedindo chunks apagados)
 registerSW({ immediate: true });
-// sessão silenciosa: se houver cookie de refresh, já entra logado
+// sessão silenciosa: se houver cookie de refresh, já entra logado (cookie ~30 dias)
 await refreshSession().catch(() => false);
+// volta do background sem access em memória: restaura pelo cookie
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !session.token) void refreshSession().catch(() => false);
+});
 
 const root = document.getElementById('root');
 if (root) {

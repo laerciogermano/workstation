@@ -183,7 +183,8 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
     expect(r.status).toBe(200);
     expect(r.body.best).toMatchObject({ priceCents: 1199, store: { name: 'Jupiter' } });
     const s = JSON.stringify(r.body);
-    expect(s).not.toMatch(/visitor|user|ip|fingerprint/i);
+    // word-boundary: "description" contém "ip" e não é dado de pessoa
+    expect(s).not.toMatch(/"visitor"|"user"|"ip"|"fingerprint"/i);
     const busca = await request(app).get('/api/v1/produtos/busca').query({ q: 'leite' });
     expect(busca.body.unlinked[0]).toMatchObject({ storeCode: '34811' });
   });
@@ -227,16 +228,25 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
     expect(wrong.body.code).toBe('INVALID_CREDENTIALS');
   });
 
-  it('refresh rotaciona e reuso revoga a família', async () => {
+  it('refresh rotaciona; reuso imediato é corrida; reuso antigo revoga a família', async () => {
     const login = await request(app).post('/api/v1/auth/login').set(H).send({ email: 'ana@example.com', password: 'senha-forte-1' });
     const c1 = String(login.headers['set-cookie']).split(';')[0] ?? '';
     const r1 = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c1 });
     expect(r1.status).toBe(200);
-    const reuse = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c1 });
-    expect(reuse.body.code).toBe('REFRESH_REUSED');
+    // corrida (abas/SW): cookie velho logo após a rotação → 401 sem matar a família
+    const race = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c1 });
+    expect(race.status).toBe(401);
+    expect(race.body.code).toBe('UNAUTHENTICATED');
     const c2 = String(r1.headers['set-cookie']).split(';')[0] ?? '';
-    const r2 = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c2 });
-    expect(r2.status).toBe(401);
+    const stillOk = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c2 });
+    expect(stillOk.status).toBe(200);
+    const c3 = String(stillOk.headers['set-cookie']).split(';')[0] ?? '';
+    // simula reuso fora da janela de graça (roubo)
+    await db.query(`UPDATE sessions SET replaced_at = now() - interval '1 minute' WHERE replaced_at IS NOT NULL`);
+    const reuse = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c2 });
+    expect(reuse.body.code).toBe('REFRESH_REUSED');
+    const dead = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c3 });
+    expect(dead.status).toBe(401);
   });
 
   it('admin exige role; LGPD apaga dados pessoais e mantém o índice', async () => {

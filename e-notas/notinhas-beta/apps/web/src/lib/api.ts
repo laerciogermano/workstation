@@ -71,7 +71,8 @@ export async function api<T>(path: string, opts: Opts = {}): Promise<T> {
   let res: Response;
   try {
     res = await rawFetch(path, opts);
-    if (res.status === 401 && session.token && !path.startsWith('/auth/')) {
+    // Sem exigir token em memória: após reload/foco o cookie ainda vale (REQ-071).
+    if (res.status === 401 && !path.startsWith('/auth/')) {
       if (await refreshSession()) res = await rawFetch(path, opts);
     }
   } catch (e) {

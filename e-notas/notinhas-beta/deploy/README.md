@@ -22,6 +22,12 @@
 **Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  
 **Rollback:** reverter `apps/web/index.html`, `src/main.tsx`, `src/lib/app-gestures.ts`, `src/styles/app.css`, `vite.config.ts`.
 
+### Sessão / tabbar (REQ-071)
+
+- Refresh cookie `nt_rt`: **30 dias** (sliding); access JWT **60 min**; reuso &lt;15 s = corrida (não revoga família).
+- Tabbar: FAB sem clip (scroll na `.tabbar-row`); itens menores; Perfil só no menu (sem ícone no topo da home).
+- **Rollback:** `ACCESS_TTL_S=15*60` + reuso sempre `REFRESH_REUSED`; CSS/tabbar e ícone user na home como antes.
+
 ### Chunks stale pós-deploy (import module script fail)
 
 **Sintoma:** após `rsync --delete`, navegar p/ rota lazy (ex.: Perfil) → “Unexpected Application Error” / failed to fetch module; F5 resolve.  

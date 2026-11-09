@@ -68,35 +68,7 @@ function productPinCandidates(
 }
 
 /**
- * Pin do estabelecimento no centro exato (lat/lng da loja), sem mover produtos.
- * Um por loja presente nos pins de produto do mapa.
- */
-export function storeCenterPinsForProducts(
-  products: ProductCardDTO[],
-  ranking: StoreRankDTO[] | undefined,
-  opts: { limit?: number; onSelect?: (storeId: number) => void } = {},
-): MapPin[] {
-  const seen = new Set<number>();
-  const out: MapPin[] = [];
-  for (const c of productPinCandidates(products, ranking, opts.limit)) {
-    if (seen.has(c.storeId)) continue;
-    seen.add(c.storeId);
-    out.push({
-      id: `store-${c.storeId}`,
-      lat: c.lat,
-      lng: c.lng,
-      text: '·',
-      kind: 'store',
-      label: c.name,
-      ...(opts.onSelect ? { onClick: () => opts.onSelect!(c.storeId) } : {}),
-    });
-  }
-  return out;
-}
-
-/**
- * Pins de produto (preço) — anel em torno da loja do melhor preço.
- * Posições dos produtos não incluem o pin da loja (ver `storeCenterPinsForProducts`).
+ * Pins de produto (preço) — anel em torno da loja do melhor preço (sem pin de estabelecimento).
  */
 export function productPricePins(
   products: ProductCardDTO[],

@@ -2,13 +2,13 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { km, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
-import { homeProducts, productPricePins, storeCenterPinsForProducts, youPin } from '../../lib/map-pins';
+import { homeProducts, productPricePins, youPin } from '../../lib/map-pins';
 import { useHome, useRanking } from '../../lib/queries';
 import { Photo, Price } from '../../ui/bits';
 import { MapView } from '../../ui/MapView';
 import { TopBar } from '../../ui/TopBar';
 
-/** T-15 — loja no centro + produtos no anel (posições dos produtos intactas). */
+/** T-15 — pins = produtos no anel; sem pin de estabelecimento. */
 export default function ProductsMapPage() {
   const home = useHome();
   const ranking = useRanking();
@@ -16,11 +16,7 @@ export default function ProductsMapPage() {
   const products = useMemo(() => homeProducts(home.data), [home.data]);
   const [sel, setSel] = useState<string | null>(null);
   const pins = useMemo(
-    () => [
-      ...storeCenterPinsForProducts(products, ranking.data),
-      ...productPricePins(products, ranking.data, { selectedGtin: sel, onSelect: setSel }),
-      youPin(anchor),
-    ],
+    () => [...productPricePins(products, ranking.data, { selectedGtin: sel, onSelect: setSel }), youPin(anchor)],
     [products, ranking.data, sel, anchor],
   );
   const selected = products.find((p) => p.gtin === sel) ?? products[0] ?? null;

@@ -88,8 +88,10 @@ img { max-width: 100%; }
   container-type: size;
   container-name: shellbody;
 }
+/* 1 gesto vertical = próxima seção no topo; lateral dentro do .hscroll permanece livre */
 .shell-body.snap-y {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: 0;
 }
 .main {
   max-width: 560px;

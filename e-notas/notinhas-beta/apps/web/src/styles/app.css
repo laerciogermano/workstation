@@ -404,10 +404,10 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
   gap: 0;
 }
 .viewbar.compact .seg .i { width: 15px; height: 15px; }
-/* Opção ativa do seletor sm/md/lista: fundo preto + ícone branco. */
-.viewbar .seg button.on { color: var(--nt-white); }
+/* Opção ativa: cor de ação do tema ativo (`--nt-blue`) + ícone `--nt-on-primary`. */
+.viewbar .seg button.on { color: var(--nt-on-primary); }
 .viewbar .seg button.on .segpill {
-  background: var(--nt-black);
+  background: var(--nt-blue);
   box-shadow: none;
 }
 .seg.icons button { font-size: 0; }

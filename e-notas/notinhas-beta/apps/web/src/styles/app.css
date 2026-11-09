@@ -93,8 +93,14 @@ img { max-width: 100%; }
   scroll-snap-type: y mandatory;
   scroll-padding-top: 0;
 }
+/* Mesma altura de tela que .home-sec — senão o mandatory não sobe de Promoções ao mapa/busca */
 .home-top {
+  box-sizing: border-box;
+  min-height: 100cqh;
   scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 .main {
   max-width: 560px;

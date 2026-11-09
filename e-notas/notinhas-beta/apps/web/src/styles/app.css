@@ -224,17 +224,26 @@ img { max-width: 100%; }
 .search input::placeholder { font-size: 13.5px; color: var(--nt-muted); opacity: 1; }
 .search:focus-within { border-color: var(--nt-blue); box-shadow: 0 0 0 3px var(--nt-blue-soft); }
 .top .search { margin: 0; }
-/* Busca + seletor sm/md/lista na mesma linha (home produtos · vitrine loja). */
+/* Busca + seletor sm/md/lista na mesma linha (home produtos · vitrine loja).
+   `.search` tem width:100% — dentro da row isso ocupava a linha inteira e
+   empurrava/ocultava o toggle; forçamos width:auto + nowrap. */
 .search-row {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
   min-width: 0;
+  width: 100%;
 }
-.search-row .search { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
+.search-row .search {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto; /* sobrescreve .search { width: 100% } */
+  margin-bottom: 0;
+}
 .search-row .viewbar {
-  flex: none;
+  flex: 0 0 auto;
   margin: 0;
 }
 .search-row .viewbar.compact { margin: 0; padding: 0; }

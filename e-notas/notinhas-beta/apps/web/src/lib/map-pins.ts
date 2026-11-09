@@ -29,18 +29,20 @@ function coordsByStore(ranking: StoreRankDTO[] | undefined): Map<number, { name:
 }
 
 /**
- * Offset em torno da loja para pins no mesmo ponto não se empilharem.
- * Um único produto fica no ponto exato; vários formam um anel (~45 m).
- * Antes: ~15 m (1921) → agora ~45 m (mais legível no zoom, ainda perto da loja).
+ * Círculo em torno da loja: mesmo raio para todos, ângulos iguais (360°/N).
+ * 1 produto → ponto exato; N>1 → anel circular ~60 m (antes ~45 m).
  */
 export function nearStore(lat: number, lng: number, indexAmongStore: number, totalAtStore: number): { lat: number; lng: number } {
   if (totalAtStore <= 1 || indexAmongStore < 0) return { lat, lng };
-  const radiusDeg = 0.0004; // ~45 m
+  const radiusM = 60;
+  // ângulo uniforme no círculo; índice 0 no norte (−π/2)
   const angle = (2 * Math.PI * indexAmongStore) / totalAtStore - Math.PI / 2;
+  const metersPerDegLat = 111_320;
   const cosLat = Math.cos((lat * Math.PI) / 180) || 1;
+  const metersPerDegLng = metersPerDegLat * cosLat;
   return {
-    lat: lat + radiusDeg * Math.sin(angle),
-    lng: lng + (radiusDeg * Math.cos(angle)) / cosLat,
+    lat: lat + (radiusM * Math.sin(angle)) / metersPerDegLat,
+    lng: lng + (radiusM * Math.cos(angle)) / metersPerDegLng,
   };
 }
 

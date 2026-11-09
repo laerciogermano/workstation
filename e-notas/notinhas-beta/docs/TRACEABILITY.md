@@ -9,7 +9,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · resultados sempre `view=list` (sem `ProductViewToggle`); tabbar some só com busca ativa; cache limpo ao limpar/sair |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` na seção Perto de você → mapa; Alterar código / Trocar foto) | `GET /produtos/:gtin` (+ `links[]`) | RN-05, Q3, REQ-047/058/067 · mapa sai do topo e fica junto de Perto de você |
 | T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
-| T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins ancorados na loja do melhor preço + anel (~45 m) se vários na mesma loja; `MapPin.photoUrl` = foto principal |
+| T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins em círculo (~60 m, ângulos iguais) em torno da loja do melhor preço; `MapPin.photoUrl` = foto principal |
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
 | T-23/T-24 Scan EAN + VOCR | sheet câmera / foto | `scanner.tsx` `useCameraScanner` / `decodeImageFile` | `POST /codigos-barras` (+ `vocr`) | zxing + OCR (tesseract) em paralelo; OCR sozinho aceita GTIN válido se barras falham |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
@@ -18,7 +18,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos?q=` (SI5 + Google/Bing) | REQ-040/042/069; ≥30 candidatas; campo `q` editável; voto em `photo_registrations`; principal = mais votada |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
-| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: só pin do estabelecimento · item sem EAN: clique abre `LinkEanSheet`; após vínculo `onLinked` → `q.refetch()` (lista atualiza sem F5). `api` fetch usa `cache: 'no-store'` p/ não reusar GET com max-age=30 da API |
+| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · `ProductViewToggle` compact sempre na `.search-row` · mapa: só pin do estabelecimento · item sem EAN → `LinkEanSheet`; `onLinked` → `q.refetch()`; `api` `cache: 'no-store'` |
 | T-40 Minhas listas | `/listas` | `features/listas/ListsPage` | `GET/POST /listas` | REQ-051 |
 | T-42 Uma loja · T-41 Dividir · T-54 Gate | `/listas/:id` | `features/listas/ListPage` | `GET /listas/:id`, `PUT /listas/:id/itens/:gtin` | RN-13, REQ-052 |
 | (Adicionar à lista) | sheet | `features/listas/AddToListSheet` | `PUT /listas/:id/itens/:gtin` | — |

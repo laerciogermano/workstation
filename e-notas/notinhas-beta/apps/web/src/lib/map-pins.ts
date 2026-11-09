@@ -29,9 +29,24 @@ function coordsByStore(ranking: StoreRankDTO[] | undefined): Map<number, { name:
 }
 
 /**
- * Pins de produto (preço) — lat/lng = coordenada exata da loja do melhor preço
- * (`best.store` → ranking/`stores.lat|lng`). Sem jitter: vários produtos na mesma
- * loja compartilham o ponto (antes o protótipo espalhava ~120–140 m).
+ * Micro-offset em torno da loja (~12–20 m) para pins no mesmo ponto não se empilharem.
+ * Um único produto fica no ponto exato; vários formam um anel curto.
+ * Antes → depois: jitter largo do protótipo (~120 m) → sem offset → este anel curto.
+ */
+export function nearStore(lat: number, lng: number, indexAmongStore: number, totalAtStore: number): { lat: number; lng: number } {
+  if (totalAtStore <= 1 || indexAmongStore < 0) return { lat, lng };
+  const radiusDeg = 0.00014; // ~15 m
+  const angle = (2 * Math.PI * indexAmongStore) / totalAtStore - Math.PI / 2;
+  const cosLat = Math.cos((lat * Math.PI) / 180) || 1;
+  return {
+    lat: lat + radiusDeg * Math.sin(angle),
+    lng: lng + (radiusDeg * Math.cos(angle)) / cosLat,
+  };
+}
+
+/**
+ * Pins de produto (preço) — âncora = lat/lng da loja do melhor preço;
+ * micro-anel se houver mais de um produto na mesma loja.
  */
 export function productPricePins(
   products: ProductCardDTO[],
@@ -39,23 +54,37 @@ export function productPricePins(
   opts: { selectedGtin?: string | null; onSelect?: (gtin: string) => void; limit?: number } = {},
 ): MapPin[] {
   const coords = coordsByStore(ranking);
-  const placed: { p: ProductCardDTO; pin: Omit<MapPin, 'kind'> }[] = [];
+  type Row = { p: ProductCardDTO; storeId: number; lat: number; lng: number; name: string };
+  const candidates: Row[] = [];
   for (const p of products) {
-    if (opts.limit !== undefined && placed.length >= opts.limit) break;
+    if (opts.limit !== undefined && candidates.length >= opts.limit) break;
     const best = p.best;
     if (!best) continue;
     const s = coords.get(best.store.id);
     if (!s) continue;
-    const gtin = p.gtin;
+    candidates.push({ p, storeId: best.store.id, lat: s.lat, lng: s.lng, name: s.name });
+  }
+
+  const countByStore = new Map<number, number>();
+  const indexByStore = new Map<number, number>();
+  for (const c of candidates) countByStore.set(c.storeId, (countByStore.get(c.storeId) ?? 0) + 1);
+
+  const placed: { p: ProductCardDTO; pin: Omit<MapPin, 'kind'> }[] = [];
+  for (const c of candidates) {
+    const total = countByStore.get(c.storeId) ?? 1;
+    const idx = indexByStore.get(c.storeId) ?? 0;
+    indexByStore.set(c.storeId, idx + 1);
+    const at = nearStore(c.lat, c.lng, idx, total);
+    const gtin = c.p.gtin;
     placed.push({
-      p,
+      p: c.p,
       pin: {
         id: gtin,
-        lat: s.lat,
-        lng: s.lng,
-        text: pricePinText(best.priceCents),
-        label: `${p.title} · ${s.name}`,
-        photoUrl: p.photoUrl,
+        lat: at.lat,
+        lng: at.lng,
+        text: pricePinText(c.p.best!.priceCents),
+        label: `${c.p.title} · ${c.name}`,
+        photoUrl: c.p.photoUrl,
         ...(opts.onSelect ? { onClick: () => opts.onSelect!(gtin) } : {}),
       },
     });

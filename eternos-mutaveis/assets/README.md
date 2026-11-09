@@ -18,6 +18,10 @@ Imagens da obra.
 | `banner-cap-6-alfabeto-da-dualidade.jpg` | Cap. 6 em [`artigo.md`](../artigo.md) | Filme dourado (verbo entre estados), círculo escuro × luminoso, cubo wireframe, horizonte espelhado (assim em cima como embaixo) |
 | `banner-cap-7-superacao-adamica.jpg` | Cap. 7 em [`artigo.md`](../artigo.md) | Figura de pé com luz no peito (contraponto ao cap. 1), máscaras abandonadas, fluxo dourado ligando-a a uma árvore e à estrutura luminosa (Éden interior, de ator a autor) |
 
+## Pranchas P&B (livro v2)
+
+`gravuras/cap-1..7.jpg` ← `gravuras/_build_gravuras.py` a partir de `gravuras/originais/` (Wikimedia Commons, domínio público / CC0): 1 Dürer, Adão e Eva · 2 Dürer, São Jerônimo · 3 Goltzius, Íxion · 4 Flammarion · 5 Dürer, O desenhista · 6 Khunrath, oratório e laboratório · 7 Dürer, O Cavaleiro, a Morte e o Diabo. Usadas em `../livro-v2.html`. Apagar a pasta reverte.
+
 ## Reverter
 
 Remover a linha `![Banner do capítulo N…]` de `artigo.md` e apagar o arquivo correspondente; regenerar com o prompt acima (16:9).

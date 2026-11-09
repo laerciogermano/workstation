@@ -31,7 +31,12 @@ export default defineConfig({
         // T-71: últimos preços ficam em cache com a idade explícita na UI
         runtimeCaching: [
           {
-            urlPattern: ({ url, request }) => url.pathname.startsWith('/api/v1/') && request.method === 'GET' && !url.pathname.startsWith('/api/v1/admin'),
+            // JSON da API — não cachear proxy de imagem binária
+            urlPattern: ({ url, request }) =>
+              url.pathname.startsWith('/api/v1/') &&
+              request.method === 'GET' &&
+              !url.pathname.startsWith('/api/v1/admin') &&
+              !url.pathname.startsWith('/api/v1/imagens/'),
             handler: 'NetworkFirst',
             options: { cacheName: 'api', networkTimeoutSeconds: 6, expiration: { maxEntries: 200, maxAgeSeconds: 7 * 86400 } },
           },

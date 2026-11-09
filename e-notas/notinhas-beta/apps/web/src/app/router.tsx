@@ -3,9 +3,10 @@ import { createBrowserRouter } from 'react-router';
 import { Shell } from './Shell';
 import { NotFound } from './NotFound';
 
-// code-splitting por feature (só a home entra no bundle inicial)
+// code-splitting por feature (home + busca no bundle inicial: teclado abre no mesmo toque)
 import { HomePage } from '../features/produtos/HomePage';
-const SearchPage = lazy(() => import('../features/produtos/SearchPage'));
+import SearchPage from '../features/produtos/SearchPage';
+
 const ProductPage = lazy(() => import('../features/produtos/ProductPage'));
 const ProductsMapPage = lazy(() => import('../features/produtos/ProductsMapPage'));
 const ProductNearbyMapPage = lazy(() => import('../features/produtos/ProductNearbyMapPage'));

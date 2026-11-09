@@ -1,7 +1,7 @@
 import { isValidGtin } from '@notinhas/domain';
 import { CATEGORIES } from '@notinhas/domain';
 import type { ProductCardDTO } from '@notinhas/contracts';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { brl, when } from '../../lib/format';
 import { useSearch } from '../../lib/queries';
@@ -12,6 +12,9 @@ import { ProductCard } from '../../ui/ProductCard';
 import { Sheet } from '../../ui/Sheet';
 import { AddToListSheet } from '../listas/AddToListSheet';
 import { useCameraScanner, Viewfinder } from '../nota/scanner';
+
+/** Seletor estável para a home focar o campo no mesmo toque (teclado iOS). */
+export const SEARCH_INPUT_ATTR = 'data-nt-search';
 
 /** T-11 · T-72 — nome, marca ou EAN (8–14 dígitos com DV); itens sem EAN à parte (Q6). */
 export default function SearchPage() {
@@ -24,6 +27,11 @@ export default function SearchPage() {
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [scan, setScan] = useState(false);
   const go = useGo();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useLayoutEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
 
   const set = (k: string, v: string | null) => {
     const p = new URLSearchParams(params);
@@ -42,7 +50,19 @@ export default function SearchPage() {
         </button>
         <label className="search" style={{ viewTransitionName: 'search' }}>
           <Icon name="search" />
-          <input autoFocus value={q} onChange={(e) => set('q', e.target.value)} placeholder="Leite, Coca-Cola, 789…" aria-label="Buscar produto ou código de barras" inputMode="search" enterKeyHint="search" />
+          <input
+            ref={inputRef}
+            {...{ [SEARCH_INPUT_ATTR]: '' }}
+            value={q}
+            onChange={(e) => set('q', e.target.value)}
+            placeholder="Leite, Coca-Cola, 789…"
+            aria-label="Buscar produto ou código de barras"
+            inputMode="search"
+            enterKeyHint="search"
+            autoCapitalize="off"
+            autoCorrect="off"
+            autoComplete="off"
+          />
           {q && (
             <button onClick={() => set('q', null)} aria-label="Limpar">
               <Icon name="x" />

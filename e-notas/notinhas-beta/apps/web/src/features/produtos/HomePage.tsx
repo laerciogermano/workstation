@@ -2,7 +2,8 @@ import type { ProductCardDTO } from '@notinhas/contracts';
 import { CATEGORIES } from '@notinhas/domain';
 import type { IconName } from '../../ui/Icon';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router';
+import { flushSync } from 'react-dom';
+import { Link, useNavigate } from 'react-router';
 import { PageSkeleton } from '../../app/Shell';
 import { useAnchor } from '../../lib/location';
 import { homeProducts, productPricePins } from '../../lib/map-pins';
@@ -14,6 +15,7 @@ import { ProductCard } from '../../ui/ProductCard';
 import { Wordmark } from '../../ui/Wordmark';
 import { ThemePicker } from '../../ui/ThemePicker';
 import { AddToListSheet } from '../listas/AddToListSheet';
+import { SEARCH_INPUT_ATTR } from './SearchPage';
 
 /** T-10 · REQ-056: Promoções → Mais comprados → categorias; grade de 2 linhas rolando na horizontal. */
 export function HomePage() {
@@ -21,6 +23,7 @@ export function HomePage() {
   const ranking = useRanking();
   const me = useMe();
   const anchor = useAnchor();
+  const navigate = useNavigate();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [active, setActive] = useState('promocoes');
   const refs = useRef(new Map<string, HTMLElement>());
@@ -28,6 +31,14 @@ export function HomePage() {
     () => productPricePins(homeProducts(home.data), ranking.data, { limit: 24 }),
     [home.data, ranking.data],
   );
+
+  /** Abre /busca e foca o campo no mesmo toque — iOS só mostra o teclado se o focus vier do gesto. */
+  const openSearch = () => {
+    flushSync(() => {
+      navigate('/busca');
+    });
+    document.querySelector<HTMLInputElement>(`input[${SEARCH_INPUT_ATTR}]`)?.focus({ preventScroll: true });
+  };
 
   const sections = home.data
     ? [
@@ -74,10 +85,10 @@ export function HomePage() {
         </Link>
       </header>
 
-      <Link to="/busca" viewTransition className="search" style={{ viewTransitionName: 'search' }}>
+      <button type="button" className="search" style={{ viewTransitionName: 'search' }} onClick={openSearch} aria-label="Buscar produto ou código de barras">
         <Icon name="search" />
         <span>Buscar produto ou código de barras</span>
-      </Link>
+      </button>
 
       {anchor.mode === 'padrao' && (
         <Link to="/perfil/localizacao" className="banner">

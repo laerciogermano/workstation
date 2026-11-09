@@ -60,3 +60,4 @@ Como registrar: [`README.md`](README.md).
 | 048b | 2026-11-09 | Nota: para quem foi escrito | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | "Escrevi para as pessoas que buscam compreender as estruturas que regem a realidade e a existência…" |
 | 049 | 2026-11-09 | Nota: o conhecimento que alinha as lentes | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | Fecho da nota do autor reescrito com as lentes alinhadas. |
 | 050 | 2026-11-09 | Introdução: só alfabetização | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | Após “analfabetismo espiritual”, o objetivo fica “uma alfabetização” (sem repetir espiritual). |
+| 051 | 2026-11-09 | Introdução: paradigma | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | No ajuste de lentes, o que muda é o paradigma com que enxergamos. |

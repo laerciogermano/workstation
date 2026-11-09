@@ -1,0 +1,18 @@
+[
+  {"name":"01-login","href":"https://privacy.com.br/auth?route=sign-in"},
+  {"name":"02-signup","href":"https://privacy.com.br/auth?route=sign-up"},
+  {"name":"03-signup-creator","href":"https://privacy.com.br/auth?route=sign-up","note":"toggle Seja creator"},
+  {"name":"04-help","href":"https://privacy.com.br/help/pt"},
+  {"name":"05-termos","href":"https://privacy.com.br/termos"},
+  {"name":"06-como-funciona","href":"https://privacy.com.br/howitworks"},
+  {"name":"07-blog-features","href":"https://blog.privacy.com.br/guia-de-funcionalidades-da-privacy-que-todo-creator-precisa-conhecer/"},
+  {"name":"10-destaques","href":"https://privacy.com.br/topcreators?tab=destaques","note":"bottom nav Em alta = esta home"},
+  {"name":"11-top-creators","href":"https://privacy.com.br/topcreators?tab=top-creators"},
+  {"name":"12-feed","href":"https://privacy.com.br/"},
+  {"name":"15-search","href":"https://privacy.com.br/search"},
+  {"name":"16-chat","href":"https://privacy.com.br/chat"},
+  {"name":"17-notifications","href":"https://privacy.com.br/creator-hub"},
+  {"name":"18-wallet","href":"recarregar carteira (modal/flow)"},
+  {"name":"19-settings","href":"https://privacy.com.br/settings/creator"},
+  {"name":"20-user-menu","href":"overlay menu usuário"}
+]

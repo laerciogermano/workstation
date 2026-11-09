@@ -14,36 +14,47 @@ Site: https://privacy.com.br/ · card: `Trello/Clozzy 2028/Backlog/Inspecionar P
 
 Credenciais espelhadas em [`credenciais-privacy.txt`](credenciais-privacy.txt).
 
-## Prints
+## Prints mobile (canônico)
 
-Pasta [`prints/desktop/`](prints/desktop/) e [`prints/mobile/`](prints/mobile/) — mesmo nome em ambos.
+Pasta [`prints/mobile/`](prints/mobile/) — **1 print por página**, sem repetidos (hash). Viewport iPhone `390×844 @3x`.
+
+Recapturar:
+
+```bash
+cd clozzy/marca/benchmarking-concorrentes/privacy
+node capture-mobile.mjs
+```
 
 | Print | Tela |
 |-------|------|
-| `02-login` | Login (Email/CPF + senha + OAuth) |
-| `03-signup` / `03b-signup-creator` | Cadastro assinante / toggle creator |
-| `16-ready-submit` | Form preenchido + checklist senha + termos |
-| `18-submit-result` | Pós-submit → login + toast confirmação e-mail |
-| `19`–`20` | Tentativa login pré-confirmação |
-| `25-email-confirm` | Conta validada com sucesso |
-| `26-login-ready` | Login preenchido pós-confirmação |
-| `27-logged-home` | Onboarding pós-login (`/topcreators?tab=destaques`) |
-| `33-destaques` | Home Destaques (logado) |
-| `34-tab-em-alta` | Em alta |
-| `35-search` | Busca |
-| `36-messages` | Chat/messages |
-| `37-notifications` | Notificações |
-| `21`–`24` | Help / Termos / Blog features / Como funciona |
+| `01-login` | Auth login |
+| `02-signup` | Cadastro assinante |
+| `03-signup-creator` | Cadastro creator (toggle) |
+| `04-help` | Central de ajuda |
+| `05-termos` | Termos (`/termos`) |
+| `06-como-funciona` | Como funciona |
+| `07-blog-features` | Blog — guia de funcionalidades |
+| `10-destaques` | Destaques (bottom nav “Em alta” = esta home) |
+| `11-top-creators` | Ranking Top Creators |
+| `12-feed` | Feed |
+| `15-search` | Busca |
+| `16-chat` | Conversas |
+| `17-notifications` | Notificações (Laranjinha) |
+| `18-wallet` | Recarregar carteira |
+| `19-settings` | Configurações de perfil |
+| `20-user-menu` | Menu do usuário |
+
+**Antes → depois:** mobile tinha dezenas de PNGs com hashes iguais (feed copiado como wallet/chat/etc.). Agora só páginas distintas. Desktop em [`prints/desktop/`](prints/desktop/) ainda é legado (inclui passos de signup).
 
 ## Docs
 
-- **Documento único:** [`benchmarking-privacy.html`](benchmarking-privacy.html) / [`benchmarking-privacy.pdf`](benchmarking-privacy.pdf) — resumo + funcionalidades + IA + todos os prints
+- **Documento único:** [`benchmarking-privacy.html`](benchmarking-privacy.html) / [`benchmarking-privacy.pdf`](benchmarking-privacy.pdf)
 - [`funcionalidades.md`](funcionalidades.md) — inventário web + “app”
 - [`ia.md`](ia.md) — política / produto / promessa IA
 
 ## App
 
-**Não há app nativo** nas stores. Experiência mobile = web responsiva + “Adicionar à tela inicial” (PWA-like). Ver prints `mobile/`.
+**Não há app nativo** nas stores. Experiência mobile = web responsiva + “Adicionar à tela inicial” (PWA-like).
 
 ## E-mail lab (pré-requisito do cadastro)
 

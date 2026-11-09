@@ -74,7 +74,8 @@ export function HomePage() {
       ]
     : [];
 
-  // Snap vertical só depois do 1º gesto do usuário — senão o mandatory pula o topo e cai em Promoções.
+  // Snap só após rolagem real para baixo. pointerdown NÃO arma (tap no mapa/busca pulava p/ Promoções).
+  // .home-top é snap-alvo para subir de volta ao mapa/busca.
   useEffect(() => {
     const body = document.querySelector('.shell-body');
     if (!(body instanceof HTMLElement)) return;
@@ -84,26 +85,33 @@ export function HomePage() {
     };
     stickTop();
     requestAnimationFrame(stickTop);
+    const t1 = window.setTimeout(stickTop, 50);
+    const t2 = window.setTimeout(stickTop, 200);
 
     let armed = false;
     const armSnap = () => {
       if (armed) return;
       armed = true;
       body.classList.add('snap-y');
-      body.removeEventListener('wheel', armSnap);
-      body.removeEventListener('touchstart', armSnap);
-      body.removeEventListener('pointerdown', armSnap);
+      body.removeEventListener('wheel', onWheel);
+      body.removeEventListener('scroll', onScroll);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) armSnap();
+    };
+    const onScroll = () => {
+      if (body.scrollTop > 32) armSnap();
     };
 
-    body.addEventListener('wheel', armSnap, { passive: true });
-    body.addEventListener('touchstart', armSnap, { passive: true });
-    body.addEventListener('pointerdown', armSnap, { passive: true });
+    body.addEventListener('wheel', onWheel, { passive: true });
+    body.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
       body.classList.remove('snap-y');
-      body.removeEventListener('wheel', armSnap);
-      body.removeEventListener('touchstart', armSnap);
-      body.removeEventListener('pointerdown', armSnap);
+      body.removeEventListener('wheel', onWheel);
+      body.removeEventListener('scroll', onScroll);
     };
   }, []);
 
@@ -120,95 +128,97 @@ export function HomePage() {
 
   return (
     <>
-      <header className="top brandtop">
-        <Wordmark />
-        <span className="sp" />
-        {me.data?.user && (
-          <Link to="/pontos" className="ptschip" aria-label="Pontos">
-            <Icon name="award" />
-            <span className="tnum">{me.data.points}</span>
+      <div className="home-top" id="topo">
+        <header className="top brandtop">
+          <Wordmark />
+          <span className="sp" />
+          {me.data?.user && (
+            <Link to="/pontos" className="ptschip" aria-label="Pontos">
+              <Icon name="award" />
+              <span className="tnum">{me.data.points}</span>
+            </Link>
+          )}
+          <Link to="/mapa" viewTransition className="ib" aria-label="Mapa de produtos">
+            <Icon name="pin" />
+          </Link>
+          <ThemePicker />
+          <Link to="/perfil" viewTransition className="ib" aria-label="Perfil e configurações">
+            <Icon name="user" />
+          </Link>
+        </header>
+
+        {betaOpen && (
+          <div className="banner beta" role="status">
+            <Icon name="info" />
+            <span>
+              <b>Beta</b> · versão em desenvolvimento
+            </span>
+            <span className="beta-ver tnum" title={`build ${__BUILD_ID__}`}>
+              v{__APP_VERSION__} · {__BUILD_ID__}
+            </span>
+            <button type="button" className="ib" onClick={dismissBeta} aria-label="Fechar aviso">
+              <Icon name="x" />
+            </button>
+          </div>
+        )}
+
+        <label className="search" style={{ viewTransitionName: 'search' }}>
+          <Icon name="search" />
+          <input
+            type="search"
+            readOnly
+            value=""
+            placeholder="Buscar produto ou código de barras"
+            aria-label="Buscar produto ou código de barras"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            onFocus={openSearch}
+            onClick={openSearch}
+          />
+        </label>
+
+        {anchor.mode === 'padrao' && (
+          <Link to="/perfil/localizacao" className="banner">
+            <Icon name="nav" />
+            <span>
+              Mostrando preços perto do <b>{anchor.label}</b>. Use sua localização para ver o que fica mais perto.
+            </span>
+            <Icon name="next" />
           </Link>
         )}
-        <Link to="/mapa" viewTransition className="ib" aria-label="Mapa de produtos">
-          <Icon name="pin" />
-        </Link>
-        <ThemePicker />
-        <Link to="/perfil" viewTransition className="ib" aria-label="Perfil e configurações">
-          <Icon name="user" />
-        </Link>
-      </header>
 
-      {betaOpen && (
-        <div className="banner beta" role="status">
-          <Icon name="info" />
-          <span>
-            <b>Beta</b> · versão em desenvolvimento
-          </span>
-          <span className="beta-ver tnum" title={`build ${__BUILD_ID__}`}>
-            v{__APP_VERSION__} · {__BUILD_ID__}
-          </span>
-          <button type="button" className="ib" onClick={dismissBeta} aria-label="Fechar aviso">
-            <Icon name="x" />
-          </button>
-        </div>
-      )}
-
-      <label className="search" style={{ viewTransitionName: 'search' }}>
-        <Icon name="search" />
-        <input
-          type="search"
-          readOnly
-          value=""
-          placeholder="Buscar produto ou código de barras"
-          aria-label="Buscar produto ou código de barras"
-          inputMode="search"
-          enterKeyHint="search"
-          autoComplete="off"
-          onFocus={openSearch}
-          onClick={openSearch}
+        <MapBanner
+          to="/mapa"
+          pins={productPins}
+          center={anchor}
+          radiusKm={Math.min(anchor.radiusKm, 4)}
+          caption={`${productPins.length} produto${productPins.length === 1 ? '' : 's'} perto`}
         />
-      </label>
 
-      {anchor.mode === 'padrao' && (
-        <Link to="/perfil/localizacao" className="banner">
-          <Icon name="nav" />
-          <span>
-            Mostrando preços perto do <b>{anchor.label}</b>. Use sua localização para ver o que fica mais perto.
-          </span>
-          <Icon name="next" />
-        </Link>
-      )}
+        {home.isPending && <PageSkeleton bare />}
+        <ErrorBanner error={home.error} />
 
-      <MapBanner
-        to="/mapa"
-        pins={productPins}
-        center={anchor}
-        radiusKm={Math.min(anchor.radiusKm, 4)}
-        caption={`${productPins.length} produto${productPins.length === 1 ? '' : 's'} perto`}
-      />
+        {home.data && sections.length > 0 && (
+          <div className="secbar">
+            <nav className="chips" aria-label="Seções">
+              {sections.map((s) => (
+                <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                  <Icon name={s.icon} />
+                  {s.name}
+                </button>
+              ))}
+            </nav>
+            <ProductViewToggle compact />
+          </div>
+        )}
 
-      {home.isPending && <PageSkeleton bare />}
-      <ErrorBanner error={home.error} />
-
-      {home.data && sections.length > 0 && (
-        <div className="secbar">
-          <nav className="chips" aria-label="Seções">
-            {sections.map((s) => (
-              <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-                <Icon name={s.icon} />
-                {s.name}
-              </button>
-            ))}
-          </nav>
-          <ProductViewToggle compact />
-        </div>
-      )}
-
-      {home.data && home.data.promotions.length === 0 && (
-        <Empty icon="receipt" title="Ainda não há preços aqui.">
-          Escaneie a primeira nota do bairro — cada cupom vira preço para todo mundo.
-        </Empty>
-      )}
+        {home.data && home.data.promotions.length === 0 && (
+          <Empty icon="receipt" title="Ainda não há preços aqui.">
+            Escaneie a primeira nota do bairro — cada cupom vira preço para todo mundo.
+          </Empty>
+        )}
+      </div>
 
       {sections.map((s) =>
         s.products.length ? (

@@ -88,10 +88,13 @@ img { max-width: 100%; }
   container-type: size;
   container-name: shellbody;
 }
-/* Snap só com .snap-y (ligado após o 1º gesto). Sem stop:always — sobe para seções anteriores sem travar. */
+/* Snap só com .snap-y (após rolagem p/ baixo). home-top = alvo p/ voltar ao mapa/busca. */
 .shell-body.snap-y {
   scroll-snap-type: y mandatory;
   scroll-padding-top: 0;
+}
+.home-top {
+  scroll-snap-align: start;
 }
 .main {
   max-width: 560px;

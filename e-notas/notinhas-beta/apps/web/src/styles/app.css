@@ -293,11 +293,31 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .row .b { font-size: 13.5px; line-height: 1.3; }
 
 .hscroll { display: grid; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-auto-columns: 152px; gap: 10px; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+.hscroll.view-sm { grid-auto-columns: 112px; }
+.hscroll.view-md { grid-auto-columns: 152px; }
+.hscroll.view-list { display: flex; flex-direction: column; grid: none; overflow: visible; margin: 0; padding: 0; gap: 8px; }
 .hscroll.one { grid-template-rows: auto; }
 .hscroll::-webkit-scrollbar { display: none; }
 .hscroll .pc { scroll-snap-align: start; }
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.pgrid.view-sm { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.pgrid.view-md { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.pgrid.view-list { display: flex; flex-direction: column; gap: 8px; }
+.viewbar { display: flex; justify-content: flex-end; margin: 4px 0 12px; }
+.viewbar .seg { margin: 0; width: auto; max-width: 100%; }
+.viewbar .seg button { padding: 0 10px; font-size: 12px; gap: 4px; }
 .pc { position: relative; background: var(--nt-surface); border: 1px solid var(--nt-line); border-radius: var(--nt-r-md); padding: 8px 9px 11px; display: flex; flex-direction: column; gap: 2px; color: inherit; transition: transform var(--dur-micro) var(--spring), border-color var(--dur-micro); }
+.pc.pc-sm { padding: 6px 7px 9px; }
+.pc.pc-sm .pn { font-size: 11.5px; min-height: 2.4em; }
+.pc.pc-sm .pp .price { font-size: 15px; }
+.pc.pc-sm .pm { font-size: 10.5px; }
+.pc.pc-list { flex-direction: row; align-items: center; gap: 12px; padding: 10px 12px; }
+.pc.pc-list .phwrap { flex: none; width: 56px; }
+.pc.pc-list .ph { margin-bottom: 0; }
+.pc.pc-list .pc-list-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pc.pc-list .pn { min-height: 0; -webkit-line-clamp: 2; margin-top: 2px; }
+.pc.pc-list .pc-list-end { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.pc.pc-list .add { position: static; width: 34px; height: 34px; }
 /* Espaço extra entre chip “menor preço”/“promoção” e o título do produto */
 .pc > .pn { margin-top: 6px; }
 .pc:hover { border-color: var(--nt-line-strong); }
@@ -305,6 +325,8 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .phwrap { position: relative; }
 .pc .add { position: absolute; bottom: 14px; right: 6px; width: 34px; height: 34px; border-radius: 50%; background: var(--nt-blue); color: var(--nt-on-primary); display: grid; place-items: center; box-shadow: 0 4px 10px color-mix(in srgb, var(--nt-blue) 35%, transparent); }
 .pc .add .i { width: 18px; height: 18px; }
+.cand .cand-votes { position: absolute; right: 8px; top: 8px; left: auto; bottom: auto; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: var(--nt-blue-deep); color: var(--nt-on-primary); }
+.cand .cand-votes.primary { background: var(--nt-green); }
 /* Foto sempre inteira no quadro. img preenche o box (object-fit) — % em grid colapsava a 0×0. */
 .ph {
   position: relative;
@@ -433,7 +455,8 @@ dt { color: var(--nt-muted); }
 .okdot { width: 28px; height: 28px; border-radius: 50%; background: var(--nt-green-soft); color: var(--nt-green); display: grid; place-items: center; flex: none; }
 .okdot .i { width: 15px; height: 15px; stroke-width: 2.6; }
 
-.cam { position: relative; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: radial-gradient(ellipse at 50% 38%, color-mix(in srgb, var(--nt-blue-deep) 55%, var(--nt-scan)) 0%, var(--nt-scan) 68%); padding: 72px 16px 220px; overflow: hidden; }
+/* Fundo 100% preto — sem halo azul (evita look “IA” no scan / colar link) */
+.cam { position: relative; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: #000; padding: 72px 16px 220px; overflow: hidden; }
 .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
 .cam > p { color: color-mix(in srgb, var(--nt-white) 82%, transparent); font-size: 14px; position: relative; text-align: center; }
 .cam.short { min-height: 0; height: 330px; padding: 40px 16px; border-radius: 0 0 24px 24px; }

@@ -22,6 +22,12 @@
 **Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  
 **Rollback:** reverter `apps/web/index.html`, `src/main.tsx`, `src/lib/app-gestures.ts`, `src/styles/app.css`, `vite.config.ts`.
 
+### Scan QR (REQ-072)
+
+- Motor QR: **`qr-scanner` (Nimiq)** em `apps/web/.../scanner.tsx` (`QR_SCAN_ENGINE`); EAN continua `@zxing` + tesseract.
+- Antes: QR no `@zxing/browser`. Próximo rodízio: `html5-qrcode` / `@yudiel/react-qr-scanner`.
+- Rollback: reverter `scanner.tsx` + `package.json` (`qr-scanner`).
+
 ### Sessão / tabbar (REQ-071)
 
 - Refresh cookie `nt_rt`: **30 dias** (sliding); access JWT **60 min**; reuso &lt;15 s = corrida (não revoga família).

@@ -11,6 +11,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
 | T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · só pins de produto no anel (~60 m); sem pin de estabelecimento; `MapPin.photoUrl` |
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
+| T-20/T-21 Scan QR | `ScanPage` câmera / foto | `scanner.tsx` (`QR_SCAN_ENGINE=qr-scanner`) | `POST /notas` | QR: `qr-scanner` (Nimiq); EAN: zxing (REQ-072) |
 | T-23/T-24 Scan EAN + VOCR | sheet câmera / foto | `scanner.tsx` `useCameraScanner` / `decodeImageFile` | `POST /codigos-barras` (+ `vocr`) | zxing + OCR (tesseract) em paralelo; OCR sozinho aceita GTIN válido se barras falham |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
 | T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe (+ T-41/T-42 cotação) | `/notas/:id` | `features/nota/ReceiptResultPage` + `ui/QuotePanel` | `GET /notas/:id` (+ geo · quote/credits) | RN-02, RN-03, RN-06, RN-13, REQ-046 · layout: info → Comparar preços → Itens |

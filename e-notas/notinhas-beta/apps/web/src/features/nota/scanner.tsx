@@ -4,21 +4,38 @@ import { isValidGtin, normalizeGtin } from '@notinhas/domain';
 
 export type ScanMode = 'qr' | 'ean';
 
-/** Resultado: barras (zxing) e/ou VOCR (OCR dos dígitos impressos). */
+/**
+ * Motor de scan (rodízio para comparar qualidade):
+ * - QR: `qr-scanner` (Nimiq) — BarcodeDetector nativo + worker jsQR
+ * - EAN: `@zxing/browser` + OCR (tesseract)
+ * Anterior (QR): só `@zxing/browser`. Próximas candidatas: html5-qrcode, @yudiel/react-qr-scanner.
+ */
+export const QR_SCAN_ENGINE = 'qr-scanner' as const;
+
+/** Resultado: barras e/ou VOCR (OCR dos dígitos impressos). */
 export interface ScanHit {
   code: string;
   /** Dígitos lidos por OCR; null se OCR falhou ou modo QR. */
   vocr: string | null;
 }
 
-/** zxing carregado só quando a câmera abre (fora do bundle inicial). */
-async function createReader(mode: ScanMode): Promise<Reader> {
-  const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')]);
-  const formats =
-    mode === 'qr'
-      ? [BarcodeFormat.QR_CODE]
-      : [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.ITF];
+/** zxing só para EAN (QR usa qr-scanner). Lazy fora do bundle inicial. */
+async function createEanReader(): Promise<Reader> {
+  const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([
+    import('@zxing/browser'),
+    import('@zxing/library'),
+  ]);
+  const formats = [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.ITF];
   return new BrowserMultiFormatReader(new Map([[DecodeHintType.POSSIBLE_FORMATS, formats]]));
+}
+
+async function loadQrScanner() {
+  const [{ default: QrScanner }, workerUrl] = await Promise.all([
+    import('qr-scanner'),
+    import('qr-scanner/qr-scanner-worker.min.js?url'),
+  ]);
+  QrScanner.WORKER_PATH = workerUrl.default;
+  return QrScanner;
 }
 
 /** Extrai a melhor sequência numérica (8–14) do texto OCR. */
@@ -94,20 +111,33 @@ async function readVocrFromBitmap(file: File): Promise<string | null> {
   }
 }
 
+async function decodeQrImage(file: File): Promise<string | null> {
+  const QrScanner = await loadQrScanner();
+  try {
+    const result = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
+    const text = typeof result === 'string' ? result : result.data;
+    return text?.trim() ? text.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Decodifica QR/EAN de uma foto (T-21, T-24). No EAN: zxing + OCR; se barras falham, OCR sozinho pode fechar. */
 export async function decodeImageFile(file: File, mode: ScanMode): Promise<ScanHit | null> {
-  const reader = await createReader(mode);
+  if (mode === 'qr') {
+    const code = await decodeQrImage(file);
+    return code ? { code, vocr: null } : null;
+  }
+
+  const reader = await createEanReader();
   const url = URL.createObjectURL(file);
   try {
     try {
       const r = await reader.decodeFromImageUrl(url);
       const code = r.getText();
-      if (mode !== 'ean') return { code, vocr: null };
       const vocr = await readVocrFromBitmap(file);
       return { code, vocr: validEan(vocr) ?? vocr };
     } catch {
-      if (mode !== 'ean') return null;
-      // Barras ilegíveis → tenta só OCR.
       const vocr = await readVocrFromBitmap(file);
       const code = validEan(vocr);
       return code ? { code, vocr: code } : null;
@@ -120,8 +150,8 @@ export async function decodeImageFile(file: File, mode: ScanMode): Promise<ScanH
 export type CameraState = 'starting' | 'live' | 'denied' | 'unsupported';
 
 /**
- * Câmera contínua (RN-07: HTTPS). Modo EAN: zxing e OCR em paralelo —
- * OCR periódico pega VOCR quando as barras não decodificam.
+ * Câmera contínua (RN-07: HTTPS).
+ * QR → qr-scanner; EAN → zxing + OCR periódico.
  */
 export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => void, enabled = true) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -135,7 +165,7 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
   useEffect(() => {
     if (!enabled) return;
     let stopped = false;
-    let controls: { stop: () => void } | null = null;
+    let stopCamera: (() => void) | null = null;
     let ocrTimer: ReturnType<typeof setInterval> | null = null;
     let ocrWorker: OcrWorker | null = null;
     let ocrRunning = false;
@@ -158,22 +188,62 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
 
     (async () => {
       try {
-        const reader = await createReader(mode);
-        if (stopped || !videoRef.current) return;
-        controls = await reader.decodeFromConstraints({ video: { facingMode: 'environment' } }, videoRef.current, (result) => {
-          if (!result || stopped || busy.current) return;
-          void (async () => {
-            const code = result.getText();
-            let vocr: string | null = null;
-            if (mode === 'ean' && videoRef.current) {
-              vocr = await readVocrFromVideo(videoRef.current, ocrWorker);
-            }
-            emit({ code, vocr: validEan(vocr) ?? vocr });
-          })();
-        });
+        if (!videoRef.current) return;
 
-        // OCR em paralelo ao zxing (só EAN): se as barras falham, o número impresso ainda pode valer.
-        if (mode === 'ean') {
+        if (mode === 'qr') {
+          const QrScanner = await loadQrScanner();
+          if (stopped || !videoRef.current) return;
+          const scanner = new QrScanner(
+            videoRef.current,
+            (result) => {
+              const code = typeof result === 'string' ? result : result.data;
+              if (!code?.trim() || stopped || busy.current) return;
+              emit({ code: code.trim(), vocr: null });
+            },
+            {
+              preferredCamera: 'environment',
+              maxScansPerSecond: 12,
+              returnDetailedScanResult: true,
+              // Região um pouco maior que o default (2/3) — cupom NFC-e costuma ter QR pequeno no rodapé.
+              calculateScanRegion: (video) => {
+                const smallest = Math.min(video.videoWidth, video.videoHeight);
+                const size = Math.floor(smallest * 0.85);
+                return {
+                  x: Math.floor((video.videoWidth - size) / 2),
+                  y: Math.floor((video.videoHeight - size) / 2),
+                  width: size,
+                  height: size,
+                  downScaledWidth: 480,
+                  downScaledHeight: 480,
+                };
+              },
+            },
+          );
+          await scanner.start();
+          stopCamera = () => {
+            scanner.stop();
+            scanner.destroy();
+          };
+        } else {
+          const reader = await createEanReader();
+          if (stopped || !videoRef.current) return;
+          const controls = await reader.decodeFromConstraints(
+            { video: { facingMode: 'environment' } },
+            videoRef.current,
+            (result) => {
+              if (!result || stopped || busy.current) return;
+              void (async () => {
+                const code = result.getText();
+                let vocr: string | null = null;
+                if (videoRef.current) {
+                  vocr = await readVocrFromVideo(videoRef.current, ocrWorker);
+                }
+                emit({ code, vocr: validEan(vocr) ?? vocr });
+              })();
+            },
+          );
+          stopCamera = () => controls.stop();
+
           try {
             ocrWorker = await createOcrWorker();
           } catch {
@@ -194,7 +264,7 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
           }, 1600);
         }
 
-        if (stopped) controls.stop();
+        if (stopped) stopCamera?.();
         else setState('live');
       } catch (e) {
         if (!stopped) setState(e instanceof DOMException && e.name === 'NotAllowedError' ? 'denied' : 'unsupported');
@@ -203,7 +273,7 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
 
     return () => {
       stopped = true;
-      controls?.stop();
+      stopCamera?.();
       if (ocrTimer) clearInterval(ocrTimer);
       void ocrWorker?.terminate().catch(() => undefined);
     };

@@ -678,3 +678,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Home: sem ícone de Perfil no topo — Perfil só no menu de baixo (e sidenav).
 - `/auth` rate limit 60/min; refresh em 429 **não** zera a sessão no front.
 - Rollback: `ACCESS_TTL_S=15*60`; reuso sempre `REFRESH_REUSED`; tabbar antiga; ícone user na home; limiter(20) em `/auth`.
+
+## REQ-072 — Motor de scan QR trocável (2026-11-09)
+
+- Scan do **QR da NFC-e** (câmera + foto) usa motor dedicado e testável em rodízio; EAN permanece em `@zxing` + OCR.
+- Motor atual: **`qr-scanner` (Nimiq)** — BarcodeDetector nativo quando houver, senão worker jsQR; região de scan ~85% do menor lado.
+- Antes: QR e EAN no `@zxing/browser` (detecção fraca no cupom).
+- Próximas candidatas se ainda falhar: `html5-qrcode`, `@yudiel/react-qr-scanner`.
+- Constante `QR_SCAN_ENGINE` em `apps/web/src/features/nota/scanner.tsx`.
+- Rollback: reverter `scanner.tsx` + remover dep `qr-scanner` (voltar QR no zxing).

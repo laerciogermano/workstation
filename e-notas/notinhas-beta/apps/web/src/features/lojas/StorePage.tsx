@@ -1,16 +1,56 @@
 import type { ProductCardDTO, UnlinkedItemDTO } from '@notinhas/contracts';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { brl, km, when } from '../../lib/format';
+import { useAnchor } from '../../lib/location';
+import { jitter, pricePinText } from '../../lib/map-pins';
 import { useStore, useSuggestions } from '../../lib/queries';
 import { Chip, Empty, ErrorBanner, Progress, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
+import { MapBanner } from '../../ui/MapBanner';
+import type { MapPin } from '../../ui/MapView';
 import { ProductCard } from '../../ui/ProductCard';
 import { Segmented } from '../../ui/Segmented';
 import { TopBar } from '../../ui/TopBar';
 import { AddToListSheet } from '../listas/AddToListSheet';
 import { LinkEanSheet, type LinkTarget } from '../nota/LinkEanSheet';
 import { rankText } from './StoreRow';
+
+/** Pins da vitrine: produtos com preço nesta loja (espalhados no mesmo ponto) + pin do estabelecimento. */
+function storeVitrinePins(
+  store: { id: number; name: string; lat: number | null; lng: number | null; position: number | null },
+  products: { gtin: string; title: string; here: { priceCents: number } }[],
+): MapPin[] {
+  if (store.lat === null || store.lng === null) return [];
+  const lat = store.lat;
+  const lng = store.lng;
+  const productPins: MapPin[] = products.slice(0, 24).map((p, i) => {
+    const at = jitter(lat, lng, i + 1);
+    return {
+      id: p.gtin,
+      lat: at.lat,
+      lng: at.lng,
+      text: pricePinText(p.here.priceCents),
+      kind: 'price' as const,
+      label: `${p.title} · ${store.name}`,
+    };
+  });
+  const min = Math.min(...productPins.map((p) => products.find((x) => x.gtin === p.id)?.here.priceCents ?? Infinity));
+  return [
+    {
+      id: `store-${store.id}`,
+      lat,
+      lng,
+      text: store.position ? String(store.position) : '·',
+      kind: 'store',
+      label: store.name,
+    },
+    ...productPins.map((p) => ({
+      ...p,
+      kind: (products.find((x) => x.gtin === p.id)?.here.priceCents === min ? 'best' : 'price') as MapPin['kind'],
+    })),
+  ];
+}
 
 /** T-33 vitrine · T-34 item sem EAN com sugestão inline (REQ-039/043). Só leitura de preços (sem checkout — ADR-009). */
 export default function StorePage() {
@@ -20,14 +60,20 @@ export default function StorePage() {
   const [tab, setTab] = useState<'com' | 'sem'>(focus ? 'sem' : 'com');
   const [term, setTerm] = useState('');
   const q = useStore(Number(id), useDeferredValue(term));
+  const anchor = useAnchor();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [target, setTarget] = useState<LinkTarget | null>(null);
   const [open, setOpen] = useState<string | null>(focus);
   const d = q.data;
+  const pins = useMemo(
+    () => (d ? storeVitrinePins({ ...d.rank.store, position: d.rank.position }, d.withEan) : []),
+    [d],
+  );
 
   if (q.isPending) return <><TopBar title="" /><Skel h={120} r={16} /><Skel h={300} r={16} /></>;
   if (!d) return <><TopBar title="Loja" /><ErrorBanner error={q.error} /><StateView icon="store" title="Loja não encontrada" /></>;
   const s = d.rank.store;
+  const mapCenter = s.lat !== null && s.lng !== null ? { lat: s.lat, lng: s.lng } : anchor;
 
   return (
     <>
@@ -40,6 +86,17 @@ export default function StorePage() {
               <Icon name="nav" />
             </a>
           )
+        }
+      />
+      <MapBanner
+        to="/lojas/mapa"
+        pins={pins}
+        center={mapCenter}
+        radiusKm={Math.min(anchor.radiusKm, 4)}
+        caption={
+          pins.length > 1
+            ? `${d.withEan.length} produto${d.withEan.length === 1 ? '' : 's'} neste estabelecimento`
+            : s.name
         }
       />
       <div className="card pad">

@@ -16,7 +16,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` | REQ-040 |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
-| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` | `GET /lojas/:id` | REQ-039/043/045 |
+| T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: estabelecimento + pins de produto |
 | T-40 Minhas listas | `/listas` | `features/listas/ListsPage` | `GET/POST /listas` | REQ-051 |
 | T-42 Uma loja · T-41 Dividir · T-54 Gate | `/listas/:id` | `features/listas/ListPage` | `GET /listas/:id`, `PUT /listas/:id/itens/:gtin` | RN-13, REQ-052 |
 | (Adicionar à lista) | sheet | `features/listas/AddToListSheet` | `PUT /listas/:id/itens/:gtin` | — |

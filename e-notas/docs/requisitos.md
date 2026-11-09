@@ -591,6 +591,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Mapa cheio `/mapa` (T-15): mesmo critério — pin = produto, não agregado por loja.
 - Estabelecimentos (`/lojas`, T-31): faixa de mapa no topo com **1 pin por estabelecimento** (posição no ranking); toque abre `/lojas/mapa`.
 - Mapa `/lojas/mapa` (T-32): só estabelecimentos (não pins de produto).
+- Vitrine da loja (`/lojas/:id`, T-33): faixa de mapa no topo com **pin do estabelecimento** + **pins de produto** (preço nesta loja, espalhados); toque abre `/lojas/mapa`.
 - Rollback: remover `MapBanner` das páginas e voltar `ProductsMapPage` ao agregado por loja.
 
 ## REQ-061 — Publicar Beta em notinhas.shop (Contabo) (2026-11-09)

@@ -107,6 +107,9 @@ export function HomePage() {
           <span>
             <b>Beta</b> · versão em desenvolvimento
           </span>
+          <span className="beta-ver tnum" title={`build ${__BUILD_ID__}`}>
+            v{__APP_VERSION__} · {__BUILD_ID__}
+          </span>
           <button type="button" className="ib" onClick={dismissBeta} aria-label="Fechar aviso">
             <Icon name="x" />
           </button>

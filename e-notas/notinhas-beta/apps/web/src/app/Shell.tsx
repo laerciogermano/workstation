@@ -98,7 +98,7 @@ export function Shell() {
         )}
       </nav>
 
-      <div>
+      <div className="shell-body">
         {!online && (
           <div className="banner warn offline" role="status">
             <Icon name="wifioff" />

@@ -1,8 +1,20 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const root = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string };
+/** Carimbo do build (UTC) — muda a cada `vite build` para o banner Beta acusar chunk novo. */
+const buildId = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(2, 12); // YYMMDDHHmm
+
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __BUILD_ID__: JSON.stringify(buildId),
+  },
   plugins: [
     react(),
     VitePWA({

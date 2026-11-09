@@ -106,14 +106,6 @@ export default function ProductPage() {
             <p className="banner warn mt12">Sem preço nos últimos meses.</p>
           )}
 
-          <MapBanner
-            to={`/produto/${p.gtin}/mapa`}
-            pins={pins}
-            center={anchor}
-            radiusKm={Math.min(anchor.radiusKm, 4)}
-            caption={`${pins.length} loja${pins.length === 1 ? '' : 's'} com este produto`}
-          />
-
           <div className="sec">
             <h2>Histórico</h2>
             <span className="meta-r">{d.history.length} registros</span>
@@ -171,6 +163,13 @@ export default function ProductPage() {
               {anchor.mode === 'gps' ? 'GPS' : anchor.label.split(',')[0]}
             </Link>
           </div>
+          <MapBanner
+            to={`/produto/${p.gtin}/mapa`}
+            pins={pins}
+            center={anchor}
+            radiusKm={Math.min(anchor.radiusKm, 4)}
+            caption={`${pins.length} loja${pins.length === 1 ? '' : 's'} com este produto`}
+          />
           {nearest.map((c) => (
             <div key={c.store.id} className="row">
               <Icon name="pin" />

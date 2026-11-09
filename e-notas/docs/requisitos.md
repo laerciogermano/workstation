@@ -584,6 +584,11 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Troca animada, sem animação com movimento reduzido.
 - Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts` (ou restaurar default `institucional`/`escuro` por `prefers-color-scheme`).
 
+## REQ-065 — Foto do produto sempre inteira no quadro (2026-11-09)
+
+- Em cards, detalhe e miniaturas (`.ph`), a imagem usa `object-fit: contain` com padding — o produto inteiro aparece (ex.: garrafa Coca alta), sem corte pelas bordas.
+- Rollback: `.ph img { width/height: 86%; }` sem padding no container.
+
 ## REQ-064 — Teclado ao abrir a busca (2026-11-09)
 
 - Toque em “Buscar” na home abre `/busca` e **já mostra o teclado** (sem segundo toque no campo).

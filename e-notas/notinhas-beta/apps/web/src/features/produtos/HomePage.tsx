@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { PageSkeleton } from '../../app/Shell';
 import { useAnchor } from '../../lib/location';
-import { homeProducts, productPricePins } from '../../lib/map-pins';
+import { homeProducts, productPricePins, storeCenterPinsForProducts } from '../../lib/map-pins';
 import { useProductViewMode } from '../../lib/product-view';
 import { useHome, useMe, useRanking } from '../../lib/queries';
 import { Empty, ErrorBanner } from '../../ui/bits';
@@ -36,10 +36,13 @@ export function HomePage() {
     }
   });
   const refs = useRef(new Map<string, HTMLElement>());
-  const productPins = useMemo(
-    () => productPricePins(homeProducts(home.data), ranking.data, { limit: 24 }),
-    [home.data, ranking.data],
-  );
+  const productPins = useMemo(() => {
+    const products = homeProducts(home.data);
+    return [
+      ...storeCenterPinsForProducts(products, ranking.data, { limit: 24 }),
+      ...productPricePins(products, ranking.data, { limit: 24 }),
+    ];
+  }, [home.data, ranking.data]);
 
   const dismissBeta = () => {
     setBetaOpen(false);

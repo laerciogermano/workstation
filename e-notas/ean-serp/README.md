@@ -8,7 +8,7 @@ Não grava no Postgres do e-notas; só resolve e devolve JSON.
 
 | Método | Rota | O que faz |
 |--------|------|-----------|
-| `GET`/`POST` | `/ean/si5` | **Só SI5** JSON final. Todas as variantes; top `n`/`limit` (máx 100) |
+| `GET`/`POST` | `/ean/si5` | **Só SI5** JSON final. Variantes + **paginação** (`?page=`); top `n`/`limit` (máx 100; Beta pede ≥50) |
 | `GET` | `/ean/si5/stream` | **SSE** SI5: `meta` → `batch` (com foto SI5 no top) → `done` (`enrich=0` desliga fotos) |
 | `GET`/`POST` | `/ean/google-cdp` | **Só Google** via Chrome CDP (`EAN {descricao}`). Precisa `CDP_URL` (default `:9223`) |
 | `GET`/`POST` | `/ean/google-imagens` | Imagens via CDP: Google `tbm=isch`; se IP cair em `/sorry/` → **Bing Images**. Sem CDP → `[]` |

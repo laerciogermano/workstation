@@ -125,7 +125,7 @@ export async function suggestBarcodes(
         OR p.gtin IN (SELECT bl.gtin FROM barcode_links bl JOIN receipt_items ri
                         ON ri.store_id = bl.store_id AND ri.store_code = bl.store_code
                       WHERE ri.description = $3)
-     ORDER BY sim DESC LIMIT 12`,
+     ORDER BY sim DESC LIMIT 50`,
     [human, query, desc],
   );
   const local: SuggestionDTO[] = rows
@@ -138,7 +138,9 @@ export async function suggestBarcodes(
     }))
     .filter((s) => s.score >= 0.25);
 
-  const remote = await deps.eanSuggest.byDescription(query, 8);
+  /** Mínimo 50 candidatos no sheet (REQ-066); SI5 até 100, depois corta. */
+  const SUGGEST_LIMIT = 50;
+  const remote = await deps.eanSuggest.byDescription(query, SUGGEST_LIMIT);
 
   const byGtin = new Map<string, SuggestionDTO>();
   for (const s of [...local, ...remote]) {
@@ -152,7 +154,7 @@ export async function suggestBarcodes(
       });
     }
   }
-  return [...byGtin.values()].sort((a, b) => b.score - a.score).slice(0, 8);
+  return [...byGtin.values()].sort((a, b) => b.score - a.score).slice(0, SUGGEST_LIMIT);
 }
 
 /** SI5 / Google / CDNs — devolve URL same-origin via proxy. */

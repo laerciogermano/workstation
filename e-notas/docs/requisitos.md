@@ -624,3 +624,12 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Docs: [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md) · [`../deploy/README.md`](../deploy/README.md).
 - Rollback: restaurar nginx root `/opt/notinhas-v2` + lab `:4174`; `systemctl disable --now notinhas-api` (detalhe no deploy do Beta).
 
+
+## REQ-066 — Pelo menos 50 sugestões de EAN no vínculo (2026-11-09)
+
+- `GET /codigos-barras/sugestoes` devolve **até 50** candidatos (antes: 8).
+- Fonte SI5: `n` até 100 no ean-serp; filtro de score mínimo 0.2 (antes 0.35) para não esvaziar a lista.
+- ean-serp `/ean/si5` percorre **páginas** do HTML SI5 (`?page=`) além das variantes — página 1 sozinha ~30 itens.
+- Catálogo local: `LIMIT 50` (antes 12).
+- Antes → depois: sheet com poucas opções → lista longa rolável (≥50 quando o SI5/catálogo tiver).
+- Rollback: `slice(0, 8)` + `byDescription(…, 8)` + cap `n≤24` + score `≥0.35`; em `si5.js` voltar a uma URL sem `page`.

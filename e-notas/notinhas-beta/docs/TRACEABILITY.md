@@ -56,7 +56,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 ## Sugestão de EAN (REQ-044) — feito
 
-- `GET /codigos-barras/sugestoes?storeId&storeCode&q?` → catálogo local (pg_trgm) **+** `ean-serp` `/ean/si5` (`EanSuggestPort`)
+- `GET /codigos-barras/sugestoes?storeId&storeCode&q?` → catálogo local (pg_trgm) **+** `ean-serp` `/ean/si5` (`EanSuggestPort`); **até 50** resultados (REQ-066; antes 8)
 - Sheet `LinkEanSheet`: campo de texto editável + lista (toque vincula) + câmera + digitação
 - Env: `EAN_SERP_URL` (default `http://127.0.0.1:4180`); vazio = só catálogo
 - Contabo: units `notinhas-chrome` (`:9223`) + `ean-serp` (`:4180`) + `EAN_SERP_URL` no `.env`

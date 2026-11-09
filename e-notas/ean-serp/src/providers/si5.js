@@ -137,8 +137,15 @@ function rescoreCandidate(qNorm, ean, c) {
   return { ...c, score: Math.max(0.35, score) };
 }
 
+/** Páginas SI5 (~30/resultado); 1ª variante vai mais fundo p/ atingir n≥50. */
+function pagesForVariant(variantIndex, want) {
+  if (variantIndex === 0) return Math.min(8, Math.max(2, Math.ceil(want / 25)));
+  return Math.min(3, Math.max(1, Math.ceil(want / 50)));
+}
+
 /**
  * Stream SI5: uma yield por variante (para SSE).
+ * Cada variante percorre `?page=` até encher `n` ou acabar a lista.
  * @param {string} descricaoNorm
  * @param {{ n?: number, signal?: AbortSignal }} [opts]
  * @yields {{ i: number, total: number, query: string, novos: object[], candidatos: object[] }}
@@ -159,21 +166,45 @@ export async function* iterateSi5Html(descricaoNorm, opts = {}) {
     if (opts.signal?.aborted) {
       throw Object.assign(new Error('aborted'), { status: 499 });
     }
+    if (merged.size >= n && i > 0) break;
+
     const q = variants[i];
-    const url = `${BASE}/?q=${encodeURIComponent(q)}`;
-    const { ok, text } = await fetchText(url);
     const novos = [];
-    if (ok && text) {
+    const maxPages = pagesForVariant(i, n);
+
+    for (let page = 1; page <= maxPages; page += 1) {
+      if (opts.signal?.aborted) {
+        throw Object.assign(new Error('aborted'), { status: 499 });
+      }
+      if (merged.size >= n && page > 1) break;
+
+      const url =
+        page === 1
+          ? `${BASE}/?q=${encodeURIComponent(q)}`
+          : `${BASE}/?q=${encodeURIComponent(q)}&page=${page}`;
+      const { ok, text } = await fetchText(url);
+      if (!ok || !text) break;
+
       const map = parseSi5SearchHtml(text, qNorm || q);
+      if (!map.size) break;
+
+      let added = 0;
       for (const [ean, c] of map) {
         const next = rescoreCandidate(qNorm, ean, c);
+        // páginas seguintes: leve decay p/ priorizar page=1
+        if (page > 1) next.score = Math.max(0.2, next.score * (1 - 0.03 * (page - 1)));
         const prev = merged.get(ean);
         if (!prev || next.score > prev.score) {
           merged.set(ean, next);
-          novos.push(next);
+          if (!prev) {
+            novos.push(next);
+            added += 1;
+          }
         }
       }
+      if (added === 0 && page > 1) break;
     }
+
     const candidatos = [...merged.values()]
       .sort((a, b) => b.score - a.score)
       .slice(0, n);

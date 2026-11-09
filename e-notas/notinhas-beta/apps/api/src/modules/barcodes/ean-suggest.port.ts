@@ -29,10 +29,11 @@ export function createEanSerpAdapter(opts: {
   async function si5(descricao: string, limit: number) {
     const url = new URL(`${base}/ean/si5`);
     url.searchParams.set('descricao', descricao);
-    url.searchParams.set('n', String(Math.min(Math.max(limit, 1), 24)));
+    // ean-serp MAX_LIMIT = 100; pedimos folga p/ filtro de score
+    url.searchParams.set('n', String(Math.min(Math.max(limit, 1), 100)));
     url.searchParams.set('enrich', '1');
     const res = await doFetch(url, {
-      signal: AbortSignal.timeout(opts.timeoutMs ?? 12_000),
+      signal: AbortSignal.timeout(opts.timeoutMs ?? 20_000),
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) return [] as SuggestionDTO[];
@@ -43,7 +44,7 @@ export function createEanSerpAdapter(opts: {
       .map((c) => {
         const gtin = String(c.ean ?? '').replace(/\D/g, '');
         const score = Number(c.score) || 0;
-        if (gtin.length < 8 || score < 0.35) return null;
+        if (gtin.length < 8 || score < 0.2) return null;
         return {
           gtin,
           title: (c.nome_canonico || gtin).trim(),
@@ -79,7 +80,7 @@ export function createEanSerpAdapter(opts: {
   }
 
   return {
-    async byDescription(descricao, limit = 8) {
+    async byDescription(descricao, limit = 50) {
       const q = descricao.trim();
       if (!q) return [];
       try {

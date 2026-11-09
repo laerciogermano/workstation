@@ -4,7 +4,6 @@ export type QrStop = () => void;
 
 type StartOpts = {
   video: HTMLVideoElement;
-  host: HTMLElement;
   onCode: (text: string) => void;
   signal: { stopped: boolean };
 };
@@ -116,35 +115,6 @@ async function startZxing({ video, onCode, signal }: StartOpts): Promise<QrStop>
   return () => controls.stop();
 }
 
-async function startHtml5({ host, onCode, signal }: StartOpts): Promise<QrStop> {
-  const { Html5Qrcode } = await import('html5-qrcode');
-  if (signal.stopped) return () => undefined;
-  host.replaceChildren();
-  host.id = host.id || 'nt-html5-qr';
-  const scanner = new Html5Qrcode(host.id, { verbose: false });
-  await scanner.start(
-    { facingMode: 'environment' },
-    { fps: 12, qrbox: (w, h) => {
-      const s = Math.floor(Math.min(w, h) * 0.75);
-      return { width: s, height: s };
-    }, aspectRatio: 1 },
-    (text) => {
-      if (text?.trim()) onCode(text.trim());
-    },
-    () => undefined,
-  );
-  return () => {
-    void scanner.stop().catch(() => undefined).then(() => {
-      try {
-        scanner.clear();
-      } catch {
-        /* já limpo */
-      }
-      host.replaceChildren();
-    });
-  };
-}
-
 async function startJsQr({ video, onCode, signal }: StartOpts): Promise<QrStop> {
   const { default: jsQR } = await import('jsqr');
   await playEnvironment(video);
@@ -193,8 +163,6 @@ export async function startQrCamera(id: QrEngineId, opts: StartOpts): Promise<Qr
       return startQrScanner(opts);
     case 'zxing':
       return startZxing(opts);
-    case 'html5-qrcode':
-      return startHtml5(opts);
     case 'jsqr':
       return startJsQr(opts);
     default: {
@@ -251,28 +219,6 @@ async function decodeZxingImage(file: File): Promise<string | null> {
   }
 }
 
-async function decodeHtml5Image(file: File): Promise<string | null> {
-  const { Html5Qrcode } = await import('html5-qrcode');
-  const host = document.createElement('div');
-  host.id = `nt-html5-file-${Date.now()}`;
-  host.hidden = true;
-  document.body.appendChild(host);
-  const scanner = new Html5Qrcode(host.id, { verbose: false });
-  try {
-    const text = await scanner.scanFile(file, false);
-    return text?.trim() || null;
-  } catch {
-    return null;
-  } finally {
-    try {
-      scanner.clear();
-    } catch {
-      /* ignore */
-    }
-    host.remove();
-  }
-}
-
 async function decodeJsQrImage(file: File): Promise<string | null> {
   const { default: jsQR } = await import('jsqr');
   const bitmap = await createImageBitmap(file);
@@ -300,8 +246,6 @@ export async function decodeQrWithEngine(id: QrEngineId, file: File): Promise<st
       return decodeQrScannerImage(file);
     case 'zxing':
       return decodeZxingImage(file);
-    case 'html5-qrcode':
-      return decodeHtml5Image(file);
     case 'jsqr':
       return decodeJsQrImage(file);
     default: {

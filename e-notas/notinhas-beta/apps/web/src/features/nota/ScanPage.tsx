@@ -55,7 +55,7 @@ export default function ScanPage() {
     [ingest, go],
   );
 
-  const { videoRef, hostRef, state } = useCameraScanner(
+  const { videoRef, state } = useCameraScanner(
     'qr',
     (scanHit) => {
       setHit(true);
@@ -106,7 +106,6 @@ export default function ScanPage() {
   return (
     <div className="cam">
       <video ref={videoRef} muted playsInline aria-hidden="true" />
-      <div ref={hostRef} className="cam-host off" id="nt-html5-qr" aria-hidden="true" />
       <div className="floattop">
         <button className="ib glass" onClick={() => go(-1)} aria-label="Fechar">
           <Icon name="x" />
@@ -132,7 +131,7 @@ export default function ScanPage() {
         </div>
       ) : (
         <>
-          {engineMeta.needs === 'video' && <Viewfinder mode="qr" hit={hit} />}
+          <Viewfinder mode="qr" hit={hit} />
           <p>{state === 'starting' ? 'Abrindo a câmera…' : 'Aponte para o QR Code no rodapé do cupom'}</p>
         </>
       )}

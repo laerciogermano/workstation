@@ -14,7 +14,7 @@ Implementação completa do **notinhas.shop Beta 1.0** (repositório interno `e-
 | Domínio | `packages/domain` — funções puras (RN-10 ranking, RN-11 destaque, RN-13 cotação/split, GTIN, chave NFC-e, dinheiro em centavos) |
 | Contratos | `packages/contracts` — Zod nas entradas, DTOs tipados, catálogo de erros RFC 9457 |
 | API | `apps/api` — Node 22 · Express 5 modular (feature modules + portas/adaptadores) · `pg` · Pino · Helmet · rate limit · JWT 60 min + refresh 30 dias (REQ-071) |
-| Web | `apps/web` — React 19 · Vite 6 · React Router 7 (View Transitions) · TanStack Query 5 · Motion · Leaflet/OSM · QR multi-motor (Nimiq/ZXing/html5-qrcode/jsQR/nativo) + zxing (EAN) · PWA |
+| Web | `apps/web` — React 19 · Vite 6 · React Router 7 (View Transitions) · TanStack Query 5 · Motion · Leaflet/OSM · QR multi-motor (Nimiq/ZXing/jsQR/nativo) + zxing (EAN) · PWA |
 | Banco | PostgreSQL 16 · schema `notinhas` (configurável) · migrations SQL versionadas |
 | Testes | Vitest (domínio, API contra Postgres real, componentes com Testing Library) |
 

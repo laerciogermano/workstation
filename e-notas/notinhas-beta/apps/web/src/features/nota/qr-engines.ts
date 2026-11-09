@@ -1,14 +1,11 @@
 /** Catálogo de motores de QR (NFC-e). Preferência em localStorage. */
 
-export type QrEngineId = 'native' | 'qr-scanner' | 'zxing' | 'html5-qrcode' | 'jsqr';
-
-export type QrEngineNeeds = 'video' | 'host';
+export type QrEngineId = 'native' | 'qr-scanner' | 'zxing' | 'jsqr';
 
 export interface QrEngineMeta {
   id: QrEngineId;
   name: string;
   blurb: string;
-  needs: QrEngineNeeds;
 }
 
 export const QR_ENGINES: readonly QrEngineMeta[] = [
@@ -16,31 +13,21 @@ export const QR_ENGINES: readonly QrEngineMeta[] = [
     id: 'native',
     name: 'BarcodeDetector',
     blurb: 'API nativa do browser (Chrome/Android). Leve; pode faltar no iOS/Safari.',
-    needs: 'video',
   },
   {
     id: 'qr-scanner',
     name: 'qr-scanner (Nimiq)',
     blurb: 'Usa BarcodeDetector quando dá; senão worker jsQR. Bom no cupom.',
-    needs: 'video',
   },
   {
     id: 'zxing',
     name: 'ZXing',
     blurb: '@zxing/browser — o motor anterior do app.',
-    needs: 'video',
-  },
-  {
-    id: 'html5-qrcode',
-    name: 'html5-qrcode',
-    blurb: 'Lib clássica (mebjas). Gerencia a câmera num container próprio.',
-    needs: 'host',
   },
   {
     id: 'jsqr',
     name: 'jsQR',
     blurb: 'Port JS puro do ZXing (cozmo). Decodifica frame a frame no canvas.',
-    needs: 'video',
   },
 ] as const;
 

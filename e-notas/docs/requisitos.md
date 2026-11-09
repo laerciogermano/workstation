@@ -683,7 +683,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 
 - Scan do **QR da NFC-e** (câmera + foto) usa motor dedicado e testável em rodízio; EAN permanece em `@zxing` + OCR.
 - **Menu no front (T-20):** pill no topo abre sheet “Leitor de QR”; preferência em `localStorage` (`nt_qr_engine`).
-- Motores: `BarcodeDetector` (nativo), `qr-scanner` (Nimiq, default), `ZXing`, `html5-qrcode`, `jsQR`.
+- Motores: `BarcodeDetector` (nativo), `qr-scanner` (Nimiq, default), `ZXing`, `jsQR`. (`html5-qrcode` removido.)
 - Indisponíveis (ex.: nativo no Safari) aparecem desabilitados.
 - Antes: só `@zxing`; depois um motor fixo `qr-scanner`; agora seleção pelo usuário.
 - Código: `qr-engines.ts`, `qr-runners.ts`, `ScanPage.tsx`.

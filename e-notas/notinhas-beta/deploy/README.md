@@ -24,7 +24,7 @@
 
 ### Scan QR (REQ-072)
 
-- Menu no scan: escolher motor (`native` / `qr-scanner` / `zxing` / `html5-qrcode` / `jsqr`); default `qr-scanner`; `localStorage nt_qr_engine`.
+- Menu no scan: escolher motor (`native` / `qr-scanner` / `zxing` / `jsqr`); default `qr-scanner`; `localStorage nt_qr_engine`.
 - EAN continua `@zxing` + tesseract.
 - Rollback: reverter `ScanPage`/`qr-engines`/`qr-runners`/`scanner` + deps.
 

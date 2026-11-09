@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserMultiFormatReader as Reader } from '@zxing/browser';
 import { isValidGtin, normalizeGtin } from '@notinhas/domain';
-import { getQrEngineMeta, type QrEngineId } from './qr-engines';
+import type { QrEngineId } from './qr-engines';
 import { decodeQrWithEngine, startQrCamera } from './qr-runners';
 
 export type ScanMode = 'qr' | 'ean';
@@ -135,7 +135,6 @@ export function useCameraScanner(
   qrEngine: QrEngineId = 'qr-scanner',
 ) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const hostRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<CameraState>('starting');
   const cb = useRef(onResult);
   const busy = useRef(false);
@@ -172,14 +171,9 @@ export function useCameraScanner(
       try {
         if (mode === 'qr') {
           const video = videoRef.current;
-          const host = hostRef.current;
-          if (!video || !host) return;
-          const needsHost = getQrEngineMeta(qrEngine).needs === 'host';
-          video.classList.toggle('off', needsHost);
-          host.classList.toggle('off', !needsHost);
+          if (!video) return;
           stopCamera = await startQrCamera(qrEngine, {
             video,
-            host,
             signal,
             onCode: (code) => {
               if (!stopped && !busy.current) emit({ code, vocr: null });
@@ -187,8 +181,6 @@ export function useCameraScanner(
           });
         } else {
           if (!videoRef.current) return;
-          videoRef.current.classList.remove('off');
-          hostRef.current?.classList.add('off');
           const reader = await createEanReader();
           if (stopped || !videoRef.current) return;
           const controls = await reader.decodeFromConstraints(
@@ -244,7 +236,7 @@ export function useCameraScanner(
     };
   }, [mode, enabled, qrEngine]);
 
-  return { videoRef, hostRef, state };
+  return { videoRef, state };
 }
 
 export function Viewfinder({ mode, hit }: { mode: ScanMode; hit: boolean }) {

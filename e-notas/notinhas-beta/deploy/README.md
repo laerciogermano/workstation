@@ -26,6 +26,7 @@
 
 - Menu no scan: escolher motor (`native` / `qr-scanner` / `zxing` / `jsqr`); default `qr-scanner`; `localStorage nt_qr_engine`.
 - EAN continua `@zxing` + tesseract.
+- Rodapé do scan (`Foto do cupom` / `Colar link`): fundo do botão transparente (override no elemento; `.btn.light` e `.camfoot` intactos). Rollback: tirar o `style={{ background: 'transparent' }}` nesses botões em `ScanPage`.
 - Rollback: reverter `ScanPage`/`qr-engines`/`qr-runners`/`scanner` + deps.
 
 ### Sessão / tabbar (REQ-071)

@@ -143,11 +143,11 @@ export default function ScanPage() {
 
       <div className="camfoot">
         <input ref={fileRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
-        <button className="btn light" onClick={() => fileRef.current?.click()}>
+        <button className="btn light" style={{ background: 'transparent' }} onClick={() => fileRef.current?.click()}>
           <Icon name="image" />
           Foto do cupom
         </button>
-        <button className="btn light" onClick={() => setPaste(true)}>
+        <button className="btn light" style={{ background: 'transparent' }} onClick={() => setPaste(true)}>
           <Icon name="link" />
           Colar link da nota
         </button>

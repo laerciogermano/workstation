@@ -4,7 +4,7 @@ import { brl } from '../lib/format';
 import { Icon, type IconName } from './Icon';
 
 /** `/media/` é estático do Beta; SI5/CDN exige proxy (hotlink 403). */
-function photoSrc(url: string | null | undefined): string | null {
+export function photoSrc(url: string | null | undefined): string | null {
   if (!url) return null;
   if (url.startsWith('/media/') || url.startsWith('/api/')) return url;
   if (!/^https:\/\//i.test(url)) return null;

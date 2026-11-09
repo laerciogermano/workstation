@@ -1,9 +1,9 @@
-import type { BarcodeOrigin, LinkResultDTO } from '@notinhas/contracts';
+import type { BarcodeOrigin, LinkResultDTO, SuggestionDTO } from '@notinhas/contracts';
 import { isValidGtin, normalizeGtin } from '@notinhas/domain';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLinkBarcode, usePhotoCandidates, useSuggestions } from '../../lib/queries';
 import { api } from '../../lib/api';
-import { ErrorBanner, Photo } from '../../ui/bits';
+import { ErrorBanner, Photo, photoSrc } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { Sheet } from '../../ui/Sheet';
 import { useToast } from '../../ui/Toast';
@@ -22,6 +22,7 @@ export interface LinkTarget {
 /**
  * T-23 · US-01.10 · RN-12 — câmera já aberta; três caminhos com origem gravada:
  * sugestão pela descrição (toque vincula), leitura do código (scan) ou digitação com DV.
+ * Depois do vínculo: T-24 escolher foto (SI5 + Open Food Facts).
  */
 /** `onLinked` devolve 'next' quando o pai já vai abrir o próximo item (fila de pendentes). */
 export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget | null; onClose: () => void; onLinked?: (r: LinkResultDTO) => 'next' | void }) {
@@ -31,6 +32,8 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   const [typed, setTyped] = useState('');
   const [hit, setHit] = useState(false);
   const [photoFor, setPhotoFor] = useState<string | null>(null);
+  const [seedPhotos, setSeedPhotos] = useState<{ url: string; source: string }[]>([]);
+  const pending = useRef<LinkResultDTO | null>(null);
   const toast = useToast();
   const replacing = !!target?.replace;
 
@@ -40,6 +43,9 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
     setDebounced(target.displayName || target.description);
     setTyped('');
     setHit(false);
+    setPhotoFor(null);
+    setSeedPhotos([]);
+    pending.current = null;
   }, [target?.storeId, target?.storeCode, target?.description, target?.displayName, target?.replace]);
 
   useEffect(() => {
@@ -49,7 +55,15 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
 
   const sugg = useSuggestions(target?.storeId ?? 0, target?.storeCode ?? '', debounced, !!target);
 
-  async function submit(gtin: string, origin: BarcodeOrigin) {
+  function finish(r: LinkResultDTO) {
+    pending.current = null;
+    setPhotoFor(null);
+    setSeedPhotos([]);
+    if (onLinked?.(r) === 'next') return;
+    onClose();
+  }
+
+  async function submit(gtin: string, origin: BarcodeOrigin, from?: SuggestionDTO) {
     if (!target || link.isPending) return;
     const r = await link.mutateAsync({
       storeId: target.storeId,
@@ -60,12 +74,19 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
     });
     setTyped('');
     setHit(false);
-    if (r.status === 'flagged') toast({ text: 'Esse item já tinha outro código. Mandamos para revisão — obrigado!' });
-    else if (r.status === 'replaced') toast({ text: 'Código de barras atualizado' });
+    if (r.status === 'flagged') {
+      toast({ text: 'Esse item já tinha outro código. Mandamos para revisão — obrigado!' });
+      finish(r);
+      return;
+    }
+    if (r.status === 'replaced') toast({ text: 'Código de barras atualizado' });
     else toast({ text: r.pointsAwarded ? `Vinculado · +${r.pointsAwarded} pontos` : 'Código vinculado' });
-    if (onLinked?.(r) === 'next') return;
-    if (!r.product.photoUrl && (r.status === 'linked' || r.status === 'replaced')) setPhotoFor(r.product.gtin);
-    else onClose();
+
+    const seeds: { url: string; source: string }[] = [];
+    if (from?.photoUrl) seeds.push({ url: unwrapProxy(from.photoUrl), source: from.source === 'si5' ? 'SI5' : 'sugestão' });
+    pending.current = r;
+    setSeedPhotos(seeds);
+    setPhotoFor(r.product.gtin);
   }
 
   const { videoRef, state } = useCameraScanner(
@@ -83,7 +104,22 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   const typedOk = clean.length >= 8 && isValidGtin(clean);
   const typedBad = clean.length >= 8 && !typedOk;
 
-  if (photoFor) return <PhotoPickerSheet gtin={photoFor} onClose={() => { setPhotoFor(null); onClose(); }} />;
+  if (photoFor) {
+    return (
+      <PhotoPickerSheet
+        gtin={photoFor}
+        seed={seedPhotos}
+        onClose={() => {
+          const r = pending.current;
+          if (r) finish(r);
+          else {
+            setPhotoFor(null);
+            onClose();
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <Sheet open={!!target} onClose={onClose} title={replacing ? 'Alterar código de barras' : 'Vincular código de barras'}>
@@ -135,7 +171,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       </div>
       <p className="hint">{sugg.isFetching ? 'Buscando…' : sugg.data?.length ? `${sugg.data.length} resultado${sugg.data.length === 1 ? '' : 's'} — toque para vincular` : 'Nenhuma sugestão — refine o texto ou escaneie.'}</p>
       {sugg.data?.map((s) => (
-        <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
+        <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion', s)} disabled={link.isPending}>
           <Photo url={s.photoUrl} size="xs" eager />
           <span className="grow">
             <span className="b">{s.title}</span>
@@ -154,12 +190,49 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   );
 }
 
+function unwrapProxy(url: string): string {
+  if (url.startsWith('/api/v1/imagens/proxy?')) {
+    try {
+      return new URL(url, location.origin).searchParams.get('u') || url;
+    } catch {
+      return url;
+    }
+  }
+  return url;
+}
+
 /** T-24 · US-01.11 — a foto escolhida vira a foto da ficha para todas as lojas. */
-export function PhotoPickerSheet({ gtin, onClose }: { gtin: string; onClose: () => void }) {
+export function PhotoPickerSheet({
+  gtin,
+  seed = [],
+  onClose,
+}: {
+  gtin: string;
+  seed?: { url: string; source: string }[];
+  onClose: () => void;
+}) {
   const q = usePhotoCandidates(gtin);
   const [sel, setSel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const toast = useToast();
+
+  const candidates = (() => {
+    const map = new Map<string, { url: string; source: string }>();
+    for (const s of seed) {
+      const u = unwrapProxy(s.url);
+      if (u) map.set(u, { url: u, source: s.source });
+    }
+    for (const c of q.data?.candidates ?? []) {
+      const u = unwrapProxy(c.url);
+      if (u && !map.has(u)) map.set(u, { url: u, source: c.source });
+    }
+    return [...map.values()];
+  })();
+
+  useEffect(() => {
+    if (!sel && candidates[0]) setSel(candidates[0].url);
+  }, [candidates, sel]);
+
   async function save() {
     if (!sel) return onClose();
     setSaving(true);
@@ -171,22 +244,31 @@ export function PhotoPickerSheet({ gtin, onClose }: { gtin: string; onClose: () 
       onClose();
     }
   }
+
   return (
     <Sheet open onClose={onClose} title="Escolher foto do produto">
-      {q.data && q.data.candidates.length === 0 && <p className="meta">Nenhuma foto encontrada para esse código. Tudo bem — o produto já está vinculado.</p>}
-      <div className="photogrid">
-        {q.data?.candidates.map((c) => (
-          <button key={c.url} className={`cand ${sel === c.url ? 'on' : ''}`} onClick={() => setSel(c.url)} aria-pressed={sel === c.url}>
-            <img src={c.url} alt="" loading="lazy" />
-            <span>{c.source}</span>
-          </button>
-        ))}
+      <p className="meta">Toque na foto que melhor representa o produto. Ela vale para todas as lojas.</p>
+      {q.isPending && candidates.length === 0 && <p className="hint mt12">Buscando fotos…</p>}
+      {!q.isPending && candidates.length === 0 && (
+        <p className="meta mt12">Nenhuma foto encontrada para esse código. Tudo bem — o produto já está vinculado.</p>
+      )}
+      <div className="photogrid mt12">
+        {candidates.map((c) => {
+          const src = photoSrc(c.url);
+          return (
+            <button key={c.url} className={`cand ${sel === c.url ? 'on' : ''}`} onClick={() => setSel(c.url)} aria-pressed={sel === c.url} type="button">
+              {src ? <img src={src} alt="" loading="eager" decoding="async" referrerPolicy="no-referrer" /> : <span className="ph-empty" />}
+              <span>{c.source}</span>
+            </button>
+          );
+        })}
       </div>
+      <ErrorBanner error={q.error} />
       <div className="duo mt16">
-        <button className="btn s" onClick={onClose}>
+        <button className="btn s" type="button" onClick={onClose}>
           Pular
         </button>
-        <button className="btn p" onClick={save} disabled={!sel || saving}>
+        <button className="btn p" type="button" onClick={save} disabled={!sel || saving || candidates.length === 0}>
           Usar esta foto
         </button>
       </div>

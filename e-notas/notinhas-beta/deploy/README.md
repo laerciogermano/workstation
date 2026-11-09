@@ -13,7 +13,8 @@
 - Viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` + metas `apple-mobile-web-app-*`
 - Gestos: `installAppGestures()` bloqueia pinch/double-tap/Ctrl± (mapa Leaflet pode pinçar)
 - CSS: `html`/`body`/`#root` sem overflow do browser; scroll no `.shell`; inputs **16px**
-- Manifest: `display: standalone` + `display_override` + `orientation: portrait-primary`
+- Manifest: `display: standalone` + `display_override: [fullscreen, standalone, minimal-ui]` + `orientation: portrait-primary`
+- Layout full-bleed: `html`/`body`/`#root`/`shell` com `100dvh` + `-webkit-fill-available`; tabbar `bottom: 0` com `padding-bottom: safe-area` (antes flutuava com gap de 12px)
 - Ícone / favicon: fundo **#00984B** + tiras **brancas** só (sem azul). Assets: `favicon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`. Manifest PWA usa PNG; HTML favicon SVG `?v=3` + apple-touch PNG. Antes: tiras azul+verde em fundo transparente/branco. Rollback: SVG antigo azul/verde + theme `#F6F6F4`.
 
 **Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  

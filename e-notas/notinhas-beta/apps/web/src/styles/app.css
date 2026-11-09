@@ -2,15 +2,19 @@
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-/* PWA-like (RoleGo): viewport fixa, sem bounce/zoom do browser */
+/* PWA: altura = viewport inteiro (inclui safe areas); sem chrome do browser no modo instalado */
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   height: 100%;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
+  background: var(--nt-canvas);
 }
 body {
   font-family: var(--nt-font);
@@ -19,7 +23,10 @@ body {
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
   height: 100%;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
@@ -32,8 +39,12 @@ body {
 }
 #root {
   height: 100%;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
+  background: var(--nt-canvas);
 }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; touch-action: manipulation; }
 /* ≥16px evita zoom do iOS ao focar; seleção liberada nos campos */
@@ -56,13 +67,23 @@ img { max-width: 100%; }
 /* ───────── shell ───────── */
 .shell {
   height: 100%;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  background: var(--nt-canvas);
 }
-.main { max-width: 560px; margin: 0 auto; padding: max(8px, env(safe-area-inset-top)) 16px 120px; view-transition-name: main; }
+.main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: max(8px, env(safe-area-inset-top, 0px)) 16px calc(88px + env(safe-area-inset-bottom, 0px));
+  view-transition-name: main;
+  min-height: 100%;
+}
 .main.dark { max-width: none; padding: 0; background: var(--nt-scan); min-height: 100dvh; color: var(--nt-white); }
 .sidenav { display: none; }
 
@@ -84,7 +105,30 @@ img { max-width: 100%; }
 .ptschip { display: flex; align-items: center; gap: 5px; height: 36px; padding: 0 12px; border-radius: 999px; background: var(--nt-green-soft); color: var(--nt-green-deep); font-weight: 800; font-size: 13px; }
 .ptschip .i { width: 16px; height: 16px; }
 
-.tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(12px, env(safe-area-inset-bottom)); width: min(540px, calc(100% - 20px)); height: 70px; border-radius: 26px; display: flex; align-items: center; justify-content: space-around; background: color-mix(in srgb, var(--nt-surface) 82%, transparent); backdrop-filter: blur(18px) saturate(1.5); border: 1px solid var(--nt-line); box-shadow: 0 10px 30px var(--nt-shadow); z-index: 10; view-transition-name: tabbar; }
+/* Tabbar colada no fundo da tela (sem folga cinza); safe-area entra no padding interno */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 64px;
+  padding: 8px 8px max(8px, env(safe-area-inset-bottom, 0px));
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: color-mix(in srgb, var(--nt-surface) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid var(--nt-line);
+  border-bottom: 0;
+  box-shadow: 0 -8px 28px var(--nt-shadow);
+  z-index: 10;
+  view-transition-name: tabbar;
+  transform: none;
+}
 .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; color: var(--nt-muted); min-width: 58px; padding: 6px 0; }
 .tab .i { width: 23px; height: 23px; }
 .tab.on { color: var(--nt-blue-deep); }
@@ -416,10 +460,10 @@ dt { color: var(--nt-muted); }
 /* mapa (Leaflet) */
 .mapbox { position: relative; height: 220px; border-radius: 16px; overflow: hidden; border: 1px solid var(--nt-line); margin-bottom: 12px; isolation: isolate; }
 .mapbox.tall { height: calc(100dvh - 160px); min-height: 420px; }
-.mapbox.banner { height: 200px; margin: 0; border: 0; border-radius: 0; }
+.mapbox.inbanner { height: 200px; margin: 0; border: 0; border-radius: 0; }
 .mapbox .leaflet-container { width: 100%; height: 100%; background: var(--nt-line-2); font-family: var(--nt-font); }
 .mapbanner { position: relative; display: block; height: 200px; border-radius: 16px; overflow: hidden; border: 1px solid var(--nt-line); margin-bottom: 12px; color: inherit; }
-.mapbanner .mapbox.banner .leaflet-container { pointer-events: none; }
+.mapbanner .mapbox.inbanner .leaflet-container { pointer-events: none; }
 .mapbanner .cap { position: absolute; left: 10px; bottom: 10px; z-index: 500; display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: color-mix(in srgb, var(--nt-surface) 88%, transparent); backdrop-filter: blur(8px); pointer-events: none; }
 .mapbanner .cap .i { width: 14px; height: 14px; }
 .mpin { display: grid; place-items: center; }

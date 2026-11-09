@@ -19,8 +19,9 @@ export default defineConfig({
         dir: 'ltr',
         theme_color: '#00984B',
         background_color: '#00984B',
+        // fullscreen primeiro (sem chrome); standalone se o SO não permitir fullscreen
         display: 'standalone',
-        display_override: ['standalone', 'minimal-ui'],
+        display_override: ['fullscreen', 'standalone', 'minimal-ui'],
         orientation: 'portrait-primary',
         start_url: '/',
         scope: '/',

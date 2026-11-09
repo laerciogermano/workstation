@@ -24,7 +24,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | (Adicionar à lista) | sheet | `features/listas/AddToListSheet` | `PUT /listas/:id/itens/:gtin` | — |
 | T-50 Minhas notas | `/notas` | `features/notas/MyReceiptsPage` | `GET /notas/minhas` | RN-14, REQ-051 |
 | T-52 Gastos | `/gastos` | `features/notas/SpendingPage` | `GET /gastos` | RN-14 |
-| T-51 Perfil | `/perfil` | `features/conta/ProfilePage` · sidenav `Shell` | `GET /me`, `POST /auth/logout` | REQ-050 · sidenav (7): Produtos→Lojas→Listas→Adicionar nota→Notas→Gasto do mês→Perfil |
+| T-51 Perfil | `/perfil` | `features/conta/ProfilePage` · `Shell` MENU | `GET /me`, `POST /auth/logout` | REQ-050 · menu 7 (sidenav+tabbar): Produtos→Lojas→Listas→Adicionar nota→Notas→Gasto do mês→Perfil |
 | T-53 Pontos | `/pontos` | `features/conta/PointsPage` | `GET /pontos` | REQ-052 |
 | T-02 Criar conta · T-03 Entrar · T-04 Recuperar | `/conta/criar · entrar · recuperar · redefinir` | `features/conta/AuthPages` | `/auth/*` | REQ-050 (merge) |
 | T-05 Localização | `/perfil/localizacao` | `features/conta/LocationPage` | — (fica no aparelho) | RN-09 |

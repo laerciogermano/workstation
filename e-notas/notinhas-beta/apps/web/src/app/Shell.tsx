@@ -9,16 +9,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../ui/Toast';
 import { Skel } from '../ui/bits';
 
-/** Mobile tabbar (FAB Nota no meio). */
-const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
-  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
-  { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
-  { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
-  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
-];
-
-/** Desktop sidenav — exatamente 7 itens, nesta ordem. */
-const SIDE: { to: string; icon: IconName; label: string; match: RegExp }[] = [
+/**
+ * Menu transversal (sidenav ≥1024px + tabbar mobile) — exatamente 7 itens.
+ * Antes a tabbar usava só 4 + FAB "Nota", então Gasto/Perfil/Adicionar nota não apareciam no mobile.
+ */
+const MENU: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
   { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
   { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
@@ -84,7 +79,7 @@ export function Shell() {
         <NavLink to="/" viewTransition>
           <Wordmark />
         </NavLink>
-        {SIDE.map((t) => (
+        {MENU.map((t) => (
           <NavLink key={t.to} to={t.to} viewTransition className={() => `dnav ${t.match.test(pathname) ? 'on' : ''}`}>
             <Icon name={t.icon} />
             {t.label}
@@ -114,24 +109,28 @@ export function Shell() {
 
       {!hideTabbar && (
         <nav className="tabbar" aria-label="Principal">
-          {TABS.slice(0, 2).map((t) => (
-            <NavLink key={t.to} to={t.to} viewTransition className={`tab ${t.match.test(pathname) ? 'on' : ''}`}>
-              <Icon name={t.icon} />
-              <span>{t.label}</span>
-            </NavLink>
-          ))}
-          <NavLink to="/nota" viewTransition className="tab fab" aria-label="Depositar nota">
-            <span className="fabbtn">
-              <Icon name="qr" />
-            </span>
-            <span>Nota</span>
-          </NavLink>
-          {TABS.slice(2).map((t) => (
-            <NavLink key={t.to} to={t.to} viewTransition className={`tab ${t.match.test(pathname) ? 'on' : ''}`}>
-              <Icon name={t.icon} />
-              <span>{t.label}</span>
-            </NavLink>
-          ))}
+          {MENU.map((t) => {
+            const on = t.match.test(pathname);
+            const addNota = t.to === '/nota';
+            return (
+              <NavLink
+                key={t.to}
+                to={t.to}
+                viewTransition
+                className={`tab ${addNota ? 'fab' : ''} ${on ? 'on' : ''}`}
+                aria-label={addNota ? 'Adicionar nota' : undefined}
+              >
+                {addNota ? (
+                  <span className="fabbtn">
+                    <Icon name={t.icon} />
+                  </span>
+                ) : (
+                  <Icon name={t.icon} />
+                )}
+                <span>{t.label}</span>
+              </NavLink>
+            );
+          })}
         </nav>
       )}
     </div>

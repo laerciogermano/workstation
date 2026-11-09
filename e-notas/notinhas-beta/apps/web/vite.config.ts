@@ -30,10 +30,10 @@ export default defineConfig({
         lang: 'pt-BR',
         dir: 'ltr',
         theme_color: '#00984B',
-        background_color: '#00984B',
-        // fullscreen primeiro (sem chrome); standalone se o SO não permitir fullscreen
+        background_color: '#F5F7FA',
+        // standalone primeiro: iOS A2HS ignora/falha com fullscreen e deixava faixa sob a tabbar
         display: 'standalone',
-        display_override: ['fullscreen', 'standalone', 'minimal-ui'],
+        display_override: ['standalone', 'fullscreen', 'minimal-ui'],
         orientation: 'portrait-primary',
         start_url: '/',
         scope: '/',

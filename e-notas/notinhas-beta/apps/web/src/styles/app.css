@@ -2,15 +2,15 @@
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-/* PWA: altura = viewport inteiro (inclui safe areas); sem chrome do browser no modo instalado */
+/*
+  PWA instalado (iOS): NÃO usar 100dvh/svh no root — no boot o WebKit calcula curto e
+  deixa faixa cinza sob a tabbar. Cadeia % + --app-height (visualViewport em viewport-height.ts).
+*/
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   height: 100%;
-  height: 100svh;
-  height: 100dvh;
-  min-height: 100svh;
-  min-height: -webkit-fill-available;
+  height: var(--app-height, 100%);
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
@@ -22,11 +22,12 @@ body {
   color: var(--nt-ink);
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
-  height: 100%;
-  height: 100svh;
-  height: 100dvh;
-  min-height: 100svh;
+  min-height: 100%;
   min-height: -webkit-fill-available;
+  height: var(--app-height, 100%);
+  max-height: var(--app-height, 100%);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
@@ -38,11 +39,12 @@ body {
   padding: 0;
 }
 #root {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   height: 100%;
-  height: 100svh;
-  height: 100dvh;
-  min-height: 100svh;
-  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   background: var(--nt-canvas);
 }
@@ -65,15 +67,15 @@ img { max-width: 100%; }
 .mono { font-family: var(--nt-mono); font-size: 0.9em; letter-spacing: -0.01em; }
 
 /* ───────── shell ─────────
-   Shell fixo na viewport; só .shell-body rola; tabbar no fluxo (sem gap ao overscroll). */
+   Preenche #root (altura = --app-height); só .shell-body rola; tabbar flex-none no fluxo. */
 .shell {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   height: 100%;
-  height: 100svh;
-  height: 100dvh;
-  min-height: 100svh;
-  min-height: -webkit-fill-available;
+  max-height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
   background: var(--nt-canvas);
@@ -113,7 +115,7 @@ img { max-width: 100%; }
 .ptschip { display: flex; align-items: center; gap: 5px; height: 36px; padding: 0 12px; border-radius: 999px; background: var(--nt-green-soft); color: var(--nt-green-deep); font-weight: 800; font-size: 13px; }
 .ptschip .i { width: 16px; height: 16px; }
 
-/* Tabbar no fluxo do flex (flex-none) — sempre no fundo do viewport, sem position:fixed */
+/* Tabbar no fluxo (flex-none); safe-area no padding — fundo cobre o home indicator no PWA iOS */
 .tabbar {
   position: relative;
   flex: 0 0 auto;
@@ -134,6 +136,8 @@ img { max-width: 100%; }
   z-index: 10;
   view-transition-name: tabbar;
   transform: none;
+  /* evita “vazamento” de canvas cinza sob cantos no modo instalado */
+  margin-bottom: 0;
 }
 .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; color: var(--nt-muted); min-width: 58px; padding: 6px 0; }
 .tab .i { width: 23px; height: 23px; }

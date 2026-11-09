@@ -9,6 +9,7 @@ import { refreshSession } from './lib/api';
 import { ApiError } from './lib/api';
 import { installAppGestures } from './lib/app-gestures';
 import { clearChunkReloadFlag } from './lib/lazy-page';
+import { installViewportHeightLock } from './lib/viewport-height';
 import { ToastProvider } from './ui/Toast';
 import { applyTheme } from './lib/theme';
 
@@ -22,6 +23,7 @@ const queryClient = new QueryClient({
   },
 });
 
+installViewportHeightLock();
 installAppGestures();
 applyTheme();
 clearChunkReloadFlag();

@@ -74,11 +74,19 @@ export function HomePage() {
       ]
     : [];
 
+  // snap vertical só na home (1 seção = 1 tela)
+  useEffect(() => {
+    const body = document.querySelector('.shell-body');
+    body?.classList.add('snap-y');
+    return () => body?.classList.remove('snap-y');
+  }, []);
+
   // chips acompanham a rolagem
   useEffect(() => {
+    const root = document.querySelector('.shell-body');
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: '-40% 0px -55% 0px' },
+      { root: root instanceof Element ? root : null, rootMargin: '-45% 0px -45% 0px' },
     );
     refs.current.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -181,10 +189,10 @@ export function HomePage() {
           <section
             key={s.id}
             id={s.id}
+            className="home-sec"
             ref={(el) => {
               if (el) refs.current.set(s.id, el);
             }}
-            style={{ scrollMarginTop: 12 }}
           >
             <div className="sec">
               <h2 className="h1 sechead" style={{ fontSize: 22 }}>

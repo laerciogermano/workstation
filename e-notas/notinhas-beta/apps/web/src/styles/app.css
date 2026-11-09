@@ -84,6 +84,12 @@ img { max-width: 100%; }
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  /* altura/largura do scrollport p/ seções full-bleed da home */
+  container-type: size;
+  container-name: shellbody;
+}
+.shell-body.snap-y {
+  scroll-snap-type: y proximity;
 }
 .main {
   max-width: 560px;
@@ -299,6 +305,45 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .hscroll.one { grid-template-rows: auto; }
 .hscroll::-webkit-scrollbar { display: none; }
 .hscroll .pc { scroll-snap-align: start; }
+
+/* Home: cada seção = 1 tela (altura do shell-body) × largura total do scrollport */
+.home-sec {
+  box-sizing: border-box;
+  width: 100cqw;
+  max-width: 100cqw;
+  height: 100cqh;
+  max-height: 100cqh;
+  margin-left: calc(50% - 50cqw);
+  margin-right: calc(50% - 50cqw);
+  padding: 8px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+}
+.home-sec .sec { margin-top: 8px; flex: none; }
+.home-sec .hscroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100cqw;
+  max-width: 100cqw;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  align-content: start;
+}
+.home-sec .hscroll.view-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 .pgrid.view-sm { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
 .pgrid.view-md { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
@@ -633,6 +678,7 @@ dt { color: var(--nt-muted); }
   .main.narrow { max-width: 640px; }
   .cols2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .hscroll { grid-auto-columns: 176px; margin: 0; padding: 0 0 4px; }
+  .home-sec .hscroll { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
   .footbar { bottom: 6px; }
   .toast { bottom: 28px; }
   .sheet { bottom: auto; top: 50%; transform: translate(-50%, -50%); border-radius: 24px; animation-name: fade; }

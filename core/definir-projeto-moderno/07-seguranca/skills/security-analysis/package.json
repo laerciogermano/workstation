@@ -1,0 +1,42 @@
+{
+  "name": "security-analysis-skill",
+  "version": "2.0.0",
+  "description": "Security audit skill for 11 AI coding agents — OWASP Top 10, Laravel, Next.js, ASP.NET, React, GraphQL",
+  "bin": {
+    "security-analysis-skill": "bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "references/"
+  ],
+  "keywords": [
+    "copilot",
+    "skill",
+    "security",
+    "owasp",
+    "audit",
+    "vulnerability",
+    "laravel",
+    "nextjs",
+    "aspnet",
+    "react",
+    "graphql",
+    "cursor",
+    "claude",
+    "codex",
+    "windsurf",
+    "cline",
+    "aider",
+    "continue",
+    "amazonq",
+    "gemini",
+    "zed"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geek1498/security-analysis-skill.git"
+  },
+  "homepage": "https://github.com/Geek1498/security-analysis-skill#readme"
+}

@@ -1,17 +1,18 @@
 # Definir projeto moderno
 
-Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/motion, logo, identidade, banco PostgreSQL) para IA iniciar e desenvolver sistema.
+Pacote unificado das pesquisas de **2026-11-08/09** (arquitetura, stack, design/motion, logo, identidade, banco PostgreSQL, segurança) para IA iniciar e desenvolver sistema.
 
 ## Pastas
 
 | Pasta | Conteúdo |
 |---|---|
 | [`01-arquitetura/`](01-arquitetura/README.md) | ADR, arc42, C4 lean, prompts, AGENTS.md |
-| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres ops, filas, 12-Factor, OWASP |
+| [`02-boas-praticas-stack/`](02-boas-praticas-stack/referencias/README.md) | Node/TS, React, Postgres ops, filas, 12-Factor |
 | [`03-design-ui-motion/`](03-design-ui-motion/modern-2026/MODERN-UI-MOTION.md) | UI 2026, motion, anti-slop |
 | [`04-logos/`](04-logos/LOGO.md) | Logos: princípios, prompts, skills SVG |
 | [`05-identidade-visual/`](05-identidade-visual/IDENTIDADE-VISUAL.md) | Sistema de marca: cor, tipo, motion, BRAND/tokens |
 | [`06-banco-postgresql/`](06-banco-postgresql/README.md) | Definir schema PG: defaults, prompts, skills, refs |
+| [`07-seguranca/`](07-seguranca/README.md) | AppSec: OWASP, skills, prompts, checklist (BE/FE/infra) |
 
 ## Começar
 
@@ -21,6 +22,7 @@ Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/mot
 4. Logo: [`04-logos/LOGO.md`](04-logos/LOGO.md)
 5. Identidade: [`05-identidade-visual/IDENTIDADE-VISUAL.md`](05-identidade-visual/IDENTIDADE-VISUAL.md)
 6. Banco: [`06-banco-postgresql/POSTGRES.md`](06-banco-postgresql/POSTGRES.md)
+7. Segurança: [`07-seguranca/SEGURANCA.md`](07-seguranca/SEGURANCA.md)
 
 ## Cópias no workspace
 
@@ -28,6 +30,7 @@ Pacote unificado das pesquisas de **2026-11-08** (arquitetura, stack, design/mot
 - `03` → `.cursor/design-refs/modern-2026/` + skill `.cursor/skills/modern-ui-motion/`
 - `04` → skill `.cursor/skills/logo-identidade/`
 - `05` → skill `.cursor/skills/identidade-visual/`
+- `07` → skill `.cursor/skills/seguranca/`
 
 ## Rollback
 

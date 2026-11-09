@@ -16,7 +16,7 @@ Espelhos oficiais/canônicos baixados em 2026-11-08 para agentes lerem **on-dema
 | [`arquitetura/`](arquitetura/) | 12-Factor, monólito modular, hexagonal, C4, ADR, outbox | Decisões estruturais, deploy, side-effects |
 | [`filas/`](filas/) | BullMQ produção, idempotência, workers, retries | **Só após ADR** de worker/fila (gap atual do Beta) |
 | [`ia-specs/`](ia-specs/) | AGENTS.md, SDD, spec-kit, Beyond Gherkin, code review | Formato de docs e fluxo agente |
-| [`seguranca/`](seguranca/) | OWASP Node/JS-TS, ASVS 5 index | Checklist segurança; não colar ASVS inteiro no prompt |
+| [`seguranca/`](seguranca/README.md) | Ponteiro → pacote [`../../07-seguranca/`](../../07-seguranca/README.md) | AppSec completo (OWASP BE/FE/infra + skills); não colar ASVS inteiro no prompt |
 
 ## Ordem mínima por tipo de task
 
@@ -24,7 +24,7 @@ Espelhos oficiais/canônicos baixados em 2026-11-08 para agentes lerem **on-dema
 2. Migration/SQL → `05` + `postgres/indexes-intro.md` + `sql-altertable.md` + `transaction-iso.md`
 3. Job em background → portas em `03`/`08` → `filas/` + outbox em `arquitetura/` **depois** de ADR
 4. UI → `12` + tokens → `react/react-you-might-not-need-an-effect.md` + Testing Library queries
-5. Segurança/LGPD → `10` + `seguranca/owasp-nodejs-security-cheat-sheet.md`
+5. Segurança/LGPD → `10` + [`../../07-seguranca/SEGURANCA.md`](../../07-seguranca/SEGURANCA.md) + `07-seguranca/referencias/backend/nodejs.md`
 
 ## Caminho inverso
 

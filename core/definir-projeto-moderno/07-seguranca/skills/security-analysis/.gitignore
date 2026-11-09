@@ -1,0 +1,10 @@
+# Test artifacts from --agent=project installs
+.rules
+.windsurfrules
+.clinerules
+.continuerules
+CONVENTIONS.md
+.amazonq/
+
+# Node
+node_modules/

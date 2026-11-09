@@ -23,7 +23,7 @@ Pacote de **espelhos oficiais** (Node/TS, React, PostgreSQL, arquitetura, filas,
 | Monólito modular / hexagonal / C4 / ADR | `03`, `04`, `07` |
 | TS strict + Express produção | `08`, trechos Node em `03` |
 | Postgres índices/migrations | `05` |
-| Segurança / LGPD | `10` + `referencias/seguranca/` |
+| Segurança / LGPD | `10` + [`../../07-seguranca/`](../../07-seguranca/README.md) (ponteiro em `referencias/seguranca/`) |
 | Twelve-Factor / deploy | `14` |
 | Jobs confiáveis | Drivers em `03` → ADR novo → `referencias/filas/` |
 

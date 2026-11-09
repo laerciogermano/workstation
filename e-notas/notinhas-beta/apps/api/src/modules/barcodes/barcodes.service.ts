@@ -1,4 +1,10 @@
-import type { BarcodeOrigin, LinkResultDTO, ProductBarcodeLinkDTO, SuggestionDTO } from '@notinhas/contracts';
+import type {
+  BarcodeOrigin,
+  BarcodeRegistrationTallyDTO,
+  LinkResultDTO,
+  ProductBarcodeLinkDTO,
+  SuggestionDTO,
+} from '@notinhas/contracts';
 import { classifyProduct, descriptionSimilarity, humanizeDescription } from '@notinhas/domain';
 import type { Db, Queryable } from '../../shared/db.js';
 import { withTx } from '../../shared/db.js';
@@ -16,7 +22,73 @@ async function itemDescription(db: Queryable, storeId: number, storeCode: string
   return rows[0]?.description ?? null;
 }
 
-/** Vínculos (loja, cód.) deste EAN — ficha do produto / Alterar código (REQ-067). */
+/** Contagens por EAN + gtin principal (mais votos; empate = registro mais recente). */
+export async function registrationTallies(
+  db: Queryable,
+  storeId: number,
+  storeCode: string,
+): Promise<{ primaryGtin: string | null; registrations: BarcodeRegistrationTallyDTO[] }> {
+  const { rows } = await db.query<{ gtin: string; votes: string; last_at: Date }>(
+    `SELECT gtin, count(*)::text AS votes, max(created_at) AS last_at
+     FROM barcode_registrations
+     WHERE store_id = $1 AND store_code = $2
+     GROUP BY gtin
+     ORDER BY count(*) DESC, max(created_at) DESC, gtin ASC`,
+    [storeId, storeCode],
+  );
+  const primaryGtin = rows[0]?.gtin ?? null;
+  return {
+    primaryGtin,
+    registrations: rows.map((r) => ({
+      gtin: r.gtin,
+      votes: Number(r.votes),
+      primary: r.gtin === primaryGtin,
+    })),
+  };
+}
+
+/** Aplica o EAN mais votado em barcode_links (fonte do índice / v_price_observations). */
+async function upsertPrimaryLink(
+  tx: Queryable,
+  input: {
+    storeId: number;
+    storeCode: string;
+    gtin: string;
+    origin: BarcodeOrigin;
+    visitorId: number | null;
+    userId: number | null;
+  },
+): Promise<void> {
+  await tx.query(
+    `INSERT INTO barcode_links (store_id, store_code, gtin, origin, linked_by_visitor_id, linked_by_user_id)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     ON CONFLICT (store_id, store_code) DO UPDATE SET
+       gtin = EXCLUDED.gtin,
+       origin = EXCLUDED.origin,
+       linked_by_visitor_id = EXCLUDED.linked_by_visitor_id,
+       linked_by_user_id = EXCLUDED.linked_by_user_id,
+       updated_at = now()`,
+    [input.storeId, input.storeCode, input.gtin, input.origin, input.visitorId, input.userId],
+  );
+}
+
+/** Origem do último voto do gtin vencedor (para gravar em barcode_links). */
+async function latestOriginForGtin(
+  tx: Queryable,
+  storeId: number,
+  storeCode: string,
+  gtin: string,
+): Promise<BarcodeOrigin> {
+  const { rows } = await tx.query<{ origin: BarcodeOrigin }>(
+    `SELECT origin FROM barcode_registrations
+     WHERE store_id = $1 AND store_code = $2 AND gtin = $3
+     ORDER BY created_at DESC, id DESC LIMIT 1`,
+    [storeId, storeCode, gtin],
+  );
+  return rows[0]?.origin ?? 'manual';
+}
+
+/** Vínculos (loja, cód.) cujo EAN principal é este — ficha do produto / Alterar (REQ-067). */
 export async function linksForGtin(db: Queryable, gtin: string): Promise<ProductBarcodeLinkDTO[]> {
   const { rows } = await db.query<{
     store_id: string;
@@ -36,17 +108,23 @@ export async function linksForGtin(db: Queryable, gtin: string): Promise<Product
      LIMIT 50`,
     [gtin],
   );
-  return rows.map((r) => {
+  const out: ProductBarcodeLinkDTO[] = [];
+  for (const r of rows) {
     const description = (r.description || '').trim() || r.store_code;
-    return {
+    const tallies = await registrationTallies(db, Number(r.store_id), r.store_code);
+    const mine = tallies.registrations.find((t) => t.gtin === gtin);
+    out.push({
       storeId: Number(r.store_id),
       storeCode: r.store_code,
       storeName: r.store_name,
       description,
       displayName: humanizeDescription(description),
       origin: (r.origin as BarcodeOrigin) || null,
-    };
-  });
+      votes: mine?.votes ?? 0,
+      registrations: tallies.registrations,
+    });
+  }
+  return out;
 }
 
 /** Garante a ficha canônica do EAN (REQ-047). Rede fora de transação. */
@@ -64,13 +142,13 @@ export async function ensureProduct(db: Db, lookup: ProductLookupPort, gtin: str
 }
 
 /**
- * US-01.10 · RN-12 · Q2 — UPSERT em (loja, cód. interno).
- * Default: primeiro vínculo vale; divergência → moderação.
- * Com `replace: true` (fluxo “Alterar”): sobrescreve e registra o antigo em moderação.
+ * US-01.10 · RN-12 — cada vínculo é um voto em barcode_registrations.
+ * O EAN ativo (barcode_links) = mais repetido; empate → voto mais recente.
+ * `replace` permanece no contrato (legado) mas não força sobrescrita.
  */
 export async function linkBarcode(
   deps: { db: Db; productLookup: ProductLookupPort },
-  input: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean },
+  input: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean; vocr?: string | null },
   owner: Owner | null,
 ): Promise<LinkResultDTO> {
   const { db } = deps;
@@ -79,24 +157,35 @@ export async function linkBarcode(
   await ensureProduct(db, deps.productLookup, input.gtin, desc);
 
   const out = await withTx(db, async (tx) => {
-    const cur = await tx.query<{ gtin: string }>(
+    const before = await tx.query<{ gtin: string }>(
       'SELECT gtin FROM barcode_links WHERE store_id = $1 AND store_code = $2 FOR UPDATE',
       [input.storeId, input.storeCode],
     );
-    const existing = cur.rows[0];
-    if (!existing) {
-      await tx.query(
-        `INSERT INTO barcode_links (store_id, store_code, gtin, origin, linked_by_visitor_id, linked_by_user_id)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [input.storeId, input.storeCode, input.gtin, input.origin, owner?.visitorId ?? null, owner?.userId ?? null],
-      );
-      const points = owner
-        ? await awardPoints(tx, owner, 'eanLink', `link:${input.storeId}:${input.storeCode}`, `EAN · ${humanizeDescription(desc)}`)
-        : 0;
-      return { status: 'linked' as const, points };
-    }
-    if (existing.gtin === input.gtin) return { status: 'unchanged' as const, points: 0 };
-    if (input.replace) {
+    const prevPrimary = before.rows[0]?.gtin ?? null;
+
+    const vocr = input.vocr?.replace(/\D/g, '') || null;
+    await tx.query(
+      `INSERT INTO barcode_registrations (store_id, store_code, gtin, origin, vocr, linked_by_visitor_id, linked_by_user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [input.storeId, input.storeCode, input.gtin, input.origin, vocr, owner?.visitorId ?? null, owner?.userId ?? null],
+    );
+
+    const tallies = await registrationTallies(tx, input.storeId, input.storeCode);
+    const primaryGtin = tallies.primaryGtin;
+    if (!primaryGtin) throw new AppError('INTERNAL', 'Falha ao calcular EAN principal.');
+
+    const origin = await latestOriginForGtin(tx, input.storeId, input.storeCode, primaryGtin);
+    await upsertPrimaryLink(tx, {
+      storeId: input.storeId,
+      storeCode: input.storeCode,
+      gtin: primaryGtin,
+      origin,
+      visitorId: owner?.visitorId ?? null,
+      userId: owner?.userId ?? null,
+    });
+
+    // Moderação informativa se o voto não é o principal (divergência comunitária).
+    if (primaryGtin !== input.gtin) {
       await tx.query(
         `INSERT INTO moderation_flags (kind, store_id, store_code, current_gtin, proposed_gtin, summary)
          VALUES ('ean_divergent', $1, $2, $3, $4, $5)
@@ -104,26 +193,29 @@ export async function linkBarcode(
         [
           input.storeId,
           input.storeCode,
-          existing.gtin,
+          primaryGtin,
           input.gtin,
-          `alterado: cód. ${input.storeCode} (${desc}) ${existing.gtin} → ${input.gtin}`,
+          `voto: cód. ${input.storeCode} (${desc}) → ${input.gtin} (principal ${primaryGtin})`,
         ],
       );
-      await tx.query(
-        `UPDATE barcode_links
-         SET gtin = $3, origin = $4, linked_by_visitor_id = $5, linked_by_user_id = $6
-         WHERE store_id = $1 AND store_code = $2`,
-        [input.storeId, input.storeCode, input.gtin, input.origin, owner?.visitorId ?? null, owner?.userId ?? null],
-      );
-      return { status: 'replaced' as const, points: 0 };
     }
-    await tx.query(
-      `INSERT INTO moderation_flags (kind, store_id, store_code, current_gtin, proposed_gtin, summary)
-       VALUES ('ean_divergent', $1, $2, $3, $4, $5)
-       ON CONFLICT (kind, store_id, store_code, proposed_gtin) WHERE status = 'open' DO NOTHING`,
-      [input.storeId, input.storeCode, existing.gtin, input.gtin, `cód. ${input.storeCode} (${desc}) → ${existing.gtin} vs ${input.gtin}`],
-    );
-    return { status: 'flagged' as const, points: 0 };
+
+    const points = owner
+      ? await awardPoints(
+          tx,
+          owner,
+          'eanLink',
+          `link:${input.storeId}:${input.storeCode}:${input.gtin}`,
+          `EAN · ${humanizeDescription(desc)}`,
+        )
+      : 0;
+
+    let status: LinkResultDTO['status'];
+    if (!prevPrimary) status = 'linked';
+    else if (prevPrimary !== primaryGtin) status = 'primary_changed';
+    else status = 'registered';
+
+    return { status, points, primaryGtin, registrations: tallies.registrations };
   });
 
   const p = await db.query<{ gtin: string; title: string; photo_url: string | null }>(
@@ -132,7 +224,14 @@ export async function linkBarcode(
   );
   const prod = p.rows[0];
   if (!prod) throw new AppError('NOT_FOUND');
-  return { status: out.status, pointsAwarded: out.points, product: { gtin: prod.gtin, title: prod.title, photoUrl: prod.photo_url } };
+  return {
+    status: out.status,
+    pointsAwarded: out.points,
+    product: { gtin: prod.gtin, title: prod.title, photoUrl: prod.photo_url },
+    primaryGtin: out.primaryGtin,
+    registrations: out.registrations,
+    vocr: input.vocr?.replace(/\D/g, '') || null,
+  };
 }
 
 /**
@@ -157,6 +256,9 @@ export async function suggestBarcodes(
      WHERE p.title % $1 OR p.title % $2
         OR p.gtin IN (SELECT bl.gtin FROM barcode_links bl JOIN receipt_items ri
                         ON ri.store_id = bl.store_id AND ri.store_code = bl.store_code
+                      WHERE ri.description = $3)
+        OR p.gtin IN (SELECT br.gtin FROM barcode_registrations br JOIN receipt_items ri
+                        ON ri.store_id = br.store_id AND ri.store_code = br.store_code
                       WHERE ri.description = $3)
      ORDER BY sim DESC LIMIT 50`,
     [human, query, desc],

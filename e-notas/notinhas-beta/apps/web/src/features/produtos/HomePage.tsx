@@ -6,11 +6,13 @@ import { Link, useNavigate } from 'react-router';
 import { PageSkeleton } from '../../app/Shell';
 import { useAnchor } from '../../lib/location';
 import { homeProducts, productPricePins } from '../../lib/map-pins';
+import { useProductViewMode } from '../../lib/product-view';
 import { useHome, useMe, useRanking } from '../../lib/queries';
 import { Empty, ErrorBanner } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import { ProductCard } from '../../ui/ProductCard';
+import { ProductViewToggle } from '../../ui/ProductViewToggle';
 import { Wordmark } from '../../ui/Wordmark';
 import { ThemePicker } from '../../ui/ThemePicker';
 import { AddToListSheet } from '../listas/AddToListSheet';
@@ -24,6 +26,7 @@ export function HomePage() {
   const anchor = useAnchor();
   const navigate = useNavigate();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
+  const [view] = useProductViewMode();
   const [active, setActive] = useState('promocoes');
   const [betaOpen, setBetaOpen] = useState(() => {
     try {
@@ -154,14 +157,17 @@ export function HomePage() {
       <ErrorBanner error={home.error} />
 
       {home.data && sections.length > 0 && (
-        <nav className="chips" aria-label="Seções">
-          {sections.map((s) => (
-            <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-              <Icon name={s.icon} />
-              {s.name}
-            </button>
-          ))}
-        </nav>
+        <>
+          <ProductViewToggle />
+          <nav className="chips" aria-label="Seções">
+            {sections.map((s) => (
+              <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                <Icon name={s.icon} />
+                {s.name}
+              </button>
+            ))}
+          </nav>
+        </>
       )}
 
       {home.data && home.data.promotions.length === 0 && (
@@ -187,9 +193,9 @@ export function HomePage() {
               </h2>
               <span className="meta-r">{s.sub}</span>
             </div>
-            <div className={`hscroll ${s.products.length < 5 ? 'one' : ''}`}>
+            <div className={`hscroll view-${view} ${view !== 'list' && s.products.length < 5 ? 'one' : ''}`}>
               {s.products.map((p) => (
-                <ProductCard key={p.gtin} p={p} onAdd={setAdding} showHighlight={s.hl} />
+                <ProductCard key={p.gtin} p={p} onAdd={setAdding} showHighlight={s.hl} view={view} />
               ))}
             </div>
           </section>

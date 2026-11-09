@@ -4,9 +4,9 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 | Tela | Rota | Componente | API | Regras |
 |---|---|---|---|---|
-| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 |
+| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 · `ProductViewToggle` (sm/md/list, `nt:product-view`) |
 | T-73 Carregando | (qualquer) | `app/Shell › PageSkeleton` | — | skeleton, sem spinner |
-| T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 (sem EAN = confiança menor) · tabbar oculta em `/busca` (Shell `hideTabbar`); reaparece ao voltar |
+| T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · tabbar some só com busca ativa (`q`/`categoria`); cache limpo ao limpar/sair (`clearSearchCache`, sem `placeholderData`) |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` na seção Perto de você → mapa; Alterar código / Trocar foto) | `GET /produtos/:gtin` (+ `links[]`) | RN-05, Q3, REQ-047/058/067 · mapa sai do topo e fica junto de Perto de você |
 | T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
 | T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins = produtos (vários por local) |
@@ -14,7 +14,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
 | T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe | `/notas/:id` | `features/nota/ReceiptResultPage` | `GET /notas/:id` | RN-02, RN-03, RN-06, REQ-046 |
 | T-23 Vincular EAN | sheet | `features/nota/LinkEanSheet` | `POST /codigos-barras` (`replace?`), `GET /codigos-barras/sugestoes`, `GET /imagens/proxy` | RN-12, Q2, REQ-043/068; vínculo por cód. interno (propaga) |
-| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (SI5 + Google/Bing) | REQ-040/042/069; confirmar no topo; onError remove |
+| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (SI5 + Google/Bing) | REQ-040/042/069; cada POST = voto em `photo_registrations`; `products.photo_url` = mais votada; picker mostra contagem |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
 | T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: só pin do estabelecimento · item sem EAN: clique abre `LinkEanSheet`; após vínculo `onLinked` → `q.refetch()` (lista atualiza sem F5). `api` fetch usa `cache: 'no-store'` p/ não reusar GET com max-age=30 da API |

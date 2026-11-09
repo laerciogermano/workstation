@@ -135,7 +135,7 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
     await db.query(`DELETE FROM point_events WHERE ref = 'receipt:' || $1`, [KEY_OTHER]);
   });
 
-  it('US-01.10: vincula EAN (+5), dígito inválido → 422, divergência → moderação', async () => {
+  it('US-01.10: vincula EAN (+5), dígito inválido → 422, principal = mais votado', async () => {
     const store = (await db.query('SELECT id FROM stores LIMIT 1')).rows[0].id as number;
     const bad = await request(app).post('/api/v1/codigos-barras').set(H).send({ storeId: store, storeCode: '20981', gtin: '7894900011518', origin: 'manual' });
     expect(bad.status).toBe(422);
@@ -143,12 +143,39 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
 
     const ok = await request(app).post('/api/v1/codigos-barras').set(H).send({ storeId: store, storeCode: '20981', gtin: '7894900011517', origin: 'barcode_scan' });
     expect(ok.status).toBe(200);
-    expect(ok.body).toMatchObject({ status: 'linked', pointsAwarded: 5, product: { title: 'Coca-Cola Original 2L' } });
+    expect(ok.body).toMatchObject({
+      status: 'linked',
+      pointsAwarded: 5,
+      primaryGtin: '7894900011517',
+      product: { title: 'Coca-Cola Original 2L' },
+    });
 
-    const div = await request(app).post('/api/v1/codigos-barras').set({ ...H, 'X-Client-Fingerprint': FP2 }).send({ storeId: store, storeCode: '20981', gtin: '78936683', origin: 'manual' });
-    expect(div.body.status).toBe('flagged');
-    const link = await db.query(`SELECT gtin FROM barcode_links WHERE store_code = '20981'`);
-    expect(link.rows[0].gtin).toBe('7894900011517'); // primeiro vínculo vale (Q2)
+    // 2º EAN empatado → empate desempata pelo voto mais recente
+    const other = await request(app)
+      .post('/api/v1/codigos-barras')
+      .set({ ...H, 'X-Client-Fingerprint': FP2 })
+      .send({ storeId: store, storeCode: '20981', gtin: '78936683', origin: 'manual' });
+    expect(other.body.status).toBe('primary_changed');
+    expect(other.body.primaryGtin).toBe('78936683');
+    let link = await db.query(`SELECT gtin FROM barcode_links WHERE store_code = '20981'`);
+    expect(link.rows[0].gtin).toBe('78936683');
+
+    // 2º voto na Coca → volta a ser principal
+    const again = await request(app)
+      .post('/api/v1/codigos-barras')
+      .set(H)
+      .send({ storeId: store, storeCode: '20981', gtin: '7894900011517', origin: 'manual' });
+    expect(again.body.status).toBe('primary_changed');
+    expect(again.body.primaryGtin).toBe('7894900011517');
+    link = await db.query(`SELECT gtin FROM barcode_links WHERE store_code = '20981'`);
+    expect(link.rows[0].gtin).toBe('7894900011517');
+    const votes = await db.query(
+      `SELECT gtin, count(*)::int AS c FROM barcode_registrations WHERE store_code = '20981' GROUP BY gtin ORDER BY c DESC`,
+    );
+    expect(votes.rows).toEqual([
+      { gtin: '7894900011517', c: 2 },
+      { gtin: '78936683', c: 1 },
+    ]);
   });
 
   it('RN-06: busca pública traz preço com loja e data, sem nada de pessoa', async () => {

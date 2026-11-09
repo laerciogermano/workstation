@@ -82,6 +82,37 @@ export interface ComparisonRowDTO extends OfferDTO {
   isBest: boolean;
 }
 
+/** Contagem de votos de EAN num (loja, cód. interno). */
+export interface BarcodeRegistrationTallyDTO {
+  gtin: string;
+  votes: number;
+  /** true = gtin ativo em barcode_links (mais votado). */
+  primary: boolean;
+}
+
+/** Contagem de votos de foto por EAN (espelho de barcode_registrations). */
+export interface PhotoRegistrationTallyDTO {
+  url: string;
+  votes: number;
+  /** true = URL ativa em products.photo_url (mais votada). */
+  primary: boolean;
+}
+
+export type SetProductPhotoStatus = 'set' | 'registered' | 'primary_changed';
+
+export interface SetProductPhotoResultDTO {
+  ok: true;
+  status: SetProductPhotoStatus;
+  primaryUrl: string;
+  registrations: PhotoRegistrationTallyDTO[];
+}
+
+export interface ProductPhotosDTO {
+  current: string | null;
+  candidates: { url: string; source: string; votes: number; primary: boolean }[];
+  registrations: PhotoRegistrationTallyDTO[];
+}
+
 /** Vínculo (loja, cód. interno) → este EAN — base do “Alterar código” na ficha (REQ-067). */
 export interface ProductBarcodeLinkDTO {
   storeId: number;
@@ -90,6 +121,10 @@ export interface ProductBarcodeLinkDTO {
   description: string;
   displayName: string;
   origin: BarcodeOrigin | null;
+  /** Votos deste EAN neste cód. interno. */
+  votes: number;
+  /** Todos os EAN registrados neste cód. (mais votado = primary). */
+  registrations: BarcodeRegistrationTallyDTO[];
 }
 
 export interface ProductDetailDTO {
@@ -166,11 +201,17 @@ export interface SuggestionDTO {
   source: 'catalogo' | 'openfoodfacts' | 'si5';
 }
 
-export type LinkStatus = 'linked' | 'replaced' | 'unchanged' | 'flagged';
+/** linked = 1º vínculo do cód. · registered = novo voto (principal igual) · primary_changed = novo principal · replaced/flagged = legado */
+export type LinkStatus = 'linked' | 'registered' | 'primary_changed' | 'replaced' | 'unchanged' | 'flagged';
 export interface LinkResultDTO {
   status: LinkStatus;
   pointsAwarded: number;
   product: { gtin: string; title: string; photoUrl: string | null };
+  /** EAN ativo após o voto (mais frequente). */
+  primaryGtin: string;
+  registrations: BarcodeRegistrationTallyDTO[];
+  /** VOCR gravado neste voto (OCR do número impresso), se houver. */
+  vocr: string | null;
 }
 
 export interface StoreProgressDTO {

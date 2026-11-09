@@ -3,12 +3,14 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { brl, km, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
+import { useProductViewMode } from '../../lib/product-view';
 import { useStore } from '../../lib/queries';
 import { Empty, ErrorBanner, Progress, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import type { MapPin } from '../../ui/MapView';
 import { ProductCard } from '../../ui/ProductCard';
+import { ProductViewToggle } from '../../ui/ProductViewToggle';
 import { Segmented } from '../../ui/Segmented';
 import { TopBar } from '../../ui/TopBar';
 import { AddToListSheet } from '../listas/AddToListSheet';
@@ -46,6 +48,7 @@ export default function StorePage() {
   const q = useStore(Number(id), useDeferredValue(term));
   const anchor = useAnchor();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
+  const [view] = useProductViewMode();
   const [target, setTarget] = useState<LinkTarget | null>(null);
   const d = q.data;
   const pins = useMemo(
@@ -102,11 +105,30 @@ export default function StorePage() {
 
       {tab === 'com' &&
         (d.withEan.length ? (
-          <div className="pgrid">
-            {d.withEan.map((p) => (
-              <ProductCard key={p.gtin} p={{ ...p, best: p.best ? { ...p.best, priceCents: p.here.priceCents, observedAt: p.here.observedAt, store: { id: s.id, name: s.name, neighborhood: s.neighborhood } } : null, highlight: p.best?.store.id === s.id ? p.highlight : null }} onAdd={setAdding} />
-            ))}
-          </div>
+          <>
+            <ProductViewToggle />
+            <div className={`pgrid view-${view}`}>
+              {d.withEan.map((p) => (
+                <ProductCard
+                  key={p.gtin}
+                  view={view}
+                  p={{
+                    ...p,
+                    best: p.best
+                      ? {
+                          ...p.best,
+                          priceCents: p.here.priceCents,
+                          observedAt: p.here.observedAt,
+                          store: { id: s.id, name: s.name, neighborhood: s.neighborhood },
+                        }
+                      : null,
+                    highlight: p.best?.store.id === s.id ? p.highlight : null,
+                  }}
+                  onAdd={setAdding}
+                />
+              ))}
+            </div>
+          </>
         ) : (
           <Empty icon="barcode" title="Nenhum item com código ainda." />
         ))}

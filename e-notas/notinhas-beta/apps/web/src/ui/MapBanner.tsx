@@ -19,7 +19,7 @@ export function MapBanner({
   if (pins.length === 0) return null;
   return (
     <Link to={to} viewTransition className="mapbanner" aria-label={caption}>
-      <MapView pins={pins} center={center} {...(radiusKm !== undefined ? { radiusKm } : {})} interactive={false} className="banner" />
+      <MapView pins={pins} center={center} {...(radiusKm !== undefined ? { radiusKm } : {})} interactive={false} className="inbanner" />
       <span className="cap">
         <Icon name="expand" />
         {caption}

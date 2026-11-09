@@ -154,6 +154,15 @@ await withTx(db, async (tx) => {
            ON CONFLICT (store_id, store_code) DO NOTHING`,
           [storeId, l.code, l.ean],
         );
+        await tx.query(
+          `INSERT INTO barcode_registrations (store_id, store_code, gtin, origin)
+           SELECT $1, $2, $3, 'import'
+           WHERE NOT EXISTS (
+             SELECT 1 FROM barcode_registrations
+             WHERE store_id = $1 AND store_code = $2 AND gtin = $3 AND origin = 'import'
+           )`,
+          [storeId, l.code, l.ean],
+        );
       }
     }
   }

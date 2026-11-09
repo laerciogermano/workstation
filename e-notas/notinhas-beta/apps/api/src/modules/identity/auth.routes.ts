@@ -191,6 +191,8 @@ export function meRoutes(deps: Deps): Router {
       await tx.query('UPDATE ingest_failures SET user_id = NULL, visitor_id = NULL WHERE user_id = $1', [user.id]);
       await tx.query('DELETE FROM visitors WHERE user_id = $1', [user.id]);
       await tx.query('UPDATE barcode_links SET linked_by_user_id = NULL WHERE linked_by_user_id = $1', [user.id]);
+      await tx.query('UPDATE barcode_registrations SET linked_by_user_id = NULL WHERE linked_by_user_id = $1', [user.id]);
+      await tx.query('UPDATE photo_registrations SET linked_by_user_id = NULL WHERE linked_by_user_id = $1', [user.id]);
       await tx.query(
         `UPDATE users SET email = 'excluido-' || public_id || '@invalid', password_hash = '!', name = NULL,
                           is_store_opt_in = false, deleted_at = now() WHERE id = $1`,

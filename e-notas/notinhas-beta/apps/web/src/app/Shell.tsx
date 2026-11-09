@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useSyncExternalStore } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router';
+import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router';
 import { Icon, type IconName } from '../ui/Icon';
 import { Wordmark } from '../ui/Wordmark';
 import { ThemePicker } from '../ui/ThemePicker';
@@ -31,9 +31,12 @@ export function Shell() {
   const { pathname } = useLocation();
   const online = useOnline();
   const me = useMe();
+  const [searchParams] = useSearchParams();
   const isDark = pathname === '/nota' || pathname.startsWith('/nota/ler');
-  /** Busca em tela cheia: some a tabbar; volta ao sair de /busca (voltar / cancelar). */
-  const hideTabbar = isDark || pathname === '/busca' || pathname.startsWith('/busca?');
+  /** Tabbar some só com busca ativa (q ou categoria); /busca vazio ou fora dela → menu de volta. */
+  const searchActive =
+    pathname === '/busca' && !!(searchParams.get('q')?.trim() || searchParams.get('categoria'));
+  const hideTabbar = isDark || searchActive;
 
   useEffect(() => {
     document.documentElement.classList.remove('back');

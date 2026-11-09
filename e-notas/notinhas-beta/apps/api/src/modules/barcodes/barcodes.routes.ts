@@ -6,6 +6,7 @@ import { maybeOwnerOf } from '../../shared/http/context.js';
 import { AppError } from '../../shared/http/problem.js';
 import { parse } from '../../shared/http/validate.js';
 import { linkBarcode, suggestBarcodes } from './barcodes.service.js';
+import { photoTallies, registerPhotoVote } from './photos.service.js';
 import { isAllowedPhotoUrl } from './photo-url.js';
 
 const SuggestQuery = z.object({
@@ -66,28 +67,41 @@ export function barcodesRoutes(deps: Deps): Router {
   return r;
 }
 
-/** T-24 — candidatas de foto pelo EAN; a escolhida vira a foto da ficha para todas as lojas. */
+/** T-24 — candidatas de foto pelo EAN; cada POST é um voto; products.photo_url = mais votada. */
 export function productPhotoRoutes(deps: Deps): Router {
   const r = Router({ mergeParams: true });
 
   r.get('/', async (req, res) => {
     const gtin = parse(GtinSchema, (req.params as { gtin: string }).gtin);
     const { current, candidates } = await photoCandidates(deps, gtin);
-    res.json({ current, candidates });
+    const tallies = await photoTallies(deps.db, gtin);
+    const byUrl = new Map(tallies.registrations.map((t) => [t.url, t]));
+    res.json({
+      current: tallies.primaryUrl ?? current,
+      candidates: candidates.map((c) => {
+        const t = byUrl.get(c.url);
+        return {
+          url: c.url,
+          source: c.source,
+          votes: t?.votes ?? 0,
+          primary: t?.primary ?? c.url === (tallies.primaryUrl ?? current),
+        };
+      }),
+      registrations: tallies.registrations,
+    });
   });
 
   r.post('/', async (req, res) => {
     const gtin = parse(GtinSchema, (req.params as { gtin: string }).gtin);
-    const raw = parse(z.object({ url: z.string().min(1).max(8000) }), req.body).url;
-    const url = unwrapPhotoUrl(raw);
+    const body = parse(z.object({ url: z.string().min(1).max(8000), source: z.string().max(40).optional() }), req.body);
+    const url = unwrapPhotoUrl(body.url);
     if (!isAllowedPhotoUrl(url)) throw new AppError('VALIDATION_FAILED', 'Foto fora da lista de candidatas.');
     const { allowed } = await photoCandidates(deps, gtin);
     // aceita URL da lista atual OU https público (lista Google muda entre GET e POST)
     if (!allowed.has(url) && !isAllowedPhotoUrl(url)) {
       throw new AppError('VALIDATION_FAILED', 'Foto fora da lista de candidatas.');
     }
-    await deps.db.query('UPDATE products SET photo_url = $2 WHERE gtin = $1', [gtin, url]);
-    res.json({ ok: true });
+    res.json(await registerPhotoVote(deps, { gtin, url, source: body.source ?? 'picker' }, maybeOwnerOf(req)));
   });
 
   return r;

@@ -45,8 +45,18 @@ export const LinkBarcodeSchema = z.object({
   storeCode: z.string().trim().min(1).max(60),
   gtin: GtinSchema,
   origin: z.enum(BARCODE_ORIGINS),
-  /** Explicitamente alterar vínculo já existente (grava o antigo em moderação e sobrescreve). */
+  /**
+   * Legado “Alterar”: ainda aceito, mas o fluxo atual só registra um voto.
+   * O EAN ativo passa a ser o mais repetido entre as registraões.
+   */
   replace: z.boolean().optional().default(false),
+  /** Dígitos lidos por OCR no mesmo frame (número impresso sob as barras). */
+  vocr: z
+    .string()
+    .trim()
+    .regex(/^\d{8,14}$/)
+    .optional()
+    .nullable(),
 });
 
 export const SearchQuerySchema = GeoQuerySchema.extend({

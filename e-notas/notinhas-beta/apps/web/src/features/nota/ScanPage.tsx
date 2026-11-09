@@ -46,9 +46,9 @@ export default function ScanPage() {
 
   const { videoRef, state } = useCameraScanner(
     'qr',
-    (text) => {
+    (hit) => {
       setHit(true);
-      void submit(text);
+      void submit(hit.code);
     },
     phase.kind === 'camera' && !paste,
   );
@@ -56,10 +56,10 @@ export default function ScanPage() {
   async function onPhoto(f: File | undefined) {
     if (!f) return;
     setPhotoMsg('Lendo o QR da foto…');
-    const text = await decodeImageFile(f, 'qr');
-    if (text) {
+    const hit = await decodeImageFile(f, 'qr');
+    if (hit) {
       setPhotoMsg(null);
-      void submit(text);
+      void submit(hit.code);
     } else setPhotoMsg('Não achamos um QR Code nessa foto. Tente outra, mais de perto e sem reflexo.');
   }
 

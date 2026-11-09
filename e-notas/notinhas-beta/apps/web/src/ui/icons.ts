@@ -3,6 +3,9 @@ export const ICONS = {
   search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   grid: '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+  /** Grade densa 3×3 — modo cards pequenos */
+  gridsm:
+    '<rect width="4" height="4" x="3" y="3" rx="0.5"/><rect width="4" height="4" x="10" y="3" rx="0.5"/><rect width="4" height="4" x="17" y="3" rx="0.5"/><rect width="4" height="4" x="3" y="10" rx="0.5"/><rect width="4" height="4" x="10" y="10" rx="0.5"/><rect width="4" height="4" x="17" y="10" rx="0.5"/><rect width="4" height="4" x="3" y="17" rx="0.5"/><rect width="4" height="4" x="10" y="17" rx="0.5"/><rect width="4" height="4" x="17" y="17" rx="0.5"/>',
   store: '<path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/>',
   plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
   minus: '<path d="M5 12h14"/>',

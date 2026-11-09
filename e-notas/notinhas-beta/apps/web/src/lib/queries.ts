@@ -45,12 +45,18 @@ export function useHome() {
 
 export function useSearch(q: string, categoria: string | null, ordem: 'preco' | 'distancia') {
   const g = geoQuery(useAnchor());
+  const active = q.trim().length > 0 || !!categoria;
   return useQuery({
     queryKey: [...qk.catalog, 'busca', q, categoria, ordem, g],
     queryFn: ({ signal }) => api<SearchDTO>('/produtos/busca', { query: { q, categoria, ordem, ...g }, signal }),
-    enabled: q.trim().length > 0 || !!categoria,
-    placeholderData: (prev) => prev,
+    enabled: active,
+    // Sem placeholderData: resultados antigos NÃO ficam na tela ao trocar/limpar a query.
   });
+}
+
+/** Apaga o cache de buscas (sair da tela / limpar campo / nova busca). */
+export function clearSearchCache(qc: ReturnType<typeof useQueryClient>) {
+  qc.removeQueries({ queryKey: [...qk.catalog, 'busca'] });
 }
 
 export function useProduct(gtin: string) {
@@ -89,7 +95,12 @@ export function useSuggestions(storeId: number, storeCode: string, q = '', enabl
 export function usePhotoCandidates(gtin: string | null) {
   return useQuery({
     queryKey: [...qk.catalog, 'fotos', gtin],
-    queryFn: () => api<{ current: string | null; candidates: { url: string; source: string }[] }>(`/produtos/${gtin}/fotos`),
+    queryFn: () =>
+      api<{
+        current: string | null;
+        candidates: { url: string; source: string; votes: number; primary: boolean }[];
+        registrations: { url: string; votes: number; primary: boolean }[];
+      }>(`/produtos/${gtin}/fotos`),
     enabled: !!gtin,
   });
 }
@@ -140,7 +151,7 @@ export function useIngest() {
 export function useLinkBarcode() {
   const inv = useInvalidateAll();
   return useMutation({
-    mutationFn: (b: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean }) =>
+    mutationFn: (b: { storeId: number; storeCode: string; gtin: string; origin: BarcodeOrigin; replace?: boolean; vocr?: string | null }) =>
       api<LinkResultDTO>('/codigos-barras', { method: 'POST', body: b }),
     onSuccess: () => inv(),
   });

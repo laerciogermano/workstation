@@ -1,7 +1,8 @@
 import type { BarcodeOrigin, LinkResultDTO, SuggestionDTO } from '@notinhas/contracts';
 import { isValidGtin, normalizeGtin } from '@notinhas/domain';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { useLinkBarcode, usePhotoCandidates, useSuggestions } from '../../lib/queries';
+import { useLinkBarcode, usePhotoCandidates, useSuggestions, qk } from '../../lib/queries';
 import { api } from '../../lib/api';
 import { ErrorBanner, Photo, photoSrc } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
@@ -14,7 +15,7 @@ export interface LinkTarget {
   storeCode: string;
   description: string;
   displayName: string;
-  /** Já tem EAN — fluxo “Alterar” sobrescreve o vínculo. */
+  /** Já tem EAN — fluxo “Alterar” / registrar outro voto. */
   replace?: boolean;
   currentGtin?: string | null;
 }
@@ -63,7 +64,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
     onClose();
   }
 
-  async function submit(gtin: string, origin: BarcodeOrigin, from?: SuggestionDTO) {
+  async function submit(gtin: string, origin: BarcodeOrigin, from?: SuggestionDTO, vocr?: string | null) {
     if (!target || link.isPending) return;
     const r = await link.mutateAsync({
       storeId: target.storeId,
@@ -71,6 +72,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       gtin,
       origin,
       replace: replacing || undefined,
+      vocr: vocr || undefined,
     });
     setTyped('');
     setHit(false);
@@ -79,13 +81,18 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       finish(r);
       return;
     }
-    if (r.status === 'replaced') {
+    const vocrNote = r.vocr ? ` · VOCR ${r.vocr}` : '';
+    if (r.status === 'primary_changed') {
+      toast({ text: `Principal atualizado para ${r.primaryGtin}${vocrNote} · cód. ${target.storeCode}` });
+    } else if (r.status === 'registered') {
+      toast({ text: `Código registrado${vocrNote} · principal continua ${r.primaryGtin}` });
+    } else if (r.status === 'replaced') {
       toast({ text: `Código atualizado · vale para o cód. ${target.storeCode} em todas as notas desta loja` });
     } else {
       toast({
         text: r.pointsAwarded
-          ? `Vinculado · cód. ${target.storeCode} em todas as notas desta loja · +${r.pointsAwarded}`
-          : `Vinculado · cód. ${target.storeCode} em todas as notas desta loja`,
+          ? `Vinculado${vocrNote} · cód. ${target.storeCode} · +${r.pointsAwarded}`
+          : `Vinculado${vocrNote} · cód. ${target.storeCode} em todas as notas desta loja`,
       });
     }
 
@@ -98,11 +105,11 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
 
   const { videoRef, state } = useCameraScanner(
     'ean',
-    (text) => {
-      const g = normalizeGtin(text);
+    (hit) => {
+      const g = normalizeGtin(hit.code);
       if (isValidGtin(g)) {
         setHit(true);
-        void submit(g, 'barcode_scan');
+        void submit(g, 'barcode_scan', undefined, hit.vocr);
       }
     },
     !!target && !photoFor,
@@ -129,22 +136,22 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   }
 
   return (
-    <Sheet open={!!target} onClose={onClose} title={replacing ? 'Alterar código de barras' : 'Vincular código de barras'}>
+    <Sheet open={!!target} onClose={onClose} title={replacing ? 'Registrar outro código' : 'Vincular código de barras'}>
       <p className="meta">
         {target?.displayName} · <span className="mono">{target?.description}</span> · cód. interno{' '}
         <span className="mono">{target?.storeCode}</span>
         {replacing && target?.currentGtin ? (
           <>
-            {' · EAN atual '}
+            {' · EAN principal '}
             <span className="mono">{target.currentGtin}</span>
           </>
         ) : null}
       </p>
-      <p className="hint">O vínculo é por código interno da loja: uma vez ligado, todas as notas com este cód. herdam o mesmo EAN.</p>
+      <p className="hint">Cada leitura conta como voto. O EAN principal é o mais repetido. A câmera também tenta ler o VOCR (número impresso sob as barras).</p>
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />
         <Viewfinder mode="ean" hit={hit} />
-        <p>{state === 'live' ? 'Aponte para o código de barras da embalagem' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — digite o código ou use uma sugestão abaixo.'}</p>
+        <p>{state === 'live' ? 'Aponte para o código e o número impresso abaixo' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — digite o código ou use uma sugestão abaixo.'}</p>
       </div>
 
       <label className="lbl" htmlFor="ean-typed">
@@ -221,20 +228,28 @@ export function PhotoPickerSheet({
   onClose: () => void;
 }) {
   const q = usePhotoCandidates(gtin);
+  const qc = useQueryClient();
   const [sel, setSel] = useState<string | null>(null);
   const [broken, setBroken] = useState<Set<string>>(() => new Set());
   const [saving, setSaving] = useState(false);
   const toast = useToast();
 
   const candidates = (() => {
-    const map = new Map<string, { url: string; source: string }>();
+    const map = new Map<string, { url: string; source: string; votes: number; primary: boolean }>();
     for (const s of seed) {
       const u = unwrapProxy(s.url);
-      if (u) map.set(u, { url: u, source: s.source });
+      if (u) map.set(u, { url: u, source: s.source, votes: 0, primary: false });
     }
     for (const c of q.data?.candidates ?? []) {
       const u = unwrapProxy(c.url);
-      if (u && !map.has(u)) map.set(u, { url: u, source: c.source });
+      if (!u) continue;
+      const prev = map.get(u);
+      map.set(u, {
+        url: u,
+        source: c.source || prev?.source || 'foto',
+        votes: c.votes ?? prev?.votes ?? 0,
+        primary: c.primary ?? prev?.primary ?? false,
+      });
     }
     return [...map.values()].filter((c) => !broken.has(c.url));
   })();
@@ -257,8 +272,19 @@ export function PhotoPickerSheet({
     if (!sel) return onClose();
     setSaving(true);
     try {
-      await api(`/produtos/${gtin}/fotos`, { method: 'POST', body: { url: sel } });
-      toast({ text: 'Foto salva na ficha do produto' });
+      const r = await api<{ status: string; primaryUrl: string }>(`/produtos/${gtin}/fotos`, {
+        method: 'POST',
+        body: { url: sel, source: 'picker' },
+      });
+      await qc.invalidateQueries({ queryKey: qk.catalog });
+      toast({
+        text:
+          r.status === 'primary_changed'
+            ? 'Foto principal atualizada (mais votos)'
+            : r.status === 'registered'
+              ? 'Voto registrado — principal continua a mais votada'
+              : 'Foto salva na ficha do produto',
+      });
     } finally {
       setSaving(false);
       onClose();
@@ -283,7 +309,7 @@ export function PhotoPickerSheet({
             </button>
           </div>
         </div>
-        <p className="hint">Toque numa foto abaixo — confirme aqui em cima, sem descer.</p>
+        <p className="hint">Toque numa foto — cada confirmação é um voto; a mais votada vira a principal.</p>
       </div>
 
       {q.isPending && candidates.length === 0 && <p className="hint">Buscando fotos…</p>}
@@ -306,6 +332,11 @@ export function PhotoPickerSheet({
                 />
               ) : (
                 <span className="ph-empty" />
+              )}
+              {c.votes > 0 && (
+                <span className={`cand-votes ${c.primary ? 'primary' : ''}`} title={c.primary ? 'Foto principal' : undefined}>
+                  {c.votes} {c.votes === 1 ? 'voto' : 'votos'}
+                </span>
               )}
               <span>{c.source}</span>
             </button>

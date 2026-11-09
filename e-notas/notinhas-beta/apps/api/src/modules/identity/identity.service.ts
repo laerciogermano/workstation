@@ -62,6 +62,14 @@ export async function mergeVisitorIntoUser(tx: Tx, visitorId: number, userId: nu
     'UPDATE barcode_links SET linked_by_user_id = $2 WHERE linked_by_visitor_id = $1 AND linked_by_user_id IS NULL',
     [visitorId, userId],
   );
+  await tx.query(
+    'UPDATE barcode_registrations SET linked_by_user_id = $2 WHERE linked_by_visitor_id = $1 AND linked_by_user_id IS NULL',
+    [visitorId, userId],
+  );
+  await tx.query(
+    'UPDATE photo_registrations SET linked_by_user_id = $2 WHERE linked_by_visitor_id = $1 AND linked_by_user_id IS NULL',
+    [visitorId, userId],
+  );
   await tx.query('UPDATE ingest_failures SET user_id = $2 WHERE visitor_id = $1 AND user_id IS NULL', [visitorId, userId]);
   await tx.query('UPDATE visitors SET user_id = $2, merged_at = now() WHERE id = $1', [visitorId, userId]);
 }

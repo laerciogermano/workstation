@@ -74,8 +74,7 @@ export function HomePage() {
       ]
     : [];
 
-  // Snap só após rolagem real para baixo. pointerdown NÃO arma (tap no mapa/busca pulava p/ Promoções).
-  // .home-top é snap-alvo para subir de volta ao mapa/busca.
+  // Snap só após rolar p/ baixo. Topo fica com altura natural; subir de Promoções → #topo via JS.
   useEffect(() => {
     const body = document.querySelector('.shell-body');
     if (!(body instanceof HTMLElement)) return;
@@ -89,22 +88,58 @@ export function HomePage() {
     const t2 = window.setTimeout(stickTop, 200);
 
     let armed = false;
+    let touchY = 0;
+
+    const firstSecAtTop = () => {
+      const first = body.querySelector('.home-sec');
+      if (!(first instanceof HTMLElement)) return false;
+      const br = body.getBoundingClientRect();
+      const fr = first.getBoundingClientRect();
+      return fr.top >= br.top - 12 && fr.top <= br.top + 96;
+    };
+
+    const goTop = () => {
+      const top = body.querySelector('.home-top');
+      if (top instanceof HTMLElement) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else body.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const armSnap = () => {
       if (armed) return;
       armed = true;
       body.classList.add('snap-y');
-      body.removeEventListener('wheel', onWheel);
-      body.removeEventListener('scroll', onScroll);
     };
+
     const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) armSnap();
+      if (e.deltaY > 0) {
+        armSnap();
+        return;
+      }
+      if (armed && e.deltaY < 0 && firstSecAtTop()) {
+        e.preventDefault();
+        goTop();
+      }
     };
+
     const onScroll = () => {
       if (body.scrollTop > 32) armSnap();
     };
 
-    body.addEventListener('wheel', onWheel, { passive: true });
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0]?.clientY ?? 0;
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!armed) return;
+      const y = e.changedTouches[0]?.clientY ?? touchY;
+      const dy = y - touchY; // dedo para baixo = conteúdo sobe
+      if (dy > 48 && firstSecAtTop()) goTop();
+    };
+
+    body.addEventListener('wheel', onWheel, { passive: false });
     body.addEventListener('scroll', onScroll, { passive: true });
+    body.addEventListener('touchstart', onTouchStart, { passive: true });
+    body.addEventListener('touchend', onTouchEnd, { passive: true });
 
     return () => {
       window.clearTimeout(t1);
@@ -112,6 +147,8 @@ export function HomePage() {
       body.classList.remove('snap-y');
       body.removeEventListener('wheel', onWheel);
       body.removeEventListener('scroll', onScroll);
+      body.removeEventListener('touchstart', onTouchStart);
+      body.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
 

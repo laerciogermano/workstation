@@ -29,7 +29,7 @@ export function ProductCard({
         <div className="pc-list-body">
           <div className="pc-list-top">
             {h ? <Chip kind="menor">promoção</Chip> : <Chip kind="menor">menor preço</Chip>}
-            {h && <span className="badge-off tnum">{pct(h.ratio)}</span>}
+            {h && <span className="badge-off inline tnum">{pct(h.ratio)}</span>}
           </div>
           <p className="pn">{p.title}</p>
           {b && (
@@ -64,6 +64,7 @@ export function ProductCard({
     <Link to={`/produto/${p.gtin}`} viewTransition className={`pc pc-${view}`}>
       <div className="phwrap">
         <Photo url={p.photoUrl} category={p.category} alt="" />
+        {h && <span className="badge-off tnum">{pct(h.ratio)}</span>}
         {onAdd && (
           <button
             type="button"
@@ -79,10 +80,7 @@ export function ProductCard({
           </button>
         )}
       </div>
-      <div className="pc-topline">
-        {h ? <Chip kind="menor">promoção</Chip> : <Chip kind="menor">menor preço</Chip>}
-        {h && <span className="badge-off tnum">{pct(h.ratio)}</span>}
-      </div>
+      <div>{h ? <Chip kind="menor">promoção</Chip> : <Chip kind="menor">menor preço</Chip>}</div>
       <p className="pn">{p.title}</p>
       {b && (
         <>

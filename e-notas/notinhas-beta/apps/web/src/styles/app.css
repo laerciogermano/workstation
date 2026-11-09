@@ -401,9 +401,8 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .pc.pc-list .pn { min-height: 0; -webkit-line-clamp: 2; margin-top: 2px; }
 .pc.pc-list .pc-list-end { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .pc.pc-list .add { position: static; width: 34px; height: 34px; }
-.pc-topline { display: flex; align-items: center; gap: 6px; min-width: 0; }
 /* Espaço extra entre chip “menor preço”/“promoção” e o título do produto */
-.pc > .pn, .pc .pc-topline + .pn { margin-top: 6px; }
+.pc > .pn { margin-top: 6px; }
 .pc:hover { border-color: var(--nt-line-strong); }
 .pc:active { transform: scale(0.97); }
 .phwrap { position: relative; }
@@ -452,10 +451,11 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .price { font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .price.menor { color: var(--nt-green); }
 .price.xl { font-size: 32px; display: block; line-height: 1.1; }
-/* % fora da foto: mesma linha do chip “promoção”, canto direito do card */
+/* sm/md: % sobre a foto; lista: .inline ao lado do chip promoção */
 .badge-off {
-  margin-left: auto;
-  flex: none;
+  position: absolute;
+  top: 6px;
+  left: 6px;
   background: var(--nt-green);
   color: var(--nt-on-primary);
   font-size: 11px;
@@ -463,6 +463,12 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
   padding: 3px 8px;
   border-radius: 999px;
   line-height: 1.2;
+  z-index: 1;
+}
+.badge-off.inline {
+  position: static;
+  margin-left: auto;
+  flex: none;
 }
 
 .hero { padding: 0 0 12px; display: flex; justify-content: center; }

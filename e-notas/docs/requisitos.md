@@ -635,6 +635,13 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Antes → depois: sheet com poucas opções → lista longa rolável (≥50 quando o SI5/catálogo tiver).
 - Rollback: `slice(0, 8)` + `byDescription(…, 8)` + cap `n≤24` + score `≥0.35`; em `si5.js` voltar a uma URL sem `page`.
 
+## REQ-070 — Data do histórico = emissão da NFC-e (2026-11-09)
+
+- Preço/histórico/comparação usam `receipts.issued_at` (data da nota), via `v_price_observations.observed_at = coalesce(issued_at, created_at)`.
+- UI: histórico do produto mostra **emissão** (`dateTime` em Brasília); gráfico agrupa por dia civil SP (não `slice` UTC).
+- Antes: relativo/`dateShort` sem deixar explícito; gráfico podia mudar o dia por fuso UTC.
+- Rollback: voltar `observedAt.slice(0,10)` no chart e `dateShort · when` no histórico.
+
 ## REQ-069 — Escolher foto: confirmar no topo + imagens quebradas (2026-11-09)
 
 - No sheet de foto (T-24): barra **fixa no topo** com miniatura + **Pular** / **Usar esta** — não precisa rolar a grade para confirmar.

@@ -1,15 +1,16 @@
 import type { OfferDTO } from '@notinhas/contracts';
 import { useMemo, useState } from 'react';
-import { brl, dateShort } from '../lib/format';
+import { brl, calendarDay, dateShort } from '../lib/format';
 import { Icon } from './Icon';
 
-/** T-13: cada ponto = menor preço do dia (NFC-e); tracejado = mediana 14 d. Toque mostra loja e data. */
+/** T-13: cada ponto = menor preço do dia da NFC-e (Brasília); tracejado = mediana 14 d. */
 export function PriceChart({ history, medianCents }: { history: OfferDTO[]; medianCents: number | null }) {
   const [on, setOn] = useState<number | null>(null);
   const points = useMemo(() => {
     const byDay = new Map<string, OfferDTO>();
     for (const o of history) {
-      const d = o.observedAt.slice(0, 10);
+      const d = calendarDay(o.observedAt);
+      if (!d) continue;
       const cur = byDay.get(d);
       if (!cur || o.priceCents < cur.priceCents) byDay.set(d, o);
     }

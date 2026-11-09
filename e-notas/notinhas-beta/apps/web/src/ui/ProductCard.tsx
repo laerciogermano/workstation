@@ -1,6 +1,6 @@
 import type { ProductCardDTO } from '@notinhas/contracts';
 import { Link } from 'react-router';
-import { km, pct, when } from '../lib/format';
+import { dateShort, km, pct, when } from '../lib/format';
 import { Chip, Photo, Price } from './bits';
 import { Icon } from './Icon';
 
@@ -36,7 +36,7 @@ export function ProductCard({ p, onAdd, showHighlight = true }: { p: ProductCard
             <Price cents={b.priceCents} menor />
           </p>
           <p className="pm">
-            {b.store.name} · {when(b.observedAt)}
+            {b.store.name} · {dateShort(b.observedAt)} · {when(b.observedAt)}
             {b.distanceKm !== null && ` · ${km(b.distanceKm)}`}
           </p>
           {b.isStale && <Chip kind="warn">desatualizado</Chip>}

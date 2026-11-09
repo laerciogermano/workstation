@@ -156,6 +156,7 @@ CREATE INDEX barcode_links_user_idx ON barcode_links (linked_by_user_id);
 CREATE TRIGGER barcode_links_updated_at BEFORE UPDATE ON barcode_links FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- Observações públicas: só tabelas fiscais + vínculo; nenhuma coluna de pessoa (RN-06, ADR-008).
+-- observed_at = data/hora de emissão da NFC-e (nunca a ingestão, salvo fallback se issued_at vier nulo).
 CREATE VIEW v_price_observations AS
 SELECT ri.id AS item_id, bl.gtin, ri.store_id, ri.unit_price_cents AS price_cents,
        coalesce(r.issued_at, r.created_at) AS observed_at

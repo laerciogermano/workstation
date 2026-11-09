@@ -2,7 +2,7 @@ import type { ProductBarcodeLinkDTO } from '@notinhas/contracts';
 import { CATEGORIES } from '@notinhas/domain';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { brl, dateShort, km, pct, when } from '../../lib/format';
+import { brl, dateShort, dateTime, km, pct, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
 import { pricePinText } from '../../lib/map-pins';
 import { useProduct } from '../../lib/queries';
@@ -134,7 +134,7 @@ export default function ProductPage() {
                 <Link to={`/lojas/${d.best.store.id}`} className="b" style={{ color: 'inherit' }}>
                   {d.best.store.name}
                 </Link>
-                {d.best.store.neighborhood && ` · ${d.best.store.neighborhood}`} · {when(d.best.observedAt)} {dateShort(d.best.observedAt)}
+                {d.best.store.neighborhood && ` · ${d.best.store.neighborhood}`} · {dateTime(d.best.observedAt)}
                 {d.best.distanceKm !== null && ` · ${km(d.best.distanceKm)}`}
               </p>
               {d.medianCents !== null && (
@@ -189,7 +189,7 @@ export default function ProductPage() {
                 <p className="b">{c.store.name}</p>
                 <p className="meta">
                   {c.store.neighborhood ? `${c.store.neighborhood} · ` : ''}
-                  {when(c.observedAt)}
+                  {dateShort(c.observedAt)} · {when(c.observedAt)}
                   {c.distanceKm !== null && ` · ${km(c.distanceKm)}`}
                 </p>
                 {c.isStale && <Chip kind="warn">desatualizado</Chip>}
@@ -216,7 +216,7 @@ export default function ProductPage() {
               <Icon name="pin" />
               <div className="grow">
                 <p className="b">{c.store.name}</p>
-                <p className="meta">{km(c.distanceKm)} · {when(c.observedAt)}</p>
+                <p className="meta">{km(c.distanceKm)} · {dateShort(c.observedAt)}</p>
               </div>
               <Price cents={c.priceCents} menor={c.isBest} />
               <a className="ib" href={`https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`} target="_blank" rel="noreferrer" aria-label={`Como chegar em ${c.store.name}`}>
@@ -242,7 +242,7 @@ export default function ProductPage() {
                 <Icon name="receipt" />
                 <div className="grow">
                   <p className="b">{h.store.name}</p>
-                  <p className="meta">NFC-e · {dateShort(h.observedAt)} · {when(h.observedAt)}</p>
+                  <p className="meta">NFC-e · emissão {dateTime(h.observedAt)}</p>
                 </div>
                 <Price cents={h.priceCents} />
               </div>

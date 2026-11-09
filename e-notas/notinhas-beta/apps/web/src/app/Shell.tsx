@@ -90,14 +90,8 @@ export function Shell() {
             {t.label}
           </NavLink>
         ))}
-        <span className="sp" />
         <ThemePicker placement="up" withLabel />
-        {me.data && (
-          <NavLink to="/pontos" className="ptschip" style={{ alignSelf: 'flex-start' }} aria-label="Pontuação">
-            <Icon name="award" />
-            <span className="tnum">{me.data.points} pontos</span>
-          </NavLink>
-        )}
+        <span className="sp" />
         <NavLink
           to="/perfil"
           viewTransition

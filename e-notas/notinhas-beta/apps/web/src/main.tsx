@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router';
 import { router } from './app/router';
 import { refreshSession } from './lib/api';
 import { ApiError } from './lib/api';
+import { installAppGestures } from './lib/app-gestures';
 import { ToastProvider } from './ui/Toast';
 import { applyTheme } from './lib/theme';
 
@@ -19,6 +20,7 @@ const queryClient = new QueryClient({
   },
 });
 
+installAppGestures();
 applyTheme();
 // sessão silenciosa: se houver cookie de refresh, já entra logado
 await refreshSession().catch(() => false);

@@ -6,6 +6,16 @@
 **Postgres:** schema `notinhas` no Docker `postgres-db-1` (`connectmax`)  
 **Cert LE:** `/etc/letsencrypt/live/notinhas.shop/` (já emitido)
 
+### PWA / viewport (app-like, espelho RoleGo)
+
+- Viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` + metas `apple-mobile-web-app-*`
+- Gestos: `installAppGestures()` bloqueia pinch/double-tap/Ctrl± (mapa Leaflet pode pinçar)
+- CSS: `html`/`body`/`#root` sem overflow do browser; scroll no `.shell`; inputs **16px**
+- Manifest: `display: standalone` + `display_override` + `orientation: portrait-primary`
+
+**Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  
+**Rollback:** reverter `apps/web/index.html`, `src/main.tsx`, `src/lib/app-gestures.ts`, `src/styles/app.css`, `vite.config.ts`.
+
 ## Antes → depois
 
 | | Antes | Depois |

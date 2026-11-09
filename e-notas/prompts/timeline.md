@@ -53,3 +53,4 @@ Como registrar: [`README.md`](README.md).
 | 043 | 2026-11-09 | Botão de tema com bolinha | [043-2026-11-09-botao-tema-bolinha.md](043-2026-11-09-botao-tema-bolinha.md) | `notinhas-beta`: bolinha do protótipo abre os 6 temas (topo, barra lateral, Perfil). |
 | 044 | 2026-11-09 | Publicar Beta Contabo | [044-2026-11-09-publicar-notinhas-beta-contabo.md](044-2026-11-09-publicar-notinhas-beta-contabo.md) | `notinhas-beta` no ar em https://notinhas.shop/; lab em `/enotas/` `:4175`; REQ-061. |
 | 045 | 2026-11-09 | Mapa produtos + estabelecimentos | [045-2026-11-09-mapa-produtos-estabelecimentos.md](045-2026-11-09-mapa-produtos-estabelecimentos.md) | Faixa de mapa no topo; pins de produto na home/T-15; 1 pin por estabelecimento em T-31/T-32; REQ-062. |
+| 046 | 2026-11-09 | Viewport PWA app-like | [046-2026-11-09-viewport-pwa-app-like.md](046-2026-11-09-viewport-pwa-app-like.md) | Espelha RoleGo: sem zoom, metas apple, gestos, shell scroll; REQ-063. |

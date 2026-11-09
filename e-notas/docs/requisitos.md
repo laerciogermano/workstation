@@ -584,6 +584,16 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Troca animada, sem animação com movimento reduzido.
 - Rollback: remover `ui/ThemePicker.tsx`, os temas extras de `styles/tokens.css` e voltar `lib/theme.ts` (ou restaurar default `institucional`/`escuro` por `prefers-color-scheme`).
 
+## REQ-063 — Viewport / PWA app-like no mobile web (2026-11-09)
+
+- Espelhar o RoleGo Beta em `notinhas.shop`: experiência de app no mobile web.
+- Viewport: `minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content`.
+- Metas: `mobile-web-app-capable`, `apple-mobile-web-app-*` (standalone, status bar `black-translucent`), `format-detection` off, `apple-touch-fullscreen`.
+- Gestos JS (`installAppGestures`): bloqueia pinch, double-tap zoom, Ctrl+scroll e Ctrl+/−/0; exceção de pinch no Leaflet.
+- CSS: `html`/`body`/`#root` `overflow: hidden` + `overscroll-behavior: none` + `touch-action: manipulation`; scroll no `.shell`; inputs ≥16px; sem seleção “web” fora de campos.
+- Manifest PWA: `standalone` + `display_override` + `orientation: portrait-primary`.
+- Rollback: commits anteriores de `index.html`, `app-gestures.ts`, `app.css`, `vite.config.ts` (ver [`../notinhas-beta/deploy/README.md`](../notinhas-beta/deploy/README.md)).
+
 ## REQ-062 — Mapa no topo: produtos (pins) e estabelecimentos (2026-11-09)
 
 - Home Produtos (`/`): faixa de mapa no topo com **pins de produto** (preço); vários pins no mesmo estabelecimento ficam espalhados; toque abre `/mapa`.

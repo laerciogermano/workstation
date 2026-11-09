@@ -1,11 +1,50 @@
 /* notinhas.shop — base + componentes (portado do protótipo v2, adaptado para app real) */
 @import './tokens.css';
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; }
-body { font-family: var(--nt-font); background: var(--nt-canvas); color: var(--nt-ink); -webkit-font-smoothing: antialiased; line-height: 1.5; }
-button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
-input, select, textarea { font: inherit; color: inherit; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* PWA-like (RoleGo): viewport fixa, sem bounce/zoom do browser */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+body {
+  font-family: var(--nt-font);
+  background: var(--nt-canvas);
+  color: var(--nt-ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  margin: 0;
+  padding: 0;
+}
+#root {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; touch-action: manipulation; }
+/* ≥16px evita zoom do iOS ao focar; seleção liberada nos campos */
+input, select, textarea {
+  font: inherit;
+  color: inherit;
+  font-size: 16px;
+  touch-action: manipulation;
+  -webkit-user-select: text;
+  user-select: text;
+}
 a { color: var(--nt-blue); text-decoration: none; }
 img { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--nt-blue); outline-offset: 2px; border-radius: 6px; }
@@ -15,7 +54,14 @@ img { max-width: 100%; }
 .mono { font-family: var(--nt-mono); font-size: 0.9em; letter-spacing: -0.01em; }
 
 /* ───────── shell ───────── */
-.shell { min-height: 100dvh; }
+.shell {
+  height: 100%;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
 .main { max-width: 560px; margin: 0 auto; padding: max(8px, env(safe-area-inset-top)) 16px 120px; view-transition-name: main; }
 .main.dark { max-width: none; padding: 0; background: var(--nt-scan); min-height: 100dvh; color: var(--nt-white); }
 .sidenav { display: none; }

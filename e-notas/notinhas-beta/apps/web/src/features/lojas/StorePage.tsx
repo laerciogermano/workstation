@@ -98,15 +98,17 @@ export default function StorePage() {
           { value: 'sem', label: `Sem código (${d.withoutEan.length})`, icon: 'tag' },
         ]}
       />
-      <label className="search">
-        <Icon name="search" />
-        <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={`Buscar em ${s.name}`} aria-label="Buscar nesta loja" />
-      </label>
+      <div className="search-row">
+        <label className="search">
+          <Icon name="search" />
+          <input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={`Buscar em ${s.name}`} aria-label="Buscar nesta loja" />
+        </label>
+        {tab === 'com' && d.withEan.length > 0 && <ProductViewToggle />}
+      </div>
 
       {tab === 'com' &&
         (d.withEan.length ? (
           <>
-            <ProductViewToggle />
             <div className={`pgrid view-${view}`}>
               {d.withEan.map((p) => (
                 <ProductCard

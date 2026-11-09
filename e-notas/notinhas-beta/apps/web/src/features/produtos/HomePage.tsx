@@ -199,21 +199,25 @@ export function HomePage() {
           </div>
         )}
 
-        <label className="search" style={{ viewTransitionName: 'search' }}>
-          <Icon name="search" />
-          <input
-            type="search"
-            readOnly
-            value=""
-            placeholder="Buscar produto ou código de barras"
-            aria-label="Buscar produto ou código de barras"
-            inputMode="search"
-            enterKeyHint="search"
-            autoComplete="off"
-            onFocus={openSearch}
-            onClick={openSearch}
-          />
-        </label>
+        <div className="search-row">
+          <label className="search" style={{ viewTransitionName: 'search' }}>
+            <Icon name="search" />
+            <input
+              type="search"
+              readOnly
+              value=""
+              placeholder="Buscar produto ou código de barras"
+              aria-label="Buscar produto ou código de barras"
+              inputMode="search"
+              enterKeyHint="search"
+              autoComplete="off"
+              onFocus={openSearch}
+              onClick={openSearch}
+            />
+          </label>
+          {/* Mesmo seletor sm/md/lista da vitrine da loja (com rótulos), ao lado da busca. */}
+          <ProductViewToggle />
+        </div>
 
         {anchor.mode === 'padrao' && (
           <Link to="/perfil/localizacao" className="banner">
@@ -246,7 +250,6 @@ export function HomePage() {
                 </button>
               ))}
             </nav>
-            <ProductViewToggle compact />
           </div>
         )}
 

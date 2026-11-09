@@ -1,0 +1,16 @@
+---
+description: Após qualquer alteração no notinhas-beta (ou ean-serp ligado a ele), fazer commit/push e deploy Contabo sem pedir.
+globs: e-notas/notinhas-beta/**/*,e-notas/ean-serp/**/*
+alwaysApply: false
+---
+
+# Deploy Contabo automático (notinhas)
+
+Sempre que alterar código/docs/config em `e-notas/notinhas-beta` (e `e-notas/ean-serp` quando afetar o beta), **no mesmo turno**:
+
+1. Commit + `git push` na branch atual (mensagem em português)
+2. Rsync + build + migrate + restart na Contabo (`185.250.37.82`, `/opt/notinhas-beta`) — ver [`e-notas/notinhas-beta/deploy/README.md`](e-notas/notinhas-beta/deploy/README.md)
+3. Se mexeu em ean-serp: rsync `/opt/ean-serp` + `systemctl restart ean-serp`
+4. Reportar **status + stamp** (`__BUILD_ID__` / banner `v… · YYMMDDHHmm`)
+
+Não perguntar se deve publicar. Escape só se o usuário pedir explicitamente para **não** fazer deploy.

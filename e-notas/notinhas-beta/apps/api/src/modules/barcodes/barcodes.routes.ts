@@ -7,7 +7,12 @@ import { AppError } from '../../shared/http/problem.js';
 import { parse } from '../../shared/http/validate.js';
 import { linkBarcode, suggestBarcodes } from './barcodes.service.js';
 
-const SuggestQuery = z.object({ storeId: z.coerce.number().int().positive(), storeCode: z.string().min(1).max(60) });
+const SuggestQuery = z.object({
+  storeId: z.coerce.number().int().positive(),
+  storeCode: z.string().min(1).max(60),
+  /** Texto livre para refinar a busca SI5/catálogo (default = descrição da DANFE). */
+  q: z.string().max(200).optional(),
+});
 
 export function barcodesRoutes(deps: Deps): Router {
   const r = Router();
@@ -20,7 +25,7 @@ export function barcodesRoutes(deps: Deps): Router {
 
   r.get('/sugestoes', async (req, res) => {
     const q = parse(SuggestQuery, req.query);
-    res.json(await suggestBarcodes(deps.db, q.storeId, q.storeCode));
+    res.json(await suggestBarcodes(deps, q.storeId, q.storeCode, q.q));
   });
 
   return r;

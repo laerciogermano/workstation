@@ -1,8 +1,8 @@
 /**
  * Google SERP via Chrome CDP (opcional).
  * Extrai links orgânicos e EANs de href/título — mesmo padrão do google-imagens do app.
+ * human-cdp é carregado sob demanda; sem o módulo (ex.: Contabo) SI5 continua ok.
  */
-import { createCdpSession, getJson, openPage } from '../../../../screen-robot/pocs/chrome-cdp/human-cdp/src/cdp.mjs';
 import { extractEansFromText, normalizeEan, scoreDescricao } from '../normalize.js';
 
 function sleep(ms) {
@@ -11,6 +11,14 @@ function sleep(ms) {
 
 function cdpBase() {
   return String(process.env.CDP_URL || 'http://127.0.0.1:9223').replace(/\/$/, '');
+}
+
+async function loadHumanCdp() {
+  try {
+    return await import('../../../../screen-robot/pocs/chrome-cdp/human-cdp/src/cdp.mjs');
+  } catch {
+    return null;
+  }
 }
 
 const EXTRACT_JS = `(() => {
@@ -41,8 +49,10 @@ const EXTRACT_JS = `(() => {
 })()`;
 
 export async function cdpAvailable() {
+  const human = await loadHumanCdp();
+  if (!human) return false;
   try {
-    await getJson(cdpBase(), '/json/version');
+    await human.getJson(cdpBase(), '/json/version');
     return true;
   } catch {
     return false;
@@ -52,6 +62,11 @@ export async function cdpAvailable() {
 export async function searchGoogleCdpEan(descricaoNorm) {
   const q = String(descricaoNorm || '').trim();
   if (!q) return [];
+  const human = await loadHumanCdp();
+  if (!human) {
+    throw Object.assign(new Error('human-cdp indisponível neste host'), { status: 503 });
+  }
+  const { createCdpSession, getJson, openPage } = human;
   const base = cdpBase();
   try {
     await getJson(base, '/json/version');

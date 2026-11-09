@@ -2,6 +2,7 @@
 
 **URL:** https://notinhas.shop/ · https://www.notinhas.shop/  
 **Host:** Contabo `185.250.37.82` · código `/opt/notinhas-beta` · unit `notinhas-api` · Node `127.0.0.1:4174`  
+**ean-serp:** `/opt/ean-serp` · unit `ean-serp` · `127.0.0.1:4180` (REQ-044 sugestões SI5; `EAN_SERP_URL` no `.env`)  
 **nginx:** `sites-available/notinhas` — `/` → `apps/web/dist`; `/api/` → API; `/enotas/` → lab `:4175`  
 **Postgres:** schema `notinhas` no Docker `postgres-db-1` (`connectmax`)  
 **Cert LE:** `/etc/letsencrypt/live/notinhas.shop/` (já emitido)
@@ -43,11 +44,29 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@185.250.37.82 '
 '
 ```
 
-Arquivos de referência: [`nginx.conf`](nginx.conf) · [`notinhas-api.service`](notinhas-api.service).
+Arquivos de referência: [`nginx.conf`](nginx.conf) · [`notinhas-api.service`](notinhas-api.service) · [`ean-serp.service`](ean-serp.service).
+
+### ean-serp (primeira vez / atualizar)
+
+```bash
+SRC_SERP=/Users/laerciogermano/Documents/works/e-notas/ean-serp
+sshpass -e rsync -az --delete --exclude node_modules --exclude .git \
+  -e 'ssh -o StrictHostKeyChecking=no' \
+  "$SRC_SERP/" root@185.250.37.82:/opt/ean-serp/
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@185.250.37.82 '
+  cd /opt/ean-serp && npm ci --omit=dev
+  chown -R notinhas:notinhas /opt/ean-serp
+  cp /opt/notinhas-beta/deploy/ean-serp.service /etc/systemd/system/ean-serp.service
+  grep -q EAN_SERP_URL /opt/notinhas-beta/.env || echo "EAN_SERP_URL=http://127.0.0.1:4180" >> /opt/notinhas-beta/.env
+  systemctl daemon-reload && systemctl enable --now ean-serp
+  systemctl restart notinhas-api
+'
+```
 
 ## Rollback
 
 1. Restaurar nginx: `root /opt/notinhas-v2`; `/enotas/` → `:4174` (ou backup `notinhas.bak.*`)
-2. `systemctl disable --now notinhas-api`
+2. `systemctl disable --now notinhas-api` · opcional `systemctl disable --now ean-serp`
 3. Em `/opt/e-notas/.env`: `PORT=4174` + `systemctl restart enotas`
 4. Opcional: `DROP SCHEMA notinhas CASCADE` (só com confirmação) · `rm -rf /opt/notinhas-beta`

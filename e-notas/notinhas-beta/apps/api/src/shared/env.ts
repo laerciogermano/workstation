@@ -17,6 +17,9 @@ const EnvSchema = z.object({
   NOMINATIM_URL: z.url().default('https://nominatim.openstreetmap.org'),
   NOMINATIM_USER_AGENT: z.string().default('notinhas.shop/1.0 (contato@notinhas.shop)'),
   GEOCODE_ENABLED: z.stringbool().default(true),
+  /** Base do ean-serp (SI5). Vazio = só sugestão pelo catálogo local. */
+  EAN_SERP_URL: z.string().default('http://127.0.0.1:4180'),
+  EAN_SERP_TIMEOUT_MS: z.coerce.number().int().min(1000).default(12_000),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
 

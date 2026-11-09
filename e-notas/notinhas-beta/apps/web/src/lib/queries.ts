@@ -72,12 +72,16 @@ export function useStore(id: number, q: string) {
   });
 }
 
-export function useSuggestions(storeId: number, storeCode: string, enabled = true) {
+export function useSuggestions(storeId: number, storeCode: string, q = '', enabled = true) {
+  const query = q.trim();
   return useQuery({
-    queryKey: [...qk.catalog, 'sugestoes', storeId, storeCode],
-    queryFn: () => api<SuggestionDTO[]>('/codigos-barras/sugestoes', { query: { storeId, storeCode } }),
-    enabled,
-    staleTime: 5 * 60_000,
+    queryKey: [...qk.catalog, 'sugestoes', storeId, storeCode, query],
+    queryFn: () =>
+      api<SuggestionDTO[]>('/codigos-barras/sugestoes', {
+        query: { storeId, storeCode, ...(query ? { q: query } : {}) },
+      }),
+    enabled: enabled && storeId > 0 && !!storeCode,
+    staleTime: 60_000,
   });
 }
 

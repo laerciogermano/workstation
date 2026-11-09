@@ -50,6 +50,16 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 ## Fora deste corte (próximos passos)
 
-- Sugestão de EAN via serviço `ean-serp` (SI5/SERP, REQ-044) e Google Imagens (REQ-042): hoje a sugestão usa o catálogo local (pg_trgm) e as fotos vêm do Open Food Facts. Encaixe previsto: nova implementação de `ProductLookupPort` / porta de sugestão.
+- Google Imagens (REQ-042) ainda não; fotos das sugestões vêm do SI5 (`image_url`) + Open Food Facts na ficha.
 - Alertas de preço por e-mail (Mailcow está pronto no `Mailer`; falta a feature).
 - (feito em REQ-060: os 6 temas do protótipo com seletor por bolinha)
+
+## Sugestão de EAN (REQ-044) — feito
+
+- `GET /codigos-barras/sugestoes?storeId&storeCode&q?` → catálogo local (pg_trgm) **+** `ean-serp` `/ean/si5` (`EanSuggestPort`)
+- Sheet `LinkEanSheet`: campo de texto editável + lista (toque vincula) + câmera + digitação
+- Env: `EAN_SERP_URL` (default `http://127.0.0.1:4180`); vazio = só catálogo
+- Contabo: unit `ean-serp` em `:4180` + `EAN_SERP_URL` no `.env` do Beta
+
+**Antes → depois:** sugestões quase sempre vazias (catálogo pequeno) → lista SI5 pela descrição da nota.  
+**Rollback:** `EAN_SERP_URL=` (noop) ou `systemctl stop ean-serp`; reverter `ean-suggest.port.ts` / `LinkEanSheet`.

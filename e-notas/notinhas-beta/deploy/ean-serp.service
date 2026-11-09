@@ -1,0 +1,23 @@
+# /etc/systemd/system/ean-serp.service — sugestão EAN (SI5) para notinhas-api
+[Unit]
+Description=ean-serp (SI5 EAN by description)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=notinhas
+WorkingDirectory=/opt/ean-serp
+Environment=NODE_ENV=production PORT=4180 HOST=127.0.0.1
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+KillSignal=SIGTERM
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

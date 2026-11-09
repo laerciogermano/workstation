@@ -1,6 +1,6 @@
 import type { BarcodeOrigin, LinkResultDTO } from '@notinhas/contracts';
 import { isValidGtin, normalizeGtin } from '@notinhas/domain';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLinkBarcode, usePhotoCandidates, useSuggestions } from '../../lib/queries';
 import { api } from '../../lib/api';
 import { ErrorBanner, Photo } from '../../ui/bits';
@@ -23,11 +23,27 @@ export interface LinkTarget {
 /** `onLinked` devolve 'next' quando o pai já vai abrir o próximo item (fila de pendentes). */
 export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget | null; onClose: () => void; onLinked?: (r: LinkResultDTO) => 'next' | void }) {
   const link = useLinkBarcode();
-  const sugg = useSuggestions(target?.storeId ?? 0, target?.storeCode ?? '', !!target);
+  const [search, setSearch] = useState('');
+  const [debounced, setDebounced] = useState('');
   const [typed, setTyped] = useState('');
   const [hit, setHit] = useState(false);
   const [photoFor, setPhotoFor] = useState<string | null>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    if (!target) return;
+    setSearch(target.displayName || target.description);
+    setDebounced(target.displayName || target.description);
+    setTyped('');
+    setHit(false);
+  }, [target?.storeId, target?.storeCode, target?.description, target?.displayName]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search.trim()), 350);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  const sugg = useSuggestions(target?.storeId ?? 0, target?.storeCode ?? '', debounced, !!target);
 
   async function submit(gtin: string, origin: BarcodeOrigin) {
     if (!target || link.isPending) return;
@@ -69,26 +85,46 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
         <p>{state === 'live' ? 'Aponte para o código de barras da embalagem' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — use uma sugestão ou digite.'}</p>
       </div>
 
-      {(sugg.data?.length ?? 0) > 0 && (
-        <>
-          <p className="lbl">Sugestões pela descrição</p>
-          {sugg.data?.map((s) => (
-            <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
-              <Photo url={s.photoUrl} size="xs" />
-              <span className="grow">
-                <span className="b">{s.title}</span>
-                <span className="meta mono" style={{ display: 'block' }}>
-                  {s.gtin} · {Math.round(s.score * 100)}% parecido
-                </span>
-                <span className="score">
-                  <i style={{ width: `${Math.round(s.score * 100)}%` }} />
-                </span>
+      <label className="lbl" htmlFor="ean-suggest-q">
+        Buscar sugestões pelo texto
+      </label>
+      <div className="field">
+        <span>
+          <Icon name="search" />
+        </span>
+        <input
+          id="ean-suggest-q"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Ex.: Pringles Original 100g"
+          autoComplete="off"
+          enterKeyHint="search"
+        />
+      </div>
+
+      <p className="lbl">Sugestões {sugg.isFetching ? '· buscando…' : sugg.data?.length ? `· ${sugg.data.length}` : ''}</p>
+      {sugg.isPending && !sugg.data ? (
+        <p className="hint">Buscando pelo texto da nota…</p>
+      ) : (sugg.data?.length ?? 0) > 0 ? (
+        sugg.data?.map((s) => (
+          <button key={s.gtin} className="sug" onClick={() => submit(s.gtin, 'suggestion')} disabled={link.isPending}>
+            <Photo url={s.photoUrl} size="xs" />
+            <span className="grow">
+              <span className="b">{s.title}</span>
+              <span className="meta mono" style={{ display: 'block' }}>
+                {s.gtin} · {Math.round(s.score * 100)}% · {s.source === 'si5' ? 'SI5' : s.source}
               </span>
-              <Icon name="check" />
-            </button>
-          ))}
-        </>
+              <span className="score">
+                <i style={{ width: `${Math.round(s.score * 100)}%` }} />
+              </span>
+            </span>
+            <Icon name="check" />
+          </button>
+        ))
+      ) : (
+        <p className="hint">Nenhuma sugestão ainda — refine o texto acima ou escaneie o código da embalagem.</p>
       )}
+      <ErrorBanner error={sugg.error} />
 
       <label className="lbl" htmlFor="ean-typed">
         Ou digite os números

@@ -44,7 +44,7 @@ Um processo de API (12-Factor: config por env, logs em stdout, SIGTERM limpo). J
 |---|---|---|
 | `identity` | visitante por fingerprint (HMAC), IP, conta, JWT + refresh rotativo, merge, exclusão LGPD | `/auth/*`, `/me` |
 | `receipts` | allow-list da URL, dedupe pela chave do QR, porta SEFAZ, ingestão transacional, fila de falhas | `/notas` |
-| `barcodes` | vínculo (loja, cód.) ↔ EAN, primeiro vale + moderação, sugestões pg_trgm, fotos | `/codigos-barras`, `/produtos/:gtin/fotos` |
+| `barcodes` | vínculo (loja, cód.) ↔ EAN, primeiro vale + moderação, sugestões pg_trgm + ean-serp/SI5, fotos | `/codigos-barras`, `/produtos/:gtin/fotos` |
 | `catalog` | snapshot do índice + regras do domínio: home, busca, detalhe, ranking, vitrine | `/produtos/*`, `/lojas/*`, `/categorias` |
 | `lists` | várias listas, cotação uma loja / split, crédito de cotação | `/listas` |
 | `spending` / `points` | gastos do titular, extrato de pontos | `/gastos`, `/pontos` |

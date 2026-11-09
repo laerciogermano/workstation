@@ -5,6 +5,7 @@ import { withTx } from '../../shared/db.js';
 import type { Owner } from '../../shared/http/context.js';
 import { AppError } from '../../shared/http/problem.js';
 import { awardPoints } from '../points/points.service.js';
+import type { EanSuggestPort } from './ean-suggest.port.js';
 import type { ProductLookupPort } from './product-lookup.port.js';
 
 async function itemDescription(db: Queryable, storeId: number, storeCode: string): Promise<string | null> {
@@ -79,30 +80,55 @@ export async function linkBarcode(
   return { status: out.status, pointsAwarded: out.points, product: { gtin: prod.gtin, title: prod.title, photoUrl: prod.photo_url } };
 }
 
-/** REQ-039/043: candidatos de EAN pela descrição da DANFE (catálogo local, pg_trgm + Jaccard). */
-export async function suggestBarcodes(db: Db, storeId: number, storeCode: string): Promise<SuggestionDTO[]> {
-  const desc = await itemDescription(db, storeId, storeCode);
+/**
+ * REQ-039/043/044 — candidatos de EAN pela descrição:
+ * 1) catálogo local (pg_trgm + Jaccard)
+ * 2) ean-serp / SI5 (quando `EAN_SERP_URL` está configurado)
+ * `q` opcional refine a busca (campo editável no sheet); default = descrição da DANFE.
+ */
+export async function suggestBarcodes(
+  deps: { db: Db; eanSuggest: EanSuggestPort },
+  storeId: number,
+  storeCode: string,
+  q?: string,
+): Promise<SuggestionDTO[]> {
+  const desc = await itemDescription(deps.db, storeId, storeCode);
   if (!desc) throw new AppError('NOT_FOUND');
-  const human = humanizeDescription(desc);
-  const { rows } = await db.query<{ gtin: string; title: string; photo_url: string | null; sim: number }>(
+  const query = (q?.trim() || desc).trim();
+  const human = humanizeDescription(query);
+  const { rows } = await deps.db.query<{ gtin: string; title: string; photo_url: string | null; sim: number }>(
     `SELECT p.gtin, p.title, p.photo_url, greatest(similarity(p.title, $1), similarity(p.title, $2)) AS sim
      FROM products p
      WHERE p.title % $1 OR p.title % $2
         OR p.gtin IN (SELECT bl.gtin FROM barcode_links bl JOIN receipt_items ri
                         ON ri.store_id = bl.store_id AND ri.store_code = bl.store_code
-                      WHERE ri.description = $2)
+                      WHERE ri.description = $3)
      ORDER BY sim DESC LIMIT 12`,
-    [human, desc],
+    [human, query, desc],
   );
-  return rows
+  const local: SuggestionDTO[] = rows
     .map((r) => ({
       gtin: r.gtin,
       title: r.title,
       photoUrl: r.photo_url,
-      score: Math.round(Math.max(r.sim, descriptionSimilarity(desc, r.title)) * 100) / 100,
+      score: Math.round(Math.max(r.sim, descriptionSimilarity(query, r.title)) * 100) / 100,
       source: 'catalogo' as const,
     }))
-    .filter((s) => s.score >= 0.25)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .filter((s) => s.score >= 0.25);
+
+  const remote = await deps.eanSuggest.byDescription(query, 8);
+
+  const byGtin = new Map<string, SuggestionDTO>();
+  for (const s of [...local, ...remote]) {
+    const prev = byGtin.get(s.gtin);
+    if (!prev || s.score > prev.score || (!prev.photoUrl && s.photoUrl)) {
+      byGtin.set(s.gtin, {
+        ...s,
+        photoUrl: s.photoUrl ?? prev?.photoUrl ?? null,
+        title: s.title || prev?.title || s.gtin,
+        score: Math.max(s.score, prev?.score ?? 0),
+      });
+    }
+  }
+  return [...byGtin.values()].sort((a, b) => b.score - a.score).slice(0, 8);
 }

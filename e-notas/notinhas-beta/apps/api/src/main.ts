@@ -1,5 +1,6 @@
 import { createApp } from './app.js';
 import { startScheduler } from './jobs/scheduler.js';
+import { createEanSerpAdapter, createNoopEanSuggestAdapter } from './modules/barcodes/ean-suggest.port.js';
 import { createOpenFoodFactsAdapter } from './modules/barcodes/product-lookup.port.js';
 import { createPriceIndex } from './modules/catalog/price-index.js';
 import { createTokenService } from './modules/identity/tokens.js';
@@ -18,6 +19,10 @@ const db = createPool(env.DATABASE_URL, env.DB_SCHEMA);
 
 await migrate(env, log);
 
+const eanSuggest = env.EAN_SERP_URL.trim()
+  ? createEanSerpAdapter({ baseUrl: env.EAN_SERP_URL, timeoutMs: env.EAN_SERP_TIMEOUT_MS })
+  : createNoopEanSuggestAdapter();
+
 const deps: Deps = {
   env,
   db,
@@ -27,6 +32,7 @@ const deps: Deps = {
   mailer: createMailer(env.SMTP_URL, env.MAIL_FROM, log, env.NODE_ENV === 'production'),
   sefaz: createSefazPrAdapter({ timeoutMs: env.SEFAZ_TIMEOUT_MS }),
   productLookup: createOpenFoodFactsAdapter(),
+  eanSuggest,
   index: createPriceIndex(db, systemClock),
 };
 

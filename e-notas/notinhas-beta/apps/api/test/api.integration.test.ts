@@ -74,6 +74,7 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
         },
       },
       productLookup: { byGtin: async (gtin) => (gtin === '7894900011517' ? { title: 'Coca-Cola Original 2L', brand: 'Coca-Cola', photoUrls: [], categoriesHint: 'sodas', source: 'openfoodfacts' } : null) },
+      eanSuggest: { byDescription: async () => [] },
       index: createPriceIndex(db, systemClock),
     };
     app = createApp(deps);

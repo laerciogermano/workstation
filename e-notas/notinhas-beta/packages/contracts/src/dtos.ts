@@ -150,7 +150,8 @@ export interface SuggestionDTO {
   title: string;
   photoUrl: string | null;
   score: number;
-  source: 'catalogo' | 'openfoodfacts';
+  /** `catalogo` = pg_trgm local · `si5` = ean-serp (REQ-044) */
+  source: 'catalogo' | 'openfoodfacts' | 'si5';
 }
 
 export type LinkStatus = 'linked' | 'unchanged' | 'flagged';

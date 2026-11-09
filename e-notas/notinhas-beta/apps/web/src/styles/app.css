@@ -669,6 +669,27 @@ dt { color: var(--nt-muted); }
 .mpin.g span { background: var(--nt-green); color: var(--nt-on-primary); border-color: var(--nt-green); }
 .mpin.store span { background: var(--nt-blue); color: var(--nt-on-primary); border-color: var(--nt-blue); min-width: 26px; text-align: center; }
 .mpin.you span { width: 16px; height: 16px; padding: 0; border-radius: 50%; background: var(--nt-blue); border: 3px solid var(--nt-white); box-shadow: 0 0 0 7px color-mix(in srgb, var(--nt-blue) 18%, transparent); }
+/* Pin de produto: foto principal (mais votada) acima do preço. */
+.mpin.has-ph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transform: translate(-50%, -72%);
+}
+.mpin.has-ph span { transform: none; }
+.mpin-ph {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: var(--nt-surface);
+  border: 2px solid var(--nt-white);
+  box-shadow: 0 2px 8px var(--nt-shadow);
+  display: block;
+  flex: none;
+}
+.mpin.g .mpin-ph { border-color: var(--nt-green); }
 .mapcard { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; background: color-mix(in srgb, var(--nt-surface) 94%, transparent); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid var(--nt-line); box-shadow: 0 10px 30px var(--nt-shadow); z-index: 500; color: inherit; text-align: left; }
 
 /* ───────── listas / gastos ───────── */

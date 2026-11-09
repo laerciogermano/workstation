@@ -61,6 +61,7 @@ export default function ProductPage() {
         text: pricePinText(c.priceCents),
         kind: c.isBest ? 'best' : 'price',
         label: `${c.store.name}: ${brl(c.priceCents)}`,
+        photoUrl: d.product.photoUrl,
       }));
     return ps;
   }, [d]);

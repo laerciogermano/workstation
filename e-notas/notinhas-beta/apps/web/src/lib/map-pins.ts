@@ -61,6 +61,7 @@ export function productPricePins(
         lng: at.lng,
         text: pricePinText(best.priceCents),
         label: `${p.title} · ${s.name}`,
+        photoUrl: p.photoUrl,
         ...(opts.onSelect ? { onClick: () => opts.onSelect!(gtin) } : {}),
       },
     });

@@ -9,7 +9,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · tabbar some só com busca ativa (`q`/`categoria`); cache limpo ao limpar/sair (`clearSearchCache`, sem `placeholderData`) |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` na seção Perto de você → mapa; Alterar código / Trocar foto) | `GET /produtos/:gtin` (+ `links[]`) | RN-05, Q3, REQ-047/058/067 · mapa sai do topo e fica junto de Perto de você |
 | T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
-| T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins = produtos (vários por local) |
+| T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins = produtos (vários por local); `MapPin.photoUrl` = `products.photo_url` (mais votada) |
 | T-20 Scan câmera · T-21 Foto · T-70 Câmera negada | `/nota` | `features/nota/ScanPage` (+ `scanner.tsx`) | `POST /notas` | RN-01, RN-07 |
 | T-23/T-24 Scan EAN + VOCR | sheet câmera / foto | `scanner.tsx` `useCameraScanner` / `decodeImageFile` | `POST /codigos-barras` (+ `vocr`) | zxing + OCR (tesseract) em paralelo; OCR sozinho aceita GTIN válido se barras falham |
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |

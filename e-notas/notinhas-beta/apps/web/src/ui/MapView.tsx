@@ -2,6 +2,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect } from 'react';
 import { Circle, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
+import { photoSrc } from './bits';
 
 export interface MapPin {
   id: string | number;
@@ -10,14 +11,25 @@ export interface MapPin {
   text: string;
   kind: 'price' | 'best' | 'store' | 'you';
   label: string;
+  /** Foto principal do produto (mais votada) — pins de preço. */
+  photoUrl?: string | null;
   onClick?: () => void;
 }
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+function pinHtml(p: MapPin): string {
+  const src = p.kind === 'price' || p.kind === 'best' ? photoSrc(p.photoUrl) : null;
+  const img = src
+    ? `<img class="mpin-ph" src="${esc(src)}" alt="" decoding="async" referrerpolicy="no-referrer" />`
+    : '';
+  return `${img}<span>${esc(p.text)}</span>`;
+}
+
 const icon = (p: MapPin) =>
   L.divIcon({
-    className: `mpin ${p.kind === 'best' ? 'g' : p.kind === 'store' ? 'store' : p.kind === 'you' ? 'you' : ''}`,
-    html: `<span>${esc(p.text)}</span>`,
+    className: `mpin ${p.kind === 'best' ? 'g' : p.kind === 'store' ? 'store' : p.kind === 'you' ? 'you' : ''}${p.photoUrl && (p.kind === 'price' || p.kind === 'best') ? ' has-ph' : ''}`,
+    html: pinHtml(p),
     iconSize: [0, 0],
   });
 

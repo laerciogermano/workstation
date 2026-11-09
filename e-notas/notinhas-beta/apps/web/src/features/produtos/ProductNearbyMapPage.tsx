@@ -28,6 +28,7 @@ export default function ProductNearbyMapPage() {
         text: pricePinText(c.priceCents),
         kind: (sel === c.store.id || c.isBest ? 'best' : 'price') as MapPin['kind'],
         label: `${c.store.name}: ${brl(c.priceCents)}`,
+        photoUrl: d.product.photoUrl,
         onClick: () => setSel(c.store.id),
       }));
     return [...ps, youPin(anchor)];

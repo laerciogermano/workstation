@@ -65,8 +65,9 @@ img { max-width: 100%; }
 .mono { font-family: var(--nt-mono); font-size: 0.9em; letter-spacing: -0.01em; }
 
 /* ───────── shell ─────────
-   Preenche #root (fixed inset:0); só .shell-body rola; tabbar flex-none no fluxo. */
+   Preenche #root; .shell-body rola em tela cheia; tabbar flutua por cima (transparente). */
 .shell {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -87,6 +88,10 @@ img { max-width: 100%; }
   /* altura/largura do scrollport p/ seções full-bleed da home */
   container-type: size;
   container-name: shellbody;
+}
+/* folga pro menu flutuante; some quando a tabbar não está no DOM (scan) */
+.shell:has(.tabbar) .shell-body {
+  padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
 }
 .main {
   max-width: 560px;
@@ -115,15 +120,14 @@ img { max-width: 100%; }
 .ptschip { display: flex; align-items: center; gap: 5px; height: 36px; padding: 0 12px; border-radius: 999px; background: var(--nt-green-soft); color: var(--nt-green-deep); font-weight: 800; font-size: 13px; }
 .ptschip .i { width: 16px; height: 16px; }
 
-/* Tabbar flutuante (modelo protótipo v2): pílula inset, blur, FAB alto.
-   7 itens compactos; sem overflow-x (cliparia o FAB). */
+/* Tabbar flutuante sobre o conteúdo (protótipo v2): sem faixa cinza atrás. */
 .tabbar {
-  position: relative;
-  flex: 0 0 auto;
-  width: auto;
-  max-width: none;
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: max(10px, env(safe-area-inset-bottom, 0px));
   height: 58px;
-  margin: 6px 10px max(10px, env(safe-area-inset-bottom, 0px));
+  margin: 0;
   padding: 0 2px;
   border-radius: 26px;
   display: flex;
@@ -131,13 +135,15 @@ img { max-width: 100%; }
   justify-content: space-around;
   gap: 0;
   overflow: visible;
-  background: color-mix(in srgb, var(--nt-surface) 82%, transparent);
+  background: color-mix(in srgb, var(--nt-surface) 72%, transparent);
   backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
   border: 1px solid color-mix(in srgb, var(--nt-line) 90%, transparent);
   box-shadow: 0 10px 30px var(--nt-shadow);
   z-index: 10;
   view-transition-name: tabbar;
   transform: none;
+  pointer-events: auto;
 }
 .tab {
   display: flex;

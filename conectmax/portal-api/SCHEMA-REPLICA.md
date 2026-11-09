@@ -77,7 +77,11 @@ node scripts/sync-campinas-postgres.mjs --franquia=2 --only-orcamentos
 node scripts/sync-campinas-postgres.mjs --contato --skip-itens
 ```
 
-**Orçamentos cross-franquia:** a lista HTML `page=orcamentos` ignora `id_franqueado_rel` (só a franquia da sessão — default Campinas/`9`). Nas outras, o sync grava stubs a partir dos pedidos (cliente/vendedor/data + **total/status do pedido**, status default `Aprovado`). Detalhe real via IDOR: `page=orcamentos_edicao&id_orcamento=`.
+**Orçamentos cross-franquia:** a lista HTML `page=orcamentos` ignora `id_franqueado_rel` (só a franquia da sessão — default Campinas/`9`). Por isso Campinas fica com ~4× mais orçamentos que pedidos; nas outras o sync antigo só criava stubs dos pedidos (~1:1).
+
+- Pedido HTML: `Orçamento: {numeroLocal}` + href `/orcamento/{idGlobal}` (`parse-pedidos` → `orcamento` + `orcamentoId`).
+- Lista completa: `python3 scripts/scan-orcamentos-pdf.py --from=1 --to=66000` (PDF público traz CNPJ da EMPRESA → franquia). Status opcional: `--with-status` via `orcamentos_edicao`.
+- Detalhe: `page=orcamentos_edicao&id_orcamento={idGlobal}`.
 
 Antes → depois:
 - Sync full limpava tudo da franquia (incluindo itens). Com `--delta`, pedidos/itens existentes ficam; só entram registros novos e itens que faltavam.

@@ -14,11 +14,14 @@ export function parsePedidosHtml(html) {
     const metaTxt = stripTags(meta);
     const dataM = metaTxt.match(/(\d{2}\/\d{2}\/\d{4})/);
     const orcM = meta.match(/Orçamento:\s*(\d+)/i) || metaTxt.match(/Orçamento:\s*(\d+)/i);
+    // id global no href /orcamento/{id}; "Orçamento: N" é o número local da franquia
+    const orcIdM = meta.match(/\/orcamento\/(\d+)/i);
     out.push({
       id: row.id,
       numero: row.id,
       data: dataM ? dataM[1] : null,
       orcamento: orcM ? Number(orcM[1]) : null,
+      orcamentoId: orcIdM ? Number(orcIdM[1]) : null,
       status: parseStatus(row.inner),
       cliente: tds[3] ? stripTags(tds[3]) || null : null,
       vendedor: tds[4] ? stripTags(tds[4]) || null : null,

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserMultiFormatReader as Reader } from '@zxing/browser';
+import { isValidGtin, normalizeGtin } from '@notinhas/domain';
 
 export type ScanMode = 'qr' | 'ean';
 
-/** Resultado da leitura: barras (zxing) + VOCR (OCR dos dígitos impressos no mesmo frame). */
+/** Resultado: barras (zxing) e/ou VOCR (OCR dos dígitos impressos). */
 export interface ScanHit {
   code: string;
-  /** Dígitos lidos por OCR sob/ao lado do código; null se OCR falhou ou modo QR. */
+  /** Dígitos lidos por OCR; null se OCR falhou ou modo QR. */
   vocr: string | null;
 }
 
@@ -27,62 +28,90 @@ function pickDigitRun(text: string): string | null {
   return runs.sort((a, b) => b.length - a.length)[0] ?? null;
 }
 
-/** OCR dos dígitos no frame atual do vídeo (faixa inferior — onde costuma estar o HRI/VOCR). */
-async function readVocrFromVideo(video: HTMLVideoElement): Promise<string | null> {
+function validEan(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const g = normalizeGtin(raw);
+  return isValidGtin(g) ? g : null;
+}
+
+type OcrWorker = { recognize: (img: HTMLCanvasElement) => Promise<{ data: { text: string } }>; terminate: () => Promise<void> };
+
+async function createOcrWorker(): Promise<OcrWorker> {
+  const Tesseract = await import('tesseract.js');
+  const worker = await Tesseract.createWorker('eng', 1, { logger: () => undefined });
+  await worker.setParameters({
+    tessedit_char_whitelist: '0123456789',
+  });
+  return worker as unknown as OcrWorker;
+}
+
+/** OCR na faixa inferior do frame (HRI / número sob as barras). */
+async function readVocrFromVideo(video: HTMLVideoElement, worker?: OcrWorker | null): Promise<string | null> {
   if (video.readyState < 2 || video.videoWidth < 8) return null;
   const w = video.videoWidth;
   const h = video.videoHeight;
   const canvas = document.createElement('canvas');
-  // Faixa central-inferior: número impresso sob as barras.
-  const cropY = Math.floor(h * 0.45);
-  const cropH = Math.floor(h * 0.5);
+  const cropY = Math.floor(h * 0.4);
+  const cropH = Math.floor(h * 0.55);
   canvas.width = w;
   canvas.height = cropH;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
   ctx.drawImage(video, 0, cropY, w, cropH, 0, 0, w, cropH);
   try {
+    if (worker) {
+      const result = await worker.recognize(canvas);
+      return pickDigitRun((result.data.text || '').replace(/[^\d\s]/g, ' '));
+    }
     const Tesseract = await import('tesseract.js');
-    const result = await Tesseract.recognize(canvas, 'eng', {
-      logger: () => undefined,
-    });
-    // Só dígitos — reduz ruído do OCR.
-    const raw = (result.data.text || '').replace(/[^\d\s]/g, ' ');
-    return pickDigitRun(raw);
+    const result = await Tesseract.recognize(canvas, 'eng', { logger: () => undefined });
+    return pickDigitRun((result.data.text || '').replace(/[^\d\s]/g, ' '));
   } catch {
     return null;
   }
 }
 
-/** Decodifica QR/EAN de uma foto (T-21, T-24): reflexo, papel amassado ou câmera fraca. */
+async function readVocrFromBitmap(file: File): Promise<string | null> {
+  try {
+    const Tesseract = await import('tesseract.js');
+    const img = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    const cropY = Math.floor(img.height * 0.4);
+    const cropH = Math.floor(img.height * 0.55);
+    canvas.width = img.width;
+    canvas.height = cropH;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      img.close();
+      return null;
+    }
+    ctx.drawImage(img, 0, cropY, img.width, cropH, 0, 0, img.width, cropH);
+    img.close();
+    const result = await Tesseract.recognize(canvas, 'eng', { logger: () => undefined });
+    return pickDigitRun((result.data.text || '').replace(/[^\d\s]/g, ' '));
+  } catch {
+    return null;
+  }
+}
+
+/** Decodifica QR/EAN de uma foto (T-21, T-24). No EAN: zxing + OCR; se barras falham, OCR sozinho pode fechar. */
 export async function decodeImageFile(file: File, mode: ScanMode): Promise<ScanHit | null> {
   const reader = await createReader(mode);
   const url = URL.createObjectURL(file);
   try {
-    const r = await reader.decodeFromImageUrl(url);
-    const code = r.getText();
-    if (mode !== 'ean') return { code, vocr: null };
-    // OCR na mesma imagem (foto estática).
     try {
-      const Tesseract = await import('tesseract.js');
-      const img = await createImageBitmap(file);
-      const canvas = document.createElement('canvas');
-      const cropY = Math.floor(img.height * 0.45);
-      const cropH = Math.floor(img.height * 0.5);
-      canvas.width = img.width;
-      canvas.height = cropH;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return { code, vocr: null };
-      ctx.drawImage(img, 0, cropY, img.width, cropH, 0, 0, img.width, cropH);
-      img.close();
-      const result = await Tesseract.recognize(canvas, 'eng', { logger: () => undefined });
-      const vocr = pickDigitRun((result.data.text || '').replace(/[^\d\s]/g, ' '));
-      return { code, vocr };
+      const r = await reader.decodeFromImageUrl(url);
+      const code = r.getText();
+      if (mode !== 'ean') return { code, vocr: null };
+      const vocr = await readVocrFromBitmap(file);
+      return { code, vocr: validEan(vocr) ?? vocr };
     } catch {
-      return { code, vocr: null };
+      if (mode !== 'ean') return null;
+      // Barras ilegíveis → tenta só OCR.
+      const vocr = await readVocrFromBitmap(file);
+      const code = validEan(vocr);
+      return code ? { code, vocr: code } : null;
     }
-  } catch {
-    return null;
   } finally {
     URL.revokeObjectURL(url);
   }
@@ -91,9 +120,8 @@ export async function decodeImageFile(file: File, mode: ScanMode): Promise<ScanH
 export type CameraState = 'starting' | 'live' | 'denied' | 'unsupported';
 
 /**
- * Câmera contínua (RN-07: exige HTTPS). Sem permissão ou sem HTTPS, estado vira `denied`/`unsupported`
- * e a tela oferece foto e colar link (T-70) — o fluxo nunca trava.
- * No modo EAN, após o zxing, tenta OCR (VOCR) no mesmo frame.
+ * Câmera contínua (RN-07: HTTPS). Modo EAN: zxing e OCR em paralelo —
+ * OCR periódico pega VOCR quando as barras não decodificam.
  */
 export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => void, enabled = true) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -108,44 +136,76 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
     if (!enabled) return;
     let stopped = false;
     let controls: { stop: () => void } | null = null;
+    let ocrTimer: ReturnType<typeof setInterval> | null = null;
+    let ocrWorker: OcrWorker | null = null;
+    let ocrRunning = false;
+
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       setState('unsupported');
       return;
     }
     setState('starting');
+
+    const emit = (hit: ScanHit) => {
+      if (stopped || busy.current) return;
+      busy.current = true;
+      navigator.vibrate?.(40);
+      cb.current(hit);
+      setTimeout(() => {
+        busy.current = false;
+      }, 1200);
+    };
+
     (async () => {
       try {
         const reader = await createReader(mode);
         if (stopped || !videoRef.current) return;
         controls = await reader.decodeFromConstraints({ video: { facingMode: 'environment' } }, videoRef.current, (result) => {
           if (!result || stopped || busy.current) return;
-          busy.current = true;
           void (async () => {
-            try {
-              const code = result.getText();
-              navigator.vibrate?.(40);
-              let vocr: string | null = null;
-              if (mode === 'ean' && videoRef.current) {
-                vocr = await readVocrFromVideo(videoRef.current);
-              }
-              if (!stopped) cb.current({ code, vocr });
-            } finally {
-              // Evita rajada de leituras enquanto o pai processa.
-              setTimeout(() => {
-                busy.current = false;
-              }, 1200);
+            const code = result.getText();
+            let vocr: string | null = null;
+            if (mode === 'ean' && videoRef.current) {
+              vocr = await readVocrFromVideo(videoRef.current, ocrWorker);
             }
+            emit({ code, vocr: validEan(vocr) ?? vocr });
           })();
         });
+
+        // OCR em paralelo ao zxing (só EAN): se as barras falham, o número impresso ainda pode valer.
+        if (mode === 'ean') {
+          try {
+            ocrWorker = await createOcrWorker();
+          } catch {
+            ocrWorker = null;
+          }
+          ocrTimer = setInterval(() => {
+            if (stopped || busy.current || ocrRunning || !videoRef.current) return;
+            ocrRunning = true;
+            void (async () => {
+              try {
+                const raw = await readVocrFromVideo(videoRef.current!, ocrWorker);
+                const code = validEan(raw);
+                if (code) emit({ code, vocr: code });
+              } finally {
+                ocrRunning = false;
+              }
+            })();
+          }, 1600);
+        }
+
         if (stopped) controls.stop();
         else setState('live');
       } catch (e) {
         if (!stopped) setState(e instanceof DOMException && e.name === 'NotAllowedError' ? 'denied' : 'unsupported');
       }
     })();
+
     return () => {
       stopped = true;
       controls?.stop();
+      if (ocrTimer) clearInterval(ocrTimer);
+      void ocrWorker?.terminate().catch(() => undefined);
     };
   }, [mode, enabled]);
 
@@ -159,7 +219,6 @@ export function Viewfinder({ mode, hit }: { mode: ScanMode; hit: boolean }) {
       <i />
       <i />
       <i />
-      {/* laser up/down removido — corners do vf intactos */}
     </div>
   );
 }

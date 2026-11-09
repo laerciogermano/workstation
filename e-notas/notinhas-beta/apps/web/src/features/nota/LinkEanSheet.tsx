@@ -147,7 +147,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
           </>
         ) : null}
       </p>
-      <p className="hint">Cada leitura conta como voto. O EAN principal é o mais repetido. A câmera também tenta ler o VOCR (número impresso sob as barras).</p>
+      <p className="hint">Cada leitura conta como voto. O EAN principal é o mais repetido. Barras e OCR (número impresso) rodam juntos — se o código não lê, o VOCR ainda pode vincular.</p>
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />
         <Viewfinder mode="ean" hit={hit} />

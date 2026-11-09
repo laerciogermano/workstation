@@ -57,3 +57,6 @@ Como registrar: [`README.md`](README.md).
 | 046 | 2026-11-09 | Introdução: máxima do Caibalion | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | "Quando os ouvidos do discípulo estão preparados para ouvir, então vêm os lábios para enchê-los de sabedoria." |
 | 047 | 2026-11-09 | Introdução: resolução da metafísica | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | Introdução v5 declara a proposta de síntese/resolução da metafísica a partir do software. |
 | 048 | 2026-11-09 | Documento de ajustes | [048-2026-11-09-ajustes-do-livro.md](048-2026-11-09-ajustes-do-livro.md) | `ajustes.md`: caderno de revisão da v5; primeiro item A1 = parágrafo software × filosofia da Introdução. |
+| 048b | 2026-11-09 | Nota: para quem foi escrito | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | "Escrevi para as pessoas que buscam compreender as estruturas que regem a realidade e a existência…" |
+| 049 | 2026-11-09 | Nota: o conhecimento que alinha as lentes | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | Fecho da nota do autor reescrito com as lentes alinhadas. |
+| 050 | 2026-11-09 | Introdução: só alfabetização | [039-2026-11-09-versao-5-0.md](039-2026-11-09-versao-5-0.md) | Após “analfabetismo espiritual”, o objetivo fica “uma alfabetização” (sem repetir espiritual). |

@@ -7,6 +7,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // registro via `virtual:pwa-register` em main.tsx (com reload no update)
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'media/*'],
       manifest: {
         id: '/',
@@ -27,6 +29,9 @@ export default defineConfig({
         icons: [{ src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
       },
       workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         navigateFallbackDenylist: [/^\/api\//],
         // T-71: últimos preços ficam em cache com a idade explícita na UI
         runtimeCaching: [

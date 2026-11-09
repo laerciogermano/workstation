@@ -18,6 +18,19 @@
 **Antes → depois:** viewport só `initial-scale=1` (zoom livre) → travado + gestos + shell scroll.  
 **Rollback:** reverter `apps/web/index.html`, `src/main.tsx`, `src/lib/app-gestures.ts`, `src/styles/app.css`, `vite.config.ts`.
 
+### Chunks stale pós-deploy (import module script fail)
+
+**Sintoma:** após `rsync --delete`, navegar p/ rota lazy (ex.: Perfil) → “Unexpected Application Error” / failed to fetch module; F5 resolve.  
+**Causa:** shell JS antigo (aba aberta ou SW) pedia `/assets/*-HASH.js` já apagado; `index.html` sem `Cache-Control: no-cache`; `registerSW.js` só registrava SW sem reload no update.
+
+**Mitigações (atuais):**
+1. nginx: `no-cache` em `/`, `/index.html`, `/sw.js`; `/assets/` continua `immutable`
+2. PWA: `virtual:pwa-register` + `autoUpdate` + `cleanupOutdatedCaches` / `skipWaiting` / `clientsClaim`
+3. `lazyPage()`: 1× `location.reload()` se o dynamic import falhar
+
+**Antes → depois:** index sem cache headers + registerSW mínimo → no-cache + reload no SW/chunk.  
+**Rollback:** reverter `deploy/nginx.conf` (e `/etc/nginx/sites-available/notinhas`), `vite.config.ts`, `main.tsx`, `router.tsx`, `lib/lazy-page.ts`.
+
 ## Antes → depois
 
 | | Antes | Depois |

@@ -1,30 +1,30 @@
-import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router';
 import { Shell } from './Shell';
 import { NotFound } from './NotFound';
+import { lazyPage } from '../lib/lazy-page';
 
 // code-splitting por feature (home + busca no bundle inicial: teclado abre no mesmo toque)
 import { HomePage } from '../features/produtos/HomePage';
 import SearchPage from '../features/produtos/SearchPage';
 
-const ProductPage = lazy(() => import('../features/produtos/ProductPage'));
-const ProductsMapPage = lazy(() => import('../features/produtos/ProductsMapPage'));
-const ProductNearbyMapPage = lazy(() => import('../features/produtos/ProductNearbyMapPage'));
-const ScanPage = lazy(() => import('../features/nota/ScanPage'));
-const ReceiptResultPage = lazy(() => import('../features/nota/ReceiptResultPage'));
-const StoresPage = lazy(() => import('../features/lojas/StoresPage'));
-const StoresMapPage = lazy(() => import('../features/lojas/StoresMapPage'));
-const StorePage = lazy(() => import('../features/lojas/StorePage'));
-const ListsPage = lazy(() => import('../features/listas/ListsPage'));
-const ListPage = lazy(() => import('../features/listas/ListPage'));
-const MyReceiptsPage = lazy(() => import('../features/notas/MyReceiptsPage'));
-const SpendingPage = lazy(() => import('../features/notas/SpendingPage'));
-const ProfilePage = lazy(() => import('../features/conta/ProfilePage'));
-const PointsPage = lazy(() => import('../features/conta/PointsPage'));
-const AuthPages = lazy(() => import('../features/conta/AuthPages'));
-const LocationPage = lazy(() => import('../features/conta/LocationPage'));
-const DeleteAccountPage = lazy(() => import('../features/conta/DeleteAccountPage'));
-const AdminPage = lazy(() => import('../features/admin/AdminPage'));
+const ProductPage = lazyPage(() => import('../features/produtos/ProductPage'));
+const ProductsMapPage = lazyPage(() => import('../features/produtos/ProductsMapPage'));
+const ProductNearbyMapPage = lazyPage(() => import('../features/produtos/ProductNearbyMapPage'));
+const ScanPage = lazyPage(() => import('../features/nota/ScanPage'));
+const ReceiptResultPage = lazyPage(() => import('../features/nota/ReceiptResultPage'));
+const StoresPage = lazyPage(() => import('../features/lojas/StoresPage'));
+const StoresMapPage = lazyPage(() => import('../features/lojas/StoresMapPage'));
+const StorePage = lazyPage(() => import('../features/lojas/StorePage'));
+const ListsPage = lazyPage(() => import('../features/listas/ListsPage'));
+const ListPage = lazyPage(() => import('../features/listas/ListPage'));
+const MyReceiptsPage = lazyPage(() => import('../features/notas/MyReceiptsPage'));
+const SpendingPage = lazyPage(() => import('../features/notas/SpendingPage'));
+const ProfilePage = lazyPage(() => import('../features/conta/ProfilePage'));
+const PointsPage = lazyPage(() => import('../features/conta/PointsPage'));
+const AuthPages = lazyPage(() => import('../features/conta/AuthPages'));
+const LocationPage = lazyPage(() => import('../features/conta/LocationPage'));
+const DeleteAccountPage = lazyPage(() => import('../features/conta/DeleteAccountPage'));
+const AdminPage = lazyPage(() => import('../features/admin/AdminPage'));
 
 /** Rotas ↔ telas do protótipo v2 (T-xx). */
 export const router = createBrowserRouter([

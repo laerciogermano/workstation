@@ -25,11 +25,27 @@ export function HomePage() {
   const navigate = useNavigate();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [active, setActive] = useState('promocoes');
+  const [betaOpen, setBetaOpen] = useState(() => {
+    try {
+      return localStorage.getItem('nt:beta-banner') !== '0';
+    } catch {
+      return true;
+    }
+  });
   const refs = useRef(new Map<string, HTMLElement>());
   const productPins = useMemo(
     () => productPricePins(homeProducts(home.data), ranking.data, { limit: 24 }),
     [home.data, ranking.data],
   );
+
+  const dismissBeta = () => {
+    setBetaOpen(false);
+    try {
+      localStorage.setItem('nt:beta-banner', '0');
+    } catch {
+      /* private mode */
+    }
+  };
 
   /**
    * REQ-064 — abre /busca e foca o campo no mesmo gesto (teclado iOS).
@@ -84,6 +100,18 @@ export function HomePage() {
           <Icon name="user" />
         </Link>
       </header>
+
+      {betaOpen && (
+        <div className="banner beta" role="status">
+          <Icon name="info" />
+          <span>
+            <b>Beta</b> · versão em desenvolvimento
+          </span>
+          <button type="button" className="ib" onClick={dismissBeta} aria-label="Fechar aviso">
+            <Icon name="x" />
+          </button>
+        </div>
+      )}
 
       <label className="search" style={{ viewTransitionName: 'search' }}>
         <Icon name="search" />

@@ -5,13 +5,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useDeferredValue, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { brl, when } from '../../lib/format';
-import { useProductViewMode } from '../../lib/product-view';
 import { clearSearchCache, useSearch } from '../../lib/queries';
 import { Chip, Empty, ErrorBanner, Skel } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { useGo } from '../../ui/nav';
 import { ProductCard } from '../../ui/ProductCard';
-import { ProductViewToggle } from '../../ui/ProductViewToggle';
 import { Sheet } from '../../ui/Sheet';
 import { AddToListSheet } from '../listas/AddToListSheet';
 import { useCameraScanner, Viewfinder } from '../nota/scanner';
@@ -30,7 +28,6 @@ export default function SearchPage() {
   const res = useSearch(deferred, cat, ordem);
   const qc = useQueryClient();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
-  const [view] = useProductViewMode();
   const [scan, setScan] = useState(false);
   const go = useGo();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -134,10 +131,10 @@ export default function SearchPage() {
               </button>
             </div>
           </div>
-          <ProductViewToggle />
-          <div className={`pgrid view-${view}`}>
+          {/* Busca: sempre lista — sem seletor sm/md/lista. */}
+          <div className="pgrid view-list">
             {data.products.map((p) => (
-              <ProductCard key={p.gtin} p={p} onAdd={setAdding} view={view} />
+              <ProductCard key={p.gtin} p={p} onAdd={setAdding} view="list" />
             ))}
           </div>
         </>

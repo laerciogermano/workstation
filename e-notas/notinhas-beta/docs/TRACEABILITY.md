@@ -4,9 +4,9 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 
 | Tela | Rota | Componente | API | Regras |
 |---|---|---|---|---|
-| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 · `ProductViewToggle` compact na `.secbar` (não na busca); scroll vertical normal (sem snap-y) |
+| T-10 Home · Produtos | `/` | `features/produtos/HomePage` | `GET /produtos/home` | RN-05, RN-11, REQ-045/049/056 · `ProductViewToggle` compact na `.search-row` (ao lado da busca); chips de seção separados; scroll vertical normal (sem snap-y) |
 | T-73 Carregando | (qualquer) | `app/Shell › PageSkeleton` | — | skeleton, sem spinner |
-| T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · tabbar some só com busca ativa (`q`/`categoria`); cache limpo ao limpar/sair (`clearSearchCache`, sem `placeholderData`) |
+| T-11 Busca · T-72 sem resultado | `/busca?q=&categoria=` | `features/produtos/SearchPage` | `GET /produtos/busca` | GTIN mod-10, Q6 · resultados sempre `view=list` (sem `ProductViewToggle`); tabbar some só com busca ativa; cache limpo ao limpar/sair |
 | T-14 Detalhe · T-13 Histórico · T-12 Registros | `/produto/:gtin` | `features/produtos/ProductPage` (`MapBanner` na seção Perto de você → mapa; Alterar código / Trocar foto) | `GET /produtos/:gtin` (+ `links[]`) | RN-05, Q3, REQ-047/058/067 · mapa sai do topo e fica junto de Perto de você |
 | T-30 Onde comprar perto | `/produto/:gtin/mapa` | `features/produtos/ProductNearbyMapPage` | `GET /produtos/:gtin` | RN-09 · expansão do mapa do detalhe |
 | T-15 Mapa de produtos | `/mapa` (+ faixa na home `/`) | `features/produtos/ProductsMapPage` · `MapBanner` na `HomePage` | home + ranking | RN-09 · pins ancorados na loja do melhor preço + anel (~45 m) se vários na mesma loja; `MapPin.photoUrl` = foto principal |

@@ -102,7 +102,7 @@ export default function ProfilePage() {
         </Link>
         <Link to="/gastos" className="li">
           <Icon name="chart" />
-          <span className="grow b">Gastos do mês</span>
+          <span className="grow b">Gasto do mês</span>
           <Icon name="next" />
         </Link>
       </div>

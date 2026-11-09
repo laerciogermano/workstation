@@ -10,11 +10,22 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../ui/Toast';
 import { Skel } from '../ui/bits';
 
+/** Mobile tabbar (FAB Nota no meio). */
 const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
-  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ }, // inclui /produto/:gtin/mapa
+  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
   { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
   { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
-  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/(notas|gastos)/ },
+  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
+];
+
+/** Desktop sidenav: produtos → lojas → listas → nota → notas → gasto → (fixixo embaixo) pontuação + perfil. */
+const SIDE: { to: string; icon: IconName; label: string; match: RegExp }[] = [
+  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
+  { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
+  { to: '/listas', icon: 'list', label: 'Listas', match: /^\/listas/ },
+  { to: '/nota', icon: 'qr', label: 'Nota', match: /^\/nota(\/|$)/ },
+  { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
+  { to: '/gastos', icon: 'chart', label: 'Gasto do mês', match: /^\/gastos/ },
 ];
 
 const subscribeOnline = (cb: () => void) => {
@@ -73,32 +84,34 @@ export function Shell() {
         <NavLink to="/" viewTransition>
           <Wordmark />
         </NavLink>
-        {TABS.map((t) => (
+        {SIDE.map((t) => (
           <NavLink key={t.to} to={t.to} viewTransition className={() => `dnav ${t.match.test(pathname) ? 'on' : ''}`}>
             <Icon name={t.icon} />
             {t.label}
           </NavLink>
         ))}
-        <NavLink to="/perfil" viewTransition className={({ isActive }) => `dnav ${isActive ? 'on' : ''}`}>
+        <span className="sp" />
+        <ThemePicker placement="up" withLabel />
+        {me.data && (
+          <NavLink to="/pontos" className="ptschip" style={{ alignSelf: 'flex-start' }} aria-label="Pontuação">
+            <Icon name="award" />
+            <span className="tnum">{me.data.points} pontos</span>
+          </NavLink>
+        )}
+        <NavLink
+          to="/perfil"
+          viewTransition
+          className={() =>
+            `dnav ${pathname.startsWith('/perfil') || pathname.startsWith('/conta') ? 'on' : ''}`
+          }
+        >
           <Icon name="user" />
-          {me.data?.user ? 'Perfil' : 'Perfil e conta'}
+          Perfil e configurações
         </NavLink>
         {me.data?.user?.role === 'admin' && (
           <NavLink to="/admin" className="dnav">
             <Icon name="shield" />
             Admin
-          </NavLink>
-        )}
-        <NavLink to="/nota" viewTransition className="btn p">
-          <Icon name="qr" />
-          Escanear nota
-        </NavLink>
-        <span className="sp" />
-        <ThemePicker placement="up" withLabel />
-        {me.data && (
-          <NavLink to="/pontos" className="ptschip" style={{ alignSelf: 'flex-start' }}>
-            <Icon name="award" />
-            <span className="tnum">{me.data.points} pontos</span>
           </NavLink>
         )}
       </nav>

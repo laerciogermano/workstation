@@ -149,14 +149,6 @@ export default function ProductPage() {
             <p className="banner warn mt12">Sem preço nos últimos meses.</p>
           )}
 
-          <div className="sec">
-            <h2>Histórico</h2>
-            <span className="meta-r">{d.history.length} registros</span>
-          </div>
-          <div className="card">
-            <PriceChart history={d.history} medianCents={d.medianCents} />
-          </div>
-
           <div className="card ficha open">
             <h2 className="ficha-title">Ficha do produto</h2>
             <dl>
@@ -175,6 +167,14 @@ export default function ProductPage() {
               <dt>Fontes</dt>
               <dd>{p.sources.join(', ') || 'DANFE'}</dd>
             </dl>
+          </div>
+
+          <div className="sec">
+            <h2>Histórico</h2>
+            <span className="meta-r">{d.history.length} registros</span>
+          </div>
+          <div className="card">
+            <PriceChart history={d.history} medianCents={d.medianCents} />
           </div>
         </div>
 

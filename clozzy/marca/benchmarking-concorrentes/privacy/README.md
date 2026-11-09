@@ -37,6 +37,7 @@ Pasta [`prints/desktop/`](prints/desktop/) e [`prints/mobile/`](prints/mobile/) 
 
 ## Docs
 
+- **Documento único:** [`benchmarking-privacy.html`](benchmarking-privacy.html) / [`benchmarking-privacy.pdf`](benchmarking-privacy.pdf) — resumo + funcionalidades + IA + todos os prints
 - [`funcionalidades.md`](funcionalidades.md) — inventário web + “app”
 - [`ia.md`](ia.md) — política / produto / promessa IA
 

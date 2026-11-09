@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clozzy — Benchmarking Privacy</title>
+<style>
+  :root{
+    --bg:#0B1220;--card:#121A2B;--line:#243149;--text:#F2F5FA;--muted:#8B97AD;
+    --accent:#F07B24;--ok:#2DD4A8;--no:#F07178;--mid:#F5D27A;--paper:#161F31;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.03em;margin-bottom:8px}
+  h2{font-size:18px;margin:36px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 8px;color:#D6DEEA}
+  .lead{color:var(--muted);margin-bottom:16px;max-width:820px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:24px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0 4px}
+  th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  ul{margin:6px 0 6px 18px;color:#C5CDD9;font-size:13.5px}
+  li{margin-bottom:5px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2438;color:#B4BCCC;font-size:11px;margin:0 4px 4px 0}
+  .tag.br{background:#123028;color:#6EE7B7}
+  .tag.warn{background:#2a2414;color:#F5D27A}
+  .tag.ok{background:#123028;color:#6EE7B7}
+  .tag.no{background:#2a1518;color:#F07178}
+  .kpi{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .kpi span{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+  .shot{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;break-inside:avoid;page-break-inside:avoid;margin:0}
+  .shot img{display:block;width:100%;height:auto;background:#0a0f18}
+  .shot .cap{padding:10px 12px;font-size:12px;color:#C5CDD9;border-top:1px solid var(--line)}
+  .shot .cap strong{display:block;color:var(--text);font-size:12.5px;margin-bottom:2px}
+  .shot .cap code{font-size:10px;color:var(--muted)}
+  .duo{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin:12px 0}
+  @media(max-width:800px){.duo{grid-template-columns:1fr}}
+  .note{font-size:12px;color:var(--muted);margin-top:6px}
+  .y{color:var(--ok);font-weight:600}
+  .n{color:var(--no);font-weight:600}
+  .p{color:var(--mid);font-weight:600}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  @media print{
+    body{padding:12px;background:#fff;color:#111}
+    .card,.shot{border-color:#ddd;background:#fff}
+    .shot .cap{color:#333;border-color:#eee}
+    h2{border-color:#ddd;color:#111}
+    a{color:#c45a12}
+    :root{--muted:#555;--text:#111;--line:#ddd;--card:#f7f7f7;--paper:#fafafa}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Benchmarking — Privacy</h1>
+  <p class="lead">Inspeção profunda da plataforma #1 BR de conteúdo exclusivo: cadastro, área logada (fan), discovery, pagamentos, “app” e IA — com prints desktop e mobile.</p>
+  <p class="meta">
+    Site · <a href="https://privacy.com.br/">privacy.com.br</a>
+    · Card · <a href="https://trello.com/c/vFDqfcKE">vFDqfcKE</a>
+    · Pai · <a href="https://trello.com/c/RR95Cei7">RR95Cei7</a>
+    · Data · 2026-11-09
+    · CDP · <code>benchmarking :9263</code>
+  </p>
+
+  <div class="grid3">
+    <div class="card"><div class="kpi">#3<span>ranking Clozzy (escala)</span></div></div>
+    <div class="card"><div class="kpi">~12,6M<span>visitas/mês (âncora)</span></div></div>
+    <div class="card"><div class="kpi">Pix<span>rails BR · taxa ~20%</span></div></div>
+  </div>
+
+  <div class="card">
+    <span class="tag br">BR / LATAM</span>
+    <span class="tag ok">Pix</span>
+    <span class="tag">Assinatura + PPV</span>
+    <span class="tag warn">Sem app nativo</span>
+    <span class="tag no">Sem suite IA</span>
+    <span class="tag">OAuth G / X / Apple / TikTok</span>
+  </div>
+
+  <!-- 1 -->
+  <h2>1. Resumo executivo</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Âncora Clozzy:</strong> rival doméstico #1 — Pix-first, discovery interna forte (Destaques / Em alta / Top Creators), carteira com bônus.</li>
+      <li><strong>Produto:</strong> fan ↔ creator com assinatura (R$ 19,90–200), post avulso, chat, mimo, videochamada 1:1, live, afiliados.</li>
+      <li><strong>App:</strong> não há store app; mobile = web + “Adicionar à tela inicial”.</li>
+      <li><strong>IA:</strong> só política de perfil IA no Help — zero tools nativos tipo Fanvue.</li>
+      <li><strong>Gap Clozzy:</strong> empate em rails BR; diferenciar em pack=produto + (opcional) suite IA com disclosure.</li>
+    </ul>
+  </div>
+
+  <!-- 2 -->
+  <h2>2. Conta de inspeção</h2>
+  <div class="card">
+    <table>
+      <tr><th>Campo</th><th>Valor</th></tr>
+      <tr><td>Tipo</td><td>Assinante (fan) — creator/KYC não executado nesta sessão</td></tr>
+      <tr><td>User</td><td><code>benchclozzy342</code></td></tr>
+      <tr><td>E-mail</td><td><code>benchmarking@brsupply.email</code></td></tr>
+      <tr><td>CDP</td><td><code>benchmarking</code> · porta <code>9263</code></td></tr>
+      <tr><td>Fluxo</td><td>Signup → e-mail “Ativar minha conta” → login → onboarding Destaques</td></tr>
+    </table>
+  </div>
+
+  <!-- 3 -->
+  <h2>3. Inventário de funcionalidades</h2>
+
+  <h3>Cadastro / acesso</h3>
+  <div class="card">
+    <ul>
+      <li>Toggle <strong>Seja assinante</strong> / <strong>Seja creator</strong> no signup</li>
+      <li>E-mail + senha (8+, maiúsc/minúsc, número, especial) com checklist visual</li>
+      <li>OAuth: Google, X, Apple, TikTok</li>
+      <li>Age gate 18+ + Termos / Privacidade</li>
+      <li>Confirmação de e-mail obrigatória; reenvio com cooldown 5 min</li>
+      <li>Login Email/CPF + senha; “Esqueceu sua senha?”</li>
+      <li>Onboarding pós-login (tutorial Destaques / carteira)</li>
+    </ul>
+  </div>
+
+  <h3>Discovery (fan logado)</h3>
+  <div class="card">
+    <ul>
+      <li>Tabs <strong>Destaques</strong> / <strong>Top Creators</strong></li>
+      <li><strong>Em alta</strong> (rankings semanais)</li>
+      <li>Campanhas (ex.: Black Privacy + bônus carteira até R$ 1.000)</li>
+      <li>Top creators por região · Busca · Feed · cards de perfil</li>
+      <li>Ranking Free (perfis gratuitos)</li>
+    </ul>
+  </div>
+
+  <h3>Fan / monetização</h3>
+  <div class="card">
+    <ul>
+      <li>Assinatura; prévia antes de assinar; gestão (trocar pagamento, antecipar, reativar)</li>
+      <li>Pagamentos BR + Apple Pay / Google Pay</li>
+      <li>Carteira (recarga, bônus)</li>
+      <li>Post avulso (compra sem assinatura via link)</li>
+      <li>Chat · Notificações · Mimo · Videochamada 1:1 · Áudios Feed/Chat · Amigos</li>
+      <li>Cancelamento / estorno (help)</li>
+    </ul>
+  </div>
+
+  <h3>Creator (help + blog — KYC não rodado)</h3>
+  <div class="card">
+    <ul>
+      <li>Onboarding: país, CPF, nome, nascimento, telefone → foto/capa/bio/@ → redes → preço → doc + selfie (Certta)</li>
+      <li>Posts grátis/pagos; agendamento; editar/excluir; post avulso</li>
+      <li>Status (Online / Offline / No Chat); Restringir / Silenciar</li>
+      <li>Carteira / saldo / extrato / saque; % repasse; indicação; afiliados; CNPJ</li>
+      <li>Live + notificações aos assinantes; proteção / DMCA / denúncia</li>
+    </ul>
+  </div>
+
+  <h3>“App”</h3>
+  <div class="card">
+    <p><span class="n">Sem app nativo</span> nas stores. Mobile = web responsiva + atalho tela inicial (iOS Safari / Android Chrome).</p>
+    <p class="note">Bottom nav observada: Feed · Em alta · Chat · Busca (+ home, notifications, user menu).</p>
+  </div>
+
+  <!-- 4 -->
+  <h2>4. IA</h2>
+  <div class="card">
+    <table>
+      <tr><th>Camada</th><th>Achado</th></tr>
+      <tr><td>Política</td><td>Help tem artigo “Posso criar um perfil de IA na Privacy?”</td></tr>
+      <tr><td>Produto</td><td><span class="n">Sem suite</span> (sem chatbot/agent/voice/geração nativos)</td></tr>
+      <tr><td>Promessa</td><td>Pitch = monetização BR (“Monetize, do seu jeito!”), não GenAI</td></tr>
+      <tr><td>vs Clozzy</td><td>Espaço para pack=produto + tools IA com disclosure</td></tr>
+    </table>
+  </div>
+
+  <!-- 5 Cadastro prints -->
+  <h2>5. Fluxo de cadastro — prints</h2>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/02-login.png" alt="Login desktop">
+      <figcaption class="cap"><strong>Login (desktop)</strong> Email/CPF · Senha · OAuth · Cadastre-se · <code>02-login.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/02-login.png" alt="Login mobile">
+      <figcaption class="cap"><strong>Login (mobile)</strong> <code>mobile/02-login.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/03-signup.png" alt="Signup assinante">
+      <figcaption class="cap"><strong>Signup — Seja assinante</strong> Nome · E-mail · Senha · 18+ · Confirmar · <code>03-signup.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/03b-signup-creator.png" alt="Signup creator toggle">
+      <figcaption class="cap"><strong>Toggle Seja creator</strong> <code>03b-signup-creator.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/16-ready-submit.png" alt="Form preenchido">
+      <figcaption class="cap"><strong>Form pronto</strong> checklist senha verde + termos · <code>16-ready-submit.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/18-submit-result.png" alt="Pós submit">
+      <figcaption class="cap"><strong>Pós-submit</strong> volta ao login + toast de e-mail · <code>18-submit-result.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/20-after-login.png" alt="Pré confirmação">
+      <figcaption class="cap"><strong>Login pré-confirmação</strong> aviso de e-mail enviado · <code>20-after-login.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/25-email-confirm.png" alt="Conta validada">
+      <figcaption class="cap"><strong>E-mail confirmado</strong> “Conta validada com sucesso!” · <code>25-email-confirm.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/26-login-ready.png" alt="Login preenchido">
+      <figcaption class="cap"><strong>Login pós-confirmação</strong> <code>26-login-ready.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/27-logged-home.png" alt="Onboarding">
+      <figcaption class="cap"><strong>Onboarding logado</strong> Destaques + Black Privacy / carteira · <code>27-logged-home.png</code></figcaption>
+    </figure>
+  </div>
+
+  <!-- 6 Área logada -->
+  <h2>6. Área logada (fan) — prints</h2>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/33-destaques.png" alt="Destaques">
+      <figcaption class="cap"><strong>Destaques</strong> home discovery · <code>33-destaques.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/34-tab-em-alta.png" alt="Em alta">
+      <figcaption class="cap"><strong>Em alta</strong> <code>34-tab-em-alta.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="grid3">
+    <figure class="shot">
+      <img src="prints/desktop/35-search.png" alt="Busca">
+      <figcaption class="cap"><strong>Busca</strong> <code>35-search.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/36-messages.png" alt="Chat">
+      <figcaption class="cap"><strong>Chat / messages</strong> <code>36-messages.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/37-notifications.png" alt="Notificações">
+      <figcaption class="cap"><strong>Notificações</strong> <code>37-notifications.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="grid3">
+    <figure class="shot">
+      <img src="prints/desktop/28-explore.png" alt="Explore">
+      <figcaption class="cap"><strong>Explore / home</strong> <code>28-explore.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/30-chat.png" alt="Chat route">
+      <figcaption class="cap"><strong>/chat</strong> <code>30-chat.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/31-wallet.png" alt="Wallet">
+      <figcaption class="cap"><strong>Carteira</strong> <code>31-wallet.png</code></figcaption>
+    </figure>
+  </div>
+
+  <div class="duo">
+    <figure class="shot">
+      <img src="prints/desktop/29-profile-menu.png" alt="Profile">
+      <figcaption class="cap"><strong>Perfil / menu</strong> <code>29-profile-menu.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/32-settings.png" alt="Settings">
+      <figcaption class="cap"><strong>Settings</strong> <code>32-settings.png</code></figcaption>
+    </figure>
+  </div>
+
+  <!-- 7 Institucional -->
+  <h2>7. Institucional / legal — prints</h2>
+  <div class="grid2">
+    <figure class="shot">
+      <img src="prints/desktop/21-help.png" alt="Help">
+      <figcaption class="cap"><strong>Central de ajuda</strong> <code>21-help.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/22-termos.png" alt="Termos">
+      <figcaption class="cap"><strong>Termos</strong> <code>22-termos.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/23-blog-features.png" alt="Blog features">
+      <figcaption class="cap"><strong>Blog — guia de funcionalidades</strong> <code>23-blog-features.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/desktop/24-como-funciona.png" alt="Como funciona">
+      <figcaption class="cap"><strong>Como funciona</strong> <code>24-como-funciona.png</code></figcaption>
+    </figure>
+  </div>
+
+  <!-- 8 Mobile -->
+  <h2>8. Mobile — seleção</h2>
+  <p class="note">Paridade desktop/mobile na pasta <code>prints/mobile/</code>. Amostra abaixo.</p>
+  <div class="grid3">
+    <figure class="shot">
+      <img src="prints/mobile/03-signup.png" alt="Signup mobile">
+      <figcaption class="cap"><strong>Signup</strong> <code>mobile/03-signup.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/16-ready-submit.png" alt="Ready mobile">
+      <figcaption class="cap"><strong>Form pronto</strong> <code>mobile/16-ready-submit.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/27-logged-home.png" alt="Home mobile">
+      <figcaption class="cap"><strong>Home logada</strong> <code>mobile/27-logged-home.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/33-destaques.png" alt="Destaques mobile">
+      <figcaption class="cap"><strong>Destaques</strong> <code>mobile/33-destaques.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/35-search.png" alt="Search mobile">
+      <figcaption class="cap"><strong>Busca</strong> <code>mobile/35-search.png</code></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="prints/mobile/36-messages.png" alt="Chat mobile">
+      <figcaption class="cap"><strong>Chat</strong> <code>mobile/36-messages.png</code></figcaption>
+    </figure>
+  </div>
+
+  <!-- 9 Índice completo -->
+  <h2>9. Índice completo de prints</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Arquivo</th><th>Tela</th><th>Desktop</th><th>Mobile</th></tr></thead>
+      <tbody>
+        <tr><td><code>01-landing</code></td><td>Entrada / redirect auth</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>02-login</code></td><td>Login</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>03-signup</code></td><td>Cadastro assinante</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>03b-signup-creator</code></td><td>Toggle creator</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>04…15</code></td><td>Intermediários de preenchimento</td><td>✓</td><td>parcial</td></tr>
+        <tr><td><code>16-ready-submit</code></td><td>Form + checklist + termos</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>17 / 18</code></td><td>Submit / toast confirmação</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>19 / 20</code></td><td>Login pré-ativação</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>21–24</code></td><td>Help · Termos · Blog · Como funciona</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>25-email-confirm</code></td><td>Conta validada</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>26-login-ready</code></td><td>Login pós-confirmação</td><td>✓</td><td>—</td></tr>
+        <tr><td><code>27-logged-home</code></td><td>Onboarding / home</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>28–32</code></td><td>Explore · perfil · chat · wallet · settings</td><td>✓</td><td>✓</td></tr>
+        <tr><td><code>33–37</code></td><td>Destaques · Em alta · Busca · Messages · Notif</td><td>✓</td><td>✓</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Pasta canônica: <code>clozzy/marca/benchmarking-concorrentes/privacy/prints/{desktop,mobile}/</code></p>
+  </div>
+
+  <!-- 10 Gaps -->
+  <h2>10. Implicações Clozzy</h2>
+  <div class="card">
+    <ul>
+      <li><span class="y">Empatar</span> em Pix, carteira, discovery e assinatura+avulso.</li>
+      <li><span class="p">Diferenciar</span> com pack=produto (vitrine → compra → biblioteca) mais clara que feed OF-like.</li>
+      <li><span class="y">Oportunidade IA:</span> Privacy não compete em suite; Clozzy pode entrar com tools + disclosure (sem clonar Fanvue).</li>
+      <li><span class="p">Mobile-first:</span> Privacy vive de PWA — Clozzy deve priorizar web mobile excelente antes de app store.</li>
+      <li><span class="n">Pendente inspeção:</span> fluxo creator completo (KYC), checkout Pix real, live, videochamada, painel saque.</li>
+    </ul>
+  </div>
+
+  <p class="foot">
+    Fontes: inspeção CDP 2026-11-09 · privacy.com.br/help · blog Privacy (guia funcionalidades) · docs em
+    <code>funcionalidades.md</code> · <code>ia.md</code> · <code>README.md</code>.
+    Gerar PDF:
+    <code>Chrome --headless --print-to-pdf=…/benchmarking-privacy.pdf file://…/benchmarking-privacy.html</code>
+  </p>
+
+</div>
+</body>
+</html>

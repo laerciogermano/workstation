@@ -12,9 +12,9 @@
 
 - Viewport: `maximum-scale=1, user-scalable=no, viewport-fit=cover` + metas `apple-mobile-web-app-*`
 - Gestos: `installAppGestures()` bloqueia pinch/double-tap/Ctrl± (mapa Leaflet pode pinçar)
-- CSS: cadeia `%` + `--app-height` (`installViewportHeightLock` / visualViewport) — **sem** `100dvh` no root (iOS PWA deixava faixa cinza)
-- Manifest: `display: standalone` + `display_override: [standalone, fullscreen, minimal-ui]` (`background_color` = canvas `#F5F7FA`; theme splash `#00984B`)
-- Layout: `.shell` flex coluna `height:100%` / `overflow:hidden`; só `.shell-body` rola; tabbar `flex:none` + `padding-bottom: safe-area`
+- CSS: `#root { position:fixed; inset:0 }` — **não** usar `visualViewport.height` como max-height (encurta acima do home indicator → faixa `--nt-canvas`)
+- `--app-height` = `window.innerHeight`; html/body fundo `--nt-surface`; tabbar `padding-bottom: safe-area` (uma vez) + `::after` anti-subpixel
+- Manifest: `display: standalone` + `display_override: [standalone, fullscreen, minimal-ui]` (`background_color` `#F5F7FA`; theme `#00984B`)
 - Metas: `apple-mobile-web-app-capable`, `status-bar-style=black-translucent`, `viewport-fit=cover`
 - Banner Beta: tag `v{package.json} · {YYMMDDHHmm}` (`__APP_VERSION__`/`__BUILD_ID__` no `vite.config.ts`) — muda a cada build para acusar chunk novo
 - Ícone / favicon: fundo **#00984B** + tiras **brancas** só (sem azul). Assets: `favicon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`. Manifest PWA usa PNG; HTML favicon SVG `?v=3` + apple-touch PNG. Antes: tiras azul+verde em fundo transparente/branco. Rollback: SVG antigo azul/verde + theme `#F6F6F4`.

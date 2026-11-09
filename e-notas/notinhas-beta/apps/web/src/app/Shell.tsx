@@ -2,7 +2,6 @@ import { Suspense, useEffect, useSyncExternalStore } from 'react';
 import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router';
 import { Icon, type IconName } from '../ui/Icon';
 import { Wordmark } from '../ui/Wordmark';
-import { ThemePicker } from '../ui/ThemePicker';
 import { useMe } from '../lib/queries';
 import { api } from '../lib/api';
 import { dequeue, pending } from '../lib/offline-queue';
@@ -18,14 +17,14 @@ const TABS: { to: string; icon: IconName; label: string; match: RegExp }[] = [
   { to: '/notas', icon: 'receipt', label: 'Notas', match: /^\/notas/ },
 ];
 
-/** Desktop sidenav: Produtos → Lojas → Lista → Nota → Minhas notas → Gasto do mês; embaixo pontuação + Perfis. */
+/** Desktop sidenav — exatamente 6 itens, nesta ordem. */
 const SIDE: { to: string; icon: IconName; label: string; match: RegExp }[] = [
-  { to: '/', icon: 'grid', label: 'Produtos', match: /^\/($|produto|busca|mapa)/ },
-  { to: '/lojas', icon: 'store', label: 'Lojas', match: /^\/lojas/ },
-  { to: '/listas', icon: 'list', label: 'Lista', match: /^\/listas/ },
+  { to: '/', icon: 'grid', label: 'Produto', match: /^\/($|produto|busca|mapa)/ },
+  { to: '/lojas', icon: 'store', label: 'Loja', match: /^\/lojas/ },
   { to: '/nota', icon: 'qr', label: 'Nota', match: /^\/nota(\/|$)/ },
+  { to: '/listas', icon: 'list', label: 'Lista', match: /^\/listas/ },
   { to: '/notas', icon: 'receipt', label: 'Minhas notas', match: /^\/notas/ },
-  { to: '/gastos', icon: 'chart', label: 'Gasto do mês', match: /^\/gastos/ },
+  { to: '/perfil', icon: 'user', label: 'Perfil', match: /^\/(perfil|conta)/ },
 ];
 
 const subscribeOnline = (cb: () => void) => {
@@ -90,18 +89,6 @@ export function Shell() {
             {t.label}
           </NavLink>
         ))}
-        <ThemePicker placement="up" withLabel />
-        <span className="sp" />
-        <NavLink
-          to="/perfil"
-          viewTransition
-          className={() =>
-            `dnav ${pathname.startsWith('/perfil') || pathname.startsWith('/conta') ? 'on' : ''}`
-          }
-        >
-          <Icon name="user" />
-          Perfis
-        </NavLink>
         {me.data?.user?.role === 'admin' && (
           <NavLink to="/admin" className="dnav">
             <Icon name="shield" />

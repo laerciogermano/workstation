@@ -209,7 +209,7 @@ export default function ProductPage() {
             pins={pins}
             center={anchor}
             radiusKm={Math.min(anchor.radiusKm, 4)}
-            caption={`${pins.length} loja${pins.length === 1 ? '' : 's'} com este produto`}
+            caption={`${pins.length} loja${pins.length === 1 ? '' : 's'} com este produto · perto de ${anchor.mode === 'gps' ? 'você' : anchor.label.split(',')[0]}`}
           />
           {nearest.map((c) => (
             <div key={c.store.id} className="row">

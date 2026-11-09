@@ -674,6 +674,7 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 - Sessão logada permanece **30 dias** (faixa 15–30): cookie `nt_rt` HttpOnly com `REFRESH_TTL_DAYS=30`, renovado (sliding) a cada refresh bem-sucedido.
 - Access JWT em memória: **60 min** (antes 15); boot/visibility sem token tenta refresh pelo cookie.
 - Reuso de refresh **nos primeiros 15 s** após rotação = corrida (abas/SW) → 401 sem revogar a família; reuso depois disso continua revogando (roubo).
-- Tabbar: FAB “adicionar nota” não pode ficar cortado (`overflow-x` só na row interna + padding-top); itens do menu um pouco menores; rótulos curtos (Nota / Gastos).
+- Tabbar: FAB “escanear nota” sem clip (sem `overflow-x` na barra); ícone `scan` (mira+QR); itens menores; rótulos curtos (Nota / Gastos).
 - Home: sem ícone de Perfil no topo — Perfil só no menu de baixo (e sidenav).
-- Rollback: `ACCESS_TTL_S=15*60`; reuso sempre `REFRESH_REUSED`; tabbar com overflow no container; ícone user de volta no `HomePage`.
+- `/auth` rate limit 60/min; refresh em 429 **não** zera a sessão no front.
+- Rollback: `ACCESS_TTL_S=15*60`; reuso sempre `REFRESH_REUSED`; tabbar antiga; ícone user na home; limiter(20) em `/auth`.

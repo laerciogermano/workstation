@@ -73,7 +73,8 @@ export function createApp(deps: Deps) {
   api.use(requireCsrfHeader);
   api.use(identify(deps.db, deps.tokens, deps.env.FINGERPRINT_PEPPER));
 
-  api.use('/auth', limiter(20), authRoutes(deps));
+  // login/register mais apertado; refresh precisa de folga (abas + boot + 401) — REQ-071
+  api.use('/auth', limiter(60), authRoutes(deps));
   api.use('/me', meRoutes(deps));
   api.use('/notas', limiter(30), invalidateOnWrite(deps), receiptsRoutes(deps));
   api.use('/codigos-barras', invalidateOnWrite(deps), barcodesRoutes(deps));

@@ -31,7 +31,8 @@ export function refreshSession(): Promise<boolean> {
     try {
       const res = await rawFetch('/auth/refresh', { method: 'POST' });
       if (!res.ok) {
-        session.set(null);
+        // 429: não desloga — só adianta o próximo try (rate limit /auth)
+        if (res.status !== 429) session.set(null);
         return false;
       }
       const s = (await res.json()) as SessionDTO;

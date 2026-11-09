@@ -3,8 +3,8 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { brl, km, when } from '../../lib/format';
 import { useAnchor } from '../../lib/location';
-import { useStore, useSuggestions } from '../../lib/queries';
-import { Chip, Empty, ErrorBanner, Progress, Skel, StateView } from '../../ui/bits';
+import { useStore } from '../../lib/queries';
+import { Empty, ErrorBanner, Progress, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { MapBanner } from '../../ui/MapBanner';
 import type { MapPin } from '../../ui/MapView';
@@ -36,7 +36,7 @@ function storeOnlyPin(store: {
   ];
 }
 
-/** T-33 vitrine · T-34 item sem EAN com sugestão inline (REQ-039/043). Só leitura de preços (sem checkout — ADR-009). */
+/** T-33 vitrine · T-34 item sem EAN abre LinkEanSheet no clique (REQ-039/043). Só leitura de preços (sem checkout — ADR-009). */
 export default function StorePage() {
   const { id = '0' } = useParams();
   const [params] = useSearchParams();
@@ -47,7 +47,6 @@ export default function StorePage() {
   const anchor = useAnchor();
   const [adding, setAdding] = useState<ProductCardDTO | null>(null);
   const [target, setTarget] = useState<LinkTarget | null>(null);
-  const [open, setOpen] = useState<string | null>(focus);
   const d = q.data;
   const pins = useMemo(
     () => (d ? storeOnlyPin({ ...d.rank.store, position: d.rank.position }) : []),
@@ -120,9 +119,7 @@ export default function StorePage() {
             <UnlinkedRow
               key={u.storeCode}
               u={u}
-              open={open === u.storeCode}
-              onToggle={() => setOpen(open === u.storeCode ? null : u.storeCode)}
-              onLink={() => setTarget({ storeId: s.id, storeCode: u.storeCode, description: u.description, displayName: u.displayName })}
+              onOpen={() => setTarget({ storeId: s.id, storeCode: u.storeCode, description: u.description, displayName: u.displayName })}
             />
           ))}
         </>
@@ -133,35 +130,16 @@ export default function StorePage() {
   );
 }
 
-function UnlinkedRow({ u, open, onToggle, onLink }: { u: UnlinkedItemDTO; open: boolean; onToggle: () => void; onLink: () => void }) {
-  const sugg = useSuggestions(u.store.id, u.storeCode, '', open);
-  const top = sugg.data?.[0];
+function UnlinkedRow({ u, onOpen }: { u: UnlinkedItemDTO; onOpen: () => void }) {
   return (
-    <div className="nrow">
-      <button onClick={onToggle} style={{ textAlign: 'left' }} aria-expanded={open}>
+    <button type="button" className="nrow" onClick={onOpen} style={{ textAlign: 'left', width: '100%', color: 'inherit', cursor: 'pointer' }}>
+      <span>
         <p className="b">{u.displayName}</p>
         <p className="meta">
           <span className="mono">{u.description}</span> · cód. {u.storeCode} · {when(u.observedAt)}
         </p>
-      </button>
+      </span>
       <span className="price tnum">{brl(u.priceCents)}</span>
-      {open && (
-        <div className="suginline">
-          <span>
-            {sugg.isPending ? 'Procurando sugestão…' : top ? (
-              <>
-                <Icon name="info" />
-                Parece <b>{top.title}</b> <Chip kind="meta">{Math.round(top.score * 100)}%</Chip>
-              </>
-            ) : (
-              'Sem sugestão pela descrição.'
-            )}
-          </span>
-          <button className="btn p xs" onClick={onLink}>
-            Vincular
-          </button>
-        </div>
-      )}
-    </div>
+    </button>
   );
 }

@@ -26,7 +26,7 @@ function Fit({ pins }: { pins: MapPin[] }) {
   useEffect(() => {
     if (pins.length === 0) return;
     const b = L.latLngBounds(pins.map((p) => [p.lat, p.lng]));
-    map.fitBounds(b.pad(0.25), { maxZoom: 15, animate: false });
+    map.fitBounds(b.pad(0.45), { maxZoom: 14, animate: false });
   }, [map, pins]);
   return null;
 }
@@ -35,7 +35,7 @@ function Fit({ pins }: { pins: MapPin[] }) {
 export function MapView({ pins, center, radiusKm, className = '', interactive = true }: { pins: MapPin[]; center: { lat: number; lng: number }; radiusKm?: number; className?: string; interactive?: boolean }) {
   return (
     <div className={`mapbox ${className}`}>
-      <MapContainer center={[center.lat, center.lng]} zoom={14} scrollWheelZoom={interactive} dragging={interactive} zoomControl={interactive} attributionControl>
+      <MapContainer center={[center.lat, center.lng]} zoom={13} scrollWheelZoom={interactive} dragging={interactive} zoomControl={interactive} attributionControl>
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {radiusKm && <Circle center={[center.lat, center.lng]} radius={radiusKm * 1000} pathOptions={{ color: 'var(--nt-blue)', weight: 1.5, dashArray: '6 6', fillOpacity: 0.04 }} />}
         {pins.map((p) => (

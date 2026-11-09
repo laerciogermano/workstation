@@ -2,7 +2,6 @@ import type { ProductCardDTO } from '@notinhas/contracts';
 import { CATEGORIES } from '@notinhas/domain';
 import type { IconName } from '../../ui/Icon';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 import { Link, useNavigate } from 'react-router';
 import { PageSkeleton } from '../../app/Shell';
 import { useAnchor } from '../../lib/location';
@@ -32,11 +31,12 @@ export function HomePage() {
     [home.data, ranking.data],
   );
 
-  /** Abre /busca e foca o campo no mesmo toque — iOS só mostra o teclado se o focus vier do gesto. */
+  /**
+   * REQ-064 — abre /busca e foca o campo no mesmo gesto (teclado iOS).
+   * `flushSync: true` no React Router 7 monta a SearchPage a tempo do focus().
+   */
   const openSearch = () => {
-    flushSync(() => {
-      navigate('/busca');
-    });
+    navigate('/busca', { flushSync: true });
     document.querySelector<HTMLInputElement>(`input[${SEARCH_INPUT_ATTR}]`)?.focus({ preventScroll: true });
   };
 
@@ -85,10 +85,21 @@ export function HomePage() {
         </Link>
       </header>
 
-      <button type="button" className="search" style={{ viewTransitionName: 'search' }} onClick={openSearch} aria-label="Buscar produto ou código de barras">
+      <label className="search" style={{ viewTransitionName: 'search' }}>
         <Icon name="search" />
-        <span>Buscar produto ou código de barras</span>
-      </button>
+        <input
+          type="search"
+          readOnly
+          value=""
+          placeholder="Buscar produto ou código de barras"
+          aria-label="Buscar produto ou código de barras"
+          inputMode="search"
+          enterKeyHint="search"
+          autoComplete="off"
+          onFocus={openSearch}
+          onClick={openSearch}
+        />
+      </label>
 
       {anchor.mode === 'padrao' && (
         <Link to="/perfil/localizacao" className="banner">

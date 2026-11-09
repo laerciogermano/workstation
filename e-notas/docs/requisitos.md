@@ -592,8 +592,9 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-064 — Teclado ao abrir a busca (2026-11-09)
 
 - Toque em “Buscar” na home abre `/busca` e **já mostra o teclado** (sem segundo toque no campo).
-- Busca entra no bundle inicial; navegação com `flushSync` + `focus()` no mesmo gesto (iOS).
-- Rollback: voltar `Link`+`viewTransition` na home e `lazy` da SearchPage.
+- Busca no bundle inicial; home usa `<input>` (não botão); `navigate('/busca', { flushSync: true })` + `focus()` no mesmo gesto (iOS / React Router 7).
+- Antes: `ReactDOM.flushSync` em volta do `navigate` — o RR7 ainda podia adiar o mount e o teclado não abria.
+- Rollback: botão + `Link`/`viewTransition` na home; `lazy` da SearchPage.
 
 ## REQ-063 — Viewport / PWA app-like no mobile web (2026-11-09)
 

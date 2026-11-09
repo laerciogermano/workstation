@@ -30,7 +30,9 @@ export default function SearchPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
-    inputRef.current?.focus({ preventScroll: true });
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus({ preventScroll: true });
   }, []);
 
   const set = (k: string, v: string | null) => {
@@ -62,6 +64,7 @@ export default function SearchPage() {
             autoCapitalize="off"
             autoCorrect="off"
             autoComplete="off"
+            autoFocus
           />
           {q && (
             <button onClick={() => set('q', null)} aria-label="Limpar">

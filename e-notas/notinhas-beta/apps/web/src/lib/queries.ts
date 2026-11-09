@@ -112,7 +112,12 @@ export function useMyReceipts() {
   return useQuery({ queryKey: [...qk.personal, 'notas'], queryFn: () => api<ReceiptSummaryDTO[]>('/notas/minhas') });
 }
 export function useReceipt(id: string) {
-  return useQuery({ queryKey: [...qk.personal, 'nota', id], queryFn: () => api<ReceiptDTO>(`/notas/${id}`) });
+  const g = geoQuery(useAnchor());
+  return useQuery({
+    queryKey: [...qk.personal, 'nota', id, g],
+    queryFn: () => api<ReceiptDTO>(`/notas/${id}`, { query: g }),
+    placeholderData: (p) => p,
+  });
 }
 export function useLists() {
   return useQuery({ queryKey: [...qk.personal, 'listas'], queryFn: () => api<ListSummaryDTO[]>('/listas') });

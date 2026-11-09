@@ -6,6 +6,7 @@ import { brl, dateTime } from '../../lib/format';
 import { useMe, useReceipt } from '../../lib/queries';
 import { Chip, ErrorBanner, Photo, Progress, Skel, StateView } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
+import { QuotePanel } from '../../ui/QuotePanel';
 import { TopBar } from '../../ui/TopBar';
 import { LinkEanSheet, type LinkTarget } from './LinkEanSheet';
 
@@ -141,39 +142,56 @@ export default function ReceiptResultPage() {
             : 'todos os códigos internos com EAN'}
         </span>
       </div>
-      <div className="card list">
-        {r.items.map((i) => (
-          <div className="li" key={i.id}>
-            <Photo url={i.photoUrl} size="xs" />
-            <div className="grow">
-              {i.gtin ? (
-                <Link to={`/produto/${i.gtin}`} className="b" style={{ color: 'inherit', display: 'block' }}>
-                  {i.displayName}
-                </Link>
-              ) : (
-                <p className="b">{i.displayName}</p>
-              )}
-              <p className="meta tnum">
-                {i.quantity} × {brl(i.unitCents)} · cód. {i.storeCode} {i.origin && <Chip kind="meta">{ORIGIN[i.origin]}</Chip>}
-              </p>
-            </div>
-            {i.gtin ? (
-              <button className="btn s xs" onClick={() => setTarget(toTarget(i, true))} aria-label="Alterar código de barras">
-                Alterar
-              </button>
-            ) : (
-              <button className="btn s xs" onClick={() => setTarget(toTarget(i))}>
-                Vincular
-              </button>
+      <div className="cols2">
+        <div>
+          <div className="card list">
+            {r.items.map((i) => (
+              <div className="li" key={i.id}>
+                <Photo url={i.photoUrl} size="xs" />
+                <div className="grow">
+                  {i.gtin ? (
+                    <Link to={`/produto/${i.gtin}`} className="b" style={{ color: 'inherit', display: 'block' }}>
+                      {i.displayName}
+                    </Link>
+                  ) : (
+                    <p className="b">{i.displayName}</p>
+                  )}
+                  <p className="meta tnum">
+                    {i.quantity} × {brl(i.unitCents)} · cód. {i.storeCode} {i.origin && <Chip kind="meta">{ORIGIN[i.origin]}</Chip>}
+                  </p>
+                </div>
+                {i.gtin ? (
+                  <button className="btn s xs" onClick={() => setTarget(toTarget(i, true))} aria-label="Alterar código de barras">
+                    Alterar
+                  </button>
+                ) : (
+                  <button className="btn s xs" onClick={() => setTarget(toTarget(i))}>
+                    Vincular
+                  </button>
+                )}
+              </div>
+            ))}
+            {r.totalCents !== null && (
+              <div className="li">
+                <span className="grow b">Total</span>
+                <span className="price tnum">{brl(r.totalCents)}</span>
+              </div>
             )}
           </div>
-        ))}
-        {r.totalCents !== null && (
-          <div className="li">
-            <span className="grow b">Total</span>
-            <span className="price tnum">{brl(r.totalCents)}</span>
+        </div>
+        <div>
+          <div className="sec">
+            <h2>Comparar preços</h2>
           </div>
-        )}
+          <QuotePanel
+            quote={r.quote}
+            credits={r.credits}
+            hasItems={r.items.length > 0}
+            needEanHint={r.eanProgress.done === 0}
+            title={(g) => r.items.find((i) => i.gtin === g)?.displayName ?? g}
+            photo={(g) => r.items.find((i) => i.gtin === g)?.photoUrl ?? null}
+          />
+        </div>
       </div>
 
       <div className="footbar">

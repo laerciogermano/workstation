@@ -53,6 +53,8 @@ export async function receiptDto(db: Queryable, receiptId: number): Promise<Rece
     store: { id: r.store_id, name: r.display_name, neighborhood: r.neighborhood, address: r.address },
     items: dtoItems,
     eanProgress: { done: dtoItems.filter((i) => i.gtin).length, total: dtoItems.length },
+    quote: null,
+    credits: 0,
   };
 }
 

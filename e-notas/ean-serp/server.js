@@ -6,7 +6,7 @@ import {
   resolveEanSi5,
   resolveEanSi5Stream,
 } from './src/resolve.js';
-import { searchGoogleImagens } from './src/providers/google-imagens.js';
+import { searchGoogleImagens, searchGoogleImagensStream } from './src/providers/google-imagens.js';
 
 const app = express();
 app.use(express.json({ limit: '64kb' }));
@@ -144,10 +144,47 @@ async function handleGoogleImagens(req, res) {
     res.status(err.status || 500).json({ ok: false, error: err.message || String(err) });
   }
 }
+
+/** SSE: batches progressivos enquanto o scrape rola (Google → Bing). */
+async function handleGoogleImagensStream(req, res) {
+  const { descricao, limit } = parseCommon(req);
+  const q = descricao || '';
+  const ac = new AbortController();
+  const onClose = () => ac.abort();
+  req.on('close', onClose);
+
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+  try {
+    writeSse(res, 'open', { ok: true });
+    for await (const msg of searchGoogleImagensStream(q, {
+      n: limit ? Number(limit) : 30,
+      signal: ac.signal,
+    })) {
+      if (ac.signal.aborted) break;
+      writeSse(res, msg.event, msg.data);
+    }
+  } catch (err) {
+    if (!ac.signal.aborted) {
+      writeSse(res, 'fail', { ok: false, error: err.message || String(err) });
+    }
+  } finally {
+    req.off('close', onClose);
+    res.end();
+  }
+}
+
 app.get('/ean/google-imagens', handleGoogleImagens);
 app.post('/ean/google-imagens', handleGoogleImagens);
 app.get('/api/ean/google-imagens', handleGoogleImagens);
 app.post('/api/ean/google-imagens', handleGoogleImagens);
+app.get('/ean/google-imagens/stream', handleGoogleImagensStream);
+app.get('/api/ean/google-imagens/stream', handleGoogleImagensStream);
 
 app.get('/ean', handleResolve);
 app.post('/ean', handleResolve);
@@ -159,4 +196,5 @@ app.listen(PORT, () => {
   console.log(`[ean-serp] SI5 SSE http://127.0.0.1:${PORT}/ean/si5/stream?descricao=…`);
   console.log(`[ean-serp] Google CDP http://127.0.0.1:${PORT}/ean/google-cdp?descricao=…`);
   console.log(`[ean-serp] Google Imagens http://127.0.0.1:${PORT}/ean/google-imagens?descricao=…`);
+  console.log(`[ean-serp] Google Imagens SSE http://127.0.0.1:${PORT}/ean/google-imagens/stream?descricao=…`);
 });

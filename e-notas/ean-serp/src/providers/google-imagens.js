@@ -204,7 +204,7 @@ async function scrapeBing(page, query, want) {
 export async function searchGoogleImagens(query, opts = {}) {
   const q = String(query ?? '').trim();
   if (!q) return [];
-  const want = clampN(opts.n, 24);
+  const want = clampN(opts.n, 30);
   if (!(await cdpImagesAvailable())) return [];
 
   try {
@@ -221,4 +221,145 @@ export async function searchGoogleImagens(query, opts = {}) {
     console.warn('[google-imagens]', err.message || err);
     return [];
   }
+}
+
+/**
+ * SSE-friendly: yield batches while scrolling (Google → Bing se bloqueado).
+ * @param {string} query
+ * @param {{ n?: number, signal?: AbortSignal }} [opts]
+ * @yields {{ event: string, data: object }}
+ */
+export async function* searchGoogleImagensStream(query, opts = {}) {
+  const q = String(query ?? '').trim();
+  const want = clampN(opts.n, 30);
+  const signal = opts.signal;
+
+  yield { event: 'meta', data: { ok: true, fonte: 'google-imagens', query: q, n: want } };
+
+  if (!q) {
+    yield { event: 'done', data: { ok: true, imagens: [] } };
+    return;
+  }
+  if (!(await cdpImagesAvailable())) {
+    yield { event: 'done', data: { ok: true, imagens: [], reason: 'cdp-offline' } };
+    return;
+  }
+
+  const seen = new Set();
+  const all = [];
+  const pushNew = (items) => {
+    const novos = [];
+    for (const it of items) {
+      if (!it?.url || seen.has(it.url)) continue;
+      seen.add(it.url);
+      all.push(it);
+      novos.push(it);
+      if (all.length >= want) break;
+    }
+    return novos;
+  };
+
+  let browser;
+  try {
+    browser = await puppeteer.connect({
+      browserURL: cdpBase(),
+      defaultViewport: { width: 1280, height: 900 },
+    });
+    const page = await browser.newPage();
+    await page.setUserAgent(
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    );
+
+    const aborted = () => signal?.aborted;
+
+    {
+      const searchUrl =
+        `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}&hl=pt-BR&gl=br&safe=active`;
+      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 25_000 });
+      if (!aborted()) {
+        await sleep(1200);
+        try {
+          const btn = await page.$('button[aria-label*="Aceitar"], button[aria-label*="Accept"], #L2AGLb');
+          if (btn) {
+            await btn.click();
+            await sleep(800);
+          }
+        } catch {
+          /* ignore */
+        }
+        let googleBlocked = false;
+        const rounds = Math.max(1, Math.min(4, Math.ceil(want / 12)));
+        for (let i = 0; i < rounds; i += 1) {
+          if (aborted() || all.length >= want) break;
+          if (i > 0) {
+            await page.evaluate(() => window.scrollBy(0, 1600));
+            await sleep(450);
+          }
+          const raw = await page.evaluate(EXTRACT_GOOGLE_JS);
+          const href = String(raw?.href || '');
+          if (/\/sorry\/|unusual traffic|captcha/i.test(href) || /\/sorry\//i.test(String(raw?.title || ''))) {
+            googleBlocked = true;
+            console.warn('[google-imagens] Google bloqueou IP — fallback Bing (stream)');
+            break;
+          }
+          let batch = pushNew(pack(raw?.urls || [], 'Google', want, { allowTbn: false }));
+          if (batch.length === 0 && i === 0) {
+            batch = pushNew(pack(raw?.urls || [], 'Google', want, { allowTbn: true }));
+          }
+          if (batch.length) {
+            yield {
+              event: 'batch',
+              data: { i, fonte: 'Google', novos: batch, total: all.length },
+            };
+          }
+        }
+
+        if ((googleBlocked || all.length < Math.min(8, want)) && !aborted() && all.length < want) {
+          const bingUrl =
+            `https://www.bing.com/images/search?q=${encodeURIComponent(q)}` +
+            `&form=HDRSC2&first=1&tsc=ImageHoverTitle`;
+          await page.goto(bingUrl, { waitUntil: 'domcontentloaded', timeout: 25_000 });
+          await sleep(1200);
+          try {
+            const btn = await page.$('#bnp_btn_accept, button#bnp_btn_accept');
+            if (btn) {
+              await btn.click();
+              await sleep(600);
+            }
+          } catch {
+            /* ignore */
+          }
+          const roundsB = Math.max(1, Math.min(4, Math.ceil((want - all.length) / 12)));
+          for (let i = 0; i < roundsB; i += 1) {
+            if (aborted() || all.length >= want) break;
+            if (i > 0) {
+              await page.evaluate(() => window.scrollBy(0, 1600));
+              await sleep(450);
+            }
+            const raw = await page.evaluate(EXTRACT_BING_JS);
+            const batch = pushNew(pack(raw?.urls || [], 'Bing', want));
+            if (batch.length) {
+              yield {
+                event: 'batch',
+                data: { i, fonte: 'Bing', novos: batch, total: all.length },
+              };
+            }
+          }
+        }
+      }
+    }
+
+    await page.close().catch(() => {});
+  } catch (err) {
+    console.warn('[google-imagens/stream]', err.message || err);
+    yield { event: 'fail', data: { ok: false, error: err.message || String(err) } };
+  } finally {
+    try {
+      browser?.disconnect();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  yield { event: 'done', data: { ok: true, imagens: all } };
 }

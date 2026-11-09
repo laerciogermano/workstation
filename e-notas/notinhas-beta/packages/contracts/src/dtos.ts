@@ -173,6 +173,9 @@ export interface ReceiptDTO {
   store: StoreRefDTO & { address: string | null };
   items: ReceiptItemDTO[];
   eanProgress: { done: number; total: number };
+  /** Cotação dos itens com EAN — mesmo painel das listas (uma loja / dividir). */
+  quote: QuoteDTO | null;
+  credits: number;
 }
 
 export interface ReceiptSummaryDTO {

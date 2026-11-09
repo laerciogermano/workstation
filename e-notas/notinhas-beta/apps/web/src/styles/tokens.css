@@ -25,7 +25,8 @@
   --nt-white: #ffffff;
   --nt-scan: #000000;
   --nt-scan-hint: #7ee2a8;
-  --nt-scrim: rgb(11 31 51 / 0.4);
+  /* preto neutro — o azul-marinho antigo tingia o viewfinder atrás do sheet (colar link) */
+  --nt-scrim: rgb(0 0 0 / 0.55);
   --nt-shadow: rgb(11 31 51 / 0.12);
   color-scheme: light;
 }

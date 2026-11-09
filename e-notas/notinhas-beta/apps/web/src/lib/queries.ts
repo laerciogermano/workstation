@@ -73,7 +73,8 @@ export function useStore(id: number, q: string) {
 }
 
 export function useSuggestions(storeId: number, storeCode: string, q = '', enabled = true) {
-  const query = q.trim();
+  // Guard: callers já passaram boolean no 3º arg (enabled) por engano — nunca .trim() em não-string.
+  const query = typeof q === 'string' ? q.trim() : '';
   return useQuery({
     queryKey: [...qk.catalog, 'sugestoes', storeId, storeCode, query],
     queryFn: () =>

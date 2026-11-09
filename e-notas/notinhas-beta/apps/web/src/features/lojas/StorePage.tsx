@@ -134,7 +134,7 @@ export default function StorePage() {
 }
 
 function UnlinkedRow({ u, open, onToggle, onLink }: { u: UnlinkedItemDTO; open: boolean; onToggle: () => void; onLink: () => void }) {
-  const sugg = useSuggestions(u.store.id, u.storeCode, open);
+  const sugg = useSuggestions(u.store.id, u.storeCode, '', open);
   const top = sugg.data?.[0];
   return (
     <div className="nrow">

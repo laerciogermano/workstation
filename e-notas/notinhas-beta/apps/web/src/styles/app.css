@@ -395,11 +395,13 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .pc.pc-list .phwrap { flex: none; width: 56px; }
 .pc.pc-list .ph { margin-bottom: 0; }
 .pc.pc-list .pc-list-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pc.pc-list .pc-list-top { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .pc.pc-list .pn { min-height: 0; -webkit-line-clamp: 2; margin-top: 2px; }
 .pc.pc-list .pc-list-end { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .pc.pc-list .add { position: static; width: 34px; height: 34px; }
+.pc-topline { display: flex; align-items: center; gap: 6px; min-width: 0; }
 /* Espaço extra entre chip “menor preço”/“promoção” e o título do produto */
-.pc > .pn { margin-top: 6px; }
+.pc > .pn, .pc .pc-topline + .pn { margin-top: 6px; }
 .pc:hover { border-color: var(--nt-line-strong); }
 .pc:active { transform: scale(0.97); }
 .phwrap { position: relative; }
@@ -448,7 +450,18 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .price { font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .price.menor { color: var(--nt-green); }
 .price.xl { font-size: 32px; display: block; line-height: 1.1; }
-.badge-off { position: absolute; top: 6px; left: 6px; background: var(--nt-green); color: var(--nt-on-primary); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+/* % fora da foto: mesma linha do chip “promoção”, canto direito do card */
+.badge-off {
+  margin-left: auto;
+  flex: none;
+  background: var(--nt-green);
+  color: var(--nt-on-primary);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
 
 .hero { padding: 0 0 12px; display: flex; justify-content: center; }
 .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.18; color: var(--nt-blue-deep); margin-bottom: 4px; }

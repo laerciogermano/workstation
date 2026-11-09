@@ -74,11 +74,37 @@ export function HomePage() {
       ]
     : [];
 
-  // snap vertical só na home (1 seção = 1 tela)
+  // Snap vertical só depois do 1º gesto do usuário — senão o mandatory pula o topo e cai em Promoções.
   useEffect(() => {
     const body = document.querySelector('.shell-body');
-    body?.classList.add('snap-y');
-    return () => body?.classList.remove('snap-y');
+    if (!(body instanceof HTMLElement)) return;
+
+    const stickTop = () => {
+      body.scrollTop = 0;
+    };
+    stickTop();
+    requestAnimationFrame(stickTop);
+
+    let armed = false;
+    const armSnap = () => {
+      if (armed) return;
+      armed = true;
+      body.classList.add('snap-y');
+      body.removeEventListener('wheel', armSnap);
+      body.removeEventListener('touchstart', armSnap);
+      body.removeEventListener('pointerdown', armSnap);
+    };
+
+    body.addEventListener('wheel', armSnap, { passive: true });
+    body.addEventListener('touchstart', armSnap, { passive: true });
+    body.addEventListener('pointerdown', armSnap, { passive: true });
+
+    return () => {
+      body.classList.remove('snap-y');
+      body.removeEventListener('wheel', armSnap);
+      body.removeEventListener('touchstart', armSnap);
+      body.removeEventListener('pointerdown', armSnap);
+    };
   }, []);
 
   // chips acompanham a rolagem

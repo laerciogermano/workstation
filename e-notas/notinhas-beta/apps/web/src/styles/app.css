@@ -88,7 +88,7 @@ img { max-width: 100%; }
   container-type: size;
   container-name: shellbody;
 }
-/* 1 gesto vertical = próxima seção no topo; lateral dentro do .hscroll permanece livre */
+/* Snap só com .snap-y (ligado após o 1º gesto). Sem stop:always — sobe para seções anteriores sem travar. */
 .shell-body.snap-y {
   scroll-snap-type: y mandatory;
   scroll-padding-top: 0;
@@ -341,7 +341,6 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
   display: flex;
   flex-direction: column;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
   overflow: hidden;
 }
 .home-sec .sec { margin-top: 8px; flex: none; }

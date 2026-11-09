@@ -7,6 +7,14 @@ import { Skel } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { useGo } from '../../ui/nav';
 import { Sheet } from '../../ui/Sheet';
+import {
+  getQrEngineMeta,
+  isQrEngineAvailable,
+  loadQrEngine,
+  QR_ENGINES,
+  saveQrEngine,
+  type QrEngineId,
+} from './qr-engines';
 import { decodeImageFile, useCameraScanner, Viewfinder } from './scanner';
 
 type Phase = { kind: 'camera' } | { kind: 'processing' } | { kind: 'failed'; error: ApiError } | { kind: 'queued' };
@@ -16,11 +24,14 @@ export default function ScanPage() {
   const [phase, setPhase] = useState<Phase>({ kind: 'camera' });
   const [hit, setHit] = useState(false);
   const [paste, setPaste] = useState(false);
+  const [engineSheet, setEngineSheet] = useState(false);
+  const [engine, setEngine] = useState<QrEngineId>(() => loadQrEngine());
   const [photoMsg, setPhotoMsg] = useState<string | null>(null);
   const ingest = useIngest();
   const go = useGo();
   const fileRef = useRef<HTMLInputElement>(null);
   const busy = useRef(false);
+  const engineMeta = getQrEngineMeta(engine);
 
   const submit = useCallback(
     async (url: string) => {
@@ -44,23 +55,33 @@ export default function ScanPage() {
     [ingest, go],
   );
 
-  const { videoRef, state } = useCameraScanner(
+  const { videoRef, hostRef, state } = useCameraScanner(
     'qr',
-    (hit) => {
+    (scanHit) => {
       setHit(true);
-      void submit(hit.code);
+      void submit(scanHit.code);
     },
-    phase.kind === 'camera' && !paste,
+    phase.kind === 'camera' && !paste && !engineSheet,
+    engine,
   );
+
+  function pickEngine(id: QrEngineId) {
+    if (!isQrEngineAvailable(id)) return;
+    saveQrEngine(id);
+    setEngine(id);
+    setEngineSheet(false);
+    setHit(false);
+    setPhotoMsg(null);
+  }
 
   async function onPhoto(f: File | undefined) {
     if (!f) return;
-    setPhotoMsg('Lendo o QR da foto…');
-    const hit = await decodeImageFile(f, 'qr');
-    if (hit) {
+    setPhotoMsg(`Lendo o QR (${engineMeta.name})…`);
+    const scanHit = await decodeImageFile(f, 'qr', engine);
+    if (scanHit) {
       setPhotoMsg(null);
-      void submit(hit.code);
-    } else setPhotoMsg('Não achamos um QR Code nessa foto. Tente outra, mais de perto e sem reflexo.');
+      void submit(scanHit.code);
+    } else setPhotoMsg(`Não achamos um QR com ${engineMeta.name}. Troque o motor ou tente outra foto.`);
   }
 
   if (phase.kind === 'processing') return <Processing />;
@@ -85,15 +106,16 @@ export default function ScanPage() {
   return (
     <div className="cam">
       <video ref={videoRef} muted playsInline aria-hidden="true" />
+      <div ref={hostRef} className="cam-host off" id="nt-html5-qr" aria-hidden="true" />
       <div className="floattop">
         <button className="ib glass" onClick={() => go(-1)} aria-label="Fechar">
           <Icon name="x" />
         </button>
         <span className="sp" />
-        <span className="pillcam">
-          <Icon name="qr" />
-          QR da NFC-e · Paraná
-        </span>
+        <button type="button" className="pillcam" onClick={() => setEngineSheet(true)} aria-haspopup="dialog" aria-label="Escolher leitor de QR">
+          <Icon name="sliders" />
+          {engineMeta.name}
+        </button>
       </div>
 
       {noCamera ? (
@@ -110,7 +132,7 @@ export default function ScanPage() {
         </div>
       ) : (
         <>
-          <Viewfinder mode="qr" hit={hit} />
+          {engineMeta.needs === 'video' && <Viewfinder mode="qr" hit={hit} />}
           <p>{state === 'starting' ? 'Abrindo a câmera…' : 'Aponte para o QR Code no rodapé do cupom'}</p>
         </>
       )}
@@ -132,7 +154,50 @@ export default function ScanPage() {
         </button>
       </div>
       <PasteSheet open={paste} onClose={() => setPaste(false)} onSubmit={(u) => { setPaste(false); void submit(u); }} />
+      <EngineSheet open={engineSheet} current={engine} onClose={() => setEngineSheet(false)} onPick={pickEngine} />
     </div>
+  );
+}
+
+function EngineSheet({
+  open,
+  current,
+  onClose,
+  onPick,
+}: {
+  open: boolean;
+  current: QrEngineId;
+  onClose: () => void;
+  onPick: (id: QrEngineId) => void;
+}) {
+  return (
+    <Sheet open={open} onClose={onClose} title="Leitor de QR">
+      <p className="meta mb12">Escolha a lib para comparar no cupom. A preferência fica neste aparelho.</p>
+      <ul className="engine-list">
+        {QR_ENGINES.map((e) => {
+          const ok = isQrEngineAvailable(e.id);
+          const on = e.id === current;
+          return (
+            <li key={e.id}>
+              <button
+                type="button"
+                className={`engine-opt${on ? ' on' : ''}${ok ? '' : ' off'}`}
+                disabled={!ok}
+                aria-pressed={on}
+                onClick={() => onPick(e.id)}
+              >
+                <span className="engine-opt-top">
+                  <strong>{e.name}</strong>
+                  {on && <Icon name="check" />}
+                  {!ok && <span className="meta">indisponível</span>}
+                </span>
+                <span className="meta">{e.blurb}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </Sheet>
   );
 }
 

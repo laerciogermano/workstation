@@ -24,9 +24,9 @@
 
 ### Scan QR (REQ-072)
 
-- Motor QR: **`qr-scanner` (Nimiq)** em `apps/web/.../scanner.tsx` (`QR_SCAN_ENGINE`); EAN continua `@zxing` + tesseract.
-- Antes: QR no `@zxing/browser`. Próximo rodízio: `html5-qrcode` / `@yudiel/react-qr-scanner`.
-- Rollback: reverter `scanner.tsx` + `package.json` (`qr-scanner`).
+- Menu no scan: escolher motor (`native` / `qr-scanner` / `zxing` / `html5-qrcode` / `jsqr`); default `qr-scanner`; `localStorage nt_qr_engine`.
+- EAN continua `@zxing` + tesseract.
+- Rollback: reverter `ScanPage`/`qr-engines`/`qr-runners`/`scanner` + deps.
 
 ### Sessão / tabbar (REQ-071)
 

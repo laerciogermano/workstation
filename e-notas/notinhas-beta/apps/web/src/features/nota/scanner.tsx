@@ -1,16 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserMultiFormatReader as Reader } from '@zxing/browser';
 import { isValidGtin, normalizeGtin } from '@notinhas/domain';
+import { getQrEngineMeta, type QrEngineId } from './qr-engines';
+import { decodeQrWithEngine, startQrCamera } from './qr-runners';
 
 export type ScanMode = 'qr' | 'ean';
-
-/**
- * Motor de scan (rodízio para comparar qualidade):
- * - QR: `qr-scanner` (Nimiq) — BarcodeDetector nativo + worker jsQR
- * - EAN: `@zxing/browser` + OCR (tesseract)
- * Anterior (QR): só `@zxing/browser`. Próximas candidatas: html5-qrcode, @yudiel/react-qr-scanner.
- */
-export const QR_SCAN_ENGINE = 'qr-scanner' as const;
 
 /** Resultado: barras e/ou VOCR (OCR dos dígitos impressos). */
 export interface ScanHit {
@@ -19,7 +13,7 @@ export interface ScanHit {
   vocr: string | null;
 }
 
-/** zxing só para EAN (QR usa qr-scanner). Lazy fora do bundle inicial. */
+/** zxing só para EAN. Lazy fora do bundle inicial. */
 async function createEanReader(): Promise<Reader> {
   const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([
     import('@zxing/browser'),
@@ -27,15 +21,6 @@ async function createEanReader(): Promise<Reader> {
   ]);
   const formats = [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.ITF];
   return new BrowserMultiFormatReader(new Map([[DecodeHintType.POSSIBLE_FORMATS, formats]]));
-}
-
-async function loadQrScanner() {
-  const [{ default: QrScanner }, workerUrl] = await Promise.all([
-    import('qr-scanner'),
-    import('qr-scanner/qr-scanner-worker.min.js?url'),
-  ]);
-  QrScanner.WORKER_PATH = workerUrl.default;
-  return QrScanner;
 }
 
 /** Extrai a melhor sequência numérica (8–14) do texto OCR. */
@@ -111,21 +96,11 @@ async function readVocrFromBitmap(file: File): Promise<string | null> {
   }
 }
 
-async function decodeQrImage(file: File): Promise<string | null> {
-  const QrScanner = await loadQrScanner();
-  try {
-    const result = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
-    const text = typeof result === 'string' ? result : result.data;
-    return text?.trim() ? text.trim() : null;
-  } catch {
-    return null;
-  }
-}
-
-/** Decodifica QR/EAN de uma foto (T-21, T-24). No EAN: zxing + OCR; se barras falham, OCR sozinho pode fechar. */
-export async function decodeImageFile(file: File, mode: ScanMode): Promise<ScanHit | null> {
+/** Decodifica QR/EAN de uma foto. QR usa o motor escolhido. */
+export async function decodeImageFile(file: File, mode: ScanMode, qrEngine?: QrEngineId): Promise<ScanHit | null> {
   if (mode === 'qr') {
-    const code = await decodeQrImage(file);
+    const id = qrEngine ?? 'qr-scanner';
+    const code = await decodeQrWithEngine(id, file);
     return code ? { code, vocr: null } : null;
   }
 
@@ -151,10 +126,16 @@ export type CameraState = 'starting' | 'live' | 'denied' | 'unsupported';
 
 /**
  * Câmera contínua (RN-07: HTTPS).
- * QR → qr-scanner; EAN → zxing + OCR periódico.
+ * QR → motor selecionável; EAN → zxing + OCR periódico.
  */
-export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => void, enabled = true) {
+export function useCameraScanner(
+  mode: ScanMode,
+  onResult: (hit: ScanHit) => void,
+  enabled = true,
+  qrEngine: QrEngineId = 'qr-scanner',
+) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<CameraState>('starting');
   const cb = useRef(onResult);
   const busy = useRef(false);
@@ -165,6 +146,7 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
   useEffect(() => {
     if (!enabled) return;
     let stopped = false;
+    const signal = { stopped: false };
     let stopCamera: (() => void) | null = null;
     let ocrTimer: ReturnType<typeof setInterval> | null = null;
     let ocrWorker: OcrWorker | null = null;
@@ -188,43 +170,25 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
 
     (async () => {
       try {
-        if (!videoRef.current) return;
-
         if (mode === 'qr') {
-          const QrScanner = await loadQrScanner();
-          if (stopped || !videoRef.current) return;
-          const scanner = new QrScanner(
-            videoRef.current,
-            (result) => {
-              const code = typeof result === 'string' ? result : result.data;
-              if (!code?.trim() || stopped || busy.current) return;
-              emit({ code: code.trim(), vocr: null });
+          const video = videoRef.current;
+          const host = hostRef.current;
+          if (!video || !host) return;
+          const needsHost = getQrEngineMeta(qrEngine).needs === 'host';
+          video.classList.toggle('off', needsHost);
+          host.classList.toggle('off', !needsHost);
+          stopCamera = await startQrCamera(qrEngine, {
+            video,
+            host,
+            signal,
+            onCode: (code) => {
+              if (!stopped && !busy.current) emit({ code, vocr: null });
             },
-            {
-              preferredCamera: 'environment',
-              maxScansPerSecond: 12,
-              returnDetailedScanResult: true,
-              // Região um pouco maior que o default (2/3) — cupom NFC-e costuma ter QR pequeno no rodapé.
-              calculateScanRegion: (video) => {
-                const smallest = Math.min(video.videoWidth, video.videoHeight);
-                const size = Math.floor(smallest * 0.85);
-                return {
-                  x: Math.floor((video.videoWidth - size) / 2),
-                  y: Math.floor((video.videoHeight - size) / 2),
-                  width: size,
-                  height: size,
-                  downScaledWidth: 480,
-                  downScaledHeight: 480,
-                };
-              },
-            },
-          );
-          await scanner.start();
-          stopCamera = () => {
-            scanner.stop();
-            scanner.destroy();
-          };
+          });
         } else {
+          if (!videoRef.current) return;
+          videoRef.current.classList.remove('off');
+          hostRef.current?.classList.add('off');
           const reader = await createEanReader();
           if (stopped || !videoRef.current) return;
           const controls = await reader.decodeFromConstraints(
@@ -273,13 +237,14 @@ export function useCameraScanner(mode: ScanMode, onResult: (hit: ScanHit) => voi
 
     return () => {
       stopped = true;
+      signal.stopped = true;
       stopCamera?.();
       if (ocrTimer) clearInterval(ocrTimer);
       void ocrWorker?.terminate().catch(() => undefined);
     };
-  }, [mode, enabled]);
+  }, [mode, enabled, qrEngine]);
 
-  return { videoRef, state };
+  return { videoRef, hostRef, state };
 }
 
 export function Viewfinder({ mode, hit }: { mode: ScanMode; hit: boolean }) {

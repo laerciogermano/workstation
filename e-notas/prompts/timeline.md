@@ -57,3 +57,4 @@ Como registrar: [`README.md`](README.md).
 | 047 | 2026-11-09 | Mapa no topo do produto | [047-2026-11-09-mapa-topo-produto.md](047-2026-11-09-mapa-topo-produto.md) | Produto: mapa no topo; faixa de mapa sem encolher (classe `inbanner`). |
 | 048 | 2026-11-09 | Tabbar, sessão, Perfil | [048-2026-11-09-tabbar-sessao-perfil.md](048-2026-11-09-tabbar-sessao-perfil.md) | FAB sem corte; menu menor; sessão 30 dias (REQ-071); Perfil só no menu de baixo. |
 | 049 | 2026-11-09 | Lib scan QR (rodízio) | [049-2026-11-09-qr-scanner-lib.md](049-2026-11-09-qr-scanner-lib.md) | QR: zxing → qr-scanner (Nimiq); EAN intacto; REQ-072. |
+| 050 | 2026-11-09 | Menu libs QR | [050-2026-11-09-menu-libs-qr.md](050-2026-11-09-menu-libs-qr.md) | Seletor no front com 5 motores famosos; preferência local. |

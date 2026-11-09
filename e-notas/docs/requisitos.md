@@ -682,8 +682,9 @@ Card: [BXKZ55Wb](https://trello.com/c/BXKZ55Wb).
 ## REQ-072 — Motor de scan QR trocável (2026-11-09)
 
 - Scan do **QR da NFC-e** (câmera + foto) usa motor dedicado e testável em rodízio; EAN permanece em `@zxing` + OCR.
-- Motor atual: **`qr-scanner` (Nimiq)** — BarcodeDetector nativo quando houver, senão worker jsQR; região de scan ~85% do menor lado.
-- Antes: QR e EAN no `@zxing/browser` (detecção fraca no cupom).
-- Próximas candidatas se ainda falhar: `html5-qrcode`, `@yudiel/react-qr-scanner`.
-- Constante `QR_SCAN_ENGINE` em `apps/web/src/features/nota/scanner.tsx`.
-- Rollback: reverter `scanner.tsx` + remover dep `qr-scanner` (voltar QR no zxing).
+- **Menu no front (T-20):** pill no topo abre sheet “Leitor de QR”; preferência em `localStorage` (`nt_qr_engine`).
+- Motores: `BarcodeDetector` (nativo), `qr-scanner` (Nimiq, default), `ZXing`, `html5-qrcode`, `jsQR`.
+- Indisponíveis (ex.: nativo no Safari) aparecem desabilitados.
+- Antes: só `@zxing`; depois um motor fixo `qr-scanner`; agora seleção pelo usuário.
+- Código: `qr-engines.ts`, `qr-runners.ts`, `ScanPage.tsx`.
+- Rollback: remover sheet/engines e fixar um único runner.

@@ -11,7 +11,7 @@
 ROOT=/Users/laerciogermano/Documents/works/eternos-mutaveis
 DEST=/tmp/eternos-mutaveis-deploy
 rm -rf "$DEST" && mkdir -p "$DEST"
-cp "$ROOT/livro-v2.html" "$DEST/index.html"   # versão publicada; rollback local: livro.html
+cp "$ROOT/livro-v3.html" "$DEST/index.html"   # versão publicada; rollback local: livro-v2.html
 # copiar só paths referenciados em index.html (assets/, capa/v2/, inputs/imagens/, musica/)
 # depois:
 export SSHPASS='…'   # Contabo 185

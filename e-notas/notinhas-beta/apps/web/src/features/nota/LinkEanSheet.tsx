@@ -227,12 +227,31 @@ export function PhotoPickerSheet({
   seed?: { url: string; source: string }[];
   onClose: () => void;
 }) {
-  const q = usePhotoCandidates(gtin);
+  const [search, setSearch] = useState('');
+  const [debounced, setDebounced] = useState('');
+  const seeded = useRef(false);
+  const q = usePhotoCandidates(gtin, debounced);
   const qc = useQueryClient();
   const [sel, setSel] = useState<string | null>(null);
   const [broken, setBroken] = useState<Set<string>>(() => new Set());
   const [saving, setSaving] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(search.trim()), 400);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  // Prefill editável com o título do produto (1ª resposta).
+  useEffect(() => {
+    if (seeded.current) return;
+    const title = q.data?.title?.trim();
+    if (title) {
+      seeded.current = true;
+      setSearch(title);
+      setDebounced(title);
+    }
+  }, [q.data?.title]);
 
   const candidates = (() => {
     const map = new Map<string, { url: string; source: string; votes: number; primary: boolean }>();
@@ -309,12 +328,27 @@ export function PhotoPickerSheet({
             </button>
           </div>
         </div>
-        <p className="hint">Toque numa foto — cada confirmação é um voto; a mais votada vira a principal.</p>
+        <label className="field mt8" htmlFor="photo-search-q">
+          <span>
+            <Icon name="search" />
+          </span>
+          <input
+            id="photo-search-q"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar fotos — edite o texto"
+            autoComplete="off"
+            enterKeyHint="search"
+            aria-label="Busca de fotos do produto"
+          />
+        </label>
+        <p className="hint">
+          {q.isFetching ? 'Buscando fotos…' : `${candidates.length} foto${candidates.length === 1 ? '' : 's'} — toque para votar; a mais votada vira a principal.`}
+        </p>
       </div>
 
-      {q.isPending && candidates.length === 0 && <p className="hint">Buscando fotos…</p>}
-      {!q.isPending && candidates.length === 0 && (
-        <p className="meta">Nenhuma foto carregou para esse código. Pode pular — o produto já está vinculado.</p>
+      {!q.isPending && !q.isFetching && candidates.length === 0 && (
+        <p className="meta">Nenhuma foto carregou para essa busca. Refine o texto ou pule — o produto já está vinculado.</p>
       )}
       <div className="photogrid">
         {candidates.map((c) => {

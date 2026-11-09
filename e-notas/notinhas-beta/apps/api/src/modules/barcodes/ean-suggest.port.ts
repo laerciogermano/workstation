@@ -60,7 +60,7 @@ export function createEanSerpAdapter(opts: {
   async function googleImagens(query: string, limit: number) {
     const url = new URL(`${base}/ean/google-imagens`);
     url.searchParams.set('descricao', query);
-    url.searchParams.set('n', String(Math.min(Math.max(limit, 1), 40)));
+    url.searchParams.set('n', String(Math.min(Math.max(limit, 1), 60)));
     const res = await doFetch(url, {
       signal: AbortSignal.timeout(opts.timeoutMs ?? 35_000),
       headers: { Accept: 'application/json' },
@@ -95,9 +95,10 @@ export function createEanSerpAdapter(opts: {
       const nome = String(photoOpts?.descricao ?? '').trim();
       const googleQ = [code, nome].filter(Boolean).join(' ').slice(0, 180);
 
+      // Pelo menos 30 candidatas no picker (SI5 + Google/Bing).
       const [si5Hits, googleHits] = await Promise.all([
-        si5(code, 8).catch(() => [] as SuggestionDTO[]),
-        googleImagens(googleQ, 24).catch(() => [] as { url: string; source: string }[]),
+        si5(code, 12).catch(() => [] as SuggestionDTO[]),
+        googleImagens(googleQ, 30).catch(() => [] as { url: string; source: string }[]),
       ]);
 
       const urls = new Map<string, string>();

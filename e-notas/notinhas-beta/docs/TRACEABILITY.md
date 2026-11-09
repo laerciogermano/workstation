@@ -15,7 +15,7 @@ Protótipo: [`../../beta-docs/prototipos/v2/`](../../beta-docs/prototipos/v2/ind
 | T-25 Processando · T-27 Falha | `/nota` (fases) | `ScanPage › Processing / Failure` | `POST /notas` → 400/502/504 | RN-15, fila `ingest_failures` |
 | T-22 Nota recebida · T-26 Duplicada · T-55 Detalhe | `/notas/:id` | `features/nota/ReceiptResultPage` | `GET /notas/:id` | RN-02, RN-03, RN-06, REQ-046 |
 | T-23 Vincular EAN | sheet | `features/nota/LinkEanSheet` | `POST /codigos-barras` (`replace?`), `GET /codigos-barras/sugestoes`, `GET /imagens/proxy` | RN-12, Q2, REQ-043/068; vínculo por cód. interno (propaga) |
-| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos` (SI5 + Google/Bing) | REQ-040/042/069; cada POST = voto em `photo_registrations`; `products.photo_url` = mais votada; picker mostra contagem |
+| T-24 Escolher foto | sheet | `LinkEanSheet › PhotoPickerSheet` | `GET/POST /produtos/:gtin/fotos?q=` (SI5 + Google/Bing) | REQ-040/042/069; ≥30 candidatas; campo `q` editável; voto em `photo_registrations`; principal = mais votada |
 | T-31 Estabelecimentos · mais baratas | `/lojas` | `features/lojas/StoresPage` (+ `MapBanner`) | `GET /lojas/ranking` | RN-09, RN-10, REQ-046 · pins = estabelecimentos |
 | T-32 Mapa de estabelecimentos | `/lojas/mapa` | `features/lojas/StoresMapPage` | `GET /lojas/ranking` | RN-09 · 1 pin por loja |
 | T-33 Vitrine · T-34 Item sem EAN | `/lojas/:id` | `features/lojas/StorePage` (+ `MapBanner`) | `GET /lojas/:id` | REQ-039/043/045 · mapa: só pin do estabelecimento · item sem EAN: clique abre `LinkEanSheet`; após vínculo `onLinked` → `q.refetch()` (lista atualiza sem F5). `api` fetch usa `cache: 'no-store'` p/ não reusar GET com max-age=30 da API |

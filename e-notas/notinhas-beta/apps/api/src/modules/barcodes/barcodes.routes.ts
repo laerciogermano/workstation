@@ -28,14 +28,15 @@ function unwrapPhotoUrl(url: string): string {
   return url;
 }
 
-async function photoCandidates(deps: Deps, gtin: string) {
+async function photoCandidates(deps: Deps, gtin: string, queryOverride?: string) {
   const { rows } = await deps.db.query<{ photo_url: string | null; title: string | null }>(
     'SELECT photo_url, title FROM products WHERE gtin = $1',
     [gtin],
   );
   if (!rows[0]) throw new AppError('NOT_FOUND');
   const info = await deps.productLookup.byGtin(gtin);
-  const descricao = (rows[0].title || info?.title || '').trim();
+  const title = (rows[0].title || info?.title || '').trim();
+  const descricao = (queryOverride?.trim() || title).slice(0, 180);
   const external = await deps.eanSuggest.photosByGtin(gtin, { descricao });
   const out: { url: string; source: string }[] = [];
   const seen = new Set<string>();
@@ -47,7 +48,7 @@ async function photoCandidates(deps: Deps, gtin: string) {
   push(rows[0].photo_url, 'atual');
   for (const u of info?.photoUrls ?? []) push(u, 'Open Food Facts');
   for (const s of external) push(s.url, s.source);
-  return { current: rows[0].photo_url, candidates: out, allowed: seen };
+  return { current: rows[0].photo_url, candidates: out, allowed: seen, title, query: descricao };
 }
 
 export function barcodesRoutes(deps: Deps): Router {
@@ -73,11 +74,14 @@ export function productPhotoRoutes(deps: Deps): Router {
 
   r.get('/', async (req, res) => {
     const gtin = parse(GtinSchema, (req.params as { gtin: string }).gtin);
-    const { current, candidates } = await photoCandidates(deps, gtin);
+    const q = typeof req.query.q === 'string' ? req.query.q : undefined;
+    const { current, candidates, title, query } = await photoCandidates(deps, gtin, q);
     const tallies = await photoTallies(deps.db, gtin);
     const byUrl = new Map(tallies.registrations.map((t) => [t.url, t]));
     res.json({
       current: tallies.primaryUrl ?? current,
+      title,
+      query,
       candidates: candidates.map((c) => {
         const t = byUrl.get(c.url);
         return {

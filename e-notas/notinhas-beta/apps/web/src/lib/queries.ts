@@ -92,15 +92,18 @@ export function useSuggestions(storeId: number, storeCode: string, q = '', enabl
   });
 }
 
-export function usePhotoCandidates(gtin: string | null) {
+export function usePhotoCandidates(gtin: string | null, q = '') {
+  const query = q.trim();
   return useQuery({
-    queryKey: [...qk.catalog, 'fotos', gtin],
+    queryKey: [...qk.catalog, 'fotos', gtin, query],
     queryFn: () =>
       api<{
         current: string | null;
+        title: string;
+        query: string;
         candidates: { url: string; source: string; votes: number; primary: boolean }[];
         registrations: { url: string; votes: number; primary: boolean }[];
-      }>(`/produtos/${gtin}/fotos`),
+      }>(`/produtos/${gtin}/fotos`, { query: query ? { q: query } : undefined }),
     enabled: !!gtin,
   });
 }

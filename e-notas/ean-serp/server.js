@@ -138,7 +138,7 @@ async function handleGoogleImagens(req, res) {
   const { descricao, limit } = parseCommon(req);
   const q = descricao || '';
   try {
-    const imagens = await searchGoogleImagens(q, { n: limit ? Number(limit) : 24 });
+    const imagens = await searchGoogleImagens(q, { n: limit ? Number(limit) : 30 });
     res.json({ ok: true, fonte: 'google-imagens', descricao: q, imagens });
   } catch (err) {
     res.status(err.status || 500).json({ ok: false, error: err.message || String(err) });

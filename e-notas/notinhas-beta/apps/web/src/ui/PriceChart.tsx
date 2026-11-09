@@ -1,6 +1,7 @@
 import type { OfferDTO } from '@notinhas/contracts';
 import { useMemo, useState } from 'react';
 import { brl, dateShort } from '../lib/format';
+import { Icon } from './Icon';
 
 /** T-13: cada ponto = menor preço do dia (NFC-e); tracejado = mediana 14 d. Toque mostra loja e data. */
 export function PriceChart({ history, medianCents }: { history: OfferDTO[]; medianCents: number | null }) {
@@ -14,7 +15,29 @@ export function PriceChart({ history, medianCents }: { history: OfferDTO[]; medi
     }
     return [...byDay.values()].sort((a, b) => a.observedAt.localeCompare(b.observedAt));
   }, [history]);
-  if (points.length < 2) return <p className="meta">Ainda há poucos registros para desenhar o histórico.</p>;
+
+  if (points.length < 2) {
+    const n = points.length;
+    return (
+      <div className="chart-empty" role="status">
+        <span className="chart-empty-icon" aria-hidden>
+          <Icon name="chart" />
+        </span>
+        <p className="b">{n === 0 ? 'Histórico ainda vazio' : 'Histórico começando'}</p>
+        <p className="meta">
+          {n === 0
+            ? 'Quando mais notas com este produto forem lidas, o gráfico de preços aparece aqui.'
+            : 'Falta pelo menos mais um dia com preço para desenhar a curva.'}
+        </p>
+        {n === 1 && points[0] && (
+          <p className="chart-empty-one tnum">
+            {brl(points[0].priceCents)} · {points[0].store.name} · {dateShort(points[0].observedAt)}
+          </p>
+        )}
+      </div>
+    );
+  }
+
 
   const prices = points.map((p) => p.priceCents).concat(medianCents ? [medianCents] : []);
   const min = Math.min(...prices);

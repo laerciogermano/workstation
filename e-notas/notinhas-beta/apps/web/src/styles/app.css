@@ -261,15 +261,47 @@ span.chip { height: 22px; padding: 0 9px; font-size: 11px; font-weight: 700; gap
 .bestbox { margin: 14px 0 4px; padding: 14px 16px; border-radius: 18px; background: var(--nt-surface); border: 1.5px solid var(--nt-green); }
 .bestbox > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .bestbox p { font-size: 13px; margin-top: 4px; }
-details.ficha summary { list-style: none; padding: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-details.ficha summary::-webkit-details-marker { display: none; }
-details.ficha summary .i { transition: transform var(--dur-ui) var(--spring); color: var(--nt-muted); }
-details.ficha[open] summary .i { transform: rotate(90deg); }
+.card.ficha { padding: 0; }
+.ficha-title { font-size: 14px; font-weight: 700; padding: 14px 14px 0; margin: 0; }
+.card.ficha dl { display: grid; grid-template-columns: 82px 1fr; gap: 8px 12px; padding: 12px 14px 14px; font-size: 13px; margin: 0; }
+.card.ficha dt { color: var(--nt-muted); }
 dl { display: grid; grid-template-columns: 82px 1fr; gap: 8px 12px; padding: 0 14px 14px; font-size: 13px; }
 dt { color: var(--nt-muted); }
 
 /* gráfico de histórico (T-13) */
 .chart { padding: 14px 10px 10px; }
+.chart-empty {
+  min-height: 180px;
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+}
+.chart-empty-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--nt-blue-soft);
+  color: var(--nt-blue-deep);
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+}
+.chart-empty-icon .i { width: 20px; height: 20px; }
+.chart-empty .b { font-size: 15px; }
+.chart-empty .meta { max-width: 32ch; line-height: 1.45; }
+.chart-empty-one {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nt-canvas);
+  border: 1px solid var(--nt-line);
+  font-size: 13px;
+  color: var(--nt-ink);
+}
 .plot { position: relative; width: 100%; height: 180px; }
 .plot svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .plot .line { fill: none; stroke: var(--nt-blue); stroke-width: 2.2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }

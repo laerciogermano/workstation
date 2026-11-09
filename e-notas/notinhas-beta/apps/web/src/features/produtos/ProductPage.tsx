@@ -114,10 +114,8 @@ export default function ProductPage() {
             <PriceChart history={d.history} medianCents={d.medianCents} />
           </div>
 
-          <details className="card ficha">
-            <summary>
-              Ficha do produto <Icon name="next" />
-            </summary>
+          <div className="card ficha open">
+            <h2 className="ficha-title">Ficha do produto</h2>
             <dl>
               <dt>Marca</dt>
               <dd>{p.brand ?? '—'}</dd>
@@ -134,7 +132,7 @@ export default function ProductPage() {
               <dt>Fontes</dt>
               <dd>{p.sources.join(', ') || 'DANFE'}</dd>
             </dl>
-          </details>
+          </div>
         </div>
 
         <div>

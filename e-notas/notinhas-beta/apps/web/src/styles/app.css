@@ -132,7 +132,7 @@ img { max-width: 100%; }
 .footbar { position: sticky; bottom: 96px; padding: 14px 0 4px; display: flex; flex-direction: column; gap: 6px; background: linear-gradient(180deg, transparent, var(--nt-canvas) 28%); z-index: 5; }
 
 .search { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 16px; border-radius: 999px; background: var(--nt-surface); border: 1px solid var(--nt-line); color: var(--nt-muted); width: 100%; margin-bottom: 10px; font-size: 15px; text-align: left; }
-.search input { border: 0; outline: 0; background: none; flex: 1; min-width: 0; color: var(--nt-ink); font-size: 15px; }
+.search input { border: 0; outline: 0; background: none; flex: 1; min-width: 0; color: var(--nt-ink); font-size: 16px; }
 .search:focus-within { border-color: var(--nt-blue); box-shadow: 0 0 0 3px var(--nt-blue-soft); }
 .top .search { margin: 0; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 16px 12px; margin: 0 -16px; scrollbar-width: none; }

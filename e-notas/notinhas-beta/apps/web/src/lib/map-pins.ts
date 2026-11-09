@@ -29,13 +29,13 @@ function coordsByStore(ranking: StoreRankDTO[] | undefined): Map<number, { name:
 }
 
 /**
- * Micro-offset em torno da loja (~12–20 m) para pins no mesmo ponto não se empilharem.
- * Um único produto fica no ponto exato; vários formam um anel curto.
- * Antes → depois: jitter largo do protótipo (~120 m) → sem offset → este anel curto.
+ * Offset em torno da loja para pins no mesmo ponto não se empilharem.
+ * Um único produto fica no ponto exato; vários formam um anel (~45 m).
+ * Antes: ~15 m (1921) → agora ~45 m (mais legível no zoom, ainda perto da loja).
  */
 export function nearStore(lat: number, lng: number, indexAmongStore: number, totalAtStore: number): { lat: number; lng: number } {
   if (totalAtStore <= 1 || indexAmongStore < 0) return { lat, lng };
-  const radiusDeg = 0.00014; // ~15 m
+  const radiusDeg = 0.0004; // ~45 m
   const angle = (2 * Math.PI * indexAmongStore) / totalAtStore - Math.PI / 2;
   const cosLat = Math.cos((lat * Math.PI) / 180) || 1;
   return {

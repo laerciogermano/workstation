@@ -121,24 +121,21 @@ export function HomePage() {
           </div>
         )}
 
-        <div className="search-row">
-          <label className="search" style={{ viewTransitionName: 'search' }}>
-            <Icon name="search" />
-            <input
-              type="search"
-              readOnly
-              value=""
-              placeholder="Buscar produto ou código de barras"
-              aria-label="Buscar produto ou código de barras"
-              inputMode="search"
-              enterKeyHint="search"
-              autoComplete="off"
-              onFocus={openSearch}
-              onClick={openSearch}
-            />
-          </label>
-          <ProductViewToggle compact />
-        </div>
+        <label className="search" style={{ viewTransitionName: 'search' }}>
+          <Icon name="search" />
+          <input
+            type="search"
+            readOnly
+            value=""
+            placeholder="Buscar produto ou código de barras"
+            aria-label="Buscar produto ou código de barras"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            onFocus={openSearch}
+            onClick={openSearch}
+          />
+        </label>
 
         {anchor.mode === 'padrao' && (
           <Link to="/perfil/localizacao" className="banner">
@@ -162,14 +159,18 @@ export function HomePage() {
         <ErrorBanner error={home.error} />
 
         {home.data && sections.length > 0 && (
-          <nav className="chips" aria-label="Seções">
-            {sections.map((s) => (
-              <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-                <Icon name={s.icon} />
-                {s.name}
-              </button>
-            ))}
-          </nav>
+          <div className="secbar">
+            <nav className="chips" aria-label="Seções">
+              {sections.map((s) => (
+                <button key={s.id} className={`chip ${active === s.id ? 'on' : ''}`} onClick={() => refs.current.get(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                  <Icon name={s.icon} />
+                  {s.name}
+                </button>
+              ))}
+            </nav>
+            {/* Visão sm/md/lista na página de produtos (não na busca). */}
+            <ProductViewToggle compact />
+          </div>
         )}
 
         {home.data && home.data.promotions.length === 0 && (

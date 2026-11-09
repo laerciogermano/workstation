@@ -450,8 +450,6 @@ dt { color: var(--nt-muted); }
 .vf.hit i:nth-child(2) { transform: translate(-14px, 14px); }
 .vf.hit i:nth-child(3) { transform: translate(14px, -14px); }
 .vf.hit i:nth-child(4) { transform: translate(-14px, -14px); }
-.vf .laser { position: absolute; left: 12px; right: 12px; height: 2px; top: 12%; background: linear-gradient(90deg, transparent, var(--nt-scan-hint), transparent); animation: laser 2.2s ease-in-out infinite alternate; }
-.vf.hit .laser { opacity: 0; }
 .camfoot { position: fixed; left: 50%; transform: translateX(-50%); width: min(560px, 100%); bottom: 0; padding: 16px 16px max(28px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; z-index: 5; }
 .pillcam { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; color: var(--nt-white); padding: 8px 12px; border-radius: 999px; background: color-mix(in srgb, var(--nt-white) 14%, transparent); backdrop-filter: blur(10px); position: relative; }
 .pillcam .i { width: 14px; height: 14px; }
@@ -621,7 +619,6 @@ dt { color: var(--nt-muted); }
 
 /* ───────── motion ───────── */
 @keyframes shimmer { to { background-position: -200% 0; } }
-@keyframes laser { to { top: 86%; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pop { from { transform: scale(0.6); opacity: 0; } }
 @keyframes sheetin { from { transform: translate(-50%, 100%); } }
@@ -640,7 +637,6 @@ html.back::view-transition-new(main) { animation-name: vt-in-back; }
 
 /* movimento reduzido: caso a caso, mantém só fades */
 @media (prefers-reduced-motion: reduce) {
-  .vf .laser { animation: none; top: 50%; }
   .skel { animation: none; }
   .now .mk { animation: none; border-top-color: var(--nt-blue); }
   .sheet, .toast, .sticon, .okbig, .done .mk, .tip { animation-name: fade; }

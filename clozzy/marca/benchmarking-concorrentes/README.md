@@ -60,7 +60,7 @@ Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/
 
 **Privacy (2026-11-09):** pasta [`privacy/`](privacy/README.md) — CDP `benchmarking` :9263; cadastro fan `benchclozzy342` + prints desktop/mobile + inventário. Documento: [`privacy/benchmarking-privacy.html`](privacy/benchmarking-privacy.html) / [`.pdf`](privacy/benchmarking-privacy.pdf).
 
-**CloseFans (2026-11-10):** pasta [`closefans/`](closefans/README.md) — CDP `closefans` :9264; inspeção pública desktop/mobile + inventário Help/Termos (área logada completa pendente). Documento: [`closefans/benchmarking-closefans.html`](closefans/benchmarking-closefans.html) / [`.pdf`](closefans/benchmarking-closefans.pdf).
+**CloseFans (2026-11-10):** pasta [`closefans/`](closefans/README.md) — CDP `closefans` :9264; fan `closefans.bench@brsupply.email` logado + Descobrir/lista + público. Documento: [`closefans/benchmarking-closefans.html`](closefans/benchmarking-closefans.html) / [`.pdf`](closefans/benchmarking-closefans.pdf).
 
 ## Insights p/ identidade visual
 

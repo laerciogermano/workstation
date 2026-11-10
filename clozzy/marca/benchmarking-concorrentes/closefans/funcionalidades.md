@@ -71,8 +71,19 @@ Fonte: inspeção CDP `closefans` :9264 (2026-11-10) + [Central de ajuda](https:
 - Redes: Instagram · Telegram · TikTok · YouTube
 - Proíbe promover Privacy/OnlyFans/concorrentes na plataforma (Termos 3.6)
 
-## Pendente (não coberto nesta entrega)
+## Área logada fan (CDP 2026-11-10)
 
-- Cadastro fan confirmado + área logada completa (feed/chat/wallet prints logados)
-- Fluxo creator KYC + painel saque
+- Signup: e-mail + senha + aceite 18+/Termos → direto `/my-feed` (sem gate de confirmação)
+- Nav: **Feed** · **Descobrir**
+- Feed: tabs Para você / Seguindo; cards com Seguir Grátis, Chat, Enviar presente; rail Black Friday Top N
+- **Descobrir:** Perfis recomendados · Top Videochamadas · Em Alta · Top Assinaturas · Top Packs; filtros Todas / Black Friday / Disponível para chamada / Online / Novidades / Mais Seguidores / TOP Telegram / Mais Ativas
+- Busca / highlights: ranking Top 1…N
+- Settings: Minha conta / Edite seus dados
+- `/wallet` → onboarding creator (Dados pessoais → Endereço → Monetização → Customize → Documentos)
+- Rotas `/chat` `/messages` `/notifications` `/profile` `/subscriptions` → “LINK ANTIGO” + fallback Descobrir
+
+## Pendente
+
+- KYC creator completo + painel saque
 - Checkout Pix real
+- Rota canônica de chat/inbox (URLs antigas 404)

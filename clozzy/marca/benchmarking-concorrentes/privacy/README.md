@@ -23,6 +23,8 @@ Recapturar:
 ```bash
 cd clozzy/marca/benchmarking-concorrentes/privacy
 node capture-mobile.mjs
+# desktop pontual (chat / notif / carteira):
+node capture-desktop-fix3.mjs
 ```
 
 | Print | Tela |
@@ -44,7 +46,7 @@ node capture-mobile.mjs
 | `19-settings` | Configurações de perfil |
 | `20-user-menu` | Menu do usuário |
 
-**Antes → depois:** mobile tinha dezenas de PNGs com hashes iguais (feed copiado como wallet/chat/etc.). Agora só páginas distintas. Desktop em [`prints/desktop/`](prints/desktop/) ainda é legado (inclui passos de signup).
+**Antes → depois:** mobile tinha dezenas de PNGs com hashes iguais (feed copiado como wallet/chat/etc.). Agora só páginas distintas. Desktop (2026-11-10): removidos hash-dups; recapturados `36-messages`, `37-notifications`, `31-wallet` (antes = Explore). Signup intermediário legado permanece (`05–16`).
 
 ## Docs
 

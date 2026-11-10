@@ -1,0 +1,22 @@
+{
+  "text": "Entrar\nCriar conta\nCriadores de conteúdo no Fatal Fans\n\nConheça\n\nConheça\n\nConheça\n\nConheça\n\nPesquisar por nome ou @usuário (mínimo 3 caracteres)\nMulheres\nCasais\nHomens\nTrans\nCreator Awards Fatal Fans 2026\n\nVotação aberta até 26 de novembro\n\nCriador(a) Trans do Ano\nEnzinhoFTM\nCriadora do Ano\nJuju Ferrari\nCriador(a) Trans do Ano\nBárbara Pinheiro\nCriador(a) Trans do Ano\nMemel\nRevelação do Ano\nIvy Mena\nMelhor Cena do Ano\npernocas\nCriador do Ano\nPistolinha oficial\nMelhor Cena do Ano\nPistolinha oficial\nCriador(a) Trans do Ano\nAylla gattina\nRevelação do Ano\nPah Suelen\nMarketing do Ano\nO primeiro clipe explícito da história, por Anônima VB\nColab do Ano\nJennifer Fabri, Anny Alves e Willian de Santti\nMarketing do Ano\nAs 6 a 8 postagens diárias de Pah Suelen\nColab do Ano\nBrenda Aguiar, Pistolinha e O Rasta\nCriador(a) Trans do Ano\nMia Fortunatto\nMarketing do Ano\nO brinde aos 10 primeiros assinantes da Bruninha Surfistinha\nCasal Criador do Ano\nCasalNoturno\nCriador(a) Trans do Ano\nLara\nCasal Criador do Ano\nVidaSafada\nColab do Ano\nAline Fischborn e Lucas Ferraz\nCriador do Ano\nMr Matusalem\nCriadora do Ano\nMari Ávila\nMarketing do Ano\nOs outdoors com censura fictícia de Daniella Motta\nColab do Ano\nLarissa Ferrari e Chanelzinha D\nCriador(a) Trans do Ano\nYanna de Mel\nMarketing do Ano\nVitória Milky nos influenciadores, podcasts e na TV\nCriador do Ano\nBINHO TED\nCriadora do Ano\nMis Scarlett\nColab do Ano\nPernocas e Hannah Chaves\nCriador do Ano\nJefao\nCriador do Ano\nAlex Mendes\nCriador(a) Trans do Ano\nRafaela Didoné\nRevelação do Ano\nEmily louise\nMarketing do Ano\nAquele Ton no GRABBYS 2026\nCasal Criador do Ano\nProjeto Descubra\nMarketing do Ano\nA agência de marketing própria de Elbo Bayma\nMelhor Cena do Ano\nLarissa Sumpani\nMelhor Cena do Ano\nNatasha Naturista\nMarketing do Ano\nO POV em cinema mudo de Vana\nMarketing do Ano\nOs QR Codes espalhados pelas ruas por Alice Queentrix\nCriador(a) Trans do Ano\nMaju Garcia\nCriador do Ano\nZetomasO\nCasal Criador do Ano\nCasal19\nMarketing do Ano\nPolítica e cont",
+  "inputs": [
+    {
+      "type": "text",
+      "placeholder": "Insira seu e-mail ou CPF",
+      "name": "credential"
+    },
+    {
+      "type": "password",
+      "placeholder": "Insira sua senha",
+      "name": "password"
+    }
+  ],
+  "buttons": [
+    "Entrar",
+    "Criar conta",
+    "Entrar com Google",
+    "Entrar com X",
+    "Esqueci minha senha"
+  ]
+}

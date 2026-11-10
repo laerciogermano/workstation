@@ -1,0 +1,72 @@
+{
+  "href": "https://fatalfans.com/",
+  "text": "Entrar\nCriar conta\nCriadores de conteúdo no Fatal Fans\n\nConheça\n\nConheça\n\nConheça\n\nConheça\n\nPesquisar por nome ou @usuário (mínimo 3 caracteres)\nMulheres\nCasais\nHomens\nTrans\nCreator Awards Fatal Fans 2026\n\nVotação aberta até 26 de novembro\n\nRevelação do Ano\nPattywife\nCriador do Ano\nRafael Silva\nMarketing do Ano\nO vídeo viral dos 8 bilhões de Andry Silva\nCriador do Ano\nCaio pernalonga\nMarketing do Ano\nA entrevista e a chegada de Larissa Ferrari à Fatal Fans\nMarketing do Ano\nPolítica e conteúdo a bordo do carro da Xehli G\nMelhor Cena do Ano\nVictor Prado\nCasal Criador do Ano\nCasalNoturno\nCriador do Ano\nGabriel Sudré\nCasal Criador do Ano\nTrisal Fatal MrBlos\nMelhor Cena do Ano\nAna flávia\nCriadora do Ano\nDenise Rocha\nMarketing do Ano\nOs outdoors com censura fictícia de Daniella Motta\nMelhor Cena do Ano\nLara Soft\nCriador do Ano\nDeivid Fortunato\nColab do Ano\nBrenda Aguiar, Pistolinha e O Rasta\nCriador(a) Trans do Ano\nAndreia Latina\nCriador(a) Trans do Ano\nNinfetajenny\nCriadora do Ano\nBad Mi Mc Mirella\nCasal Criador do Ano\nCasal ElasEmAção\nCriador(a) Trans do Ano\njackycherry\nRevelação do Ano\nFooquinha\nColab do Ano\nPattywife, Kasalker, Casal Pá Pum e mais 4\nCriador(a) Trans do Ano\nDuda Cavala\nCriadora do Ano\nLuiza Marquesa\nCriadora do Ano\nFernanda Campos\nColab do Ano\nFoquinha e Luna Wolfy\nMarketing do Ano\nA máscara como marca registrada de Miss Scarlett\nMelhor Cena do Ano\nBella Ruiva\nCriador(a) Trans do Ano\nMallu Vieira\nMelhor Cena do Ano\nLuar Casal\nCriador(a) Trans do Ano\nMia Fortunatto\nCriador(a) Trans do Ano\nRafaela Didoné\nCriador(a) Trans do Ano\nMemel\nCasal Criador do Ano\nVetrixHot\nCriador do Ano\nJesus Luz\nCriador do Ano\nVictor Prado\nColab do Ano\nBarbara Orth e Will Duarte\nColab do Ano\nAline Fischborn e Lucas Ferraz\nRevelação do Ano\nIsabella Sena\nRevelação do Ano\nLaura Keller\nCriador do Ano\nPietro Devil\nCriador do Ano\nAllan Guerra Gomes\nCriador do Ano\nElbo Bayma\nCriador do Ano\nPistolinha oficial\nCasal Criador do Ano\nloiradocorno\nCasal Criador do Ano\nRainha Akira\nCasal Criador do Ano\nLuar Casal\nMelhor Cena do Ano\nJuju Furacão\nCriador(a) Trans do Ano\nBruna Matarazzo\nCasal Criador do Ano\nCasalcariocas\nCriador(a) Trans do Ano\nYanna de Mel\nColab do Ano\nJuliara Jujuba e Hyoran Carvalho\nMarketing do Ano\nA agência de marketing própria de Elbo Bayma\nMarketing do Ano\nComandante Senna: o universo fictício de Ana Senna\nCriadora do Ano\nAndressa Urach\nCasal Criador do Ano\nKasal novinhoooos\nRevelação do Ano\nGaby Lopez\nCasal Criador do Ano\ncasal maromba\nCasal Criador do Ano\nGat",
+  "inputs": [
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Criar conta",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar com Google",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar com X",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "placeholder": "Insira seu apelido",
+      "text": "",
+      "name": "name",
+      "aria": null
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "placeholder": "Insira seu e-mail",
+      "text": "",
+      "name": "email",
+      "aria": null
+    },
+    {
+      "tag": "INPUT",
+      "type": "password",
+      "placeholder": "Insira sua senha",
+      "text": "",
+      "name": "password",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "",
+      "name": "",
+      "aria": "Mostrar senha"
+    },
+    {
+      "tag": "BUTTON",
+      "type": "submit",
+      "text": "Criar conta",
+      "name": "",
+      "aria": null
+    }
+  ]
+}

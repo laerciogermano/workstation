@@ -1,0 +1,83 @@
+Entrar
+Criar conta
+Novembro, 2026
+Termos e Condições
+
+Olá! Seja bem-vindo à FatalFans. Este documento estabelece nossas regras e condições de uso. Sugerimos que você pare um momento para a leitura do documento.
+A FatalFans é operada pela FF Tecnologia Ltda., pessoa jurídica de direito privado, inscrita no CNPJ sob o nº 63.400.101/0001-70, doravante denominada PLATAFORMA.
+Ao usar nosso site, você consente com nossos termos de uso. Para facilitar a leitura e compreensão deste documento, apresentamos abaixo um sumário do seu conteúdo:
+
+1. Das Definições
+2. Da Aceitação dos Termos
+3. Da Responsabilidade da Plataforma
+4. Da Condição de Cadastro e Exclusão
+5. Das Obrigações e das Condutas Proibidas
+6. Das Assinaturas, Planos, Pagamentos e Funcionalidades
+7. Da Lei Geral de Proteção de Dados
+8. Da Propriedade Intelectual
+9. Do Canal de Denúncia
+10. Das Disposições Finais
+1. DAS DEFINIÇÕES
+
+1.1 Para melhor compreensão do tema, destacamos os seguintes termos e seus significados:
+Assinaturas: são valores pagos pelos USUÁRIOS para a PLATAFORMA para ter acesso a conteúdos exclusivos e funcionalidades exclusivas.
+Chamada de Vídeo: é a funcionalidade de interação em tempo real, mediante pagamento, disponibilizada e acordada entre Creators e Fans dentro da PLATAFORMA.
+Chargeback (ou "Estorno"): é a contestação de pagamento realizada pelo USUÁRIO junto à instituição financeira, adquirente ou intermediador de pagamento responsável pela transação.
+Conteúdo (ou “Conteúdos”): são as imagens, mídias e publicações dos USUÁRIOS na PLATAFORMA.
+Conteúdo Avulso: é o Conteúdo comercializado individualmente pelo Creator, fora do modelo de Assinatura, seja publicado no perfil/feed, seja enviado por meio de mensagens privadas.
+Creators: são os USUÁRIOS que utilizam a plataforma para disponibilizar seu conteúdo.
+Fans: são os USUÁRIOS que utilizam a plataforma para ter acesso ao conteúdo criado pelos Creators.
+Plataforma: É a estrutura tecnológica que permite aos USUÁRIOS divulgarem seu conteúdo e/ou acessá-lo.
+Taxa de Transação: é o percentual retido pela PLATAFORMA sobre toda venda de Conteúdo ou Assinatura realizada por meio da PLATAFORMA, nos termos da cláusula 6.3.
+Usuário (ou “Usuários”): São pessoas físicas que utilizam a PLATAFORMA para divulgar o seu conteúdo (Creators), visitar o site ou para visualizar os conteúdos (Fans).
+
+2. DA ACEITAÇÃO DOS TERMOS
+
+2.1 Ao acessar a PLATAFORMA, você concorda com as definições e condições aqui apresentadas.
+2.2 Este instrumento trata-se de um contrato particular que regula as condições de uso dos serviços da PLATAFORMA entre os USUÁRIOS e a PLATAFORMA, sendo então regido pela legislação Civil (Código Civil e Código de Processo Civil). A utilização dos serviços oferecidos através da PLATAFORMA indica expressamente que você concorda com todos os termos e condições contidos neste instrumento e com as disposições legais aplicáveis à espécie.
+2.3 O USUÁRIO é o único e exclusivo responsável por toda e qualquer atividade realizada em sua conta na PLATAFORMA, incluindo, mas não se limitando a, o conteúdo que publica, envia, compartilha ou armazena, bem como por qualquer uso indevido da PLATAFORMA ou violação destes Termos e da legislação vigente.
+2.4 A PLATAFORMA é destinada exclusivamente a pessoas maiores de 18 anos e não se limita à declaração de idade do USUÁRIO. O acesso ao conteúdo, a publicação e a compra dependem das barreiras descritas nestes Termos: aviso de conteúdo adulto na entrada, conteúdo sensível oculto na área pública, conferência do CPF em base oficial de quem publica e de quem compra e verificação biométrica de identidade do CREATOR. O USUÁRIO que declarar idade falsa, usar dados ou meio de pagamento de terceiro ou de qualquer forma fraudar essas barreiras terá a conta suspensa ou encerrada e responderá civil e criminalmente pelos atos praticados, sem prejuízo da comunicação às autoridades competentes.
+
+3. DA RESPONSABILIDADE DA PLATAFORMA
+
+3.1 A PLATAFORMA atua na condição de mera facilitadora ou provedora de aplicação. Desta forma, a PLATAFORMA não se responsabiliza por:
+a) Conteúdo de terceiros ou gerado pelos USUÁRIOS, incluindo links, anúncios, opiniões, informações ou materiais publicados na PLATAFORMA;
+b) Perdas ou danos resultantes da indisponibilidade ou falhas da PLATAFORMA, seja por questões técnicas, manutenções, ataques cibernéticos ou força maior;
+c) Quaisquer danos diretos, indiretos, incidentais, especiais, punitivos ou consequenciais, incluindo lucros cessantes, perda de dados ou interrupção de negócios, decorrentes do uso ou da incapacidade de usar a PLATAFORMA;
+d) Vírus, códigos maliciosos ou outros componentes prejudiciais que possam infectar o equipamento do USUÁRIO em decorrência do acesso ou uso da PLATAFORMA;
+e) Ações ou omissões de outros USUÁRIOS ou terceiros dentro ou fora da PLATAFORMA;
+f) O cumprimento de obrigações fiscais, tributárias e previdenciárias decorrentes dos valores recebidos pelos Creators por meio da PLATAFORMA, nos termos da cláusula 6.7.2
+3.2 A responsabilidade da PLATAFORMA limita-se exclusivamente ao bom funcionamento técnico dos serviços e recursos oferecidos.
+3.3 A PLATAFORMA não se responsabiliza pelo conteúdo gerado por terceiros e seus USUÁRIOS. Isso inclui, mas não se limita a, textos, imagens, vídeos, links para sites externos e quaisquer outras informações ou materiais. A presença de links para sites externos não implica em endosso ou responsabilidade da PLATAFORMA pelo conteúdo desses sites. Os USUÁRIOS são exclusivamente responsáveis pela avaliação e uso de qualquer conteúdo de terceiros.
+3.4 Para garantir a conformidade com estes Termos de Uso, as Políticas da PLATAFORMA e a legislação aplicável, a PLATAFORMA reserva-se o direito de, a qualquer momento e a seu exclusivo critério, suspender, bloquear ou remover conteúdos e/ou perfis de USUÁRIOS.
+
+4. DA CONDIÇÃO DE CADASTRO E EXCLUSÃO
+
+4.1 Os USUÁRIOS deverão efetuar cadastro, preenchendo todos os dados solicitados pela PLATAFORMA no momento do cadastramento, também declarando que preenchem os seguintes pré-requisitos para utilização da PLATAFORMA:
+a) Ser maior de idade e absolutamente capaz;
+b) Possuir a capacidade de comprometer-se aos presentes termos, prestando todas as informações que forem necessárias para realização de seu cadastro. Declarando prestá-las de maneira idônea e verídica, sob pena de responder penal e civilmente;
+c) Possuir um e-mail válido e/ou telefone
+4.2 É estritamente proibida a publicação, divulgação ou compartilhamento de qualquer conteúdo que envolva, faça referência ou esteja relacionado a menores de idade, incluindo, mas não se limitando a imagens, stickers, vídeos, textos ou qualquer outra forma de representação de crianças ou adolescentes.
+4.3 É de exclusiva responsabilidade dos USUÁRIOS fornecer, atualizar e garantir a veracidade dos dados cadastrais, não recaindo à PLATAFORMA qualquer tipo de responsabilidade civil e criminal resultante de dados inverídicos, incorretos ou incompletos fornecidos pelos USUÁRIOS.
+4.4. Em cumprimento à Lei nº 15.211/2025 ("ECA Digital"), a comprovação da maioridade do USUÁRIO não se limita à autodeclaração prevista na Cláusula 2.4, podendo a PLATAFORMA, diretamente ou por meio de seus parceiros de pagamento e verificação de identidade, exigir a apresentação de documento oficial com foto e/ou outros mecanismos confiáveis de verificação de idade a qualquer momento, sendo a recusa em fornecê-los motivo para suspensão ou cancelamento do cadastro.
+4.5 Quando o Conteúdo publicado pelo Creator envolver a participação de qualquer outra pessoa além do próprio USUÁRIO, o Creator declara e garante que:
+a) a pessoa participante é maior de 18 (dezoito) anos e plenamente capaz;
+b) obteve o consentimento livre, expresso e informado dessa pessoa para a gravação, publicação e monetização do Conteúdo na PLATAFORMA;
+c) manterá sob sua guarda, pelo prazo mínimo de 5 anos, documento comprobatório da identidade e do consentimento da pessoa participante, comprometendo-se a apresentá-lo à PLATAFORMA mediante solicitação.
+4.6 O USUÁRIO responderá, civil e criminalmente, por qualquer publicação de conteúdo íntimo sem o consentimento das pessoas nele retratadas, isentando a PLATAFORMA de qualquer responsabilidade nesse sentido.
+4.7 A PLATAFORMA poderá disponibilizar diferentes selos indicativos nos perfis dos Creators, não constituindo, em qualquer hipótese, endosso, garantia de veracidade do conteúdo publicado ou de qualquer característica pessoal declarada pelo USUÁRIO.
+4.8 O Fan poderá excluir sua conta a qualquer momento diretamente na PLATAFORMA ou mediante contato com o suporte.
+4.9 Caso existam Assinaturas ativas vinculadas ao seu perfil, o Creator não poderá excluir a conta de imediato, mas poderá desativá-la temporariamente. Durante a desativação, o perfil ficará indisponível para os demais usuários e para novas assinaturas. Os Fans que já forem assinantes continuarão a acessá-lo normalmente até o término do período contratado. Encerradas todas as Assinaturas, o Creator poderá excluir sua conta.
+4.10 É vedado publicar, em qualquer área da PLATAFORMA, conteúdo que represente criança ou adolescente, real ou fictício, inclusive produzido, alterado ou gerado por inteligência artificial, e conteúdo em que pessoa adulta encene menoridade por meio de vestuário, cenário, caracterização, enquadramento, linguagem ou qualquer outro elemento, como uniforme escolar, ambiente infantil ou termos que evoquem idade inferior a 18 anos. O conteúdo é retirado de imediato de todas as áreas da PLATAFORMA, a conta é suspensa até a conclusão da análise, os registros são preservados e, quando houver indício de crime, o caso é comunicado às autoridades competentes.
+4.11. Toda pessoa que apareça em conteúdo publicado na PLATAFORMA deve ser maior de 18 anos, ter a idade e a identidade verificadas pela PLATAFORMA e ter consentido expressamente com a gravação e a publicação. O CREATOR que publicar conteúdo com terceiros declara ter obtido esse consentimento, obriga-se a guardar o documento de identidade e a autorização de cada participante enquanto o conteúdo estiver publicado e deve apresentá-los à PLATAFORMA sempre que solicitado. Conteúdo com participante não verificado não é publicado ou é retirado.
+4.12. Qualquer pessoa, com ou sem conta, pode denunciar conteúdo ou acesso que envolva criança ou adolescente, que recebe tratamento prioritário. O conteúdo denunciado é retirado de todas as áreas da PLATAFORMA durante a análise, os registros são preservados e, quando houver indício de crime, o caso é comunicado às autoridades competentes.
+
+5. DAS OBRIGAÇÕES E DAS CONDUTAS PROIBIDAS
+
+5.1 Os USUÁRIOS não devem utilizar a PLATAFORMA para quaisquer fins e/ou por quaisquer meios ilegais, difamatórios, discriminatórios, abusivos, ofensivos, agressivos, injuriosos, vexatórios, enganosos, caluniosos, violentos, vulgares, ou de assédio, ameaça ou uso de falsa identidade, ou seja, qualquer desvio de finalidade ou uso escuso que esteja em desconformidade com as normas legais ou que possa prejudicar tanto a PLATAFORMA, quanto outros USUÁRIOS ou terceiros.
+5.2 Os USUÁRIOS não podem, entre outras práticas, realizar as seguintes condutas:
+a) Emprestar, ceder, vender ou de qualquer forma permitir o acesso à sua conta de USUÁRIOS por terceiros, seja a título oneroso ou gratuito;
+b) Utilizar, reproduzir, modificar ou divulgar conteúdo (incluindo texto, imagem, vídeo ou software) protegido por direito autoral, propriedade intelectual ou qualquer outro direito de terceiros, sem a devida autorização ou licença;
+c) Copiar, distribuir, replicar e armazenar indevidamente o conteúdo da PLATAFORMA ou de outros USUÁRIOS, violando direitos de terceiros;
+d) Tentar fraudar, manipular ou interferir no funcionamento da PLATAFORMA, seja por meio de bots, scripts ou qualquer outro mecanismo que vise alterar resultados ou obter vantagens indevidas;
+e) Usar documentos, dados cadastrais, informações de pagamento ou qualquer outra identificação falsa, incorreta,

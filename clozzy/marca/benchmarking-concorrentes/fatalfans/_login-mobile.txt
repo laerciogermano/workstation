@@ -1,0 +1,78 @@
+{
+  "href": "https://fatalfans.com/",
+  "text": "Entrar\nCriar conta\nCriadores de conteúdo no Fatal Fans\n\nConheça\n\nConheça\n\nConheça\n\nPesquisar por nome ou @usuário (mínimo 3 caracteres)\nMulheres\nCasais\nHomens\nTrans\nCreator Awards Fatal Fans 2026\n\nVotação aberta até 26 de novembro\n\nMarketing do Ano\nO primeiro clipe explícito da história, por Anônima VB\nCriador do Ano\nBINHO TED\nCriadora do Ano\nAna flávia\nRevelação do Ano\nElisa Sanches\nCasal Criador do Ano\nCunhada Proibida\nCriadora do Ano\nAndressa Urach\nCriador do Ano\nDeivid Fortunato\nCriador do Ano\nBrunin\nMelhor Cena do Ano\nAline Limas\nCriador do Ano\nPitt Garcia\nCriador(a) Trans do Ano\nBruna Matarazzo\nMarketing do Ano\nA criação da marca Especialista em Oral\nRevelação do Ano\nPah Suelen\nRevelação do Ano\nArthur Moreira\nMarketing do Ano\nA Menina do Fusca: de meme a marca pessoal\nMelhor Cena do Ano\nVictor Prado\nRevelação do Ano\nZuh Borges\nMelhor Cena do Ano\nPah Suelen\nCriador(a) Trans do Ano\nDani Marks\nRevelação do Ano\nBINHO TED\nCriador(a) Trans do Ano\nProfana Trans\nMarketing do Ano\nComandante Senna: o universo fictício de Ana Senna\nMarketing do Ano\nA agência de marketing própria de Elbo Bayma\nRevelação do Ano\nPistolinha oficial\nMarketing do Ano\nA piada sobre Lula que viralizou com Julssy\nCriador(a) Trans do Ano\njackycherry\nCriadora do Ano\nKellyta Tharsys\nMelhor Cena do Ano\nBella Ruiva\nRevelação do Ano\nBrenda Moranguinho\nCriador(a) Trans do Ano\nVictoria\nCriadora do Ano\nKinechan\nCriador do Ano\nZetomasO\nMarketing do Ano\nAquele Ton no GRABBYS 2026\nMarketing do Ano\nAfknaty, a virgem, na campanha para relaxar os CLTs\nMelhor Cena do Ano\nDreadhot\nColab do Ano\nBrenda Aguiar, Pistolinha e O Rasta\nCriador do Ano\nJefao\nCasal Criador do Ano\nTrans Casada\nColab do Ano\nStephany Alves e Steh Angel\nCriador(a) Trans do Ano\nEduarda Gallaxe\nCasal Criador do Ano\nCasal DNA\nCriador do Ano\nElbo Bayma\nCasal Criador do Ano\nThayna Hotwife\nCriador do Ano\nErick Diaz\nCasal Criador do Ano\nIvone Zimmer\nCriador(a) Trans do Ano\nAndreia Latina\nCriadora do Ano\nThawany Anny Alves\nCriadora do Ano\nIvy Mena\nMelhor Cena do Ano\nPistolinha oficial\nCriadora do Ano\nNatali Conti Curvy\nCasal Criador do Ano\nCasal Prazer e Sedução\nMelhor Cena do Ano\nAna flávia\nColab do Ano\nRafaela Portella e Maximo Garcia\nRevelação do Ano\nMilena Mariani\nMelhor Cena do Ano\nJuju Furacão\nRevelação do Ano\nClara Aguilar\nCasal Criador do Ano\nProjeto Descubra\nCriador(a) Trans do Ano\nLuiza Sangalo\nCriador do Ano\nRafael Silva\nCriador(a) Trans do Ano\nMaju Garcia\nCasal Criador do Ano\nCasal de Ativos\nColab do Ano\nManu Martins e Jeh Sexólo",
+  "inputs": [
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Criar conta",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar com Google",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Entrar com X",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "INPUT",
+      "type": "text",
+      "placeholder": "Insira seu e-mail ou CPF",
+      "text": "",
+      "name": "credential",
+      "aria": null
+    },
+    {
+      "tag": "INPUT",
+      "type": "password",
+      "placeholder": "Insira sua senha",
+      "text": "",
+      "name": "password",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "",
+      "name": "",
+      "aria": "Mostrar senha"
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Esqueci minha senha",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "submit",
+      "text": "Continuar",
+      "name": "",
+      "aria": null
+    },
+    {
+      "tag": "BUTTON",
+      "type": "button",
+      "text": "Não tem uma conta? Cadastre-se",
+      "name": "",
+      "aria": null
+    }
+  ]
+}

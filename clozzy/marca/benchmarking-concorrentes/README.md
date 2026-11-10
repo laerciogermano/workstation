@@ -62,7 +62,7 @@ Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/
 
 **CloseFans (2026-11-10):** pasta [`closefans/`](closefans/README.md) — CDP `closefans` :9264; fan `closefans.bench@brsupply.email` logado + Descobrir/lista + público. Documento: [`closefans/benchmarking-closefans.html`](closefans/benchmarking-closefans.html) / [`.pdf`](closefans/benchmarking-closefans.pdf).
 
-**FatalFans (2026-11-10):** pasta [`fatalfans/`](fatalfans/README.md) — CDP `fatalfans` :9265; **só público** (age gate, landing, modais, legal, perfis, Awards, campanha Fatal Model). Documento: [`fatalfans/benchmarking-fatalfans.html`](fatalfans/benchmarking-fatalfans.html) / [`.pdf`](fatalfans/benchmarking-fatalfans.pdf).
+**FatalFans (2026-11-10):** pasta [`fatalfans/`](fatalfans/README.md) — CDP `fatalfans` :9265; fan `fatalfans.bench@brsupply.email` / `FatalfansBench` + público. Documento: [`fatalfans/benchmarking-fatalfans.html`](fatalfans/benchmarking-fatalfans.html) / [`.pdf`](fatalfans/benchmarking-fatalfans.pdf).
 
 ## Insights p/ identidade visual
 

@@ -1,0 +1,11 @@
+# FatalFans lab — Clozzy benchmarking
+email=fatalfans.bench@brsupply.email
+password=Fata1FansBench26!
+apelido=FatalfansBench
+user_id=1671183
+url=https://fatalfans.com/
+cdp=fatalfans
+cdp_port=9265
+profile=~/chrome-profiles/fatalfans
+mailbox=Mailcow Contabo 185.250.37.82 · domínio brsupply.email
+nota=Signup OK 2026-11-10 via API /api/auth/signup → /user; apelido sem ponto; consent faixa etária; sem confirmação e-mail prévia

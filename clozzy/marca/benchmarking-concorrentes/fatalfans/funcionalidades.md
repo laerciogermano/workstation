@@ -1,14 +1,18 @@
 # FatalFans — inventário de funcionalidades
 
-Fonte: inspeção CDP `fatalfans` :9265 (2026-11-10, **só público**) + [Termos](https://fatalfans.com/terms) + [Privacidade](https://fatalfans.com/privacy-policy) + campanha [Fatal Model](https://campanha.fatalmodel.com/cadastro-fatal-fans).
+Fonte: inspeção CDP `fatalfans` :9265 (2026-11-10, público + **fan logado**) + [Termos](https://fatalfans.com/terms) + [Privacidade](https://fatalfans.com/privacy-policy) + campanha [Fatal Model](https://campanha.fatalmodel.com/cadastro-fatal-fans).
 
 ## Cadastro / acesso
 
 - Age gate na entrada: “Tenho +18 anos, quero entrar” / sair
 - Header: **Entrar** · **Criar conta** (modais SPA — rotas `/login` `/signup` etc. caem em 404 de “creator”)
 - Login: e-mail **ou CPF** + senha · Esqueci minha senha · OAuth **Google** · **X**
-- Signup: apelido + e-mail + senha · Google · X (não submetido nesta sessão)
-- 18+ + Termos; ECA Digital (Lei 15.211/2025) citada; CPF em base oficial (quem publica e quem compra); biometria do creator
+- Signup (`#account-create-form` → `POST api.fatalfans.com/api/auth/signup`):
+  - Apelido (só letras/números — **sem ponto**) + e-mail + senha (≥8, maiúsc/minúsc, número, especial)
+  - Consent: conferência de faixa etária ao publicar/comprar
+  - OAuth Google · X
+  - Lab 2026-11-10: `fatalfans.bench@brsupply.email` → user `1671183` / `FatalfansBench` → `/user` **sem** confirmação e-mail prévia
+- 18+ + Termos; ECA Digital; CPF base oficial; biometria creator
 
 ## Discovery / fan (UI pública)
 
@@ -52,6 +56,18 @@ Fonte: inspeção CDP `fatalfans` :9265 (2026-11-10, **só público**) + [Termos
 - Canal denúncia: `suporte@fatalfans.com`
 - Ligação de marca com **Fatal Model**
 
+## Área logada fan (CDP 2026-11-10)
+
+- `/user` — Painel: Editar perfil · Modo Escuro · Prévias Telegram · **Crie conteúdo** · Salvos · Minhas compras · Sair
+- Bottom nav: **Home · Compras · Busca · Chat · Painel**
+- Salvos (`/user/saved`): Perfis salvos / Conteúdo salvo
+- Compras (`/user/purchases`): Assinaturas (Ativas/Expiradas/Canceladas) · Conteúdos pagos
+- Chat: inbox (vazio no lab)
+- Perfil creator logado: Assinar + Presente + Salvar + oferta/cupom
+- Crie conteúdo: onboarding creator (sem KYC completo)
+- Banner Telegram na conta (“prévias grátis”)
+- Cookies consent banner (Aceitar todos / Rejeitar / Personalizar)
+
 ## Fora de escopo (esta sessão)
 
-- Submit login/signup · área logada · checkout · KYC creator · chat pago
+- Checkout Pix pago · KYC creator completo · videochamada real · DM paga

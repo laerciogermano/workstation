@@ -7,7 +7,7 @@ REQ-050: usar sem login, com os dados do visitante na base (não no localStorage
 
 ## Decisão
 - O navegador envia `X-Client-Fingerprint` (SHA-256 de sinais do aparelho + semente aleatória local). O servidor guarda **só** `HMAC-SHA256(pepper, fingerprint)` em `visitors`, com primeiro/último IP (de `req.ip` com `trust proxy` no loopback).
-- Conta: senha com scrypt; access token JWT HS256 de **60 min** em memória no front; refresh opaco em cookie `nt_rt` HttpOnly/SameSite=Lax/path `/api/v1/auth`, **30 dias** (sliding a cada refresh); rotacionado a cada uso. Reuso após a janela de graça (15 s) revoga a família; reuso imediato = corrida entre abas (REQ-071), sem derrubar a sessão boa.
+- Conta: senha com scrypt; access token JWT HS256 de **60 min** em memória no front; refresh opaco em cookie `nt_rt` HttpOnly/SameSite=Lax/path `/api/v1/auth`, **30 dias** (sliding a cada refresh); rotacionado a cada uso. Reuso após a janela de graça (**60 s**) revoga a família; reuso imediato = corrida entre abas/SW (REQ-071): devolve access novo **sem** `clearCookie` (antes o clear apagava o `nt_rt` bom da aba vencedora e deslogava).
 - Registro e login no mesmo navegador fazem o merge (`mergeVisitorIntoUser`) numa transação.
 - CSRF: toda mutação exige `X-Requested-With: notinhas` (formulário de outro site não consegue mandar).
 

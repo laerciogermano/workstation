@@ -36,6 +36,10 @@ await refreshSession().catch(() => false);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && !session.token) void refreshSession().catch(() => false);
 });
+// renova o access antes de expirar (60 min) para não acumular 401 + corrida de refresh
+window.setInterval(() => {
+  if (document.visibilityState === 'visible' && session.token) void refreshSession().catch(() => false);
+}, 45 * 60_000);
 
 const root = document.getElementById('root');
 if (root) {

@@ -15,7 +15,7 @@ import { AppError } from '../../shared/http/problem.js';
 import { parse } from '../../shared/http/validate.js';
 import { DUMMY_HASH, hashPassword, randomToken, sha256, verifyPassword } from '../../shared/security/crypto.js';
 import { buildMe, mergeVisitorIntoUser } from './identity.service.js';
-import { ACCESS_TTL_S, REFRESH_COOKIE, REFRESH_TTL_DAYS } from './tokens.js';
+import { ACCESS_TTL_S, REFRESH_COOKIE, REFRESH_RACE_GRACE_MS, REFRESH_TTL_DAYS } from './tokens.js';
 
 type UserRow = { id: number; public_id: string; role: 'user' | 'admin'; password_hash: string };
 
@@ -98,11 +98,16 @@ export function authRoutes(deps: Deps): Router {
       if (!s) throw new AppError('UNAUTHENTICATED');
       // reuso: a revogação precisa ser gravada (commit), então não lançamos aqui dentro
       if (s.replaced_at || s.revoked_at) {
-        // corrida entre abas/SW nos primeiros segundos: não mata a família (REQ-071).
+        // corrida entre abas/SW/boot: não mata a família (REQ-071).
         // ageMs pode ser negativo se o relógio do Postgres estiver um pouco à frente.
         if (s.replaced_at && !s.revoked_at) {
           const ageMs = Date.now() - new Date(s.replaced_at).getTime();
-          if (ageMs < 15_000) return { race: true } as const;
+          if (ageMs < REFRESH_RACE_GRACE_MS) {
+            return {
+              race: true,
+              user: { id: s.id, public_id: s.public_id, role: s.role },
+            } as const;
+          }
         }
         await tx.query('UPDATE sessions SET revoked_at = now() WHERE family_id = $1 AND revoked_at IS NULL', [s.family_id]);
         return { reused: s.family_id } as const;
@@ -112,13 +117,14 @@ export function authRoutes(deps: Deps): Router {
       return { token: await issueSession(tx, req, res, s, s.family_id) } as const;
     });
     if ('race' in out) {
-      // outra aba já rotacionou; cookie antigo some sem derrubar a sessão boa
-      res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth' });
-      throw new AppError('UNAUTHENTICATED');
+      // NÃO clearCookie: apagar nt_rt aqui sobrescrevia o cookie novo da aba vencedora e deslogava.
+      const token = await tokens.sign({ sub: out.user.public_id, uid: out.user.id, role: out.user.role });
+      res.json(await sessionResponse(req, token));
+      return;
     }
     if ('reused' in out) {
       log.warn({ family: out.reused }, 'refresh token reutilizado: família revogada');
-      res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth' });
+      res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth', secure, sameSite: 'lax' });
       throw new AppError('REFRESH_REUSED');
     }
     res.json(await sessionResponse(req, out.token));

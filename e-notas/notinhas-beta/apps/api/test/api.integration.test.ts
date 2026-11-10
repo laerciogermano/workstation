@@ -233,17 +233,19 @@ describe.skipIf(!hasDb)('API · fluxo completo (Postgres real)', () => {
     const c1 = String(login.headers['set-cookie']).split(';')[0] ?? '';
     const r1 = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c1 });
     expect(r1.status).toBe(200);
-    // corrida (abas/SW): cookie velho logo após a rotação → 401 sem matar a família
+    // corrida (abas/SW): cookie velho logo após a rotação → 200 com access, sem apagar nt_rt
     const race = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c1 });
-    expect(race.status).toBe(401);
-    expect(race.body.code).toBe('UNAUTHENTICATED');
+    expect(race.status).toBe(200);
+    expect(race.body.accessToken).toBeTruthy();
+    expect(String(race.headers['set-cookie'] ?? '')).not.toMatch(/nt_rt=;/);
     const c2 = String(r1.headers['set-cookie']).split(';')[0] ?? '';
     const stillOk = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c2 });
     expect(stillOk.status).toBe(200);
     const c3 = String(stillOk.headers['set-cookie']).split(';')[0] ?? '';
     // simula reuso fora da janela de graça (roubo)
-    await db.query(`UPDATE sessions SET replaced_at = now() - interval '1 minute' WHERE replaced_at IS NOT NULL`);
+    await db.query(`UPDATE sessions SET replaced_at = now() - interval '5 minutes' WHERE replaced_at IS NOT NULL`);
     const reuse = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c2 });
+    expect(reuse.status).toBe(401);
     expect(reuse.body.code).toBe('REFRESH_REUSED');
     const dead = await request(app).post('/api/v1/auth/refresh').set({ ...H, Cookie: c3 });
     expect(dead.status).toBe(401);

@@ -6,6 +6,8 @@ export const ACCESS_TTL_S = 60 * 60;
 /** Cookie HttpOnly: 30 dias (faixa pedida 15–30). Sliding a cada refresh bem-sucedido. */
 export const REFRESH_TTL_DAYS = 30;
 export const REFRESH_COOKIE = 'nt_rt';
+/** Corrida entre abas/SW/boot: reuso do cookie velho nesta janela não derruba a sessão. */
+export const REFRESH_RACE_GRACE_MS = 60_000;
 
 export interface AccessClaims {
   sub: string; // users.public_id

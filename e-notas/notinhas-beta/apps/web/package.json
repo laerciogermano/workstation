@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@ericblade/quagga2": "^1.13.0",
     "@notinhas/contracts": "*",
     "@notinhas/domain": "*",
     "@tanstack/react-query": "^5.62.0",

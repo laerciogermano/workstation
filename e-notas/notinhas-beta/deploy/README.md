@@ -25,9 +25,10 @@
 ### Scan QR (REQ-072)
 
 - Menu no scan: escolher motor (`jsqr` / `qr-scanner` / `native` / `zxing`); default `jsqr`; `localStorage nt_qr_engine`.
-- EAN continua `@zxing` + tesseract.
+- EAN (vincular / busca): seletor ZXing · BarcodeDetector · Quagga2; default `zxing`; `localStorage nt_ean_engine`; VOCR (tesseract) segue junto.
 - Rodapé do scan (`Foto do cupom` / `Colar link`): fundo do botão transparente (override no elemento; `.btn.light` e `.camfoot` intactos). Rollback: tirar o `style={{ background: 'transparent' }}` nesses botões em `ScanPage`.
-- Rollback: reverter `ScanPage`/`qr-engines`/`qr-runners`/`scanner` + deps.
+- Rollback QR: reverter `ScanPage`/`qr-engines`/`qr-runners`/`scanner` + deps.
+- Rollback EAN: reverter `ean-engines`/`ean-runners`/`EnginePickerSheet` + seletor em `LinkEanSheet`/`SearchPage`.
 
 ### Sessão / tabbar (REQ-071)
 

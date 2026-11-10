@@ -12,6 +12,15 @@ import { useGo } from '../../ui/nav';
 import { ProductCard } from '../../ui/ProductCard';
 import { Sheet } from '../../ui/Sheet';
 import { AddToListSheet } from '../listas/AddToListSheet';
+import {
+  EAN_ENGINES,
+  getEanEngineMeta,
+  isEanEngineAvailable,
+  loadEanEngine,
+  saveEanEngine,
+  type EanEngineId,
+} from '../nota/ean-engines';
+import { EnginePickerSheet } from '../nota/EnginePickerSheet';
 import { useCameraScanner, Viewfinder } from '../nota/scanner';
 
 /** Seletor estável para a home focar o campo no mesmo toque (teclado iOS). */
@@ -189,14 +198,49 @@ export default function SearchPage() {
 }
 
 function BarcodeSearchSheet({ open, onClose, onCode }: { open: boolean; onClose: () => void; onCode: (c: string) => void }) {
-  const { videoRef, state } = useCameraScanner('ean', (hit) => isValidGtin(hit.code) && onCode(hit.code), open);
+  const [engineSheet, setEngineSheet] = useState(false);
+  const [engine, setEngine] = useState<EanEngineId>(() => loadEanEngine());
+  const engineMeta = getEanEngineMeta(engine);
+  const { videoRef, state } = useCameraScanner(
+    'ean',
+    (hit) => isValidGtin(hit.code) && onCode(hit.code),
+    open && !engineSheet,
+    engine,
+  );
+
+  function pickEngine(id: string) {
+    if (!isEanEngineAvailable(id as EanEngineId)) return;
+    const next = id as EanEngineId;
+    saveEanEngine(next);
+    setEngine(next);
+    setEngineSheet(false);
+  }
+
   return (
-    <Sheet open={open} onClose={onClose} title="Ler código de barras">
-      <div className="cam short">
-        <video ref={videoRef} muted playsInline />
-        <Viewfinder mode="ean" hit={false} />
-        <p>{state === 'denied' || state === 'unsupported' ? 'Câmera indisponível — digite o código na busca.' : 'Aponte para o código de barras da embalagem'}</p>
-      </div>
-    </Sheet>
+    <>
+      <Sheet open={open} onClose={onClose} title="Ler código de barras">
+        <div className="cam short">
+          <video ref={videoRef} muted playsInline />
+          <div className="floattop">
+            <span className="sp" />
+            <button type="button" className="pillcam" onClick={() => setEngineSheet(true)} aria-haspopup="dialog" aria-label="Escolher leitor de código de barras">
+              <Icon name="sliders" />
+              {engineMeta.name}
+            </button>
+          </div>
+          <Viewfinder mode="ean" hit={false} />
+          <p>{state === 'denied' || state === 'unsupported' ? 'Câmera indisponível — digite o código na busca.' : 'Aponte para o código de barras da embalagem'}</p>
+        </div>
+      </Sheet>
+      <EnginePickerSheet
+        open={engineSheet}
+        title="Leitor de código de barras"
+        hint="Escolha a lib para ler o EAN. A preferência fica neste aparelho."
+        current={engine}
+        options={EAN_ENGINES.map((e) => ({ ...e, available: isEanEngineAvailable(e.id) }))}
+        onClose={() => setEngineSheet(false)}
+        onPick={pickEngine}
+      />
+    </>
   );
 }

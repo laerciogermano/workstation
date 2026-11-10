@@ -8,6 +8,15 @@ import { ErrorBanner, Photo, photoSrc } from '../../ui/bits';
 import { Icon } from '../../ui/Icon';
 import { Sheet } from '../../ui/Sheet';
 import { useToast } from '../../ui/Toast';
+import {
+  EAN_ENGINES,
+  getEanEngineMeta,
+  isEanEngineAvailable,
+  loadEanEngine,
+  saveEanEngine,
+  type EanEngineId,
+} from './ean-engines';
+import { EnginePickerSheet } from './EnginePickerSheet';
 import { useCameraScanner, Viewfinder } from './scanner';
 
 export interface LinkTarget {
@@ -34,9 +43,12 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   const [hit, setHit] = useState(false);
   const [photoFor, setPhotoFor] = useState<string | null>(null);
   const [seedPhotos, setSeedPhotos] = useState<{ url: string; source: string }[]>([]);
+  const [engineSheet, setEngineSheet] = useState(false);
+  const [engine, setEngine] = useState<EanEngineId>(() => loadEanEngine());
   const pending = useRef<LinkResultDTO | null>(null);
   const toast = useToast();
   const replacing = !!target?.replace;
+  const engineMeta = getEanEngineMeta(engine);
 
   useEffect(() => {
     if (!target) return;
@@ -112,8 +124,18 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
         void submit(g, 'barcode_scan', undefined, hit.vocr);
       }
     },
-    !!target && !photoFor,
+    !!target && !photoFor && !engineSheet,
+    engine,
   );
+
+  function pickEngine(id: string) {
+    if (!isEanEngineAvailable(id as EanEngineId)) return;
+    const next = id as EanEngineId;
+    saveEanEngine(next);
+    setEngine(next);
+    setEngineSheet(false);
+    setHit(false);
+  }
   const clean = normalizeGtin(typed);
   const typedOk = clean.length >= 8 && isValidGtin(clean);
   const typedBad = clean.length >= 8 && !typedOk;
@@ -136,6 +158,7 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
   }
 
   return (
+    <>
     <Sheet open={!!target} onClose={onClose} title={replacing ? 'Registrar outro código' : 'Vincular código de barras'}>
       <p className="meta">
         {target?.displayName} · <span className="mono">{target?.description}</span> · cód. interno{' '}
@@ -150,6 +173,13 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       <p className="hint">Cada leitura conta como voto. O EAN principal é o mais repetido. Barras e OCR (número impresso) rodam juntos — se o código não lê, o VOCR ainda pode vincular.</p>
       <div className="cam short mt12" style={{ borderRadius: 18 }}>
         <video ref={videoRef} muted playsInline />
+        <div className="floattop">
+          <span className="sp" />
+          <button type="button" className="pillcam" onClick={() => setEngineSheet(true)} aria-haspopup="dialog" aria-label="Escolher leitor de código de barras">
+            <Icon name="sliders" />
+            {engineMeta.name}
+          </button>
+        </div>
         <Viewfinder mode="ean" hit={hit} />
         <p>{state === 'live' ? 'Aponte para o código e o número impresso abaixo' : state === 'starting' ? 'Abrindo a câmera…' : 'Câmera indisponível — digite o código ou use uma sugestão abaixo.'}</p>
       </div>
@@ -203,6 +233,16 @@ export function LinkEanSheet({ target, onClose, onLinked }: { target: LinkTarget
       ))}
       <ErrorBanner error={sugg.error} />
     </Sheet>
+    <EnginePickerSheet
+      open={engineSheet}
+      title="Leitor de código de barras"
+      hint="Escolha a lib para ler o EAN. A preferência fica neste aparelho."
+      current={engine}
+      options={EAN_ENGINES.map((e) => ({ ...e, available: isEanEngineAvailable(e.id) }))}
+      onClose={() => setEngineSheet(false)}
+      onPick={pickEngine}
+    />
+    </>
   );
 }
 

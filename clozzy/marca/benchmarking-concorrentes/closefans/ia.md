@@ -26,7 +26,7 @@ Termos **5.3.A**: “É expressamente proibido o uso de imagens geradas por inte
 ## UX (onde aparece)
 
 - Só na Central de Ajuda (artigo criador) + cláusula nos Termos.
-- Não aparece no signup fan / landing como feature positiva.
+- Não aparece no signup fan / landing / **área logada** (feed, Descobrir, perfil, settings) como feature positiva — inspeção 2026-11-10.
 
 ## Gaps vs Clozzy
 

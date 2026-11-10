@@ -13,66 +13,54 @@ Site: https://close.fans/ · card: `Trello/Clozzy 2028/Backlog/Inspecionar Close
 
 Credenciais espelhadas em [`credenciais-closefans.txt`](credenciais-closefans.txt).
 
-## Escopo desta entrega
+## Escopo
 
-Inspeção **pública** + **área logada fan** (feed, Descobrir/lista, busca, highlights, settings). Sem KYC creator completo; sem checkout Pix real. `/wallet` redireciona ao onboarding creator.
+Público + área logada fan profunda (Descobrir tabs/filtros, perfis, Assinar CTA, busca, settings, onboarding creator via `/wallet`). Sem KYC completo nem checkout Pix pago.
 
-## Prints mobile (canônico)
+## Prints mobile
 
-Pasta [`prints/mobile/`](prints/mobile/) — viewport iPhone `390×844 @3x`.
-
-| Print | Tela |
-|-------|------|
-| `01-landing` | Home pública |
-| `02-login` | Login |
-| `03-signup` | Cadastro (`/signin`) |
-| `04-onboarding` | Venda seu conteúdo (signup creator) |
-| `05-closebot` | CloseBot landing |
-| `06-termos` | Termos de uso |
-| `07-privacidade` | Aviso de privacidade |
-| `08-ajuda` | Central de ajuda |
-| `09-help-ia` | Help — modelo IA |
-| `10-help-closebot` | Help — o que é CloseBot |
-| `11-help-taxa` | Help — taxas |
-| `12-help-criador` | Categoria criador |
-| `13-help-assinante` | Categoria assinante |
-| `14-blog` | Blog |
-| `15-blog-funcionalidades` | Blog — ferramentas |
-| `50-feed` … `54-chat` | Área logada (mobile) |
-
-### Desktop logado (2026-11-10)
+Pasta [`prints/mobile/`](prints/mobile/) — iPhone `390×844 @3x`.
 
 | Print | Tela |
 |-------|------|
-| `40–45` | Login inválido → signup → `/my-feed` |
-| `50-feed` | Feed Para você / Seguindo |
-| `51-discover` | **Lista influenciadores** (Descobrir) |
-| `52-search` / `53-highlights` | Rankings Black Friday / Em alta |
-| `58-settings` | Configurações |
-| `57-wallet` | Redireciona onboarding creator (5 passos) |
+| `01`–`15` | Público (landing → blog) |
+| `50`–`54` | Feed / Descobrir / search / highlights / chat-404 |
+| `55`–`59` | Descobrir tabs (Videochamadas, Assinaturas, Packs, Em Alta) |
+| `60`–`63` | Search · Settings · Wallet/onboarding · Feed |
+| `64`–`66` | Perfis (Larissa, Ani, Casal Amador) |
 
-Desktop completo em [`prints/desktop/`](prints/desktop/).
+## Prints desktop logado
+
+| Print | Tela |
+|-------|------|
+| `40`–`45` | Login falho → signup → `/my-feed` |
+| `50`–`62` | Feed · Descobrir · search · settings · wallet |
+| `63`–`69` | Descobrir tabs: Videochamadas · Em Alta · Assinaturas · Packs · Recomendado |
+| `70`–`77` | Filtros: BF · Online · Telegram · Chamada · Seguidores · Ativas · Novidades · Todas |
+| `78`–`79` | Search + query “Larissa” |
+| `80`–`83` | Settings / editar / conta / privacidade (footer) |
+| `84`–`89` | `/wallet` → onboarding creator (5 passos) |
+| `90`–`91` | Menu usuário / indique |
+| `92`–`101` | Perfis + CTA Assinar (Larissa, Ani, Casal Amador, Jamilly, Nina Nyx) |
+
+**Nota UX:** cards em Descobrir são `div` clicáveis (poucos `<a href>` de perfil no DOM) — navegação por slug conhecido/`from=` links do feed.
 
 ## Docs
 
-- **Documento único:** [`benchmarking-closefans.html`](benchmarking-closefans.html) / [`benchmarking-closefans.pdf`](benchmarking-closefans.pdf)
-- [`funcionalidades.md`](funcionalidades.md)
-- [`ia.md`](ia.md)
+- [`benchmarking-closefans.html`](benchmarking-closefans.html) / [`benchmarking-closefans.pdf`](benchmarking-closefans.pdf)
+- [`funcionalidades.md`](funcionalidades.md) · [`ia.md`](ia.md)
 
 ## App
 
-**Sem app nativo** nas stores. Help: Web App / “Instalar o App” (atalho navegador).
+Sem app nativo. Web App / “Instalar o App”.
 
-## Diferencial vs Privacy
+## vs Privacy
 
-- Pitch **3 em 1**: site + **Bot Telegram (CloseBot)** + integração automática
-- Taxa **20% + tarifa fixa** por venda (Pix/cartão/boleto)
-- **CloseMatch** (troca / contratar divulgação entre criadoras)
-- IA: **ban** de perfil com imagens geradas por IA / deepfake (help + Termos 5.3.A)
+- 3 em 1 site + CloseBot Telegram; taxa 20%+fixo; CloseMatch; ban IA explícito
 
-## Rollback desta pasta
+## Rollback
 
 ```bash
 rm -rf clozzy/marca/benchmarking-concorrentes/closefans
-# CDP: node -e "import {removeCdp} from './screen-robot/pocs/chrome-cdp/human-cdp/src/index.mjs'; removeCdp('closefans',{deleteProfile:true})"
+# removeCdp('closefans',{deleteProfile:true})
 ```

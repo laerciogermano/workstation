@@ -75,15 +75,19 @@ Fonte: inspeção CDP `closefans` :9264 (2026-11-10) + [Central de ajuda](https:
 
 - Signup: e-mail + senha + aceite 18+/Termos → direto `/my-feed` (sem gate de confirmação)
 - Nav: **Feed** · **Descobrir**
-- Feed: tabs Para você / Seguindo; cards com Seguir Grátis, Chat, Enviar presente; rail Black Friday Top N
-- **Descobrir:** Perfis recomendados · Top Videochamadas · Em Alta · Top Assinaturas · Top Packs; filtros Todas / Black Friday / Disponível para chamada / Online / Novidades / Mais Seguidores / TOP Telegram / Mais Ativas
-- Busca / highlights: ranking Top 1…N
-- Settings: Minha conta / Edite seus dados
-- `/wallet` → onboarding creator (Dados pessoais → Endereço → Monetização → Customize → Documentos)
-- Rotas `/chat` `/messages` `/notifications` `/profile` `/subscriptions` → “LINK ANTIGO” + fallback Descobrir
+- Feed: tabs Para você / Seguindo; Seguir Grátis · Chat · Enviar presente; rail Black Friday Top N
+- **Descobrir tabs:** Recomendado · **Top Videochamadas** (“mais fizeram videochamada na semana”) · **Em Alta** · **Top Assinaturas** · **Top Packs** (“mais venderam pack na semana”)
+- Filtros grade: Todas · Black Friday · Disponível para chamada · Online agora · Novidades · Mais Seguidores · TOP Telegram · Mais Ativas
+- Cards da grade: muitas vezes `div` role=button (não `<a>`), labels “Ativa no Telegram” / “Disponível”
+- Busca: home rankings + query texto (ex. Larissa)
+- **Perfil creator:** bio · Seguir Grátis · **Assinar a partir de R$…** (BF com preço riscado) · contagem posts/fotos/vídeos · menção chamada de vídeo / lives / personalizados no texto
+- Settings: Configurações / Minha conta / Edite seus dados (footer Privacidade = legal)
+- `/wallet` → onboarding creator 5 passos: Dados pessoais · Endereço · Formas de monetização · Customize perfil · Documentos (WhatsApp, Instagram, confirmar e-mail)
+- Rotas `/chat` `/messages` `/notifications` `/profile` `/subscriptions` → “LINK ANTIGO” + fallback lista
 
 ## Pendente
 
-- KYC creator completo + painel saque
-- Checkout Pix real
+- KYC creator completo + painel saque / saldo real
+- Checkout Pix / pagamento Assinar até o fim
 - Rota canônica de chat/inbox (URLs antigas 404)
+- Clique card→perfil via UI (DOM sem href; usamos slugs)

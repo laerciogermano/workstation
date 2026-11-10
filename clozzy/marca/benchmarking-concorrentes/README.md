@@ -44,17 +44,20 @@ Detalhe + implicações Clozzy: §5 de [`00-curadoria.html`](00-curadoria.html).
 
 ## Cards filhos — inspeção profunda
 
-Cadastro + prints de todas as telas + inventário de funcionalidades (Backlog Clozzy 2028):
+Cadastro + prints de todas as telas + inventário de funcionalidades (Clozzy 2028):
 
-| # | Plataforma | Card |
-|---|------------|------|
-| 1 | OnlyFans | https://trello.com/c/5SHmEwEZ |
-| 2 | Patreon | https://trello.com/c/nTY47jqR |
-| 3 | Privacy | https://trello.com/c/vFDqfcKE |
-| 4 | Fansly | https://trello.com/c/HxwNb1E7 |
-| 5 | Fanvue | https://trello.com/c/3TA3RKF5 |
-| 6 | LoyalFans | https://trello.com/c/iBZZX5G0 |
-| 10 | CloseFans | https://trello.com/c/JFzUjNaW |
+| # | Plataforma | Card | Status |
+|---|------------|------|--------|
+| 1 | OnlyFans | https://trello.com/c/5SHmEwEZ | Backlog — **fora da fila atual** |
+| 2 | Patreon | https://trello.com/c/nTY47jqR | Backlog |
+| 3 | Privacy | https://trello.com/c/vFDqfcKE | Feito (2026-11-09) |
+| 4 | Fansly | https://trello.com/c/HxwNb1E7 | **Priorizados — próximo** |
+| 5 | Fanvue | https://trello.com/c/3TA3RKF5 | Priorizados |
+| 6 | LoyalFans | https://trello.com/c/iBZZX5G0 | Priorizados |
+| 10 | CloseFans | https://trello.com/c/JFzUjNaW | Feito (2026-11-10) |
+| 11 | FatalFans | — | Feito (2026-11-10) |
+
+**Fila atual (2026-11-10):** Fansly → Fanvue → LoyalFans. OnlyFans não entra agora.
 
 Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/` (`prints/` + `funcionalidades.md` + `ia.md` + `README.md`).
 

@@ -1,0 +1,9 @@
+# CloseFans lab — Clozzy benchmarking
+email=closefans.bench@brsupply.email
+password=Cl0seFansBench26!
+url=https://close.fans/login
+cdp=closefans
+cdp_port=9264
+profile=~/chrome-profiles/closefans
+mailbox=Mailcow Contabo 185.250.37.82 · domínio brsupply.email
+nota=Cadastro UI iniciado 2026-11-10; confirmação/área logada completa pendente

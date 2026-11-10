@@ -1,0 +1,107 @@
+[
+  {
+    "name": "01-landing",
+    "href": "https://close.fans/",
+    "title": "Close Fans - Conteúdos exclusivos de quem você ama!",
+    "hash": "fe607136e034b1a3",
+    "dupOf": null
+  },
+  {
+    "name": "02-login",
+    "href": "https://close.fans/login",
+    "title": "Acessar área de membros | Close Fans",
+    "hash": "78cf4670aa805457",
+    "dupOf": null
+  },
+  {
+    "name": "03-signup",
+    "href": "https://close.fans/signin",
+    "title": "Acessar área de membros | Close Fans",
+    "hash": "1eb7a41d20aaaf52",
+    "dupOf": null
+  },
+  {
+    "name": "04-onboarding",
+    "href": "https://close.fans/onboarding",
+    "title": "Acessar área de membros | Close Fans",
+    "hash": "bba9bdce2793c3c2",
+    "dupOf": null
+  },
+  {
+    "name": "05-closebot",
+    "href": "https://close.fans/closebot",
+    "title": "CloseBot | Close Fans",
+    "hash": "a81ad1a25ddf4c33",
+    "dupOf": null
+  },
+  {
+    "name": "06-termos",
+    "href": "https://close.fans/termos-de-uso",
+    "title": "Termos de Uso | Close Fans",
+    "hash": "202e2a89d1f93526",
+    "dupOf": null
+  },
+  {
+    "name": "07-privacidade",
+    "href": "https://close.fans/termos-politica-de-privacidade",
+    "title": "Termos de Privacidade | Close Fans",
+    "hash": "a275db157b50669e",
+    "dupOf": null
+  },
+  {
+    "name": "08-ajuda",
+    "href": "https://ajuda.close.fans/pt-br/",
+    "title": "Central de Ajuda do CloseFans",
+    "hash": "14c10a0adc43b620",
+    "dupOf": null
+  },
+  {
+    "name": "09-help-ia",
+    "href": "https://ajuda.close.fans/pt-br/article/a-plataforma-aceita-modelo-criada-por-ia-1luus4o/",
+    "title": "A plataforma aceita modelo criada por IA? | Central de Ajuda do CloseFans",
+    "hash": "5b05e43a423e1872",
+    "dupOf": null
+  },
+  {
+    "name": "10-help-closebot",
+    "href": "https://ajuda.close.fans/pt-br/article/o-que-e-o-closebot-1rm9iso/",
+    "title": "O que é o CloseBot | Central de Ajuda do CloseFans",
+    "hash": "d69127474df1c66c",
+    "dupOf": null
+  },
+  {
+    "name": "11-help-taxa",
+    "href": "https://ajuda.close.fans/pt-br/article/quanto-custa-vender-pelo-close-fans-1thzx3i/",
+    "title": "Quanto custa vender pelo Close Fans? | Central de Ajuda do CloseFans",
+    "hash": "0edbd1ee1a4285eb",
+    "dupOf": null
+  },
+  {
+    "name": "12-help-criador",
+    "href": "https://ajuda.close.fans/pt-br/category/sou-um-criador-de-conteudo-1djxjqc/",
+    "title": "Sou um criador de conteúdo | Central de Ajuda do CloseFans",
+    "hash": "46074141d0d5d153",
+    "dupOf": null
+  },
+  {
+    "name": "13-help-assinante",
+    "href": "https://ajuda.close.fans/pt-br/category/sou-um-assinante-1ufcqcn/",
+    "title": "Sou um assinante | Central de Ajuda do CloseFans",
+    "hash": "dc4dbf68ebcdb340",
+    "dupOf": null
+  },
+  {
+    "name": "14-blog",
+    "href": "https://blog.close.fans/",
+    "title": "Close News | Blog Close Fans",
+    "hash": "a492e39bdd46f91f",
+    "dupOf": null
+  },
+  {
+    "name": "15-blog-funcionalidades",
+    "href": "https://blog.close.fans/blog/categories/ferramentas-e-funcionalidades",
+    "title": "Ferramentas e Funcionalidades",
+    "hash": "7a8279969b8fa3ca",
+    "dupOf": null
+  }
+]

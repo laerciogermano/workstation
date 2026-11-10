@@ -1,0 +1,139 @@
+Venda seu conteúdo
+Indique e ganhe
+Entrar
+TERMOS E CONDIÇÕES DE USO CLOSE FANS
+
+A Close Fans solicita a leitura atenta destes Termos e Condições de Uso ("Termos"), da nossa Política de Privacidade, bem como de quaisquer outros documentos mencionados nestes Termos ("Documentos Close Fans").
+
+Os documentos Close Fans te ajudarão a entender o funcionamento e as diretrizes da nossa Plataforma, os seus direitos e deveres, como cuidamos da sua privacidade e dos seus Dados Pessoais e a se manter atualizado das principais alterações e melhorias das Plataformas.
+
+Ao acessar as Plataformas da Close Fans e, consequentemente, as páginas vinculadas a este endereço, o Usuário estará, automaticamente, concordando com a totalidade dos presentes Termos.
+
+Te desejamos boas-vindas à nossa comunidade e esperamos que aproveite ao máximo nossos Serviços! Em caso de dúvidas, você poderá entrar em contato com a nossa Central de Ajuda ou o Canal de Suporte. Vamos nessa:
+
+1. Definições
+Termo	Definição
+"API"	Significa Application Programming Interface, ou, em português, Interface de Programação de Aplicação. É a interface utilizada para integrar as Plataformas aos Canais Externos.
+"Canais Externos"	Significa as plataformas utilizadas pelos Criadores de Conteúdo em conexão com os Serviços Close Fans, incluindo, mas não se limitando ao Instagram, Telegram, WhatsApp ou plataformas de e-mail.
+"Chargeback/Estorno"	Significa o cancelamento de uma compra online realizada por meio de cartão de crédito, que pode acontecer em virtude do não reconhecimento da compra pelo titular do cartão ou ainda pelo fato de a transação não obedecer às regulamentações previstas nos contratos, termos, aditivos, manuais ou quaisquer outros documentos publicados pela administradora do cartão do cartão utilizado na transação.
+"Conteúdo"	Significa os conteúdos disponibilizados pelos Criadores de Conteúdo vinculados aos Serviços Close Fans, seja por meio de Canais Externos, Plataforma Própria ou e-mail. Os conteúdos incluem, mas não se limitam, a fotos, vídeos, sons, textos, desenhos, ou qualquer outro conteúdo, em qualquer meio ou formato, seja por reprodução ao vivo ou gravada.
+"Conteúdo Adulto"	Significa todo e qualquer conteúdo que envolva nudez e/ou atos de cunho sexuais lícitos, proibidos para usuários menores de 18 (dezoito) anos.
+"Conteúdo do Usuário"	Significa todo conteúdo postado por um Usuário em nossas Plataformas, incluindo, mas não se limitando a comentários, feedbacks e mensagens.
+"Criadores de Conteúdo"	Significa as pessoas físicas ou jurídicas criadoras de produtos digitais, devidamente cadastradas junto à Close Fans.
+"Close Fans"	Plataforma da Close Fans, destinada a Criadores de Conteúdo que desejam vender conteúdo pago, com público-alvo exclusivamente de maiores de 18 (dezoito) anos, que permite fornecer e visualizar o Conteúdo do Criador e, quando apropriado, promoverá a interação com os assinantes. A Plataforma Close Fans pode ser acessada por meio do site close.fans.
+"Dados Pessoais"	Significa toda informação relacionada a pessoa natural identificada ou identificável.
+"Close Fans"	Significa a Close Fans Tecnologia S.A., sociedade anônima, inscrita no CNPJ sob o nº 49.425.086/0001-93, localizada na cidade de SÃO Paulo, Estado de São Paulo, na Rua Álvaro Rodrigues, n° 152 - Bairro Cidade Monções, São Paulo - SP, CEP 04582-000
+"Membros"	Significa as pessoas físicas ou jurídicas que adquirem assinatura para acompanhamento dos produtos digitais de um Criador de Conteúdo, por meio do pagamento direto ao Criador de Conteúdo do valor de assinatura estipulado pelo Criador de Conteúdo.
+"Nós" e "nosso"	Significa a Close Fans, conforme acima definida.
+"Plataforma de Pagamento"	Plataforma utilizada pela Close Fans para transacionar os pagamentos dos Membros aos Criadores de Conteúdo e realizar o Split dos pagamentos entre o Criador de Conteúdo e a Close Fans, conforme porcentagens previamente determinadas nestes Termos.
+"Plataformas" ou "Plataformas Close Fans"	Significa a Plataforma Própria e o portal de acesso (dashboard) aos Serviços de Gerenciamento, por meio do site.
+"Plataforma Própria "	Plataforma Própria da Close Fans para upload dos Conteúdos pelos Criadores de Conteúdo e acesso restrito aos Membros assinantes, que poderão também interagir com os Conteúdos postados.
+"Serviços"	Significa os serviços prestados pela Close Fans, quais sejam, os Serviços de Gerenciamento e a Plataforma Própria .
+"Serviços de Gerenciamento"	Serviço de integração e gerenciamento de assinaturas pagas em Canais Externos nos quais o Criador de Conteúdo possui cadastro.
+"Split"	Divisão dos valores pagos pelo Membro e contidos na Plataforma de Pagamento, entre a Close Fans e o Criador de Conteúdo, nas proporções estabelecidas nos presentes Termos.
+"Término dos Serviços"	Significa o fim do vínculo entre qualquer dos Usuários e a Close Fans, seja por meio do (i) cancelamento da comunidade pelo Criador de Conteúdo; (ii) cancelamento da renovação dos Serviços pelo Membro; ou (iii) cancelamento por inadimplência no pagamento.
+"Usuários"	Significa os Criadores de Conteúdo, os Membros e qualquer pessoa que tenha acesso às Plataformas, Conteúdos e/ou Serviços.
+"Autofraude"	Compra do próprio conteúdo direta ou indiretamente visando manipular algoritmos ou métricas da plataforma.
+"Taxa de Validação"	Valor cobrado para garantir segurança e conformidade regulatória das transações financeiras
+2. Introdução
+2.1 A Close Fans busca proporcionar aos Criadores de Conteúdo os serviços de gerenciamento de assinaturas dos Membros para acompanhamento dos Conteúdos, possibilitando a promoção e a venda de produtos digitais dos Criadores de Conteúdo aos seus Membros.
+2.1.1 A monetização dos produtos digitais dos Criadores de Conteúdo junto à Close Fans pode ocorrer por três meios:
+2.1.1.1 utilizando a Plataforma Própria, por meio do upload dos Conteúdos em nossa Plataforma Própria, que permite o Criador de Conteúdo ter uma página exclusiva em nossa comunidade, por meio da qual poderão compartilhar Conteúdos e interagir com seus Membros; e
+2.1.1.2 utilizando nosso Serviço de Gerenciamento, por meio da integração e gerenciamento de assinaturas pagas para acesso aos Conteúdos postados em Canais Externos ou serviços de e-mail.
+2.1.1.3 utilizando a Plataforma "Close Fans", caso o Criador tenha 18 (dezoito) anos ou mais, por meio do upload de Conteúdo Adulto na Plataforma, permitindo que o Criador de Conteúdo Adulto tenha uma página exclusiva em nossa comunidade, por meio da qual poderá compartilhar Conteúdos e interagir com seus Membros.
+2.1.2 O Usuário pode obter informações mais detalhadas sobre nossas opções de Serviços no Tópico 3 dos presentes Termos.
+2.2 O Usuário, ao utilizar os nossos Serviços e Plataformas ou acessar um Conteúdo, estará concordando e se obrigando a cumprir com os presentes Termos.
+2.2.1 O Usuário compromete a fornecer à Close Fans apenas informações verídicas, precisas e completas, inclusive no que se refere à idade para celebração de contratos e acesso aos Conteúdos.
+2.2.2 Os Usuários localizados no Brasil devem possuir 18 (dezoito) anos completos para firmar o presente contrato e utilizar de qualquer forma as Plataformas Close Fans. O Usuário pode encontrar mais informações sobre a idade mínima para acesso aos Conteúdos da nossa Plataforma, de acordo com a classificação indicativa, no Tópico 5 "Diretrizes da Comunidade" dos presentes Termos
+2.2.3 Caso não esteja localizado no Brasil, consulte a legislação aplicável antes de utilizar as nossas Plataformas e os nossos Serviços.
+2.2.4 Se o Usuário não for juridicamente capaz ou não estiver de pleno acordo com qualquer uma das condições estabelecidas nestes Termos, deverá se abster de utilizar as Plataformas e os nossos Serviços.
+2.2.5 Ao usar a Plataforma "Close Fans" você estará ciente que se trata de uma Plataforma da Close Fans, e que, portanto, toda e qualquer atividade realizada em relação à Plataforma Close Fans deverá seguir o previsto nestes Termos de Uso
+3. Funcionamento dos nossos Serviços
+3.1 A Close Fans possui Serviços de assinaturas pagas e todas as opções de Serviços ofertados pela Close Fans exigem pagamento prévio para acesso ao Conteúdo, conforme detalhado na cláusula 7 "do Pagamento".
+3.2 Nós podemos também oferecer aos Criadores de Conteúdo promoções especiais, a exclusivo critério da Close Fans.
+3.2.1 Nos reservamos o direito de modificar ou encerrar nossas ofertas a qualquer momento. Na hipótese de a Close Fans realizar campanhas promocionais a respeito da porcentagem devida na cláusula 7, a menos que estipulado expressamente em contrário, a promoção não afetará ou permitirá o reajuste do Serviço já contratado pelo Criador de Conteúdo e poderá ser revogada a qualquer tempo, a exclusivo critério da Close Fans.
+3.3 Para o acesso às Plataformas é necessária uma conexão de internet, um aparelho compatível para utilização das Plataformas e utilização de um navegador, de preferência em sua versão mais atualizada. O cumprimento desses requisitos, bem como a atualização dos sistemas e navegadores de acesso é de responsabilidade exclusiva do Usuário e o não atendimento a estes requisitos poderá gerar falhas e/ou lentidão no acesso à Plataforma.
+3.4 O Usuário é responsável por todas as tarifas de acesso à Internet e a qualidade da imagem e som do Conteúdo pode variar de aparelho para aparelho e pode ser afetada por diversos fatores, incluindo sua localização, a largura de banda disponível, a velocidade da conexão com a Internet e as configurações do aparelho utilizado.
+3.5 Os Usuários estão cientes que os Serviços poderão ser alterados pela Close Fans, a qualquer momento, sem qualquer aviso prévio.
+3.6 É expressamente proibida a divulgação ou promoção de outras plataformas concorrentes, incluindo mas não se limitando a Privacy, OnlyFans ou quaisquer outras plataformas similares dentro da Close Fans. Esta proibição inclui a divulgação direta ou indireta por meio de imagens, vídeos ou qualquer outro tipo de conteúdo.
+3.7 A primeira infração resultará em uma notificação formal ao Criador. Caso haja reincidência, a conta poderá ser bloqueada ou permanentemente banida, a critério exclusivo da Close Fans.
+4. Opções de Serviço
+4.1 Serviços de Gerenciamento
+4.1.1 O Serviço de Gerenciamento de pagamentos inclui:
+a. Criação de uma página padrão para que os Membros possam adquirir a permissão de acesso aos Conteúdos postados nos Canais Externos do Criador de Conteúdo.
+b. Cobrança no cartão de crédito, boleto ou PIX, conforme o plano selecionado pelo Membro.
+c. Adição e/ou permissão automática do Membro que adquirir a assinatura à lista de seguidores do perfil, grupo, lista de mailing ou canal privado do Criador de Conteúdo, nos Canais Externos, obtendo acesso ao Conteúdo exclusivo da assinatura contratada.
+4.1.2 A partir da contratação do Serviço de Gerenciamento, o Criador de Conteúdo se compromete a realizar a prática de inclusão e exclusão de Membros da lista de seguidores pela Plataforma, estando ciente que a prática manual de inclusão e exclusão de Membros por fora das Plataformas poderá ocasionar a suspensão ou exclusão da conta do Criador de Conteúdo nos Canais Externos e divergências de dados entre os Canais Externos e a Plataforma.
+4.1.3 O Criador de Conteúdo declara também estar ciente que a prática de inclusão e exclusão de Membros da lista de seguidores por outro meio fora das Plataformas pode gerar inconsistência na prestação dos Serviços aqui descritos, bem como no cálculo dos pagamentos devidos, de modo que o Close Fans não se responsabiliza por tais inconsistências e nem pelo acesso de contas incluídas de forma manual ao Conteúdo.
+4.1.4 O Usuário deverá seguir todas as normas, orientações, termos de uso, políticas e legislações pertinentes aos Canais Externos, bem como de qualquer outro Canal Externo cadastrado junto aos Serviços da Close Fans, ficando a Close Fans isenta de qualquer responsabilidade advinda do mau uso pelo Usuário de qualquer plataforma de terceiros.
+4.1.5 Caso a conta e/ou perfil do Criador de Conteúdo nos Canais Externos seja suspenso ou excluído, não poderá o Criador de Conteúdo requerer qualquer tipo de reparação cível a qualquer título, inclusive de perdas e danos, tampouco alegar descumprimento contratual por parte da Close Fans.
+4.1.6 A Close Fans se reserva o direito de suspender, bloquear, cancelar e/ou excluir contas que não sigam as orientações e legislações pertinentes aos Canais Externos integrados aos seus Serviços.
+4.2 Serviços de Plataforma Própria
+4.2.1 Por meio da Plataforma Própria , nosso canal próprio, proporcionamos aos Usuários uma comunidade por meio da qual os Criadores de Conteúdo podem postar, distribuir seu Conteúdo para seus Membros.
+4.2.2 Serviço da Plataforma Própria inclui:
+a. Criação uma Comunidade na Plataforma Própria para que os Membros possam adquirir a permissão de acesso e interação aos Conteúdos postados pelos Criadores de Conteúdo dos quais adquirir assinatura.
+b. Cobrança no cartão de crédito, boleto, transferência bancária ou PIX, conforme o plano selecionado pelo Membro.
+c. Adição e/ou permissão automática do Membro que adquirir a assinatura à lista de seguidores do perfil na Plataforma Própria , obtendo acesso e possibilidade de interação com o Conteúdo exclusivo do Criador de Conteúdo.
+4.3 Serviços da Plataforma "Close Fans"
+4.3.1 Por meio da Plataforma "Close Fans", a Close Fans proporciona aos seus Usuários uma comunidade de Criadores de Conteúdo Adulto os quais poderão postar e distribuir seu conteúdo para seus membros, observando estritamente as Diretrizes da Comunidade previstas nestes Termos de Uso.
+4.3.2 O Criador de Conteúdo Adulto está ciente que a Plataforma "Close Fans" é gerenciada pela "Close Fans", que poderá fazer a migração do Criador de Conteúdo Adulto da Plataforma Close Fans para a Close Fans, a seu exclusivo critério. O Criador de Conteúdo Adulto e seus Usuários estão cientes que todas as regras previstas no presente Termos de Uso serão aplicáveis integralmente à Plataforma "Close Fans".
+4.3.3 A Plataforma "Close Fans" é destinada exclusivamente ao público com mais de 18 (dezoito) anos, sem exceções. Tanto os Usuários quanto os Criadores de Conteúdo Adulto declaram, ao usar a Plataforma "Close Fans" que possuem ao menos 18 (dezoito) anos de idade e que mantém à disposição da Close Fans uma documentação escrita suficiente para confirmar que possuem 18 (dezoito) anos ou mais, que poderá ser solicitada a qualquer momento pela Close Fans.
+4.3.3.1 Caso se verifique que, dentro da Plataforma "Close Fans" o Usuário ou o Criador de Conteúdo possuem menos de 18 (dezoito) anos, a Close Fans bloqueará imediatamente o acesso e tomará todas as medidas ao seu alcance para a proteção do menor de idade, em cumprimento a legislação aplicável.
+4.3.4 Serviço da Plataforma "Close Fans" inclui todas as funcionalidades de uma Plataforma Close Fans, incluindo, mas não se limitando a:
+a. Criação de uma Comunidade na Plataforma Própria para que os Membros possam adquirir a permissão de acesso e interação aos Conteúdos Adultos postados pelos Criadores de Conteúdo dos quais adquirir assinatura.
+b. Cobrança no cartão de crédito, boleto, transferência bancária ou PIX, conforme o plano selecionado pelo Membro.
+c. Adição e/ou permissão automática do Membro que adquirir a assinatura à lista de seguidores do perfil na Plataforma Própria, obtendo acesso e possibilidade de interação com o Conteúdo exclusivo do Criador de Conteúdo Adulto.
+4.3.5 Sem prejuízo das disposições previstas nas Diretrizes da Comunidade, será proibido todo e qualquer Conteúdo Adulto que, a critério exclusivo da Close Fans, mostre, promova, ou faça referência a: (i) drogas ou qualquer uso de substâncias ilícitas; (ii) incesto; (iii) violência, falta de consentimento, hipnose, agressão sexual, tortura, sadomasoquismo ou mutilação genital; (iv) qualquer material de natureza escatológica; (v) "pornografia de vingança", incluindo qualquer Conteúdo Adulto que apresente qualquer indivíduo que não tenha dado consentimento prévio, expresso e plenamente informado para que esse material fosse gravado ou compartilhado; (vi) serviços de prostituição de qualquer modalidade.
+5. Do cadastro
+5.1 Para adesão a uma das opções de Serviços, o Criador de Conteúdo deverá contratar o serviço desejado no painel de administração no site da Close Fans.
+5.2 Para se cadastrar é necessário ter, no mínimo, 18 (dezoito) anos completos e capacidade civil plena, para firmar o cadastro, em se tratando de pessoa natural. Em se tratando de pessoa jurídica, o representante deverá possuir poder societário ou contratual de direção e gerência suficiente para tal contratação.
+5.3 O Criador de Conteúdo deverá enviar a seguinte documentação para o e-mail documentos@close.fans em até 3 (três) dias úteis após o início do cadastro:
+Pessoa Física	Pessoa Jurídica
+1. Carteira Nacional de Habilitação (CNH) ou Documento de identidade com foto do responsável pela conta	1. Carteira Nacional de Habilitação (CNH) ou Documento de identidade com foto dos sócios da sociedade
+2. Comprovante de endereço do responsável pela conta	2. Cópia atualizada do Contrato/Estatuto Social
+3. Comprovante bancário da conta especificada no cadastro	3. Comprovante de endereço da Sociedade
+4. Selfie segurando documento de identificação.
+5. Descrição do Conteúdo que será divulgado na Plataforma.
+5.4 A documentação solicitada e devidamente enviada não impede que documentos adicionais sejam solicitados ao longo da relação entre a Close Fans e o Criador do Conteúdo.
+5.4.1 A Close Fans poderá, a seu exclusivo critério, rejeitar a solicitação de cadastro.
+5.5 O Criador do Conteúdo será o único responsável cível e criminal com relação à veracidade dos dados e documentos fornecidos. A Close Fans não se responsabilizará por problemas decorrentes de dados ou documentos falsos, adulterados, fraudados, ilegíveis, incorretos ou ilegais e se reserva o direito de bloquear e cancelar contas de Criadores de Conteúdo que forneçam tais dados e documentos, conforme acima descrito.
+5.6 O Criador de Conteúdo está ciente que não é possível realizar a transferência de saldo entre contas.
+5.7 O Criador de Conteúdo poderá solicitar atualização dos dados fornecidos pelo Canal de Atendimento na própria Plataforma. Assim que realizada a solicitação para alteração dos dados pelo Usuário, a Close Fans poderá solicitar novamente os documentos da cláusula 5.3. acima.
+5.8 É reservado à Close Fans o direito de se valer de todos os meios em direito admitidos para identificar o Criador do Conteúdo e prevenir eventuais fraudes, incluindo a consulta em sites, busca por processos judiciais e mídias. O Criador de Conteúdo está ciente que a identificação de ausência de veracidade das informações fornecidas pode acarretar a suspensão, bloqueio ou cancelamento do Criador de Conteúdo à Plataforma.
+5.9 Finalizando o cadastro, o Criador de Conteúdo declara estar ciente e aceitar a versão mais recente da Política de Privacidade e autoriza o tratamento de seus Dados Pessoais pela Close Fans. Para mais informações sobre como asseguramos sua privacidade e tratamos seus Dados Pessoais, favor ler com atenção nossa Política de Privacidade.
+5.10 É vedada, por meio da Plataforma, a comercialização de produtos físicos, ou seja, produtos que não sejam os serviços de conteúdo digital, conforme descrito neste Termo.
+5.11 A Close Fans não será responsável por responder as mensagens enviadas pelos Membros, de modo que tal responsabilidade recai unicamente ao Criador do Conteúdo, sendo este o único responsável por todo o Conteúdo que postar nas mensagens enviadas aos Membros.
+5.12 O Usuário será responsável por disponibilizar o Conteúdo aos seus Membros, bem como pela periodicidade da comunicação prometida aos Membros.
+5.13 O acesso ao Conteúdo será disponibilizado em até 12 (doze) horas úteis, contados da efetivação do pagamento.
+5.14 A Close Fans reserva-se o direito de rejeitar, suspender ou excluir cadastros que apresentem inconsistências, informações falsas, ou suspeita de fraude, a qualquer momento e a seu exclusivo critério.
+5.A Responsabilidade
+5.1.A O Criador declara e garante que possui propriedade intelectual integral ou autorização explícita sobre todo conteúdo carregado nas Plataformas da Close Fans.
+5.2.A O Criador assume integral responsabilidade civil e criminal pela veracidade dessas declarações, eximindo a Close Fans de qualquer responsabilidade judicial ou extrajudicial sobre disputas relacionadas.
+5.3.A É expressamente proibido o uso de imagens geradas por inteligência artificial, deep fakes ou qualquer simulação de identidade não autorizada expressamente.
+6. Da abertura de conta para processamento de pagamento
+6.1 O Criador de Conteúdo neste ato autoriza a Close Fans a abrir uma conta em seu nome para o processamento dos pagamentos da venda dos acessos aos produtos digitais na Plataforma de Pagamento de escolha da Close Fans.
+6.2 O Criador de Conteúdo está ciente que a conta vinculada ao recebimento das vendas realizará automaticamente a divisão entre os valores devidos à Close Fans, determinados na cláusula 7 abaixo pelo pagamento da prestação dos Serviços objeto deste Termo.
+6.3 O valor eventualmente pago será disponibilizado para saque do Criador de Conteúdo somente após:
+i. 30 (trinta) dias úteis, na hipótese de pagamento à vista via cartão de crédito;
+ii. 30 (trinta) dias úteis após o pagamento de cada parcela, na hipótese de pagamento parcelado via cartão de crédito realizado até o dia 01 de agosto de 2022;
+iii. 30 (trinta) dias úteis após a realização do pagamento parcelado realizado a partir do dia 02 de agosto de 2022, hipótese na qual a integralidade da compra será repassada de forma antecipada;
+iiii. 03 (três) dias úteis após a compensação do pagamento do boleto, na hipótese de pagamento via boleto;
+iv. 01 (um) dia útil após a compensação da transferência, na hipótese de pagamento à vista via PIX.
+6.4 O prazo para o saque poderá ser efetivado de forma variável, podendo ser imediato ou levar até 5 dias. Contas novas são sujeitas a validações adicionais, o que pode estender o prazo de análise.
+6.5 Para garantir a segurança das transações e a conformidade com as regras da plataforma, aplique-se as seguintes condições:
+Os pagamentos serão realizados apenas para contas bancárias do titular da conta do criador, ou seja, vinculadas ao mesmo CPF ou CNPJ.
+Apenas 1 (um) saque é permitido por dia.
+Saques solicitados fora do plano comercial poderão ter uma análise concluída no próximo dia útil.
+Saques realizados antes das 10h30min poderão sofrer atrasos caso existam antecipações pendentes no sistema.
+6.6 A Close Fans tem o direito de negar restrições de saque nas seguintes situações:
+Documentação inconsistente: Caso os documentos fornecidos sejam insuficientes ou apresentem irregularidades, o Criador será contatado para fornecer as informações ou documentos adicionais.
+Violação dos Termos e Políticas: Se o perfil estiver desacordo com este Termo, será necessário regularizá-lo antes da liberação de qualquer valor.
+Cancelamento de conta ou denúncias: Caso a conta seja encerrada ou existam denúncias válidas, os valores pendentes poderão ser utilizados para reembolsar os assinantes ativos.
+6.7 Caso um saque seja negado, o Criador será notificado por e-mail, recebendo o prazo de até 7 (sete) dias úteis para regularizar as pendências. Se não houver regularização no prazo estipulado, a conta poderá ser suspensa e os valores pendentes destinados ao reembolso de assinantes, conforme aplicável.
+7. Do pagamento
+7.1 Pela prestação dos Serviços, a Close Fans fará jus à remuneração de 20%, (vinte por cento) do valor da receita bruta de todas as vendas no mês realizadas para acesso do Membro aos produtos digitais publicados pelo Criador de Conteúdo, ainda que o cadastro decorra de indicação.
+7.1.1 O pagamento será debitado de forma automática na conta da Plataforma de Pagamento que realizará o Split de forma automática.
+7.1.2 Se entende por receita bruta todos os valores recebidos pela transação efetuada entre o Criador de Conteúdo e o Membro na venda dos produtos digitais disponibilizados pelo Criador de Conteúdo por meio das Plataformas Close Fans, sem recolhimento de qualquer tributo ou qualquer taxa bancária.
+7.1.3 Caso algum valor devido pelo Criador de Conteúdo à Close Fans esteja pendente de compensação, a Close Fans poderá, a seu exclusivo critério e a qualquer tempo, descontar de forma retroativa o valor devido pelas vendas realizadas e não descontadas da Plataforma de Pagamento.
+7.1.4 A suspensão, bloqueio, desativação e/ou cancelamento do cadastro de qualquer Usuário, por quaisquer motivos previstos nestes Termos, não exime o Usuário de eventuais pagamentos pendentes em relação aos Serviços prestados pela Close Fans e não acarreta o reembolso dos valores cujos pagamentos já foram realizados.
+7.2 Além do percentual determinado na cláusula anterior, será cobrado o valor de (i) R$0,90 (noventa centavos) por transação de vend

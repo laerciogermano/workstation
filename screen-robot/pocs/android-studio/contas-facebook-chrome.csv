@@ -36,3 +36,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-05,Gabriel Rocha,linkedin,~/chrome-profiles/gabriel-rocha,9260,human-cdp createCdp gabriel-rocha,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI signup
 2026-11-05,Mariana Medeiros,linkedin,~/chrome-profiles/mariana-medeiros,9261,human-cdp createCdp mariana-medeiros,perfil Chrome isolado; fingerprint Win32 America/Fortaleza; LI signup
 2026-11-09,Benchmarking,privacy,~/chrome-profiles/benchmarking,9263,human-cdp createCdp benchmarking,perfil Chrome isolado; benchmarking Clozzy concorrentes (Privacy primeiro)
+2026-11-10,CloseFans,closefans,~/chrome-profiles/closefans,9264,human-cdp createCdp closefans,perfil Chrome isolado; benchmarking Clozzy CloseFans (#2 BR)

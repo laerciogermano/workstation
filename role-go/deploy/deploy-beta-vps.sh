@@ -2,12 +2,12 @@
 # Sobe o monorepo beta/ na Contabo (rolego.com.br).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-HOST="${HOST:-144.126.154.90}"
+HOST="${HOST:-185.250.37.82}"
 REMOTE_SRC=/opt/rolego/beta
 REMOTE_ENV_DIR=/srv/rolego/prod
 
 if [[ -z "${SSHPASS:-}" ]]; then
-  SSHPASS="$(python3 -c 'import re; t=open("'"$ROOT"'/../credenciais.md").read(); print(re.search(r"`root@144\.126\.154\.90`\s*—\s*`([^`]+)`", t).group(1))')"
+  SSHPASS="$(python3 -c 'import re; t=open("'"$ROOT"'/../credenciais.md").read(); m=re.search(r"`root@185\.250\.37\.82`\s*—\s*`([^`]+)`", t) or re.search(r"`root@144\.126\.154\.90`\s*—\s*`([^`]+)`", t); print(m.group(1))')"
   export SSHPASS
 fi
 RSH='sshpass -e ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no'

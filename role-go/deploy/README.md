@@ -1,6 +1,7 @@
 # RoleGo — Deploy (Contabo)
 
-VPS app: `144.126.154.90` · DNS A `rolego.com.br` / `www` → Contabo · HTTPS Certbot.
+VPS app atual: **`185.250.37.82`** (`vmi3645369`) · DNS A `rolego.com.br` / `www` / `mail` → Contabo · HTTPS Certbot.  
+Legado offline: `144.126.154.90`.
 
 ## Beta monorepo (`rolego.com.br`) — atual
 
@@ -12,8 +13,8 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 | Env / segredos | `/srv/rolego/prod/.env` (não versionado) |
 | Compose | [`../beta/infra/docker-compose.vps.yml`](../beta/infra/docker-compose.vps.yml) |
 | Web (container) | `127.0.0.1:8090` (8080 = Mailcow) |
-| nginx host | proxy → `:8090` · canônico [`nginx-rolego-app.conf`](nginx-rolego-app.conf) |
-| SMTP | Mailcow `mail.clozzy.com.br:587` · `nao-responda@rolego.com.br` (creds em `credenciais.md`) |
+| nginx host | proxy → `:8090` · canônico [`nginx-rolego-app.conf`](nginx-rolego-app.conf) (HTTP até LE) |
+| SMTP | Mailcow Contabo `mail.brsupply.email:587` · `nao-responda@rolego.com.br` (creds em `credenciais.md`) |
 | Mailpit UI | `127.0.0.1:8025` (só localhost; legado — prod não usa mais) |
 | Seed | `ana@rolego.dev` / `rolego2026` (e demais contas do README do beta) |
 | Backup protótipo HTML | `/opt/rolego/web-proto-bak` |
@@ -26,19 +27,25 @@ Stack Docker (`api` + `worker` + PostGIS + `web` + Mailpit) a partir de [`../bet
 
 **Antes → depois (SMTP):** `SMTP_HOST=mailpit:1025` (só captura local) → Mailcow real `mail.clozzy.com.br:587` + domínio/mailbox `rolego.com.br` / `nao-responda@`. Rollback: restaurar backup `/srv/rolego/prod/.env.bak-smtp-*` e `compose up -d --force-recreate api worker web`.
 
-### DNS Hostinger (`rolego.com.br`) — e-mail
+### DNS Hostinger (`rolego.com.br`) — web + e-mail
 
-Ainda falta no painel (perfil Chrome Germano `:9230`):
+Alvo Contabo **`185.250.37.82`** (perfil Chrome Germano `:9230`). Mailcow já tem domínio + DKIM + caixas `germano@` / `jaime.richards@` / `nao-responda@`.
 
 | Tipo | Nome | Valor |
 |------|------|--------|
-| A | `mail` | `144.126.154.90` |
-| MX | `@` | `mail.rolego.com.br` (prio 10) — ou `mail.clozzy.com.br` enquanto o SAN não incluir `mail.rolego` |
-| TXT | `@` | `v=spf1 mx a:mail.clozzy.com.br ip4:144.126.154.90 ~all` |
-| TXT | `dkim._domainkey` | conteúdo em `/tmp/rolego-dkim.txt` no Mac (gerado no Mailcow) |
+| A | `@` | `185.250.37.82` |
+| A | `www` | `185.250.37.82` |
+| A | `mail` | `185.250.37.82` |
+| MX | `@` | `mail.rolego.com.br` (prio 10) |
+| TXT | `@` | `v=spf1 mx a:mail.rolego.com.br ip4:185.250.37.82 ~all` |
+| TXT | `dkim._domainkey` | DKIM Mailcow (`GET /api/v1/get/dkim/rolego.com.br` no host) |
 | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:nao-responda@rolego.com.br` |
 
-Sem esses registros, Gmail/Outlook podem rejeitar ou jogar no spam; envio SMTP interno já funciona.
+**Antes → depois (2026-11-10):** A/`www` apontavam para VPS morta `144…` → Contabo `185…` + Mailcow local + SMTP real.  
+**Rollback DNS:** A/`www`/`mail` + SPF de volta para `144…` (só se o host legado voltar). Rollback Mailcow: apagar domínio/mailboxes `rolego.com.br` na API.  
+Após DNS propagar: `certbot --nginx -d rolego.com.br -d www.rolego.com.br` e `certbot --nginx -d mail.rolego.com.br`.
+
+Deploy: `HOST=185.250.37.82 SSHPASS='…' ./role-go/deploy/deploy-beta-vps.sh` (senha em `credenciais.md` § `root@185…`).
 
 ### PWA / viewport (app instalável)
 

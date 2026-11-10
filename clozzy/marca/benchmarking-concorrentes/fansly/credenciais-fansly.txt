@@ -1,0 +1,8 @@
+email=fansly.bench@brsupply.email
+password=F4nslyBench26!
+username=FanslyBench26
+cdp=fansly
+port=9266
+profile=~/chrome-profiles/fansly
+mailbox=Mailcow Contabo 185.250.37.82 · domínio brsupply.email
+email_status=NOT VERIFIED (ativação não chegou 2026-11-10; mailbox criada após 1º envio)

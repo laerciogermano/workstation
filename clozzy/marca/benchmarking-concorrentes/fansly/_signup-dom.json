@@ -1,0 +1,48 @@
+{
+  "inputs": [],
+  "clickables": [
+    {
+      "t": "Terms & Conditions",
+      "tag": "A",
+      "x": 1119,
+      "y": 412
+    },
+    {
+      "t": "Privacy Policy",
+      "tag": "A",
+      "x": 1086,
+      "y": 423
+    },
+    {
+      "t": "Help Center",
+      "tag": "A",
+      "x": 588,
+      "y": 873
+    },
+    {
+      "t": "Complaints",
+      "tag": "A",
+      "x": 927,
+      "y": 873
+    },
+    {
+      "t": "Reporting NCII",
+      "tag": "A",
+      "x": 1024,
+      "y": 873
+    },
+    {
+      "t": "X",
+      "tag": "A",
+      "x": 1101,
+      "y": 873
+    },
+    {
+      "t": "Instagram",
+      "tag": "A",
+      "x": 1173,
+      "y": 873
+    }
+  ],
+  "html": "\n        <app-root ng-version=\"19.1.2\" _nghost-ng-c594600131=\"\"><app-video-element-factory-container _ngcontent-ng-c594600131=\"\"><div></div><!----></app-video-element-factory-container><app-theme-controller _ngcontent-ng-c594600131=\"\" _nghost-ng-c4116268905=\"\"><!----><!----><!----></app-theme-controller><!----><div _ngcontent-ng-c594600131=\"\" class=\"global-wrapper\"><div _ngcontent-ng-c594600131=\"\" class=\"site-wrapper nav-bar-visible nav-bar-mobile-visible nav-bar-top-visible landing\"><app-nav-ba"
+}

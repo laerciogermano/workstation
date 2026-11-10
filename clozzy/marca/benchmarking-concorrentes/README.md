@@ -51,19 +51,21 @@ Cadastro + prints de todas as telas + inventário de funcionalidades (Clozzy 202
 | 1 | OnlyFans | https://trello.com/c/5SHmEwEZ | Backlog — **fora da fila atual** |
 | 2 | Patreon | https://trello.com/c/nTY47jqR | Backlog |
 | 3 | Privacy | https://trello.com/c/vFDqfcKE | Feito (2026-11-09) |
-| 4 | Fansly | https://trello.com/c/HxwNb1E7 | **Priorizados — próximo** |
+| 4 | Fansly | https://trello.com/c/HxwNb1E7 | **Feito (2026-11-10)** |
 | 5 | Fanvue | https://trello.com/c/3TA3RKF5 | Priorizados |
 | 6 | LoyalFans | https://trello.com/c/iBZZX5G0 | Priorizados |
 | 10 | CloseFans | https://trello.com/c/JFzUjNaW | Feito (2026-11-10) |
 | 11 | FatalFans | — | Feito (2026-11-10) |
 
-**Fila atual (2026-11-10):** Fansly → Fanvue → LoyalFans. OnlyFans não entra agora.
+**Fila atual (2026-11-10):** Fanvue → LoyalFans. Fansly feito. OnlyFans fora.
 
 Entrega esperada por card: `clozzy/marca/benchmarking-concorrentes/<plataforma>/` (`prints/` + `funcionalidades.md` + `ia.md` + `README.md`).
 
 **Privacy (2026-11-09):** pasta [`privacy/`](privacy/README.md) — CDP `benchmarking` :9263; cadastro fan `benchclozzy342` + prints desktop/mobile + inventário. Documento: [`privacy/benchmarking-privacy.html`](privacy/benchmarking-privacy.html) / [`.pdf`](privacy/benchmarking-privacy.pdf).
 
 **CloseFans (2026-11-10):** pasta [`closefans/`](closefans/README.md) — CDP `closefans` :9264; fan `closefans.bench@brsupply.email` logado + Descobrir/lista + público. Documento: [`closefans/benchmarking-closefans.html`](closefans/benchmarking-closefans.html) / [`.pdf`](closefans/benchmarking-closefans.pdf).
+
+**Fansly (2026-11-10):** pasta [`fansly/`](fansly/README.md) — CDP `fansly` :9266; fan `fansly.bench@brsupply.email` / `FanslyBench26` (e-mail NOT VERIFIED nesta sessão). Documento: [`fansly/benchmarking-fansly.html`](fansly/benchmarking-fansly.html) / [`.pdf`](fansly/benchmarking-fansly.pdf).
 
 **FatalFans (2026-11-10):** pasta [`fatalfans/`](fatalfans/README.md) — CDP `fatalfans` :9265; fan `fatalfans.bench@brsupply.email` / `FatalfansBench` + público. Documento: [`fatalfans/benchmarking-fatalfans.html`](fatalfans/benchmarking-fatalfans.html) / [`.pdf`](fatalfans/benchmarking-fatalfans.pdf).
 

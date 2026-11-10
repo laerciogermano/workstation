@@ -1,0 +1,62 @@
+{
+  "walk": [
+    {
+      "tag": "APP-LANDING-PAGE-NEW",
+      "id": "",
+      "cls": "",
+      "x": 0,
+      "y": 0,
+      "w": 1430,
+      "h": 900
+    }
+  ],
+  "iframes": [],
+  "apps": [
+    {
+      "tag": "DIV",
+      "cls": "site-wrapper nav-bar-visible nav-bar-mobile-visible nav-bar-top-visible landing",
+      "text": "0:37\nSign up\nLogin\nBy joining, you agree to ourTerms & ConditionsandPrivacy Poli"
+    },
+    {
+      "tag": "DIV",
+      "cls": "landing-page",
+      "text": "0:37\nSign up\nLogin\nBy joining, you agree to ourTerms & ConditionsandPrivacy Poli"
+    },
+    {
+      "tag": "DIV",
+      "cls": "landing-left",
+      "text": "0:37"
+    },
+    {
+      "tag": "DIV",
+      "cls": "landing-right",
+      "text": "Sign up\nLogin\nBy joining, you agree to ourTerms & ConditionsandPrivacy Policy, a"
+    },
+    {
+      "tag": "DIV",
+      "cls": "login-menu",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "cls": "flex-row login-provider btn large Twitter",
+      "text": "Sign in with X"
+    },
+    {
+      "tag": "DIV",
+      "cls": "flex-row login-provider btn large Google",
+      "text": "Sign in with Google"
+    },
+    {
+      "tag": "DIV",
+      "cls": "flex-row login-provider btn large Twitch",
+      "text": "Sign in with Twitch"
+    },
+    {
+      "tag": "DIV",
+      "cls": "landing-footer",
+      "text": "© 2026 Fansly\nExplore Fansly\nBecome A Creator\nContact\nHelp Center\nTerms\nPrivacy\n"
+    }
+  ],
+  "title": "Fansly - Start Interacting With Your Fans"
+}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clozzy — Benchmarking Fansly</title>
+<style>
+  :root{
+    --bg:#0B1220;--card:#121A2B;--line:#243149;--text:#F2F5FA;--muted:#8B97AD;
+    --accent:#4B9BFF;--ok:#2DD4A8;--no:#F07178;--mid:#F5D27A;--paper:#161F31;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:40px 24px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.03em;margin-bottom:8px}
+  h2{font-size:18px;margin:36px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 8px;color:#D6DEEA}
+  .lead{color:var(--muted);margin-bottom:16px;max-width:820px}
+  .meta{font-size:12px;color:var(--muted);margin-bottom:24px}
+  a{color:#9CC4FF;text-decoration:none}
+  a:hover{text-decoration:underline}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0 4px}
+  th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  ul{margin:6px 0 6px 18px;color:#C5CDD9;font-size:13.5px}
+  li{margin-bottom:5px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#1a2438;color:#B4BCCC;font-size:11px;margin:0 4px 4px 0}
+  .tag.ok{background:#123028;color:#6EE7B7}
+  .tag.no{background:#2a1518;color:#F07178}
+  .tag.warn{background:#2a2414;color:#F5D27A}
+  .kpi{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .kpi span{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+  .shot{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;break-inside:avoid;page-break-inside:avoid;margin:0}
+  .shot img{display:block;width:100%;height:auto;background:#0a0f18}
+  .shot .cap{padding:10px 12px;font-size:12px;color:#C5CDD9;border-top:1px solid var(--line)}
+  .shot .cap strong{display:block;color:var(--text);font-size:12.5px;margin-bottom:2px}
+  .shot .cap code{font-size:10px;color:var(--muted)}
+  .duo{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin:12px 0}
+  @media(max-width:800px){.duo{grid-template-columns:1fr}}
+  .y{color:var(--ok);font-weight:600}
+  .n{color:var(--no);font-weight:600}
+  .p{color:var(--mid);font-weight:600}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  @media print{
+    body{padding:12px;background:#fff;color:#111}
+    .card,.shot{border-color:#ddd;background:#fff}
+    .shot .cap{color:#333;border-color:#eee}
+    h2{border-color:#ddd;color:#111}
+    a{color:#246}
+    :root{--muted:#555;--text:#111;--line:#ddd;--card:#f7f7f7;--paper:#fafafa}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Benchmarking — Fansly</h1>
+  <p class="lead">Inspeção #4 do ranking Clozzy (global + discovery): age gate, signup fan, Explore/For You/live, settings/payments, política IA anti-fotorealista.</p>
+  <p class="meta">
+    Site · <a href="https://fansly.com/">fansly.com</a>
+    · Data · 2026-11-10
+    · CDP · <code>fansly :9266</code>
+    · Conta · <code>fansly.bench@brsupply.email</code> / <code>FanslyBench26</code>
+    · E-mail · <span class="p">NOT VERIFIED</span> (ativação não chegou ao Mailcow nesta sessão)
+  </p>
+
+  <div class="grid3">
+    <div class="card"><div class="kpi">#4<span>ranking Clozzy (escala)</span></div></div>
+    <div class="card"><div class="kpi">~37–39M<span>visitas/mês (âncora)</span></div></div>
+    <div class="card"><div class="kpi">20%<span>taxa típica ranking</span></div></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Global</span>
+    <span class="tag no">Sem Pix óbvio</span>
+    <span class="tag ok">OAuth X/Google/Twitch</span>
+    <span class="tag warn">Ban IA fotorealista</span>
+    <span class="tag">Select Media LLC (US)</span>
+  </div>
+
+  <h2>1. Cadastro</h2>
+  <ul>
+    <li>Age gate Enter/Leave + cookies Essential/Accept All</li>
+    <li>Modal Sign up now: Username · Email · Password · Confirm · Join</li>
+    <li>Senha “Strong” (mín. 6 + lower/upper/número/especial)</li>
+    <li>Pós-Join → <code>/home</code> com banner de verificação de e-mail</li>
+  </ul>
+  <div class="duo">
+    <div class="shot"><img src="prints/desktop/36-ready-to-join.png" alt="Signup filled"><div class="cap"><strong>Signup preenchido</strong><code>desktop/36-ready-to-join.png</code></div></div>
+    <div class="shot"><img src="prints/desktop/37-after-join.png" alt="Home after join"><div class="cap"><strong>Home pós-Join</strong><code>desktop/37-after-join.png</code></div></div>
+  </div>
+
+  <h2>2. Área logada</h2>
+  <ul>
+    <li>Home: All · Subscribed · For You · Suggestions · Live streams</li>
+    <li>Explore/Discover com hashtags e Who To Follow</li>
+    <li>Messages · Notifications · Search</li>
+    <li>Settings: Account (2FA, sessions) · Payments (cards, bank/local, crypto, gift code)</li>
+    <li>Creator Application → Apply (em Account)</li>
+  </ul>
+  <div class="duo">
+    <div class="shot"><img src="prints/desktop/71-home-foryou.png" alt="Home"><div class="cap"><strong>Home For You</strong><code>desktop/71-home-foryou.png</code></div></div>
+    <div class="shot"><img src="prints/desktop/51-explore.png" alt="Explore"><div class="cap"><strong>Explore Discover</strong><code>desktop/51-explore.png</code></div></div>
+  </div>
+  <div class="duo">
+    <div class="shot"><img src="prints/desktop/69-payments.png" alt="Payments"><div class="cap"><strong>Payments</strong><code>desktop/69-payments.png</code></div></div>
+    <div class="shot"><img src="prints/desktop/70-profile-creator.png" alt="Creator profile"><div class="cap"><strong>Perfil creator</strong><code>desktop/70-profile-creator.png</code></div></div>
+  </div>
+
+  <h2>3. IA</h2>
+  <div class="card">
+    <p><span class="n">Ban</span> conteúdo fotorealista/lifelike gerado por IA (label <strong>não</strong> libera). Ban AI interagindo com fãs sem oversight humano. Virtual não-fotorealista OK com ID real.</p>
+    <p class="meta" style="margin:8px 0 0">Help: <a href="https://help.fansly.com/en/articles/12315578-ai-generated-content-on-fansly">AI Generated Content on Fansly</a> · detalhe em <code>ia.md</code></p>
+  </div>
+  <div class="duo">
+    <div class="shot"><img src="prints/desktop/21-ai-policy-article.png" alt="AI policy"><div class="cap"><strong>Help — AI policy</strong><code>desktop/21-ai-policy-article.png</code></div></div>
+    <div class="shot"><img src="prints/desktop/06-tos.png" alt="ToS"><div class="cap"><strong>Terms of Service</strong><code>desktop/06-tos.png</code></div></div>
+  </div>
+
+  <h2>4. Mobile</h2>
+  <div class="duo">
+    <div class="shot"><img src="prints/mobile/01-home.png" alt="Mobile home"><div class="cap"><strong>Mobile home</strong><code>mobile/01-home.png</code></div></div>
+    <div class="shot"><img src="prints/mobile/02-explore.png" alt="Mobile explore"><div class="cap"><strong>Mobile explore</strong><code>mobile/02-explore.png</code></div></div>
+  </div>
+
+  <h2>5. vs Clozzy</h2>
+  <table>
+    <thead><tr><th>Tema</th><th>Fansly</th><th>Clozzy</th></tr></thead>
+    <tbody>
+      <tr><td>Rails BR / Pix</td><td class="n">Não óbvio na UI</td><td class="y">Alvo</td></tr>
+      <tr><td>Discovery</td><td class="y">Explore + live + For You</td><td class="p">Blueprint a estudar</td></tr>
+      <tr><td>IA fotorealista</td><td class="n">Ban</td><td class="p">Disclosure vs Fanvue</td></tr>
+      <tr><td>Pack = produto</td><td class="p">Assinatura + mídia social</td><td class="y">Diferencial</td></tr>
+      <tr><td>OAuth</td><td class="y">X / Google / Twitch</td><td class="p">Avaliar</td></tr>
+    </tbody>
+  </table>
+
+  <p class="foot">Pasta <code>clozzy/marca/benchmarking-concorrentes/fansly/</code> · card Trello Clozzy 2028 · ver também Privacy / CloseFans / FatalFans.</p>
+</div>
+</body>
+</html>

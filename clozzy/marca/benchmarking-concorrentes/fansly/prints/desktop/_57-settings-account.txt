@@ -1,0 +1,43 @@
+URL: https://fansly.com/settings/account
+
+$0
+Account
+Profile
+Your username and the name shown on your profile.
+Username (Profile)
+fansly.com/FanslyBench26
+Copy link
+Change Username
+Display Name
+Shown on your profile, posts and messages.
+Display Name
+Change
+Security
+How you sign in and keep your account protected.
+1 of 3 done
+Email
+NOT VERIFIED
+fansly.bench@brsupply.email
+Your email is not yet verified, please check your email for the activations link or clickhereto resend the activation link.
+Change Email
+Password
+After changing it you can sign out your other devices.
+Change Password
+Manage 2FA
+OFF
+Protect your account and content by enabling 2FA. You can use apps such as Authy, Google Authenticator and many others to view your 2FA codes.
+Setup 2 Factor Authentication
+Sessions
+1
+Review where your account is signed in and close what you do not recognise.
+Manage
+Creator Application
+Apply to become a creator and start earning on Fansly.
+Apply
+Delete Account
+Deleting your account is permanent. Check that you have no pending payouts first, as they may be interrupted.
+Delete Account
+Enable Push Notifications
+We will notify you about new messages and other account related events right as they happen.
+Yes, Enable
+Maybe Later

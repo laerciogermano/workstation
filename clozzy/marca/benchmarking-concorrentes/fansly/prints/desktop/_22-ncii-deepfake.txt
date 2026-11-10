@@ -1,0 +1,154 @@
+URL: https://help.fansly.com/en/articles/15142092-reporting-non-consensual-intimate-imagery
+
+Skip to main content
+Fansly Help Center
+English
+Español
+English
+Search for articles...
+All Collections
+FAQs & Basic Troubleshooting
+Reporting Non-Consensual Intimate Imagery
+Reporting Non-Consensual Intimate Imagery
+June 9, 2026
+What is non-consensual intimate imagery (NCII)?
+
+Non-consensual intimate imagery — sometimes called "intimate visual depictions" or, in older terminology, "revenge porn" — is sexually explicit material that depicts a person and was published without that person's consent. It includes:
+
+Material recorded consensually but published without consent
+
+Material recorded without consent in the first place
+
+Digital forgeries (deepfakes or AI-generated material) that depict a real person who did not consent to the depiction
+
+Fansly removes non-consensual intimate imagery on receipt of a complete report.
+
+ 
+
+How do I report intimate imagery of myself that was posted without my consent?
+
+Email notice@fansly.com with the completed Notice of Non-Consensual Intimate Imagery form, available here or by request.
+
+You do not need to be logged in to submit a report.
+
+If you are unsure whether what you are reporting qualifies as NCII, submit the report anyway.
+
+What happens after I submit a report?
+
+Acknowledgement. You will receive an automated email confirming we received your report, along with a case ID.
+
+Review. A member of our Trust & Safety team reviews your report to confirm it contains the information we need to act on it.
+
+Removal. We act on complete reports as quickly as possible within 48 hours of receipt.  
+
+Resolution notice. We confirm in writing once action has been taken, along with the basis for the decision.
+
+Identical-copy effort. We make reasonable efforts to identify and remove identical copies of the removed material on Fansly.
+
+If we need additional information to act on your report, we will reach out to you using the contact details you provided.
+
+ 
+
+What does my report need to include?
+
+For us to act on your report as quickly as possible, please include all four of the following:
+
+Your signature — typed full legal name with an electronic-signature attestation, or a handwritten signature.
+
+Location of the material — typically the URL(s), post ID(s), message identifier(s), or profile URL(s) where the material appears.
+
+Your contact information — email address and telephone number.
+
+A good-faith statement that the material is an intimate visual depiction of you (or of the person you are authorized to represent) and was published without that person's consent.
+
+If your report is missing one or more of these elements, we will still review and act on it, but processing will take longer.
+
+ 
+
+You will also be asked to verify your identity, typically through a government-issued photo ID. Because Fansly is an adult-content platform where every creator's identity is verified on file, identity verification on your side helps us act on your notice in good faith and ensures we have reasonably sufficient information to confirm that the content was published without your consent. It also protects you and other users from misuse of the takedown process.
+
+ 
+
+Can I report intimate imagery of someone else?
+
+You can submit a report on behalf of another person if you are:
+
+The parent or legal guardian of a minor depicted in the material;
+
+An attorney or other authorized legal representative acting for the depicted individual; or
+
+Otherwise authorized in writing by the depicted individual.
+
+If you are reporting on someone else's behalf, you will be asked to provide documentation of your authority to act (for example, a power of attorney, signed authorization, or proof of guardianship).
+
+ 
+
+If you are concerned about intimate imagery of someone you are not authorized to represent, please use the in-product Report feature on the relevant post or profile. Our Trust & Safety team reviews those reports separately.
+
+ 
+
+How long does removal take?
+
+We act on complete reports as quickly as possible. For most cases, action follows within 48 hours of receipt at our designated channel. Our handling runs continuously — including over weekends and outside business hours.
+
+ 
+
+In urgent or high-harm cases — for example, content involving a minor, content tied to imminent threats, or material spreading rapidly — we may act sooner. Incomplete reports take longer to action; the fastest route to removal is a complete report.
+
+ 
+
+What if I previously consented and now want the material removed?
+
+You can withdraw previously given consent at any time. Where consent withdrawal is the only basis for your request — i.e. you are not also alleging that the original recording or publication of the material was non-consensual — please use Fansly's Revocation of Consent process rather than the Notice of Non-Consensual Intimate Imagery form. The Revocation of Consent process is designed specifically for these cases and is the fastest route for them. We treat a clear revocation as binding; documented prior consent does not prevent removal.
+
+ 
+
+If your situation is mixed — for example, you originally consented to the recording but not to the publication, or your consent was procured under duress — please use the Notice of Non-Consensual Intimate Imagery form and select the boxes in Section D that match your circumstances. We will route your case to the right workflow based on the boxes you select.
+
+ 
+
+If you submit through the wrong form, we will still review your request and route it correctly. The choice of form does not affect whether we act — it affects how quickly we act.
+
+ 
+
+What if the material is a deepfake or AI-generated?
+
+Digital forgeries — deepfakes, AI-generated depictions, manipulated images, or composite material — are covered.
+
+ 
+
+When you submit the report, check the box marked "The material is a digital forgery, deepfake, or AI-generated depiction of me to which I did not consent."
+
+ 
+
+What if the depicted individual is a minor?
+
+Reports involving minors are treated as the highest priority. Where the material involves a minor in a sexual context, we are required by federal law to report it to the National Center for Missing & Exploited Children (NCMEC) in addition to removing it.
+
+If you are a parent or legal guardian reporting on behalf of a minor, the same form applies. If you are a minor yourself, you can still submit the report — you do not need to involve a parent or guardian to make the report — but we strongly recommend reaching out to a trusted adult or to one of the support resources listed at the end of this article.
+
+ 
+
+What if my account has been suspended or restricted because of an NCII report?
+
+If your content has been removed or your account restricted in response to an NCII report, you will receive a written statement of reasons explaining the action, the basis for it, and your appeal rights. The appeal route is described under Fansly's Trust & Safety appeals process.
+
+ 
+
+NCII removal is not paused or reversed by a creator appeal. Your appeal is reviewed after removal is complete. If the appeal is upheld — for example, because the underlying notice was facially invalid or fraudulently submitted — we will reinstate the content following the post-removal review.
+
+ 
+
+What if I think someone is misusing this process to harass me?
+
+We take abuse of the NCII reporting process seriously. Knowingly false statements made in a notice may expose the submitter to civil liability and, where applicable, to criminal penalties under federal and state law and equivalent perjury and false-statement offenses in other jurisdictions.
+
+ 
+
+If you believe someone has filed a false NCII report against your content, document the action you received, file an appeal, and report the suspected abuse to support@fansly.com. Patterns of misuse may be referred to law enforcement.
+
+ 
+
+What if I'm not sure my situation fits?
+
+Submit the report anyway. Our Trust & Safety team reviews every submission. If your situation is better handled through a different process — for exa

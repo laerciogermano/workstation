@@ -17,12 +17,16 @@ Controla um Chrome já rodando com `--remote-debugging-port=9222` (mesmo perfil/
 ./start-camila-ferreira.sh                     # CDP :9229 (Camila Ferreira / LI)
 ./start-germano.sh                             # CDP :9230 (Germano / Hostinger rolego)
 # human-cdp createCdp benchmarking             # CDP :9263 — Clozzy benchmarking (Privacy primeiro)
+./start-matheus-conectmax.sh                   # CDP :9267 (Matheus ConectMax / LI login)
 ./start-germano-firefox.sh                     # Firefox isolado (sem CDP; perfil ~/firefox-profiles/germano)
 # opcional URL: ./start-lucas-mendes.sh https://www.linkedin.com/
 # opcional URL: ./start-germano-firefox.sh https://tinder.com
+# preferir startCdp('matheus-conectmax') p/ aplicar fingerprint keeper
 ```
 
 Registro: [`../android-studio/contas-facebook-chrome.csv`](../android-studio/contas-facebook-chrome.csv)
+
+**Antes → depois (Matheus ConectMax 2026-11-11):** só AVD/agente `local` → CDP Chrome `matheus-conectmax` :9267 + fingerprint Win32/`America/Sao_Paulo` (sem mailbox/signup; login manual em `/login`). CSVs `contas-facebook-chrome.csv` + linha LI (email/senha vazios até login). Rollback: fechar Chrome; `removeCdp('matheus-conectmax', { deleteProfile: true })`; remover linhas CSV/`start-matheus-conectmax.sh`/nota em `credenciais.md`.
 
 **Antes → depois (Germano):** sem perfil → `~/chrome-profiles/germano` + `start-germano.sh` (:9230) para painel Hostinger do domínio `rolego.com.br`. Rollback: fechar Chrome; `rm -rf ~/chrome-profiles/germano`; remover script/linha README/CSV.
 

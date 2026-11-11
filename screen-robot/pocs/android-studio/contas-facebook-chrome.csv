@@ -39,3 +39,4 @@ data,nome,plataforma,chrome_user_data_dir,cdp_port,start_script,obs
 2026-11-10,CloseFans,closefans,~/chrome-profiles/closefans,9264,human-cdp createCdp closefans,perfil Chrome isolado; benchmarking Clozzy CloseFans (#2 BR)
 2026-11-10,FatalFans,fatalfans,~/chrome-profiles/fatalfans,9265,human-cdp createCdp fatalfans,perfil Chrome isolado; benchmarking Clozzy FatalFans (#3 BR) público
 2026-11-10,Fansly,fansly,~/chrome-profiles/fansly,9266,human-cdp createCdp fansly,perfil Chrome isolado; benchmarking Clozzy Fansly (#4)
+2026-11-11,Matheus ConectMax,linkedin,~/chrome-profiles/matheus-conectmax,9267,human-cdp createCdp matheus-conectmax,perfil Chrome isolado; fingerprint Win32 America/Sao_Paulo; LI login (conta existente AVD/local)

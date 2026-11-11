@@ -1,0 +1,55 @@
+/**
+ * CloseFans — tokens as-is (extraídos de close.fans CSS + meta + assets, nov/2026)
+ * Fonte: /_next/static/css + theme-color #890aff + manifest background #050506
+ */
+:root {
+  /* Brand */
+  --cf-purple: #890aff;
+  --cf-purple-deep: #6f00d6;
+  --cf-purple-dark: #47008a;
+  --cf-purple-ink: #2a0052;
+  --cf-purple-soft: #c299ff;
+  --cf-purple-wash: #f0e0ff;
+  --cf-icon-purple: #47008a; /* mark app ~ rgb(71,0,138) */
+
+  /* Neutros */
+  --cf-black: #050506;
+  --cf-surface: #1c1d25;
+  --cf-surface-2: #42455c;
+  --cf-muted: #787d9e;
+  --cf-grey-ui: #a8a8bd;
+  --cf-line: #dde4e8;
+  --cf-white: #ffffff;
+  --cf-paper: #f1f2f5;
+
+  /* Semântica */
+  --cf-success: #19d297;
+  --cf-success-deep: #0f6c45;
+  --cf-danger: #d84940;
+  --cf-warning: #ffd03d;
+  --cf-info: #1e6ff5;
+  --cf-link: #c299ff;
+
+  /* Media / player */
+  --plyr-color-main: #6f00d6;
+
+  /* Tipo */
+  --cf-font-ui: "Archivo", system-ui, sans-serif;
+  --cf-font-alt: "DM Sans", system-ui, sans-serif;
+
+  /* Raio observado */
+  --cf-radius-sm: 8px;
+  --cf-radius-md: 12px;
+  --cf-radius-lg: 16px;
+  --cf-radius-pill: 999px;
+
+  /* Motion (observado: UI padrão, sem signature move documentado) */
+  --cf-ease: cubic-bezier(0.2, 0, 0, 1);
+  --cf-dur-fast: 140ms;
+  --cf-dur: 220ms;
+}
+
+/* Pares AA (WCAG 2.2 approx.) */
+/* branco / #890aff = 5.9:1 · branco / #6f00d6 = 7.9:1 · branco / #050506 = 20.4:1 */
+/* #c299ff / #050506 = 9.0:1 · #890aff / #050506 = 3.4:1 (só título/ícone grande) */
+/* #19d297 / #050506 = 10.4:1 · #d84940 / #050506 = 4.8:1 */

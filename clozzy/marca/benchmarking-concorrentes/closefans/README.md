@@ -49,6 +49,7 @@ Pasta [`prints/mobile/`](prints/mobile/) — iPhone `390×844 @3x`.
 
 - [`benchmarking-closefans.html`](benchmarking-closefans.html) / [`benchmarking-closefans.pdf`](benchmarking-closefans.pdf)
 - [`funcionalidades.md`](funcionalidades.md) · [`ia.md`](ia.md)
+- [`identidade-atual/`](identidade-atual/README.md) — identidade visual as-is (logos, tokens, BRAND, manual HTML/PDF)
 
 ## App
 

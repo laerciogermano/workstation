@@ -3,6 +3,7 @@
 | Arquivo | Uso |
 |---------|-----|
 | [`benchmarking-concorrentes/`](benchmarking-concorrentes/README.md) | Benchmarking de plataformas concorrentes (insumo da nova identidade) |
+| [`benchmarking-concorrentes/closefans/identidade-atual/`](benchmarking-concorrentes/closefans/identidade-atual/README.md) | Identidade visual as-is CloseFans (close.fans) |
 
 **Card:** [Benchmarking de todas as concorrentes](https://trello.com/c/RR95Cei7) · board [Clozzy 2028](https://trello.com/b/n24j78NT/clozzy-2028) · task [`../tasks/6aeb158bc595d3438795932d/`](../tasks/6aeb158bc595d3438795932d/README.md)
 

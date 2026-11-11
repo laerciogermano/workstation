@@ -1,15 +1,8 @@
 import { getHandler } from './handlers/index.mjs';
-import {
-  checkEgressIpOnce,
-  commitEgressIp,
-  isEgressIpGuardEnabled,
-} from './last-egress-ip.mjs';
 import { createLogger, fmtDuration, jobTypeLabel } from './log.mjs';
 
 /**
  * Um ciclo claim→handler→complete/fail para um agentId.
- * Com guarda de IP: se o egress atual já foi usado → não claima / falha o job.
- * Se novo → claima, grava na lista e executa.
  * @returns {Promise<boolean>} true se processou job
  */
 export async function runAgentCycle(api, opts) {
@@ -23,33 +16,12 @@ export async function runAgentCycle(api, opts) {
     dry = false,
     onClaimed,
     onSettled,
-    shouldStop,
     runtime,
     cycle = 0,
   } = opts;
 
   const log = opts.log || createLogger(agentId);
-  let reservedIp = null;
   const cycleLabel = cycle > 0 ? `ciclo #${cycle}` : 'ciclo';
-
-  if (!dry && isEgressIpGuardEnabled()) {
-    log.info(`${cycleLabel}: checando se o IP público pode ser usado…`);
-    const status = await checkEgressIpOnce({
-      logTag: agentId,
-      log,
-    });
-    if (!status.ready) {
-      log.warn(
-        `${cycleLabel}: abortado — IP ${status.ip} já utilizado anteriormente`,
-      );
-      return false;
-    }
-    reservedIp = status.ip;
-  } else if (dry) {
-    log.debug(`${cycleLabel}: guarda de IP desligada (DRY)`);
-  } else {
-    log.debug(`${cycleLabel}: guarda de IP desligada (SKIP_EGRESS_IP_GUARD)`);
-  }
 
   log.info(`${cycleLabel}: pedindo job na API…`);
   const claim = await api.claim(agentId);
@@ -86,39 +58,6 @@ export async function runAgentCycle(api, opts) {
     }
 
     try {
-      if (isEgressIpGuardEnabled()) {
-        if (shouldStop?.()) {
-          await api.fail(
-            agentId,
-            j.id,
-            'worker shutdown — job interrompido antes da execução (IP)',
-          );
-          log.warn(`job «${label}» falhou no shutdown (antes de gravar IP)`);
-          return true;
-        }
-        const ip =
-          reservedIp ||
-          (await checkEgressIpOnce({ logTag: agentId, log })).ip;
-        const commit = await commitEgressIp(ip, {
-          agentId,
-          jobId: j.id,
-          jobType: j.type,
-          runtime:
-            runtime ||
-            (cdpId || cdpUrl ? 'cdp' : serial ? 'avd' : undefined),
-        });
-        if (!commit.committed) {
-          const msg = `IP ${ip} já utilizado anteriormente — execução abortada`;
-          await api.fail(agentId, j.id, msg);
-          log.warn(`job «${label}» falhou: ${msg}`);
-          return true;
-        }
-        log.info(
-          `registreí IP ${commit.ip} na lista de usados (${commit.used.length} no total; job ${j.id})`,
-        );
-        reservedIp = commit.ip;
-      }
-
       const where =
         cdpId || cdpUrl
           ? `Chrome CDP (${cdpId || cdpUrl})`

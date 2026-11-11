@@ -1,15 +1,11 @@
 /**
- * Guarda a lista de IPs de egress já usados no host. Antes de claimar/executar,
- * se o IP atual já estiver na lista → aborta (não claima / falha o job).
- * Se for novo → executa e acrescenta na lista + timeline.
+ * Helpers de IP de egress (lista/timeline). A guarda no ciclo do worker foi
+ * removida — `agent-cycle.mjs` não chama mais check/commit.
  *
- * Estado compartilhado entre workers (AVD/CDP) no mesmo Mac.
- *
- * Env:
+ * Env (legado / uso ad-hoc):
  *   USED_EGRESS_IPS_FILE — lista (default ~/.connectmax/used-egress-ips), 1 IP/linha
  *   LAST_EGRESS_IP_FILE — legado (lido só na migração; default ~/.connectmax/last-egress-ip)
  *   EGRESS_IP_TIMELINE_FILE — JSONL (default ~/.connectmax/egress-ip-timeline.jsonl)
- *   SKIP_EGRESS_IP_GUARD=1 — desliga a guarda
  *   EGRESS_IP_URL — default https://api.ipify.org
  */
 import {
@@ -48,10 +44,9 @@ export function egressIpTimelinePath() {
   return fromEnv || DEFAULT_TIMELINE;
 }
 
+/** Sempre off — guarda removida do ciclo. Mantido p/ callers legados. */
 export function isEgressIpGuardEnabled() {
-  if (process.env.SKIP_EGRESS_IP_GUARD === '1') return false;
-  if (process.env.DRY === '1') return false;
-  return true;
+  return false;
 }
 
 function isIpLike(s) {

@@ -311,26 +311,29 @@ def p_errados(n):
     return page("Usos incorretos", n, f'<h1>Não fazer</h1><div style="display:flex;flex-wrap:wrap;gap:22px 20px">{"".join(tiles)}</div>')
 
 
+CAP_ESC = "rgba(255,255,255,.65)"     # legenda sobre fundo preto
+
+
 def phone(inner, bg, w=270, h=640):
-    return (f'<div style="width:{w}px;height:{h}px;border-radius:38px;background:{bg};border:8px solid #1d1217;box-shadow:0 0 0 2px rgba(20,9,15,.2);'
+    return (f'<div style="width:{w}px;height:{h}px;border-radius:38px;background:{bg};border:8px solid rgba(255,255,255,.3);'
             f'position:relative;overflow:hidden">{inner}</div>')
 
 
 def p_apps(n):
-    icons = "".join(f'<div style="text-align:center"><div style="width:170px;height:170px;border-radius:38px;overflow:hidden;{"border:1px solid rgba(20,9,15,.2);" if s == "branco" else ""}">{M.tile_svg(s, 170, radius=0)}</div>{cap(nm)}</div>'
+    icons = "".join(f'<div style="text-align:center"><div style="width:170px;height:170px;border-radius:38px;overflow:hidden;{"border:1px solid rgba(255,255,255,.3);" if s == "preto" else ""}">{M.tile_svg(s, 170, radius=0)}</div>{cap(nm, CAP_ESC)}</div>'
                     for s, nm in (("preto", "Preto"), ("rosa", "Rosa"), ("roxo", "Roxo"), ("branco", "Branco")))
     splash = phone(f'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">'
                    f'{lg("empilhado", "preto", 150)}<div style="font:400 16px Figtree;color:rgba(255,255,255,.75)">Seu close, seu preço.</div></div>', INK)
     story = phone(f'<div style="position:absolute;inset:0;padding:34px 26px;display:flex;flex-direction:column;justify-content:space-between">'
                   f'{lg("horizontal", "rosa", 26)}<div><div style="font:900 52px/.98 Gabarito;letter-spacing:-.03em;color:{WHITE}">Liberado.</div>'
                   f'<div style="font:500 17px Figtree;color:{WHITE};margin-top:8px">Tá na sua biblioteca.</div></div></div>', PINK)
-    avatars = "".join(f'<div style="text-align:center"><div style="width:110px;height:110px;border-radius:50%;overflow:hidden">{M.tile_svg(s, 110, radius=0, scale=0.58)}</div>{cap(s.capitalize())}</div>'
+    avatars = "".join(f'<div style="text-align:center"><div style="width:110px;height:110px;border-radius:50%;overflow:hidden;{"border:1px solid rgba(255,255,255,.3);" if s == "preto" else ""}">{M.tile_svg(s, 110, radius=0, scale=0.58)}</div>{cap(s.capitalize(), CAP_ESC)}</div>'
                       for s in ("rosa", "preto", "roxo"))
     return page("Aplicações", n, f'<div style="display:flex;gap:60px;align-items:flex-start">'
                 f'<div style="flex:1"><h1>Ícone, perfil e telas</h1><div style="display:flex;gap:22px;flex-wrap:wrap">{icons}</div>'
                 f'<div style="display:flex;gap:34px;margin-top:34px;align-items:flex-end">{avatars}'
                 f'<div style="font:500 19px/1.45 Figtree;max-width:360px">Perfil: símbolo a 58% do quadrado, para sobrar folga quando a rede corta em círculo. Ícone de app: 62%, quadrado sem cantos.</div></div></div>'
-                f'<div style="display:flex;gap:26px">{"".join(f"<div>{p}{cap(c)}</div>" for p, c in ((splash, "Splash · preto"), (story, "Story · rosa")))}</div></div>')
+                f'<div style="display:flex;gap:26px">{"".join(f"<div>{p}{cap(c, CAP_ESC)}</div>" for p, c in ((splash, "Splash · preto"), (story, "Story · rosa")))}</div></div>', "#000000", WHITE)
 
 
 def p_voz(n):

@@ -15,20 +15,23 @@ Plano de execução
 
 Etapas do funil (canônico Connect)
 
-1. Conexão
-2. Mensagem
-3. Resposta
-4. E-mail
-5. Orçamento
-6. Ordem de compra
-7. Pedido
-8. Compra dos produtos
-9. Nota fiscal
-10. Boleto
-11. Embala
-12. Envia
-13. Recebe
-14. Cobrança (caso necessário)
+1. Conexão LinkedIn
+2. Mensagem LinkedIn
+3. Resposta LinkedIn
+4. Enviar e-mail prospecção
+5. Receber orçamento
+6. Enviar orçamento
+7. Receber ordem de compra
+8. Gerar pedido no portal ConectMax
+9. Compra dos produtos do pedido
+10. Recebimento dos produtos
+11. Emissão nota fiscal
+12. Emissão boleto
+13. Embalar pedido
+14. Cotação com transportadora/Correios
+15. Enviar pedido
+16. 30 dias após a NF — receber o valor da venda
+17. Cobrança (caso necessário)
 
 Dados por etapa: card *Levantar dados do funil Connect — etapas ponta a ponta* (Backlog).
 

@@ -87,7 +87,7 @@ def cr(a, b):
 def p_capa():
     return page("", 0, f'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:64px">'
                 f'{lg("horizontal", "preto", 190)}'
-                f'<div style="font:600 24px Figtree;color:rgba(255,255,255,.75);letter-spacing:.14em">IDENTIDADE VISUAL · 2026-11-11</div></div>', INK, WHITE)
+                f'<div style="font:600 24px Figtree;color:rgba(255,255,255,.75);letter-spacing:.14em">IDENTIDADE VISUAL · 2026-11-11</div></div>', "#000000", WHITE)  # capa em preto puro (o resto usa o ink #14090F)
 
 
 def p_essencia(n):

@@ -202,7 +202,7 @@ def p_regra(n):
 def p_voz(n):
     faz = ["Seu pack tá no ar. Já pode mandar o link.", "Pago no Pix. Liberado na sua biblioteca.", "Você só paga se vender.", "Seu close, seu preço.", "Entra pro meu close."]
     nao = ["Plataforma de conteúdo adulto", "Monetize seu engajamento com soluções", "Emoji de fogo ou berinjela como identidade", "Compartilhe o link do seu Close Friends e ganhe com assinaturas"]
-    bolha = lambda t, bg, c=INK, strike=False: (f'<div style="background:{bg};color:{c};border-radius:22px;padding:15px 22px;font:600 25px/1.25 Figtree;margin-bottom:12px;'
+    bolha = lambda t, bg, c=INK, strike=False: (f'<div style="background:{bg};color:{c};border-radius:22px;padding:18px 26px;font:600 29px/1.25 Figtree;margin-bottom:16px;'
                                                  f'display:table;max-width:100%;{"text-decoration:line-through;text-decoration-thickness:2px;opacity:.75" if strike else ""}">{t}</div>')
     col = lambda t, itens, cor, fn: (f'<div style="flex:1"><b style="font:900 40px Gabarito;color:{cor};display:block;margin-bottom:16px">{t}</b>' + "".join(fn(i) for i in itens) + '</div>')
     gloss = "".join(f'<span style="display:inline-block;margin-right:10px">{chip(g, SOFT, INK, 20)}</span>' for g in ("exclusivo", "oferta", "pack", "drop", "biblioteca", "canal"))

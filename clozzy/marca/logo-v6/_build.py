@@ -98,7 +98,7 @@ def p_cover():
 <div><div class="kicker">Clozzy 2028 · Logo · v6</div>
 <h1>As pontas<br>inteiras.<br>A quebra<br><em>no canto.</em></h1>
 <p class="lead" style="margin-top:18px;max-width:470px">O C fecha nas duas extremidades e só o <b>canto superior esquerdo</b> se interrompe: três traços de tamanhos diferentes, com vãos largos e também desiguais — o bastante para o tracejado continuar visível em 16 px. Quatro cores: <b>preto, rosa, branco e roxo</b>.</p></div>
-<div style="display:grid;place-items:center">{img(L(MAIN + "-uso-rosa-no-preto"), 340)}</div>{foot(1)}</section>"""
+<div style="display:grid;place-items:center">{img(L(MAIN + "-uso-rosa-estrela-branca-no-preto"), 340)}</div>{foot(1)}</section>"""
 
 
 def p_origin(n):
@@ -224,7 +224,7 @@ def p_palette(n):
 <p class="lead">Preto, rosa, branco e roxo. O símbolo usa uma cor só ou duas — anel numa, estrela na outra. Sem gradiente e sem terceira cor dentro da marca.</p>
 <div class="pal">{cards}</div>
 <div style="display:flex;gap:24px;margin-top:16px;flex-wrap:wrap">{duo}</div>
-<p class="lead" style="margin-top:12px">Rosa e roxo juntos só dentro do símbolo, onde são formas grandes e separadas — nunca como texto rosa sobre fundo roxo.</p>{foot(n)}</section>"""
+<p class="lead" style="margin-top:12px">Rosa e roxo juntos só sobre branco ou preto, nunca um sobre o outro: rosa em fundo roxo some. Sobre rosa, nada de preto — só branco. E sobre preto o símbolo é rosa com a estrela branca.</p>{foot(n)}</section>"""
 
 
 def p_uses(n, idx, title, sub, white=False):
@@ -278,7 +278,7 @@ def p_utilizacoes(n):
                          f'<span style="background:{PINK};color:#fff;padding:6px 12px;border-radius:99px;font-size:9.5px;font-weight:800;display:flex;gap:6px;align-items:center">'
                          f'{img(L(MAIN + "-uso-branco-no-rosa"), 14)} Assinar close</span>'
                          f'<span style="background:{INK};color:#fff;padding:5px 10px;border-radius:7px;font-size:8.5px;display:flex;gap:5px;align-items:center">'
-                         f'{img(L(MAIN + "-uso-rosa-no-preto"), 12)} verificado</span></div>',
+                         f'{img(L(MAIN + "-uso-rosa-estrela-branca-no-preto"), 12)} verificado</span></div>',
          "Dentro de botão, o símbolo entra em 14 px com o corte pequeno."),
         ("Marca d’água", f'<div class="st" style="background:#2b1d26;justify-content:flex-end;align-items:flex-end;position:relative;overflow:hidden">'
                          f'<img src="{av}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55">'
@@ -319,8 +319,8 @@ def p_screen(n):
 <div class="box" style="display:flex;justify-content:space-between;align-items:center">{img(L(MAIN + "-uso-rosa-deep-lockup"), h=32)}
 <span style="display:flex;gap:16px;font-size:12px;font-weight:700;align-items:center">Explorar <span>Entrar</span>
 <span style="background:{PINK};color:#fff;padding:7px 14px;border-radius:99px">Sou criador</span></span></div>
-<div class="box" style="background:{INK};display:flex;justify-content:space-between;align-items:center">{img(L(MAIN + "-uso-branco-estrela-rosa-no-preto-lockup"), h=32)}
-<span style="display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px;font-size:11px">{img(L(MAIN + "-uso-rosa-no-preto-16"), 16)}clozzy.com</span></div>
+<div class="box" style="background:{INK};display:flex;justify-content:space-between;align-items:center">{img(L(MAIN + "-uso-rosa-estrela-branca-no-preto-lockup"), h=32)}
+<span style="display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px;font-size:11px">{img(L(MAIN + "-uso-rosa-estrela-branca-no-preto-16"), 16)}clozzy.com</span></div>
 <div class="box" style="background:{INK};color:#fff"><h4>Animação de assinatura (600 ms)</h4><div class="frames">{frames}
 <p style="margin-left:10px;font-size:10.5px;opacity:.8">A estrela acende e o C se desenha no sentido horário; ao cruzar o canto superior esquerdo o traço pisca nos vãos em vez de parar. Com <code>prefers-reduced-motion</code>, só o quadro final.</p></div></div>
 </div></div>{foot(n)}</section>"""
@@ -328,7 +328,7 @@ def p_screen(n):
 
 def p_next(n):
     picks = ["v6a-canto", "v6b-dois", "v6d-vao-largo"]
-    cards = "".join(f'<div style="text-align:center">{img(L(s + "-uso-rosa-no-preto"), 126)}'
+    cards = "".join(f'<div style="text-align:center">{img(L(s + "-uso-rosa-estrela-branca-no-preto"), 126)}'
                     f'<div style="font:800 12px Gabarito;margin-top:6px">{C[s][1]}</div></div>' for s in picks)
     tiles = "".join(f'<div style="text-align:center">{img(L(MAIN + "-app-" + b), 76)}</div>' for b in ("rosa", "roxo", "branco"))
     return f"""<section class="page ink" style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:30px">
@@ -336,19 +336,19 @@ def p_next(n):
 <p class="lead" style="margin-top:10px">Pontas inteiras e três traços desiguais (9 · 19 · 13) com vãos de 6 a 8 no canto superior esquerdo. É a versão que continua lendo como círculo fechado de longe e mostra o tracejado em 16 px.</p>
 <ul class="lead" style="margin:14px 0 0 18px">
 <li>Mais discreta: <b>2 · dois traços</b>. Mais segura no pequeno: <b>4 · vão largo</b>.</li>
-<li>Para fechar: a forma (1–6) e a dupla de cores (págs. 06–08). Sugestão: rosa no preto como principal, branco sobre rosa e roxo, preto para uma cor só.</li>
+<li>Para fechar: a forma (1–6) e a dupla de cores (págs. 06–08). Sugestão: rosa com estrela branca no preto como principal, branco sobre rosa e roxo, preto para uma cor só.</li>
 <li>Depois: ajuste óptico dos vãos, kit de exportação e manual.</li></ul></div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;justify-items:center">{cards}{tiles}</div>{foot(n)}</section>"""
 
 
 def build():
     light = [0, 1, 2, 3, 4, 5, 6, 7]
-    dark = [8, 9, 10, 11, 12, 13, 14, 15]
+    dark = [8, 9, 10, 11]
     pages = [p_cover(), p_origin(2), p_anatomy(3), p_variants(4), p_gap(5), p_palette(6),
              p_uses(7, light, "Sobre <em>branco</em>",
                     "Uma cor só (rosa, preto, roxo) e as duplas, com o anel numa cor e a estrela na outra. O rosa escuro #E0005A é o rosa dos tamanhos pequenos sobre branco.", white=True),
              p_uses(8, dark, "Sobre <em>rosa, roxo e preto</em>",
-                    "Sobre cor ou preto: branco puro, rosa no preto ou uma dupla com a estrela em destaque. No rosa, o preto também passa (5,2:1)."),
+                    "Sobre preto, o anel é rosa e a estrela branca; branco de um tom só fica como alternativa. Sobre rosa e sobre roxo, só branco — preto no rosa fecha a forma e rosa no roxo some."),
              p_apps_lockups(9), p_utilizacoes(10), p_screen(11), p_next(12)]
     html = (f'<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Clozzy — Logo v6</title>'
             f'<style>{PB.css()}{EXTRA}</style></head><body>{"".join(pages)}</body></html>')

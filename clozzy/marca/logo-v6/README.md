@@ -31,6 +31,15 @@ Base: [`../refs/`](../refs/) (Círculo próximo e anel de story) e a [`../logo-v
 
 **O vão é o que some primeiro.** Quando o logo encolhe, quem desaparece é o espaço, não o traço. Com metade dos vãos o canto fecha em 20 px; com +90% os traços soltam e lê como pontilhado. O corte de 16–20 px (`-16.svg`) usa espessura 12, dois traços (12 e 21) e vãos de 8 a 10,5.
 
+## Cor sobre fundo colorido
+
+**No preto:** anel **rosa** + estrela **branca** (`rosa-estrela-branca-no-preto`) — é a versão principal. Branco de um tom só segue válido para uma cor.
+**No rosa e no roxo:** só branco.
+
+Saíram três combinações: **preto no rosa** (os tons brigam e a forma fecha), **rosa no roxo** (o rosa some) e **branco + estrela rosa no preto** (no preto o anel é que é rosa). Antes → depois: a página 08 tinha 8 tiles, agora tem 4; o lockup e o favicon escuros, a capa e os cards da decisão passaram de `-uso-rosa-no-preto` para `-uso-rosa-estrela-branca-no-preto`.
+
+Rollback: em [`_v6.py`](_v6.py), voltar as linhas `("rosa-no-preto", …, INK, PINK, PINK, WHITE)`, `("branco-estrela-rosa-no-preto", …, INK, WHITE, PINK, WHITE)`, `("preto-no-rosa", …, PINK, INK, INK, INK)` e `("rosa-no-roxo", …, PURPLE, PINK, WHITE, WHITE)` ao `USES`, e em [`_build.py`](_build.py) `dark = [8, 9, 10, 11]` → `[8, …, 15]`.
+
 ## Paleta
 
 | Cor | Hex | Uso |

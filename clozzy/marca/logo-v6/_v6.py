@@ -108,6 +108,9 @@ C = {c[0]: c for c in CONCEPTS}
 MAIN = "v6a-canto"
 
 # usos: (slug, nome, fundo, anel, estrela, palavra do lockup)
+# Sobre fundo colorido só entram três: branco no rosa, branco no roxo e, no preto,
+# anel rosa com estrela branca (mais o branco de uma cor só). Preto sobre rosa e
+# rosa sobre roxo ficam fora — os tons brigam.
 USES = [
     ("rosa", "Rosa", WHITE, PINK, PINK, INK),
     ("preto", "Preto", WHITE, INK, INK, INK),
@@ -117,14 +120,10 @@ USES = [
     ("rosa-estrela-roxa", "Rosa + estrela roxa", WHITE, PINK, PURPLE, INK),
     ("preto-estrela-rosa", "Preto + estrela rosa", WHITE, INK, PINK, INK),
     ("roxo-estrela-rosa", "Roxo + estrela rosa", WHITE, PURPLE, PINK, INK),
-    ("branco-no-preto", "Branco no preto", INK, WHITE, WHITE, WHITE),
-    ("rosa-no-preto", "Rosa no preto", INK, PINK, PINK, WHITE),
-    ("branco-estrela-rosa-no-preto", "Branco + estrela rosa no preto", INK, WHITE, PINK, WHITE),
     ("rosa-estrela-branca-no-preto", "Rosa + estrela branca no preto", INK, PINK, WHITE, WHITE),
+    ("branco-no-preto", "Branco no preto", INK, WHITE, WHITE, WHITE),
     ("branco-no-rosa", "Branco no rosa", PINK, WHITE, WHITE, WHITE),
-    ("preto-no-rosa", "Preto no rosa", PINK, INK, INK, INK),
     ("branco-no-roxo", "Branco no roxo", PURPLE, WHITE, WHITE, WHITE),
-    ("rosa-no-roxo", "Rosa no roxo", PURPLE, PINK, WHITE, WHITE),
 ]
 
 THEMES = {"rosa": (PINK, PINK), "preto": (INK, INK), "roxo": (PURPLE, PURPLE),

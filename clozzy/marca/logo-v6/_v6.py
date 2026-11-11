@@ -23,8 +23,11 @@ OUTER = 45.0                 # raio externo (igual ao Círculo próximo)
 W_MAIN, W_SMALL = 10.0, 12.0
 C_LOW, C_TOP = -3.4, 327.4   # pontas visíveis do C (abertura de 54° centrada em −18°)
 CORNER = 225.0               # canto superior esquerdo: entre 180° (esquerda) e 270° (topo)
-DASH, GAP = 14.0, 6.5        # comprimento visível do traço · vão (unidades de arco)
-DASH_S, GAP_S = 17.0, 9.0    # corte de 16–20 px: menos traços, vão bem maior
+# Nenhuma parte se repete: cada traço e cada vão tem a sua medida (unidades de arco).
+DASHES = [9.0, 19.0, 13.0]           # traços, do lado esquerdo para o topo
+GAPS = [6.0, 8.0, 6.5, 7.5]          # vãos: borda, entre traços, borda
+DASHES_S = [12.0, 21.0]              # corte de 16–20 px
+GAPS_S = [8.0, 10.5, 9.0]
 
 
 def f(v):
@@ -53,47 +56,51 @@ def line(c, w, a0, a1):
             f'fill="none" stroke="{c}" stroke-width="{f(w)}" stroke-linecap="round"/>')
 
 
-def c_v6(rc, w, center=CORNER, n=3, dash=DASH, gap=GAP, open_extra=0.0, dashes=None):
+def c_v6(rc, w, dashes=None, gaps=None, center=CORNER, open_extra=0.0):
     """C com as duas pontas inteiras; o tracejado fica só no trecho centrado em `center`.
-    Comprimentos visíveis em unidades de arco; o vão é sempre o mesmo entre os traços e nas bordas."""
+    `dashes` e `gaps` são listas de comprimentos visíveis (unidades de arco) — todas as partes diferentes.
+    `gaps` tem um item a mais que `dashes`: entra também entre o arco cheio e o primeiro/último traço."""
     rm = OUTER - w / 2
     cap = math.degrees((w / 2) / rm)
     deg = lambda u: math.degrees(u / rm)  # noqa: E731
     low, top = C_LOW + open_extra, C_TOP - open_extra
-    ls = dashes if dashes else [dash] * n
-    total = sum(ls) + (len(ls) + 1) * gap
+    ds = list(dashes or DASHES)
+    gs = list(gaps or GAPS)
+    if len(gs) != len(ds) + 1:
+        gs = (gs * (len(ds) + 1))[:len(ds) + 1]
+    total = sum(ds) + sum(gs)
     start = center - deg(total) / 2
     out = line(rc, w, low + cap, start - cap)
-    pos = start + deg(gap)
-    for d in ls:
+    pos = start + deg(gs[0])
+    for d, g in zip(ds, gs[1:]):
         out += line(rc, w, pos + cap, pos + deg(d) - cap)
-        pos += deg(d) + deg(gap)
+        pos += deg(d) + deg(g)
     return out + line(rc, w, start + deg(total) + cap, top - cap)
 
 
-def mk(center=CORNER, n=3, dash=DASH, gap=GAP, open_extra=0.0, dashes=None,
-       n_small=2, dash_small=DASH_S, gap_small=GAP_S):
+def mk(dashes=None, gaps=None, center=CORNER, open_extra=0.0, dashes_s=None, gaps_s=None):
     def fn(rc=PINK, sc=PINK, small=False):
         if small:
-            body = c_v6(rc, W_SMALL, center, n_small, dash_small, gap_small, open_extra)
+            body = c_v6(rc, W_SMALL, dashes_s or DASHES_S, gaps_s or GAPS_S, center, open_extra)
         else:
-            body = c_v6(rc, W_MAIN, center, n, dash, gap, open_extra, dashes)
+            body = c_v6(rc, W_MAIN, dashes, gaps, center, open_extra)
         return body + star(sc)
     return fn
 
 
 # ---------------------------------------------------------------- possibilidades
+# Regra da v6: nenhum traço repete o tamanho de outro, e os vãos também variam.
 CONCEPTS = [
-    ("v6a-canto", "Quebra no canto", "Três traços de 14 com vão de 6,5 no canto superior esquerdo. As duas pontas do C ficam inteiras.",
+    ("v6a-canto", "Quebra no canto", "Traços de 9, 19 e 13 e vãos de 6 a 8 no canto superior esquerdo. Nenhuma parte repete a outra; as duas pontas do C ficam inteiras.",
      mk()),
-    ("v6b-dois", "Dois traços", "Dois traços mais longos: a versão mais discreta, quase um C inteiro com uma respiração.",
-     mk(n=2, dash=17.0)),
-    ("v6c-quatro", "Quatro traços", "Quatro traços mais curtos: o canto fica mais picotado e lembra mais o anel de story.",
-     mk(n=4, dash=11.0)),
-    ("v6d-vao-largo", "Vão largo", "Mesmos três traços com vão de 9: o que melhor se segura em 16 px, mas abre mais o desenho.",
-     mk(gap=9.0, gap_small=10.5)),
-    ("v6e-variado", "Traços variados", "Curto, longo, curto — o canto ganha ritmo sem virar a progressão da v5.",
-     mk(dashes=[11.0, 20.0, 11.0])),
+    ("v6b-dois", "Dois traços", "Só duas interrupções, uma curta e uma longa: a versão mais discreta.",
+     mk([11.0, 21.0], [6.5, 8.0, 7.0])),
+    ("v6c-quatro", "Quatro traços", "Quatro medidas diferentes: o canto fica mais picotado e lembra mais o anel de story.",
+     mk([7.0, 15.0, 10.0, 19.0], [6.0, 7.5, 6.5, 8.0, 7.0])),
+    ("v6d-vao-largo", "Vão largo", "Mesmos três traços com vãos de 8,5 a 10,5: a que melhor se segura em 16 px, mas abre mais o desenho.",
+     mk(None, [8.5, 10.5, 9.0, 10.0], gaps_s=[10.0, 12.5, 11.0])),
+    ("v6e-crescente", "Crescendo para o topo", "Os traços alongam na subida (8 · 14 · 22): a quebra tem direção, sem virar a progressão da v5.",
+     mk([8.0, 14.0, 22.0], [6.0, 7.5, 6.5, 8.0])),
     ("v6f-mais-alto", "Mais perto do topo", "O mesmo trecho deslocado para 248°: a quebra fica entre o canto e a ponta de cima.",
      mk(center=248.0)),
 ]

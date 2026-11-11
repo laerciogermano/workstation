@@ -97,7 +97,7 @@ def p_cover():
     return f"""<section class="page ink" style="display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:30px">
 <div><div class="kicker">Clozzy 2028 · Logo · v6</div>
 <h1>As pontas<br>inteiras.<br>A quebra<br><em>no canto.</em></h1>
-<p class="lead" style="margin-top:18px;max-width:470px">O C fecha nas duas extremidades e só o <b>canto superior esquerdo</b> se interrompe: três traços com vão largo, o bastante para o tracejado continuar visível em 16 px. Quatro cores: <b>preto, rosa, branco e roxo</b>.</p></div>
+<p class="lead" style="margin-top:18px;max-width:470px">O C fecha nas duas extremidades e só o <b>canto superior esquerdo</b> se interrompe: três traços de tamanhos diferentes, com vãos largos e também desiguais — o bastante para o tracejado continuar visível em 16 px. Quatro cores: <b>preto, rosa, branco e roxo</b>.</p></div>
 <div style="display:grid;place-items:center">{img(L(MAIN + "-uso-rosa-no-preto"), 340)}</div>{foot(1)}</section>"""
 
 
@@ -117,7 +117,7 @@ def p_origin(n):
 <div class="cols" style="grid-template-columns:repeat(4,1fr);margin-top:14px">
 <div class="box"><h4>Pontas inteiras</h4><p>O C começa e termina em linha cheia, com as pontas redondas do desenho original. Nada de traço solto nas extremidades.</p></div>
 <div class="box"><h4>Só o canto</h4><p>A interrupção fica entre 190° e 260°, o canto superior esquerdo — longe da abertura (−18°) e da ponta de cima.</p></div>
-<div class="box"><h4>Vão largo</h4><p>Vão de 6,5 contra traço de 14. Em 16 px o branco entre os traços é o que mantém o tracejado legível.</p></div>
+<div class="box"><h4>Nada se repete</h4><p>Traços de 9, 19 e 13; vãos de 6 a 8. Cada parte tem a sua medida — tracejado irregular, não borda pontilhada.</p></div>
 <div class="box"><h4>Estrela original</h4><p>R 20,5 · miolo 0,48 · canto 5, centrada em 50/50. A mesma do Círculo próximo.</p></div>
 </div>{foot(n)}</section>"""
 
@@ -134,7 +134,9 @@ def p_anatomy(n):
         x1, y1 = V.P(a, RM + 9)
         guide += f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{PURPLE}" stroke-width=".35" stroke-dasharray="1 .8"/>'
     big = V.svg100(C[MAIN][3](PINK, PINK) + guide)
-    total = 3 * V.DASH + 4 * V.GAP
+    total = sum(V.DASHES) + sum(V.GAPS)
+    medidas = " · ".join(f"{d:.0f}" for d in V.DASHES)
+    vaos = " · ".join(f"{g:.1f}".replace(".0", "") for g in V.GAPS)
     sizes = "".join(f'<div style="text-align:center">{img(L(MAIN + ("-16" if px <= 24 else "-rosa")), px)}'
                     f'<div style="font-size:9.5px;margin-top:7px;color:rgba(20,9,15,.6)">{px} px</div></div>'
                     for px in (120, 72, 44, 28, 20, 16))
@@ -144,9 +146,9 @@ def p_anatomy(n):
 {img(sv(big), 390)}
 <div class="cols" style="grid-template-columns:1fr 1fr">
 <div class="box" style="background:{CREAM}"><h4>O C</h4><p>Raio externo 45, traço 10, pontas redondas. Abertura de 54° centrada em −18°; as pontas visíveis (tracejado roxo) ficam em −3,4° e 327,4° e são <b>sempre linha cheia</b>.</p></div>
-<div class="box" style="background:{CREAM}"><h4>O trecho quebrado</h4><p>Centrado em {V.CORNER:.0f}° (linha roxa). Três traços de {V.DASH:.0f} e quatro vãos de {V.GAP:.1f} — ao todo {total:.0f} unidades de arco, {deg(total):.0f}°, menos de um terço do C.</p></div>
+<div class="box" style="background:{CREAM}"><h4>Nenhuma parte igual</h4><p>Centrado em {V.CORNER:.0f}° (linha roxa). Traços de <b>{medidas}</b> e vãos de <b>{vaos}</b> — cada medida aparece uma vez só. Ao todo {total:.0f} unidades de arco, {deg(total):.0f}°.</p></div>
 <div class="box" style="background:{CREAM}"><h4>Vão nas bordas</h4><p>O vão também entra entre o arco cheio e o primeiro traço, dos dois lados. Sem isso a quebra encosta no arco e some.</p></div>
-<div class="box" style="background:{CREAM}"><h4>16–20 px</h4><p>Corte próprio (<code>-16.svg</code>): traço 12 de espessura, só dois traços de {V.DASH_S:.0f} e vão de {V.GAP_S:.0f}.</p></div>
+<div class="box" style="background:{CREAM}"><h4>16–20 px</h4><p>Corte próprio (<code>-16.svg</code>): espessura 12, dois traços ({V.DASHES_S[0]:.0f} e {V.DASHES_S[1]:.0f}) e vãos de {V.GAPS_S[0]:.0f} a {max(V.GAPS_S):.1f}.</p></div>
 </div></div>
 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(20,9,15,.1)">
 <div style="max-width:300px"><b class="g" style="font-size:14px">Redução</b>
@@ -169,26 +171,35 @@ def p_variants(n):
 
 
 def p_gap(n):
-    cells, strips = "", ""
-    for g, lab, note in [(3.0, "3,0", "fecha em 20 px"), (4.5, "4,5", "aperta"), (6.5, "6,5", "escolhido"),
-                         (9.0, "9,0", "abre o desenho"), (12.0, "12,0", "vira pontilhado")]:
-        body = V.c_v6(PINK, V.W_MAIN, V.CORNER, 3, V.DASH, g) + V.star(PINK)
-        small = V.c_v6(PINK, V.W_SMALL, V.CORNER, 2, V.DASH_S, g * 1.4) + V.star(PINK)
-        on = "on" if g == V.GAP else ""
+    cells = ""
+    for k, lab, note in [(0.5, "metade", "fecha em 20 px"), (0.75, "−25%", "aperta"), (1.0, "da v6", "escolhido"),
+                         (1.45, "+45%", "abre o desenho"), (1.9, "+90%", "vira pontilhado")]:
+        gaps = [g * k for g in V.GAPS]
+        body = V.c_v6(PINK, V.W_MAIN, V.DASHES, gaps) + V.star(PINK)
+        small = V.c_v6(PINK, V.W_SMALL, V.DASHES_S, [g * 1.35 * k for g in V.GAPS_S]) + V.star(PINK)
+        on = "on" if k == 1.0 else ""
+        faixa = f'{min(gaps):.1f}–{max(gaps):.1f}'.replace(".0", "")
         cells += (f'<div class="{on}">{img(sv(V.svg100(body)), 158)}'
                   f'<div style="display:flex;gap:9px;justify-content:center;margin-top:8px;align-items:center">'
                   f'{img(sv(V.svg100(small)), 28)}{img(sv(V.svg100(small)), 20)}{img(sv(V.svg100(small)), 16)}</div>'
-                  f'<b>vão {lab}</b>{note}</div>')
-        strips += (f'<div style="flex:1;text-align:center"><div style="background:{"#fff" if g == V.GAP else "transparent"};'
-                   f'border-radius:12px;padding:9px 6px">{img(sv(V.svg100(small)), 54)}</div>'
-                   f'<div style="font:800 9.5px Figtree;margin-top:6px;color:{PINK if g == V.GAP else "rgba(20,9,15,.5)"}">'
-                   f'VÃO {lab} · {3 * V.DASH + 4 * g:.0f} UN</div></div>')
+                  f'<b>vãos {lab}</b>{faixa} · {note}</div>')
+    uneven = ""
+    for titulo, ds, gs, nota in [
+        ("Tudo igual", [14.0, 14.0, 14.0], [7.0] * 4, "três traços idênticos: o canto vira um tracejado de régua, mecânico"),
+        ("Traços desiguais", V.DASHES, [7.0] * 4, "só os traços variam; os vãos iguais ainda marcam um ritmo de máquina"),
+        ("Tudo desigual", V.DASHES, V.GAPS, "traço e vão com medidas próprias — é a v6"),
+    ]:
+        on = titulo == "Tudo desigual"
+        body = V.c_v6(PINK if on else INK, V.W_MAIN, ds, gs) + V.star(PINK if on else INK)
+        uneven += (f'<div class="box" style="display:flex;gap:14px;align-items:center;{"outline:2px solid " + PINK if on else ""}">'
+                   f'{img(sv(V.svg100(body)), 76)}<div><h4>{titulo}</h4><p>{nota}</p></div></div>')
     return f"""<section class="page">
-<div class="kicker">05 · O vão</div><h2>O vão é o que <em>some primeiro</em></h2>
-<p class="lead">Quando o logo encolhe, o traço continua lá — quem desaparece é o espaço entre eles. Por isso o vão da v6 é maior do que pede o desenho grande: com 3 ou 4,5 o canto fecha e vira uma linha contínua em 20 px; com 12 os traços soltam e lê como pontilhado.</p>
-<div class="thick">{cells}</div>
-<div style="display:flex;gap:18px;margin-top:22px;padding-top:16px;border-top:1px solid rgba(20,9,15,.1);align-items:flex-end">{strips}</div>
-<p class="lead" style="margin-top:10px">Os mesmos cinco vãos no corte pequeno, ampliados. Em 6,5 o branco entre os traços ainda tem mais de meio pixel em 16 px.</p>{foot(n)}</section>"""
+<div class="kicker">05 · Traços e vãos</div><h2>Nenhuma parte <em>do mesmo tamanho</em></h2>
+<p class="lead">Traços iguais em vãos iguais produzem um tracejado de régua. Na v6 cada traço e cada vão têm a sua medida — o canto fica irregular como um story que carregou pela metade, não como uma borda pontilhada.</p>
+<div class="cols" style="grid-template-columns:repeat(3,1fr);margin-top:6px">{uneven}</div>
+<h3 style="font-size:17px;margin-top:20px">E o vão é o que some primeiro</h3>
+<p class="lead" style="margin-top:2px">Quando o logo encolhe, o traço continua lá; quem desaparece é o espaço. Por isso os vãos da v6 são maiores do que o desenho grande pediria — na metade deles o canto fecha em 20 px; com +90% os traços soltam e lê como pontilhado.</p>
+<div class="thick" style="margin-top:10px">{cells}</div>{foot(n)}</section>"""
 
 
 def p_palette(n):
@@ -275,7 +286,7 @@ def p_utilizacoes(n):
          "Branco a 85% no canto inferior do conteúdo, sem caixa nem sombra."),
         ("Impresso e bordado", f'<div class="st" style="background:{CREAM};gap:12px">'
                                f'{img(L(MAIN + "-preto"), 50)}{img(L(MAIN + "-uso-rosa-deep"), 50)}</div>',
-         "Uma cor, traço 10 cheio: em bordado o vão de 6,5 é o mínimo para não fechar com a linha."),
+         "Uma cor, espessura 10 cheia: em bordado o menor vão (6) é o mínimo para não fechar com a linha."),
     ]
     body = "".join(f'<div class="k"><b>{t}</b>{st}<p>{d}</p></div>' for t, st, d in cards)
     return f"""<section class="page white">
@@ -322,7 +333,7 @@ def p_next(n):
     tiles = "".join(f'<div style="text-align:center">{img(L(MAIN + "-app-" + b), 76)}</div>' for b in ("rosa", "roxo", "branco"))
     return f"""<section class="page ink" style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:30px">
 <div><div class="kicker">{n:02d} · Decisão</div><h2 style="font-size:40px">Recomendo a <em>1 · quebra no canto</em></h2>
-<p class="lead" style="margin-top:10px">Pontas inteiras, três traços de 14 e vão de 6,5 no canto superior esquerdo. É a versão que continua lendo como círculo fechado de longe e mostra o tracejado em 16 px.</p>
+<p class="lead" style="margin-top:10px">Pontas inteiras e três traços desiguais (9 · 19 · 13) com vãos de 6 a 8 no canto superior esquerdo. É a versão que continua lendo como círculo fechado de longe e mostra o tracejado em 16 px.</p>
 <ul class="lead" style="margin:14px 0 0 18px">
 <li>Mais discreta: <b>2 · dois traços</b>. Mais segura no pequeno: <b>4 · vão largo</b>.</li>
 <li>Para fechar: a forma (1–6) e a dupla de cores (págs. 06–08). Sugestão: rosa no preto como principal, branco sobre rosa e roxo, preto para uma cor só.</li>

@@ -2,6 +2,7 @@
 
 | Arquivo | Uso |
 |---------|-----|
+| [`logo-moderna/`](logo-moderna/README.md) | **Rodada 14** — evolução moderna a partir de `refs/`: close friends como palavra-chave + grupo de **lente** (diafragma, obturador, reflexo); 10 conceitos |
 | [`identidade-v2/`](identidade-v2/README.md) | **Identidade visual v2** — símbolo R8 (C + estrela + ponta · – ––), manual, BRAND, tokens, logos |
 | [`identidade-nova/`](identidade-nova/README.md) | **Identidade Clozzy 2028** — “Círculo próximo”, manual + BRAND + tokens |
 | [`logo-2028/`](logo-2028/README.md) | Logos rodada 2 — 8 conceitos de símbolo (checkpoint) |
@@ -14,6 +15,12 @@
 | [`logo-c-canto/`](logo-c-canto/README.md) | Rodada 9 — C com pontas inteiras e tracejado no canto superior esquerdo; utilizações e 24 combinações de cor |
 | [`logo-c-canto-v2/`](logo-c-canto-v2/README.md) | Rodada 10 — dois traços do canto com um um pouco maior (16°/22°) e estrela menor (R 18) |
 | [`logo-anel-direita/`](logo-anel-direita/README.md) | **Rodada 12** — 8 exemplos do símbolo do print traço 8 (linha cheia à esquerda, traços à direita) + o tile de app espelhado para a direita |
+| [`logo-variacoes-v2/`](logo-variacoes-v2/README.md) | **Rodada 13 v2** — as 12 variações com a estrela do 07 Disco menor + seção de utilizações do 07 Disco, 04 Crescente e 06 Giro (app, perfil, story, botões, loading, ecobag) |
+| [`logo-variacoes/`](logo-variacoes/README.md) | **Rodada 13** — 12 variações possíveis a partir do logo final v3 (traços, giro, disco, squircle, estrela em linha, faísca, raios, duas cores), com lockups, ícones e teste de 16 px |
+| [`logo-stories/`](logo-stories/README.md) | **Rodada 13** — 10 logos com cara de stories (anel de avatar, segmentos, selo “+”, carregando, barras de progresso, card 9:16, pilha) |
+| [`logo-final-v3/`](logo-final-v3/README.md) | **LOGO FINAL v3** — estrela um pouco menor: inscrita no círculo central **r 19** (v2 = r 21); pontas tocam a borda, nunca passam (R ≈ 16,9) |
+| [`logo-final-v2/`](logo-final-v2/README.md) | **LOGO FINAL v2** — estrela um pouco menor, inscrita no círculo central r 21 (as 5 pontas com o canto redondo tocam a borda, nunca passam; R ≈ 18,7), também no corte pequeno |
+| [`logo-final/`](logo-final/README.md) | **LOGO FINAL** — compilado das rodadas: C da v7 (traços à direita, cantos redondos, anel 9,5, estrela R 21), lockups, regras de uso (respiro, mínimos, não fazer) e kit de redes (perfil, destaques, feed, carrossel, stories, capas) |
 | [`logo-letreiro-v7/`](logo-letreiro-v7/README.md) | Rodada 11 v7 — **C** em linha cheia com só a abertura da direita tracejada (3 traços), anel 9, estrela R 20 |
 | [`logo-letreiro-v6/`](logo-letreiro-v6/README.md) | Rodada 11 v6 — estrela no meio-termo (**R 23**) |
 | [`logo-letreiro-v5/`](logo-letreiro-v5/README.md) | Rodada 11 v5 — v4 com a **estrela maior (R 27)**, centro menos aberto |

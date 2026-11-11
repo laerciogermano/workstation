@@ -2,6 +2,7 @@
 
 | Arquivo | Uso |
 |---------|-----|
+| [`identidade-v2/`](identidade-v2/README.md) | **Identidade visual v2** — símbolo R8 (C + estrela + ponta · – ––), manual, BRAND, tokens, logos |
 | [`identidade-nova/`](identidade-nova/README.md) | **Identidade Clozzy 2028** — “Círculo próximo”, manual + BRAND + tokens |
 | [`logo-2028/`](logo-2028/README.md) | Logos rodada 2 — 8 conceitos de símbolo (checkpoint) |
 | [`referencias-apps/`](referencias-apps/README.md) | 17 apps de referência + 10 telas-modelo + logo “Story” × v1 (só rosa/roxo/ink/cream) |
@@ -11,6 +12,7 @@
 | [`logo-c-tracos/`](logo-c-tracos/README.md) | Rodada 7 — C + estrela original, ponta · – –– ––– com espessura constante |
 | [`logo-tracos-sutis/`](logo-tracos-sutis/README.md) | Rodada 8 — “Traços sutis” (· – ––) com vãos maiores; 8 variações |
 | [`logo-v5/`](logo-v5/README.md) | **v5** — C com ponta de comprimento gradativo (razão 1,7), espessura constante; preto, rosa, branco e roxo |
+| [`logo-v6/`](logo-v6/README.md) | **v6** — C de pontas inteiras com a quebra tracejada no canto superior esquerdo, vão largo para 16 px; inclui página de utilizações |
 | [`identidade-atual/`](identidade-atual/README.md) | Identidade visual **as-is** (performer + site) |
 | [`benchmarking-concorrentes/`](benchmarking-concorrentes/README.md) | Benchmarking de plataformas concorrentes |
 | [`benchmarking-concorrentes/clozzy/`](benchmarking-concorrentes/clozzy/README.md) | Clones do código Clozzy (ex-`closeapp/`) |

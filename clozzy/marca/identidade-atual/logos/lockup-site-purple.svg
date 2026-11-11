@@ -1,0 +1,5 @@
+<svg width="200" height="40" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+<circle cx="20" cy="20" r="16" fill="#7651E9"/>
+<path d="M 20.00,10.80 L 22.23,16.93 L 28.75,17.16 L 23.61,21.17 L 25.41,27.44 L 20.00,23.80 L 14.59,27.44 L 16.39,21.17 L 11.25,17.16 L 17.77,16.93 Z" fill="#FFFFFF"/>
+<text x="44" y="27" font-family="Inter, Montserrat, system-ui, sans-serif" font-weight="700" font-size="22" fill="#111111">clozzy</text>
+</svg>

@@ -26,9 +26,13 @@
   --cz-danger: #eb445a;
   --cz-info: #3dc2ff;
 
-  /* Drift site marketing (clozzy.com.br 2026-11) — não é o token do performer */
-  --cz-site-purple: #7651e9;
-  --cz-site-green: #1cce98;
+  /* Site marketing clozzy.com.br / clozzy.link (CSS :root) */
+  --cz-site-purple: #7651e9; /* --primary-color · CTA / mark estrela */
+  --cz-site-purple-rgb: 118, 81, 233; /* amostra screenshot CTA */
+  --cz-site-green: #1cce98; /* --secondary-color */
+  --cz-site-border: #ddd;
+  --cz-site-mist: #edeef1;
+  --cz-site-wash: #f6f7f8;
 
   /* Tipo */
   --cz-font-performer: "Montserrat", system-ui, sans-serif;

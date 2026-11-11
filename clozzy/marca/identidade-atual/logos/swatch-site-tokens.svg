@@ -1,0 +1,6 @@
+<svg width="240" height="80" xmlns="http://www.w3.org/2000/svg">
+<rect width="110" height="80" fill="#7651E9"/>
+<rect x="110" width="130" height="80" fill="#1CCE98"/>
+<text x="12" y="46" fill="#fff" font-family="system-ui" font-size="14" font-weight="700">#7651E9</text>
+<text x="122" y="46" fill="#000" font-family="system-ui" font-size="14" font-weight="700">#1CCE98</text>
+</svg>

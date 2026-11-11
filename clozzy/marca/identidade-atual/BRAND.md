@@ -10,31 +10,49 @@
 
 - **O que é:** plataforma BR de Close Friends pago — link na bio, assinaturas, stories/conteúdo exclusivo, gestão de membros.
 - **Para quem:** criadores (performer) e fãs (front).
-- **Personalidade observada:** rosa choque · tipografia bold · light UI · conversão (“Você só paga se vender”).
+- **Personalidade observada:** light UI · tipografia bold · conversão (“Você só paga se vender”) · **duas paletas vivas** (rosa no app, roxo no site).
 - **Posicionamento (site):** “Compartilhe o link do seu Close Friends e ganhe dinheiro com assinaturas dentro das suas redes sociais.”
 - **Nome:** Clozzy · lowercase `clozzy` no wordmark · PWA `meuclozzy` / manifest `clozzy`.
 
-## 2. Logo system (código performer)
+## 2. Logo system
 
-Masters SVG em `performer/src/assets/icons/` → cópia em [`logos/`](logos/).
+### A — App / código (performer)
+
+Masters SVG em `performer/src/assets/icons/` → [`logos/`](logos/).
 
 | Variante | Arquivo | Quando |
 |---|---|---|
-| Lockup preto + mark rosa | `lockup-clozzy.svg` / `lockup-black.svg` | Header claro, docs |
-| Lockup branco + mark rosa | `lockup-white.svg` | Fundo escuro / landing dark |
-| Mark círculo | `mark-circle.svg` | Avatar, favicon base |
-| App icons PNG | `mark-app-512.png` etc. | PWA / loja |
+| Lockup preto + mark rosa | `lockup-clozzy.svg` / `lockup-black.svg` | App criador |
+| Lockup branco + mark rosa | `lockup-white.svg` | Fundo escuro |
+| Mark círculo geométrico | `mark-circle.svg` | Avatar app |
+| App icons PNG | `mark-app-512.png` | PWA |
 
-**Anatomia do mark:** círculo `#FF0065` + glifo branco geométrico (pétalas/losango — não é estrela no SVG master). Wordmark “clozzy” em preto (ou branco no lockup dark), sans bold.
+**Mark A:** círculo `#FF0065` + glifo branco geométrico (pétalas/losango).
+
+### B — Site marketing (clozzy.com.br)
+
+Referências em [`refs/`](refs/) + reconstituição em [`logos/`](logos/).
+
+| Variante | Arquivo | Quando |
+|---|---|---|
+| Lockup site (estrela roxa) | `lockup-site-purple.svg` | Header landing |
+| Mark estrela roxa | `mark-star-purple.svg` | Hero / favicon-style site |
+| Print desktop | `refs/site-landing-desktop.png` | Landing completa |
+| Print mobile | `refs/site-landing-mobile.png` | Landing 390×844 |
+| Crops | `refs/site-logo-crop.png` · `site-mark-crop.png` · `site-cta-crop.png` | Detalhe |
+
+**Mark B:** círculo `#7651E9` + **estrela** branca de 5 pontas · wordmark `clozzy` preto · CTA pill/retângulo arredondado roxo (“Criar o meu close friends”).
 
 ### Não fazer
 
 1. Esticar / distorcer.  
-2. Trocar o rosa por roxo genérico sem decisão de redesign.  
+2. Misturar mark A (geométrico rosa) com mark B (estrela roxa) na mesma peça sem legenda.  
 3. Glow / sombra no master.  
-4. Misturar mark geométrico (código) com estrela roxa do site sem documentar o drift.
+4. Assumir que o site já unificou com o performer — ainda não.
 
 ## 3. Cor
+
+### App (código)
 
 | Token | Hex | Fonte |
 |---|---|---|
@@ -43,12 +61,20 @@ Masters SVG em `performer/src/assets/icons/` → cópia em [`logos/`](logos/).
 | `--cz-pink-landing` | `#FE2C78` | `landing-logo.svg` |
 | `--cz-ink` | `#222428` | Ionic dark / caret |
 | `--cz-light` | `#F4F5F8` | Ionic light |
-| `--cz-paper` | `#FFFFFF` | Fundo app / theme-color performer |
+| `--cz-paper` | `#FFFFFF` | Fundo app |
 | `--cz-success` | `#2DD36F` | Ionic success |
 
-**Drift site marketing (2026-11):** landing em produção usa `--primary-color:#7651E9` (roxo) + estrela — **não** bate com o performer. Favicon público ainda na família rosa. Tratar roxo como variante de marketing até unificar.
+### Site (clozzy.com.br / .link)
 
-**AA:** branco no `#FF0065` ≈ 3.9:1 (CTA grande) · rosa no preto ≈ 5.4:1 · preto no branco 21:1.
+| Token | Hex | Fonte |
+|---|---|---|
+| `--cz-site-purple` | `#7651E9` | CSS `--primary-color` · CTA RGB ≈ (118,81,233) |
+| `--cz-site-green` | `#1CCE98` | CSS `--secondary-color` |
+| `--cz-site-mist` | `#EDEEF1` | fundos / chrome |
+| `--cz-site-wash` | `#F6F7F8` | wash |
+| `--cz-site-border` | `#DDD` | bordas |
+
+**AA:** branco no `#FF0065` ≈ 3.9:1 · rosa no preto ≈ 5.4:1 · branco no `#7651E9` ≈ 5.1:1 · preto no branco 21:1.
 
 ## 4. Tipografia
 

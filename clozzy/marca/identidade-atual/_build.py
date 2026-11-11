@@ -111,7 +111,7 @@ pages.append(f"""<section class="page pink">
 {foot(1)}</section>""")
 
 # 2 sumário
-toc = [(3,"Essência"),(4,"Logo system (performer)"),(5,"Mark"),(6,"Cores"),(7,"Tipografia"),(8,"UI performer / front"),(9,"Site e drift"),(10,"Voz e canais"),(11,"Código e paths"),(12,"Contracapa")]
+toc = [(3,"Essência"),(4,"Logo system (performer)"),(5,"Mark"),(6,"Cores"),(7,"Tipografia"),(8,"UI performer / front"),(9,"Site roxo clozzy.com.br"),(10,"Voz e canais"),(11,"Código e paths"),(12,"Contracapa")]
 pages.append(f"""<section class="page light">
 <div class="eyebrow">Sumário</div><h2>Manual em <b>12</b> páginas</h2>
 <div class="toc">{''.join(f'<div class="ti"><span>{n:02d}</span><b>{t}</b></div>' for n,t in toc)}</div>
@@ -139,12 +139,12 @@ pages.append(f"""<section class="page light">
 
 # 4 logo
 tiles = [
-    ("lite","lockup-clozzy.svg","Lockup principal","Mark rosa + wordmark preto"),
-    ("lite","lockup-black.svg","Lockup alt","Mesma família, path tipográfico"),
-    ("dark","lockup-white.svg","Lockup no escuro","Wordmark branco + mark #FE2C78"),
-    ("pk","mark-circle.svg","Mark círculo","Avatar / símbolo"),
-    ("pk","mark-app-512.png","App icon 512","PWA / ícone"),
-    ("lite","favicon-96x96.png","Favicon","Rosa + estrela no PNG público"),
+    ("lite","lockup-clozzy.svg","Lockup app","Mark geométrico rosa + wordmark"),
+    ("dark","lockup-white.svg","Lockup escuro","Wordmark branco + mark rosa"),
+    ("pk","mark-circle.svg","Mark app","Círculo #FF0065 geométrico"),
+    ("lite","lockup-site-purple.svg","Lockup site","Estrela #7651E9 (clozzy.com.br)"),
+    ("pk","mark-star-purple.svg","Mark site","Estrela branca no roxo"),
+    ("lite","favicon-96x96.png","Favicon PNG","Ainda rosa (família app)"),
 ]
 lg = "".join(
     f'<div class="lt"><div class="ltv {c}">{img(f, h=90 if f.endswith(".png") else 48, max_w=420)}</div><b>{t}</b><p>{d}</p><code>{f}</code></div>'
@@ -180,16 +180,16 @@ pages.append(f"""<section class="page dark">
 
 # 6 cores
 sw = [
-    ("#FF0065","--cz-pink","performer primary"),
-    ("#FE2C55","--cz-pink-front","front primary"),
-    ("#FE2C78","--cz-pink-landing","landing-logo"),
-    ("#FF116F","--cz-pink-alt","logo.svg mark"),
-    ("#222428","--cz-ink","texto / dark"),
-    ("#F4F5F8","--cz-light","fundo light"),
+    ("#FF0065","--cz-pink","app performer"),
+    ("#FE2C55","--cz-pink-front","app front"),
+    ("#FE2C78","--cz-pink-landing","SVG landing"),
+    ("#222428","--cz-ink","texto"),
     ("#FFFFFF","--cz-paper","paper"),
-    ("#2DD36F","--cz-success","success"),
-    ("#7651E9","--cz-site-purple","drift site"),
-    ("#1CCE98","--cz-site-green","drift site"),
+    ("#7651E9","--cz-site-purple","site primary"),
+    ("#1CCE98","--cz-site-green","site secondary"),
+    ("#EDEEF1","--cz-site-mist","site mist"),
+    ("#F6F7F8","--cz-site-wash","site wash"),
+    ("#2DD36F","--cz-success","success app"),
 ]
 sw_html = "".join(
     f'<div class="sw"><div class="swc" style="background:{h};{"border:1px solid #ddd" if h=="#FFFFFF" else ""}"></div><code>{h}</code><span>{t}</span><span>{u}</span></div>'
@@ -200,11 +200,12 @@ pages.append(f"""<section class="page light">
 <h2>Rosa <b>#FF0065</b> no código</h2>
 <div class="swg">{sw_html}</div>
 <table class="ct" style="margin-top:12px"><tr><th>Par</th><th>Razão</th><th>Nota</th></tr>
-<tr><td>Branco / #FF0065</td><td>≈3.9:1 <span class="vd mid">grande</span></td><td>CTA preenchido</td></tr>
-<tr><td>#FF0065 / preto</td><td>≈5.4:1 <span class="vd ok">AA</span></td><td>Mark no escuro</td></tr>
+<tr><td>Branco / #FF0065</td><td>≈3.9:1 <span class="vd mid">grande</span></td><td>CTA app</td></tr>
+<tr><td>Branco / #7651E9</td><td>≈5.1:1 <span class="vd ok">AA</span></td><td>CTA site</td></tr>
+<tr><td>#FF0065 / preto</td><td>≈5.4:1 <span class="vd ok">AA</span></td><td>Mark app</td></tr>
 <tr><td>Preto / branco</td><td>21:1 <span class="vd ok">AAA</span></td><td>Corpo</td></tr>
 </table>
-<p class="note"><code>performer/src/theme/variables.scss</code> → <code>--color-primary: #FF0065</code>. Shade/tint Ionic ainda nos defaults azuis (dívida técnica).</p>
+<p class="note">App: <code>variables.scss</code> → #FF0065. Site: HTML <code>--primary-color:#7651e9</code> + prints em <code>refs/site-*</code>.</p>
 {foot(6)}</section>""")
 
 # 7 tipo
@@ -249,20 +250,40 @@ pages.append(f"""<section class="page light">
 </div>
 {foot(8)}</section>""")
 
-# 9 drift
-ref = ""
-if (REFS / "landing-clozzy-com-br.png").exists():
-    ref = f'<div class="rf">{img("landing-clozzy-com-br.png", REFS, max_w=720)}<b>Landing</b><span>clozzy.link / com.br — roxo #7651E9 (drift)</span></div>'
+# 9 site purple refs
+def ref_img(name, cap, sub, max_w=720):
+    if not (REFS / name).exists():
+        return ""
+    return f'<div class="rf">{img(name, REFS, max_w=max_w)}<b>{cap}</b><span>{sub}</span></div>'
+
+site_grid = "".join([
+    ref_img("site-landing-desktop.png", "Landing desktop", "clozzy.com.br / .link · hero + CTA #7651E9"),
+    ref_img("site-landing-mobile.png", "Landing mobile", "390×844"),
+    ref_img("site-logo-crop.png", "Lockup site", "estrela roxa + wordmark preto", 480),
+    ref_img("site-cta-crop.png", "CTA", "“Criar o meu close friends” · “Você só paga se vender”", 480),
+])
 pages.append(f"""<section class="page mist">
-<div class="eyebrow">Site</div>
-<h2>clozzy.com.br × <b>código</b></h2>
-<div class="grid2">
-<div class="card"><b>Produção web</b>
-<p>DNS às vezes falha localmente; conteúdo serve via Fastly (151.101.x) e clozzy.link. <code>og:url</code> = https://clozzy.com.br</p>
-<p style="margin-top:8px">CSS marketing: <code>--primary-color:#7651e9</code> · estrela roxa no hero — <b>diferente</b> do performer.</p>
-<div class="warn" style="margin-top:10px">Unificar rosa código ↔ roxo site é decisão de Clozzy 2028 (card identidade nova).</div>
+<div class="eyebrow">Site · clozzy.com.br</div>
+<h2>Sistema <b>roxo</b> ao vivo</h2>
+<div style="display:grid;grid-template-columns:1.1fr .9fr;gap:16px;flex:1">
+<div class="refs" style="grid-template-columns:1fr 1fr">{site_grid}</div>
+<div>
+<div class="card"><b>Tokens do site</b>
+<ul>
+<li><code>--primary-color: #7651E9</code></li>
+<li><code>--secondary-color: #1CCE98</code></li>
+<li>Fundos <code>#EDEEF1</code> / <code>#F6F7F8</code></li>
+<li>Mark: círculo roxo + estrela branca</li>
+<li>CTA RGB ≈ (118, 81, 233)</li>
+</ul>
+<div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+{img('lockup-site-purple.svg', h=36, max_w=360)}
+{img('mark-star-purple.svg', h=48, max_w=120)}
 </div>
-{ref or '<div class="card"><b>Screenshot</b><p>refs/landing-clozzy-com-br.png</p></div>'}
+<p class="note" style="margin-top:10px">Espelho: clozzy.link · <code>og:url</code> = clozzy.com.br. Favicon PNG ainda rosa (família app).</p>
+<div class="warn" style="margin-top:10px">Rosa app (#FF0065) ≠ roxo site (#7651E9). Unificar = card identidade nova.</div>
+</div>
+</div>
 </div>
 {foot(9)}</section>""")
 

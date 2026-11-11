@@ -12,7 +12,11 @@ K, f = M.K, M.f
 PINK, DEEP, PURPLE, INK, CREAM, WHITE = M.PINK, M.DEEP, M.PURPLE, M.INK, M.CREAM, M.WHITE
 LAV, SOFT, MUTED = M.LAVANDA, M.ROSA_SUAVE, M.MUTED
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-FONTS = "../identidade-nova/fonts"
+FONTS = "../identidade-nova/fonts"           # relativo ao HTML gerado
+NOME_FONTE = "Gabarito 800"                  # fonte e peso do nome clozzy (as outras variantes trocam isto)
+OUT_DIR = HERE                               # pasta de saída do HTML/PDF
+OUT_NAME = "identidade-clozzy-oficial"       # nome base do HTML/PDF
+DOC_TITULO = "Clozzy — identidade visual"
 LINE = "rgba(20,9,15,.14)"
 LINE_W = "rgba(255,255,255,.28)"
 
@@ -106,7 +110,7 @@ def p_logo(n):
                 + "".join(f'<div style="flex:1;border-top:3px solid {INK};padding-top:14px"><b style="font:800 26px Gabarito">{a}</b>'
                           f'<div style="font:500 20px/1.4 Figtree;margin-top:6px;opacity:.85">{b}</div></div>' for a, b in (
                     ("Símbolo", "Anel de story com a linha partida no canto superior esquerdo (dois traços, 16° e 22°) e a estrela de cinco pontas no centro."),
-                    ("Palavra", "clozzy em Gabarito 800, caixa baixa, aperto −18. Sempre ao lado do símbolo ou embaixo dele; nunca fundida ao c."),
+                    ("Palavra", f"clozzy em {NOME_FONTE}, caixa baixa, aperto −18. Sempre ao lado do símbolo ou embaixo dele; nunca fundida ao c."),
                     ("Relação", "Anel com 1,4× a altura do l, vão de 0,35 l, centrado nas letras. Símbolo e palavra pesam parecido.")))
                 + '</div></div>')
 
@@ -130,7 +134,7 @@ def p_construcao(n):
             ("Quebra", "canto superior esquerdo (228°): traços de 16° e 22°, vãos de 10°"),
             ("Estrela", "R 18 · razão 0,48 · cantos redondos"),
             ("Corte pequeno", "≤ 32 px: espessura 13, traços de 22° e 28°, vãos de 16°"),
-            ("Lockup", "anel 1,4× o l · vão 0,35 l · Gabarito 800")]
+            ("Lockup", f"anel 1,4× o l · vão 0,35 l · {NOME_FONTE}")]
     return page("Construção", n, f'<div style="display:flex;gap:80px;align-items:center;height:100%">{construcao()}'
                 f'<div style="flex:1"><h1>O símbolo</h1><p class="lead" style="margin-bottom:18px">Um story que ainda está carregando: a linha cheia é o que já se vê e os dois traços são o que abre no close.</p>{spec(rows)}</div></div>')
 
@@ -263,7 +267,7 @@ def p_tipografia(n):
                 f'<div style="font:300 34px/1.2 Figtree;margin-top:26px;color:rgba(255,255,255,.85)">Pago no Pix<br>liberado na hora</div></div>'
                 f'<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:34px">'
                 f'<div><div style="font:900 120px/1 Gabarito;letter-spacing:-.03em">Aa</div><b style="font:800 28px Gabarito">Gabarito 700–900</b>'
-                f'<div style="font:500 20px/1.4 Figtree;margin-top:4px">Nome, títulos, preços e botões. Aperto −3% nos títulos.</div></div>'
+                f'<div style="font:500 20px/1.4 Figtree;margin-top:4px">Títulos, preços e botões. Aperto −3% nos títulos. Nome clozzy: {NOME_FONTE}.</div></div>'
                 f'<div><div style="font:500 120px/1 Figtree">Aa</div><b style="font:800 28px Gabarito">Figtree 400–700</b>'
                 f'<div style="font:500 20px/1.4 Figtree;margin-top:4px">Texto, legenda e interface. Subtítulo em peso 300–400.</div></div>'
                 f'<div style="font:500 20px/1.5 Figtree;border-top:1px solid {LINE};padding-top:14px">Escala 64 · 44 · 32 · 22 · 16 · 14 · 12. Título branco sobre o rosa só a partir de 24 px em peso 800.</div></div></div>')
@@ -366,11 +370,11 @@ h1{font:900 50px/1.05 Gabarito;letter-spacing:-.03em;margin:0 0 20px}
 .lb{font:500 15px/1.35 Figtree;margin-top:9px;color:rgba(20,9,15,.62)}
 svg{overflow:visible}
 @media print{body{background:none}section{margin:0}}""")
-    html = f'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Clozzy — identidade visual</title><style>{css}</style></head><body>{"".join(pages)}</body></html>'
-    out = HERE / "identidade-clozzy-oficial.html"
+    html = f'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>{DOC_TITULO}</title><style>{css}</style></head><body>{"".join(pages)}</body></html>'
+    out = OUT_DIR / f"{OUT_NAME}.html"
     out.write_text(html)
     subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--allow-file-access-from-files", "--force-device-scale-factor=1",
-                    f"--print-to-pdf={HERE / 'identidade-clozzy-oficial.pdf'}", "--no-pdf-header-footer", "--virtual-time-budget=4000", out.as_uri()],
+                    f"--print-to-pdf={OUT_DIR / (OUT_NAME + '.pdf')}", "--no-pdf-header-footer", "--virtual-time-budget=4000", out.as_uri()],
                    check=True, capture_output=True)
     return len(pages)
 

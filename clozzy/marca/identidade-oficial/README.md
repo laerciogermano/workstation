@@ -33,6 +33,8 @@ cd clozzy/marca/identidade-oficial && python3 _marca.py && python3 _build.py
 
 Depende de `../logo-letreiro-v2/` (lockup e símbolo) e `../identidade-nova/fonts/`.
 
+Variante com o nome mais fino e outras fontes: [`../identidade-oficial-fontes/`](../identidade-oficial-fontes/README.md). O `_build.py` expõe `NOME_FONTE`, `OUT_DIR`, `OUT_NAME`, `DOC_TITULO` e `FONTS` para isso.
+
 ## Caminho inverso
 - **Antes:** o `logo-letreiro-v2` usava símbolo ink no rosa, rosa no roxo e anel branco + estrela rosa no preto. **Depois:** nada preto no rosa, nada rosa no roxo, e no preto anel rosa + estrela branca.
 - Para voltar: [`../logo-letreiro-v2/`](../logo-letreiro-v2/README.md) (não foi alterado). Para mudar uma versão, edite `VERSOES` em `_marca.py` e rode os dois scripts.

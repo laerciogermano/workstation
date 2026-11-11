@@ -97,8 +97,8 @@ def tile_svg(slug, size=1024, radius=22.37, scale=0.62, small=False):
             f'<g transform="translate({f(o)} {f(o)}) scale({f(scale)})">{SYM(rc, sc, small)}</g></svg>\n')
 
 
-def build():
-    out = HERE / "svg"
+def build(out=None):
+    out = Path(out) if out else HERE / "svg"
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     n = 0

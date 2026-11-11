@@ -1,0 +1,26 @@
+{
+ "gabarito": {
+  "peso": 649,
+  "alvo": 0.85
+ },
+ "outfit": {
+  "peso": 663,
+  "alvo": 0.85
+ },
+ "lexend": {
+  "peso": 634,
+  "alvo": 0.85
+ },
+ "nunito": {
+  "peso": 777,
+  "alvo": 0.85
+ },
+ "rubik": {
+  "peso": 561,
+  "alvo": 0.85
+ },
+ "fredoka": {
+  "peso": 585,
+  "alvo": 0.85
+ }
+}

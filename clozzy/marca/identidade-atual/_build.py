@@ -130,10 +130,10 @@ pages.append(f"""<section class="page light">
 <div class="eyebrow">Essência</div>
 <h2>Close Friends pago, <b>num link</b></h2>
 <div class="ess"><div style="display:flex;flex-direction:column;gap:12px">
-<div class="kv"><span>O que é</span><p>Plataforma BR para vender acesso a Close Friends / conteúdo exclusivo via assinatura.</p></div>
+<div class="kv"><span>O que é</span><p>Ferramenta BR para gerenciar/profissionalizar Close Friends (Instagram) + assinaturas — board Figma <code>Group 289</code>.</p></div>
 <div class="kv"><span>Código</span><p>GitLab <code>clozzy-app</code> — performer, front, api, robot, schedule.</p></div>
-<div class="kv"><span>Site</span><p>clozzy.com.br (canônico no og:url) · clozzy.link · meu.clozzy.com.br</p></div>
-<div class="kv"><span>Promessa</span><p>“Compartilhe o link… e ganhe dinheiro com assinaturas.” · “Você só paga se vender.”</p></div>
+<div class="kv"><span>Site</span><p>clozzy.com.br (og:url) · clozzy.link · meu.clozzy.com.br · wordmark PWA <b>meuclozzy</b></p></div>
+<div class="kv"><span>Promessa</span><p>“Gerenciar sua lista de Close Friends…” · “ASSINAR AGORA” · “Você só paga se vender.”</p></div>
 </div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">{''.join(f'<div class="per"><b>{a}</b><i>{b}</i><p>{c}</p></div>' for a,b,c in pers)}</div></div>
 {foot(3)}</section>""")
 
@@ -174,7 +174,7 @@ pages.append(f"""<section class="page dark">
 <li>Wordmark “clozzy” ao lado no lockup</li>
 <li>PNG de app: fundo rosa saturado (amostra ~#C00028–#D80030)</li>
 </ul>
-<p class="note">O favicon/site às vezes mostra <b>estrela</b> — variante raster; o master SVG do performer é o glifo geométrico.</p>
+<p class="note">Figma <b>Group 289</b> usa mark <b>estrela</b> magenta (não o glifo geométrico do SVG). Site usa estrela roxa. Três marks vivos até unificar.</p>
 </div></div>
 {foot(5)}</section>""")
 
@@ -297,16 +297,16 @@ def fig(name, cap, sub, max_w=900):
     return f'<div class="rf">{img(name, FIG, max_w=max_w)}<b>{cap}</b><span>{sub}</span></div>'
 
 fig_grid = "".join([
-    fig("untitled-zip/Deslogado.png", "Landing Figma", "estrela roxa · Deslogado", 400),
-    fig("02-group-285.png", "Performer UI", "onboarding / perfil / plano · rosa", 640),
-    fig("01-group-284.png", "Wallet", "Minha Carteira · rosa (+ roxo pontual)", 640),
-    fig("03-group-286.png", "v1.0 + components", "kit de UI rosa", 640),
+    fig("06-group-289.png", "Brand board 289", "meuclozzy · estrela · splash · ASSINAR · flame/IG", 720),
+    fig("05-group-288.png", "Wallet A/B 288", "Sacar rosa vs roxo · web.clozzy.com", 560),
+    fig("02-group-285.png", "Performer UI 285", "onboarding / perfil / plano · rosa", 560),
+    fig("untitled-zip/Deslogado.png", "Landing Deslogado", "estrela roxa · site", 400),
 ])
 pages.append(f"""<section class="page mist">
 <div class="eyebrow">Figma · exports</div>
-<h2>Figuras baixadas dos <b>4 arquivos</b></h2>
+<h2>Referência canônica: <b>Group 289</b></h2>
 <div class="refs" style="grid-template-columns:1fr 1fr">{fig_grid}</div>
-<p class="note">Origem: Downloads <code>Group 284–287.png</code> + <code>Untitled.zip</code> → <code>refs/figma/exports/</code>. Links: Untitled×3 + clozzy-performers. Pill gradiente: <code>rectangle-43.png</code> (roxo→fúcsia).</p>
+<p class="note">Pasta fonte: <code>clozzy/figma/</code> (Groups 284–289) → <code>refs/figma/exports/</code>. Mark C = estrela magenta; 288 = exploração CTA rosa|roxo. Pill: <code>rectangle-43.png</code>.</p>
 {foot(10)}</section>""")
 
 # 11 voz + código

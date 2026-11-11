@@ -4,6 +4,7 @@ Kit da marca **atual** (código + site), no formato RoleGo v4. Insumo para Clozz
 
 | Fonte | O quê |
 |---|---|
+| [`../../figma/`](../../figma/) | Boards Figma (esp. **Group 289** brand · **288** wallet A/B) → [`refs/figma/`](refs/figma/README.md) |
 | [`../benchmarking-concorrentes/clozzy/performer/`](../benchmarking-concorrentes/clozzy/performer/) | App: `#FF0065`, Montserrat, mark geométrico |
 | [`../benchmarking-concorrentes/clozzy/front/`](../benchmarking-concorrentes/clozzy/front/) | Fã: `#FE2C55`, Proxima Nova |
 | clozzy.com.br / clozzy.link | Site: `#7651E9` + estrela · prints em [`refs/`](refs/) |

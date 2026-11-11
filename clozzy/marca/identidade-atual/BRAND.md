@@ -8,11 +8,11 @@
 
 ## 1. Essência
 
-- **O que é:** plataforma BR de Close Friends pago — link na bio, assinaturas, stories/conteúdo exclusivo, gestão de membros.
-- **Para quem:** criadores (performer) e fãs (front).
-- **Personalidade observada:** light UI · tipografia bold · conversão (“Você só paga se vender”) · **duas paletas vivas** (rosa no app, roxo no site).
-- **Posicionamento (site):** “Compartilhe o link do seu Close Friends e ganhe dinheiro com assinaturas dentro das suas redes sociais.”
-- **Nome:** Clozzy · lowercase `clozzy` no wordmark · PWA `meuclozzy` / manifest `clozzy`.
+- **O que é:** ferramenta BR para gerenciar e profissionalizar lista de Close Friends (Instagram) — link, assinaturas, conteúdo exclusivo.
+- **Para quem:** criadores (performer / `meuclozzy`) e fãs (front).
+- **Personalidade observada:** light UI · tipografia bold · conversão (“ASSINAR AGORA”, “Você só paga se vender”) · **duas paletas vivas** (magenta app, roxo site).
+- **Posicionamento (Figma 289 / site):** “O meuclozzy é a ferramenta ideal para você gerenciar e profissionalizar sua lista de 'Close Friends' no Instagram.” · site: “Compartilhe o link do seu Close Friends e ganhe dinheiro…”
+- **Nome:** Clozzy · lowercase `clozzy` / PWA wordmark **`meuclozzy`** (board Figma).
 
 ## 2. Logo system
 
@@ -24,10 +24,10 @@ Masters SVG em `performer/src/assets/icons/` → [`logos/`](logos/).
 |---|---|---|
 | Lockup preto + mark rosa | `lockup-clozzy.svg` / `lockup-black.svg` | App criador |
 | Lockup branco + mark rosa | `lockup-white.svg` | Fundo escuro |
-| Mark círculo geométrico | `mark-circle.svg` | Avatar app |
+| Mark círculo geométrico | `mark-circle.svg` | Avatar app (legado código) |
 | App icons PNG | `mark-app-512.png` | PWA |
 
-**Mark A:** círculo `#FF0065` + glifo branco geométrico (pétalas/losango).
+**Mark A (código):** círculo `#FF0065` + glifo branco geométrico (pétalas/losango).
 
 ### B — Site marketing (clozzy.com.br)
 
@@ -37,18 +37,31 @@ Referências em [`refs/`](refs/) + reconstituição em [`logos/`](logos/).
 |---|---|---|
 | Lockup site (estrela roxa) | `lockup-site-purple.svg` | Header landing |
 | Mark estrela roxa | `mark-star-purple.svg` | Hero / favicon-style site |
-| Print desktop | `refs/site-landing-desktop.png` | Landing completa |
-| Print mobile | `refs/site-landing-mobile.png` | Landing 390×844 |
-| Crops | `refs/site-logo-crop.png` · `site-mark-crop.png` · `site-cta-crop.png` | Detalhe |
+| Print desktop / mobile | `refs/site-landing-*.png` | Landing |
 
-**Mark B:** círculo `#7651E9` + **estrela** branca de 5 pontas · wordmark `clozzy` preto · CTA pill/retângulo arredondado roxo (“Criar o meu close friends”).
+**Mark B:** círculo `#7651E9` + **estrela** branca · wordmark `clozzy` preto · CTA roxo.
+
+### C — Brand board Figma (`Group 289`)
+
+Fonte: [`clozzy/figma/Group 289.png`](../../figma/Group%20289.png) → [`refs/figma/exports/06-group-289.png`](refs/figma/exports/06-group-289.png).
+
+| Elemento | Observado |
+|---|---|
+| Wordmark | `meuclozzy` branco lowercase · sans geométrica (Montserrat-like) |
+| Mark canônico do board | círculo branco + **estrela** 5 pontas magenta (inverso: círculo magenta + estrela branca) |
+| Splash / login | fundo sólido magenta · inputs “Usuário/Senha” · botão Login branco |
+| CTA produto | pill/botão **ASSINAR AGORA** magenta em perfil claro |
+| Ícones satélite | flame + logo Instagram; flame estilo Tinder; apps icons estrela/flame em grades |
+| Magenta amostrado | ~`#F80068` / `#F82878` (alinha a `#FF0065` do código) |
+
+**Mark C ≠ Mark A:** Figma usa **estrela**; o SVG do performer ainda é o glifo geométrico. Documentar os dois até unificar.
 
 ### Não fazer
 
 1. Esticar / distorcer.  
-2. Misturar mark A (geométrico rosa) com mark B (estrela roxa) na mesma peça sem legenda.  
+2. Misturar mark A (geométrico), B (estrela roxa) e C (estrela magenta) na mesma peça sem legenda.  
 3. Glow / sombra no master.  
-4. Assumir que o site já unificou com o performer — ainda não.
+4. Assumir que site, código e Figma já unificaram — ainda não (288 explora CTA rosa **ou** roxo na wallet).
 
 ## 3. Cor
 
@@ -94,9 +107,10 @@ UI performer: `font-family: "Montserrat", sans-serif !important` em tudo exceto 
 
 ## 6. Imagery / ícones
 
-- Mark rosa em círculo; ícones Material / Ionic outline.
-- Fotografia: criadores reais nas páginas de venda; UI light.
-- Raios: pills de versão `#ff0065`; botões com radius médio Ionic.
+- Figma 289: estrela em círculo; flame + Instagram; grades de app icon (rounded square / circle).
+- Código: mark geométrico; Material / Ionic outline.
+- Fotografia: criadores reais; mock Instagram/TikTok no board; UI light.
+- Raios: pills `#ff0065`; botões radius médio Ionic; status wallet (288): Pendente / Realizado / Rejeitado.
 
 ## 7. Motion
 
@@ -122,15 +136,17 @@ Sem política GenAI explícita no código inspecionado. Para Clozzy 2028: defini
 
 ## 11. Refs Figma (exports)
 
-Pasta: [`refs/figma/`](refs/figma/README.md)
+Origem: [`clozzy/figma/`](../../figma/) · espelho [`refs/figma/`](refs/figma/README.md)
 
-| Export | Conteúdo | Cor dominante |
+| Export | Conteúdo | Cor / nota |
 |---|---|---|
-| `exports/untitled-zip/Deslogado.png` | Landing mobile estrela | Roxo site |
-| `exports/01-group-284.png` | Wallet / Minha Carteira | Rosa CTA (+ roxo pontual) |
-| `exports/02-group-285.png` | Onboarding / perfil / plano | Rosa performer |
-| `exports/03-group-286.png` | v1.0 + components | Rosa |
-| `exports/04-group-287.png` | Conta / saque / teclado | Rosa + cards azul |
-| `exports/rectangle-43.png` | Pill gradiente | Roxo→fúcsia |
+| `06-group-289.png` | **Brand board** meuclozzy | Magenta + estrela · splash · ASSINAR |
+| `05-group-288.png` | Wallet A/B (`web.clozzy.com`) | CTA rosa **vs** roxo `#7651E9` |
+| `01-group-284.png` | Wallet / Minha Carteira | Rosa (+ roxo pontual) |
+| `02-group-285.png` | Onboarding / perfil / plano | Rosa |
+| `03-group-286.png` | v1.0 + components | Rosa |
+| `04-group-287.png` | Conta / saque / teclado | Rosa + cards azul |
+| `untitled-zip/Deslogado.png` | Landing mobile | Roxo site |
+| `rectangle-43.png` | Pill gradiente | Roxo→fúcsia |
 
-Links origem: Untitled×3 + [clozzy-performers](https://www.figma.com/design/h0BH4yv0LoeBsUlgjK7B2M/clozzy-performers).
+Links: Untitled×3 + [clozzy-performers](https://www.figma.com/design/h0BH4yv0LoeBsUlgjK7B2M/clozzy-performers).

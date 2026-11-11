@@ -2,6 +2,7 @@
 
 | Arquivo | Uso |
 |---------|-----|
+| [`identidade-oficial/`](identidade-oficial/README.md) | **Identidade oficial** — logo do `logo-letreiro-v2` (lockup equilibrado) em preto, branco, roxo e rosa; regras de cor, paleta, tipografia, usos e aplicações; 16 páginas |
 | [`logo-moderna/`](logo-moderna/README.md) | **Rodada 14** — evolução moderna a partir de `refs/`: close friends como palavra-chave + grupo de **lente** (diafragma, obturador, reflexo); 10 conceitos |
 | [`identidade-v2/`](identidade-v2/README.md) | **Identidade visual v2** — símbolo R8 (C + estrela + ponta · – ––), manual, BRAND, tokens, logos |
 | [`identidade-nova/`](identidade-nova/README.md) | **Identidade Clozzy 2028** — “Círculo próximo”, manual + BRAND + tokens |

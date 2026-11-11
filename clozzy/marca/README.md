@@ -3,6 +3,7 @@
 | Arquivo | Uso |
 |---------|-----|
 | [`identidade-oficial/`](identidade-oficial/README.md) | **Identidade oficial** — logo do `logo-letreiro-v2` (lockup equilibrado) em preto, branco, roxo e rosa; regras de cor, paleta, tipografia, usos e aplicações; 16 páginas |
+| [`identidade-oficial-v2/`](identidade-oficial-v2/README.md) | **Identidade oficial v2** — cópia da oficial com o arco do símbolo mais grosso (9 → 11,5) para combinar com o Gabarito 800; o resto igual |
 | [`identidade-oficial-fontes/`](identidade-oficial-fontes/README.md) | **Teste de fontes do nome** — a identidade oficial com o clozzy a 85% da espessura em Gabarito, Outfit, Lexend, Nunito, Rubik e Fredoka; PDF de cada uma + comparativo |
 | [`logo-moderna/`](logo-moderna/README.md) | **Rodada 14** — evolução moderna a partir de `refs/`: close friends como palavra-chave + grupo de **lente** (diafragma, obturador, reflexo); 10 conceitos |
 | [`identidade-v2/`](identidade-v2/README.md) | **Identidade visual v2** — símbolo R8 (C + estrela + ponta · – ––), manual, BRAND, tokens, logos |

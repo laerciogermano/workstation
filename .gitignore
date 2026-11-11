@@ -29,3 +29,6 @@ e-notas/app/data/
 
 # Export Instagram (dados pessoais — não versionar)
 /core/instagram-*/
+
+# Clozzy benchmarking compiled PDF (too large for GitHub)
+clozzy/marca/benchmarking-concorrentes/relatorio-compilado.pdf

@@ -8,6 +8,24 @@ Matriz vs plataformas de **conteúdo exclusivo / creator monetization**, ordenad
 - **Entrada:** [`00-curadoria.html`](00-curadoria.html) / [`00-curadoria.pdf`](00-curadoria.pdf)
 - **Task:** [`../../tasks/6aeb158bc595d3438795932d/`](../../tasks/6aeb158bc595d3438795932d/README.md)
 
+## Relatório compilado
+
+Documento único claro (estilo cloud / IBM Plex) com matriz de funcionalidades + **todas** as prints:
+
+- [`relatorio-compilado.html`](relatorio-compilado.html) — versionado
+- `relatorio-compilado.pdf` — **local** (Chrome print; ~200MB+, fora do git)
+- Gerador: [`build-relatorio-compilado.mjs`](build-relatorio-compilado.mjs)
+
+```bash
+node clozzy/marca/benchmarking-concorrentes/build-relatorio-compilado.mjs
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=120000 \
+  --print-to-pdf=clozzy/marca/benchmarking-concorrentes/relatorio-compilado.pdf \
+  "file://$(pwd)/clozzy/marca/benchmarking-concorrentes/relatorio-compilado.html"
+```
+
+Cobre Privacy · CloseFans · FatalFans · Fansly. Antes → depois: só curadorias por pasta → um HTML compilado. Rollback: apagar `relatorio-compilado.*` + `build-relatorio-compilado.mjs`.
+
 ## Ordem (mais → menos)
 
 | # | Plataforma | Escala (âncora) | Taxa* | Pix | vs Clozzy |

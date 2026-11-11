@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clozzy 2028 — Relatório de benchmarking (compilado)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #ffffff;
+    --surface: #f6f7f9;
+    --ink: #161616;
+    --body: #525252;
+    --muted: #6f6f6f;
+    --line: #e0e0e0;
+    --line-strong: #c6c6c6;
+    --accent: #0f62fe;
+    --accent-soft: #edf5ff;
+    --radius: 2px;
+    --font: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --max: 1080px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 48px 32px 80px; }
+  header.cover {
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+  .kicker {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .deck { color: var(--body); max-width: 42rem; font-size: 16px; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px 20px;
+    margin-top: 18px; font-size: 13px; color: var(--muted);
+  }
+  .meta-row strong { color: var(--ink); font-weight: 600; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 48px 0 14px; padding-top: 20px; border-top: 1px solid var(--line);
+  }
+  h3 { font-size: 16px; font-weight: 600; margin: 28px 0 10px; }
+  h4 {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--muted); margin: 22px 0 10px;
+  }
+  p { margin: 0 0 12px; color: var(--body); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .toc {
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 18px 20px; margin: 24px 0 8px;
+  }
+  .toc ol { margin: 0 0 0 18px; color: var(--ink); }
+  .toc li { margin: 4px 0; }
+  .toc a { color: var(--ink); }
+  .toc a:hover { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0 8px; }
+  th, td {
+    text-align: left; padding: 10px 12px;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  th {
+    background: var(--surface); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+  }
+  td.plat { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 7px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--body); margin-right: 4px;
+  }
+  .badge.accent { border-color: #a6c8ff; background: var(--accent-soft); color: #002d9c; }
+  .badge.ok { border-color: #a7f0ba; background: #defbe6; color: #0e6027; }
+  .platform-head {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: 8px 14px; margin-bottom: 8px;
+  }
+  .platform-head h2 { border: 0; margin: 0; padding: 0; }
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); margin: 16px 0 8px;
+  }
+  .stats > div { background: var(--paper); padding: 14px 16px; }
+  .stats .n {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats .l {
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+    text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600;
+  }
+  @media (max-width: 800px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .wrap { padding: 28px 16px 56px; }
+  }
+  .gallery {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0 8px;
+  }
+  @media (max-width: 720px) { .gallery { grid-template-columns: 1fr; } }
+  .shot {
+    border: 1px solid var(--line); background: var(--surface);
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .shot img {
+    display: block; width: 100%; height: auto;
+    background: #fff; border-bottom: 1px solid var(--line);
+  }
+  .shot figcaption {
+    padding: 8px 10px; display: flex; justify-content: space-between;
+    gap: 8px; align-items: baseline; font-size: 12px; color: var(--body);
+  }
+  .shot figcaption code { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  ul.compact { margin: 0 0 12px 18px; color: var(--body); }
+  ul.compact li { margin: 3px 0; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-soft);
+    padding: 12px 14px; margin: 14px 0; font-size: 13.5px; color: var(--ink);
+  }
+  footer.doc {
+    margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line-strong);
+    font-size: 12px; color: var(--muted);
+  }
+  @media print {
+    body { font-size: 11.5px; }
+    .wrap { padding: 12px; max-width: none; }
+    .shot { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    .gallery { grid-template-columns: 1fr 1fr; }
+    h2 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">Clozzy 2028 · Relatório de produto</div>
+  <h1>Benchmarking de concorrentes — compilado</h1>
+  <p class="deck">Inspeções profundas já entregues: Privacy, CloseFans, FatalFans e Fansly. Matriz de funcionalidades, política de IA e acervo completo de prints (desktop + mobile).</p>
+  <div class="meta-row">
+    <span><strong>Data</strong> 2026-11-11</span>
+    <span><strong>Plataformas</strong> 4</span>
+    <span><strong>Prints</strong> 286</span>
+    <span><strong>Pasta</strong> <code>clozzy/marca/benchmarking-concorrentes/</code></span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sumário">
+  <strong>Sumário</strong>
+  <ol>
+    <li><a href="#visao">Visão geral</a></li>
+    <li><a href="#matriz">Matriz de funcionalidades</a></li>
+    <li><a href="#ia">Política e produto de IA</a></li>
+    <li><a href="#privacy">Privacy — prints e notas</a></li>
+    <li><a href="#closefans">CloseFans — prints e notas</a></li>
+    <li><a href="#fatalfans">FatalFans — prints e notas</a></li>
+    <li><a href="#fansly">Fansly — prints e notas</a></li>
+    <li><a href="#fontes">Fontes</a></li>
+  </ol>
+</nav>
+
+<section id="visao">
+  <h2>1. Visão geral</h2>
+  <div class="stats">
+    <div><div class="n">4</div><div class="l">Inspeções</div></div>
+    <div><div class="n">286</div><div class="l">Prints</div></div>
+    <div><div class="n">3</div><div class="l">Rivais BR</div></div>
+    <div><div class="n">1</div><div class="l">Global (#4)</div></div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Plataforma</th><th>Ranking</th><th>Taxa</th><th>Pix</th>
+        <th>Inspeção</th><th>Prints</th><th>Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="plat"><a href="https://privacy.com.br/">Privacy</a></td>
+        <td>#3 · #1 BR</td>
+        <td>20%</td>
+        <td>Sim</td>
+        <td>2026-11-09</td>
+        <td>46 <span class="muted">(30d / 16m)</span></td>
+        <td>Referência BR · Pix · audiência</td>
+      </tr>
+<tr>
+        <td class="plat"><a href="https://close.fans/">CloseFans</a></td>
+        <td>#10 · #2 BR</td>
+        <td>20% + fixo</td>
+        <td>Sim</td>
+        <td>2026-11-10</td>
+        <td>121 <span class="muted">(89d / 32m)</span></td>
+        <td>Site + Telegram CloseBot · packs</td>
+      </tr>
+<tr>
+        <td class="plat"><a href="https://fatalfans.com/">FatalFans</a></td>
+        <td>#11 · #3 BR</td>
+        <td>15%</td>
+        <td>Sim</td>
+        <td>2026-11-10</td>
+        <td>54 <span class="muted">(40d / 14m)</span></td>
+        <td>Fatal Model · Creator Awards</td>
+      </tr>
+<tr>
+        <td class="plat"><a href="https://fansly.com/">Fansly</a></td>
+        <td>#4 global</td>
+        <td>~20%</td>
+        <td>Não (UI lab)</td>
+        <td>2026-11-10</td>
+        <td>65 <span class="muted">(56d / 9m)</span></td>
+        <td>Explore / For You / lives · ban IA fotorealista</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="muted">Curadoria macro (#1–#12) em <code>00-curadoria.html</code>. OnlyFans, Patreon, Fanvue e LoyalFans ainda fora deste compilado (fila: Fanvue → LoyalFans).</p>
+</section>
+
+<section id="matriz">
+  <h2>2. Matriz de funcionalidades</h2>
+  <p>Comparativo a partir dos inventários <code>funcionalidades.md</code> de cada pasta.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Capacidade</th><th>Privacy</th><th>CloseFans</th><th>FatalFans</th><th>Fansly</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="plat">Cadastro fan (e-mail/senha)</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Sim</td></tr>
+<tr><td class="plat">OAuth</td><td>Google, X, Apple, TikTok</td><td>OAuth genérico</td><td>Google, X</td><td>X, Google, Twitch</td></tr>
+<tr><td class="plat">Confirmação de e-mail</td><td>Obrigatória</td><td>Não (lab)</td><td>Não (lab)</td><td>Obrigatória (UI)</td></tr>
+<tr><td class="plat">Age gate 18+</td><td>Sim</td><td>Termos</td><td>Sim</td><td>Sim</td></tr>
+<tr><td class="plat">Discovery / Explore</td><td>Destaques · Top · Em alta</td><td>Descobrir + filtros + packs</td><td>Filtros · Awards · rankings</td><td>Explore · For You · hashtags</td></tr>
+<tr><td class="plat">Live streams</td><td>Sim</td><td>Lives (help)</td><td>—</td><td>Streams You Might Like</td></tr>
+<tr><td class="plat">Chat / DM</td><td>Sim</td><td>Sim (+ mimo)</td><td>Sim</td><td>Messages</td></tr>
+<tr><td class="plat">Videochamada 1:1</td><td>Sim</td><td>Sim (Top Videochamadas)</td><td>Sim (pago)</td><td>—</td></tr>
+<tr><td class="plat">Assinatura</td><td>Sim</td><td>Sim</td><td>Sim + cupom</td><td>Sim</td></tr>
+<tr><td class="plat">Pack / conteúdo avulso</td><td>Post avulso</td><td>Top Packs · chat</td><td>Avulso / DM</td><td>Collections / bookmarks</td></tr>
+<tr><td class="plat">Carteira / tips</td><td>Carteira · mimo</td><td>Presente · carteira</td><td>Presente</td><td>Wallet · crypto · gift</td></tr>
+<tr><td class="plat">Telegram / bot</td><td>—</td><td>CloseBot nativo</td><td>Prévias Telegram</td><td>—</td></tr>
+<tr><td class="plat">Pix</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Não óbvio</td></tr>
+<tr><td class="plat">Cartão</td><td>Sim + Apple/Google Pay</td><td>Sim</td><td>Sim</td><td>Visa/MC/Discover</td></tr>
+<tr><td class="plat">Taxa plataforma</td><td>~20%</td><td>20% + fixo</td><td>15%</td><td>~20%</td></tr>
+<tr><td class="plat">App nativo</td><td>Não (PWA)</td><td>Não (Web App)</td><td>Não</td><td>Não</td></tr>
+<tr><td class="plat">2FA</td><td>—</td><td>—</td><td>—</td><td>Sim</td></tr>
+<tr><td class="plat">Creator KYC</td><td>Certta docs+selfie</td><td>Docs e-mail</td><td>Docs + biometria</td><td>Gov ID (help)</td></tr>
+<tr><td class="plat">IA fotorealista</td><td>Policy help (perfil IA)</td><td>Ban explícito</td><td>Ban só menoridade</td><td>Ban (label não libera)</td></tr>
+<tr><td class="plat">IA chat/auto fãs</td><td>Sem suite</td><td>Ban</td><td>Sem suite</td><td>Ban sem oversight</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <strong>Padrão BR:</strong> Pix + taxa ~15–20% + discovery por ranking. CloseFans diferencia com Telegram/CloseBot e packs. FatalFans amarra Fatal Model e taxa 15%. Fansly lidera discovery global (Explore / For You / lives) sem Pix na UI lab.
+  </div>
+</section>
+
+<section id="ia">
+  <h2>3. Política e produto de IA</h2>
+  <table>
+    <thead>
+      <tr><th>Plataforma</th><th>Política</th><th>Suite / tools</th><th>Promessa</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="plat">Privacy</td>
+        <td>Artigo help sobre perfil IA</td>
+        <td>Sem suite GenAI na UI fan</td>
+        <td>Monetização + Pix BR</td>
+      </tr>
+      <tr>
+        <td class="plat">CloseFans</td>
+        <td>Ban perfil 100% IA / deepfake</td>
+        <td>Sem suite; CloseBot ≠ GenAI</td>
+        <td>Site + Telegram</td>
+      </tr>
+      <tr>
+        <td class="plat">FatalFans</td>
+        <td>Ban IA ligada a menoridade (Termos 4.10)</td>
+        <td>Sem suite</td>
+        <td>Taxa 15% + Fatal Model</td>
+      </tr>
+      <tr>
+        <td class="plat">Fansly</td>
+        <td>Ban fotorealista (label não libera); ban AI chat sem oversight</td>
+        <td>Sem suite</td>
+        <td>“Conteúdo humano real”</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="muted">Detalhe: <code>privacy/ia.md</code>, <code>closefans/ia.md</code>, <code>fatalfans/ia.md</code>, <code>fansly/ia.md</code>.</p>
+</section>
+
+
+<section id="privacy">
+  <div class="platform-head">
+    <h2>Privacy</h2>
+    <span class="badge accent">#3 · #1 BR</span>
+    <span class="badge">2026-11-09</span>
+    <span class="badge ok">30 desktop</span>
+    <span class="badge">16 mobile</span>
+  </div>
+  <p><a href="https://privacy.com.br/">https://privacy.com.br/</a> · pasta <code>privacy/</code> · Referência BR · Pix · audiência</p>
+  <h4>Desktop</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="privacy/prints/desktop/01-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>01-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/02-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>02-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/03-signup-blocked.png" alt="Signup Blocked" loading="lazy" />
+  <figcaption><span>Signup Blocked</span><code>03-signup-blocked.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/03-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>03-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/05-signup-username.png" alt="Signup Username" loading="lazy" />
+  <figcaption><span>Signup Username</span><code>05-signup-username.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/06-signup-email.png" alt="Signup Email" loading="lazy" />
+  <figcaption><span>Signup Email</span><code>06-signup-email.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/07-signup-password.png" alt="Signup Password" loading="lazy" />
+  <figcaption><span>Signup Password</span><code>07-signup-password.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/08-signup-terms.png" alt="Signup Terms" loading="lazy" />
+  <figcaption><span>Signup Terms</span><code>08-signup-terms.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/09-signup-submit.png" alt="Signup Submit" loading="lazy" />
+  <figcaption><span>Signup Submit</span><code>09-signup-submit.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/13-terms-checked.png" alt="Terms Checked" loading="lazy" />
+  <figcaption><span>Terms Checked</span><code>13-terms-checked.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/15-field-0.png" alt="Field 0" loading="lazy" />
+  <figcaption><span>Field 0</span><code>15-field-0.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/15-field-1.png" alt="Field 1" loading="lazy" />
+  <figcaption><span>Field 1</span><code>15-field-1.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/15-field-2.png" alt="Field 2" loading="lazy" />
+  <figcaption><span>Field 2</span><code>15-field-2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/16-ready-submit.png" alt="Ready Submit" loading="lazy" />
+  <figcaption><span>Ready Submit</span><code>16-ready-submit.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/19-login-filled.png" alt="Login Filled" loading="lazy" />
+  <figcaption><span>Login Filled</span><code>19-login-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/20-after-login.png" alt="After Login" loading="lazy" />
+  <figcaption><span>After Login</span><code>20-after-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/21-help.png" alt="Help" loading="lazy" />
+  <figcaption><span>Help</span><code>21-help.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/22-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>22-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/23-blog-features.png" alt="Blog Features" loading="lazy" />
+  <figcaption><span>Blog Features</span><code>23-blog-features.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/25-email-confirm.png" alt="Email Confirm" loading="lazy" />
+  <figcaption><span>Email Confirm</span><code>25-email-confirm.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/27-logged-home-before-close.png" alt="Logged Home Before Close" loading="lazy" />
+  <figcaption><span>Logged Home Before Close</span><code>27-logged-home-before-close.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/27-logged-home.png" alt="Logged Home" loading="lazy" />
+  <figcaption><span>Logged Home</span><code>27-logged-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/28-explore.png" alt="Explore" loading="lazy" />
+  <figcaption><span>Explore</span><code>28-explore.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/29-profile-menu.png" alt="Profile Menu" loading="lazy" />
+  <figcaption><span>Profile Menu</span><code>29-profile-menu.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/31-wallet.png" alt="Wallet" loading="lazy" />
+  <figcaption><span>Wallet</span><code>31-wallet.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/32-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>32-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/33-destaques.png" alt="Destaques" loading="lazy" />
+  <figcaption><span>Destaques</span><code>33-destaques.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/35-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>35-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/36-messages.png" alt="Messages" loading="lazy" />
+  <figcaption><span>Messages</span><code>36-messages.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/desktop/37-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>37-notifications.png</code></figcaption>
+</figure></div>
+  <h4>Mobile</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="privacy/prints/mobile/01-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>01-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/02-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>02-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/03-signup-creator.png" alt="Signup Creator" loading="lazy" />
+  <figcaption><span>Signup Creator</span><code>03-signup-creator.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/04-help.png" alt="Help" loading="lazy" />
+  <figcaption><span>Help</span><code>04-help.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/05-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>05-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/06-como-funciona.png" alt="Como Funciona" loading="lazy" />
+  <figcaption><span>Como Funciona</span><code>06-como-funciona.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/07-blog-features.png" alt="Blog Features" loading="lazy" />
+  <figcaption><span>Blog Features</span><code>07-blog-features.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/10-destaques.png" alt="Destaques" loading="lazy" />
+  <figcaption><span>Destaques</span><code>10-destaques.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/11-top-creators.png" alt="Top Creators" loading="lazy" />
+  <figcaption><span>Top Creators</span><code>11-top-creators.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/12-feed.png" alt="Feed" loading="lazy" />
+  <figcaption><span>Feed</span><code>12-feed.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/15-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>15-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/16-chat.png" alt="Chat" loading="lazy" />
+  <figcaption><span>Chat</span><code>16-chat.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/17-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>17-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/18-wallet.png" alt="Wallet" loading="lazy" />
+  <figcaption><span>Wallet</span><code>18-wallet.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/19-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>19-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="privacy/prints/mobile/20-user-menu.png" alt="User Menu" loading="lazy" />
+  <figcaption><span>User Menu</span><code>20-user-menu.png</code></figcaption>
+</figure></div>
+</section>
+
+
+<section id="closefans">
+  <div class="platform-head">
+    <h2>CloseFans</h2>
+    <span class="badge accent">#10 · #2 BR</span>
+    <span class="badge">2026-11-10</span>
+    <span class="badge ok">89 desktop</span>
+    <span class="badge">32 mobile</span>
+  </div>
+  <p><a href="https://close.fans/">https://close.fans/</a> · pasta <code>closefans/</code> · Site + Telegram CloseBot · packs</p>
+  <h4>Desktop</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="closefans/prints/desktop/01-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>01-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/02-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>02-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/03-signin.png" alt="Signin" loading="lazy" />
+  <figcaption><span>Signin</span><code>03-signin.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/03-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>03-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/04-onboarding-creator.png" alt="Onboarding Creator" loading="lazy" />
+  <figcaption><span>Onboarding Creator</span><code>04-onboarding-creator.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/04-onboarding.png" alt="Onboarding" loading="lazy" />
+  <figcaption><span>Onboarding</span><code>04-onboarding.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/05-closebot.png" alt="Closebot" loading="lazy" />
+  <figcaption><span>Closebot</span><code>05-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/05-search-public.png" alt="Search Public" loading="lazy" />
+  <figcaption><span>Search Public</span><code>05-search-public.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/06-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>06-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/07-privacidade.png" alt="Privacidade" loading="lazy" />
+  <figcaption><span>Privacidade</span><code>07-privacidade.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/08-ajuda.png" alt="Ajuda" loading="lazy" />
+  <figcaption><span>Ajuda</span><code>08-ajuda.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/09-blog.png" alt="Blog" loading="lazy" />
+  <figcaption><span>Blog</span><code>09-blog.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/09-help-ia.png" alt="Help Ia" loading="lazy" />
+  <figcaption><span>Help Ia</span><code>09-help-ia.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/10-closebot.png" alt="Closebot" loading="lazy" />
+  <figcaption><span>Closebot</span><code>10-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/10-help-closebot.png" alt="Help Closebot" loading="lazy" />
+  <figcaption><span>Help Closebot</span><code>10-help-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/11-help-criar-conta.png" alt="Help Criar Conta" loading="lazy" />
+  <figcaption><span>Help Criar Conta</span><code>11-help-criar-conta.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/11-help-taxa.png" alt="Help Taxa" loading="lazy" />
+  <figcaption><span>Help Taxa</span><code>11-help-taxa.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/12-help-closebot.png" alt="Help Closebot" loading="lazy" />
+  <figcaption><span>Help Closebot</span><code>12-help-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/12-help-criador.png" alt="Help Criador" loading="lazy" />
+  <figcaption><span>Help Criador</span><code>12-help-criador.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/13-help-assinante.png" alt="Help Assinante" loading="lazy" />
+  <figcaption><span>Help Assinante</span><code>13-help-assinante.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/13-help-telegram.png" alt="Help Telegram" loading="lazy" />
+  <figcaption><span>Help Telegram</span><code>13-help-telegram.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/14-blog.png" alt="Blog" loading="lazy" />
+  <figcaption><span>Blog</span><code>14-blog.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/14-help-taxa.png" alt="Help Taxa" loading="lazy" />
+  <figcaption><span>Help Taxa</span><code>14-help-taxa.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/15-blog-funcionalidades.png" alt="Blog Funcionalidades" loading="lazy" />
+  <figcaption><span>Blog Funcionalidades</span><code>15-blog-funcionalidades.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/15-help-assinante.png" alt="Help Assinante" loading="lazy" />
+  <figcaption><span>Help Assinante</span><code>15-help-assinante.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/16-help-criador.png" alt="Help Criador" loading="lazy" />
+  <figcaption><span>Help Criador</span><code>16-help-criador.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/20-signup-empty.png" alt="Signup Empty" loading="lazy" />
+  <figcaption><span>Signup Empty</span><code>20-signup-empty.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/21-signup-filled.png" alt="Signup Filled" loading="lazy" />
+  <figcaption><span>Signup Filled</span><code>21-signup-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/22-signup-after.png" alt="Signup After" loading="lazy" />
+  <figcaption><span>Signup After</span><code>22-signup-after.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/30-home.png" alt="Home" loading="lazy" />
+  <figcaption><span>Home</span><code>30-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/31-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>31-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/40-login-before.png" alt="Login Before" loading="lazy" />
+  <figcaption><span>Login Before</span><code>40-login-before.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/41-login-filled.png" alt="Login Filled" loading="lazy" />
+  <figcaption><span>Login Filled</span><code>41-login-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/42-login-after.png" alt="Login After" loading="lazy" />
+  <figcaption><span>Login After</span><code>42-login-after.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/43-signup-start.png" alt="Signup Start" loading="lazy" />
+  <figcaption><span>Signup Start</span><code>43-signup-start.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/44-signup-filled.png" alt="Signup Filled" loading="lazy" />
+  <figcaption><span>Signup Filled</span><code>44-signup-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/45-signup-after.png" alt="Signup After" loading="lazy" />
+  <figcaption><span>Signup After</span><code>45-signup-after.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/50-feed.png" alt="Feed" loading="lazy" />
+  <figcaption><span>Feed</span><code>50-feed.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/51-discover.png" alt="Discover" loading="lazy" />
+  <figcaption><span>Discover</span><code>51-discover.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/52-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>52-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/53-highlights.png" alt="Highlights" loading="lazy" />
+  <figcaption><span>Highlights</span><code>53-highlights.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/54-chat.png" alt="Chat" loading="lazy" />
+  <figcaption><span>Chat</span><code>54-chat.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/55-messages.png" alt="Messages" loading="lazy" />
+  <figcaption><span>Messages</span><code>55-messages.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/56-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>56-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/57-wallet.png" alt="Wallet" loading="lazy" />
+  <figcaption><span>Wallet</span><code>57-wallet.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/58-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>58-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/59-profile.png" alt="Profile" loading="lazy" />
+  <figcaption><span>Profile</span><code>59-profile.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/60-subscriptions.png" alt="Subscriptions" loading="lazy" />
+  <figcaption><span>Subscriptions</span><code>60-subscriptions.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/61-following.png" alt="Following" loading="lazy" />
+  <figcaption><span>Following</span><code>61-following.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/62-user-menu.png" alt="User Menu" loading="lazy" />
+  <figcaption><span>User Menu</span><code>62-user-menu.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/63-feed-again.png" alt="Feed Again" loading="lazy" />
+  <figcaption><span>Feed Again</span><code>63-feed-again.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/64-discover-home.png" alt="Discover Home" loading="lazy" />
+  <figcaption><span>Discover Home</span><code>64-discover-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/65-discover-top-videochamadas.png" alt="Discover Top Videochamadas" loading="lazy" />
+  <figcaption><span>Discover Top Videochamadas</span><code>65-discover-top-videochamadas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/66-discover-em-alta.png" alt="Discover Em Alta" loading="lazy" />
+  <figcaption><span>Discover Em Alta</span><code>66-discover-em-alta.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/67-discover-top-assinaturas.png" alt="Discover Top Assinaturas" loading="lazy" />
+  <figcaption><span>Discover Top Assinaturas</span><code>67-discover-top-assinaturas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/68-discover-top-packs.png" alt="Discover Top Packs" loading="lazy" />
+  <figcaption><span>Discover Top Packs</span><code>68-discover-top-packs.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/69-discover-recomendado.png" alt="Discover Recomendado" loading="lazy" />
+  <figcaption><span>Discover Recomendado</span><code>69-discover-recomendado.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/70-discover-filter-black-friday.png" alt="Discover Filter Black Friday" loading="lazy" />
+  <figcaption><span>Discover Filter Black Friday</span><code>70-discover-filter-black-friday.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/71-discover-filter-online-agora.png" alt="Discover Filter Online Agora" loading="lazy" />
+  <figcaption><span>Discover Filter Online Agora</span><code>71-discover-filter-online-agora.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/72-discover-filter-top-telegram.png" alt="Discover Filter Top Telegram" loading="lazy" />
+  <figcaption><span>Discover Filter Top Telegram</span><code>72-discover-filter-top-telegram.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/73-discover-filter-disponível-para-chamada.png" alt="Discover Filter DisponíVel Para Chamada" loading="lazy" />
+  <figcaption><span>Discover Filter DisponíVel Para Chamada</span><code>73-discover-filter-disponível-para-chamada.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/74-discover-filter-mais-seguidores.png" alt="Discover Filter Mais Seguidores" loading="lazy" />
+  <figcaption><span>Discover Filter Mais Seguidores</span><code>74-discover-filter-mais-seguidores.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/75-discover-filter-mais-ativas.png" alt="Discover Filter Mais Ativas" loading="lazy" />
+  <figcaption><span>Discover Filter Mais Ativas</span><code>75-discover-filter-mais-ativas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/76-discover-filter-novidades.png" alt="Discover Filter Novidades" loading="lazy" />
+  <figcaption><span>Discover Filter Novidades</span><code>76-discover-filter-novidades.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/77-discover-filter-todas.png" alt="Discover Filter Todas" loading="lazy" />
+  <figcaption><span>Discover Filter Todas</span><code>77-discover-filter-todas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/78-search-home.png" alt="Search Home" loading="lazy" />
+  <figcaption><span>Search Home</span><code>78-search-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/79-search-query-larissa.png" alt="Search Query Larissa" loading="lazy" />
+  <figcaption><span>Search Query Larissa</span><code>79-search-query-larissa.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/80-settings-home.png" alt="Settings Home" loading="lazy" />
+  <figcaption><span>Settings Home</span><code>80-settings-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/81-settings-edite-seus-dados.png" alt="Settings Edite Seus Dados" loading="lazy" />
+  <figcaption><span>Settings Edite Seus Dados</span><code>81-settings-edite-seus-dados.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/82-settings-minha-conta.png" alt="Settings Minha Conta" loading="lazy" />
+  <figcaption><span>Settings Minha Conta</span><code>82-settings-minha-conta.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/83-settings-privacidade.png" alt="Settings Privacidade" loading="lazy" />
+  <figcaption><span>Settings Privacidade</span><code>83-settings-privacidade.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/84-wallet-or-onboarding.png" alt="Wallet Or Onboarding" loading="lazy" />
+  <figcaption><span>Wallet Or Onboarding</span><code>84-wallet-or-onboarding.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/85-creator-onboard-dados-pessoais.png" alt="Creator Onboard Dados Pessoais" loading="lazy" />
+  <figcaption><span>Creator Onboard Dados Pessoais</span><code>85-creator-onboard-dados-pessoais.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/86-creator-onboard-endereço.png" alt="Creator Onboard EndereçO" loading="lazy" />
+  <figcaption><span>Creator Onboard EndereçO</span><code>86-creator-onboard-endereço.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/87-creator-onboard-formas-de-monetização.png" alt="Creator Onboard Formas De MonetizaçãO" loading="lazy" />
+  <figcaption><span>Creator Onboard Formas De MonetizaçãO</span><code>87-creator-onboard-formas-de-monetização.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/88-creator-onboard-customize-seu-perfil.png" alt="Creator Onboard Customize Seu Perfil" loading="lazy" />
+  <figcaption><span>Creator Onboard Customize Seu Perfil</span><code>88-creator-onboard-customize-seu-perfil.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/89-creator-onboard-documentos.png" alt="Creator Onboard Documentos" loading="lazy" />
+  <figcaption><span>Creator Onboard Documentos</span><code>89-creator-onboard-documentos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/90-user-menu-open.png" alt="User Menu Open" loading="lazy" />
+  <figcaption><span>User Menu Open</span><code>90-user-menu-open.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/91-indique-or-home.png" alt="Indique Or Home" loading="lazy" />
+  <figcaption><span>Indique Or Home</span><code>91-indique-or-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/92-profile-1.png" alt="Profile 1" loading="lazy" />
+  <figcaption><span>Profile 1</span><code>92-profile-1.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/93-profile-1-assinar.png" alt="Profile 1 Assinar" loading="lazy" />
+  <figcaption><span>Profile 1 Assinar</span><code>93-profile-1-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/94-profile-2.png" alt="Profile 2" loading="lazy" />
+  <figcaption><span>Profile 2</span><code>94-profile-2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/95-profile-2-assinar.png" alt="Profile 2 Assinar" loading="lazy" />
+  <figcaption><span>Profile 2 Assinar</span><code>95-profile-2-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/96-profile-3.png" alt="Profile 3" loading="lazy" />
+  <figcaption><span>Profile 3</span><code>96-profile-3.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/97-profile-3-assinar.png" alt="Profile 3 Assinar" loading="lazy" />
+  <figcaption><span>Profile 3 Assinar</span><code>97-profile-3-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/98-profile-4.png" alt="Profile 4" loading="lazy" />
+  <figcaption><span>Profile 4</span><code>98-profile-4.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/99-profile-4-assinar.png" alt="Profile 4 Assinar" loading="lazy" />
+  <figcaption><span>Profile 4 Assinar</span><code>99-profile-4-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/100-profile-5.png" alt="Profile 5" loading="lazy" />
+  <figcaption><span>Profile 5</span><code>100-profile-5.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/desktop/101-profile-5-assinar.png" alt="Profile 5 Assinar" loading="lazy" />
+  <figcaption><span>Profile 5 Assinar</span><code>101-profile-5-assinar.png</code></figcaption>
+</figure></div>
+  <h4>Mobile</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="closefans/prints/mobile/01-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>01-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/02-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>02-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/03-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>03-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/04-onboarding.png" alt="Onboarding" loading="lazy" />
+  <figcaption><span>Onboarding</span><code>04-onboarding.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/05-closebot.png" alt="Closebot" loading="lazy" />
+  <figcaption><span>Closebot</span><code>05-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/06-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>06-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/07-privacidade.png" alt="Privacidade" loading="lazy" />
+  <figcaption><span>Privacidade</span><code>07-privacidade.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/08-ajuda.png" alt="Ajuda" loading="lazy" />
+  <figcaption><span>Ajuda</span><code>08-ajuda.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/09-help-ia.png" alt="Help Ia" loading="lazy" />
+  <figcaption><span>Help Ia</span><code>09-help-ia.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/10-help-closebot.png" alt="Help Closebot" loading="lazy" />
+  <figcaption><span>Help Closebot</span><code>10-help-closebot.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/11-help-taxa.png" alt="Help Taxa" loading="lazy" />
+  <figcaption><span>Help Taxa</span><code>11-help-taxa.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/12-help-criador.png" alt="Help Criador" loading="lazy" />
+  <figcaption><span>Help Criador</span><code>12-help-criador.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/13-help-assinante.png" alt="Help Assinante" loading="lazy" />
+  <figcaption><span>Help Assinante</span><code>13-help-assinante.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/14-blog.png" alt="Blog" loading="lazy" />
+  <figcaption><span>Blog</span><code>14-blog.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/15-blog-funcionalidades.png" alt="Blog Funcionalidades" loading="lazy" />
+  <figcaption><span>Blog Funcionalidades</span><code>15-blog-funcionalidades.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/50-feed.png" alt="Feed" loading="lazy" />
+  <figcaption><span>Feed</span><code>50-feed.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/51-discover.png" alt="Discover" loading="lazy" />
+  <figcaption><span>Discover</span><code>51-discover.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/52-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>52-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/53-highlights.png" alt="Highlights" loading="lazy" />
+  <figcaption><span>Highlights</span><code>53-highlights.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/54-chat.png" alt="Chat" loading="lazy" />
+  <figcaption><span>Chat</span><code>54-chat.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/55-discover.png" alt="Discover" loading="lazy" />
+  <figcaption><span>Discover</span><code>55-discover.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/56-discover-top-videochamadas.png" alt="Discover Top Videochamadas" loading="lazy" />
+  <figcaption><span>Discover Top Videochamadas</span><code>56-discover-top-videochamadas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/57-discover-top-assinaturas.png" alt="Discover Top Assinaturas" loading="lazy" />
+  <figcaption><span>Discover Top Assinaturas</span><code>57-discover-top-assinaturas.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/58-discover-top-packs.png" alt="Discover Top Packs" loading="lazy" />
+  <figcaption><span>Discover Top Packs</span><code>58-discover-top-packs.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/59-discover-em-alta.png" alt="Discover Em Alta" loading="lazy" />
+  <figcaption><span>Discover Em Alta</span><code>59-discover-em-alta.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/60-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>60-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/61-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>61-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/62-wallet-onboarding.png" alt="Wallet Onboarding" loading="lazy" />
+  <figcaption><span>Wallet Onboarding</span><code>62-wallet-onboarding.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/63-feed.png" alt="Feed" loading="lazy" />
+  <figcaption><span>Feed</span><code>63-feed.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/64-profile-1.png" alt="Profile 1" loading="lazy" />
+  <figcaption><span>Profile 1</span><code>64-profile-1.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/65-profile-2.png" alt="Profile 2" loading="lazy" />
+  <figcaption><span>Profile 2</span><code>65-profile-2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="closefans/prints/mobile/66-profile-3.png" alt="Profile 3" loading="lazy" />
+  <figcaption><span>Profile 3</span><code>66-profile-3.png</code></figcaption>
+</figure></div>
+</section>
+
+
+<section id="fatalfans">
+  <div class="platform-head">
+    <h2>FatalFans</h2>
+    <span class="badge accent">#11 · #3 BR</span>
+    <span class="badge">2026-11-10</span>
+    <span class="badge ok">40 desktop</span>
+    <span class="badge">14 mobile</span>
+  </div>
+  <p><a href="https://fatalfans.com/">https://fatalfans.com/</a> · pasta <code>fatalfans/</code> · Fatal Model · Creator Awards</p>
+  <h4>Desktop</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="fatalfans/prints/desktop/00-age-gate.png" alt="Age Gate" loading="lazy" />
+  <figcaption><span>Age Gate</span><code>00-age-gate.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/01-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>01-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/01b-landing-awards.png" alt="Landing Awards" loading="lazy" />
+  <figcaption><span>Landing Awards</span><code>01b-landing-awards.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/01c-landing-rankings.png" alt="Landing Rankings" loading="lazy" />
+  <figcaption><span>Landing Rankings</span><code>01c-landing-rankings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/02-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>02-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/03-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>03-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/04-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>04-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/05-privacidade.png" alt="Privacidade" loading="lazy" />
+  <figcaption><span>Privacidade</span><code>05-privacidade.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/06-profile.png" alt="Profile" loading="lazy" />
+  <figcaption><span>Profile</span><code>06-profile.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/07-profile-2.png" alt="Profile 2" loading="lazy" />
+  <figcaption><span>Profile 2</span><code>07-profile-2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/08-awards.png" alt="Awards" loading="lazy" />
+  <figcaption><span>Awards</span><code>08-awards.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/09-filter-mulheres.png" alt="Filter Mulheres" loading="lazy" />
+  <figcaption><span>Filter Mulheres</span><code>09-filter-mulheres.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/10-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>10-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/11-creator-campaign.png" alt="Creator Campaign" loading="lazy" />
+  <figcaption><span>Creator Campaign</span><code>11-creator-campaign.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/40-signup-before.png" alt="Signup Before" loading="lazy" />
+  <figcaption><span>Signup Before</span><code>40-signup-before.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/41-signup-empty.png" alt="Signup Empty" loading="lazy" />
+  <figcaption><span>Signup Empty</span><code>41-signup-empty.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/42-signup-filled.png" alt="Signup Filled" loading="lazy" />
+  <figcaption><span>Signup Filled</span><code>42-signup-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/43-signup-after.png" alt="Signup After" loading="lazy" />
+  <figcaption><span>Signup After</span><code>43-signup-after.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/44-signup-retry.png" alt="Signup Retry" loading="lazy" />
+  <figcaption><span>Signup Retry</span><code>44-signup-retry.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/45-signup-with-consent.png" alt="Signup With Consent" loading="lazy" />
+  <figcaption><span>Signup With Consent</span><code>45-signup-with-consent.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/46-signup-after-consent.png" alt="Signup After Consent" loading="lazy" />
+  <figcaption><span>Signup After Consent</span><code>46-signup-after-consent.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/47-signup-ready.png" alt="Signup Ready" loading="lazy" />
+  <figcaption><span>Signup Ready</span><code>47-signup-ready.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/48-signup-result.png" alt="Signup Result" loading="lazy" />
+  <figcaption><span>Signup Result</span><code>48-signup-result.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/50-user-menu.png" alt="User Menu" loading="lazy" />
+  <figcaption><span>User Menu</span><code>50-user-menu.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/51-home-logged.png" alt="Home Logged" loading="lazy" />
+  <figcaption><span>Home Logged</span><code>51-home-logged.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/52-edit-profile.png" alt="Edit Profile" loading="lazy" />
+  <figcaption><span>Edit Profile</span><code>52-edit-profile.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/52c-edit-click.png" alt="Edit Click" loading="lazy" />
+  <figcaption><span>Edit Click</span><code>52c-edit-click.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/53-saved.png" alt="Saved" loading="lazy" />
+  <figcaption><span>Saved</span><code>53-saved.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/53c-saved-click.png" alt="Saved Click" loading="lazy" />
+  <figcaption><span>Saved Click</span><code>53c-saved-click.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/54-purchases.png" alt="Purchases" loading="lazy" />
+  <figcaption><span>Purchases</span><code>54-purchases.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/54c-purchases-click.png" alt="Purchases Click" loading="lazy" />
+  <figcaption><span>Purchases Click</span><code>54c-purchases-click.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/55-subscriptions.png" alt="Subscriptions" loading="lazy" />
+  <figcaption><span>Subscriptions</span><code>55-subscriptions.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/56-chats.png" alt="Chats" loading="lazy" />
+  <figcaption><span>Chats</span><code>56-chats.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/56b-chat.png" alt="Chat" loading="lazy" />
+  <figcaption><span>Chat</span><code>56b-chat.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/57-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>57-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/57b-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>57b-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/58-profile-assinar.png" alt="Profile Assinar" loading="lazy" />
+  <figcaption><span>Profile Assinar</span><code>58-profile-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/59-awards-logged.png" alt="Awards Logged" loading="lazy" />
+  <figcaption><span>Awards Logged</span><code>59-awards-logged.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/60-create-content.png" alt="Create Content" loading="lazy" />
+  <figcaption><span>Create Content</span><code>60-create-content.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/desktop/61-telegram.png" alt="Telegram" loading="lazy" />
+  <figcaption><span>Telegram</span><code>61-telegram.png</code></figcaption>
+</figure></div>
+  <h4>Mobile</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="fatalfans/prints/mobile/01-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>01-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/01b-landing-scroll.png" alt="Landing Scroll" loading="lazy" />
+  <figcaption><span>Landing Scroll</span><code>01b-landing-scroll.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/02-login.png" alt="Login" loading="lazy" />
+  <figcaption><span>Login</span><code>02-login.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/03-signup.png" alt="Signup" loading="lazy" />
+  <figcaption><span>Signup</span><code>03-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/04-termos.png" alt="Termos" loading="lazy" />
+  <figcaption><span>Termos</span><code>04-termos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/05-privacidade.png" alt="Privacidade" loading="lazy" />
+  <figcaption><span>Privacidade</span><code>05-privacidade.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/06-profile.png" alt="Profile" loading="lazy" />
+  <figcaption><span>Profile</span><code>06-profile.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/11-creator-campaign.png" alt="Creator Campaign" loading="lazy" />
+  <figcaption><span>Creator Campaign</span><code>11-creator-campaign.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/50-user-menu.png" alt="User Menu" loading="lazy" />
+  <figcaption><span>User Menu</span><code>50-user-menu.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/51-home-logged.png" alt="Home Logged" loading="lazy" />
+  <figcaption><span>Home Logged</span><code>51-home-logged.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/53-saved.png" alt="Saved" loading="lazy" />
+  <figcaption><span>Saved</span><code>53-saved.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/54-purchases.png" alt="Purchases" loading="lazy" />
+  <figcaption><span>Purchases</span><code>54-purchases.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/58-profile-assinar.png" alt="Profile Assinar" loading="lazy" />
+  <figcaption><span>Profile Assinar</span><code>58-profile-assinar.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fatalfans/prints/mobile/60-create-content.png" alt="Create Content" loading="lazy" />
+  <figcaption><span>Create Content</span><code>60-create-content.png</code></figcaption>
+</figure></div>
+</section>
+
+
+<section id="fansly">
+  <div class="platform-head">
+    <h2>Fansly</h2>
+    <span class="badge accent">#4 global</span>
+    <span class="badge">2026-11-10</span>
+    <span class="badge ok">56 desktop</span>
+    <span class="badge">9 mobile</span>
+  </div>
+  <p><a href="https://fansly.com/">https://fansly.com/</a> · pasta <code>fansly/</code> · Explore / For You / lives · ban IA fotorealista</p>
+  <h4>Desktop</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="fansly/prints/desktop/00-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>00-landing.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/01-after-agegate.png" alt="After Agegate" loading="lazy" />
+  <figcaption><span>After Agegate</span><code>01-after-agegate.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/01-home.png" alt="Home" loading="lazy" />
+  <figcaption><span>Home</span><code>01-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/01-landing-entered.png" alt="Landing Entered" loading="lazy" />
+  <figcaption><span>Landing Entered</span><code>01-landing-entered.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/01b-clicked-enter.png" alt="Clicked Enter" loading="lazy" />
+  <figcaption><span>Clicked Enter</span><code>01b-clicked-enter.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/01c-after-cookies.png" alt="After Cookies" loading="lazy" />
+  <figcaption><span>After Cookies</span><code>01c-after-cookies.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/02-explore.png" alt="Explore" loading="lazy" />
+  <figcaption><span>Explore</span><code>02-explore.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/03-discover.png" alt="Discover" loading="lazy" />
+  <figcaption><span>Discover</span><code>03-discover.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/04-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>04-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/05-become-creator.png" alt="Become Creator" loading="lazy" />
+  <figcaption><span>Become Creator</span><code>05-become-creator.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/05b-become-creator-alt.png" alt="Become Creator Alt" loading="lazy" />
+  <figcaption><span>Become Creator Alt</span><code>05b-become-creator-alt.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/06-tos.png" alt="Tos" loading="lazy" />
+  <figcaption><span>Tos</span><code>06-tos.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/07-privacy.png" alt="Privacy" loading="lazy" />
+  <figcaption><span>Privacy</span><code>07-privacy.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/08-2257.png" alt="2257" loading="lazy" />
+  <figcaption><span>2257</span><code>08-2257.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/09-dmca.png" alt="Dmca" loading="lazy" />
+  <figcaption><span>Dmca</span><code>09-dmca.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/10-help.png" alt="Help" loading="lazy" />
+  <figcaption><span>Help</span><code>10-help.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/11-help-search-ai.png" alt="Help Search Ai" loading="lazy" />
+  <figcaption><span>Help Search Ai</span><code>11-help-search-ai.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/12-help-search-ai2.png" alt="Help Search Ai2" loading="lazy" />
+  <figcaption><span>Help Search Ai2</span><code>12-help-search-ai2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/13-help-search-deepfake.png" alt="Help Search Deepfake" loading="lazy" />
+  <figcaption><span>Help Search Deepfake</span><code>13-help-search-deepfake.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/14-contact.png" alt="Contact" loading="lazy" />
+  <figcaption><span>Contact</span><code>14-contact.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/15-usc2257.png" alt="Usc2257" loading="lazy" />
+  <figcaption><span>Usc2257</span><code>15-usc2257.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/20-ai-0.png" alt="Ai 0" loading="lazy" />
+  <figcaption><span>Ai 0</span><code>20-ai-0.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/20-ai-1.png" alt="Ai 1" loading="lazy" />
+  <figcaption><span>Ai 1</span><code>20-ai-1.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/20-ai-2.png" alt="Ai 2" loading="lazy" />
+  <figcaption><span>Ai 2</span><code>20-ai-2.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/20-ai-3.png" alt="Ai 3" loading="lazy" />
+  <figcaption><span>Ai 3</span><code>20-ai-3.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/21-ai-policy-article.png" alt="Ai Policy Article" loading="lazy" />
+  <figcaption><span>Ai Policy Article</span><code>21-ai-policy-article.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/22-ncii-deepfake.png" alt="Ncii Deepfake" loading="lazy" />
+  <figcaption><span>Ncii Deepfake</span><code>22-ncii-deepfake.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/30-landing-before-signup.png" alt="Landing Before Signup" loading="lazy" />
+  <figcaption><span>Landing Before Signup</span><code>30-landing-before-signup.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/30-signup-home.png" alt="Signup Home" loading="lazy" />
+  <figcaption><span>Signup Home</span><code>30-signup-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/31-signup-form.png" alt="Signup Form" loading="lazy" />
+  <figcaption><span>Signup Form</span><code>31-signup-form.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/32-signup-filled.png" alt="Signup Filled" loading="lazy" />
+  <figcaption><span>Signup Filled</span><code>32-signup-filled.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/33-signup-after-submit.png" alt="Signup After Submit" loading="lazy" />
+  <figcaption><span>Signup After Submit</span><code>33-signup-after-submit.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/34-signup-filled-all.png" alt="Signup Filled All" loading="lazy" />
+  <figcaption><span>Signup Filled All</span><code>34-signup-filled-all.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/35-signup-after-join.png" alt="Signup After Join" loading="lazy" />
+  <figcaption><span>Signup After Join</span><code>35-signup-after-join.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/36-ready-to-join.png" alt="Ready To Join" loading="lazy" />
+  <figcaption><span>Ready To Join</span><code>36-ready-to-join.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/37-after-join.png" alt="After Join" loading="lazy" />
+  <figcaption><span>After Join</span><code>37-after-join.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/50-home-unverified.png" alt="Home Unverified" loading="lazy" />
+  <figcaption><span>Home Unverified</span><code>50-home-unverified.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/51-explore.png" alt="Explore" loading="lazy" />
+  <figcaption><span>Explore</span><code>51-explore.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/52-explore-discover.png" alt="Explore Discover" loading="lazy" />
+  <figcaption><span>Explore Discover</span><code>52-explore-discover.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/53-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>53-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/54-messages.png" alt="Messages" loading="lazy" />
+  <figcaption><span>Messages</span><code>54-messages.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/55-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>55-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/56-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>56-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/57-settings-account.png" alt="Settings Account" loading="lazy" />
+  <figcaption><span>Settings Account</span><code>57-settings-account.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/58-wallet.png" alt="Wallet" loading="lazy" />
+  <figcaption><span>Wallet</span><code>58-wallet.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/59-collections.png" alt="Collections" loading="lazy" />
+  <figcaption><span>Collections</span><code>59-collections.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/60-bookmarks.png" alt="Bookmarks" loading="lazy" />
+  <figcaption><span>Bookmarks</span><code>60-bookmarks.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/62-account-before-resend.png" alt="Account Before Resend" loading="lazy" />
+  <figcaption><span>Account Before Resend</span><code>62-account-before-resend.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/63-account-after-resend-attempt.png" alt="Account After Resend Attempt" loading="lazy" />
+  <figcaption><span>Account After Resend Attempt</span><code>63-account-after-resend-attempt.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/64-resend-clicked.png" alt="Resend Clicked" loading="lazy" />
+  <figcaption><span>Resend Clicked</span><code>64-resend-clicked.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/67-profile-me.png" alt="Profile Me" loading="lazy" />
+  <figcaption><span>Profile Me</span><code>67-profile-me.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/68-creator-apply.png" alt="Creator Apply" loading="lazy" />
+  <figcaption><span>Creator Apply</span><code>68-creator-apply.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/69-payments.png" alt="Payments" loading="lazy" />
+  <figcaption><span>Payments</span><code>69-payments.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/70-profile-creator.png" alt="Profile Creator" loading="lazy" />
+  <figcaption><span>Profile Creator</span><code>70-profile-creator.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/71-home-foryou.png" alt="Home Foryou" loading="lazy" />
+  <figcaption><span>Home Foryou</span><code>71-home-foryou.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/desktop/72-creator-apply-flow.png" alt="Creator Apply Flow" loading="lazy" />
+  <figcaption><span>Creator Apply Flow</span><code>72-creator-apply-flow.png</code></figcaption>
+</figure></div>
+  <h4>Mobile</h4>
+  <div class="gallery"><figure class="shot">
+  <img src="fansly/prints/mobile/01-home.png" alt="Home" loading="lazy" />
+  <figcaption><span>Home</span><code>01-home.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/02-explore.png" alt="Explore" loading="lazy" />
+  <figcaption><span>Explore</span><code>02-explore.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/03-search.png" alt="Search" loading="lazy" />
+  <figcaption><span>Search</span><code>03-search.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/04-messages.png" alt="Messages" loading="lazy" />
+  <figcaption><span>Messages</span><code>04-messages.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/05-notifications.png" alt="Notifications" loading="lazy" />
+  <figcaption><span>Notifications</span><code>05-notifications.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/06-settings.png" alt="Settings" loading="lazy" />
+  <figcaption><span>Settings</span><code>06-settings.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/07-account.png" alt="Account" loading="lazy" />
+  <figcaption><span>Account</span><code>07-account.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/08-profile-creator.png" alt="Profile Creator" loading="lazy" />
+  <figcaption><span>Profile Creator</span><code>08-profile-creator.png</code></figcaption>
+</figure>
+<figure class="shot">
+  <img src="fansly/prints/mobile/09-landing.png" alt="Landing" loading="lazy" />
+  <figcaption><span>Landing</span><code>09-landing.png</code></figcaption>
+</figure></div>
+</section>
+
+
+<section id="fontes">
+  <h2>Fontes</h2>
+  <ul class="compact">
+    <li>Pastas: <code>privacy/</code>, <code>closefans/</code>, <code>fatalfans/</code>, <code>fansly/</code></li>
+    <li>Curadoria macro: <code>00-curadoria.html</code></li>
+    <li>Cards Clozzy 2028 · CDPs :9263–:9266</li>
+  </ul>
+</section>
+
+<footer class="doc">
+  Clozzy 2028 · Relatório compilado · 286 prints · 2026-11-11 · visual: relatório claro (IBM Plex / branco)
+</footer>
+
+</div>
+</body>
+</html>

@@ -5,6 +5,7 @@ Matriz vs plataformas de **conteúdo exclusivo / creator monetization**, ordenad
 - **Card Trello:** https://trello.com/c/RR95Cei7
 - **Board:** [Clozzy 2028](https://trello.com/b/n24j78NT/clozzy-2028)
 - **Visão:** [`../../README.md`](../../README.md)
+- **Código Clozzy (clones):** [`clozzy/`](clozzy/README.md) · **identidade as-is:** [`../identidade-atual/`](../identidade-atual/README.md)
 - **Entrada:** [`00-curadoria.html`](00-curadoria.html) / [`00-curadoria.pdf`](00-curadoria.pdf)
 - **Task:** [`../../tasks/6aeb158bc595d3438795932d/`](../../tasks/6aeb158bc595d3438795932d/README.md)
 

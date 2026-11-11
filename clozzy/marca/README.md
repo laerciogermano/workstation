@@ -2,16 +2,18 @@
 
 | Arquivo | Uso |
 |---------|-----|
-| [`benchmarking-concorrentes/`](benchmarking-concorrentes/README.md) | Benchmarking de plataformas concorrentes (insumo da nova identidade) |
-| [`benchmarking-concorrentes/closefans/identidade-atual/`](benchmarking-concorrentes/closefans/identidade-atual/README.md) | Identidade visual as-is CloseFans (close.fans) |
+| [`identidade-atual/`](identidade-atual/README.md) | Identidade visual **as-is** (performer + site) |
+| [`benchmarking-concorrentes/`](benchmarking-concorrentes/README.md) | Benchmarking de plataformas concorrentes |
+| [`benchmarking-concorrentes/clozzy/`](benchmarking-concorrentes/clozzy/README.md) | Clones do código Clozzy (ex-`closeapp/`) |
+| [`benchmarking-concorrentes/closefans/identidade-atual/`](benchmarking-concorrentes/closefans/identidade-atual/README.md) | Identidade as-is CloseFans (concorrente) |
 
-**Card:** [Benchmarking de todas as concorrentes](https://trello.com/c/RR95Cei7) · board [Clozzy 2028](https://trello.com/b/n24j78NT/clozzy-2028) · task [`../tasks/6aeb158bc595d3438795932d/`](../tasks/6aeb158bc595d3438795932d/README.md)
+**Card:** [Benchmarking de todas as concorrentes](https://trello.com/c/RR95Cei7) · board [Clozzy 2028](https://trello.com/b/n24j78NT/clozzy-2028)
 
-**Antes → depois:** sem curadoria de mercado → matriz HTML/PDF em `benchmarking-concorrentes/`.  
-**Próximo:** card [Criar identidade visual (nova)](https://trello.com/c/ivTfpNhh) usa este benchmarking como insumo.
+**Próximo:** card [Criar identidade visual (nova)](https://trello.com/c/ivTfpNhh) usa benchmarking + este as-is como insumo.
 
 ## Rollback
 
 ```bash
-rm -rf clozzy/marca/benchmarking-concorrentes clozzy/marca/README.md
+rm -rf clozzy/marca/identidade-atual
+# clones: ver benchmarking-concorrentes/clozzy/README.md
 ```

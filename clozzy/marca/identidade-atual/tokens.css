@@ -1,0 +1,43 @@
+/**
+ * Clozzy — tokens as-is
+ * Fonte canônica: performer/src/theme/variables.scss + global.scss
+ * Site clozzy.com.br / clozzy.link: ver nota de drift no BRAND.md
+ */
+:root {
+  /* Brand (performer) */
+  --cz-pink: #ff0065;
+  --cz-pink-alt: #ff116f; /* logo.svg */
+  --cz-pink-landing: #fe2c78; /* landing-logo.svg */
+  --cz-pink-front: #fe2c55; /* front --ion-color-primary */
+
+  /* Neutros */
+  --cz-black: #000000;
+  --cz-ink: #222428;
+  --cz-caret: #222222;
+  --cz-medium: #92949c;
+  --cz-light: #f4f5f8;
+  --cz-paper: #ffffff;
+  --cz-mist: #edeef1;
+  --cz-wash: #f6f7f8;
+
+  /* Semântica (Ionic defaults ainda no theme) */
+  --cz-success: #2dd36f;
+  --cz-warning: #ffc409;
+  --cz-danger: #eb445a;
+  --cz-info: #3dc2ff;
+
+  /* Drift site marketing (clozzy.com.br 2026-11) — não é o token do performer */
+  --cz-site-purple: #7651e9;
+  --cz-site-green: #1cce98;
+
+  /* Tipo */
+  --cz-font-performer: "Montserrat", system-ui, sans-serif;
+  --cz-font-front: "Proxima Nova", Helvetica, Arial, sans-serif;
+
+  /* Ionic bridge */
+  --color-primary: var(--cz-pink);
+  --ion-color-primary: var(--cz-pink);
+  --ion-color-primary-contrast: #ffffff;
+}
+
+/* AA approx: branco/#FF0065 ≈ 3.9:1 (só título/CTA grande) · #FF0065/#000 ≈ 5.4:1 · preto/branco 21:1 */

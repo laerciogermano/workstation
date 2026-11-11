@@ -111,7 +111,7 @@ pages.append(f"""<section class="page pink">
 {foot(1)}</section>""")
 
 # 2 sumário
-toc = [(3,"Essência"),(4,"Logo system (performer)"),(5,"Mark"),(6,"Cores"),(7,"Tipografia"),(8,"UI performer / front"),(9,"Site roxo clozzy.com.br"),(10,"Voz e canais"),(11,"Código e paths"),(12,"Contracapa")]
+toc = [(3,"Essência"),(4,"Logo system (performer)"),(5,"Mark"),(6,"Cores"),(7,"Tipografia"),(8,"UI performer / front"),(9,"Site roxo clozzy.com.br"),(10,"Refs Figma"),(11,"Voz · código"),(12,"Contracapa")]
 pages.append(f"""<section class="page light">
 <div class="eyebrow">Sumário</div><h2>Manual em <b>12</b> páginas</h2>
 <div class="toc">{''.join(f'<div class="ti"><span>{n:02d}</span><b>{t}</b></div>' for n,t in toc)}</div>
@@ -287,41 +287,48 @@ pages.append(f"""<section class="page mist">
 </div>
 {foot(9)}</section>""")
 
-# 10 voz
-pages.append(f"""<section class="page light">
-<div class="eyebrow">Voz · canais</div>
-<h2>Pitch de <b>Close Friends</b></h2>
-<div class="grid2">
-<div class="card"><b>Voz</b>
-<ul>
-<li>Do: assinatura, link, ganhe dinheiro, só paga se vender</li>
-<li>Don't: soar OnlyFans genérico sem o ângulo CF</li>
-</ul>
-<b style="margin-top:10px">Canais</b>
-<ul>
-<li>clozzy.com.br / .link — marketing</li>
-<li>meu.clozzy.com.br — performer</li>
-<li>GitLab clozzy-app — código</li>
-</ul></div>
-<div class="card"><b>IA</b>
-<p>Sem suite GenAI no código. Benchmarking Clozzy 2028: oportunidade de disclosure vs ban CloseFans.</p>
-</div></div>
+# 10 Figma exports
+FIG = REFS / "figma" / "exports"
+def fig(name, cap, sub, max_w=900):
+    p = FIG / name
+    if not p.exists():
+        return ""
+    # img() só aceita folder+name
+    return f'<div class="rf">{img(name, FIG, max_w=max_w)}<b>{cap}</b><span>{sub}</span></div>'
+
+fig_grid = "".join([
+    fig("untitled-zip/Deslogado.png", "Landing Figma", "estrela roxa · Deslogado", 400),
+    fig("02-group-285.png", "Performer UI", "onboarding / perfil / plano · rosa", 640),
+    fig("01-group-284.png", "Wallet", "Minha Carteira · rosa (+ roxo pontual)", 640),
+    fig("03-group-286.png", "v1.0 + components", "kit de UI rosa", 640),
+])
+pages.append(f"""<section class="page mist">
+<div class="eyebrow">Figma · exports</div>
+<h2>Figuras baixadas dos <b>4 arquivos</b></h2>
+<div class="refs" style="grid-template-columns:1fr 1fr">{fig_grid}</div>
+<p class="note">Origem: Downloads <code>Group 284–287.png</code> + <code>Untitled.zip</code> → <code>refs/figma/exports/</code>. Links: Untitled×3 + clozzy-performers. Pill gradiente: <code>rectangle-43.png</code> (roxo→fúcsia).</p>
 {foot(10)}</section>""")
 
-# 11 paths
-pages.append(f"""<section class="page mist">
-<div class="eyebrow">Código</div>
-<h2>Onde está a <b>marca</b></h2>
-<table class="ct">
-<tr><th>Path</th><th>O quê</th></tr>
-<tr><td><code>…/clozzy/performer/src/theme/variables.scss</code></td><td>--color-primary #FF0065</td></tr>
-<tr><td><code>…/clozzy/performer/src/global.scss</code></td><td>Montserrat</td></tr>
-<tr><td><code>…/clozzy/performer/src/assets/icons/</code></td><td>SVG + PNG logos</td></tr>
-<tr><td><code>…/clozzy/front/src/theme/variables.scss</code></td><td>#FE2C55</td></tr>
-<tr><td><code>…/clozzy/front/src/global.scss</code></td><td>Proxima Nova</td></tr>
-<tr><td><code>marca/identidade-atual/</code></td><td>Este kit</td></tr>
-</table>
-<p class="note">Pasta de clones: <code>marca/benchmarking-concorrentes/clozzy/</code> (renomeada de <code>closeapp/</code> em 2026-11-11).</p>
+# 11 voz + código
+pages.append(f"""<section class="page light">
+<div class="eyebrow">Voz · código</div>
+<h2>Close Friends · onde está a <b>marca</b></h2>
+<div class="grid2">
+<div class="card"><b>Voz / canais</b>
+<ul>
+<li>Do: assinatura, link, ganhe dinheiro, só paga se vender</li>
+<li>clozzy.com.br · meu.clozzy.com.br · GitLab clozzy-app</li>
+<li>IA: sem suite GenAI no código</li>
+</ul></div>
+<div class="card"><b>Paths</b>
+<ul>
+<li><code>performer/.../variables.scss</code> → #FF0065</li>
+<li><code>performer/.../icons/</code> → SVG/PNG</li>
+<li><code>front/.../variables.scss</code> → #FE2C55</li>
+<li><code>marca/identidade-atual/</code> → este kit</li>
+<li><code>refs/figma/</code> → exports</li>
+</ul></div>
+</div>
 {foot(11)}</section>""")
 
 # 12

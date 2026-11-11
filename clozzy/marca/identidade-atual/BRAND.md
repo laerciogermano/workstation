@@ -119,3 +119,18 @@ Sem política GenAI explícita no código inspecionado. Para Clozzy 2028: defini
 | front | Rosa `#FE2C55` · Proxima | Fã, assinatura |
 | clozzy.com.br | Hoje roxo `#7651E9` (drift) | Marketing / cadastro |
 | PWA | Icons PNG rosa | Manifest theme `#ffffff` |
+
+## 11. Refs Figma (exports)
+
+Pasta: [`refs/figma/`](refs/figma/README.md)
+
+| Export | Conteúdo | Cor dominante |
+|---|---|---|
+| `exports/untitled-zip/Deslogado.png` | Landing mobile estrela | Roxo site |
+| `exports/01-group-284.png` | Wallet / Minha Carteira | Rosa CTA (+ roxo pontual) |
+| `exports/02-group-285.png` | Onboarding / perfil / plano | Rosa performer |
+| `exports/03-group-286.png` | v1.0 + components | Rosa |
+| `exports/04-group-287.png` | Conta / saque / teclado | Rosa + cards azul |
+| `exports/rectangle-43.png` | Pill gradiente | Roxo→fúcsia |
+
+Links origem: Untitled×3 + [clozzy-performers](https://www.figma.com/design/h0BH4yv0LoeBsUlgjK7B2M/clozzy-performers).

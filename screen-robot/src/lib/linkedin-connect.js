@@ -216,7 +216,7 @@ export function hasPending(els) {
 }
 
 /**
- * LinkedIn 404: "This page doesn't exist" / "Please check your URL…".
+ * LinkedIn 404: EN "This page doesn't exist" / PT "Esta página não existe".
  * Junta textos OCR (podem vir partidos) e normaliza apóstrofo.
  */
 export function hasPageDoesNotExist(els) {
@@ -228,7 +228,10 @@ export function hasPageDoesNotExist(els) {
     .replace(/[\u2019\u2018`´]/g, "'");
   return (
     /this\s+page\s+doesn'?t\s+exist/.test(blob) ||
-    /please\s+check\s+your\s+url/.test(blob)
+    /please\s+check\s+your\s+url/.test(blob) ||
+    /est[ae]\s+p[aá]gina\s+n[aã]o\s+existe/.test(blob) ||
+    /p[aá]gina\s+n[aã]o\s+(existe|encontrada)/.test(blob) ||
+    /verifique\s+sua\s+url/.test(blob)
   );
 }
 

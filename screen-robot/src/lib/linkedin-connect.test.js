@@ -124,6 +124,13 @@ describe("linkedin-connect helpers", () => {
       ]),
       true,
     );
+    assert.equal(
+      hasPageDoesNotExist([
+        { text: "Esta página não existe" },
+        { text: "Verifique sua URL ou volte para a página de início do LinkedIn." },
+      ]),
+      true,
+    );
     assert.equal(hasPageDoesNotExist([{ text: "Connect" }]), false);
   });
 

@@ -10,7 +10,7 @@ Aceitos: listagem `/connections` → `POST …/mark-accepted` (nome OCR ↔ pend
 
 1. Recebe URL `linkedin.com/in/…`
 2. Abre perfil: `am start VIEW` + package LinkedIn
-3. OCR: se **"This page doesn't exist"** / **"Please check your URL"** → `ok: true`, `status: discarded` + POST conexão `status: 3` com `discardReason` (sai de Candidatos → coluna Descartados; print `99-page-does-not-exist.png`)
+3. OCR/DOM: se **"This page doesn't exist"** / **"Please check your URL"** / **"Esta página não existe"** (PT) / path `/404` → `ok: true`, `status: discarded` + POST conexão `status: 3` com `discardReason` (sai de Candidatos → coluna Descartados; print `99-page-does-not-exist.png`)
 4. **Connect** no header → tap; senão só **Follow** → ⋮ → **Connect** no sheet
 5. Dialog note → tap **Skip** (nunca Add a note)
 6. Confirma **Pending** no OCR — sem Pending = falha

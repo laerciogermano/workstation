@@ -303,12 +303,14 @@ export async function clickSkipInvite(page, steps) {
 export async function profileSignals(page) {
   return page.evaluate(`(() => {
     const body = (document.body?.innerText || '').replace(/\\s+/g, ' ').trim();
-    const lower = body.toLowerCase();
+    // PT LinkedIn usa "Esta página não existe" (esta, não essa); EN + redirect /404/.
     const pageMissing =
+      /\\/404\\/?(\\?|$|#)/i.test(location.pathname) ||
       /this page doesn.?t exist/i.test(body) ||
       /please check your url/i.test(body) ||
-      /essa página não existe/i.test(body) ||
-      /página não encontrada/i.test(body);
+      /est[ae] página não existe/i.test(body) ||
+      /página não (existe|encontrada)/i.test(body) ||
+      /verifique sua url/i.test(body);
     // Pending/Pendente: botão OU <a> do hero ("Pendente; clique para retirar o convite…")
     const isPendingLabel = (aria, txt) => {
       const a = String(aria || '').replace(/\\s+/g, ' ').trim();

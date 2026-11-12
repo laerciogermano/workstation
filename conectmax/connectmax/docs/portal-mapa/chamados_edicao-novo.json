@@ -1,0 +1,169 @@
+{
+  "id": "chamados_edicao-novo",
+  "page": "chamados_edicao-novo",
+  "label": "chamados_edicao-novo",
+  "shot": "screenshots/chamados_edicao-novo.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=chamados_edicao",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Chamados",
+      "CRIAR CHAMADO",
+      "ENVOLVIDOS"
+    ],
+    "fields": [
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Ana Paula"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Gilson"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Suporte - Anna Beatriz"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Suporte Portal"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "MARCELLO ABW"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "GABRIELE"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "LAERCIO"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Logistica"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Bruno Toyo"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Gabriele"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Guilherme"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Marcello"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "para[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Olívia"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "assunto",
+        "id": null,
+        "placeholder": null,
+        "label": "Assunto"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "mensagem",
+        "id": null,
+        "placeholder": null,
+        "label": "Mensagem"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "file_upload",
+        "id": "file_uploadwuyi9o9lvtss88l3ibrgmgldkw977hh05vdrpt4x",
+        "placeholder": null,
+        "label": "Anexos (imagem, doc, pdf, excel, zip) Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Anexos (imagem, doc, pdf, excel, zip) Selecione o arquivo ou arraste aqui"
+      }
+    ],
+    "buttons": [
+      "Criar chamado"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "CRIAR CHAMADO",
+      "ENVOLVIDOS"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Chamados CRIAR CHAMADO ENVOLVIDOS Conectmax Ana Paula Gilson Suporte - Anna Beatriz Suporte Portal Funcionários admin MARCELLO ABW Funcionários GABRIELE LAERCIO Logistica Vendedores Bruno Toyo Gabriele Guilherme Marcello Olívia Assunto Mensagem Anexos (imagem, doc, pdf, excel, zip) Selecione o arquivo ou arraste aqui Criar chamado"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=chamados_edicao"
+}

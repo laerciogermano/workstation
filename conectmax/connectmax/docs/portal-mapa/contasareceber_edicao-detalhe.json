@@ -1,0 +1,265 @@
+{
+  "id": "contasareceber_edicao-detalhe",
+  "page": "contasareceber_edicao-detalhe",
+  "label": "contasareceber_edicao-detalhe",
+  "shot": "screenshots/contasareceber_edicao-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=contasareceber_edicao&id_conta=20897",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Contas a receber - Edição",
+      "EDITAR",
+      "TÃ­tulo 1",
+      "TÃ­tulo 2",
+      "TÃ­tulo 3"
+    ],
+    "fields": [
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Aberta"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Estornada"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Falta arquivo"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Quitada"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "id_banco",
+        "id": null,
+        "placeholder": null,
+        "label": "Inter Conect Campinas"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "id_banco",
+        "id": null,
+        "placeholder": null,
+        "label": "INTER X"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "name": "data_vencimento",
+        "id": null,
+        "placeholder": null,
+        "label": "Data de vencimento"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "name": "data_pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Data de pagamento"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "titulo",
+        "id": null,
+        "placeholder": null,
+        "label": "Título"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "descricao",
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "backColorPicker",
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "foreColorPicker",
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-txt-17945007355221",
+        "placeholder": null,
+        "label": "Texto para exibir"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-url-17945007355221",
+        "placeholder": null,
+        "label": "Para qual URL este link leva?"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Abrir em uma nova janela"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Use default protocol"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "files",
+        "id": "note-dialog-image-file-17945007355221",
+        "placeholder": null,
+        "label": "Selecione a partir dos arquivos"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-image-url-17945007355221",
+        "placeholder": null,
+        "label": "URL da imagem"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-video-url-17945007355221",
+        "placeholder": null,
+        "label": "URL do vÃ­deo? (YouTube, Vimeo, Vine, Instagram, DailyMotion ou Youku)"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição Overpass"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "file_upload",
+        "id": "file_upload2573677",
+        "placeholder": null,
+        "label": "Anexos Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Anexos Selecione o arquivo ou arraste aqui"
+      }
+    ],
+    "buttons": [
+      "Aberta",
+      "Estornada",
+      "Falta arquivo",
+      "Quitada",
+      "Overpass",
+      "Transparente",
+      "Selecionar",
+      "Restaurar padrÃ£o",
+      "Selecionar",
+      "Inserir link",
+      "Inserir imagem",
+      "100%",
+      "50%",
+      "25%",
+      "Inserir vÃ­deo",
+      "Voltar",
+      "Novo",
+      "Salvar"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "EDITAR",
+      "TÃ­tulo 4",
+      "TÃ­tulo 5",
+      "Inserir link",
+      "Inserir imagem",
+      "Inserir vÃ­deo",
+      "Ajuda"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Contas a receber - Edição EDITAR Status Aberta Estornada Falta arquivo Quitada Banco Inter Conect Campinas INTER X Data de vencimento Data de pagamento Título Valor Descrição Overpass Anexos Selecione o arquivo ou arraste aqui Voltar Novo Salvar"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=contasareceber_edicao&id_conta=20897"
+}

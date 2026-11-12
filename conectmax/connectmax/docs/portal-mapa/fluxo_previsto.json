@@ -1,0 +1,166 @@
+{
+  "id": "fluxo_previsto",
+  "page": "fluxo_previsto",
+  "label": "Fluxo previsto",
+  "shot": "screenshots/fluxo_previsto.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=fluxo_previsto",
+    "title": "ConectMax - Painel de Controle",
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Fluxo Previsto - 11/2026 Busca Mês 09/2026 10/2026 11/2026 12/2026 01/2027 02/2027 03/2027 04/2027 05/2027 06/2027 07/2027 08/2027 09/2027 10/2027 11/2027 Gerar fluxo Gráfico",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Fluxo Previsto - 11/2026"
+    ],
+    "menu": [
+      {
+        "text": "Dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard",
+        "page": "dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos",
+        "page": "orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos",
+        "page": "pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais",
+        "page": "notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber",
+        "page": "contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento",
+        "page": "faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto",
+        "page": "fluxo_previsto"
+      }
+    ],
+    "filters": [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "data",
+        "id": null,
+        "placeholder": null,
+        "label": "Mês",
+        "options": [
+          "09/2026",
+          "10/2026",
+          "11/2026",
+          "12/2026",
+          "01/2027",
+          "02/2027",
+          "03/2027",
+          "04/2027",
+          "05/2027",
+          "06/2027",
+          "07/2027",
+          "08/2027",
+          "09/2027",
+          "10/2027",
+          "11/2027"
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "text": "×",
+        "tag": "button",
+        "href": null,
+        "classes": "close"
+      },
+      {
+        "text": "Fechar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-secondary"
+      },
+      {
+        "text": "Excluir",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary excluir-registros"
+      },
+      {
+        "text": "Ver todas",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes",
+        "classes": "btn btn-primary btn-sm"
+      },
+      {
+        "text": "Gerar fluxo",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary"
+      }
+    ],
+    "tables": [],
+    "cards": [
+      "Busca Mês 09/2026 10/2026 11/2026 12/2026 01/2027 02/2027 03/2027 04/2027 05/2027 06/2027 07/2027 08/2027 09/2027 10/2027 11/2027 Gerar flux",
+      "Gráfico"
+    ],
+    "linksPage": [
+      {
+        "text": "",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Ver todas",
+        "page": "notificacoes",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes"
+      },
+      {
+        "text": "Dashboard",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "page": "orcamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "page": "faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "page": "fluxo_previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto"
+      }
+    ]
+  }
+}

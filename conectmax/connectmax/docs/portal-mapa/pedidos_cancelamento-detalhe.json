@@ -1,0 +1,38 @@
+{
+  "id": "pedidos_cancelamento-detalhe",
+  "page": "pedidos_cancelamento-detalhe",
+  "label": "pedidos_cancelamento-detalhe",
+  "shot": "screenshots/pedidos_cancelamento-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=pedidos_cancelamento&id_pedido=17050",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Cancelar pedido nº 17050"
+    ],
+    "fields": [
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "observacao_cancelamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Observação do cancelamento"
+      }
+    ],
+    "buttons": [
+      "Voltar",
+      "Cancelar pedido"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Cancelar pedido nº 17050 Observação do cancelamento Voltar Cancelar pedido"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=pedidos_cancelamento&id_pedido=17050"
+}

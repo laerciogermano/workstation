@@ -1,0 +1,842 @@
+{
+  "id": "contasareceber",
+  "page": "contasareceber",
+  "label": "Contas a receber",
+  "shot": "screenshots/contasareceber.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=contasareceber",
+    "title": "ConectMax - Painel de Controle",
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Contas a receber Adicionar Busca Valor Título + Busca completa Filtrar Total: R$ 172.325,08 Aberta: 41 - Total: R$ 137.789,58 Quitada: 10 - Total: R$ 32.012,00 Vencida: 3 - Total: R$ 2.384,00 Próxima ao vencimento: 6 - Total",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Contas a receber"
+    ],
+    "menu": [
+      {
+        "text": "Dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard",
+        "page": "dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos",
+        "page": "orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos",
+        "page": "pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais",
+        "page": "notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber",
+        "page": "contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento",
+        "page": "faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto",
+        "page": "fluxo_previsto"
+      }
+    ],
+    "filters": [
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "id_banco",
+        "id": null,
+        "placeholder": null,
+        "label": "Inter Conect Campinas",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "id_banco",
+        "id": null,
+        "placeholder": null,
+        "label": "INTER X",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": "juros",
+        "id": "juros",
+        "placeholder": null,
+        "label": "Incluir juros e multa (se houver)",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "datetime-local",
+        "name": "data_pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": null,
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "titulo",
+        "id": null,
+        "placeholder": null,
+        "label": "Título",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cliente",
+        "id": null,
+        "placeholder": null,
+        "label": "Cliente",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Status",
+        "options": [
+          "Todos",
+          "Aberta",
+          "Quitada",
+          "Vencida",
+          "Próxima ao vencimento",
+          "Estornada",
+          "Falta arquivo"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data_inicial",
+        "id": "dp1794500307878",
+        "placeholder": null,
+        "label": "Data inicial (vencimento)",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data_final",
+        "id": "dp1794500307879",
+        "placeholder": null,
+        "label": "Data final (vencimento)",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_franqueado_rel",
+        "id": null,
+        "placeholder": null,
+        "label": "Subfranqueado",
+        "options": [
+          "Nenhum"
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "text": "×",
+        "tag": "button",
+        "href": null,
+        "classes": "close"
+      },
+      {
+        "text": "Fechar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-secondary"
+      },
+      {
+        "text": "Excluir",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary excluir-registros"
+      },
+      {
+        "text": "Ver todas",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes",
+        "classes": "btn btn-primary btn-sm"
+      },
+      {
+        "text": "×",
+        "tag": "button",
+        "href": null,
+        "classes": "close"
+      },
+      {
+        "text": "Enviar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary"
+      },
+      {
+        "text": "Adicionar",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao",
+        "classes": "btn btn-app btn-primary"
+      },
+      {
+        "text": "Filtrar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary"
+      },
+      {
+        "text": "Aberta: 41 - Total: R$ 137.789,58",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Aberta",
+        "classes": "btn btn-success status-filtro"
+      },
+      {
+        "text": "Quitada: 10 - Total: R$ 32.012,00",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Quitada",
+        "classes": "btn btn-info status-filtro"
+      },
+      {
+        "text": "Vencida: 3 - Total: R$ 2.384,00",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Vencida",
+        "classes": "btn btn-danger status-filtro"
+      },
+      {
+        "text": "Próxima ao vencimento: 6 - Total: R$ 52.567,13",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Pr%C3%B3xima%20ao%20vencimento",
+        "classes": "btn btn-warning status-filtro"
+      },
+      {
+        "text": "Estornada: 0 - Total: R$ 0,00",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Estornada",
+        "classes": "btn btn-default status-filtro"
+      },
+      {
+        "text": "Falta arquivo: 1 - Total: R$ 2.523,50",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Falta%20arquivo",
+        "classes": "btn btn-default status-filtro"
+      },
+      {
+        "text": "Quitar contas em massa",
+        "tag": "div",
+        "href": null,
+        "classes": "btn btn-primary quitar-contas"
+      },
+      {
+        "text": "Aberta",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Quitada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "Vencida",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Próxima ao vencimento",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Estornada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Falta arquivo",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Gerar boleto",
+        "tag": "div",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge gerar-boleto"
+      },
+      {
+        "text": "Ver boleto",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/ajax/boletos/boleto.php?id_boleto=2832",
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20897",
+        "classes": "btn btn-sm btn-primary badge"
+      },
+      {
+        "text": "Aberta",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Quitada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "Vencida",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Próxima ao vencimento",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Estornada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Falta arquivo",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Gerar boleto",
+        "tag": "div",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge gerar-boleto"
+      },
+      {
+        "text": "Editar",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21014",
+        "classes": "btn btn-sm btn-primary badge"
+      },
+      {
+        "text": "Aberta",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Quitada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "Vencida",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Próxima ao vencimento",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Estornada",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Falta arquivo",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Gerar boleto",
+        "tag": "div",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge gerar-boleto"
+      },
+      {
+        "text": "Editar",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21044",
+        "classes": "btn btn-sm btn-primary badge"
+      }
+    ],
+    "tables": [
+      {
+        "index": 0,
+        "headers": [
+          "STATUS",
+          "DATA VENCIMENTO",
+          "TÍTULO",
+          "DESCRIÇÃO",
+          "VALOR",
+          "AÇÕES",
+          "Quitada",
+          "02/11/2026",
+          "Fatura 3 da nota fiscal nº 288 Pedido 16620 Cliente: INDUSTR",
+          "R$ 89,00",
+          "Gerar boleto Ver boleto Editar"
+        ],
+        "approxRows": 53
+      }
+    ],
+    "cards": [
+      "Busca Valor Título + Busca completa Filtrar",
+      "Total: R$ 172.325,08 Aberta: 41 - Total: R$ 137.789,58 Quitada: 10 - Total: R$ 32.012,00 Vencida: 3 - Total: R$ 2.384,00 Próxima ao vencimen"
+    ],
+    "linksPage": [
+      {
+        "text": "",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Ver todas",
+        "page": "notificacoes",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes"
+      },
+      {
+        "text": "Dashboard",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "page": "orcamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "page": "faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "page": "fluxo_previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto"
+      },
+      {
+        "text": "Adicionar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao"
+      },
+      {
+        "text": "Adicionar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao"
+      },
+      {
+        "text": "Aberta: 41 - Total: R$ 137.789,58",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Aberta"
+      },
+      {
+        "text": "Quitada: 10 - Total: R$ 32.012,00",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Quitada"
+      },
+      {
+        "text": "Vencida: 3 - Total: R$ 2.384,00",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Vencida"
+      },
+      {
+        "text": "Próxima ao vencimento: 6 - Total: R$ 52.567,13",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Pr%C3%B3xima%20ao%20vencimento"
+      },
+      {
+        "text": "Estornada: 0 - Total: R$ 0,00",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Estornada"
+      },
+      {
+        "text": "Falta arquivo: 1 - Total: R$ 2.523,50",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=contasareceber&status=Falta%20arquivo"
+      },
+      {
+        "text": "Fatura 3 da nota fiscal nº 288",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17158"
+      },
+      {
+        "text": "Pedido 16620",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16620&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20897"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 293",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17269"
+      },
+      {
+        "text": "Pedido 16729",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16729&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21014"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17297"
+      },
+      {
+        "text": "Pedido 16784",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16784&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21044"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 296",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17273"
+      },
+      {
+        "text": "Pedido 16583",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16583&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21017"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 306",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17317"
+      },
+      {
+        "text": "Pedido 16760",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16760&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21082"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 666",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17107"
+      },
+      {
+        "text": "Pedido 16578",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16578&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20825"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 670",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17164"
+      },
+      {
+        "text": "Pedido 16676",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16676&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20908"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17134"
+      },
+      {
+        "text": "Pedido 16579",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16579&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20865"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17110"
+      },
+      {
+        "text": "Pedido 16582",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16582&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=20828"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 298",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17298"
+      },
+      {
+        "text": "Pedido 16619",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16619&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21047"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 299",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17305"
+      },
+      {
+        "text": "Pedido 16794",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16794&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21058"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17319"
+      },
+      {
+        "text": "Pedido 16473",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16473&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21084"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 308",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17335"
+      },
+      {
+        "text": "Pedido 16761",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16761&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21114"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 313",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17363"
+      },
+      {
+        "text": "Pedido 16716",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16716&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21179"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17367"
+      },
+      {
+        "text": "Pedido 16811",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16811&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21175"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 309",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17356"
+      },
+      {
+        "text": "Pedido 16796",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16796&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21138"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº312",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17368"
+      },
+      {
+        "text": "Pedido 16803",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16803&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21176"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº314",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17424"
+      },
+      {
+        "text": "Pedido 16831",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16831&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21241"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 323",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17444"
+      },
+      {
+        "text": "Pedido 16762",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16762&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21269"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº 322",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17443"
+      },
+      {
+        "text": "Pedido 16691",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16691&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21267"
+      },
+      {
+        "text": "Fatura 1 da nota fiscal nº",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17434"
+      },
+      {
+        "text": "Pedido 16821",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16821&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "contasareceber_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber_edicao&id_conta=21252"
+      }
+    ]
+  }
+}

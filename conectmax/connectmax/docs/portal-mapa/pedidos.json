@@ -1,0 +1,873 @@
+{
+  "id": "pedidos",
+  "page": "pedidos",
+  "label": "Pedidos",
+  "shot": "screenshots/pedidos.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=pedidos",
+    "title": "ConectMax - Painel de Controle",
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Pedidos Busca Cliente Número do pedido + Busca completa Filtrar Rascunho: 3 - Total: R$ 7.872,04 Em análise: 1 - Total: R$ 4.296,50 Aprovado: 8 - Total: R$ 29.737,75 Reprovado: 0 - Total: R$ 0,00 Cancelado: 36 - Total: R$ 24",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Pedidos"
+    ],
+    "menu": [
+      {
+        "text": "Dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard",
+        "page": "dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos",
+        "page": "orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos",
+        "page": "pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais",
+        "page": "notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber",
+        "page": "contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento",
+        "page": "faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto",
+        "page": "fluxo_previsto"
+      },
+      {
+        "text": "",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=1",
+        "page": "pedidos"
+      },
+      {
+        "text": "1",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=1",
+        "page": "pedidos"
+      },
+      {
+        "text": "2",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=2",
+        "page": "pedidos"
+      },
+      {
+        "text": "3",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=3",
+        "page": "pedidos"
+      },
+      {
+        "text": "4",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=4",
+        "page": "pedidos"
+      },
+      {
+        "text": "5",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=5",
+        "page": "pedidos"
+      },
+      {
+        "text": "",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=2",
+        "page": "pedidos"
+      },
+      {
+        "text": "",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&current_page=22",
+        "page": "pedidos"
+      }
+    ],
+    "filters": [
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cliente",
+        "id": null,
+        "placeholder": null,
+        "label": "Cliente",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "id_pedido",
+        "id": null,
+        "placeholder": null,
+        "label": "Número do pedido",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ordem_compra",
+        "id": null,
+        "placeholder": null,
+        "label": "Ordem de compra",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Status",
+        "options": [
+          "Todos",
+          "Rascunho",
+          "Em análise",
+          "Aprovado",
+          "Reprovado",
+          "Cancelado",
+          "Faturado"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_vendedor",
+        "id": null,
+        "placeholder": null,
+        "label": "Vendedor",
+        "options": [
+          "Todos",
+          "Bruno Toyo",
+          "DEVOLUÇÃO",
+          "Erickson",
+          "Gabriele",
+          "Guilherme",
+          "Marcello",
+          "Olívia"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data_inicial",
+        "id": "dp1794500301528",
+        "placeholder": null,
+        "label": "Data inicial",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data_final",
+        "id": "dp1794500301529",
+        "placeholder": null,
+        "label": "Data final",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_franqueado_rel",
+        "id": null,
+        "placeholder": null,
+        "label": "Subfranqueado",
+        "options": [
+          "Nenhum"
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "text": "×",
+        "tag": "button",
+        "href": null,
+        "classes": "close"
+      },
+      {
+        "text": "Fechar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-secondary"
+      },
+      {
+        "text": "Excluir",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary excluir-registros"
+      },
+      {
+        "text": "Ver todas",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes",
+        "classes": "btn btn-primary btn-sm"
+      },
+      {
+        "text": "Filtrar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary"
+      },
+      {
+        "text": "Rascunho: 3 - Total: R$ 7.872,04",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Rascunho",
+        "classes": "btn btn-default status-filtro"
+      },
+      {
+        "text": "Em análise: 1 - Total: R$ 4.296,50",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Em%20an%C3%A1lise",
+        "classes": "btn btn-default status-filtro"
+      },
+      {
+        "text": "Aprovado: 8 - Total: R$ 29.737,75",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Aprovado",
+        "classes": "btn btn-success status-filtro"
+      },
+      {
+        "text": "Reprovado: 0 - Total: R$ 0,00",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Reprovado",
+        "classes": "btn btn-danger status-filtro"
+      },
+      {
+        "text": "Cancelado: 36 - Total: R$ 241.874,04",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Cancelado",
+        "classes": "btn btn-warning status-filtro"
+      },
+      {
+        "text": "Faturado: 1011 - Total: R$ 3.788.726,13",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Faturado",
+        "classes": "btn btn-info status-filtro"
+      },
+      {
+        "text": "Rascunho",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Em análise",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Aprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Reprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Cancelado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Faturado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Visualizar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Nota fiscal",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Duplicar pedido",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-primary badge"
+      },
+      {
+        "text": "Rascunho",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Em análise",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Aprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Reprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Cancelado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Faturado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Visualizar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Nota fiscal",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Duplicar pedido",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-primary badge"
+      },
+      {
+        "text": "Rascunho",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Em análise",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-default mb-1 d-none"
+      },
+      {
+        "text": "Aprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-success mb-1 d-none"
+      },
+      {
+        "text": "Reprovado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-danger mb-1 d-none"
+      },
+      {
+        "text": "Cancelado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-warning mb-1 d-none"
+      },
+      {
+        "text": "Faturado",
+        "tag": "div",
+        "href": null,
+        "classes": "status btn btn-info mb-1 d-block"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      }
+    ],
+    "tables": [
+      {
+        "index": 0,
+        "headers": [
+          "STATUS",
+          "CLIENTE",
+          "VENDEDOR",
+          "TOTAL",
+          "AÇÕES",
+          "Nº 17092 10/11/2026 Orçamento: 3624",
+          "Faturado",
+          "INFORMS PUBLICIDADE E PROPAGAN INFORMS PUBLICIDADE E PROPAGA",
+          "Marcello",
+          "R$ 69,90",
+          "PDF Visualizar Nota fiscal Duplicar pedido Editar"
+        ],
+        "approxRows": 51
+      }
+    ],
+    "cards": [
+      "Busca Cliente Número do pedido + Busca completa Filtrar",
+      "Rascunho: 3 - Total: R$ 7.872,04 Em análise: 1 - Total: R$ 4.296,50 Aprovado: 8 - Total: R$ 29.737,75 Reprovado: 0 - Total: R$ 0,00 Cancelad"
+    ],
+    "linksPage": [
+      {
+        "text": "",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Ver todas",
+        "page": "notificacoes",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes"
+      },
+      {
+        "text": "Dashboard",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "page": "orcamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "page": "faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "page": "fluxo_previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto"
+      },
+      {
+        "text": "Rascunho: 3 - Total: R$ 7.872,04",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Rascunho"
+      },
+      {
+        "text": "Em análise: 1 - Total: R$ 4.296,50",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Em%20an%C3%A1lise"
+      },
+      {
+        "text": "Aprovado: 8 - Total: R$ 29.737,75",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Aprovado"
+      },
+      {
+        "text": "Reprovado: 0 - Total: R$ 0,00",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Reprovado"
+      },
+      {
+        "text": "Cancelado: 36 - Total: R$ 241.874,04",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Cancelado"
+      },
+      {
+        "text": "Faturado: 1011 - Total: R$ 3.788.726,13",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/?page=pedidos&status=Faturado"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17092&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17092"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17091&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17091"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17090&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17090"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17074&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17074"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17050&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=17050"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=17050"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17050"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17041&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17041"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17007&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=17007"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16996&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16996"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16996"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16996"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16993&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16993"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16992&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16992"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16982&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16982"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16982"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16982"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16981&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16981"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16981"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16981"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16980&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16980"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16980"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16980"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16968&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16968"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16967&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16967"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16967"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16967"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16954&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16954"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16932&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16932"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16932"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16932"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16911&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16911"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16895&action=visualizar"
+      },
+      {
+        "text": "Cancelar pedido",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16895"
+      },
+      {
+        "text": "Gerar nota",
+        "page": "pedidos_cancelamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_cancelamento&id_pedido=16895"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16895"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16845&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16845"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16844&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16844"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16843&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16843"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16842&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16842"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16841&action=visualizar"
+      },
+      {
+        "text": "Editar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16841"
+      },
+      {
+        "text": "Visualizar",
+        "page": "pedidos_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos_edicao&id_pedido=16840&action=visualizar"
+      }
+    ]
+  }
+}

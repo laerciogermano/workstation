@@ -1,0 +1,718 @@
+{
+  "id": "orcamentos_edicao-detalhe",
+  "page": "orcamentos_edicao-detalhe",
+  "label": "orcamentos_edicao-detalhe",
+  "shot": "screenshots/orcamentos_edicao-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=orcamentos_edicao&id_orcamento=65895",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Orçamentos - Nº 3632",
+      "EDITAR",
+      "TÃ­tulo 1",
+      "TÃ­tulo 2",
+      "TÃ­tulo 3",
+      "TÃ­tulo 1",
+      "TÃ­tulo 2",
+      "TÃ­tulo 3"
+    ],
+    "fields": [
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Em aberto"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Aprovado"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Reprovado"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Contra proposta"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Cancelado"
+      },
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Enviado"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data",
+        "id": "dp1794500708833",
+        "placeholder": null,
+        "label": "Data"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "nome",
+        "id": null,
+        "placeholder": null,
+        "label": "Nome do orçamento"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_vendedor",
+        "id": null,
+        "placeholder": null,
+        "label": "Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cnpj_cpf",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ/CPF (cliente)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ie",
+        "id": null,
+        "placeholder": null,
+        "label": "Inscrição estadual"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cliente",
+        "id": null,
+        "placeholder": null,
+        "label": "Cliente"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "comprador",
+        "id": null,
+        "placeholder": null,
+        "label": "Comprador"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "telefone",
+        "id": null,
+        "placeholder": null,
+        "label": "Telefone"
+      },
+      {
+        "tag": "input",
+        "type": "email",
+        "name": "email",
+        "id": null,
+        "placeholder": null,
+        "label": "E-mail"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "prazo_entrega",
+        "id": null,
+        "placeholder": null,
+        "label": "Prazo de entrega"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "forma_pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Forma de pagamento Selecione BOLETO DEPÓSITO BANCÁRIO PIX SEM PAGAMENTO"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Pagamento"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "frete",
+        "id": null,
+        "placeholder": null,
+        "label": "Frete Selecione CIF FOB"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "validade",
+        "id": null,
+        "placeholder": null,
+        "label": "Validade da proposta"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "observacao",
+        "id": null,
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "backColorPicker",
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "foreColorPicker",
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-txt-17945007088601",
+        "placeholder": null,
+        "label": "Texto para exibir"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-url-17945007088601",
+        "placeholder": null,
+        "label": "Para qual URL este link leva?"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Abrir em uma nova janela"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Use default protocol"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "files",
+        "id": "note-dialog-image-file-17945007088601",
+        "placeholder": null,
+        "label": "Selecione a partir dos arquivos"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-image-url-17945007088601",
+        "placeholder": null,
+        "label": "URL da imagem"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-video-url-17945007088601",
+        "placeholder": null,
+        "label": "URL do vÃ­deo? (YouTube, Vimeo, Vine, Instagram, DailyMotion ou Youku)"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação para o cliente Overpass endereço de entrega: R BENEDITO LEITE 358, JARDIM SANTA IZABEL, H"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "observacao_interna",
+        "id": null,
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "backColorPicker",
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "color",
+        "name": null,
+        "id": "foreColorPicker",
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-txt-17945007088882",
+        "placeholder": null,
+        "label": "Texto para exibir"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-link-url-17945007088882",
+        "placeholder": null,
+        "label": "Para qual URL este link leva?"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Abrir em uma nova janela"
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Use default protocol"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "files",
+        "id": "note-dialog-image-file-17945007088882",
+        "placeholder": null,
+        "label": "Selecione a partir dos arquivos"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-image-url-17945007088882",
+        "placeholder": null,
+        "label": "URL da imagem"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": null,
+        "id": "note-dialog-video-url-17945007088882",
+        "placeholder": null,
+        "label": "URL do vÃ­deo? (YouTube, Vimeo, Vine, Instagram, DailyMotion ou Youku)"
+      },
+      {
+        "tag": "input",
+        "type": "button",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Observação interna Overpass 1. Sensor Xas Porta De Aço Intelbras | R$78 + FRETE GRÁTIS | mercadolivr"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_nome",
+        "id": null,
+        "placeholder": "Digite o nome do produto",
+        "label": "Produtos"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "obs[]",
+        "id": null,
+        "placeholder": "Observações",
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "file_upload",
+        "id": "file_upload2574772",
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "legenda-arquivo",
+        "id": null,
+        "placeholder": "Legenda",
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "quantidade[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "lucro[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor_extra[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "obs[]",
+        "id": null,
+        "placeholder": "Observações",
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "file_upload",
+        "id": "file_upload2574773",
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "legenda-arquivo",
+        "id": null,
+        "placeholder": "Legenda",
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "quantidade[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "lucro[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor_extra[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "obs[]",
+        "id": null,
+        "placeholder": "Observações",
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": "file_upload",
+        "id": "file_upload2574774",
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "file",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "Selecione o arquivo ou arraste aqui"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "legenda-arquivo",
+        "id": null,
+        "placeholder": "Legenda",
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "quantidade[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "lucro[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor_extra[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "desconto_tipo",
+        "id": null,
+        "placeholder": null,
+        "label": "Aplicar desconto Porcentagem Valor"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "desconto",
+        "id": null,
+        "placeholder": null,
+        "label": "Desconto"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "total",
+        "id": null,
+        "placeholder": null,
+        "label": "Total: R$"
+      }
+    ],
+    "buttons": [
+      "Em aberto",
+      "Aprovado",
+      "Reprovado",
+      "Contra proposta",
+      "Cancelado",
+      "Enviado",
+      "Overpass",
+      "Transparente",
+      "Selecionar",
+      "Restaurar padrÃ£o",
+      "Selecionar",
+      "Inserir link",
+      "Inserir imagem",
+      "100%",
+      "50%",
+      "25%",
+      "Inserir vÃ­deo",
+      "Overpass",
+      "Transparente",
+      "Selecionar",
+      "Restaurar padrÃ£o",
+      "Selecionar",
+      "Inserir link",
+      "Inserir imagem",
+      "100%",
+      "50%",
+      "25%",
+      "Inserir vÃ­deo",
+      "Salvar",
+      "Cancelar"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "EDITAR",
+      "TÃ­tulo 4",
+      "TÃ­tulo 5",
+      "Inserir link",
+      "Inserir imagem",
+      "Inserir vÃ­deo",
+      "Ajuda",
+      "TÃ­tulo 4",
+      "TÃ­tulo 5",
+      "Inserir link",
+      "Inserir imagem",
+      "Inserir vÃ­deo",
+      "Ajuda"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Orçamentos - Nº 3632 EDITAR Status Em aberto Aprovado Reprovado Contra proposta Cancelado Enviado Data Nome do orçamento CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95 Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia CNPJ/CPF (cliente) Inscrição estadual Cliente Comprador Telefone E-mail Prazo de entrega Forma de pagamento Selecione BOLETO DEPÓSITO BANCÁRIO PIX SEM PAGAMENTO Pa"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=orcamentos_edicao&id_orcamento=65895"
+}

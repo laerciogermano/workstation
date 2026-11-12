@@ -1,0 +1,370 @@
+{
+  "id": "pedidos_edicao-editar-detalhe",
+  "page": "pedidos_edicao-editar-detalhe",
+  "label": "pedidos_edicao-editar-detalhe",
+  "shot": "screenshots/pedidos_edicao-editar-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=pedidos_edicao&id_pedido=17092",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Pedidos - Nº 17092",
+      "EDITAR"
+    ],
+    "fields": [
+      {
+        "tag": "input",
+        "type": "radio",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Faturado"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data",
+        "id": "dp1794500719306",
+        "placeholder": null,
+        "label": "Data"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_vendedor",
+        "id": null,
+        "placeholder": null,
+        "label": "Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cnpj_cpf",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ/CPF"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ie",
+        "id": null,
+        "placeholder": null,
+        "label": "Inscrição estadual"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "isento_ie",
+        "id": null,
+        "placeholder": null,
+        "label": "Isento IE Não contribuinte Sim Não"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "contribuinte_icms",
+        "id": null,
+        "placeholder": null,
+        "label": "Contribuinte do ICMS Selecione Sim Não"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "nome",
+        "id": null,
+        "placeholder": null,
+        "label": "Nome"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "email",
+        "id": null,
+        "placeholder": null,
+        "label": "E-mail"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "telefone",
+        "id": null,
+        "placeholder": null,
+        "label": "Telefone"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cep",
+        "id": null,
+        "placeholder": null,
+        "label": "CEP"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "endereco",
+        "id": null,
+        "placeholder": null,
+        "label": "Endereço"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "numero",
+        "id": null,
+        "placeholder": null,
+        "label": "Número"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "complemento",
+        "id": null,
+        "placeholder": null,
+        "label": "Complemento"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "bairro",
+        "id": null,
+        "placeholder": null,
+        "label": "Bairro"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Cidade"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "estado",
+        "id": null,
+        "placeholder": null,
+        "label": "Estado Selecione Acre Alagoas Amapá Amazonas Bahia Ceará Distrito Federal Espírito Santo Goiás Maran"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "prazo_entrega",
+        "id": null,
+        "placeholder": null,
+        "label": "Prazo de entrega"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "forma_pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Forma de pagamento Selecione BOLETO DEPÓSITO BANCÁRIO PIX SEM PAGAMENTO"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Pagamento"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "frete",
+        "id": null,
+        "placeholder": null,
+        "label": "Frete Selecione CIF FOB"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "local_entrega",
+        "id": null,
+        "placeholder": null,
+        "label": "Local de entrega"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ordemdecompra",
+        "id": null,
+        "placeholder": null,
+        "label": "Ordem de compra (número)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "legenda-arquivo",
+        "id": null,
+        "placeholder": "Legenda",
+        "label": "Ordem de compra (arquivo)"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "parcelamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Tabela de parcelamento 20/40 dias 15 dias 21/28/35 dias 28/56 dias 30/60/90/120/150/180 dias 30/60/9"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "name": "fatura_primeiro_pagamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Primeiro pagamento"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "fatura_vezes",
+        "id": null,
+        "placeholder": null,
+        "label": "Parcelas 1x 2x 3x 4x 5x 6x 7x 8x 9x 10x 11x 12x"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Ver mais"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ncm[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "quantidade[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "lucro[]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor_extra[]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_quantidade[0][]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_valor_custo[0][]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_fornecedor_frete[0][]",
+        "id": null,
+        "placeholder": null,
+        "label": "R$"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_fornecedor[0][]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_forma_pagamento[0][]",
+        "id": null,
+        "placeholder": null,
+        "label": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "desconto_tipo",
+        "id": null,
+        "placeholder": null,
+        "label": "APLICAR DESCONTO Porcentagem Valor"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "desconto",
+        "id": null,
+        "placeholder": null,
+        "label": "DESCONTO"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "total",
+        "id": null,
+        "placeholder": null,
+        "label": "TOTAL: R$"
+      }
+    ],
+    "buttons": [
+      "Faturado",
+      "Cancelar",
+      "Enviar",
+      "Salvar"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "EDITAR"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Pedidos - Nº 17092 EDITAR Status Faturado Data CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95 Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia CNPJ/CPF Inscrição estadual Isento IE Não contribuinte Sim Não Contribuinte do ICMS Selecione Sim Não Nome E-mail Telefone CEP Endereço Número Complemento Bairro Cidade Estado Selecione Acre Alagoas Amapá Amazonas Bahia Ceará Distrito Fe"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=pedidos_edicao&id_pedido=17092"
+}

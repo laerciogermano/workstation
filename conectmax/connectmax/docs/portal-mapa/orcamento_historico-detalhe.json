@@ -1,0 +1,39 @@
+{
+  "id": "orcamento_historico-detalhe",
+  "page": "orcamento_historico-detalhe",
+  "label": "orcamento_historico-detalhe",
+  "shot": "screenshots/orcamento_historico-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=orcamento_historico&id_orcamento=65895",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Orçamentos - Nº 3632",
+      "HISTÓRICO DE ATUALIZAÇÕES - PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA"
+    ],
+    "fields": [
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "data",
+        "id": "dp1794500713126",
+        "placeholder": null,
+        "label": "Data"
+      }
+    ],
+    "buttons": [
+      "Voltar"
+    ],
+    "tabs": [],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "HISTÓRICO DE ATUALIZAÇÕES - PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Orçamentos - Nº 3632 HISTÓRICO DE ATUALIZAÇÕES - PAGUE MENOS COMERCIO DE PRODUTOS ALIMENTICIOS LTDA Data NOME DATA Orçamento editado por: Gabriele 12/11/2026 12:48:00 Orçamento editado por: Gabriele 12/11/2026 12:46:12 Voltar"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=orcamento_historico&id_orcamento=65895"
+}

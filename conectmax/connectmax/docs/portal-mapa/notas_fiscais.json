@@ -1,0 +1,1015 @@
+{
+  "id": "notas_fiscais",
+  "page": "notas_fiscais",
+  "label": "Notas fiscais",
+  "shot": "screenshots/notas_fiscais.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=notas_fiscais",
+    "title": "ConectMax - Painel de Controle",
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Notas fiscais Adicionar BUSCA Número da nota (ex:1000,1001..) CNPJ/CPF + Busca completa Filtrar AÇÕES STATUS DETALHES CLIENTE DATA TRANSPORTADORA TOTAL Editar PDF XML Enviado Nº: 340 INFORMS PUBLICIDADE E PROPAGAN INFORMS PU",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Notas fiscais"
+    ],
+    "menu": [
+      {
+        "text": "Dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard",
+        "page": "dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos",
+        "page": "orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos",
+        "page": "pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais",
+        "page": "notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber",
+        "page": "contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento",
+        "page": "faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto",
+        "page": "fluxo_previsto"
+      }
+    ],
+    "filters": [
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "numero",
+        "id": null,
+        "placeholder": null,
+        "label": "Número da nota (ex:1000,1001..)",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ/CPF",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cliente",
+        "id": null,
+        "placeholder": null,
+        "label": "Cliente",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_vendedor",
+        "id": null,
+        "placeholder": null,
+        "label": "Vendedor",
+        "options": [
+          "Todos",
+          "Sem vendedor",
+          "Bruno Toyo",
+          "DEVOLUÇÃO",
+          "Erickson",
+          "Gabriele",
+          "Guilherme",
+          "Marcello",
+          "Olívia"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_franqueado_rel",
+        "id": null,
+        "placeholder": null,
+        "label": "Subfranqueado",
+        "options": [
+          "Nenhum"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-multiple",
+        "name": "cfop[]",
+        "id": null,
+        "placeholder": null,
+        "label": "CFOP",
+        "options": [
+          "1202",
+          "1916",
+          "2202",
+          "2916",
+          "5102",
+          "5108",
+          "5119",
+          "5202",
+          "5405",
+          "5411",
+          "5910",
+          "5912",
+          "5915",
+          "5923",
+          "5949",
+          "6102",
+          "6108",
+          "6119",
+          "6202",
+          "6404",
+          "6910",
+          "6912",
+          "6915",
+          "6916",
+          "6923",
+          "6949",
+          "7102"
+        ]
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "[Selecionar todos]",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "1202",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "1916",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "2202",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "2916",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5102",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5108",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5119",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5202",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5405",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5411",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5910",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5912",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5915",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5923",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "5949",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6102",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6108",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6119",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6202",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6404",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6910",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6912",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6915",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6916",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6923",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "6949",
+        "options": null
+      },
+      {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "id": null,
+        "placeholder": null,
+        "label": "7102",
+        "options": null
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "status",
+        "id": null,
+        "placeholder": null,
+        "label": "Status",
+        "options": [
+          "Todos",
+          "Aguardando envio",
+          "Cancelado",
+          "Rejeitado",
+          "Enviado"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "tipo",
+        "id": null,
+        "placeholder": null,
+        "label": "Tipo",
+        "options": [
+          "Todos",
+          "Manual",
+          "Pedido"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "uf",
+        "id": null,
+        "placeholder": null,
+        "label": "UF",
+        "options": [
+          "Todos",
+          "AC",
+          "AL",
+          "AP",
+          "AM",
+          "BA",
+          "CE",
+          "DF",
+          "ES",
+          "GO",
+          "MA",
+          "MT",
+          "MS",
+          "MG",
+          "PA",
+          "PB",
+          "PR",
+          "PE",
+          "PI",
+          "RJ",
+          "RN",
+          "RS",
+          "RO",
+          "RR",
+          "SC",
+          "SP",
+          "SE",
+          "TO"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "entrada_saida",
+        "id": null,
+        "placeholder": null,
+        "label": "Entrada/saída",
+        "options": [
+          "Todos",
+          "0 - Entrada",
+          "1 - Saída"
+        ]
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "finalidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Finalidade",
+        "options": [
+          "Todas",
+          "1 - NF-e Normal",
+          "2 - NF-e Complementar",
+          "3 - NF-e de AJuste",
+          "4 - NF-e de Devolução de Mercadoria"
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "text": "×",
+        "tag": "button",
+        "href": null,
+        "classes": "close"
+      },
+      {
+        "text": "Fechar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-secondary"
+      },
+      {
+        "text": "Excluir",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary excluir-registros"
+      },
+      {
+        "text": "Ver todas",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes",
+        "classes": "btn btn-primary btn-sm"
+      },
+      {
+        "text": "Adicionar",
+        "tag": "a",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao",
+        "classes": "btn btn-app btn-primary"
+      },
+      {
+        "text": "Filtrar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-primary"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "PDF",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "XML",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      },
+      {
+        "text": "Editar",
+        "tag": "button",
+        "href": null,
+        "classes": "btn btn-sm btn-default badge"
+      }
+    ],
+    "tables": [
+      {
+        "index": 0,
+        "headers": [
+          "AÇÕES",
+          "STATUS",
+          "DETALHES",
+          "CLIENTE",
+          "DATA",
+          "TRANSPORTADORA",
+          "TOTAL",
+          "Editar PDF XML",
+          "Enviado",
+          "Nº: 340",
+          "INFORMS PUBLICIDADE E PROPAGAN INFORMS PUBLICIDADE E PROPAGA",
+          "11/11/2026 às 11:41:28",
+          "R$ 69,90"
+        ],
+        "approxRows": 35
+      }
+    ],
+    "cards": [
+      "BUSCA Número da nota (ex:1000,1001..) CNPJ/CPF + Busca completa Filtrar",
+      "AÇÕES STATUS DETALHES CLIENTE DATA TRANSPORTADORA TOTAL Editar PDF XML Enviado Nº: 340 INFORMS PUBLICIDADE E PROPAGAN INFORMS PUBLICIDADE E "
+    ],
+    "linksPage": [
+      {
+        "text": "",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Ver todas",
+        "page": "notificacoes",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notificacoes"
+      },
+      {
+        "text": "Dashboard",
+        "page": "dashboard",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=dashboard"
+      },
+      {
+        "text": "Orçamentos",
+        "page": "orcamentos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=orcamentos"
+      },
+      {
+        "text": "Pedidos",
+        "page": "pedidos",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=pedidos"
+      },
+      {
+        "text": "Notas fiscais",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais"
+      },
+      {
+        "text": "Contas a receber",
+        "page": "contasareceber",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=contasareceber"
+      },
+      {
+        "text": "Faturamento",
+        "page": "faturamento",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=faturamento"
+      },
+      {
+        "text": "Fluxo previsto",
+        "page": "fluxo_previsto",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=fluxo_previsto"
+      },
+      {
+        "text": "Adicionar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao"
+      },
+      {
+        "text": "Adicionar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao"
+      },
+      {
+        "text": "Exportar XML",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/ajax/notas_fiscais/exportar_xml.php?sql=U0VMRUNUIG5vdGFzX2Zpc2NhaXMuKiwgSUYoY2ZvcCBJTiAoMjIwMiwxMjAyKSwgLTEsIDEpICogKHRvdGFsICsgQ0FTVChpY21zc3RfdmFsb3IgQVMgREVDSU1BTCgxMCwyKSkgLSBJRk5VTEwoKFNFTEVDVCBTVU0oZGVzY29udG8pIEZST00gbm90YXNfZmlzY2Fpc19wcm9kdXRvcyBXSEVSRSBub3Rhc19maXNjYWlzX3Byb2R1dG9zLmlkX25vdGEgPSBub3Rhc19maXNjYWlzLmlkX25vdGEpLCAwKSkgYXMgdG90YWxfZ2VyYWwgRlJPTSBub3Rhc19maXNjYWlzIEdST1VQIEJZIG5vdGFzX2Zpc2NhaXMuaWRfbm90YSAgSEFWSU5HICBub3Rhc19maXNjYWlzLmlkX25vdGEgTk9UIElOICgyMjE1LDIyMTYsMjIxOCwyMjE5LDIyMjAsMjIyMSkgIEFORCAgbm90YXNfZmlzY2Fpcy5pZF9mcmFucXVlYWRvID0gIjkiICBBTkQgIG5vdGFzX2Zpc2NhaXMuZGF0YSA%2BPSAiMjAyNi0xMC0xMyAwMDowMDowMCIg&page=notas_fiscais&data_inicial=13%2F10%2F2026&current_page=1"
+      },
+      {
+        "text": "Exportar PDF",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/ajax/notas_fiscais/exportar_pdf.php?sql=U0VMRUNUIG5vdGFzX2Zpc2NhaXMuKiwgSUYoY2ZvcCBJTiAoMjIwMiwxMjAyKSwgLTEsIDEpICogKHRvdGFsICsgQ0FTVChpY21zc3RfdmFsb3IgQVMgREVDSU1BTCgxMCwyKSkgLSBJRk5VTEwoKFNFTEVDVCBTVU0oZGVzY29udG8pIEZST00gbm90YXNfZmlzY2Fpc19wcm9kdXRvcyBXSEVSRSBub3Rhc19maXNjYWlzX3Byb2R1dG9zLmlkX25vdGEgPSBub3Rhc19maXNjYWlzLmlkX25vdGEpLCAwKSkgYXMgdG90YWxfZ2VyYWwgRlJPTSBub3Rhc19maXNjYWlzIEdST1VQIEJZIG5vdGFzX2Zpc2NhaXMuaWRfbm90YSAgSEFWSU5HICBub3Rhc19maXNjYWlzLmlkX25vdGEgTk9UIElOICgyMjE1LDIyMTYsMjIxOCwyMjE5LDIyMjAsMjIyMSkgIEFORCAgbm90YXNfZmlzY2Fpcy5pZF9mcmFucXVlYWRvID0gIjkiICBBTkQgIG5vdGFzX2Zpc2NhaXMuZGF0YSA%2BPSAiMjAyNi0xMC0xMyAwMDowMDowMCIg&page=notas_fiscais&data_inicial=13%2F10%2F2026&current_page=1"
+      },
+      {
+        "text": "Relatório PDF",
+        "page": "notas_fiscais",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/ajax/notas_fiscais/relatorio.php?sql=U0VMRUNUIG5vdGFzX2Zpc2NhaXMuKiwgSUYoY2ZvcCBJTiAoMjIwMiwxMjAyKSwgLTEsIDEpICogKHRvdGFsICsgQ0FTVChpY21zc3RfdmFsb3IgQVMgREVDSU1BTCgxMCwyKSkgLSBJRk5VTEwoKFNFTEVDVCBTVU0oZGVzY29udG8pIEZST00gbm90YXNfZmlzY2Fpc19wcm9kdXRvcyBXSEVSRSBub3Rhc19maXNjYWlzX3Byb2R1dG9zLmlkX25vdGEgPSBub3Rhc19maXNjYWlzLmlkX25vdGEpLCAwKSkgYXMgdG90YWxfZ2VyYWwgRlJPTSBub3Rhc19maXNjYWlzIEdST1VQIEJZIG5vdGFzX2Zpc2NhaXMuaWRfbm90YSAgSEFWSU5HICBub3Rhc19maXNjYWlzLmlkX25vdGEgTk9UIElOICgyMjE1LDIyMTYsMjIxOCwyMjE5LDIyMjAsMjIyMSkgIEFORCAgbm90YXNfZmlzY2Fpcy5pZF9mcmFucXVlYWRvID0gIjkiICBBTkQgIG5vdGFzX2Zpc2NhaXMuZGF0YSA%2BPSAiMjAyNi0xMC0xMyAwMDowMDowMCIg&page=notas_fiscais&data_inicial=13%2F10%2F2026&current_page=1"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17576"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17571"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17570"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17569"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17559"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17556"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17555"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17529"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17526"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17509"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17496"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17489"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17483"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17477"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17475"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17466"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17465"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17459"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17444"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17443"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17441"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17440"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17438"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17437"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17436"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17434"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17425"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17424"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17368"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17367"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17363"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17362"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17356"
+      },
+      {
+        "text": "Editar",
+        "page": "notas_fiscais_edicao",
+        "href": "https://franqueado.conectmax.com/franqueado/franqueado/?page=notas_fiscais_edicao&id_nota=17335"
+      }
+    ]
+  }
+}

@@ -1,0 +1,682 @@
+{
+  "id": "notas_fiscais_edicao-detalhe",
+  "page": "notas_fiscais_edicao-detalhe",
+  "label": "notas_fiscais_edicao-detalhe",
+  "shot": "screenshots/notas_fiscais_edicao-detalhe.png",
+  "data": {
+    "url": "https://franqueado.conectmax.com/franqueado/?page=notas_fiscais_edicao&id_nota=17576",
+    "title": "ConectMax - Painel de Controle",
+    "headings": [
+      "SISTEMA",
+      "PEDIDOS",
+      "NOTAS FISCAIS",
+      "FINANCEIRO",
+      "Notas fiscais"
+    ],
+    "fields": [
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "correcao",
+        "id": null,
+        "placeholder": null,
+        "label": "Descrição (Mínimo 15 caracteres)"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_cnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_vendedor",
+        "id": null,
+        "placeholder": null,
+        "label": "Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "entrada_saida",
+        "id": null,
+        "placeholder": null,
+        "label": "Entrada/saída 0 - Entrada 1 - Saída"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "id_pedido",
+        "id": null,
+        "placeholder": null,
+        "label": "Pedido"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "finalidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Finalidade 1 - NF-e Normal 2 - NF-e Complementar 3 - NF-e de AJuste 4 - NF-e de Devolução de Mercado"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "codigo_destino",
+        "id": null,
+        "placeholder": null,
+        "label": "Destino da operação Automático 1 - Operação Interna 2 - Operação Interestadual 3 - Operação com Exte"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "codigo_estrangeiro",
+        "id": null,
+        "placeholder": null,
+        "label": "Código estrangeiro"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "nota_referenciada",
+        "id": null,
+        "placeholder": null,
+        "label": "Nota referenciada (número da nota)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "nota_referenciada_chave",
+        "id": null,
+        "placeholder": null,
+        "label": "Nota referenciada (chave de acesso)"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "consumidor_final",
+        "id": null,
+        "placeholder": null,
+        "label": "Consumidor final Não Sim"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_cpfcnpj",
+        "id": null,
+        "placeholder": null,
+        "label": "CPF/CNPJ"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_nome",
+        "id": null,
+        "placeholder": null,
+        "label": "Nome/Razão social"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_ie",
+        "id": null,
+        "placeholder": null,
+        "label": "Inscrição estadual"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "destinatario_isento_ie",
+        "id": null,
+        "placeholder": null,
+        "label": "Isento IE Não contribuinte Sim Não"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "destinatario_contribuinte_icms",
+        "id": null,
+        "placeholder": null,
+        "label": "Contribuinte do ICMS Selecione Sim Não"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_telefone",
+        "id": null,
+        "placeholder": null,
+        "label": "Telefone"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_cep",
+        "id": null,
+        "placeholder": null,
+        "label": "CEP"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_endereco",
+        "id": null,
+        "placeholder": null,
+        "label": "Endereço"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_numero",
+        "id": null,
+        "placeholder": null,
+        "label": "Número"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_complemento",
+        "id": null,
+        "placeholder": null,
+        "label": "Complemento"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_bairro",
+        "id": null,
+        "placeholder": null,
+        "label": "Bairro"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "destinatario_cidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Cidade"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "destinatario_estado",
+        "id": null,
+        "placeholder": null,
+        "label": "Estado Nenhum AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "destinatario_pais",
+        "id": null,
+        "placeholder": null,
+        "label": "País Afeganistão África do Sul Åland, Ilhas Albânia Alemanha Andorra Angola Anguilla Antárctida Anti"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "id_transportadora",
+        "id": null,
+        "placeholder": null,
+        "label": "Transportadora Sem transportadora AGENCIA DE CORREIO AGUIA BRANCA ALFA TRANSPORTES EIRELI BRASPRESS "
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "frete",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor do frete"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "frete_modalidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Modalidade do frete Selecione CIF FOB"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "caixas",
+        "id": null,
+        "placeholder": null,
+        "label": "Número de caixas"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "caixas_peso",
+        "id": null,
+        "placeholder": null,
+        "label": "Peso das caixas em kg, ex: 0,2"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "peso_liquido",
+        "id": null,
+        "placeholder": null,
+        "label": "Peso líquido em kg"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "peso_bruto",
+        "id": null,
+        "placeholder": null,
+        "label": "Peso bruto em kg"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "pagamento_meio",
+        "id": null,
+        "placeholder": null,
+        "label": "Forma de pagamento Selecione BOLETO DEPÓSITO BANCÁRIO PIX SEM PAGAMENTO"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "natureza",
+        "id": null,
+        "placeholder": null,
+        "label": "Natureza da operação"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "informacoes_complementares",
+        "id": null,
+        "placeholder": null,
+        "label": "Informações complementares"
+      },
+      {
+        "tag": "textarea",
+        "type": "textarea",
+        "name": "observacao",
+        "id": null,
+        "placeholder": null,
+        "label": "Observação Interna"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "parcelamento",
+        "id": null,
+        "placeholder": null,
+        "label": "Tabela de parcelamento 20/40 dias 15 dias 21/28/35 dias 28/56 dias 30/60/90/120/150/180 dias 30/60/9"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_numero[]",
+        "id": null,
+        "placeholder": "Nº item",
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_id_produto[]",
+        "id": null,
+        "placeholder": "Código",
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_ordemdecompra[]",
+        "id": null,
+        "placeholder": "Ordem de compra",
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_nome[]",
+        "id": null,
+        "placeholder": "Nome do produto",
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "produto_cfop[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_ncm[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_cest[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_desconto[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_quantidade[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Produtos PRODUTO CFOP NCM VALOR DESCONTO QUANTIDADE TOTAL Ver mais 1202 - Devolução de venda de merc"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_frete[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor do frete"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_valor_tributacao[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor unitário de tributação"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_icms_base[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Base de cálculo do ICMS normal"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_icms_aliquota[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Alíquota do ICMS"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_valor_aproximado_tributos[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor aproximado dos tributos"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "produto_icms_valor[]",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor do ICMS normal"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "icms_origem",
+        "id": null,
+        "placeholder": null,
+        "label": "Forma de pagamento 0 - Nacional, exceto as indicadas nos códigos 3, 4, 5 e 8; 1 - Estrangeira - Impo"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "icms_cst",
+        "id": null,
+        "placeholder": null,
+        "label": "CST 00 - Tributada integralmente 02 - Operações com combustíveis e tributação monofásica 10 - Tribut"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icms_aliquota",
+        "id": null,
+        "placeholder": null,
+        "label": "Aliquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icms_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor base de cálculo ICMS (calculado automaticamente, não preencher)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icms_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor de cálculo ICMS"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "icmsst_modalidade",
+        "id": null,
+        "placeholder": null,
+        "label": "Modalidade Determinação 0 - Preço tabelado ou máximo sugerido; 1 - Lista Negativa (valor); 2 - Lista"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icmsst_aliquota",
+        "id": null,
+        "placeholder": null,
+        "label": "Aliquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icmsst_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor base de cálculo ICMS ST (calculado automaticamente, não preencher)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "icmsst_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor do ICMS ST"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "ipi_cst",
+        "id": null,
+        "placeholder": null,
+        "label": "CST Selecione 00 - Entrada com recuperação de crédito 01 - Entrada tributada com alíquota zero 02 - "
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ipi_codigoenquadramentolegal",
+        "id": null,
+        "placeholder": null,
+        "label": "Código de enquadramento legal"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ipi_aliquota",
+        "id": null,
+        "placeholder": null,
+        "label": "Aliquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ipi_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor base de cálculo (calculado automaticamente, não preencher)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ipi_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor de cálculo"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "pis_cst",
+        "id": null,
+        "placeholder": null,
+        "label": "CST 01 - Operação Tributável (base de cálculo = valor da operação alíquota normal (cumulativo/não cu"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "pis_aliquota",
+        "id": null,
+        "placeholder": null,
+        "label": "Aliquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "pis_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor base de cálculo (calculado automaticamente, não preencher)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "pis_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor de cálculo"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "cofins_cst",
+        "id": null,
+        "placeholder": null,
+        "label": "CST 01 - Operação Tributável (base de cálculo = valor da operação alíquota normal (cumulativo/não cu"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cofins_aliquota",
+        "id": null,
+        "placeholder": null,
+        "label": "Aliquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cofins_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor base de cálculo (calculado automaticamente, não preencher)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "cofins_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "Valor de cálculo"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "name": "ibscbs_cst",
+        "id": null,
+        "placeholder": null,
+        "label": "CST Não informar 000 - Tributação integral 010 - Tributação com alíquotas uniformes 011 - Tributação"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ibscbs_classificacao",
+        "id": null,
+        "placeholder": "Ex: 000001",
+        "label": "Classificação Tributária (cClassTrib)"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ibscbs_base",
+        "id": null,
+        "placeholder": null,
+        "label": "Base de cálculo"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ibscbs_ibs_uf_aliquota",
+        "id": null,
+        "placeholder": "0,1",
+        "label": "IBS UF - Alíquota %"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "name": "ibscbs_ibs_uf_valor",
+        "id": null,
+        "placeholder": null,
+        "label": "IBS UF - Valor"
+      }
+    ],
+    "buttons": [
+      "Enviar",
+      "Cancelar nota fiscal",
+      "Enviar correção",
+      "Ver PDF",
+      "Ver xml",
+      "Consultar",
+      "Enviar por e-mail",
+      "Duplicar nota fiscal",
+      "Voltar",
+      "Atualizar nota"
+    ],
+    "tabs": [
+      "Geral",
+      "Impostos"
+    ],
+    "sections": [
+      "Alerta",
+      "LAERCIO",
+      "Correção da nota"
+    ],
+    "bodySample": "Você está gerenciando a conta de LAERCIO Sair 0 SISTEMA Dashboard PEDIDOS Orçamentos Pedidos NOTAS FISCAIS Notas fiscais FINANCEIRO Contas a receber Faturamento Fluxo previsto Notas fiscais Cancelar nota fiscal Enviar correção Ver PDF Ver xml Consultar Enviar por e-mail Duplicar nota fiscal Geral Impostos Enviado Número da nota: 340 CNPJ (franqueado) 62.248.210/0001-50 54.926.403/0001-95 Vendedor Selecione Bruno Toyo DEVOLUÇÃO Erickson Gabriele Guilherme Marcello Olívia Entrada/saída 0 - Entrada 1 - Saída Pedido Finalidade 1 - NF-e Normal 2 - NF-e Complementar 3 - NF-e de AJuste 4 - NF-e de De"
+  },
+  "sourceHref": "https://franqueado.conectmax.com/franqueado/?page=notas_fiscais_edicao&id_nota=17576"
+}

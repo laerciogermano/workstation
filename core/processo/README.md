@@ -3,26 +3,47 @@
 Ciclo padrão da workstation:
 
 ```text
-Discovery → Refinamento técnico → Desenvolvimento → Testes → Implantação → Manutenção
+(Exploração com IA) → Discovery → Refinamento técnico → Desenvolvimento → Testes → Implantação → Manutenção
 ```
 
 Cada etapa documenta **entradas**, **execução** e **saídas**.
 
 ## Como atacar
 
-1. No [discovery](1.discovery/README.md), nesta ordem: **stories → epics (prioridade) → roadmap**; depois **refinar cada estória**: scenarios → BDDs → protótipo (se houver) → tasks.
-2. **Depois**, aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
+1. Se a direção ainda estiver aberta: [exploração com IA](0.exploracao-com-ia/README.md) — PRD → benchmark → práticas → prompt → possibilidades → escolha (loop).
+2. No [discovery](1.discovery/README.md), nesta ordem: **stories → epics (prioridade) → roadmap**; depois **refinar cada estória**: scenarios → BDDs → protótipo (se houver) → tasks.
+3. **Depois**, aplicar o ciclo acima **por estória** (refinamento técnico → desenvolvimento → testes → implantação → manutenção).
 
 O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do processo rodam **estória a estória**.
 
 | Etapa | Pasta | Objetivo |
 |-------|-------|----------|
+| Exploração com IA | [`0.exploracao-com-ia/`](0.exploracao-com-ia/README.md) | Cursor → PRD (contexto/dor/objetivo/DoD) → benchmark → práticas → prompt → possibilidades → escolha e loop |
 | Discovery | [`1.discovery/`](1.discovery/README.md) | Stories → epics → roadmap; refinar estória (scenarios → BDDs → protótipo? → tasks); depois ciclo por estória |
 | Refinamento técnico | [`2.refinamento-tecnico/`](2.refinamento-tecnico/README.md) | Detalhar solução, riscos e critérios técnicos |
 | Desenvolvimento | [`3.desenvolvimento/`](3.desenvolvimento/README.md) | Por IA na ordem do Gantt; sequencial/paralelo; próximo robô só após humano |
 | Testes | [`4.testes/`](4.testes/README.md) | Validar comportamento e qualidade |
 | Implantação | [`5.implantacao/`](5.implantacao/README.md) | Publicar em ambiente alvo |
 | Manutenção | [`6.manutencao/`](6.manutencao/README.md) | Operar, corrigir e evoluir |
+
+---
+
+## 0. Exploração com IA (opcional)
+
+Quando ainda não há direção estável (produto, marca, UI, arquitetura). Detalhe: [`0.exploracao-com-ia/`](0.exploracao-com-ia/README.md).
+
+**Entradas**
+
+- Ideia / dor bruta
+- Restrições conhecidas
+
+**Execução**
+
+- Cursor → PRD → benchmarking → práticas de mercado → prompt → overview de possibilidades → escolha e retroalimentação
+
+**Saídas**
+
+- `prd.md`, `benchmark.md`, `praticas.md`, `prompt.md`, `possibilidades.md` (direção escolhida)
 
 ---
 
@@ -34,6 +55,7 @@ O mapa e a prioridade nascem no discovery; o detalhe (SC/BDD) e o restante do pr
 - Contexto e restrições
 - Stakeholders
 - Dados e feedback
+- (Se houver) direção escolhida na exploração com IA
 
 **Execução**
 

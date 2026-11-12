@@ -2,6 +2,8 @@
 
 Entender o problema e fechar o *quê* do produto antes do refinamento técnico.
 
+Se a direção ainda estiver aberta (várias opções possíveis), rode antes a [exploração com IA](../0.exploracao-com-ia/README.md) e entre no discovery com a escolha já nomeada.
+
 ## Ordem dos artefatos
 
 Ordem **obrigatória** — não pular nem inverter:

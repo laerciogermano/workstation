@@ -1,12 +1,16 @@
 # Exploração com IA
 
-Loop para **definir o problema**, **pesquisar o mercado**, **gerar opções** e **escolher** antes do [discovery](../1.discovery/README.md). Serve para produto, marca, UI, arquitetura ou qualquer artefato ainda aberto.
+**Framework** de criação em alto nível: o mesmo loop serve para **software**, **artes/marca/UI**, e **qualquer outro produto**. Não é um método só de design — é o jeito de construir coisas pedindo à IA, com problema e critérios claros, em vez de executar o detalhe na mão.
+
+Modo de trabalho: **não codificar (nem “fazer”) direto** — estruturar o pedido (PRD → referências → práticas → prompt → opções → escolha) e deixar a IA gerar. O código, a arte e o restante do produto nascem desse fluxo.
+
+Loop para **definir o problema**, **pesquisar o mercado**, **gerar opções** e **escolher** antes do [discovery](../1.discovery/README.md) (quando o destino for software) ou antes da execução no domínio correspondente (marca, criativo, doc, etc.).
 
 ```text
 Cursor → PRD → Benchmark → Práticas → Prompt → Possibilidades → Escolha → (volta ao PRD/prompt)
 ```
 
-Só depois da escolha estável: stories → epics → roadmap ([discovery](../1.discovery/README.md)).
+Só depois da escolha estável: no software, stories → epics → roadmap ([discovery](../1.discovery/README.md)); nos outros produtos, a execução/produção da direção escolhida.
 
 ---
 

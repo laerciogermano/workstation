@@ -46,13 +46,11 @@ export async function findByTexts(page, texts, opts = {}) {
     const includeDisabled = ${JSON.stringify(!!opts.includeDisabled)};
     const menuOnly = ${JSON.stringify(!!opts.menuOnly)};
     const primaryOnly = ${JSON.stringify(!!opts.primaryOnly)};
-    // primaryOnly: botão Connect do hero OU <a> invite do perfil atual (não cards laterais)
+    // primaryOnly: Connect do hero — button OU <a> (invite vanity OU /in/ do perfil; não cards laterais)
     const nodes = menuOnly
       ? [...document.querySelectorAll('[role="menuitem"], .artdeco-dropdown__item')]
       : primaryOnly
-        ? [...document.querySelectorAll(
-            'button, [role="button"], a[href*="custom-invite"], a[href*="vanityName="]',
-          )]
+        ? [...document.querySelectorAll('button, [role="button"], a')]
         : [...document.querySelectorAll(
             'button, a, [role="button"], [role="link"], [role="menuitem"], .artdeco-dropdown__item',
           )];
@@ -66,6 +64,8 @@ export async function findByTexts(page, texts, opts = {}) {
         const w = want[i];
         if (exact) {
           if (s === w) return i;
+          // "+ Conectar" / "I+ Connect" no hero
+          if (s === '+ ' + w || s === '+' + w || s.endsWith(' ' + w) && s.length <= w.length + 4) return i;
           continue;
         }
         if (s === w) return i;
@@ -78,6 +78,7 @@ export async function findByTexts(page, texts, opts = {}) {
     const hits = [];
     for (const el of nodes) {
       if (!includeDisabled && el.disabled) continue;
+      if (primaryOnly && el.closest && el.closest('[role="menuitem"], .artdeco-dropdown__item, [role="menu"]')) continue;
       const aria = el.getAttribute('aria-label') || '';
       const label = el.innerText || el.textContent || '';
       // Preferir texto curto do botão; aria longo só se texto vazio / exact fail
@@ -339,16 +340,14 @@ export async function profileSignals(page) {
       const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
       return { aria, txt, both: (aria + ' ' + txt).replace(/\\s+/g, ' ').trim() };
     };
-    // Connect do hero: button OU <a> invite do vanity atual — NÃO cards laterais
+    // Connect do hero: button OU <a> (vanityName / custom-invite / /in/ do perfil) — NÃO cards laterais nem menu
     const vanityRaw = (location.pathname.match(/\\/in\\/([^/]+)/) || [])[1] || '';
     let vanity = vanityRaw;
     try { vanity = decodeURIComponent(vanityRaw); } catch { /* keep */ }
-    const hasConnect = [...document.querySelectorAll(
-      'button, [role=button], a[href*="custom-invite"], a[href*="vanityName="]',
-    )].some((el) => {
+    const hasConnect = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
       const r = el.getBoundingClientRect();
       if (r.width < 2 || r.height < 2 || r.y < 72) return false;
-      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"]')) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"], [role=menuitem], .artdeco-dropdown__item, [role=menu]')) return false;
       const { aria, txt, both } = labelOf(el);
       if (/\\bconnections?\\b/i.test(both) && !/invite.+to connect/i.test(both)) return false;
       if (el.tagName === 'A') {
@@ -363,6 +362,7 @@ export async function profileSignals(page) {
       }
       return (
         /^(connect|conectar)$/i.test(txt) ||
+        /^\\+\\s*(connect|conectar)$/i.test(txt) ||
         /^(connect|conectar)$/i.test(aria) ||
         /invite .+ to connect/i.test(aria) ||
         /convidar .+ (para se conectar|a conectar)/i.test(aria)

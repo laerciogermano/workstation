@@ -4,6 +4,7 @@
  *
  * Fluxo: se Connect/Conectar já está no hero → clica nele (sem abrir ⋮).
  * Senão: Mais → menuitem Conectar → Enviar sem nota/Skip → Pending.
+ * Já conectado (Mensagem + sem Conectar/Seguir) → só upsert status=2, sem clicar.
  * Manipulação só via human-cdp (clickAt/click).
  *
  * @param {{
@@ -123,6 +124,63 @@ async function finishPending(page, {
 }
 
 /**
+ * Hero com Mensagem e sem Conectar/Seguir = já 1º grau.
+ * Só alinha a base (status=2); não tenta convite de novo.
+ */
+function isAlreadyConnectedSignals(sig) {
+  return Boolean(
+    sig?.hasMessage &&
+      !sig?.hasConnect &&
+      !sig?.hasMenuConnect &&
+      !sig?.pending &&
+      !sig?.hasFollow,
+  );
+}
+
+async function finishAlreadyConnected(page, {
+  url,
+  steps,
+  outDir,
+  dryRun,
+  notifyApi,
+  agentId,
+  reason = "already_connected",
+}) {
+  steps.push(reason);
+  await shot(page, outDir, "99-already-connected.png");
+  let notify = { notified: false, reason: "notify desligado" };
+  if (notifyApi && !dryRun) {
+    try {
+      notify = await notifyInviteSent({
+        profileUrl: url,
+        steps,
+        agentId,
+        status: CONNECTION_STATUS.CONNECTED,
+      });
+      steps.push(
+        notify.notified
+          ? "api:client-connections-linkedin:ok"
+          : `api:client-connections-linkedin:skip:${notify.reason}`,
+      );
+    } catch (e) {
+      notify = { notified: false, error: String(e?.message || e) };
+      steps.push(`api:client-connections-linkedin:fail:${notify.error}`);
+    }
+  }
+  if (notifyApi && !dryRun && !notify.notified) {
+    return {
+      ok: false,
+      status: "failed",
+      url,
+      steps,
+      notify,
+      error: `já conectado mas falhou upsert API: ${notify.error || notify.reason || "n/a"}`,
+    };
+  }
+  return { ok: true, status: "already_connected", url, steps, notify };
+}
+
+/**
  * @param {object} opts
  */
 export async function connectByLinkedInUrl(opts) {
@@ -223,6 +281,18 @@ export async function connectByLinkedInUrl(opts) {
           };
         }
         return { ok: true, status: "already", url, steps, notify };
+      }
+
+      // Já 1º grau: Mensagem + sem Conectar/Seguir → só status=2 na base
+      if (!didConnect && !skipped && isAlreadyConnectedSignals(sig)) {
+        return finishAlreadyConnected(page, {
+          url,
+          steps,
+          outDir: opts.outDir,
+          dryRun,
+          notifyApi,
+          agentId,
+        });
       }
 
       // Modal "Add a note" / "Enviar sem nota" — prioridade máxima
@@ -342,6 +412,24 @@ export async function connectByLinkedInUrl(opts) {
         if (!dryRun) {
           const tapped = await clickProfileMenuConnect(page, steps);
           if (!tapped.ok) {
+            // Menu sem Conectar + hero com Mensagem = já conectado (não re-enfileirar)
+            const after = await profileSignals(page);
+            if (
+              after.hasMessage &&
+              !after.hasConnect &&
+              !after.hasMenuConnect &&
+              !after.pending
+            ) {
+              return finishAlreadyConnected(page, {
+                url,
+                steps,
+                outDir: opts.outDir,
+                dryRun,
+                notifyApi,
+                agentId,
+                reason: "already_connected:menu-sem-conectar",
+              });
+            }
             return {
               ok: false,
               status: "failed",

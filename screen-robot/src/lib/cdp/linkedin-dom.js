@@ -375,20 +375,27 @@ export async function profileSignals(page) {
       const { txt, aria } = labelOf(el);
       return /^(connect|conectar)$/i.test(txt) || /invite .+ to connect|convidar .+ conectar/i.test(aria);
     });
-    const hasMessage = [...document.querySelectorAll('button, [role=button]')].some((el) => {
+    // Mensagem no hero: button ou <a> (1º grau / open profile)
+    const hasMessage = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
       const r = el.getBoundingClientRect();
       if (r.y < 72 || r.width < 2) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"]')) return false;
       const { aria, txt, both } = labelOf(el);
       return (
         /^(message|mensagem|send a message|enviar mensagem)$/i.test(txt) ||
         /^(message|mensagem)\\b/i.test(aria) ||
-        /^(message|mensagem)\\b/i.test(both)
+        /^(message|mensagem)\\b/i.test(both) ||
+        /enviar mensagem|send a message/i.test(aria)
       );
     });
-    const hasFollow = [...document.querySelectorAll('button, [role=button]')].some((el) => {
+    // Seguir (não Seguindo/Following) — ausência + Mensagem ≈ já conectado
+    const hasFollow = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
       const r = el.getBoundingClientRect();
       if (r.y < 72 || r.width < 2) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"], [role=menuitem], .artdeco-dropdown__item, [role=menu]')) return false;
       const { aria, txt } = labelOf(el);
+      if (/^(following|seguindo|unfollow|deixar de seguir)/i.test(txt)) return false;
+      if (/^(following|seguindo)\\b/i.test(aria)) return false;
       return /^(follow|seguir)$/i.test(txt) || /^(follow|seguir)\\b/i.test(aria);
     });
     // Enviar sem nota costuma estar em open shadow root

@@ -5,7 +5,7 @@
   --nt-green: #00984b;
   --nt-green-deep: #007a3d;
   --nt-green-soft: #e6f6ee;
-  --nt-ink: #0b1f33;
+  --nt-ink: #0b1f33; --nt-black: #000000;
   --nt-muted: #5a6b7d;
   --nt-line: #d5dee8;
   --nt-bg: #f5f7fa;
@@ -669,7 +669,7 @@ body.modal-open {
 .ean-reader {
   overflow: hidden;
   border-radius: var(--nt-radius-sm);
-  background: var(--nt-ink);
+  background: var(--nt-black);
   min-height: 180px;
 }
 
@@ -878,7 +878,7 @@ td.mono {
 #reader {
   overflow: hidden;
   border-radius: var(--nt-radius);
-  background: var(--nt-ink);
+  background: var(--nt-black);
   box-shadow: var(--nt-shadow);
 }
 

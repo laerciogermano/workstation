@@ -46,11 +46,11 @@ Default: `http://localhost:3000`
 
 ### Local → base de produção
 
-No `.env` da API (não versionado): `DB_HOST=144.126.154.90` + user/senha/db de produção (`credenciais.md` / VPS). **`DB_SYNC=false`** (nunca synchronize contra prod).
+No `.env` da API (não versionado): `DB_HOST=185.250.37.82` + user/senha/db de produção (`credenciais.md` / VPS). **`DB_SYNC=false`** (nunca synchronize contra prod).
 
 | | Local (Docker/Homebrew) | Produção (VPS 144) |
 |--|--|--|
-| `DB_HOST` | `localhost` | `144.126.154.90` |
+| `DB_HOST` | `localhost` | `185.250.37.82` |
 | `DB_SYNC` | `true` ok | **`false`** |
 
 **Antes → depois:** local podia usar Postgres da máquina → agora o `.env` local aponta ao Postgres da VPS 144.  
@@ -888,19 +888,19 @@ curl -s -X POST http://localhost:3000/agente/agent-d/claim -H "X-Api-Key: $AGENT
 
 ### Produção Contabo
 
-Stack **API + web + Postgres** no host `144.126.154.90`. **Workers AVD só no Mac** (`API_URL=http://144.126.154.90`); unit `connectmax-worker` na VPS fica **disabled**.
+Stack **API + web + Postgres** no host `185.250.37.82`. **Workers AVD só no Mac** (`API_URL=http://185.250.37.82`); unit `connectmax-worker` na VPS fica **disabled**.
 
 | Peça | Onde |
 |------|------|
 | Postgres | Docker Compose `/opt/postgres/` |
 | API | systemd `connectmax-api` → `/opt/connectmax/vendas/api` (`DB_HOST=127.0.0.1`, `DB_SYNC=false`) |
 | Web | nginx → `/opt/connectmax/vendas/web/dist` + proxy → `:3000` |
-| URL | `http://144.126.154.90/` |
+| URL | `http://185.250.37.82/` |
 | Workers | Mac local — scripts [`../worker/scripts/`](../worker/scripts/) (`API_URL` Contabo) |
 | Worker VPS | unit `connectmax-worker` **disabled** (VPS sem `/dev/kvm`) |
 | nginx conf | canônico: [`../web/deploy/nginx-connectmax.conf`](../web/deploy/nginx-connectmax.conf) → `/etc/nginx/sites-available/connectmax` |
 
-**Antes → depois (runtime):** API/web/Vite locais (`:3000`/`:5173`) + workers → `localhost:3000` → API/web só na Contabo; workers Mac com `API_URL=http://144.126.154.90`.  
+**Antes → depois (runtime):** API/web/Vite locais (`:3000`/`:5173`) + workers → `localhost:3000` → API/web só na Contabo; workers Mac com `API_URL=http://185.250.37.82`.  
 **Rollback:** `npm run start:dev` na API local + `npm run dev` no web; workers com `API_URL=http://localhost:3000` (e `PROFILES_API_URL`/`MESSAGES_API_URL`/`INVITES_API_URL` iguais).
 
 **Deploy (rsync + build na VPS):**
@@ -908,11 +908,11 @@ Stack **API + web + Postgres** no host `144.126.154.90`. **Workers AVD só no Ma
 ```bash
 export SSHPASS='…'   # root@144 — credenciais.md
 rsync -az --delete --exclude node_modules --exclude dist --exclude .env --exclude logs \
-  vendas/api/ root@144.126.154.90:/opt/connectmax/vendas/api/
+  vendas/api/ root@185.250.37.82:/opt/connectmax/vendas/api/
 rsync -az --delete --exclude node_modules --exclude dist --exclude .env \
-  vendas/web/ root@144.126.154.90:/opt/connectmax/vendas/web/
-scp vendas/web/deploy/nginx-connectmax.conf root@144.126.154.90:/etc/nginx/sites-available/connectmax
-ssh root@144.126.154.90 'cd /opt/connectmax/vendas/api && npm install && npm run build && \
+  vendas/web/ root@185.250.37.82:/opt/connectmax/vendas/web/
+scp vendas/web/deploy/nginx-connectmax.conf root@185.250.37.82:/etc/nginx/sites-available/connectmax
+ssh root@185.250.37.82 'cd /opt/connectmax/vendas/api && npm install && npm run build && \
   cd ../web && npm install && npm run build && nginx -t && systemctl reload nginx && \
   systemctl restart connectmax-api'
 ```

@@ -1,0 +1,1 @@
+Pasta local low-chat/: objetivo, canais (LinkedIn, Tinder, WhatsApp, CRM), modelo barato, contrato persona↔canal.

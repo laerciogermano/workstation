@@ -1,0 +1,1 @@
+v0.1 — Autenticação e onboarding (criar + publicar)

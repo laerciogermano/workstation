@@ -1,0 +1,1 @@
+Histórico por thread/contato; janela + resumo barato; API get/append para canais.

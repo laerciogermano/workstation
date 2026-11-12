@@ -1,5 +1,40 @@
 # notinhas.shop Beta — Protótipos
 
+## 0. Protótipo v2.0 (2026-11-08) — atual
+
+**Abrir:** [`prototipos/v2/index.html`](prototipos/v2/index.html) (sem build; deep-link `#T-14`). REQ-054.
+
+Consolida o app do lab, estes docs e o v1 num app com **estado único**: busca, listas, split, vínculo de EAN, pontos e merge de conta recalculam a partir das observações. Referência de boas práticas: `core/definir-projeto-moderno/03-design-ui-motion` (motion que explica estado, View Transitions, skeleton, `prefers-reduced-motion`). Logo V9 no wordmark.
+
+| Fluxo | Telas | Novo no v2 |
+|---|---|---|
+| E01 Produtos e preços | T-10 · T-11 · T-14 · T-12 · T-13 · T-15 | busca real com GTIN mod-10; ficha canônica (REQ-047/048); histórico acima da comparação |
+| E02 Contribuir nota e EAN | T-20 · T-21 · **T-25** · T-22 · T-23 · T-24 · **T-26** · **T-27** | processando, duplicada (RN-03), falha SEFAZ / link inválido (RN-01/15); sugestão SI5 + origem (REQ-043) |
+| E03 Estabelecimentos | T-31 · T-32 · T-33 · **T-34** · T-30 | ranking RN-10 calculado; vitrine com aba sem EAN e sugestão inline |
+| E04 Listas, notas e gastos | T-40 · T-42 · T-41 · T-50 · T-55 · T-52 | cotação RN-13 com cobertura parcial explícita |
+| E05 Conta, pontos e privacidade | T-51 · T-53 · T-54 · T-02 · T-03 · T-04 · T-05 · **T-56** | excluir conta / dados (US-01.12) |
+| E06 Estados do sistema | **T-70** · **T-71** · **T-72** · **T-73** | câmera negada, offline, busca vazia, skeleton |
+| WEB 1–5 (desktop) | D-10 · D-11 · D-14 · D-20 · D-25 · D-22 · D-23 · D-24 · D-27 · D-31 · D-33 · D-40 · D-42 · D-50 · D-52 · D-51 · D-02 · D-54 | versão web no mesmo modelo (REQ-057) |
+| ADM (desktop) | T-61 · **T-62** · **T-63** | métricas da base real, fila de falhas, moderação |
+
+**Cenários** (painel direito do modo navegável): visitante/conta · resultado do scan (sucesso, duplicada, SEFAZ lenta, link inválido) · câmera · rede · GPS · crédito de cotação · movimento reduzido.
+
+**Temas (REQ-055):** seção “Temas para escolher” compara as mesmas telas em 6 paletas — Institucional (atual), Escuro, Petróleo + lima, Grafite + esmeralda, Feira, Papel de nota. Seletor também no topo e nos cenários. DESIGN.md v2 segue canônico até a escolha. No modo navegável, os temas ficam ao lado do celular (atalho `T`). Escuro = fundo preto, nunca azul.
+
+**Web desktop (REQ-057):** 18 telas `D-xx` (fluxos WEB 1–5) no mesmo modelo, em navegador 1440×900. Botão “Ver no desktop/celular” (tecla `D`) alterna a tela atual. Home desktop em seções da altura da janela com rolagem horizontal; produto, lojas, listas e notas em colunas lado a lado.
+
+**Home (REQ-056):** seções da altura da tela — Promoções → Mais comprados (lateral infinita) → categorias — cada uma com grade de 2 linhas rolando na horizontal.
+
+**Estrutura:** `js/data.js` (lojas, observações, regras de domínio: destaque, ranking, cotação, GTIN) · `js/ui.js` (componentes) · `js/screens.js` (uma `def('T-xx', {us, rn, req, notes}, render)` por tela) · `js/app.js` (estado, navegação, cenários, galeria, rastreio) · `styles.css` (tokens `--nt-*`, motion).
+
+**Evoluir:** nova tela = `def()` em `screens.js` + id em `FLOWS[].steps`; a matriz de rastreabilidade e a cobertura de US/RN se atualizam sozinhas.
+
+**Fidelidade:** lojas, descrições de DANFE e fotos vêm da base `enotas`; preços cruzados entre lojas e EANs marcados “exemplo” são de protótipo.
+
+---
+
+## v1 (2026-11-04)
+
 **Protótipo navegável:** [`prototipos/index.html`](prototipos/index.html) · no app: [notinhas.shop/#prototipo](https://notinhas.shop/#prototipo) → `prototipos.html` · PDF: [`prototipos/prototipos-notinhas-beta.pdf`](prototipos/prototipos-notinhas-beta.pdf). Abra no navegador, sem build.
 
 - **Galeria:** telas agrupadas por fluxo (E01–E04; sem ADM/backoffice neste momento), celulares com contorno azul/verde e setas entre passos.
@@ -18,7 +53,7 @@
 | Preço contextualizado | Sempre **valor + loja + data**; `tabular-nums` |
 | Wordmark = domínio | `notinhas` deep blue + `.shop` verde — nunca “e-notas” |
 | Polegar primeiro | Tab bar + FAB Nota no centro; alvos ≥ 44 px |
-| Scan | Viewport dark `#0B1F33` (exceção) |
+| Scan | Viewport preto `#000000` (exceção; todo fundo escuro é preto) |
 
 ## 2. Inventário de telas
 
@@ -116,7 +151,6 @@ Tab bar: **Produtos** (T-10) · **Lojas** (T-31) · **Nota** FAB (T-20) · **Lis
 
 ## 6. Pendências de design
 
-- Fotos reais de produto (hoje placeholders em gradiente)
-- Microinterações / skeleton
-- Estados de erro de câmera e offline PWA
-- Publicar galeria em `notinhas.shop` (opcional, card separado)
+- ~~Fotos reais de produto~~ · ~~Microinterações / skeleton~~ · ~~Estados de erro de câmera e offline~~ → resolvidos no v2.0 (§0)
+- Publicar o v2.0 em `notinhas.shop` (hoje só o v1 em `app/public/prototipos.html`)
+- Regenerar PDF a partir do v2.0

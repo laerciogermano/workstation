@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-/** Destino do proxy em dev. Remoto: API_PROXY=http://144.126.154.90 npm run dev */
+/** Destino do proxy em dev. Remoto: API_PROXY=http://185.250.37.82 npm run dev */
 const API = process.env.API_PROXY || 'http://localhost:3000';
 
 function apiProxy(extra = {}) {

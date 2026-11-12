@@ -1,5 +1,9 @@
 # RoleGo — Marca
 
+## Identidade visual v4 (atual)
+
+Kit completo sobre o logo v4: [`identidade-v4/`](identidade-v4/README.md) — manual de 26 págs. (logo system, cor + contraste, tipo, voz, motion, posts, stories, merch, eventos, rua), `BRAND.md`, `tokens.css`, posts e stories em PNG.
+
 ## Identidade visual v1
 
 Manual completo, 16 páginas em A4 paisagem, no estilo dos banners de [`../epics.pdf`](../epics.pdf) (fundo preto com estrelas e ondas neon, chip numerado, títulos gigantes com barra em gradiente, celulares com contorno neon, CTA ciano → violeta): capa-banner, essência, tom de voz, logo e símbolo, versões e usos incorretos, paleta, código de cores e contraste, tipografia (Poppins + Inter), elementos gráficos, componentes, app (splash/swipe/match), template de banner de épico 16:9, ingresso/Wallet/push, redes sociais, impressos de guerrilha e contracapa.

@@ -1,0 +1,3 @@
+- Listar os sites das empresas
+- Identificar pontos em comum
+- Identificar pontos diferentes

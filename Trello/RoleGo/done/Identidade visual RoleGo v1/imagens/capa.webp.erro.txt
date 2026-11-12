@@ -1,0 +1,2 @@
+https://trello.com/1/cards/6adfa306d2ba6a3e29c5f07d/attachments/6ae654efb7cbd033f1dd8890/previews/6ae654f0b7cbd033f1dd8b1d/download/Captura_de_Tela_2026-10-31_%C3%A0s_17.39.58.webp
+HTTP Error 401: Unauthorized

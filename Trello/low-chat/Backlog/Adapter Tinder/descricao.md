@@ -1,0 +1,1 @@
+Entrada/saída Tinder → low-chat → reply (Chrome CDP).

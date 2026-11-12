@@ -1,0 +1,1 @@
+Inspecionar CloseFans: cadastro + prints + funcionalidades

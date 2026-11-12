@@ -1,0 +1,1 @@
+Pedir para o pessoal exportar os leads do linkedin.

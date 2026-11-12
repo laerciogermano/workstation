@@ -1,0 +1,1 @@
+Estudo: client remoto (instalador + agent leve CDP via WebSocket)

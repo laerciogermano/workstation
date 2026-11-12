@@ -1,0 +1,1 @@
+Manual de identidade visual RoleGo **v1** (entregue). Artefatos: HTML/PDF/ZIP + insumos. Card de aplicação/banners: https://trello.com/c/Taaxly1i

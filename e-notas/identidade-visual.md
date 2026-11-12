@@ -27,7 +27,8 @@ Produto **claro e utilitário**: a NFC-e vira índice de preço. Confiança (dad
 | `--nt-green` | `#00984B` | Menor preço, sucesso, acento “.shop” |
 | `--nt-green-deep` | `#007A3D` | Hover / ênfase verde |
 | `--nt-green-soft` | `#E6F6EE` | Badge “menor preço” |
-| `--nt-ink` | `#0B1F33` | Texto |
+| `--nt-ink` | `#0B1F33` | Texto (só texto, nunca fundo) |
+| `--nt-black` | `#000000` | **Todo fundo escuro**: ícone de app escuro, scan, moldura de celular, toast, tooltip, card escuro |
 | `--nt-muted` | `#5A6B7D` | Secundário |
 | `--nt-line` | `#D5DEE8` | Bordas |
 | `--nt-bg` | `#F5F7FA` | Fundo app / mist |
@@ -35,6 +36,8 @@ Produto **claro e utilitário**: a NFC-e vira índice de preço. Confiança (dad
 | `--nt-err` | `#C62828` | Erro |
 
 Gradiente de marca (capa, splash): `#014380 → #0069B4 → #00984B` (135°).
+
+**Regra de fundo escuro (08/11/2026):** fundo escuro é sempre preto puro `#000000`. O azul-escuro `#0B1F33` fica só para texto. **Jamais usar azul ou verde sobre preto:** no preto, logo, wordmark e ícones são sempre todos brancos. Única exceção: no ícone de app Escuro, a última nota (tira curta) é verde `#00984B`.
 
 ---
 

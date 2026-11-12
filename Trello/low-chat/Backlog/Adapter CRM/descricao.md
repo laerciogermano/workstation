@@ -1,0 +1,1 @@
+Webhook/API CRM → low-chat → reply; mapear contato/thread.

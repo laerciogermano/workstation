@@ -1,0 +1,1 @@
+Dashboard de bots: visualizar frota, atividade ao vivo e controles

@@ -1,0 +1,2 @@
+https://trello.com/1/cards/6ae7ae51f0d412693108b6ad/attachments/6ae7aebdfb1ba29623ab7002/previews/6ae7aebffb1ba29623ab7127/download/20-logo-buscapreco.webp
+HTTP Error 401: Unauthorized

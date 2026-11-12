@@ -1,0 +1,1 @@
+Alterar Contas a Pagar (transação por transação + categoria)

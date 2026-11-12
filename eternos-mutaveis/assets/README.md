@@ -25,3 +25,7 @@ Imagens da obra.
 ## Reverter
 
 Remover a linha `![Banner do capítulo N…]` de `artigo.md` e apagar o arquivo correspondente; regenerar com o prompt acima (16:9).
+
+## Obras de abertura (livro v5)
+
+`obras-v5/cap-1..7.jpg` (Wikimedia Commons, redimensionadas): 1 Thomas Cole, *Expulsão do Jardim do Éden* (1828, DP) · 2 Joseph Wright of Derby, *O planetário* (1766, DP) · 3 Van Gogh, *A Ronda dos Prisioneiros* (1890, DP) · 4 Gravura Flammarion (1888, DP) · 5 Michelangelo, *Prisioneiro* (foto Jörg Bittner Unna, CC BY-SA 3.0, crédito obrigatório) · 6 Hilma af Klint, *O Cisne nº 1* (1915, DP) · 7 William Blake, *Albion Rose* (c. 1795, DP). Usadas em `../v5/` e `../livro-v5.html`.

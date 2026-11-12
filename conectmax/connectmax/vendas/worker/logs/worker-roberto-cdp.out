@@ -1,0 +1,711 @@
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+04/11/2026 15:12:01 [29140d46] ——— worker iniciado ———
+04/11/2026 15:12:01 [29140d46] API http://144.126.154.90
+04/11/2026 15:12:01 [29140d46] agente 29140d46-85d0-4541-a640-7b72f9519c5b · Chrome CDP · perfil=roberto-menezes · http://127.0.0.1:9259
+04/11/2026 15:12:01 [29140d46] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+04/11/2026 15:12:01 [29140d46] cadastrando/atualizando agente na API (enroll)…
+04/11/2026 15:12:02 [29140d46] enroll OK (já existia) · LinkedIn ok · online
+04/11/2026 15:12:02 [29140d46] ciclo #1: checando se o IP público pode ser usado…
+04/11/2026 15:12:02 [29140d46] consultando IP público #1 → https://api.ipify.org (já esperei 0s)…
+04/11/2026 15:12:02 [29140d46] IP mudou: 177.51.199.54 → 181.77.207.69 (consulta 343ms, esperei 0s) — liberado pra pegar job
+04/11/2026 15:12:02 [29140d46] ciclo #1: pedindo job na API…
+04/11/2026 15:12:02 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+04/11/2026 15:12:03 [29140d46] ciclo #1: peguei job «buscar candidatos» (extrair_leads) prioridade=5 id=9cdec86d-d825-4ef3-80f2-b3bf61063fe4
+04/11/2026 15:12:03 [29140d46]   payload: busca="comprador campinas" · máx=10
+04/11/2026 15:12:03 [29140d46] registreí IP 181.77.207.69 como último usado (job 9cdec86d-d825-4ef3-80f2-b3bf61063fe4)
+04/11/2026 15:12:03 [29140d46] executando «buscar candidatos» em Chrome CDP (roberto-menezes)…
+04/11/2026 15:12:03 [spawn] iniciando robô: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot --query comprador campinas
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 10 --no-shot --query comprador campinas
+
+{
+  "ok": true,
+  "query": "comprador campinas",
+  "n": 10,
+  "count": 10,
+  "pagesUsed": 1,
+  "profiles": [
+    {
+      "name": "Natã Mattos",
+      "title": "Comprador",
+      "city": "Paulínia, São Paulo, Brasil",
+      "location": "Paulínia, São Paulo, Brasil",
+      "current": "Comprador",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Natã Mattos • 3º e + Comprador Paulínia, São Paulo, Brasil Conectar",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGAdB2bNPEUtQ/profile-displayphoto-scale_100_100/B4DZvnI3Z0H0Ac-/0/1769109422256?e=1795651200&v=beta&t=8qqqqzeNzIVdkpWbNWzYpcFAMtPVAi8xkk5NIk3271E",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/natã-mattos-6b0348354",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:14.856Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Bruna Nunes",
+      "title": "Compradora Júnior | Compras Industriais | Negociação de Mão de Obra e Prestação de Serviços | Desenvolvimento Profissional",
+      "city": "Sumaré, São Paulo, Brasil",
+      "location": "Sumaré, São Paulo, Brasil",
+      "current": "Comprador na VicCorp",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Bruna Nunes • 3º e + Compradora Júnior | Compras Industriais | Negociação de Mão de Obra e Prestação de Serviços | Desenvolvimento Profissional Sumaré, São Paulo, Brasil Conectar Atual: Comprador na VicCorp",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQE37gc7nRPs8g/profile-displayphoto-scale_100_100/B4DZ6uwRNTH0AY-/0/1781048350398?e=1795651200&v=beta&t=bBwvUkYEsszYFOWHEPgtJgycX3Rknqpz42N3HK-n8VY",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/bruna-nunes-385742239",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:15.464Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Ricardo Alavarse",
+      "title": "Comprador sênior de ( Hortifruti ) Grupo São Vicente",
+      "city": "Nova Odessa, São Paulo, Brasil",
+      "location": "Nova Odessa, São Paulo, Brasil",
+      "current": "Comprador sênior na Grupo São Vicente",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Ricardo Alavarse • 3º e + Comprador sênior de ( Hortifruti ) Grupo São Vicente Nova Odessa, São Paulo, Brasil Conectar Atual: Comprador sênior na Grupo São Vicente",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQEsvKI8WWiczA/profile-displayphoto-scale_100_100/B4DZ9H1.xlI4AY-/0/1783616762218?e=1795651200&v=beta&t=pmnFj-vrn3L_h0cApjrvVSsOHUCz3j01ygkiu7SBjZ8",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/ricardo-alavarse-43369641a",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:15.980Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Guilherme Garcia Joaquim",
+      "title": "Comprador Júnior da empresa: Hospital Maternidade de Campinas",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador júnior na Hospital Maternidade de Campinas",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Guilherme Garcia Joaquim • 3º e + Comprador Júnior da empresa: Hospital Maternidade de Campinas Campinas, São Paulo, Brasil Conectar Atual: Comprador júnior na Hospital Maternidade de Campinas",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGAdB2bNPEUtQ/profile-displayphoto-scale_100_100/B4DZvnI3Z0H0Ac-/0/1769109422256?e=1795651200&v=beta&t=8qqqqzeNzIVdkpWbNWzYpcFAMtPVAi8xkk5NIk3271E",
+      "photoBase64": null,
+      "profileUrl": "https://www.linkedin.com/in/guilherme-garcia-joaquim-b46a0a18a",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:16.921Z",
+      "source": "search_card"
+    },
+    {
+      "name": "José Batista Oliveira",
+      "title": "Comprador - material direto",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador - material direto",
+      "past": "Comprador Técnico na WABCO Freios do Brasil",
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "José Batista Oliveira • 3º e + Comprador - material direto Campinas, São Paulo, Brasil Conectar Anterior: Comprador Técnico na WABCO Freios do Brasil",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGAdB2bNPEUtQ/profile-displayphoto-scale_100_100/B4DZvnI3Z0H0Ac-/0/1769109422256?e=1795651200&v=beta&t=8qqqqzeNzIVdkpWbNWzYpcFAMtPVAi8xkk5NIk3271E",
+      "photoBase64": null,
+      "profileUrl": "https://www.linkedin.com/in/josé-batista-oliveira-22906965",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:17.616Z",
+      "source": "search_card"
+    },
+    {
+      "name": "ELISSANDRA Cruz",
+      "title": "Comprador na Colégio Notre Dame de Campinas",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador na Colégio Notre Dame de Campinas",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "ELISSANDRA Cruz • 3º e + Comprador na Colégio Notre Dame de Campinas Campinas, São Paulo, Brasil Conectar",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGAdB2bNPEUtQ/profile-displayphoto-scale_100_100/B4DZvnI3Z0H0Ac-/0/1769109422256?e=1795651200&v=beta&t=8qqqqzeNzIVdkpWbNWzYpcFAMtPVAi8xkk5NIk3271E",
+      "photoBase64": null,
+      "profileUrl": "https://www.linkedin.com/in/elissandra-cruz-472a172b0",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:17.839Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Pedro Luis Silva Pinheiro",
+      "title": "Comprador",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador na Master Científica",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Pedro Luis Silva Pinheiro • 3º e + Comprador Campinas, São Paulo, Brasil Conectar Atual: Comprador na Master Científica",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGAdB2bNPEUtQ/profile-displayphoto-scale_100_100/B4DZvnI3Z0H0Ac-/0/1769109422256?e=1795651200&v=beta&t=8qqqqzeNzIVdkpWbNWzYpcFAMtPVAi8xkk5NIk3271E",
+      "photoBase64": null,
+      "profileUrl": "https://www.linkedin.com/in/pedro-luis-silva-pinheiro-3a82401a7",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:18.069Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Rodrigo Siqueira",
+      "title": "Comprador - Shopping Parque das Bandeiras",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador na Shopping Parque das Bandeiras",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Rodrigo Siqueira • 3º e + Comprador - Shopping Parque das Bandeiras Campinas, São Paulo, Brasil Conectar Atual: Comprador na Shopping Parque das Bandeiras",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQHiYjNq7BHMeQ/profile-displayphoto-scale_100_100/B4DZn3n8t5IkAc-/0/1760796069873?e=1795651200&v=beta&t=3sHtjiqKi3T2fDuDZAwVcDufVE0skzXqRp5MZ6L08Co",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/rodrigo-siqueira-343107179",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:18.866Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Fernando Suzigan",
+      "title": "Comprador",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador",
+      "past": "Comprador na Colégio Liceu Salesiano Nossa Senhora Auxiliadora",
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Fernando Suzigan • 3º e + Comprador Campinas, São Paulo, Brasil Conectar Anterior: Comprador na Colégio Liceu Salesiano Nossa Senhora Auxiliadora",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D35AQG4KPVshAqYKQ/profile-framedphoto-shrink_100_100/profile-framedphoto-shrink_100_100/0/1705512125752?e=1794423600&v=beta&t=i9OlPB9g-koLhRKm01jmvmYWPIitM7Blu77ikvLDdQ8",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/fernando-suzigan-3837a771",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:19.823Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Elaine Souza",
+      "title": "Comprador Júnior",
+      "city": "Campinas, São Paulo, Brasil",
+      "location": "Campinas, São Paulo, Brasil",
+      "current": "Comprador Junior na FUNCAMP - Fundação de Desenvolvimento da Unicamp",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Elaine Souza • 3º e + Comprador Júnior Campinas, São Paulo, Brasil Conectar Atual: Comprador Junior na FUNCAMP - Fundação de Desenvolvimento da Unicamp",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQHdLk1Il9l8XA/profile-displayphoto-shrink_100_100/B4DZwrvM.0IcAU-/0/1770260320971?e=1795651200&v=beta&t=Px0dP6EQWf3naoiwgKcy26kHvuZzFGQLCxt8Bc9qZ7I",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/elaine-souza-3a4608219",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador campinas",
+      "searchQuery": "comprador campinas",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-04T18:12:21.358Z",
+      "source": "search_card"
+    }
+  ],
+  "steps": [
+    "search:comprador campinas:page=1",
+    "list-page:1:cards=10",
+    "card:1:p1:Natã Mattos",
+    "api:profiles:ok",
+    "card:2:p1:Bruna Nunes",
+    "api:profiles:ok",
+    "card:3:p1:Ricardo Alavarse",
+    "api:profiles:ok",
+    "card:4:p1:Guilherme Garcia Joaquim",
+    "api:profiles:ok",
+    "card:5:p1:José Batista Oliveira",
+    "api:profiles:ok",
+    "card:6:p1:ELISSANDRA Cruz",
+    "api:profiles:ok",
+    "card:7:p1:Pedro Luis Silva Pinheiro",
+    "api:profiles:ok",
+    "card:8:p1:Rodrigo Siqueira",
+    "api:profiles:ok",
+    "card:9:p1:Fernando Suzigan",
+    "api:profiles:ok",
+    "card:10:p1:Elaine Souza",
+    "api:profiles:ok"
+  ],
+  "truncated": false
+}
+04/11/2026 15:12:24 [spawn] robô terminou OK: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot --query comprador campinas
+04/11/2026 15:12:24 [29140d46] job «buscar candidatos» OK em 22s (id=9cdec86d-d825-4ef3-80f2-b3bf61063fe4)
+04/11/2026 15:12:24 [29140d46] ciclo #1 ok — pausa 15s e volto a puxar fila
+04/11/2026 15:12:39 [29140d46] ciclo #2: checando se o IP público pode ser usado…
+04/11/2026 15:12:39 [29140d46] consultando IP público #1 → https://api.ipify.org (já esperei 0s)…
+04/11/2026 15:12:40 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 321ms) · #1 · 0s · próxima em 10s
+04/11/2026 15:12:50 [29140d46] consultando IP público #2 → https://api.ipify.org (já esperei 10s)…
+04/11/2026 15:12:50 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 300ms) · #2 · 10s · próxima em 10s
+04/11/2026 15:13:00 [29140d46] consultando IP público #3 → https://api.ipify.org (já esperei 21s)…
+04/11/2026 15:13:01 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 664ms) · #3 · 21s · próxima em 10s
+04/11/2026 15:13:02 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+04/11/2026 15:13:11 [29140d46] consultando IP público #4 → https://api.ipify.org (já esperei 31s)…
+04/11/2026 15:13:11 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 287ms) · #4 · 31s · próxima em 10s
+04/11/2026 15:13:21 [29140d46] consultando IP público #5 → https://api.ipify.org (já esperei 42s)…
+04/11/2026 15:13:21 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 431ms) · #5 · 42s · próxima em 10s
+04/11/2026 15:13:31 [29140d46] consultando IP público #6 → https://api.ipify.org (já esperei 52s)…
+04/11/2026 15:13:32 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 270ms) · #6 · 52s · próxima em 10s
+04/11/2026 15:13:42 [29140d46] consultando IP público #7 → https://api.ipify.org (já esperei 62s)…
+04/11/2026 15:13:42 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 289ms) · #7 · 62s · próxima em 10s
+04/11/2026 15:13:52 [29140d46] consultando IP público #8 → https://api.ipify.org (já esperei 73s)…
+04/11/2026 15:13:52 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 309ms) · #8 · 73s · próxima em 10s
+04/11/2026 15:14:02 [29140d46] consultando IP público #9 → https://api.ipify.org (já esperei 83s)…
+04/11/2026 15:14:02 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+04/11/2026 15:14:02 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 277ms) · #9 · 83s · próxima em 10s
+04/11/2026 15:14:12 [29140d46] consultando IP público #10 → https://api.ipify.org (já esperei 93s)…
+04/11/2026 15:14:13 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 306ms) · #10 · 93s · próxima em 10s
+04/11/2026 15:14:23 [29140d46] consultando IP público #11 → https://api.ipify.org (já esperei 103s)…
+04/11/2026 15:14:23 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 321ms) · #11 · 103s · próxima em 10s
+04/11/2026 15:14:33 [29140d46] consultando IP público #12 → https://api.ipify.org (já esperei 114s)…
+04/11/2026 15:14:34 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 601ms) · #12 · 114s · próxima em 10s
+04/11/2026 15:14:44 [29140d46] consultando IP público #13 → https://api.ipify.org (já esperei 124s)…
+04/11/2026 15:14:45 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 1051ms) · #13 · 124s · próxima em 10s
+04/11/2026 15:14:55 [29140d46] consultando IP público #14 → https://api.ipify.org (já esperei 135s)…
+04/11/2026 15:14:55 [29140d46] IP ainda igual ao último job — atual=181.77.207.69 último=181.77.207.69 (consulta 309ms) · #14 · 135s · próxima em 10s
+04/11/2026 15:14:55 [29140d46] ⚠ recebi SIGTERM — encerrando com segurança…
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+05/11/2026 13:57:04 [29140d46] ——— worker iniciado ———
+05/11/2026 13:57:04 [29140d46] API http://144.126.154.90
+05/11/2026 13:57:04 [29140d46] agente 29140d46-85d0-4541-a640-7b72f9519c5b · Chrome CDP · perfil=roberto-menezes · http://127.0.0.1:9259
+05/11/2026 13:57:04 [29140d46] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+05/11/2026 13:57:04 [29140d46] cadastrando/atualizando agente na API (enroll)…
+05/11/2026 13:57:04 [29140d46] enroll OK (já existia) · LinkedIn ok · online
+05/11/2026 13:57:04 [29140d46] ciclo #1: checando se o IP público pode ser usado…
+05/11/2026 13:57:04 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:57:04 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 243ms; lista=3) — abortar
+05/11/2026 13:57:04 [29140d46] ⚠ ciclo #1: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 13:57:04 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:57:05 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 13:57:19 [29140d46] ciclo #2: checando se o IP público pode ser usado…
+05/11/2026 13:57:19 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:57:20 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 236ms; lista=3) — abortar
+05/11/2026 13:57:20 [29140d46] ⚠ ciclo #2: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 13:57:20 [29140d46] sem job — pausa 15s e consulto a fila de novo
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+05/11/2026 13:57:21 [29140d46] ——— worker iniciado ———
+05/11/2026 13:57:21 [29140d46] API http://144.126.154.90
+05/11/2026 13:57:21 [29140d46] agente 29140d46-85d0-4541-a640-7b72f9519c5b · Chrome CDP · perfil=roberto-menezes · http://127.0.0.1:9259
+05/11/2026 13:57:21 [29140d46] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+05/11/2026 13:57:21 [29140d46] cadastrando/atualizando agente na API (enroll)…
+05/11/2026 13:57:22 [29140d46] enroll OK (já existia) · LinkedIn ok · online
+05/11/2026 13:57:22 [29140d46] ciclo #1: checando se o IP público pode ser usado…
+05/11/2026 13:57:22 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:57:22 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 308ms; lista=3) — abortar
+05/11/2026 13:57:22 [29140d46] ⚠ ciclo #1: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 13:57:22 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:57:22 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 13:57:37 [29140d46] ciclo #2: checando se o IP público pode ser usado…
+05/11/2026 13:57:37 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:57:37 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 269ms; lista=3) — abortar
+05/11/2026 13:57:37 [29140d46] ⚠ ciclo #2: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 13:57:37 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:57:52 [29140d46] ciclo #3: checando se o IP público pode ser usado…
+05/11/2026 13:57:52 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:57:52 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 239ms; lista=3) — abortar
+05/11/2026 13:57:52 [29140d46] ⚠ ciclo #3: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 13:57:52 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:58:07 [29140d46] ciclo #4: checando se o IP público pode ser usado…
+05/11/2026 13:58:07 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:58:07 [29140d46] ✖ erro no ciclo #4: fetch failed
+05/11/2026 13:58:07 [29140d46] pausa 15s antes de tentar de novo
+05/11/2026 13:58:22 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 13:58:22 [29140d46] ciclo #5: checando se o IP público pode ser usado…
+05/11/2026 13:58:22 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:58:23 [29140d46] IP 177.51.202.217 ainda não usado (consulta 346ms; 3 na lista) — liberado
+05/11/2026 13:58:23 [29140d46] ciclo #5: pedindo job na API…
+05/11/2026 13:58:23 [29140d46] ciclo #5: peguei job «enviar conexão» (conectar) prioridade=4 id=6b14f2fc-75eb-47af-889d-9022772c4909
+05/11/2026 13:58:23 [29140d46]   payload: perfil=https://www.linkedin.com/in/natã-mattos-6b0348354 · conexão=01d800c2-8dbc-4ae9-b150-bb30cebd1d28
+05/11/2026 13:58:23 [29140d46] registreí IP 177.51.202.217 na lista de usados (4 no total; job 6b14f2fc-75eb-47af-889d-9022772c4909)
+05/11/2026 13:58:23 [29140d46] executando «enviar conexão» em Chrome CDP (roberto-menezes)…
+05/11/2026 13:58:23 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+
+cdpId=roberto-menezes cdpUrl=http://127.0.0.1:9259 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/natã-mattos-6b0348354",
+  "steps": [
+    "view:https://www.linkedin.com/in/natã-mattos-6b0348354",
+    "wait:round0",
+    "wait:round1",
+    "wait:round2",
+    "wait:round3",
+    "wait:round4",
+    "wait:round5",
+    "wait:round6",
+    "wait:round7",
+    "wait:round8",
+    "wait:round9",
+    "wait:round10",
+    "wait:round11"
+  ],
+  "error": "Connect/Pending não resolvido a tempo"
+}
+05/11/2026 13:58:46 [spawn] robô saiu com código 1: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+05/11/2026 13:58:46 [29140d46] ✖ job «enviar conexão» falhou: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+05/11/2026 13:58:47 [29140d46] ciclo #5 ok — pausa 15s e volto a puxar fila
+05/11/2026 13:59:02 [29140d46] ciclo #6: checando se o IP público pode ser usado…
+05/11/2026 13:59:02 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:59:02 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 297ms; lista=4) — abortar
+05/11/2026 13:59:02 [29140d46] ⚠ ciclo #6: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 13:59:02 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:59:17 [29140d46] ciclo #7: checando se o IP público pode ser usado…
+05/11/2026 13:59:17 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:59:17 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 287ms; lista=4) — abortar
+05/11/2026 13:59:17 [29140d46] ⚠ ciclo #7: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 13:59:17 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:59:22 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 13:59:32 [29140d46] ciclo #8: checando se o IP público pode ser usado…
+05/11/2026 13:59:32 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:59:32 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 255ms; lista=4) — abortar
+05/11/2026 13:59:32 [29140d46] ⚠ ciclo #8: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 13:59:32 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 13:59:47 [29140d46] ciclo #9: checando se o IP público pode ser usado…
+05/11/2026 13:59:47 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 13:59:48 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 270ms; lista=4) — abortar
+05/11/2026 13:59:48 [29140d46] ⚠ ciclo #9: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 13:59:48 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:00:03 [29140d46] ciclo #10: checando se o IP público pode ser usado…
+05/11/2026 14:00:03 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:00:03 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 548ms; lista=4) — abortar
+05/11/2026 14:00:03 [29140d46] ⚠ ciclo #10: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 14:00:03 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:00:18 [29140d46] ciclo #11: checando se o IP público pode ser usado…
+05/11/2026 14:00:18 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:00:18 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 287ms; lista=4) — abortar
+05/11/2026 14:00:18 [29140d46] ⚠ ciclo #11: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 14:00:18 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:00:22 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 14:00:33 [29140d46] ciclo #12: checando se o IP público pode ser usado…
+05/11/2026 14:00:33 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:00:34 [29140d46] ⚠ IP 177.51.202.217 já foi usado anteriormente (consulta 267ms; lista=4) — abortar
+05/11/2026 14:00:34 [29140d46] ⚠ ciclo #12: abortado — IP 177.51.202.217 já utilizado anteriormente
+05/11/2026 14:00:34 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:00:49 [29140d46] ciclo #13: checando se o IP público pode ser usado…
+05/11/2026 14:00:49 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:00:49 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 364ms; lista=4) — abortar
+05/11/2026 14:00:49 [29140d46] ⚠ ciclo #13: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 14:00:49 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:01:04 [29140d46] ciclo #14: checando se o IP público pode ser usado…
+05/11/2026 14:01:04 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:01:05 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 576ms; lista=4) — abortar
+05/11/2026 14:01:05 [29140d46] ⚠ ciclo #14: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 14:01:05 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:01:20 [29140d46] ciclo #15: checando se o IP público pode ser usado…
+05/11/2026 14:01:20 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:01:20 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 227ms; lista=4) — abortar
+05/11/2026 14:01:20 [29140d46] ⚠ ciclo #15: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 14:01:20 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:01:22 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 14:01:35 [29140d46] ciclo #16: checando se o IP público pode ser usado…
+05/11/2026 14:01:35 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:01:35 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 255ms; lista=4) — abortar
+05/11/2026 14:01:35 [29140d46] ⚠ ciclo #16: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 14:01:35 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:01:50 [29140d46] ciclo #17: checando se o IP público pode ser usado…
+05/11/2026 14:01:50 [29140d46] consultando IP público → https://api.ipify.org…
+05/11/2026 14:01:50 [29140d46] ⚠ IP 191.177.175.135 já foi usado anteriormente (consulta 213ms; lista=4) — abortar
+05/11/2026 14:01:50 [29140d46] ⚠ ciclo #17: abortado — IP 191.177.175.135 já utilizado anteriormente
+05/11/2026 14:01:50 [29140d46] sem job — pausa 15s e consulto a fila de novo
+05/11/2026 14:02:01 [29140d46] ⚠ recebi SIGTERM — encerrando com segurança…
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+06/11/2026 07:04:28 [29140d46] ——— worker iniciado ———
+06/11/2026 07:04:28 [29140d46] API http://144.126.154.90
+06/11/2026 07:04:28 [29140d46] agente 29140d46-85d0-4541-a640-7b72f9519c5b · Chrome CDP · perfil=roberto-menezes · http://127.0.0.1:9259
+06/11/2026 07:04:28 [29140d46] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+06/11/2026 07:04:28 [29140d46] cadastrando/atualizando agente na API (enroll)…
+06/11/2026 07:04:28 [29140d46] enroll OK (já existia) · LinkedIn ok · online
+06/11/2026 07:04:28 [29140d46] ciclo #1: checando se o IP público pode ser usado…
+06/11/2026 07:04:28 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:04:28 [29140d46] IP 177.51.201.247 ainda não usado (consulta 331ms; 10 na lista) — liberado
+06/11/2026 07:04:28 [29140d46] ciclo #1: pedindo job na API…
+06/11/2026 07:04:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:04:29 [29140d46] ciclo #1: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:04:29 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:04:44 [29140d46] ciclo #2: checando se o IP público pode ser usado…
+06/11/2026 07:04:44 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:04:44 [29140d46] IP 177.51.201.247 ainda não usado (consulta 276ms; 10 na lista) — liberado
+06/11/2026 07:04:44 [29140d46] ciclo #2: pedindo job na API…
+06/11/2026 07:04:45 [29140d46] ciclo #2: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:04:45 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:05:00 [29140d46] ciclo #3: checando se o IP público pode ser usado…
+06/11/2026 07:05:00 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:05:00 [29140d46] IP 177.51.210.16 ainda não usado (consulta 542ms; 10 na lista) — liberado
+06/11/2026 07:05:00 [29140d46] ciclo #3: pedindo job na API…
+06/11/2026 07:05:01 [29140d46] ciclo #3: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:05:01 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:05:16 [29140d46] ciclo #4: checando se o IP público pode ser usado…
+06/11/2026 07:05:16 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:05:16 [29140d46] IP 177.51.201.247 ainda não usado (consulta 264ms; 10 na lista) — liberado
+06/11/2026 07:05:16 [29140d46] ciclo #4: pedindo job na API…
+06/11/2026 07:05:16 [29140d46] ciclo #4: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:05:16 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:05:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:05:31 [29140d46] ciclo #5: checando se o IP público pode ser usado…
+06/11/2026 07:05:31 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:05:32 [29140d46] IP 177.51.201.247 ainda não usado (consulta 276ms; 10 na lista) — liberado
+06/11/2026 07:05:32 [29140d46] ciclo #5: pedindo job na API…
+06/11/2026 07:05:32 [29140d46] ciclo #5: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:05:32 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:05:47 [29140d46] ciclo #6: checando se o IP público pode ser usado…
+06/11/2026 07:05:47 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:05:47 [29140d46] IP 177.51.201.247 ainda não usado (consulta 259ms; 10 na lista) — liberado
+06/11/2026 07:05:47 [29140d46] ciclo #6: pedindo job na API…
+06/11/2026 07:05:48 [29140d46] ciclo #6: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:05:48 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:06:03 [29140d46] ciclo #7: checando se o IP público pode ser usado…
+06/11/2026 07:06:03 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:06:03 [29140d46] IP 177.51.201.247 ainda não usado (consulta 272ms; 10 na lista) — liberado
+06/11/2026 07:06:03 [29140d46] ciclo #7: pedindo job na API…
+06/11/2026 07:06:04 [29140d46] ciclo #7: fila vazia — fora da janela 08:00–21:00 (America/Sao_Paulo)
+06/11/2026 07:06:04 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:06:19 [29140d46] ciclo #8: checando se o IP público pode ser usado…
+06/11/2026 07:06:19 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:06:19 [29140d46] IP 177.51.201.247 ainda não usado (consulta 244ms; 10 na lista) — liberado
+06/11/2026 07:06:19 [29140d46] ciclo #8: pedindo job na API…
+06/11/2026 07:06:20 [29140d46] ciclo #8: peguei job «enviar conexão» (conectar) prioridade=4 id=931a81de-595e-4e79-b953-5cffcbc35b95
+06/11/2026 07:06:20 [29140d46]   payload: perfil=https://www.linkedin.com/in/natã-mattos-6b0348354 · conexão=01d800c2-8dbc-4ae9-b150-bb30cebd1d28
+06/11/2026 07:06:20 [29140d46] registreí IP 177.51.201.247 na lista de usados (11 no total; job 931a81de-595e-4e79-b953-5cffcbc35b95)
+06/11/2026 07:06:20 [29140d46] executando «enviar conexão» em Chrome CDP (roberto-menezes)…
+06/11/2026 07:06:20 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+
+cdpId=roberto-menezes cdpUrl=http://127.0.0.1:9259 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+06/11/2026 07:06:28 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/natã-mattos-6b0348354",
+  "steps": [
+    "view:https://www.linkedin.com/in/natã-mattos-6b0348354",
+    "wait:round0",
+    "wait:round1",
+    "wait:round2",
+    "wait:round3",
+    "wait:round4",
+    "wait:round5",
+    "wait:round6",
+    "wait:round7",
+    "wait:round8",
+    "wait:round9",
+    "wait:round10",
+    "wait:round11"
+  ],
+  "error": "Connect/Pending não resolvido a tempo"
+}
+06/11/2026 07:06:42 [spawn] robô saiu com código 1: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+06/11/2026 07:06:42 [29140d46] ✖ job «enviar conexão» falhou: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+06/11/2026 07:06:43 [29140d46] ciclo #8 ok — pausa 15s e volto a puxar fila
+06/11/2026 07:06:58 [29140d46] ciclo #9: checando se o IP público pode ser usado…
+06/11/2026 07:06:58 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:06:58 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 259ms; lista=11) — abortar
+06/11/2026 07:06:58 [29140d46] ⚠ ciclo #9: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:06:58 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:07:13 [29140d46] ciclo #10: checando se o IP público pode ser usado…
+06/11/2026 07:07:13 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:07:13 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 277ms; lista=11) — abortar
+06/11/2026 07:07:13 [29140d46] ⚠ ciclo #10: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:07:13 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:07:28 [29140d46] ciclo #11: checando se o IP público pode ser usado…
+06/11/2026 07:07:28 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:07:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:07:29 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 284ms; lista=11) — abortar
+06/11/2026 07:07:29 [29140d46] ⚠ ciclo #11: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:07:29 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:07:44 [29140d46] ciclo #12: checando se o IP público pode ser usado…
+06/11/2026 07:07:44 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:07:44 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 542ms; lista=11) — abortar
+06/11/2026 07:07:44 [29140d46] ⚠ ciclo #12: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:07:44 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:07:59 [29140d46] ciclo #13: checando se o IP público pode ser usado…
+06/11/2026 07:07:59 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:08:02 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 2539ms; lista=11) — abortar
+06/11/2026 07:08:02 [29140d46] ⚠ ciclo #13: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:08:02 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:08:17 [29140d46] ciclo #14: checando se o IP público pode ser usado…
+06/11/2026 07:08:17 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:08:19 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 1772ms; lista=11) — abortar
+06/11/2026 07:08:19 [29140d46] ⚠ ciclo #14: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:08:19 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:08:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:08:34 [29140d46] ciclo #15: checando se o IP público pode ser usado…
+06/11/2026 07:08:34 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:08:35 [29140d46] IP 177.51.210.16 ainda não usado (consulta 1067ms; 10 na lista) — liberado
+06/11/2026 07:08:35 [29140d46] ciclo #15: pedindo job na API…
+06/11/2026 07:08:36 [29140d46] ciclo #15: peguei job «enviar conexão» (conectar) prioridade=4 id=b90b29eb-866b-4901-856d-bc524df041a9
+06/11/2026 07:08:36 [29140d46]   payload: perfil=https://www.linkedin.com/in/natã-mattos-6b0348354 · conexão=01d800c2-8dbc-4ae9-b150-bb30cebd1d28
+06/11/2026 07:08:36 [29140d46] registreí IP 177.51.210.16 na lista de usados (11 no total; job b90b29eb-866b-4901-856d-bc524df041a9)
+06/11/2026 07:08:36 [29140d46] executando «enviar conexão» em Chrome CDP (roberto-menezes)…
+06/11/2026 07:08:36 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+
+cdpId=roberto-menezes cdpUrl=http://127.0.0.1:9259 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/natã-mattos-6b0348354",
+  "steps": [
+    "view:https://www.linkedin.com/in/natã-mattos-6b0348354",
+    "wait:round0",
+    "wait:round1",
+    "wait:round2",
+    "wait:round3",
+    "wait:round4",
+    "wait:round5",
+    "wait:round6",
+    "wait:round7",
+    "wait:round8",
+    "wait:round9",
+    "wait:round10",
+    "wait:round11"
+  ],
+  "error": "Connect/Pending não resolvido a tempo"
+}
+06/11/2026 07:09:22 [spawn] robô saiu com código 1: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+06/11/2026 07:09:22 [29140d46] ✖ job «enviar conexão» falhou: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+06/11/2026 07:09:22 [29140d46] ciclo #15 ok — pausa 15s e volto a puxar fila
+06/11/2026 07:09:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:09:37 [29140d46] ciclo #16: checando se o IP público pode ser usado…
+06/11/2026 07:09:37 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:09:38 [29140d46] IP 177.51.201.247 ainda não usado (consulta 751ms; 11 na lista) — liberado
+06/11/2026 07:09:38 [29140d46] ciclo #16: pedindo job na API…
+06/11/2026 07:09:39 [29140d46] ciclo #16: peguei job «enviar conexão» (conectar) prioridade=4 id=b75abb79-e11d-47e1-ae26-f628eb7b0fd5
+06/11/2026 07:09:39 [29140d46]   payload: perfil=https://www.linkedin.com/in/natã-mattos-6b0348354 · conexão=01d800c2-8dbc-4ae9-b150-bb30cebd1d28
+06/11/2026 07:09:39 [29140d46] registreí IP 177.51.201.247 na lista de usados (12 no total; job b75abb79-e11d-47e1-ae26-f628eb7b0fd5)
+06/11/2026 07:09:39 [29140d46] executando «enviar conexão» em Chrome CDP (roberto-menezes)…
+06/11/2026 07:09:39 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+
+cdpId=roberto-menezes cdpUrl=http://127.0.0.1:9259 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/natã-mattos-6b0348354",
+  "steps": [
+    "view:https://www.linkedin.com/in/natã-mattos-6b0348354",
+    "wait:round0",
+    "wait:round1",
+    "wait:round2",
+    "wait:round3",
+    "wait:round4",
+    "wait:round5",
+    "wait:round6",
+    "wait:round7",
+    "wait:round8",
+    "wait:round9",
+    "wait:round10",
+    "wait:round11"
+  ],
+  "error": "Connect/Pending não resolvido a tempo"
+}
+06/11/2026 07:10:01 [spawn] robô saiu com código 1: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/natã-mattos-6b0348354 --no-shot
+06/11/2026 07:10:01 [29140d46] ✖ job «enviar conexão» falhou: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/natã-mattos-6b0348354
+06/11/2026 07:10:03 [29140d46] ciclo #16 ok — pausa 15s e volto a puxar fila
+06/11/2026 07:10:18 [29140d46] ciclo #17: checando se o IP público pode ser usado…
+06/11/2026 07:10:18 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:10:18 [29140d46] ⚠ IP 177.51.210.16 já foi usado anteriormente (consulta 306ms; lista=12) — abortar
+06/11/2026 07:10:18 [29140d46] ⚠ ciclo #17: abortado — IP 177.51.210.16 já utilizado anteriormente
+06/11/2026 07:10:18 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:10:29 [29140d46] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+06/11/2026 07:10:33 [29140d46] ciclo #18: checando se o IP público pode ser usado…
+06/11/2026 07:10:33 [29140d46] consultando IP público → https://api.ipify.org…
+06/11/2026 07:10:33 [29140d46] ⚠ IP 177.51.201.247 já foi usado anteriormente (consulta 280ms; lista=12) — abortar
+06/11/2026 07:10:33 [29140d46] ⚠ ciclo #18: abortado — IP 177.51.201.247 já utilizado anteriormente
+06/11/2026 07:10:33 [29140d46] sem job — pausa 15s e consulto a fila de novo
+06/11/2026 07:10:38 [29140d46] ⚠ recebi SIGTERM — encerrando com segurança…

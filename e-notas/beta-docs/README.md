@@ -24,7 +24,7 @@ Pacote canônico de documentos de produto, engenharia e arquitetura para impleme
 | 09 | [09-estrategia-de-testes.md](09-estrategia-de-testes.md) | Pirâmide, riscos críticos, gates e analytics | Dev, QA |
 | 10 | [10-seguranca-privacidade-lgpd.md](10-seguranca-privacidade-lgpd.md) | Inventário de dados, STRIDE, anonimização do índice, LGPD | Dev, segurança, jurídico |
 | 11 | [11-plano-de-implementacao.md](11-plano-de-implementacao.md) | Marcos M0–M6, tasks `BETA-nnn`, caminho crítico, DoD | Todos |
-| 12 | [12-prototipos.md](12-prototipos.md) → [**abrir**](prototipos/index.html) · [PDF](prototipos/prototipos-notinhas-beta.pdf) | Telas T-xx navegáveis + design system | Produto, design, dev |
+| 12 | [12-prototipos.md](12-prototipos.md) → [**abrir v2.0**](prototipos/v2/index.html) · [v1](prototipos/index.html) · [PDF v1](prototipos/prototipos-notinhas-beta.pdf) | Telas T-xx navegáveis com estado, cenários e rastreio US/RN/REQ | Produto, design, dev |
 | 13 | [13-guia-desenvolvimento-com-ia.md](13-guia-desenvolvimento-com-ia.md) · [CLAUDE.md](ia/CLAUDE.md) · [prompts](ia/prompts.md) | Fluxo por task, antipadrões, docs vivos | Dev |
 | 14 | [14-operacao-deploy.md](14-operacao-deploy.md) | Contabo, nginx, Mailcow, backup e caminho inverso | Dev, DevOps |
 | 15 | [15-glossario.md](15-glossario.md) | Dicionário de equivalência formal entre termos de domínio tributário/comercial (pt-BR) e identificadores de código (inglês) | Todos |

@@ -1,0 +1,1 @@
+Dashboard executivo: faturamento por vendedor + funil (mês/ano)

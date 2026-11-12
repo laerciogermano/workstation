@@ -1,0 +1,48 @@
+# Clozzy — Letreiro e lockup (rodada 11 · v7)
+
+**v7:** o anel vira um **C**: a linha cheia (240°) abraça a esquerda e passa do topo e de baixo, e **só a abertura da direita (120°) é tracejada**, com 3 traços longos de cantos arredondados. O **anel ficou mais grosso** (9 em vez de 5) e a **estrela, menor** (R 20 em vez de 23), o que fecha o espaço do centro. Variações em [`_simbolo.py`](_simbolo.py): `c1-c-120` (**recomendada**, 3 traços), `c2-c-90` (2 traços, C mais fechado), `c3-c-4` (4 traços), `c4-c-180` (meia-volta tracejada). Traços curtos com espessura 9 viravam bolinhas, por isso são poucos e longos. Antes → depois: v6 = metade linha / metade 11 traços, anel 5, estrela R 23. Para voltar: [`../logo-letreiro-v6/`](../logo-letreiro-v6/README.md).
+
+
+**v4:** igual à v3, mas os traços do anel têm **cantos arredondados** (bordas mais suaves), com o mesmo comprimento, espessura e vão da v3. O raio do canto é 42% da espessura (`ROUND` em [`_simbolo.py`](_simbolo.py)). A ponta 100% redonda foi testada e descartada, porque os traços curtos viravam bolinhas. Antes → depois: `dash()` com ponta reta → setor com cantos de raio 0,42 × espessura. Para voltar: trocar `dash` por `dash_reto` em `ring()` ou usar [`../logo-letreiro-v3/`](../logo-letreiro-v3/README.md).
+
+
+**Regra:** o C do símbolo **nunca** se mistura com o “c” de clozzy, e nenhuma letra é trocada pelo símbolo. O símbolo fica sempre **ao lado** da palavra (lockup) ou **acima** dela (empilhado).
+
+**v3:** símbolo novo no estilo do print [`refs/Captura de Tela 2026-11-11 às 14.54.44.png`](../refs/): anel com a **metade esquerda em linha cheia** e a **metade direita em traços retos, curtos e iguais**, com a estrela original dentro ([`_simbolo.py`](_simbolo.py)). Quatro variações: `t1-print` (**recomendada**: traço 5, 11 traços), `t2-mais-tracos` (traço 4, 15 traços), `t3-menos-tracos` (traço 7, 8 traços) e `t4-disco` (disco cheio com a estrela dentro).
+
+**Cores (regras do usuário):** nada preto sobre o rosa; rosa e roxo nunca um sobre o outro; **no preto, arco rosa + estrela branca + palavra branca** (principal); no rosa, no Deep e no roxo, tudo branco; no claro, palavra ink e símbolo Pink Deep.
+
+**Antes → depois (v2 → v3):** símbolo da rodada 10 (C com dois traços no canto) → anel do print. Fundo principal rosa com símbolo ink → preto com arco rosa e estrela branca. Combinações ink-no-rosa e rosa-no-roxo saíram e foram para os usos incorretos.
+
+**Antes → depois (v1 → v2):** a v1 ([`../logo-letreiro/`](../logo-letreiro/README.md)) fundia o símbolo com a palavra (“[C✦]lozzy”, “cl◎zzy”, c tracejado) e foi rejeitada. A v2 mantém o símbolo da rodada 10 sem mudança, ao lado da palavra, e tira o letreiro “c do canto”. As fusões aparecem só na página de usos incorretos.
+
+Do RolêGo v4 ficam: palavra e símbolo em cores diferentes (exceto uma cor), cor como superfície com a marca branca, e a família lockup → empilhado → símbolo → ícone.
+
+| Arquivo | O que é |
+|---|---|
+| [`letreiro-clozzy.pdf`](letreiro-clozzy.pdf) · `.html` | 19 págs.: capa, de onde vem, símbolo v3 (4 variações), 7 letreiros, letreiros em cor e 12 px, 6 lockups, tamanho do símbolo, logo system, construção, usos incorretos, cor, família responsiva, letreiros de apoio, app, redes, letreiro no mundo, merch, movimento, decisão |
+| `svg/` | `<slug>-<fundo>.svg` e `-placa.svg` — 13 desenhos × 9 fundos |
+| `_simbolo.py` · `_letreiro.py` · `_build.py` | Geradores (símbolo · letreiros e lockups · documento) |
+
+## Letreiros
+`l1-base` · `l2-estrela-no-o` · `l3-zz-ligado` · `l4-estrela-expoente` · `l5-clo-zzy` · `l6-italico` · `l7-leve`
+
+## Lockups
+| # | Slug | Símbolo |
+|---|---|---|
+| 1 | `k1-compacto` | anel = altura do l |
+| **2** | **`k2-equilibrado`** | **recomendado** — anel 1,4× o l, vão 0,35 l |
+| 3 | `k3-simbolo-grande` | 1,75× |
+| 4 | `k4-leve` | equilibrado + palavra peso 500 |
+| 5 | `k5-clo-zzy` | equilibrado + “zzy” na cor do símbolo |
+| 6 | `k6-empilhado` | símbolo em cima |
+
+```bash
+cd clozzy/marca/logo-letreiro-v7 && python3 _letreiro.py && python3 _build.py
+```
+
+## Rollback
+
+```bash
+rm -rf clozzy/marca/logo-letreiro-v7
+```

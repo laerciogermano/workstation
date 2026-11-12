@@ -1,0 +1,60 @@
+/* Clozzy — Identidade visual v2 · tokens (2026-11-11)
+   Paleta fechada: Pink Clozzy · Pink Deep · Roxo · Ink · Cream · Branco. Nenhuma outra cor, nem para estado:
+   sucesso/erro/aviso usam ink + ícone + texto (e, se precisar, rosa). */
+@font-face { font-family: "Gabarito"; src: url("fonts/Gabarito-Variable.ttf") format("truetype"); font-weight: 400 900; font-display: swap; }
+@font-face { font-family: "Figtree";  src: url("fonts/Figtree-Variable.ttf")  format("truetype"); font-weight: 300 900; font-display: swap; }
+
+:root {
+  /* cor */
+  --cz-pink: #FF0065;        /* símbolo, anel do Close, destaques, splash. Ink por cima 5,1:1; branco só ≥ 24px bold (3,9:1) */
+  --cz-pink-deep: #E0005A;   /* botões e links. Branco por cima 4,9:1 (AA) */
+  --cz-purple: #7C48C4;      /* acento: bolha de chat, convite, drop, estrela alternativa. Branco por cima 5,9:1 */
+  --cz-ink: #14090F;         /* texto e modo escuro */
+  --cz-cream: #FFF6F0;       /* fundo quente: chat, caixas, telas de marca */
+  --cz-white: #FFFFFF;       /* fundo base do produto */
+  /* derivados (só opacidade de ink/branco, sem cor nova) */
+  --cz-ink-70: rgba(20, 9, 15, .70);   /* texto de apoio — 7,5:1 sobre branco, 7,3:1 sobre cream */
+  --cz-ink-12: rgba(20, 9, 15, .12);   /* bordas */
+  --cz-white-70: rgba(255, 255, 255, .70);
+
+  /* papéis */
+  --cz-bg: var(--cz-white);
+  --cz-surface: var(--cz-cream);
+  --cz-text: var(--cz-ink);
+  --cz-text-muted: var(--cz-ink-70);
+  --cz-line: var(--cz-ink-12);
+  --cz-action: var(--cz-pink-deep);
+  --cz-on-action: var(--cz-white);
+  --cz-accent: var(--cz-purple);
+  --cz-close-ring: var(--cz-pink);     /* anel tracejado do avatar com story no Close */
+
+  /* tipo */
+  --cz-font-display: "Gabarito", system-ui, sans-serif;   /* 700–900: títulos, preços, números, botões */
+  --cz-font-text: "Figtree", system-ui, sans-serif;       /* 400–700: interface e texto */
+  --cz-text-display: 64px; --cz-text-h1: 44px; --cz-text-h2: 32px; --cz-text-h3: 22px;
+  --cz-text-body: 16px; --cz-text-small: 14px; --cz-text-caption: 12px;
+  --cz-leading-tight: 1.02; --cz-leading-body: 1.5; --cz-tracking-display: -0.03em;
+
+  /* forma */
+  --cz-radius-s: 10px; --cz-radius-m: 18px; --cz-radius-l: 28px; --cz-radius-pill: 999px;
+  --cz-stroke: 10%;            /* traço do anel = 10% do símbolo */
+
+  /* motion */
+  --cz-ease-out: cubic-bezier(.2, .8, .2, 1);
+  --cz-ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+  --cz-dur-fast: 120ms; --cz-dur-base: 220ms; --cz-dur-signature: 520ms;
+}
+
+[data-theme="dark"] {
+  --cz-bg: var(--cz-ink);
+  --cz-surface: #1E1219;       /* ink + 6% branco */
+  --cz-text: var(--cz-white);
+  --cz-text-muted: var(--cz-white-70);
+  --cz-line: rgba(255, 255, 255, .10);
+  --cz-action: var(--cz-pink);  /* no escuro o Pink Clozzy brilha mais; texto ink por cima */
+  --cz-on-action: var(--cz-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --cz-dur-fast: 0ms; --cz-dur-base: 0ms; --cz-dur-signature: 0ms; }
+}

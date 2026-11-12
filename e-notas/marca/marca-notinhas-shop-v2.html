@@ -11,7 +11,7 @@
 :root{
   --nt-blue:#0069B4;--nt-blue-deep:#014380;--nt-blue-soft:#E3F2FB;
   --nt-green:#00984B;--nt-green-deep:#007A3D;--nt-green-soft:#E6F6EE;
-  --nt-ink:#0B1F33;--nt-muted:#5A6B7D;--nt-line:#D5DEE8;--nt-bg:#F5F7FA;--nt-white:#fff;--nt-err:#C62828;
+  --nt-ink:#0B1F33; --nt-black: #000000;--nt-muted:#5A6B7D;--nt-line:#D5DEE8;--nt-bg:#F5F7FA;--nt-white:#fff;--nt-err:#C62828;
   --nt-grad:linear-gradient(135deg,#014380 0%,#0069B4 48%,#00984B 100%);
   --nt-radius:14px;--nt-pill:999px;
   --nt-font:"Plus Jakarta Sans",system-ui,sans-serif;
@@ -120,6 +120,7 @@ table.mat th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:
     <div class="sw"><div class="c" style="background:#014380"></div><div class="t"><b>primary-deep</b><code>#014380</code></div></div>
     <div class="sw"><div class="c" style="background:#00984B"></div><div class="t"><b>accent</b><code>#00984B</code></div></div>
     <div class="sw"><div class="c" style="background:#0B1F33"></div><div class="t"><b>ink</b><code>#0B1F33</code></div></div>
+    <div class="sw"><div class="c" style="background:#000000"></div><div class="t"><b>black</b><code>#000000</code></div></div>
     <div class="sw"><div class="c" style="background:#F5F7FA;border-bottom:1px solid var(--nt-line)"></div><div class="t"><b>canvas</b><code>#F5F7FA</code></div></div>
     <div class="sw"><div class="c" style="background:#fff;border-bottom:1px solid var(--nt-line)"></div><div class="t"><b>surface</b><code>#FFFFFF</code></div></div>
     <div class="sw"><div class="c" style="background:#D5DEE8"></div><div class="t"><b>hairline</b><code>#D5DEE8</code></div></div>
@@ -172,7 +173,7 @@ table.mat th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:
       </div>
       <p class="meta" style="margin-top:10px">Densidade GitHub · números alinhados Stripe.</p>
     </div>
-    <div class="card" style="background:var(--nt-ink);color:#fff;border:0">
+    <div class="card" style="background:var(--nt-black);color:#fff;border:0">
       <div class="label" style="color:#9ED0F5">Scan (exceção)</div>
       <div style="margin:16px auto;width:120px;height:120px;border:2px dashed #7CFFB2;border-radius:12px;display:grid;place-items:center;font-size:11px;color:#B8F5D0">QR</div>
       <p style="font-size:12px;opacity:.85;text-align:center">Viewport escuro só na câmera. Home volta ao mist claro.</p>

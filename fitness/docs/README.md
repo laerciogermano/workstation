@@ -7,7 +7,9 @@
 Derivados do [documento de visão](../README.md).  
 PRD canônico: [`prd.md`](prd.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
-Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
+Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).  
+Protótipo navegável: [`../prototipos/v1/index.html`](../prototipos/v1/index.html) (31 telas, rastreia RF/RN do PRD).  
+App (front + back): [`../app/README.md`](../app/README.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
@@ -18,7 +20,7 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 | Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |
 | Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI para implementar | A produzir |
-| Protótipo | `prototype.html` | Validação visual/interativa do que foi especificado | A produzir |
+| Protótipo | [`../prototipos/v1/index.html`](../prototipos/v1/index.html) | Validação visual/interativa do que foi especificado | v1 (direto do PRD, antes das histórias) |
 
 ## Próximos passos
 

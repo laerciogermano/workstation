@@ -1,0 +1,1 @@
+Identidade visual RoleGo **v2** (em andamento): aplicar marca nos banners/criativos. Insumos: epics.pdf, manual, prints. Base v1: https://trello.com/c/gU37I2lg

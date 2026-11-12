@@ -1,0 +1,27 @@
+{
+ "e1": {
+  "nome": "grade comum",
+  "ideia": "Pin e G na mesma grade: o furo do pin fica no eixo da abertura do G e o anel tem o traço do G (170).",
+  "risco": "Refino invisível para leigos; continua sendo letra + pin lado a lado"
+ },
+ "e2": {
+  "nome": "encaixe",
+  "ideia": "O pin entra na abertura do G e o G abre espaço para ele, com respiro constante: os dois se abraçam.",
+  "risco": "O respiro de 42 fecha abaixo de 24 px; precisa de corte pequeno sem encaixe"
+ },
+ "e3": {
+  "nome": "ligadura",
+  "ideia": "A barra do G encosta no anel do pin e vira uma peça só: o G entrega o pin.",
+  "risco": "Pode ler como “G” com um enfeite; o pin perde independência na animação"
+ },
+ "e4": {
+  "nome": "mesma caixa",
+  "ideia": "O pin tem exatamente a altura do G: topo nas maiúsculas, ponta na linha de base.",
+  "risco": "Cabeça menor que um “o”; o furo (r 87) aperta em 32 px"
+ },
+ "e5": {
+  "nome": "canal",
+  "ideia": "A boca do G continua reta por dentro do pin até o furo: uma rota só que atravessa o G e chega no pin.",
+  "risco": "O pin fica aberto de um lado (lê como “C” com ponta); o canal de 71 some em 16 px"
+ }
+}

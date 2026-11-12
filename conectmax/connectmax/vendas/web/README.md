@@ -65,7 +65,7 @@ npm run dev
 
 ```bash
 cd ../web
-API_PROXY=http://144.126.154.90 npm run dev
+API_PROXY=http://185.250.37.82 npm run dev
 ```
 
 **Antes → depois:** proxy fixo `localhost:3000` → `API_PROXY` (default local). **Rollback:** omita `API_PROXY` (volta `:3000`) ou `API_PROXY=http://localhost:3000`.

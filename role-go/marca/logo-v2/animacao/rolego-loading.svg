@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Carregando"><title>Carregando</title><style>
+.rgw-py{animation:rgw-hop 1400ms infinite}
+.rgw-rp{transform-box:view-box;transform-origin:114.9px 186.0px;opacity:0;animation:rgw-rp 1400ms cubic-bezier(0,0,.2,1) infinite}
+.rgw-rp2{animation-delay:180ms}
+@keyframes rgw-hop{0%{transform:none;animation-timing-function:cubic-bezier(.2,.6,.35,1)}35%{transform:translateY(-13.8px);animation-timing-function:cubic-bezier(.55,0,.75,.4)}60%,100%{transform:none}}
+@keyframes rgw-rp{0%,55%{opacity:0;transform:scale(.25)}60%{opacity:.9;transform:scale(.25)}100%{opacity:0;transform:scale(1.5)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.rgw-rp{opacity:0}}</style><rect width="256" height="256" rx="58" fill="#04050B"/><ellipse class="rgw-rp" cx="114.9" cy="186.0" rx="33.5" ry="8.4" fill="none" stroke="#00E5E5" stroke-width="2.5"/><ellipse class="rgw-rp rgw-rp2" cx="114.9" cy="186.0" rx="33.5" ry="8.4" fill="none" stroke="#FFFFFF" stroke-width="1.8"/><g class="rgw-px"><g class="rgw-py"><g class="rgw-ps"><path fill="#00E5E5" fill-rule="evenodd" d="M158.38 135.51C173.39 118.07 174.62 94.48 161.25 80.49C147.89 66.5 124.11 66.5 105.82 80.49C87.52 94.48 80.43 118.07 89.28 135.51L114.93 186ZM145.3 111.86C143.62 121.42 134.51 129.16 124.95 129.16C115.4 129.16 109.02 121.42 110.7 111.86C112.39 102.31 121.5 94.57 131.05 94.57C140.61 94.57 146.99 102.31 145.3 111.86Z"/></g></g></g></svg>

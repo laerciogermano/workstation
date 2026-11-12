@@ -1,0 +1,80 @@
+:root{
+  /* cores de marca */
+  --cz-rosa:#FF0065;
+  --cz-pink-deep:#E0005A;
+  --cz-roxo:#7C48C4;
+  --cz-ink:#14090F;
+  --cz-branco:#FFFFFF;
+  --cz-cream:#FFF6F0;
+  --cz-lavanda:#EBE3FA;
+  --cz-rosa-suave:#FFD9E7;
+  --cz-muted:#6B5A62;
+}
+[data-tema="preto"]{
+  --superficie:#14090F;
+  --superficie-2:#241A20;
+  --linha:#3A3035;
+  --titulo:#FFFFFF;
+  --texto:#E8E6E7;
+  --apoio:#B4B0B2;
+  --destaque:#FF0065;
+  --botao:#FFFFFF;
+  --botao-texto:#14090F;
+  --secundario:#959093;
+  --link:#FF0065;
+  --chip:#2C2227;
+  --chip-texto:#FFFFFF;
+  --chip-ativo:#FFFFFF;
+  --chip-ativo-texto:#14090F;
+}
+[data-tema="branco"]{
+  --superficie:#FFFFFF;
+  --superficie-2:#FFF6F0;
+  --linha:#DEDDDD;
+  --titulo:#14090F;
+  --texto:#14090F;
+  --apoio:#6B5A62;
+  --destaque:#E0005A;
+  --botao:#E0005A;
+  --botao-texto:#FFFFFF;
+  --secundario:#14090F;
+  --link:#E0005A;
+  --chip:#FFD9E7;
+  --chip-texto:#14090F;
+  --chip-ativo:#14090F;
+  --chip-ativo-texto:#FFFFFF;
+}
+[data-tema="roxo"]{
+  --superficie:#7C48C4;
+  --superficie-2:#8C5ECB;
+  --linha:#A37FD6;
+  --titulo:#FFFFFF;
+  --texto:#FFFFFF;
+  --apoio:#EBE3FA;
+  --destaque:#EBE3FA;
+  --botao:#FFFFFF;
+  --botao-texto:#7C48C4;
+  --secundario:#FFFFFF;
+  --link:#FFFFFF;
+  --chip:#9165CD;
+  --chip-texto:#FFFFFF;
+  --chip-ativo:#FFFFFF;
+  --chip-ativo-texto:#7C48C4;
+}
+[data-tema="rosa"]{
+  --superficie:#FF0065;
+  --superficie-2:#E0005A;
+  --linha:#FF66A3;
+  --titulo:#FFFFFF;
+  --texto:#FFFFFF;
+  --apoio:#FFFFFF;
+  --destaque:#FFFFFF;
+  --botao:#FFFFFF;
+  --botao-texto:#E0005A;
+  --secundario:#FFFFFF;
+  --link:#FFFFFF;
+  --chip:#FF3384;
+  --chip-texto:#FFFFFF;
+  --chip-ativo:#FFFFFF;
+  --chip-ativo-texto:#E0005A;
+}

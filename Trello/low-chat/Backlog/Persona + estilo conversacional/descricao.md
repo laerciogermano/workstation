@@ -1,0 +1,1 @@
+Definir persona (bio, tom, limites) e regras de fala natural com contexto, sem cair em padrão óbvio de assistente.

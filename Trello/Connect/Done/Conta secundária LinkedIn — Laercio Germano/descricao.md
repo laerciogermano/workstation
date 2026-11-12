@@ -1,0 +1,1 @@
+Criar uma conta secundária com o nome próprio, perfil próprio, mas secundária, e disponibilizar login e senha.

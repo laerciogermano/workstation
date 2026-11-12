@@ -4,6 +4,8 @@ Extraído dos mockups em [`input/rolego_mvp_completo_dark.pdf`](input/rolego_mvp
 
 **Estrutura de card/manual (insumo):** modelo ConectTech v1 em [`input/referencia-marca/README.md`](input/referencia-marca/README.md) — layout A4 e seções; cores/logo RoleGo ficam neste documento.
 
+**Kit atual (v4, 2026-11-10):** [`marca/identidade-v4/`](marca/identidade-v4/README.md) — manual 26 págs., `BRAND.md`, `tokens.css`, motion, posts e stories. Onde este documento divergir do v4, vale o v4.
+
 **Manual HTML/PDF v1:** [`marca/README.md`](marca/README.md) · [card Trello](https://trello.com/c/gU37I2lg) · [card logo](https://trello.com/c/S7jWwUbC) · [card benchmarking](https://trello.com/c/pXPmdI7g)
 
 ---
@@ -74,11 +76,14 @@ Cada categoria de feature usa uma cor neon fixa como “assinatura” (barra lat
 
 ## 5. Logo
 
-- Wordmark **“RoleGo”** em Poppins ExtraBold Itálico.
-- “**Role**” em branco; “**Go**” em gradiente ciano → violeta → magenta (`#00E5E5 → #8749FF → #FF1F7A`). O “o” é um anel neon com o ping ciano no centro (o mesmo do ícone).
-- Ícone do app: “R” branco sobre o gradiente roxo → azul, com o ping ciano.
-- Usado sozinho (splash) ou acompanhado do slogan: **“Viva o Rolê”**
+> Atualizado para o logo v4 ([`marca/logo-v4/`](marca/logo-v4/README.md)); o texto antigo (anel com ping no “o”) ficou para trás.
+
+- Nome escrito **RolêGo**, com acento. O **Go** é sempre o símbolo (G + pin numa peça só), nunca “Go” digitado.
+- **Rolê e Go nunca na mesma cor** (exceto versões de uma cor). No roxo: Rolê branco + Go ciano `#00E5E5`. No preto: Rolê branco + Go ciano → azul (`#00E5E5 → #3B82F6`), sem letras roxas. No claro: Rolê `#05070F` + Go roxo.
+- Estilo principal: superfície roxa `#9E19E9 → #6539CB → #452EFF` com marca branca. Ícone do app: Go branco no roxo.
+- Slogan: **“Viva o rolê.”** (Poppins ExtraBold itálico, “rolê” na cor do Go).
 - Linha de apoio (proposta de valor): *“Chega de sofrer para decidir onde sair.”*
+- Botão primário: degradê roxo (substitui o ciano → violeta da seção 4).
 - Domínio oficial: **rolego.com.br** · Instagram: **@rolego**
 
 ---

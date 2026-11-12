@@ -1,0 +1,1 @@
+Entrada/saída de mensagem LinkedIn → low-chat → reply. Reusa screen-robot/CDP onde couber.

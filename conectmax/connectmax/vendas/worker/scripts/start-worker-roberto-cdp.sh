@@ -6,7 +6,7 @@ mkdir -p logs
 LOG=logs/worker-roberto-cdp.out
 PIDF=logs/worker-roberto-cdp.pid
 echo "——— $(date '+%H:%M:%S') start-worker-roberto-cdp (log também em $LOG) ———"
-env API_URL=http://144.126.154.90 \
+env API_URL=http://185.250.37.82 \
   AGENT_ID="${AGENT_ID:-29140d46-85d0-4541-a640-7b72f9519c5b}" \
   AGENT_API_KEY=dev-local-agent-key \
   WORKER_RUNTIME=cdp \
@@ -15,9 +15,9 @@ env API_URL=http://144.126.154.90 \
   CONTAINER_NAME=cdp-roberto-menezes \
   SERIAL=cdp:roberto-menezes \
   HOST_KIND=localhost HOST_NOME='Macbook M5' HOST_KEY=localhost \
-  PROFILES_API_URL=http://144.126.154.90 \
-  MESSAGES_API_URL=http://144.126.154.90 \
-  INVITES_API_URL=http://144.126.154.90 \
+  PROFILES_API_URL=http://185.250.37.82 \
+  MESSAGES_API_URL=http://185.250.37.82 \
+  INVITES_API_URL=http://185.250.37.82 \
   npm start > >(tee -a "$LOG") 2>&1 &
 echo $! >"$PIDF"
 wait "$(cat "$PIDF")"

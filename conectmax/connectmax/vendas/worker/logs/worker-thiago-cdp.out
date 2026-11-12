@@ -1,0 +1,864 @@
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=b7515404-ec01-466c-b30f-30be39c0a2f3 DRY=0 runtime=cdp SERIAL=cdp:thiago-nascimento CDP_ID=thiago-nascimento CDP_URL=http://127.0.0.1:9256
+[b7515404-ec01-466c-b30f-30be39c0a2f3] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=b7515404-ec01-466c-b30f-30be39c0a2f3
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=e4a814d1-8ea8-4491-967c-8f811496ddd8
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "a11y-skip-close@1140,16",
+    "more:Mais@286,486"
+  ],
+  "error": "Conectar no menu não apareceu"
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] fail conectar: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/alex-silva-66456a238
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=f13b4726-9672-4dcd-a387-8c01f46424a1
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "a11y-skip-close@1140,16",
+    "more:Mais@286,486"
+  ],
+  "error": "Conectar no menu não apareceu"
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] fail conectar: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/alex-silva-66456a238
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=0fdc583b-44be-47f6-a23a-1686f0ceb2d3
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "a11y-skip-close@1140,16",
+    "more:Mais@286,486"
+  ],
+  "error": "Conectar no menu não apareceu"
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] fail conectar: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/alex-silva-66456a238
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=2fae09ad-7452-4e20-9e96-53abb125cd32
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "a11y-skip-close@1140,16",
+    "more:Mais@286,486"
+  ],
+  "error": "Conectar no menu não apareceu"
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] fail conectar: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/alex-silva-66456a238
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=97d8a71b-d3e9-4004-b72b-8167a6cb1f8f
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": false,
+  "status": "failed",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "a11y-skip-close@1140,16",
+    "more:Mais@286,486"
+  ],
+  "error": "Conectar no menu não apareceu"
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] fail conectar: linkedin-connect-cdp exit=1 url=https://www.linkedin.com/in/alex-silva-66456a238
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=a932c0c4-fce0-40f1-87e5-738746ea8039
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/alex-silva-66456a238 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/alex-silva-66456a238
+{
+  "ok": true,
+  "status": "pending",
+  "url": "https://www.linkedin.com/in/alex-silva-66456a238",
+  "steps": [
+    "view:https://www.linkedin.com/in/alex-silva-66456a238",
+    "click:Conectar@113,486",
+    "skip:Enviar sem nota@776,226",
+    "pending:try1",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://144.126.154.90/client-connections-linkedin",
+    "data": {
+      "id": "af283995-1e5c-41e4-872e-758cbf0b752a",
+      "clienteLinkedinId": "d5e43d42-27ed-43bb-97a6-b495c802cfdf",
+      "clienteLinkedin": {
+        "id": "d5e43d42-27ed-43bb-97a6-b495c802cfdf",
+        "clienteId": "1c2690b6-bede-40b8-95b2-d7f05449a105",
+        "profileUrl": "https://www.linkedin.com/in/alex-silva-66456a238",
+        "headline": "Comprador - Compras Indiretas Brasil",
+        "company": "Comprador na Galvani Fertilizantes",
+        "location": null,
+        "connections": null,
+        "mutualConnections": null,
+        "connectionDegree": "3º e +",
+        "inviteStatus": null,
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador",
+        "past": null,
+        "round": 2,
+        "photoBase64": null,
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-03T17:31:54.252Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-03T17:31:54.526Z",
+        "updatedAt": "2026-11-03T17:31:54.526Z"
+      },
+      "agentId": "b7515404-ec01-466c-b30f-30be39c0a2f3",
+      "status": 1,
+      "invitedAt": "2026-11-03T19:30:24.106Z",
+      "connectedAt": null,
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/alex-silva-66456a238",
+        "click:Conectar@113,486",
+        "skip:Enviar sem nota@776,226",
+        "pending:try1"
+      ],
+      "createdAt": "2026-11-03T19:27:21.733Z",
+      "updatedAt": "2026-11-03T19:30:24.362Z"
+    },
+    "status": 1
+  }
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] completed conectar
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed extrair_leads p=5 id=1949d5f3-03b2-4113-a329-e1994c242634
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 9 --no-shot --query comprador barueri
+
+{
+  "ok": true,
+  "query": "comprador barueri",
+  "n": 9,
+  "count": 9,
+  "pagesUsed": 1,
+  "profiles": [
+    {
+      "name": "Danilo Lopes",
+      "title": "Analista",
+      "city": "de Compras | Comprador | Supervisor de Compras | Strategic Sourcing | Procurement | Negociação Estratégica | Gestão de Fornecedores | Redução de Custos | Supply Chain | SAP MM Barueri, São Paulo, Brasil",
+      "location": "de Compras | Comprador | Supervisor de Compras | Strategic Sourcing | Procurement | Negociação Estratégica | Gestão de Fornecedores | Redução de Custos | Supply Chain | SAP MM Barueri, São Paulo, Brasil",
+      "current": "Analista",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Danilo Lopes • 3º e + Analista de Compras | Comprador | Supervisor de Compras | Strategic Sourcing | Procurement | Negociação Estratégica | Gestão de Fornecedores | Redução de Custos | Supply Chain | SAP MM Barueri, São Paulo, Brasil Conectar",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQEsYdiPr8P3ig/profile-displayphoto-scale_100_100/B4DZ4ed5mzKYAY-/0/1778627618648?e=1795046400&v=beta&t=XxspCDAqRKerXqTA7twvj28C7-Por8ceYJYld5dyZf8",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/danilo-silva-lopes92",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:52.145Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Rodrigo Ramos",
+      "title": "Comprador",
+      "city": "São Paulo, Brasil",
+      "location": "São Paulo, Brasil",
+      "current": "Comprador na BK Cenografia",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Rodrigo Ramos • 3º e + Comprador São Paulo, Brasil Conectar Atual: Comprador na BK Cenografia",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQEYTU_rUlAJcw/profile-displayphoto-shrink_100_100/B4DZYSmKwQHsA8-/0/1744068719014?e=1795046400&v=beta&t=StMij3RSOZwjrKUB3Mf7NOxFi6iPDKOE-5-FluJ_JLs",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/rodrigo-ramos-097038279",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:52.513Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Fabiana Lima",
+      "title": "Comprador Junior/ Desenvolvimento do Produto São Paulo e Região",
+      "city": null,
+      "location": null,
+      "current": "Comprador júnior na KLZ Uniformes, logística e tecnologia",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Fabiana Lima • 3º e + Comprador Junior/ Desenvolvimento do Produto São Paulo e Região Conectar Atual: Comprador júnior na KLZ Uniformes, logística e tecnologia",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D5603AQEhzBVTFz0bVQ/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1725495400826?e=1795046400&v=beta&t=6IVGFkebIWHzSgc8mU58cGBBYT7wJXqncz9T0lkZsdg",
+      "photoBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIYSUNDX1BST0ZJTEUAAQEAAAIIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAGRyWFlaAAABVAAAABRnWFlaAAABaAAAABRiWFlaAAABfAAAABR3dHB0AAABkAAAABRyVFJDAAABpAAAAChnVFJDAAABpAAAAChiVFJDAAABpAAAAChjcHJ0AAABzAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAaQBzAHAAbABhAHkAIABQADMAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAWFlaIAAAAAAAAIPeAAA9vv///7tYWVogAAAAAAAASr4AALE2AAAKuVhZWiAAAAAAAAAoOwAAEQwAAMjNWFlaIAAAAAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2/9sAQwAFAwQEBAMFBAQEBQUFBgcMCAcHBwcPCwsJDBEPEhIRDxERExYcFxMUGhURERghGBodHR8fHxMXIiQiHiQcHh8e/9sAQwEFBQUHBgcOCAgOHhQRFB4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4e/8AAEQgAYABgAwEiAAIRAQMRAf/EAB0AAAIDAQEBAQEAAAAAAAAAAAUHBAYIAwACAQn/xAA6EAABAwMCAwcBBQYHAQAAAAABAgMEAAURBiEHEjETFCJBUWGBcQgygqHRIzNSYsHSFRYkJUJysfD/xAAaAQEBAAMBAQAAAAAAAAAAAAAEAwECBQAG/8QAIREAAgMAAgIDAQEAAAAAAAAAAQIAAxESIQQxMkFRIiP/2gAMAwEAAhEDEQA/ANcV6vUH1dqO2aYtC7jcncJ+602n77qv4Uj/AOxWCQBpmQCTghG4TYlvhuzZ0lqNGaTzOOuqCUpHuTSk1Pxxt7clUPTMEzVZ5e9SAUt5/lT95Q+vLS813eb/AK5ubbsh89xG7MVvIQ1/cr3P5Daiei+HS57oQvmBA2FBt8wD4zp1eBg5PC191Dqi+WYTEXuUwMeJqMrsxn08OCR9aVU643SNeUSpj0hxSEkJ53SrfyJzWiWNLmzwkx1sjdODtsaWGttOJQ+otI8KiTuaGvkEnGjR46ldri5XfZL9xQqVcpDKs5U626pOD7YNWO08U77Y1kwtWzJTKE/upf7YE+nj3A+hFVi72pCCUcuMedVW4xeyKuUUys6OjB2gr8hs0toP7RFquDqIeqIXcHDgd6j5U0fdSN1JH0KqdtunQ7lCamwJTMqM6nmbdaWFJUPYiv50pWW1ggnar9w04iah0ZdWnbS920V9xKZMJ0ktOjOM/wAqvRQ/MbUlbD9wLVg9ibgr1RbXNanwm5LYKedIKkHqgkZwalVYHZEjJxmyWIcR2XJcS0yygrcWo7JAGSayLxF13I1bqp2ZICmojWWorGQQ2j39z1J/QU1vtQatVbrbF03GdUgyU95lqQrBDYOG0/KgT+CszsOPIkFzmzzKyecZzRrjy/mM8dOON+x7cJ40aREMh5PiB2z0px2a4223NAoCQvG5ApNcMUOCyAjAQvfCelFbn/jyypNvjqV74rguf9DPom8dbKhyMYuoNTxn1cicbe9LzWFxhraBzlWc9aqdwGpmXlJkNPNq+lArpKmJHI6Tze5qyVad2SXjSuKJH1DIZWTygZqn3Ac4O1GZAccJJOTQuU12eSsgD3rpVDIK48pVrkjs18wqdpR/Fziudn2nZPJVy+uDmud6CVsKWnBx5ivrRAWu+NoQnmOc4qxHUARjZNuaJnh5LT7Z/ZvIBx6jFXMEEAjoaV3D1Zb03bnleE9DimNbJIeC2zspB/Ks0t3k08hNHITFvH6/OXviZfH0OKUzHkmK3g7ANeDb5BPzVO00ZFwubMMEqK1ACiF4bVLfly3AVLfdW98qJP8AWu3CYIa1i0HEhRAOM+tRsYcCRL0V7YoPqPnTbsWwWRtU9fZtNDfHU16ZxlsUQFuPAdWlO2cVWOJFs1DOgpXBivORk7qCBSkvEG9wmVOORnEYOFJCd0/UdRQKKUfsmdbzHZegOhG9eOLcS6pU01FUjPQqTVRmTzLcLqjnO9UKOqShtKyvxnqCOlWzSsWdcm1lplxzs05PKM7UkoqeodbWs6n5PlKZZJSAVeVVaa8uS5mVI8P8CTU+7l1yWtpRKQk4IoVHt5Q8pfOFJPkavWABDWEkzqphhUdSUDAUMe1T+F7RVfXTyZKUED2PSuLMdIbUlOTtRDhK8gahW0spSHckE+x6VufUk64wmptMo5dIICRgtGjWnrkoTI60rylag24k++wP/lQdBITKsr7OQTkjH1FBJPeLXcTlK0pSsHfbcGpqcOzzjRkzrLjmNOkxXE4Uy6psj3BIoZaP9u1ZGkpI5CsZq9cZbWqy8S7zH5CG3pBkt+hS549voSR8Uvp63O/RihOU84JPpvU2UjVmanxg01Rpe6R37cgEpKSkDGao3EfQ1/u8pVxthalMHqCQFJ/WgukdQIgupYlKPZkAjersdcxWIqksrHLjoDQFVkbqd5lW1dBiVk6UmxHSJrRQrPQ1oPhDpWPF0koNMp7V5HOpRG5HpSrevTd61IymYtSIXaczpSM4TV8l8VbBZWO5WtanRy8qeXpiqWFnIEjZUFXEif4h23uer5jRQEZXzJx0IoA5FA3G1GtXXhV5u65jxAUfujzqCDzp3G9MUkAbDsoZjB4T2QUs+QNCtLSO53SO8dkpXkn2NFbyrsoLqgd+XArjpq2iS0HJB5WgjarexA+QcaaY4V3RyOsNurBbeQFIOdjTNlN2O4sBNwSyrmwBzEA5rJWk9VXWM41Z4iQ88hXI0vOAR5U0dF6e1pddX2qTd8NwWX0vugPZGEeIDA65IA+a1C9ybHV2T/tUaXXJtUPVkRsqXD/08vA37JRyhX0CiR+MVmiSvxp36Vv65wotyt0i3zmUvxpDamnW1dFJIwRWKOLmip2htTO258rdiOZchSCNnW/7h0I+ehFUuTDyhqn+oDk3QrjoTzkLSMda+WbjIKMFwkD1NB1hTiklvJWTjA866MOltRS4MEbYI86hgnQruP7Gtwsu8Nt15DzaHHXBy7pzt6UH11paRapy5rbBTFeUVIPmM+WKploMpMlRjTnYzhGykqxmvuUmetfNJlqeV6qVzVMVkPuxy2c0wyUMJX1yfc1IjPc6+UHcdcUMbjvL2yce1EoLBb5UIGVKPyaoZI6sj3xh6RHDLQJUSM4o1EjGNa0NhJUrlAOBRe1Wk+EuI8XVWfKiimWGlBHKClO+B5mtg/UFYNbZXLbH7NxKvurG4OOlaQ4EMXV2wPXS5vqcbeV2cUKH/BP3lfJ2/CaVOidFzdR39uGlKmIv7yQ7/Aj9T0A/Q1piDFjwYTMOK0lphlAbbQnolIGAKRX33C3Pg4idqr+v9IWfWun3bPeGcpPiZeT+8YX5KSf6dCNqsFeqxGwoOTDfEXQOoeHl7bTcme1hlzMac0D2TuDkf9Vfyn8xvRHX1hiT7W1qO3+GS+QXWgPCrbqPetlXSBBukB2BcYjMuK8nlcZeQFJUPcGlpqvhBEkQEMacl9zQ0SW4r5Km987BW6gPrmjNSR6ia7s9zIUYrSvzBHUUVjJ5sedW3XXC/W1mkqk/5amykZ8TkJHbpI9cIyR8gVUUuLgnkmxJUZfQpdZUg/nUHRp0KLVP3CDTRSnNWLTNsUVd7cT0HhzUHSEZV6eX2UV9xDeMBCCcn4pmW3Q+p7k22zGtEhhrzW+OyAH4sE/GamAx6E3tsUfcCnlSxyp6ro1onSVw1FPzGb5I7ZAW+seFP6n2pg6a4UxWHG5F9l95UnpHYylv5V1PximPDjR4cZEaKy2wy2MJQhOAB9KRXQT8oC3yB6WQtO2WFYrcmFCRgdVrP3nFepolXq9SwABggyd7M//Z",
+      "profileUrl": "https://www.linkedin.com/in/fabiana-lima-77001a2b6",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:52.937Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Magda Rodrigues",
+      "title": "Comprador",
+      "city": "na Pancrom Indústria GrPancrom Barueri, São Paulo, Brasil",
+      "location": "na Pancrom Indústria GrPancrom Barueri, São Paulo, Brasil",
+      "current": "Comprador",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Magda Rodrigues • 3º e + Comprador na Pancrom Indústria GrPancrom Barueri, São Paulo, Brasil Conectar",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/C4D03AQEkeOP2s92p2w/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1516992258141?e=1795046400&v=beta&t=4YqV8Geu4YwtZNmIBYmxTlUstTdJLKbPxZFt9JCb3GA",
+      "photoBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIYSUNDX1BST0ZJTEUAAQEAAAIIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAGRyWFlaAAABVAAAABRnWFlaAAABaAAAABRiWFlaAAABfAAAABR3dHB0AAABkAAAABRyVFJDAAABpAAAAChnVFJDAAABpAAAAChiVFJDAAABpAAAAChjcHJ0AAABzAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAaQBzAHAAbABhAHkAIABQADMAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAWFlaIAAAAAAAAIPeAAA9vv///7tYWVogAAAAAAAASr4AALE2AAAKuVhZWiAAAAAAAAAoOwAAEQwAAMjNWFlaIAAAAAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2/9sAQwAFAwQEBAMFBAQEBQUFBgcMCAcHBwcPCwsJDBEPEhIRDxERExYcFxMUGhURERghGBodHR8fHxMXIiQiHiQcHh8e/9sAQwEFBQUHBgcOCAgOHhQRFB4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4e/8AAEQgAYABgAwEiAAIRAQMRAf/EAB0AAAEEAwEBAAAAAAAAAAAAAAgDBgcJAAQFAgH/xAA+EAABAwMCBAMFBgMGBwAAAAABAgMEAAURBiEHEjFRE0FhCBQiI3EVYoGCkcEyg6EJJEJScrEzQ0TC0eHw/8QAGQEAAgMBAAAAAAAAAAAAAAAAAQQCAwUA/8QAIREAAgICAwADAQEAAAAAAAAAAAECEQMSBCFRIjFBMjP/2gAMAwEAAhEDEQA/ADLrKymlxY4had4a6Se1DqGQUoHwRoyCPFku42Qgd+56AbmuOHDe7rbLJa37peJ8aBBjp53pEhwIQgepNC/xW9sO0W51638PLP8Aazycp+0ZwU3Hz3Q2MLWPUlH0NDXxo4u6s4qXr3q9yfd7cysmHbWFEMsDuf8AOvHVZ37YG1R+APShZxJWr+PXFrVDi/fdZ3CGyroxble6ISO3y8Ej/UTTHdcvV6f5pEuZPcV1LrqnD9SSazT1pcus9MdKghA3Ws+QqTbJFsjTa4kIqAQP4/NRHnUJTomo+kfiFqSxoTJZemwFdUrYdUg5/A069I8eeLelnUe56zuMtpHVi4q96QR2+Zkgf6SKk/T/AAz1PqttUo26VGt7TClpcdTylxQGxA7VD/FS0xYl3UmO2lt5pATIQE8o5gNzioY8qk6LJ4qVhN8KfbDtFxdat/EOz/ZDyiE/aMEKcj57rbOVoHqCv6Cigsl1tl7tbF0s8+NPgyE87MiO4FoWPQiqiimpA4LcXNW8K7171ZJHvFueWDMtj6j4L47/AHF46LG/fI2q8pLQaymjwn4had4laSZ1Dp6RzIPwSYyyPFiu43bWO/Y9CNxTurgGne7pAstnmXe6SURYMNlT77yzgIQkZJqs/j/xLufFLXb97klbNuZyzbYZVkMM56kdOdXVR77dAKJL+0C1+5b7BbeHtvfKHrliZceU7+AlWG0H0UsE/wAsd6CtPTFBnHkD0r0lHYV75QRW3aYplTmmM/xqANB9BXY8rBanI2nGi2AJU51KRnbGThIo0OA/C7TVi01GVIjRLhOKQp544V8Z3/D6ULUBiMgwg6hKo7TzYPcfEN6K3TukRbnWr3GnkFwp8JtISkAHywkDP41n5J/o6oOqJQmybZb2QzIkxoyVDCEKWEk/Qf8Aigy9rjTkGFq6NcLbHBbuLKuZTYylSh2optRaTi3m7Jfkz1sq2KVNuFC0geQIpo8ZbbBTZWPdkIeFvZedy4eYn5ZBJJ/3qtSqSaDjh016V3OIwoikyK25eC+4R0KiQBWuR5itRdoSa7H7wE4nXThXrti9xvEftz+GbnDBwH2c9R5c6eqT326E1ZpY7pAvdmh3i1yUSoM1lL8d5B2WhQyDVRhA8zvRqf2fvEBdwsNz4eXB8rdtn98t3Md/AUrDiB6JWQf5h7VIAO/tQ6jc1Px21RN5ytmLMMBgeQQx8vb0KkqV+ao1AzW9eJK7hd5lwcJKpL63lHuVKJ/etdDeTgnrULAeUjbanLZWURI7j3L80gJ5+2euKfnBrhCvXclL6n1M25rZ5aB8S1/5U/uad3EjhXaNNsgW3xlNpSBhRyevmc7Z8hvSmTlQUtBzFxptbMY+mJQcGXBlo42PcdDRc6WubV/0/a5drfUoFIQ80CMoUBuP1oWLTZx4HixErCUkJ5SP611dKak1Hoy5rl25w+GtWVsqOUq/DyNUOnIa7SDDftkh5LQckOMoIC3RtlR7ZoffaO1BBckybfZpSke5x3Eyiys8qiR/CrvUlW/UV11dpOLcok4NtPtkuqCcFnGyk/XIoSOKF0ksXC420haHXXleJkYVy52z6nY1HDHaZDI9YWyMnUgqNIFNbS0Ht50kcHatVdGazXIqSfZd1GvS/HfS03xChmVMEB/fYof+Xv6BSkq/LUdLbOMilrPKXb7vDntkhcaQ28k9ilQP7VKwI6N1grt91mW9YwqO+tlQPkUqIP8AtXd4caVf1RqOPbWE83Ooc2SQAM7mnL7Sunlaa446mhlspZkyzOZ7FD3zNvQFSk/lqQ/Y1siZV7uN2WjPhJS0gkd9zS/InpBstwQ2mkwhdLaYi6X0wzAtbaY7bLWByDBKiOuf3qMddxHLhLTHXlIbJJJ269f/AFU36mebiaekKU6GwlO6uuN6h2+OpfQ9M3Cl4Az1G3U/pWG5U7NjE9vsZCLYhuIpDKMNBwBOOpx5muxo3Rgv14diOq8I8pcStO5OKWZYV4TCAebm5lqHoBT74dwEQ5MaWgEuMSG2yrPVCxgg9/KrbclSDPpWPuxaTj2rSDdljsJbAGMpGxydz9a5+reD+htaRo675ZG1zWmQ1700tTbpSOmSk7/jmpCUOZGEgdqRjIfDqVIUPCAUFJx1Oe9N8aFSaMrJlcu2CxxV9lKHFssq6aMushx9hsue4yyFeIBuQlYxv6GhGkNqSspUCCCQQfI1aNq2e6xFcZbOCc1WXqFIF4nYH/UubfnNX8fK5ycfAZMbjBTf6chRPTypa1w1XC7woDYyuTIQykdypQH70msb1I3sxabXqbjrpeF4ZWzFmCc+fIIY+Zv6FSUp/NTgsEd7eWg1z7HbdfwGSp23Yh3ApGT4ClZbWfRKyR/MHaub7FrARpmU9jd2Qf6UU96tkG82iXabnGRJhTGVMvtLGy0KGCKiDhpw9c4asSLMh8yYyXVuMPkYK2yfhz94DY+vpSfO/wAxriq5ji10637kI7QHikHHZIxuf0zUYXGC8otsJHX41H67J/pv+NdLWV0mO30pW58OyBg7EV7enRFSfhdBQoAK5T8WMbY/+86x0tjR/hHLtcYquODyco+D0qYNI6aLFtYLoSQ46l5Q7Afw0zdK2FM+ah4AsMKVyoATzHmG+D+5qY2EFLSEqABSMYFaHE423ykK8rkWtYiax4RU7/hI39PWvrJT4eEHcdcjrWTwow3QkEkpIAFIW1C0RQF58RW6vjKgD6Z6D0rRUFF9CF2hv8REtRoCp61BIQ0vmz6DP7VWldiH5r7w/wCY4pf6kmrGvaFfVC4NajmI/wCIxDPIfPKiE/8AdVcsjAJGOlV48Ws5S9LZ5NscY+HNdbO+BmjJ9gXQLlusVy4gXBjkeuX9zt/MMHwEqy4seilgD+We9D1wO4a3Lifrdmyxedi3s4duMsDIYZz0H31dEjvv0Bqx+y2yDZbREtNsjIjQobKWWGkDZCEjAFXlCNutefEbmRlMuZGRsodUnvWxWV0oqSpkk2naIN1npC6xbj4r6C8kr+W60nZQ+nf0rlQtESpV3ZL819xp1XK4lpop8JIBwd6IZxCHEFC0hST1BFazMBhlZU2nGTnB3xSD4er+PaGXyXKNP7G1YmmNPQY8FDDpSVkAq655c5/pTmguuOxkLdb8Nav8NepEVt9stupyD+opRKQkADoNqeiqVCrPp6Ujz/EpCEklOKWIz50h4bpddUghOQAkkedE4j/2j7Teb7wju9osMYyZckN5aCsFSErClY9dulBbwy4Q6u4h6hdttvhrhxYznJOmyUENxjndP3l/cG/fA3qxdxlLqQlwZHmO9YwwzHb8NhpDSMlXKhIAyTkn6k0Fts/AuqGzwt0Fp/h1pVmwWCPyoHxyJCwPFkuY3Ws9+w6AbCnVWVlSAf/Z",
+      "profileUrl": "https://www.linkedin.com/in/magda-rodrigues-212b8a131",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:53.164Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Rosi D.",
+      "title": "Comprador",
+      "city": "Industrial | MRO | CSC Barueri, São Paulo, Brasil",
+      "location": "Industrial | MRO | CSC Barueri, São Paulo, Brasil",
+      "current": "Comprador",
+      "past": "Comprador na Cecil S/A Laminação de Metais",
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Rosi D. • 3º e + Comprador Industrial | MRO | CSC Barueri, São Paulo, Brasil Conectar Anterior: Comprador na Cecil S/A Laminação de Metais",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/C4D03AQE-omu5Gtx2jA/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1580301669372?e=1795046400&v=beta&t=W8Fw4XcQUVxM7NLiu-I__PZHHyxPidmGaH7d7_J5Rkg",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/rosi-d-4a777232",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:53.418Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Luiz Felipe",
+      "title": "Comprador",
+      "city": "Pleno | Strategic Procurement | Compras Indiretas | Negociação | Gestão de Fornecedores | Supply Chain | SAP Barueri, São Paulo, Brasil",
+      "location": "Pleno | Strategic Procurement | Compras Indiretas | Negociação | Gestão de Fornecedores | Supply Chain | SAP Barueri, São Paulo, Brasil",
+      "current": "Comprador na Epson do Brasil",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Luiz Felipe • 3º e + Comprador Pleno | Strategic Procurement | Compras Indiretas | Negociação | Gestão de Fornecedores | Supply Chain | SAP Barueri, São Paulo, Brasil Conectar Atual: Comprador na Epson do Brasil",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQFBdk0m8Xd6OQ/profile-displayphoto-scale_100_100/B4DaA.RW2yI4Ac-/0/1787751132838?e=1795046400&v=beta&t=SpXOilE7Z1k1ptFptZ-XZod2gVAuOGPbjZF-KlHafIw",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/luiz-felipe-84681532b",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:53.661Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Ver perfil completo",
+      "title": "Comprador São Paulo e Região",
+      "city": null,
+      "location": null,
+      "current": "Comprador na Consorcio SCK",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Reginaldo Mendonça • 3º e + Comprador São Paulo e Região Conectar Atual: Comprador na Consorcio SCK",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQEYabP5qSak1Q/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1673109762451?e=1795046400&v=beta&t=EAO86IQZQ3p8M1aOghdbmO9LZo2OReT2v1QiQSxEkgQ",
+      "photoBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIYSUNDX1BST0ZJTEUAAQEAAAIIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAGRyWFlaAAABVAAAABRnWFlaAAABaAAAABRiWFlaAAABfAAAABR3dHB0AAABkAAAABRyVFJDAAABpAAAAChnVFJDAAABpAAAAChiVFJDAAABpAAAAChjcHJ0AAABzAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAaQBzAHAAbABhAHkAIABQADMAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAWFlaIAAAAAAAAIPeAAA9vv///7tYWVogAAAAAAAASr4AALE2AAAKuVhZWiAAAAAAAAAoOwAAEQwAAMjNWFlaIAAAAAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2/9sAQwAFAwQEBAMFBAQEBQUFBgcMCAcHBwcPCwsJDBEPEhIRDxERExYcFxMUGhURERghGBodHR8fHxMXIiQiHiQcHh8e/9sAQwEFBQUHBgcOCAgOHhQRFB4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4e/8AAEQgAYABgAwEiAAIRAQMRAf/EAB0AAAICAwEBAQAAAAAAAAAAAAcIBAYABQkDAgH/xAA7EAABAwIEAwUFBgYCAwAAAAABAgMEBREABgchEjFRCBMiQWEUFXGRsSMyUoGCoQkkM0KDwUPwU2LR/8QAGgEAAgMBAQAAAAAAAAAAAAAABAUAAgMBBv/EACERAAICAgICAwEAAAAAAAAAAAABAhEDBBIhMUEFEyJR/9oADAMBAAIRAxEAPwBy8ZjMU/VzUXLmmWUH8x5jkFKE+CNGbILsp22zaB16nkBucQhY65VqZQ6VIqtZqEanwIyON6RIcCEIHqThW9VO2RSYcpdJ02ovvmRxcCajOCm4/FyBQ2LLWPiUfA4V/W/WLN2q9a9qrkn2emsrJh0xhR7iOOp/Gu3NZ36WG2KHTJBj1CPIP/E6lfyIOIdSth11O1E1+ktpnZhzPVKfBdIuzTleyoQDvwnu7KP6icXTS2TJnUmPImS3312BU48tSlK/MnG21RTErulxqbclBNRWz3bYHUA//cSdOoMVFKbp4SD3aBdQ53thXt5XxpnodLWUJcl4CbkiXEXNTDYnIS9y4Q7ZX1wWor02DEBdUXAPxKKj88J/VMstwK87MaotVDoesJUR8hYJuQq3T49cE/JVezZDPshrL1RbQoIMeckcYHooc8dwwjjgmn5K7mKeadB9FZjJS2XeJAX5gXA+ONg04262HGlpWg8ik3GA3mfPcSjlbDkF2QtNiUMkFVz5YEle7RcvLdebXSqVMbHHZ2JLbKW30+h/tPRQ/cbYLWVqrF8tKo3dMcHGYqOk+oeXNS8ps5hy7JKkE93JjOWDsV226Fjr0PIjcYt2CBeQq9VafQqLNrNVlNxYEJhb8h5ZsEISLk/IY5d9oHVOqasZ+kVyVxx6axdmmQiraOzfmfLjVa6j125AYZz+IlqI5TcvUvTmnPlD1UtNqXCqx9nQqzaD6KWCf8Y64RzEIfRsfPH0m3F+ePPH0kemIQOmmeYUVnL8ChSXit+FI4kpKdg3bbfrfywddHo328xakqHE4QOIX2/79MK/ooi0qa8Rugpv8L4bTTthtqO2tR+/uDyv0wq2IpTPQaE3KN2Ed/KaVNe2sSO5StPiNxbFTn0yJT30JjyEuPBd7I+9c874t/vKOhDUeQ4pJB8LV9ieuIsiEricqbSGgor4wmwO+NljU4qi+LNOGT9g+nZa941CpRZkZxxL3A4hSVlCwfQ+hGBnqjkv3TRajVFsd2hmIEtNr34eFNir42/7fBtFYdVnRhT6RHCUFAbI/qE88DXtd5jYj5HVHY8Ls3wADpiqjTSTLbD/AA5NehdtA9VappTqAxXYveP058hmpwgqwfZvzHlxpvdJ67cicdP6FVafXKLDrNKlNyoE1lL8d5BuFoULg/I447rvxb88PB/Du1EcqWXqppzUXyt6l3m07iNz7OtVnED0Ssg/5D0wwR5tuxbe1ZmZeatfs1zu8K2Ysw09geQQx9lt6FSVK/VgX2OJtZluVCszqg4brlSHHlHqVKKj9cRQCcX4s4fiRj0YQpbiUp5k49GkAEAjxY28RhFuJOw5WUcb48NqykpUhndPdO4zeidKzHEYBkvhS5agLkpJIHyIxa8h1BxiIIiworaWLE4uXZMS1V9EYEeQlLzTZejuI8rcVwP3x4ZlyRLoNUcejtOuQ3DdKwD4PQ4XbWFzba9DL47ZS6kWtuHDq8ELdSgrIBSoDcH0OPx2nuMwwz3nFwm91psSOlxzxosrVBVPc7uQpa4yT4VW3RvuD6YuE2s0uTGtHlMlaE3uTbGeNSguw7I7mq8A7aipj5nclVN5PdNC7QOyU+ZO/nhXO1Bm+PX81ppsFZVFhggEHYknDCaiQcz5hpVYm0FClMw46j3nCSHVDmhFuZsfLCbVWG4JSkygVqUolSzubnqcb62rKb+xgm/ux6hErqwfPBO7KeZV5V19ypO70oZlTBAfHkpD/wBlv6BSkq/TijP0uygEr2O4vjKYmTSqvCqLe6osht4KT5FKgR9MFPFJehWppnxVqcun1iZT3dlRpDjKgRyKVEH6YxpkcJ4SOXngm9qPLa8sa8ZohBru2ZUwz2D5KQ/9obegUpSf04G7JACh1G3TBUYqrRnJtENxPA4CDfe+NtCJWkEcR6jr1xGS1xeEgXN7Yl09Bv8AeAA/bG8VTpFJytDpdhCsqcyzWKIof0JCXk36KFj9MMxIaS62pKkhQIOxGEo7ElUVE1Fk09TieCZFNh1KSCMOzuUkcsLtmHGbs1xS6Axmmsaas1iVBl1lNNqMY2dS3yBtsL8jjyy5M01qVchUtmrrq02TchFwUi34uEC354p/aL0heh1GRnXK6C6lZLtQh/ncuJ/e4xK7IdDjuTa5XFIQpwFthBI3SCOI4n1Q4WELLLj5GANPisQ0RWWWkMAcIbSiyQLcrflhEu1DkhOW9QpxhMBuHN/mmU25cX3gPgq/7YfxbdrJA8I3GAl2sspe98jorLDQXIpiitW25aV975bH8sW158XQLli32hD0NuJQQQfUq8setPpq6lUokJsBS5D6GbWvupQAt88babAKHFltFwNyD5YunZvoKsx63ZbhITxMR5Qmvi2yUsjvN/QqSlP6sMslU2Yxdug1/wAQHT9yo0KmahU9gqepv8lUSkb9wtV21n0Sskf5B0wmPdnbZRT54621ulwK3R5lIqkZEmDMZUw+0sbLQoWIxzS1501qmlmenqJKU4/Tn+J2my1J2fZv5+XGnkodd+RGAtaV/lm+VeykobHEPDwknl6YlxkJHClKQpPMk2GIjPDwCxPETv5DGxi+oF78wPLbbB8QZsJWgFT9yao0KdcJQqUlpfwV4f8AYx0RQoKF0m4PLHMiiOezzGJDalIcZcS4m1+YNxjpDlCYKjlyBPSQQ/HbcB+KRhfuR7UjfD/Csa6Vn3TkaYhBs/MbMdq3kVDc/K+Bf2W6xDhVmqZfWoCU6lt5FzsrhFiBjd9pmUTUKPECrJDTjhB5E3AH+8A2h1l/LmpFNrLarBpaQ4OQ4b2Px2xpixXhdDCUEsCa8jzA3xAr1Pj1OlyYMlIU0+yppYPmCLY9qbITKiofSQULAUkjoRiQ4kKTbrthf2CvtHOzP1Acy9mafR5KQDHeUgX/AA/2n5YYfsV5E93UypZ5mMcL1Q/lIRI37lKrrUPRSwB+g9cTdZNH5OctUqW5EBYgy2uKoyQn+klB3t/7EGwHX0Bwd6TT4dKpkamU9hEeJFaS0y2kbJSkWAwbmz8saSM4Q7slYqWq+n2XtScpvZfzDH4kHxxpCAO9jO22Wg9eo5EbHFtxmBE2naNTmbq/pJmrS2sezVmN7RT3l2iVFlJLL4HK/wCBduaDv0uN8VWEOXFYD446oVml06tUx+mVaDHnQpCeB1h9sLQseoOFw1J7J9JmLdm5CqvutxRKhAmlTjF+iXBdaR6EK+OD8W2mqmDTwu7QrkEq7xNgAkYffs5VI1TSWjulXEppBYV+g2/1hQ61ozqXltw+3ZTnSEIN++gj2lCh18FyB8QMMj2QpMxnJNSpVQjPRXYs4qS282UEJUkHkR1vju24zhaZzFcZdms7T7vc5oogVycirSBfmeIYBNfF5aHOHnsAfrg89rCJKkVTLphxX5Cil4KDLZWQLotsMDum6X56rqGkxqDLaH/llDuUpHXx2J/IHF9aajitsaxknhcWMhohVffGm1JmKN19yG1nz4k+E/TF2xR9FcnVLJOThR6pNjyni8p0BgHgbBt4QTYne+9hi8YWzrk6BDALYzGYzFSH/9k=",
+      "profileUrl": "https://www.linkedin.com/in/reginaldo-mendonça-ba3059231",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:53.915Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Mateus Alencar",
+      "title": "Comprador | Analista de Suprimentos | Strategic Sourcing | SAP | Protheus | Excel Brasil",
+      "city": null,
+      "location": null,
+      "current": "Comprador na Luft Logistics",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Mateus Alencar • 3º e + Comprador | Analista de Suprimentos | Strategic Sourcing | SAP | Protheus | Excel Brasil Conectar Atual: Comprador na Luft Logistics",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGQJWPwmHkJgQ/profile-displayphoto-scale_100_100/B4DZ0MVlesHMAg-/0/1774028486648?e=1795046400&v=beta&t=hwxSitK4Iz3D9m5HrIx8whkZNIa4buwgQK7WdXT_zLg",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/mateus-alencar-a044963a5",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:54.179Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Herion Lima",
+      "title": "Líder",
+      "city": "em atendimento e vendas | SDR | CLOSER | COMPRADOR | Alta perfomance na área comercial | Gerente administrativo e Geral Barueri, São Paulo, Brasil",
+      "location": "em atendimento e vendas | SDR | CLOSER | COMPRADOR | Alta perfomance na área comercial | Gerente administrativo e Geral Barueri, São Paulo, Brasil",
+      "current": "Líder",
+      "past": null,
+      "level": "3º e +",
+      "action": "Connect",
+      "connection": "connect",
+      "mutualConnections": null,
+      "summary": "Herion Lima • 3º e + Líder em atendimento e vendas | SDR | CLOSER | COMPRADOR | Alta perfomance na área comercial | Gerente administrativo e Geral Barueri, São Paulo, Brasil Conectar",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQFCW6Am8lOZEQ/profile-displayphoto-scale_100_100/B4DZuUaym4HwAc-/0/1767721610317?e=1795046400&v=beta&t=NHxHGkt0IvVEH30kSxbLvG9cqoGJpErWrpQ_S3HfEY8",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/herion-lima-067b411a0",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador barueri",
+      "searchQuery": "comprador barueri",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-03T19:30:54.472Z",
+      "source": "search_card"
+    }
+  ],
+  "steps": [
+    "search:comprador barueri:page=1",
+    "list-page:1:cards=10",
+    "card:1:p1:Danilo Lopes",
+    "api:profiles:skip:400 {\"message\":[\"city must be shorter than or equal to 200 characters\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+    "card:2:p1:Rodrigo Ramos",
+    "api:profiles:ok",
+    "card:3:p1:Fabiana Lima",
+    "api:profiles:ok",
+    "card:4:p1:Magda Rodrigues",
+    "api:profiles:ok",
+    "card:5:p1:Rosi D.",
+    "api:profiles:ok",
+    "card:6:p1:Luiz Felipe",
+    "api:profiles:ok",
+    "card:7:p1:Ver perfil completo",
+    "api:profiles:ok",
+    "card:8:p1:Mateus Alencar",
+    "api:profiles:ok",
+    "card:9:p1:Herion Lima",
+    "api:profiles:ok"
+  ],
+  "truncated": false
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] completed extrair_leads
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=ea1f17c3-6eb2-42a6-af3c-12b03bda1f92
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/rodrigo-ramos-097038279 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/rodrigo-ramos-097038279
+{
+  "ok": true,
+  "status": "pending",
+  "url": "https://www.linkedin.com/in/rodrigo-ramos-097038279",
+  "steps": [
+    "view:https://www.linkedin.com/in/rodrigo-ramos-097038279",
+    "click:Conectar@106,504",
+    "skip:Enviar sem nota@776,226",
+    "pending:try1",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://144.126.154.90/client-connections-linkedin",
+    "data": {
+      "id": "730ce770-61b4-4005-86bf-4ab145eabd50",
+      "clienteLinkedinId": "3ee5e110-599e-44ef-af30-956282da6ce8",
+      "clienteLinkedin": {
+        "id": "3ee5e110-599e-44ef-af30-956282da6ce8",
+        "clienteId": "4ce46e20-55b5-417b-bb8f-00496ac59a8c",
+        "profileUrl": "https://www.linkedin.com/in/rodrigo-ramos-097038279",
+        "headline": "Comprador",
+        "company": "Comprador na BK Cenografia",
+        "location": "São Paulo, Brasil",
+        "connections": null,
+        "mutualConnections": null,
+        "connectionDegree": "3º e +",
+        "inviteStatus": "connect",
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador barueri",
+        "past": null,
+        "round": 1,
+        "photoBase64": "data:image/jpeg;base64,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",
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-03T19:30:52.513Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-03T19:30:52.803Z",
+        "updatedAt": "2026-11-03T19:30:52.803Z"
+      },
+      "agentId": "b7515404-ec01-466c-b30f-30be39c0a2f3",
+      "status": 1,
+      "invitedAt": "2026-11-03T20:30:48.069Z",
+      "connectedAt": null,
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/rodrigo-ramos-097038279",
+        "click:Conectar@106,504",
+        "skip:Enviar sem nota@776,226",
+        "pending:try1"
+      ],
+      "createdAt": "2026-11-03T19:30:52.828Z",
+      "updatedAt": "2026-11-03T20:30:48.499Z"
+    },
+    "status": 1
+  }
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] completed conectar
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+[b7515404-ec01-466c-b30f-30be39c0a2f3] erro: fetch failed
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=b7515404-ec01-466c-b30f-30be39c0a2f3 DRY=0 runtime=cdp SERIAL=cdp:thiago-nascimento CDP_ID=thiago-nascimento CDP_URL=http://127.0.0.1:9256
+[b7515404-ec01-466c-b30f-30be39c0a2f3] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=b7515404-ec01-466c-b30f-30be39c0a2f3
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=feaad5ef-4bc0-43f9-931e-7103b8389717
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/fabiana-lima-77001a2b6 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/fabiana-lima-77001a2b6
+{
+  "ok": true,
+  "status": "pending",
+  "url": "https://www.linkedin.com/in/fabiana-lima-77001a2b6",
+  "steps": [
+    "view:https://www.linkedin.com/in/fabiana-lima-77001a2b6",
+    "click:Conectar@248,503",
+    "skip:Enviar sem nota@911,226",
+    "pending:try1",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://144.126.154.90/client-connections-linkedin",
+    "data": {
+      "id": "f508583b-9417-40b8-a58a-1a008468c4b6",
+      "clienteLinkedinId": "57741199-4f7f-42db-a9e3-790e21a6d211",
+      "clienteLinkedin": {
+        "id": "57741199-4f7f-42db-a9e3-790e21a6d211",
+        "clienteId": "0228a9a8-58eb-40ab-9a6e-59d30388bab4",
+        "profileUrl": "https://www.linkedin.com/in/fabiana-lima-77001a2b6",
+        "headline": "Comprador Junior/ Desenvolvimento do Produto São Paulo e Região",
+        "company": "Comprador júnior na KLZ Uniformes, logística e tecnologia",
+        "location": null,
+        "connections": null,
+        "mutualConnections": null,
+        "connectionDegree": "3º e +",
+        "inviteStatus": "connect",
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador barueri",
+        "past": null,
+        "round": 1,
+        "photoBase64": "data:image/jpeg;base64,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",
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-03T19:30:52.937Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-03T19:30:53.036Z",
+        "updatedAt": "2026-11-03T19:30:53.036Z"
+      },
+      "agentId": "b7515404-ec01-466c-b30f-30be39c0a2f3",
+      "status": 1,
+      "invitedAt": "2026-11-03T21:22:24.854Z",
+      "connectedAt": null,
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/fabiana-lima-77001a2b6",
+        "click:Conectar@248,503",
+        "skip:Enviar sem nota@911,226",
+        "pending:try1"
+      ],
+      "createdAt": "2026-11-03T19:30:53.059Z",
+      "updatedAt": "2026-11-03T21:22:25.239Z"
+    },
+    "status": 1
+  }
+}
+[b7515404-ec01-466c-b30f-30be39c0a2f3] completed conectar
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=b7515404-ec01-466c-b30f-30be39c0a2f3 DRY=0 runtime=cdp SERIAL=cdp:thiago-nascimento CDP_ID=thiago-nascimento CDP_URL=http://127.0.0.1:9256
+[b7515404-ec01-466c-b30f-30be39c0a2f3] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=b7515404-ec01-466c-b30f-30be39c0a2f3
+[b7515404-ec01-466c-b30f-30be39c0a2f3] idle: sem trabalho na fila (prioridades vazias)
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=b7515404-ec01-466c-b30f-30be39c0a2f3 DRY=0 runtime=cdp SERIAL=cdp:thiago-nascimento CDP_ID=thiago-nascimento CDP_URL=http://127.0.0.1:9256
+[b7515404-ec01-466c-b30f-30be39c0a2f3] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=b7515404-ec01-466c-b30f-30be39c0a2f3
+[b7515404-ec01-466c-b30f-30be39c0a2f3] claimed conectar p=4 id=f36dca29-498f-4b19-8cbb-194c13358dec
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/magda-rodrigues-212b8a131 --no-shot
+
+cdpId=thiago-nascimento cdpUrl=http://127.0.0.1:9256 url=https://www.linkedin.com/in/magda-rodrigues-212b8a131

@@ -1,0 +1,1 @@
+Trajetória contínua do mouse (sem teleportes) na human-cdp

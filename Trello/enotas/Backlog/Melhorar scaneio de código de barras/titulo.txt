@@ -1,0 +1,1 @@
+Melhorar scaneio de código de barras

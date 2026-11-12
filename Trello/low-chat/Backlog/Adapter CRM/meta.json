@@ -1,0 +1,24 @@
+{
+  "id": "6ae8ba0bc6ad9b3079ef98fd",
+  "url": "https://trello.com/c/uHEnfIUI/8-adapter-crm",
+  "list": "Backlog",
+  "dateLastActivity": "2026-11-02T16:27:55.401Z",
+  "due": null,
+  "labels": [
+    {
+      "name": "canal",
+      "color": "purple"
+    },
+    {
+      "name": "CRM",
+      "color": "orange"
+    }
+  ],
+  "cover": {
+    "color": null,
+    "size": "normal",
+    "brightness": "dark",
+    "idAttachment": null,
+    "idUploadedBackground": null
+  }
+}

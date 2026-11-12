@@ -1,0 +1,50 @@
+{
+ "v1": {
+  "nome": "pin aberto",
+  "base": "A",
+  "ideia": "O pin do A com furo maior: a forma mais simples, que aguenta 16 px.",
+  "risco": "Sozinho é o pin padrão de mapa; a ligação com o “o” só aparece no wordmark"
+ },
+ "v2": {
+  "nome": "R pin",
+  "base": "A + B",
+  "ideia": "O R do ícone aprovado com o pin no lugar do ponto: monograma + localização.",
+  "risco": "Dois elementos pequenos lado a lado; em 16 px o mini pin vira ponto"
+ },
+ "v3": {
+  "nome": "match",
+  "base": "A",
+  "ideia": "Dois pins sobrepostos: o match do grupo, todo mundo no mesmo rolê.",
+  "risco": "Mais detalhe que o A; o pin de trás perde o furo em 16 px"
+ },
+ "v4": {
+  "nome": "pin no bloco",
+  "base": "A",
+  "ideia": "Ícone de app: o pin do A vazado num bloco ciano.",
+  "risco": "É uma aplicação do A (ícone de app), não uma marca nova"
+ },
+ "v5": {
+  "nome": "Go",
+  "base": "A",
+  "ideia": "As duas letras do “Go” sozinhas: o G e o pin, o “bora” do RoleGo.",
+  "risco": "Símbolo largo (2:1); no ícone quadrado o pin fica pequeno"
+ },
+ "v6": {
+  "nome": "pin pousado",
+  "base": "A + C",
+  "ideia": "O pin pousa num anel no chão: chegou no rolê.",
+  "risco": "O anel lembra “alvo” ou sombra; some em 16 px (usar V1 no favicon)"
+ },
+ "v7": {
+  "nome": "pin balão",
+  "base": "A",
+  "ideia": "A ponta do pin vira a ponta de um balão: lugar + conversa, o lado social do app.",
+  "risco": "Pode ler só como balão de chat; perde a leitura de localização"
+ },
+ "v8": {
+  "nome": "ingresso",
+  "base": "A + emblema",
+  "ideia": "Um ingresso com o pin vazado: o rolê e a entrada no mesmo selo.",
+  "risco": "Ingresso é clichê de eventos; selo pesa ao lado do wordmark"
+ }
+}

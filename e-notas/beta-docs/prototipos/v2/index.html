@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>notinhas.shop · Protótipo v2.0</title>
+<meta name="description" content="Protótipo navegável v2.0 do notinhas.shop Beta: 38 telas, E01–E06 + ADM, rastreável a histórias, regras e requisitos.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="wrap masthead">
+  <div>
+    <span class="wm"><svg class="sym" viewBox="40 34 176 188" aria-hidden="true"><path style="fill:var(--nt-logo-a)" d="M52 52 A12 12 0 0 1 64 40 L104 40 A12 12 0 0 1 116 52 L116 202 L100 216 L84 202 L68 216 L52 202 Z"/><path style="fill:var(--nt-logo-b)" d="M140 52 A12 12 0 0 1 152 40 L192 40 A12 12 0 0 1 204 52 L204 122 L188 136 L172 122 L156 136 L140 122 Z"/></svg><b>notinhas</b><i>.shop</i></span>
+    <h1>Protótipo Beta <span>v2.0</span></h1>
+    <p class="lede-xl">Tudo o que já existe no app do lab, nos docs do Beta e no protótipo v1, num protótipo só, <b>com estado de verdade</b>: a busca filtra, a lista recalcula o split, o vínculo de EAN muda o progresso da nota, os pontos sobem. Dados de lojas, notas e fotos vêm da base real de São José dos Pinhais.</p>
+    <div class="actions">
+      <button class="sbtn p" data-start="T-10">Navegar no protótipo</button>
+      <button class="sbtn s" data-start="D-10">Ver no desktop</button>
+      <button class="sbtn s" data-start="T-20">Começar pelo scan da nota</button>
+      <a class="sbtn s" href="#rastreio">Rastreabilidade</a>
+    </div>
+    <div class="themebar" id="themebar"><span>Tema</span></div>
+  </div>
+  <div class="stats">
+    <div><b id="st-screens">–</b><span>telas navegáveis</span></div>
+    <div><b id="st-new">–</b><span>telas novas no v2</span></div>
+    <div><b id="st-us">–</b><span>histórias cobertas</span></div>
+    <div><b id="st-rn">–</b><span>regras de negócio cobertas</span></div>
+  </div>
+</header>
+
+<nav class="flownav" aria-label="Fluxos"><div class="wrap" id="flownav"></div></nav>
+
+<section class="doc" id="temas"><div class="wrap">
+  <h2>Temas para escolher</h2>
+  <p class="d">Seis combinações com a mesma gramática da marca: uma cor de ação, uma cor só para “menor preço”, texto e fundo. A câmera fica escura em todas. Escolha a tela para comparar e aplique um tema para ver o protótipo inteiro com ele.</p>
+  <div class="tscreens" id="tscreens"></div>
+  <div class="themes" id="themes"></div>
+</div></section>
+
+<main class="wrap" id="gallery"></main>
+
+<section class="doc" id="mudancas"><div class="wrap">
+  <h2>O que mudou do v1 para o v2.0</h2>
+  <p class="d">O v1 era uma galeria de telas estáticas. O v2 é um app de verdade em HTML puro (abre sem build), com estado único e cenários controláveis.</p>
+  <div class="cols">
+    <div><h3>Comportamento</h3><ul>
+      <li>Busca real por nome, marca ou EAN, com dígito verificador (GTIN mod-10)</li>
+      <li>Destaques (RN-11), ranking de lojas (RN-10) e cotação de listas (RN-13) calculados das observações, não desenhados</li>
+      <li>Stepper e remoção na lista recalculam “uma loja” e “dividir entre lojas”</li>
+      <li>Vincular EAN atualiza o progresso da nota (REQ-046) e soma pontos (REQ-052)</li>
+      <li>Criar conta faz o merge do que estava no fingerprint (REQ-050)</li>
+    </ul></div>
+    <div><h3>Cobertura nova</h3><ul>
+      <li>E02: processando nota (T-25), duplicada (T-26), falha SEFAZ / link inválido (T-27)</li>
+      <li>E03: item da vitrine sem EAN com sugestões (T-34, REQ-039/043)</li>
+      <li>E05: excluir conta e dados, LGPD (T-56, US-01.12)</li>
+      <li>E06: câmera negada, offline, busca vazia e skeleton</li>
+      <li>ADM de volta, separado: métricas da base real, fila de falhas, moderação</li>
+      <li>IDs de história alinhados aos arquivos de <code>02-historias/</code></li>
+    </ul></div>
+    <div><h3>Vindo do app do lab</h3><ul>
+      <li>Ficha canônica <code>produtos_ean</code>: título, marca, NCM, fontes (REQ-047/048)</li>
+      <li>Categorias canônicas (REQ-049) como filtro</li>
+      <li>Origem do vínculo: scan, sugestão ou manual (REQ-043)</li>
+      <li>Descrições cruas da DANFE e lojas reais de SJP</li>
+      <li>Candidatas de foto reais baixadas pelo EAN (REQ-032/040)</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section class="doc" id="design"><div class="wrap">
+  <h2>Design e motion</h2>
+  <p class="d">A marca do produto vence o default do workspace (DESIGN.md v2). As práticas de <code>core/definir-projeto-moderno/03-design-ui-motion</code> entram no comportamento: motion que explica estado, CSS primeiro, View Transitions entre rotas, vidro só em camada flutuante, skeleton em vez de spinner.</p>
+  <div class="tok">
+    <div class="sw"><i style="background:#0069B4"></i><p><b>--nt-blue</b><span>#0069B4 · único CTA</span></p></div>
+    <div class="sw"><i style="background:#014380"></i><p><b>--nt-blue-deep</b><span>#014380 · títulos</span></p></div>
+    <div class="sw"><i style="background:#00984B"></i><p><b>--nt-green</b><span>#00984B · menor preço</span></p></div>
+    <div class="sw"><i style="background:#0B1F33"></i><p><b>--nt-ink</b><span>#0B1F33 · texto</span></p></div>
+    <div class="sw"><i style="background:#000000"></i><p><b>--nt-black</b><span>#000000 · fundo escuro, scan</span></p></div>
+    <div class="sw"><i style="background:#F5F7FA;border-bottom:1px solid #D5DEE8"></i><p><b>--nt-canvas</b><span>#F5F7FA</span></p></div>
+    <div class="sw"><i style="background:#D5DEE8"></i><p><b>--nt-line</b><span>#D5DEE8 · hairline</span></p></div>
+  </div>
+  <div class="tablewrap"><table class="mt">
+    <thead><tr><th>Onde</th><th>Movimento</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Troca de tela</td><td>View Transition, 380 ms, deslize curto + fade; direção inverte no voltar</td><td>Mostra se a pessoa avançou ou voltou</td></tr>
+      <tr><td>Card → detalhe</td><td>Foto do produto é elemento compartilhado e viaja até o topo</td><td>Mantém o objeto em foco entre listas e detalhe</td></tr>
+      <tr><td>Uma loja ↔ dividir</td><td>Pílula do segmentado desliza entre as opções</td><td>Mesmo conteúdo, outra forma de calcular</td></tr>
+      <tr><td>Botões, chips, toggles</td><td>Spring curto (160 ms) na pressão; toggle com leve overshoot</td><td>Confirma o toque</td></tr>
+      <tr><td>Sheet, toast, popup do mapa</td><td>Entram de baixo com spring suave (280 ms)</td><td>Camada temporária sobre a tela</td></tr>
+      <tr><td>Leitura da nota</td><td>Etapas com check + skeleton dos itens</td><td>Espera de até 10 s com progresso real</td></tr>
+      <tr><td>Movimento reduzido</td><td>Sem deslizes, laser e shimmer parados, só fades; regra a regra</td><td><code>prefers-reduced-motion</code> ou cenário no painel</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section class="doc" id="rastreio"><div class="wrap">
+  <h2>Rastreabilidade</h2>
+  <p class="d">Cada tela declara histórias (<code>02-historias/</code>), regras (PRD §6) e requisitos (<code>docs/requisitos.md</code>). A cobertura abaixo é calculada desses metadados.</p>
+  <p class="covh">Histórias <span id="cov-us-n"></span></p><div class="cov" id="cov-us"></div>
+  <p class="covh">Regras de negócio <span id="cov-rn-n"></span></p><div class="cov" id="cov-rn"></div>
+  <div class="tablewrap"><table class="mt" id="trace"><thead><tr><th>Tela</th><th>Nome</th><th>Fluxo</th><th>Histórias</th><th>Regras</th><th>Requisitos</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<footer class="wrap site">notinhas.shop · protótipo Beta v2.0 · 2026-11-08 · lojas, DANFE e fotos da base <code>enotas</code> do lab; preços cruzados e EANs marcados “exemplo” são conteúdo de protótipo · v1 em <a href="../index.html">../index.html</a></footer>
+
+<div id="player" role="dialog" aria-modal="true" aria-label="Protótipo navegável">
+  <nav id="plist" aria-label="Telas"><span class="wm"><svg class="sym" viewBox="40 34 176 188" aria-hidden="true"><path style="fill:var(--nt-logo-a)" d="M52 52 A12 12 0 0 1 64 40 L104 40 A12 12 0 0 1 116 52 L116 202 L100 216 L84 202 L68 216 L52 202 Z"/><path style="fill:var(--nt-logo-b)" d="M140 52 A12 12 0 0 1 152 40 L192 40 A12 12 0 0 1 204 52 L204 122 L188 136 L172 122 L156 136 L140 122 Z"/></svg><b>notinhas</b><i>.shop</i></span></nav>
+  <div id="stage">
+    <div class="stagebar"><button class="sbtn s" id="stage-close">← Galeria</button><button class="sbtn s" id="dev-toggle">Ver no desktop</button><button class="sbtn s" id="pn-toggle">Notas e cenários</button></div>
+    <div class="stage-themes" id="stage-themes" role="radiogroup" aria-label="Tema"></div>
+    <div id="live"></div>
+  </div>
+  <aside id="pnotes">
+    <div id="pnotes-body"></div>
+    <div class="scen">
+      <h4>Cenários</h4>
+      <div class="sc"><span>Sessão</span><div><button data-scen="session:anon">Visitante</button><button data-scen="session:conta">Com conta</button></div></div>
+      <div class="sc"><span>Resultado da leitura da nota</span><div><button data-scen="scanResult:ok">Sucesso</button><button data-scen="scanResult:dup">Duplicada</button><button data-scen="scanResult:timeout">SEFAZ lenta</button><button data-scen="scanResult:invalid">Link inválido</button></div></div>
+      <div class="sc"><span>Câmera</span><div><button data-scen="cam:ok">Liberada</button><button data-scen="cam:negada">Negada</button></div></div>
+      <div class="sc"><span>Rede</span><div><button data-scen="online:true">Online</button><button data-scen="online:false">Offline</button></div></div>
+      <div class="sc"><span>Localização</span><div><button data-scen="gps:true">GPS ativo</button><button data-scen="gps:false">Sem GPS</button></div></div>
+      <div class="sc"><span>Crédito de cotação</span><div><button data-scen="credits:ok">Disponível</button><button data-scen="credits:out">Esgotado</button></div></div>
+      <div class="sc"><span>Tema</span><div id="scen-theme"></div></div>
+      <div class="sc"><span>Movimento</span><div><button data-scen="reduced:false">Normal</button><button data-scen="reduced:true">Reduzido</button></div></div>
+      <button class="sbtn s" id="scen-reset" style="height:34px;font-size:12px;margin-top:4px">Reiniciar estado</button>
+    </div>
+    <p class="kbd"><kbd>←</kbd> <kbd>→</kbd> telas · <kbd>⌫</kbd> voltar · <kbd>H</kbd> áreas clicáveis · <kbd>T</kbd> próximo tema · <kbd>D</kbd> celular/desktop · <kbd>Esc</kbd> fechar · link direto: <code>#T-14</code></p>
+  </aside>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/desktop.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

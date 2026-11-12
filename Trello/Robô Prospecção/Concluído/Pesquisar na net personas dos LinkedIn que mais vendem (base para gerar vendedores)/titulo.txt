@@ -1,0 +1,1 @@
+Pesquisar na net personas dos LinkedIn que mais vendem (base para gerar vendedores)

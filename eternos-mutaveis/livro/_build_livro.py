@@ -5,7 +5,7 @@ Músicas em assets/musica/ (domínio público / CC0 / CC BY, Wikimedia Commons).
 import os, re, json, sys
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else ""
-V2 = MODE in ("v2", "v3")   # pranchas P&B vindas do próprio capítulo
+V2 = MODE in ("v1", "v2", "v3", "v4", "v5")   # pranchas P&B vindas do próprio capítulo
 GRAV = {  # pranchas: gravuras renascentistas (domínio público / CC0), em assets/gravuras/
     "cap1": ("Albrecht Dürer, Adão e Eva, 1504 (gravura a buril)", "Adão e Eva de pé entre árvores, nus, no instante antes da queda; a serpente entrega o fruto a Eva; animais ao redor."),
     "cap2": ("Albrecht Dürer, São Jerônimo no estúdio, 1514 (gravura a buril)", "Um sábio escreve sozinho num estúdio iluminado pela janela; um leão dorme no chão; um crânio no parapeito."),
@@ -22,7 +22,17 @@ if V2:  # texto 2.0 / 3.0 (v2/_build_v2.py, v3/_build_v3.py): pranchas P&B, tít
 else:
     src = open(os.path.join(ROOT, "eternos-mutaveis.html"), encoding="utf-8").read()
 caps = re.findall(r'<section class="cap" id="(cap\d)">(.*?)</section>', src, re.S)
+# v4: dedicatória, nota do autor e apêndices (<section class="extra" data-pos="front|back">)
+EXTRAS = re.findall(r'<section class="extra" id="([^"]+)" data-pos="(front|back)">(.*?)</section>', src, re.S)
+def _extras(pos):
+    return "".join(f'<section class="cap extra" id="{i}" data-track="{"abertura" if pos == "front" else "fim"}"><div class="txt">{h}</div></section>'
+                   for i, p, h in EXTRAS if p == pos)
 assert len(caps) == 7, len(caps)
+
+# v5: capa D invertida (branco em cima, preto embaixo)
+CAPA = ('<img src="capa/v2/capa-d2-frente.jpg" alt="Capa de Eternos Mutáveis, de Laércio Germano: peça de dominó em pé; metade de cima branca com bola preta e a palavra ETERNOS, metade de baixo preta com bola branca e a palavra MUTÁVEIS; no alto, A superação adâmica.">'
+        if MODE == "v5" else
+        '<img src="capa/v2/capa-d-frente.jpg" alt="Capa de Eternos Mutáveis, de Laércio Germano: peça de dominó em pé; metade de cima preta com bola branca e a palavra ETERNOS, metade de baixo branca com bola preta e a palavra MUTÁVEIS; no alto, A superação adâmica.">')
 
 M = "assets/musica/"
 TRACKS = {
@@ -77,7 +87,7 @@ for cid, html in caps:
     rest = re.sub(r"<h1>.*?</h1>", "", html, count=1, flags=re.S)
     top = '<div class="dom"><span class="b"></span><span class="w"></span></div>'
     if V2:
-        m = re.search(r'<figure>(<img src="assets/(?:gravuras|banners-gravura)/[^>]*>)(?:<figcaption>(.*?)</figcaption>)?</figure>', rest, re.S)
+        m = re.search(r'<figure>(<img src="assets/(?:(?:gravuras|banners-gravura|obras-v5)/|banner-cap-)[^>]*>)(?:<figcaption>(.*?)</figcaption>)?</figure>', rest, re.S)
         rest = rest[:m.start()] + rest[m.end():]
         top = f'<figure class="plate">{m.group(1)}<figcaption>{m.group(2) or ""}</figcaption></figure>'
         PLATE_CREDITS.append(m.group(2) or "")
@@ -99,6 +109,9 @@ credits = "".join(f'<li><b>{TRACKS[k]["t"]}</b> · {TRACKS[k]["a"]} <span>({TRAC
 tracks_js = json.dumps({k: dict(f=v["f"], t=v["t"], a=v["a"]) for k, v in TRACKS.items()}, ensure_ascii=False)
 
 CSS = r"""
+/* v4: dedicatória, nota e apêndices */
+.extra{padding-top:10vh}.extra .dedic{min-height:70vh;display:flex;flex-direction:column;justify-content:center;text-align:center;font-style:italic}
+.extra table{border-collapse:collapse;width:100%;font-size:16px;margin:.8em 0 1.4em}.extra th,.extra td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 :root{--paper:#F4F2EC;--ink:#0B0B0B;--mute:#6E6B64;--line:#D9D5CB;--bar:#0B0B0B;--bar-ink:#F4F2EC}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:"EB Garamond",Georgia,serif;font-size:20px;line-height:1.62;-webkit-font-smoothing:antialiased}
@@ -251,10 +264,17 @@ js = JS.replace("__TRACKS__", tracks_js).replace("__LABELS__", json.dumps(labels
 drawer = '<a href="#rosto" data-k="abertura">Abertura<small>' + TRACKS["abertura"]["t"] + "</small></a>" + "".join(
     f'<a href="#{c}">{n}. {t}<small>♪ {TRACKS[c]["t"]} · {TRACKS[c]["a"]}</small></a>' for c, n, t in titles) + '<a href="#fim">Fim · créditos</a>'
 
-nav = ('<nav class="toc-nav" aria-label="Sumário"><a class="tn-top" href="#rosto">Eternos Mutáveis</a><ol>'
+def _xlinks(pos):  # introdução, nota do autor, apêndices no sumário lateral
+    out = ""
+    for i, p, h in EXTRAS:
+        m = re.search(r"<h1[^>]*>(.*?)</h1>", h, re.S)
+        if p == pos and m:
+            out += f'<li class="tn-cap"><a href="#{i}"><span>·</span>{re.sub(r"<[^>]+>", "", m.group(1))}</a></li>'
+    return out
+nav = ('<nav class="toc-nav" aria-label="Sumário"><a class="tn-top" href="#rosto">Eternos Mutáveis</a><ol>' + _xlinks("front")
        + "".join(f'<li class="tn-cap" data-cap="{c}"><a href="#{c}"><span>{n}</span>{t}</a><ol class="tn-secs">'
                  + "".join(f'<li><a href="#{i}"><span class="sn">{i.split("-s")[0][3:]}.{i.split("-s")[1]}</span>{x}</a></li>' for i, x in SECS.get(c, [])) + "</ol></li>" for c, n, t in titles)
-       + '<li class="tn-cap"><a href="#fim"><span>·</span>Fim e créditos</a></li></ol></nav>')
+       + _xlinks("back") + '<li class="tn-cap"><a href="#fim"><span>·</span>Fim e créditos</a></li></ol></nav>')
 labs = {"abertura": "Abertura"}; labs.update({c: f"{n}. {t}" for c, n, t in titles})
 why = "".join(f'<div class="why-it"><h3>{labs[k]}</h3><p class="wt">{TRACKS[k]["t"]} · {TRACKS[k]["a"]}</p><p>{WHY[k]}</p></div>' for k in ["abertura"] + [c for c, _, _ in titles])
 plates = ("<h2>Pranchas</h2><ol>" + "".join(f"<li>{c} <span>(domínio público / CC0, Wikimedia Commons)</span></li>" for c in PLATE_CREDITS) + "</ol>") if MODE == "v2" else ""
@@ -266,12 +286,14 @@ html = f"""<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Cormorant+SC:wght@500;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>
 <section class="cover" data-track="abertura"><div class="stack">
-<div class="book"><img src="capa/v2/capa-d-frente.jpg" alt="Capa de Eternos Mutáveis, de Laércio Germano: peça de dominó em pé; metade de cima preta com bola branca e a palavra ETERNOS, metade de baixo branca com bola preta e a palavra MUTÁVEIS; no alto, A superação adâmica."></div>
+<div class="book">{CAPA}</div>
 <button class="open" id="abrir"><span aria-hidden="true">♪</span> Abrir o livro com música</button>
 <p class="hint">A trilha muda a cada capítulo. Tecla M pausa ou toca.</p></div></section>
 <section class="front" id="rosto" data-track="abertura"><h1>Eternos<br>Mutáveis</h1><p class="sub">A superação adâmica</p><p class="by">Laércio Germano</p></section>
+{_extras("front")}
 <section class="toc" data-track="abertura"><h2>Sumário</h2><ol>{toc}</ol></section>
 {"".join(body)}
+{_extras("back")}
 <section class="back" id="fim" data-track="fim"><div class="book"><img src="capa/v2/capa-d-verso.jpg" alt="Contracapa: metade de cima branca com bola preta e o texto Da era adâmica à superação; metade de baixo preta com bola branca."></div></section>
 <section class="credits" data-track="fim"><h2>Trilha sonora</h2><ol>{credits}</ol>
 {plates}<p>Gravações do Wikimedia Commons em domínio público, CC0 ou CC BY (com o crédito do intérprete). Arquivos em <code>assets/musica/</code>.</p></section>

@@ -1,0 +1,9 @@
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+agent-worker API=http://144.126.154.90 AGENT=f505db3b-3ed8-491c-8600-0cb14993158f DRY=0 runtime=cdp SERIAL=cdp:daniela-hoffmann CDP_ID=daniela-hoffmann CDP_URL=http://127.0.0.1:9255
+[f505db3b-3ed8-491c-8600-0cb14993158f] enroll created=0 needsLinkedin=0 online=1
+agent-worker agentId canônico=f505db3b-3ed8-491c-8600-0cb14993158f
+[f505db3b-3ed8-491c-8600-0cb14993158f] claimed conectar p=4 id=b11c5552-e99b-4708-ace6-80f025b35dd0
+[f505db3b-3ed8-491c-8600-0cb14993158f] fail conectar: falha: IP igual ao último IP (191.177.175.219)

@@ -1,0 +1,1 @@
+Escanear QR também por foto (além da câmera ao vivo)

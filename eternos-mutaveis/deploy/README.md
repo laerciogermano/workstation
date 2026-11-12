@@ -5,19 +5,15 @@
 **DNS:** Hostinger (zona `laerciogermano.com`) · A `eternos-mutaveis` → `185.250.37.82`  
 **Nota:** hPanel não tem plano de hospedagem; o domínio só aponta DNS. CDP Germano `:9230` para editar zona.
 
-## Republicar
+## Republicar (todas as versões, com seletor)
 
 ```bash
-ROOT=/Users/laerciogermano/Documents/works/eternos-mutaveis
-DEST=/tmp/eternos-mutaveis-deploy
-rm -rf "$DEST" && mkdir -p "$DEST"
-cp "$ROOT/livro-v3.html" "$DEST/index.html"   # versão publicada; rollback local: livro-v2.html
-# copiar só paths referenciados em index.html (assets/, capa/v2/, inputs/imagens/, musica/)
-# depois:
-export SSHPASS='…'   # Contabo 185
-RSH='sshpass -e ssh -o StrictHostKeyChecking=no'
-sshpass -e rsync -az --delete -e "$RSH" "$DEST/" root@185.250.37.82:/opt/eternos-mutaveis/
+SSHPASS='…' bash deploy/publicar.sh      # Contabo 185
 ```
+
+`deploy/_montar_site.py` monta `/tmp/eternos-mutaveis-deploy`: `index.html` = 5.0 e `v5.html` … `v1.html` (de `livro-v5.html` … `livro-v1.html`), cada página com o seletor "Versão X ▾" no canto superior esquerdo, mais só os arquivos referenciados. Para incluir uma versão nova, gere `livro-vN.html` e acrescente-a em `VERSOES` no script.
+
+Rollback para a 3.0 sozinha: `cp livro-v3.html /tmp/x/index.html` + arquivos referenciados e o mesmo rsync.
 
 ## Rollback
 

@@ -1,0 +1,1 @@
+Ligar para Banco Inter: CNPJ de Campinas está dando erro para emitir NF e o CNPJ de Curitiba está dando erro para emitir boletos.

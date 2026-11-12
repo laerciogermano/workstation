@@ -1,0 +1,1 @@
+Chat local com persona+memória para validar qualidade sem canal.

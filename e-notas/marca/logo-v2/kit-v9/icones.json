@@ -1,0 +1,22 @@
+{
+ "claro": {
+  "nome": "Claro",
+  "nota": "marca completa em cor; recomendado como padrão",
+  "bg": "#fff"
+ },
+ "azul": {
+  "nome": "Azul",
+  "nota": "cor primária; verde vira branco (verde/azul = 2,64:1)",
+  "bg": "#014380"
+ },
+ "escuro": {
+  "nome": "Escuro",
+  "nota": "fundo preto; tira longa branca, tira curta verde (exceção à regra do preto)",
+  "bg": "#000000"
+ },
+ "verde": {
+  "nome": "Verde",
+  "nota": "destaque máximo; foge do azul institucional",
+  "bg": "#00984B"
+ }
+}

@@ -1,0 +1,1 @@
+PEgar todos os emails de todos os clientes que ja fizeram orcamento um dia

@@ -1,0 +1,23 @@
+{
+  "name": "fitness",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @fitness/api --filter @fitness/web dev",
+    "db:up": "docker compose up -d db",
+    "db:migrate": "pnpm --filter @fitness/api db:migrate",
+    "db:seed": "pnpm --filter @fitness/api db:seed",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "build": "pnpm -r build",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.7.3"
+  }
+}

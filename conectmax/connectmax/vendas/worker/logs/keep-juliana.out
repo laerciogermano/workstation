@@ -1,0 +1,26 @@
+[keep-worker] watch start-worker-juliana-cdp → /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker/./scripts/start-worker-juliana-cdp.sh (backoff 5000ms)
+——— 13:52:49 start-worker-juliana-cdp (log também em logs/worker-juliana-cdp.out) ———
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+05/11/2026 13:52:49 [1bbb1614] ——— worker iniciado ———
+05/11/2026 13:52:49 [1bbb1614] API http://144.126.154.90
+05/11/2026 13:52:49 [1bbb1614] agente 1bbb1614-ed89-42f5-a8d0-72d8649dac4a · Chrome CDP · perfil=juliana-peixoto · http://127.0.0.1:9258
+05/11/2026 13:52:49 [1bbb1614] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+05/11/2026 13:52:49 [1bbb1614] cadastrando/atualizando agente na API (enroll)…
+05/11/2026 13:52:49 [1bbb1614] enroll OK (já existia) · LinkedIn ok · online
+05/11/2026 13:52:49 [1bbb1614] ciclo #1: checando se o IP público pode ser usado…
+05/11/2026 13:52:49 [1bbb1614] consultando IP público → https://api.ipify.org…
+05/11/2026 13:52:50 [1bbb1614] IP 191.177.175.135 ainda não usado (consulta 312ms; 2 na lista) — liberado
+05/11/2026 13:52:50 [1bbb1614] ciclo #1: pedindo job na API…
+05/11/2026 13:52:50 [1bbb1614] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+05/11/2026 13:52:50 [1bbb1614] ciclo #1: peguei job «buscar candidatos» (extrair_leads) prioridade=5 id=1e47c313-d6d9-4616-95f3-0c4a6293e407
+05/11/2026 13:52:50 [1bbb1614]   payload: busca="comprador belo horizonte" · máx=10
+05/11/2026 13:52:50 [1bbb1614] registreí IP 191.177.175.135 na lista de usados (3 no total; job 1e47c313-d6d9-4616-95f3-0c4a6293e407)
+05/11/2026 13:52:50 [1bbb1614] executando «buscar candidatos» em Chrome CDP (juliana-peixoto)…
+05/11/2026 13:52:50 [spawn] iniciando robô: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot --query comprador belo horizonte
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 10 --no-shot --query comprador belo horizonte
+

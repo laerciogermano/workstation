@@ -1,0 +1,1 @@
+CRUD de CDPs na lib (contrato list/create/remove — sem UI)

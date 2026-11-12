@@ -1,0 +1,1 @@
+Modo debug no connect: mouse + painel de comportamento fixo (minimizável)

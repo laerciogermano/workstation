@@ -1,0 +1,42 @@
+{
+ "l1": {
+  "nome": "ligadura na base",
+  "ideia": "C4 + C6: G e pin numa peça só, com a ponta na linha de base. O Go fica do tamanho das letras.",
+  "risco": "Peça única e pesada; abaixo de 24 px usar o L6 (sem canal)"
+ },
+ "l2": {
+  "nome": "furo largo",
+  "ideia": "O furo cresce (r140): a cabeça do pin lê mais como o “o” do nome e o canal desemboca num espaço maior.",
+  "risco": "Anel mais fino (148) que o traço do G (170)"
+ },
+ "l3": {
+  "nome": "encaixe raso",
+  "ideia": "O pin entra menos no G: a cabeça aparece inteira e a ligação fica só na barra e no terminal.",
+  "risco": "Mais largo; a barra que liga as duas formas fica comprida"
+ },
+ "l4": {
+  "nome": "encaixe fundo",
+  "ideia": "O pin entra mais no G: monograma compacto, quase quadrado, bom para ícone.",
+  "risco": "O G perde parte da curva da direita; lê menos como “G” isolado"
+ },
+ "l5": {
+  "nome": "canal fino",
+  "ideia": "Canal de 40 no eixo: G e pin ficam mais fechados e o pin lê mais como pin de mapa.",
+  "risco": "Perde a continuidade exata com a boca do G (71)"
+ },
+ "l6": {
+  "nome": "fechado",
+  "ideia": "Sem canal: o corte para 16–24 px (favicon, notificação, marcador pequeno).",
+  "risco": "Uso só em tamanho pequeno; em grande perde a ideia da rota"
+ },
+ "l7": {
+  "nome": "ícone bloco",
+  "ideia": "O L1 vazado num bloco: ícone de app, com o Go ocupando a largura útil.",
+  "risco": "Go largo (2:1) ocupa metade da altura do bloco"
+ },
+ "l8": {
+  "nome": "ícone redondo",
+  "ideia": "O L1 vazado num círculo: avatar de rede social, selo e adesivo.",
+  "risco": "No círculo o Go fica menor; precisa da versão L6 em 32 px"
+ }
+}

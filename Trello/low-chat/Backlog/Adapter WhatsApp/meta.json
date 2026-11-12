@@ -1,0 +1,24 @@
+{
+  "id": "6ae8ba0adf7c73e8a4e61e05",
+  "url": "https://trello.com/c/IZJ8WK1I/7-adapter-whatsapp",
+  "list": "Backlog",
+  "dateLastActivity": "2026-11-02T16:27:54.697Z",
+  "due": null,
+  "labels": [
+    {
+      "name": "canal",
+      "color": "purple"
+    },
+    {
+      "name": "WhatsApp",
+      "color": "lime"
+    }
+  ],
+  "cover": {
+    "color": null,
+    "size": "normal",
+    "brightness": "dark",
+    "idAttachment": null,
+    "idUploadedBackground": null
+  }
+}

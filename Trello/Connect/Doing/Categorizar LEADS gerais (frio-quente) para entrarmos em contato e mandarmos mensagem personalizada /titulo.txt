@@ -1,0 +1,1 @@
+Categorizar LEADS gerais (frio/quente) para entrarmos em contato e mandarmos mensagem personalizada para cada categoria de cliente. (exportacao linkedin)

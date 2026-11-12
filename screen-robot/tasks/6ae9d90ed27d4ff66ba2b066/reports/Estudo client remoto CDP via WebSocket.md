@@ -22,38 +22,80 @@ Hoje o Chrome com `--remote-debugging-port` e a lib `human-cdp` vivem na mesma m
 
 **Camada humana:** fica no **servidor** (reusa `human-cdp`). O agent é um **pipe CDP** + lifecycle do Chrome — não reimplementa trajetória no client na v1.
 
-## 2. Instalador
+## 2. Instalador (Windows + Linux + macOS)
+
+**Decisão:** **três instaladores** (um por OS), **mesmo código Go** do agent. Não um instalador universal — cada OS tem empacotamento e expectativa de UX diferentes; forçar um único pacote piora a experiência sem ganho real.
+
+| OS | Artefato de distribuição | Por quê separado |
+|----|--------------------------|------------------|
+| **Windows** | `sr-agent-setup.exe` (Inno Setup / WiX) ou ZIP + `sr-agent.exe` + serviço | `.exe`/serviço Windows, paths `%LOCALAPPDATA%`, Chrome em `Program Files` |
+| **macOS** | `.pkg` ou app `.app` (notarização depois) + LaunchAgent | Gatekeeper, `~/Library/Application Support`, launchd |
+| **Linux** | `.deb` / `.rpm` **ou** tarball `tar.gz` + unit systemd | distros variam; tarball+systemd cobre a maioria na POC |
+
+**O que é único entre OSes:** o binário `sr-agent` (Go, `GOOS`/`GOARCH` distintos) + o **protocolo** e a pasta de perfil. O instalador só: coloca o binário, registra serviço/daemon, pede o token, sobe o agent.
 
 | Item | Decisão v1 |
 |------|-----------|
-| OS alvo | **macOS** (lab atual) + Linux; Windows depois |
-| Artefato | 1 binário `sr-agent` + script/app que registra token |
-| Chrome | Pré-instalado **ou** detector + link para baixar; agent lança com flags CDP |
-| Perfil | `~/Library/Application Support/sr-agent/profiles/<deviceId>/` (equivalente a `~/chrome-profiles`) |
+| OS alvo | **Windows, Linux e macOS** (amd64 + arm64 onde fizer sentido) |
+| Código | **Um** projeto Go; CI gera 3× binários + 3× pacotes |
+| Chrome | Pré-instalado **ou** detector + link oficial; agent lança com flags CDP |
+| Perfil | Windows `%LOCALAPPDATA%/sr-agent/profiles/<id>/` · macOS `~/Library/Application Support/sr-agent/profiles/<id>/` · Linux `~/.local/share/sr-agent/profiles/<id>/` |
 | Permissões | Rede egress HTTPS/WSS; sem Accessibility/Screen Recording (só CDP) |
-| UX | “colar token” → agent sobe → device aparece no servidor |
+| UX | “colar token” → serviço sobe → device aparece no servidor |
 | Update | HTTP check + replace binário (assinatura); sem auto-update forçado na POC |
 
 Flags Chrome alinhadas ao lab: `--remote-debugging-port=<local>` `--user-data-dir=<perfil>` `--remote-allow-origins=*` (só localhost). Porta **só 127.0.0.1**.
 
-## 3. Runtime do agent — comparação
+## 3. Runtime do agent — comparação e escolha
 
 | Critério | Go | Rust | Python embutido | Node |
 |----------|----|------|-----------------|------|
 | Binário único | sim (~8–15 MB) | sim (~2–8 MB) | PyInstaller ~30–50 MB+ | precisa runtime / pkg pesado |
 | WebSocket | std / gorilla / nhooyr | tokio-tungstenite | websockets | nativo |
 | CDP | `chromedp` + [chromedp-proxy](https://github.com/chromedp/chromedp-proxy) | crates ad-hoc | pychrome | já temos no lab |
-| Cross-compile | excelente (`GOOS/GOARCH`) | bom, mais atrito | frágil | médio |
-| Manutenção time JS | curva baixa | curva alta | média | alta no client (evitar) |
-| Tamanho / cold start | bom | melhor | pior | pior no client |
+| Cross-compile 3 OS | excelente (`GOOS/GOARCH`) | bom, mais atrito (linkers, targets) | frágil | médio |
+| Manutenção (time JS/TS) | curva baixa | curva alta | média | alta no client (evitar) |
+| Tamanho / RSS | bom | **melhor** (ganho típico ~2–8 MB) | pior | pior no client |
+
+### O que é o “thin pipe” (e por que o tamanho do Rust quase não importa)
+
+O agent **não** é um browser automation framework no PC da pessoa. Ele faz só isto:
+
+1. Mantém **uma** conexão WSS outbound com o servidor (auth, heartbeat, reconexão).
+2. Mantém **uma** conexão WS CDP com o Chrome em `127.0.0.1`.
+3. **Traduz envelopes** do protocolo (`cdp.send` → JSON-RPC CDP; eventos CDP → `cdp.event`).
+4. Cuida do **lifecycle** do Chrome (spawn/attach, porta, perfil).
+
+Não há no client v1: trajetória de mouse, OCR, fila de jobs complexa, UI, motor de regras. Quase todo o trabalho pesado e a “inteligência” ficam no **servidor** (`human-cdp`). O agent é um **túnel autenticado** + gerenciador mínimo do Chrome.
+
+Consequência para o critério de tamanho:
+
+- O download que a pessoa sente é **instalador + Chrome** (Chrome sozinho são **centenas de MB**). A diferença **Go ~10 MB vs Rust ~4 MB** é ruído (&lt;2% do pacote típico).
+- Em runtime, o processo que domina RAM/CPU é o **Chrome**, não o agent. Economizar 2–8 MB de RSS no agent não muda capacidade da máquina nem densidade de frota de forma mensurável.
+- O thin pipe **aumenta** o valor de: (a) entregar rápido nos 3 OS, (b) CDP estável (`chromedp`), (c) time conseguir ler/corrigir o agent. **Diminui** o valor de micro-otimizar o binário — não há loop quente nem footprint crítico no agent.
+
+### Por que **não** Rust agora (mesmo sendo menor)
+
+Rust ganha em tamanho e RSS. Isso **seria** diferencial se o agent fosse:
+
+- embarcado / IoT com orçamento rígido de MB, **ou**
+- um runtime gordo no client (replay, ML, muitos workers), **ou**
+- o gargalo de distribuição (milhões de updates diários onde cada MB conta).
+
+Nenhum desses é o caso. O agent é thin pipe + Chrome local; o custo real de escolher Rust seria:
+
+- curva e hiring no time (hoje JS/TS + Go ok);
+- menos peças prontas para CDP (vs `chromedp` / `chromedp-proxy`);
+- cross-compile e packaging Windows/macOS/Linux com mais atrito para a mesma superfície de features.
+
+**Conclusão:** o ganho de 2–8 MB do Rust **não justifica** o custo neste desenho. Go é a melhor solução **de fato** para este produto: um código, três binários/instaladores, CDP maduro, entrega mais rápida. Reavaliar Rust só se o agent deixar de ser thin pipe (lógica pesada no client) ou se houver requisito explícito de footprint.
 
 ### Recomendação: **Go**
 
-- Binário estático, fácil de distribuir e cross-compilar (darwin/linux/amd64/arm64).
+- Binário estático + cross-compile nativo para **Windows / Linux / macOS** (amd64/arm64).
 - Ecossistema CDP maduro (`chromedp`, proxy de referência).
-- Equilíbrio tamanho × velocidade de entrega; card pede **não-Node** no client.
-- Rust vence em tamanho/RSS, mas o agent v1 é thin pipe — ganho não justifica o custo agora.
-- Python embutido e Node violam o objetivo de runtime mínimo.
+- Thin pipe → prioriza velocidade de entrega e manutenção, não o último MB.
+- Card pede **não-Node** no client; Python embutido e Node violam runtime mínimo.
 
 ## 4. Controle CDP local (no agent)
 
@@ -177,8 +219,9 @@ POC pode ser só CLI/API sem dashboard.
 | Tema | Decisão |
 |------|---------|
 | Topologia | Agent outbound WSS; CDP só localhost |
-| Runtime client | **Go** (binário único) |
+| Runtime client | **Go** (1 codebase → binários por OS/arch) |
+| Go vs Rust | Go: thin pipe + CDP maduro + 3 OS; ganho 2–8 MB do Rust não justifica |
 | Lógica humana | Servidor (`human-cdp`); agent = pipe + Chrome lifecycle |
 | Protocolo | JSON envelopes `hello` / `cdp.*` / heartbeat |
-| Instalador v1 | Binário + token; perfil dedicado; Chrome detect/launch |
+| Instalador | **3 pacotes** (Win/Linux/macOS), mesmo agent Go; token + perfil + Chrome detect/launch |
 | Próximo | Card POC agent Go + hub WSS mínimo |

@@ -5,9 +5,9 @@
 **Antes:** rodízio só após N turnos idle. **Depois:** ao esvaziar a fila do agente, **troca o slot na hora**; se ainda há pending, drena com claim seguido.  
 **Rollback:** pare o worker; `MODE=single`; status pode ficar `ativo` — sleep manual / `device-status`.
 
-**Produção:** API em `http://144.126.154.90` — workers **só no Mac** (AVD/CDP local). Unit `connectmax-worker` na VPS permanece disabled (sem KVM). Scripts: [`scripts/start-worker-*.sh`](scripts/) (`API_URL` Contabo).
+**Produção:** API em `http://185.250.37.82` — workers **só no Mac** (AVD/CDP local). Unit `connectmax-worker` na VPS permanece disabled (sem KVM). Scripts: [`scripts/start-worker-*.sh`](scripts/) (`API_URL` Contabo).
 
-**Antes → depois:** `API_URL=http://localhost:3000` (API local) → `API_URL=http://144.126.154.90`.  
+**Antes → depois:** `API_URL=http://localhost:3000` (API local) → `API_URL=http://185.250.37.82`.  
 **Rollback:** scripts/env de volta a `localhost:3000` e subir API local.
 
 **Antes → depois (runtime CDP):** só AVD (`SERIAL` + handlers ADB) → `WORKER_RUNTIME=cdp` + `CDP_ID`/`CDP_URL` usa `handlers/cdp/` → scripts `linkedin-*-cdp` (mesmo contrato de jobs). **Rollback:** remova `WORKER_RUNTIME`/`CDP_*` e use `SERIAL` + scripts AVD; apague `handlers/cdp/` se precisar.
@@ -31,7 +31,7 @@ cd vendas/worker
 ./scripts/start-worker-fernando.sh   # AVD Fernando_Breda → emulator-5564
 
 # ou manual / API local:
-API_URL=http://144.126.154.90 \
+API_URL=http://185.250.37.82 \
 AGENT_ID=<agentes.id uuid> \
 AGENT_API_KEY=$AGENT_API_KEY_GLOBAL \
 SERIAL=127.0.0.1:5560 \
@@ -63,7 +63,7 @@ cd vendas/worker
 
 # ou:
 WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
-  AGENT_ID=<uuid|slug> AGENT_API_KEY=… API_URL=http://144.126.154.90 \
+  AGENT_ID=<uuid|slug> AGENT_API_KEY=… API_URL=http://185.250.37.82 \
   npm start
 ```
 

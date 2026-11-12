@@ -1,0 +1,105 @@
+/* RolêGo — brand tokens v4 (2026-11-10). Fonte: logo-v4 + manual identidade-visual-rolego-v4. */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap');
+
+:root {
+  /* Marca */
+  --rg-violet: #9E19E9;
+  --rg-purple: #6539CB;            /* também roxo de texto sobre claro e cor de tecido */
+  --rg-indigo: #452EFF;
+  --rg-cyan: #00E5E5;              /* Go no roxo/preto, palavra de destaque, tags */
+  --rg-blue: #3B82F6;              /* fim do degradê do Go no preto */
+  --rg-surface-purple: linear-gradient(135deg, #9E19E9 0%, #6539CB 50%, #452EFF 100%);
+  --rg-go-on-black: linear-gradient(90deg, #00E5E5, #3B82F6);  /* só no símbolo Go */
+
+  /* Neutros */
+  --rg-black: #000000;
+  --rg-ink: #05070F;
+  --rg-surface: #0F0F13;           /* card/campo no preto */
+  --rg-line: #1E1E25;              /* fio no preto */
+  --rg-grey: #9CA3AF;              /* texto secundário no preto (8.3:1) */
+  --rg-graphite: #5B6070;          /* texto secundário no claro (5.7:1 na névoa) */
+  --rg-line-light: #DCDDE5;
+  --rg-mist: #F4F4F8;
+  --rg-white: #FFFFFF;
+
+  /* Categorias (só ícone, tag, barra de card — sempre no preto) */
+  --rg-cat-social: #FF1F7A;
+  --rg-cat-safety: #00FF00;
+  --rg-cat-vip: #FFCC00;
+  --rg-cat-alert: #00E5E5;
+
+  /* Papéis (tema escuro = padrão do app) */
+  --color-bg: var(--rg-black);
+  --color-surface: var(--rg-surface);
+  --color-border: var(--rg-line);
+  --color-text: var(--rg-white);
+  --color-text-2: var(--rg-grey);
+  --color-accent: var(--rg-cyan);
+  --color-primary: var(--rg-surface-purple);
+  --color-focus: var(--rg-cyan);
+  --color-success: #00FF00;
+  --color-warning: #FFCC00;
+  --color-danger: #FF1F7A;
+
+  /* Tipo */
+  --font-brand: "Poppins", system-ui, sans-serif;
+  --text-display: 4.5rem;   /* 72 / .95 · 800 itálico · -0.035em */
+  --text-h1: 3rem;          /* 48 / 1.0 · 800 itálico · -0.03em */
+  --text-h2: 2rem;          /* 32 / 1.05 · 800 itálico · -0.02em */
+  --text-h3: 1.375rem;      /* 22 / 1.2 · 700 */
+  --text-body: 1rem;        /* 16 / 1.5 · 400 */
+  --text-small: 0.875rem;   /* 14 / 1.45 · 400 */
+  --text-tag: 0.75rem;      /* 12 / 1.2 · 800 caixa alta · +0.08em */
+  --leading-tight: 1;
+  --leading-body: 1.5;
+  --tracking-title: -0.03em;
+
+  /* Forma */
+  --radius-tag: 8px;
+  --radius-card: 16px;
+  --radius-sheet: 28px;
+  --radius-pill: 999px;
+  --space-post-margin: 84px; /* em 1080 px */
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-instant: 100ms;
+  --dur-fast: 140ms;
+  --dur-default: 220ms;
+  --dur-slow: 400ms;
+  --dur-logo: 600ms;
+}
+
+/* Tema claro (site, painel de parceiro, documentos) */
+[data-theme="light"] {
+  --color-bg: var(--rg-mist);
+  --color-surface: var(--rg-white);
+  --color-border: var(--rg-line-light);
+  --color-text: var(--rg-ink);
+  --color-text-2: var(--rg-graphite);
+  --color-accent: var(--rg-purple);   /* ciano não passa no claro (1.6:1) */
+  --color-focus: var(--rg-purple);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;
+    --dur-fast: 0ms;
+    --dur-default: 0ms;
+    --dur-slow: 0ms;
+    --dur-logo: 0ms;
+  }
+}
+
+/* Componentes base */
+.rg-title { font: italic 800 var(--text-h1)/var(--leading-tight) var(--font-brand); letter-spacing: var(--tracking-title); }
+.rg-title b { color: var(--color-accent); }
+.rg-btn { font: italic 800 1rem/1 var(--font-brand); color: #fff; background: var(--rg-surface-purple); border: 0; border-radius: var(--radius-pill); padding: 14px 28px; min-height: 44px; transition: transform var(--dur-instant) var(--ease-standard); }
+.rg-btn:active { transform: scale(.97); }
+.rg-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.rg-chip { font: 600 .8125rem/1 var(--font-brand); border: 1.5px solid #3A3A45; color: #C9CDD6; border-radius: var(--radius-pill); padding: 8px 16px; background: transparent; }
+.rg-chip[aria-pressed="true"] { background: var(--rg-purple); border-color: var(--rg-purple); color: #fff; }
+.rg-tag { font: 800 var(--text-tag)/1.2 var(--font-brand); letter-spacing: .08em; text-transform: uppercase; background: var(--rg-cyan); color: #000; border-radius: var(--radius-pill); padding: 4px 10px; }
+.rg-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); }

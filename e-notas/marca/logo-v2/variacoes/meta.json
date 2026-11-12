@@ -1,0 +1,47 @@
+{
+ "v1": {
+  "nome": "n entalhe",
+  "base": "A",
+  "ideia": "O n serrilhado simplificado: um entalhe por perna, que aguenta 16 px."
+ },
+ "v2": {
+  "nome": "n serrilhado ponto",
+  "base": "A + C",
+  "ideia": "O n rasgado seguido do ponto verde do .shop."
+ },
+ "v3": {
+  "nome": "n descendente",
+  "base": "A + B",
+  "ideia": "A perna direita é mais curta: a nota menor é o menor preço, em verde."
+ },
+ "v4": {
+  "nome": "n no bloco",
+  "base": "A",
+  "ideia": "Ícone de app: o n rasgado vazado num bloco azul."
+ },
+ "v5": {
+  "nome": "notinha com n",
+  "base": "A (invertido)",
+  "ideia": "A nota inteira, com o n vazado no corpo."
+ },
+ "v6": {
+  "nome": "n + notinha",
+  "base": "C",
+  "ideia": "O ponto do .shop vira uma mini nota rasgada."
+ },
+ "v7": {
+  "nome": "Três notinhas na base",
+  "base": "B",
+  "ideia": "As tiras viram barras apoiadas na base; a menor, verde, é o menor preço."
+ },
+ "v8": {
+  "nome": "wordmark serrilhado",
+  "base": "A",
+  "ideia": "O n da própria fonte ganha a borda rasgada; a assinatura carrega a ideia sozinha."
+ },
+ "v9": {
+  "nome": "Duas notinhas",
+  "base": "B",
+  "ideia": "Só duas tiras penduradas: a comprida e a curta, verde, que é o menor preço."
+ }
+}

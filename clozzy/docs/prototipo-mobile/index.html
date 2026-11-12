@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clozzy · protótipo mobile (fã e criador)</title>
+<style>
+@font-face{font-family:Gabarito;src:url("../../marca/identidade-nova/fonts/Gabarito-Variable.ttf");font-weight:400 900}
+@font-face{font-family:Figtree;src:url("../../marca/identidade-nova/fonts/Figtree-Variable.ttf");font-weight:300 900}
+/* ===== Tokens (marca/uso-da-marca): chapado, sem degradê ===== */
+:root{
+  --bg:#000;--ink:#000;--s2:#141414;--s3:#222;--line:#2A2A2A;--line2:#3D3D3D;
+  --text:#fff;--soft:#E6E6E6;--apoio:#B3B3B3;--muted:#8C8C8C;--faint:#666;
+  --rosa:#FF0065;--deep:#E0005A;--roxo:#7C48C4;--lav:#EBE3FA;--rsuave:#FFD9E7;--claro:#F2F2F2;--ok:#fff;
+  --pill:999px;--r:18px;--r2:12px;
+  /* tela: variáveis que os temas trocam (default = preto + rosa) */
+  --tx:#fff;--pb:#fff;--pbt:#000;--ac:#FF0065;--act:#FF0065;--onac:#fff;--cta:#E0005A;--ctat:#fff;
+  --cr:#7C48C4;--crt:#fff;--crx:#B08BE6;--lgr:#FF0065;--lgs:#fff;--tabbg:rgba(0,0,0,.96);--dimc:rgba(0,0,0,.7);--glass:rgba(0,0,0,.55);
+  --fd:Gabarito,system-ui,sans-serif;--fb:Figtree,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+svg.i.s{width:14px;height:14px} svg.i.l{width:24px;height:24px} svg.i.xl{width:30px;height:30px}
+svg.i.f{fill:currentColor;stroke:none}
+.logo{display:inline-block;height:28px}.logo svg{height:100%;width:auto;display:block}
+.sym{display:inline-block}.sym svg{display:block;width:100%;height:100%}
+
+/* ===== Página de apresentação ===== */
+.wrap{max-width:1500px;margin:0 auto;padding:0 40px}
+.hero{position:relative;padding:56px 0 40px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero .logo{position:absolute;right:40px;top:58px;height:52px;--lg-ring:var(--rosa);--lg-star:#fff;--lg-word:#fff}
+.chipnum{display:inline-block;padding:6px 16px;border:2px solid var(--rosa);color:#fff;border-radius:14px;font:800 20px var(--fd);letter-spacing:-.01em;margin-bottom:18px}
+.htitle{font:900 clamp(44px,6.4vw,92px)/.94 var(--fd);letter-spacing:-.04em;padding-left:28px;position:relative}
+.htitle em{font-style:normal;color:var(--rosa)}
+.htitle::before,.stitle::before{content:"";position:absolute;left:0;top:6%;bottom:6%;width:8px;border-radius:4px;background:var(--rosa)}
+.hcount{margin:14px 0 0 28px;font:700 14px var(--fb);color:#fff;font-variant-numeric:tabular-nums}
+.hsub{color:var(--apoio);margin:18px 0 0 28px;max-width:820px;font-size:15px;line-height:1.6}
+.hsub b{color:#fff}
+.hactions{margin:26px 0 0 28px;display:flex;gap:12px;flex-wrap:wrap}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:22px 0 0 28px;font-size:12px;color:var(--apoio)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:50%;border:2px solid currentColor}
+.dashring{position:absolute;right:-120px;bottom:-200px;width:520px;height:520px;opacity:.12;pointer-events:none;--lg-ring:var(--rosa);--lg-star:var(--rosa)}
+.nav{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:12px;padding-bottom:12px;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:8px 16px;border-radius:var(--pill);border:1px solid var(--line2);color:var(--soft);text-decoration:none;font-size:13px;font-weight:600}
+.nav a:hover{border-color:var(--rosa);color:#fff}
+.nav a b{color:var(--rosa);margin-right:6px}
+.nav a.cri b{color:#B08BE6}
+.flow{padding:56px 0 20px}
+.stitle{position:relative;padding-left:24px;font:900 38px/1.02 var(--fd);letter-spacing:-.03em}
+.stitle.cri::before{background:var(--roxo)}
+.sdesc{color:var(--apoio);margin:10px 0 0 24px;max-width:920px;font-size:14px;line-height:1.6}
+.sdesc code{color:var(--rsuave);font-size:12.5px}
+.sdesc .pv1{display:inline-block;margin-left:6px;padding:2px 9px;border-radius:999px;border:1.5px solid var(--rosa);color:var(--rosa);font:800 10.5px var(--fb);letter-spacing:.04em;vertical-align:1px}
+.who{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;font:700 13px var(--fb)}
+.who.fa{color:var(--rosa)} .who.cr{color:#B08BE6} .who.co{color:var(--apoio)}
+.row{display:flex;gap:0;align-items:flex-start;overflow-x:auto;padding:30px 4px 30px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.step{display:flex;flex-direction:column;align-items:center;gap:12px;flex:none}
+.step .lbl{font:800 17px var(--fd);letter-spacing:-.01em}
+.step .meta{font-size:11.5px;color:var(--muted);text-align:center;max-width:300px;line-height:1.45}
+.step .meta b{color:#fff;font-weight:600}
+.arrow{flex:none;align-self:center;width:46px;height:2px;margin:0 6px;margin-top:-30px;background:currentColor;position:relative}
+.arrow::after{content:"";position:absolute;right:-1px;top:-5px;width:10px;height:10px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+.c-rosa{color:var(--rosa)} .c-roxo{color:#B08BE6} .c-branco{color:#fff}
+footer{padding:60px 0 80px;color:var(--faint);font-size:12px;text-align:center}
+footer a{color:var(--rosa)}
+
+/* ===== Celular ===== */
+.phone{--pc:var(--rosa);width:320px;height:680px;border-radius:46px;padding:7px;background:#000;border:2px solid var(--pc);flex:none;position:relative;
+  box-shadow:0 30px 70px rgba(0,0,0,.6);cursor:pointer;transition:transform .2s}
+.row .phone:hover{transform:translateY(-4px)}
+.phone.roxo{--pc:var(--roxo)} .phone.branco{--pc:#fff}
+.scr{position:relative;width:100%;height:100%;border-radius:39px;overflow:hidden;background:var(--ink);display:flex;flex-direction:column;font-size:12.5px;line-height:1.45;color:var(--soft)}
+.row .scr *{pointer-events:none}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:92px;height:25px;border-radius:14px;background:#000;z-index:60}
+.sb{height:36px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 24px 0;font-size:11px;font-weight:700;z-index:25;position:relative;color:var(--tx)}
+.sb .ic{display:flex;gap:3px;align-items:flex-end}
+.sb .ic i{display:block;background:currentColor;border-radius:1px}
+.body{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 16px 18px;scrollbar-width:none;position:relative}
+.body::-webkit-scrollbar{display:none}
+.body.tb{padding-bottom:84px} .body.ft{padding-bottom:104px} .body.flush{padding:0}
+/* temas de tela (manual de uso: preto principal; branco conta; roxo criador; rosa momento de compra) */
+.scr.t-branco{background:#fff;color:#000}
+.scr.t-branco .sb{color:#000}
+.scr.t-roxo{background:var(--roxo);color:#fff}
+.scr.t-rosa{background:var(--rosa);color:#fff}
+.scr.t-rosa .notch{display:none} /* nada preto no rosa */
+.scr.t-foto{background:#000}
+
+/* ===== Componentes do app ===== */
+.top{display:flex;align-items:center;gap:10px;min-height:38px;margin-bottom:8px}
+.top .t{font:800 15px var(--fd);color:var(--tx);letter-spacing:-.01em}
+.t-branco .top .t{color:#000}
+.top .sp{flex:1}
+.ibtn{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--s2);color:var(--tx);flex:none;position:relative}
+.ibtn.glass{background:var(--glass);backdrop-filter:blur(6px)}
+.t-branco .ibtn{background:#F2F2F2;color:#000}
+.t-roxo .ibtn{background:#8C5ECB;color:#fff}
+.ibtn .dot{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--ac);border:1.5px solid var(--ink)}
+.h1{font:900 26px/1 var(--fd);letter-spacing:-.035em;color:var(--tx);margin:6px 0 8px}
+.h1 em{font-style:normal;color:var(--act)}
+.t-branco .h1{color:#000} .t-branco .h1 em{color:var(--deep)}
+.t-roxo .h1 em,.t-rosa .h1 em{color:#fff;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.h2{font:800 16px/1.15 var(--fd);letter-spacing:-.02em;color:var(--tx)}
+.t-branco .h2{color:#000}
+.kick{font:700 11.5px var(--fb);color:var(--muted)}
+.t-roxo .kick,.t-rosa .kick{color:rgba(255,255,255,.75)}
+.p{color:var(--apoio);font-size:12px;line-height:1.5}
+.t-branco .p{color:#666} .t-roxo .p,.t-rosa .p{color:rgba(255,255,255,.85)}
+.price,.d,.kpi .n,.hcount{font-variant-numeric:tabular-nums}
+.price{font:800 15px var(--fd);color:var(--act);letter-spacing:-.02em;white-space:nowrap}
+.t-branco .price{color:var(--deep)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:46px;border-radius:var(--pill);font:800 14px var(--fd);letter-spacing:-.01em;background:var(--pb);color:var(--pbt)}
+.btn.r{background:var(--cta);color:var(--ctat)}
+.btn.cr{background:var(--cr);color:var(--crt)}
+.btn.s{background:transparent;border:1.5px solid var(--line2);color:var(--tx)}
+.btn.gh{background:transparent;color:var(--tx);height:36px;font:700 12.5px var(--fb)}
+.btn.gh u{color:var(--act);text-decoration:none}
+.btn.dis{background:var(--s3);color:var(--muted)}
+.btn.sm{height:32px;font-size:12px;width:auto;padding:0 14px}
+.btn.xs{height:26px;font-size:11px;width:auto;padding:0 11px}
+.t-branco .btn{background:var(--deep);color:#fff} .t-branco .btn.s{background:#fff;border-color:#000;color:#000}
+.t-roxo .btn{background:#fff;color:var(--roxo)} .t-roxo .btn.s{background:transparent;border-color:#fff;color:#fff}
+.t-rosa .btn{background:#fff;color:var(--deep)} .t-rosa .btn.s{background:transparent;border-color:#fff;color:#fff}
+.stack{display:flex;flex-direction:column;gap:10px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--apoio);margin-bottom:6px}
+.t-branco .field label{color:#666} .t-roxo .field label{color:var(--lav)}
+.inp{height:44px;border-radius:var(--r2);border:1.5px solid var(--line);background:var(--s2);display:flex;align-items:center;gap:10px;padding:0 14px;color:var(--muted);font-size:12.5px}
+.inp.f{border-color:var(--ac);color:var(--tx)}
+.inp.v{color:var(--tx)}
+.inp .sp{flex:1}
+.t-branco .inp{background:#fff;border-color:#DEDDDD;color:#959093} .t-branco .inp.v{color:#000} .t-branco .inp.f{border-color:var(--deep);color:#000}
+.t-roxo .inp{background:#8C5ECB;border-color:#A37FD6;color:var(--lav)} .t-roxo .inp.v,.t-roxo .inp.f{color:#fff} .t-roxo .inp.f{border-color:#fff}
+.ta{min-height:70px;align-items:flex-start;padding-top:12px}
+.hint{font-size:10.5px;color:var(--muted);margin-top:5px}
+.t-roxo .hint{color:var(--lav)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{height:32px;padding:0 13px;border-radius:var(--pill);background:var(--s3);color:var(--tx);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip.on{background:var(--pb);color:var(--pbt)}
+.chip.sm{height:26px;padding:0 10px;font-size:11px}
+.t-branco .chip{background:var(--rsuave);color:#000} .t-branco .chip.on{background:#000;color:#fff}
+.t-roxo .chip{background:#9165CD;color:#fff} .t-roxo .chip.on{background:#fff;color:var(--roxo)}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.selo{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;border-radius:var(--pill);font:800 9.5px var(--fb);letter-spacing:.03em;white-space:nowrap;border:1.5px solid var(--act);color:var(--act)}
+.selo.f{background:var(--ac);border-color:var(--ac);color:var(--onac)}
+.selo.w{border-color:#fff;color:#fff}
+.selo.dk{background:rgba(0,0,0,.7);border-color:transparent;color:#fff;backdrop-filter:blur(4px)}
+.selo.ok{border-color:var(--ok);color:var(--ok)}
+.selo.rx{border-color:var(--crx);color:var(--crx)}
+.selo svg{width:10px;height:10px}
+.card{border-radius:var(--r);background:var(--s2);padding:14px}
+.t-branco .card{background:var(--claro)}
+.t-roxo .card{background:#8C5ECB}
+.t-branco .okc{color:#000}
+.muted{color:var(--muted)} .apoio{color:var(--apoio)} .rs{color:var(--act)} .wh{color:var(--tx)} .okc{color:var(--tx)} .rx{color:var(--crx)}
+.b{font-weight:700} .xb{font-weight:800} .d{font-family:var(--fd);letter-spacing:-.02em}
+.sm{font-size:11px} .xs{font-size:10px} .lg{font-size:15px}
+.flex{display:flex;align-items:center;gap:8px} .between{justify-content:space-between} .col{display:flex;flex-direction:column} .grow{flex:1;min-width:0}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;margin:14px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.hr{height:1px;background:var(--line);margin:12px 0}
+.t-branco .hr{background:#EBEBEB}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:11.5px;color:var(--apoio);margin-bottom:10px}
+.check i{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--line2);flex:none;display:grid;place-items:center;margin-top:1px}
+.check.on i{background:var(--ac);border-color:var(--ac)}
+.check.on i::after{content:"";width:8px;height:4px;border-left:2px solid var(--onac);border-bottom:2px solid var(--onac);transform:rotate(-45deg) translate(1px,-1px)}
+.check u{color:var(--tx)}
+.toggle{width:40px;height:23px;border-radius:12px;background:var(--s3);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#888;transition:.2s}
+.toggle.on{background:var(--ac)} .toggle.on::after{left:20px;background:var(--onac)}
+.toggle.on.cr{background:var(--cr)} .toggle.on.cr::after{background:var(--crt)}
+.t-branco .toggle{background:#DEDDDD} .t-branco .toggle.on{background:var(--deep)}
+.t-roxo .check.on i::after{border-color:var(--roxo)}
+.t-roxo .toggle{background:#A37FD6} .t-roxo .toggle.on{background:#fff} .t-roxo .toggle.on::after{background:var(--roxo)}
+.lrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:0}
+.t-branco .lrow{border-color:#EBEBEB}
+.lrow .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--s2);flex:none;color:var(--tx)}
+.t-branco .lrow .ico{background:var(--rsuave);color:var(--deep)}
+.prog{display:flex;gap:5px;margin:2px 0 14px}
+.prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.25)}
+.prog i.on{background:#fff}
+.seg{display:flex;padding:3px;border-radius:var(--pill);background:var(--s2)}
+.seg span{flex:1;height:30px;border-radius:var(--pill);display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--apoio)}
+.seg span.on{background:var(--pb);color:var(--pbt)}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);margin:0 -16px;padding:0 16px}
+.tabs span{padding:10px 0;font-weight:700;font-size:12px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--tx);border-color:var(--ac)}
+
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:70px;padding:8px 6px 16px;background:var(--tabbg);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:20}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--muted);width:60px;position:relative}
+.tab.on{color:var(--tx)}.tab.on svg{color:var(--act)}
+.tab .dot{position:absolute;top:-2px;right:16px;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:var(--ac);color:var(--onac);font-size:9px;display:grid;place-items:center;border:2px solid var(--ink)}
+.tab.plus{width:52px}
+.tab.plus b{width:46px;height:34px;border-radius:12px;background:var(--ac);color:var(--onac);display:grid;place-items:center}
+.tabbar.cri .tab.on svg{color:var(--crx)} .tabbar.cri .tab.plus b{background:var(--cr);color:var(--crt)}
+/* rodapé fixo */
+.foot{position:absolute;left:0;right:0;bottom:0;padding:14px 16px 22px;background:var(--ink);border-top:1px solid var(--line);z-index:20;display:flex;gap:10px;align-items:center}
+.t-branco .foot{background:#fff;border-color:#EBEBEB} .t-roxo .foot{background:var(--roxo);border-color:#A37FD6} .t-rosa .foot{background:var(--rosa);border-color:#FF66A3}
+/* sheet */
+.dim{position:absolute;inset:0;background:var(--dimc);z-index:40;backdrop-filter:blur(2px)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;background:var(--ink);border-top:1px solid var(--line2);border-radius:26px 26px 0 0;padding:10px 16px 22px}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line2);margin:0 auto 12px}
+.under{position:absolute;inset:36px 0 0 0;padding:6px 16px}
+
+/* ===== Mídia (fotos da direção de arte v2) ===== */
+.ph{background-color:#1A1A1A;background-repeat:no-repeat;position:relative;overflow:hidden}
+.lock::before{content:"";position:absolute;inset:0;z-index:1;-webkit-backdrop-filter:blur(16px) brightness(.5);backdrop-filter:blur(16px) brightness(.5)}
+.lockc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:2;text-align:center;color:#fff}
+.lockc .lk{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.6);border:1.5px solid rgba(255,255,255,.4)}
+.av{width:34px;height:34px;border-radius:50%;flex:none;background-color:#1A1A1A;background-size:cover;display:grid;place-items:center;font:800 13px var(--fd);color:#fff}
+.av.sm{width:26px;height:26px;font-size:10px} .av.md{width:44px;height:44px} .av.lg{width:78px;height:78px;font-size:26px}
+.av.ini{background:var(--cr);color:var(--crt)}
+.ring{padding:2.5px;border-radius:50%;border:2.5px solid var(--ac);display:inline-block;flex:none;position:relative}
+.ring.cf{border-style:dashed}
+.ring.seen{border-color:var(--line2)}
+.ring .av{border:2px solid var(--ink)}
+.ring .cfb{position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border-radius:50%;background:var(--ac);display:grid;place-items:center;border:2px solid var(--ink)}
+.ring .cfb svg{width:9px;height:9px;fill:var(--onac);stroke:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:4px;width:62px;font-size:10px;color:var(--apoio);flex:none}
+.story .ring .av{width:52px;height:52px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:0 -16px}
+.grid3 .ph{aspect-ratio:1/1.25}
+.grid3 .ph .tag{position:absolute;top:6px;right:6px;z-index:3}
+.vd{position:absolute;bottom:6px;left:6px;z-index:3;font-size:10px;font-weight:700;color:#fff;display:flex;gap:3px;align-items:center}
+.post{margin:0 -16px 18px}
+.post .hd{display:flex;align-items:center;gap:9px;padding:0 16px 9px}
+.post .md{height:300px}
+.post .ac{display:flex;gap:14px;align-items:center;padding:10px 16px 4px;color:var(--tx)}
+.post .cp{padding:0 16px;font-size:12px;color:var(--soft)}
+.unlock{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 16px 0;padding:10px 12px;border-radius:14px;background:var(--s2)}
+.bubble{max-width:78%;padding:9px 12px;border-radius:18px;font-size:12px;line-height:1.4;margin-bottom:6px}
+.bubble.in{background:var(--s2);color:var(--soft);border-bottom-left-radius:6px}
+.bubble.out{background:var(--cta);color:var(--ctat);margin-left:auto;border-bottom-right-radius:6px}
+.bubble .tm{display:block;font-size:9px;opacity:.6;margin-top:3px;text-align:right}
+.ppv{width:190px;border-radius:18px;overflow:hidden;background:var(--s2);margin-bottom:6px}
+.ppv .ph{height:150px}
+.ppv .bt{padding:9px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi .card{padding:12px}
+.kpi .n{font:900 21px var(--fd);letter-spacing:-.03em;color:var(--tx);margin-top:3px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:70px;margin-top:10px}
+.bars i{flex:1;background:var(--s3);border-radius:4px 4px 0 0}
+.bars i.on{background:var(--ac)}
+.qr{width:170px;height:170px;margin:0 auto;background:#fff;border-radius:16px;padding:12px}
+.cam{position:absolute;inset:0}
+.camui{position:absolute;left:0;right:0;bottom:0;padding:16px 16px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;z-index:5}
+.shutter{width:68px;height:68px;border-radius:50%;border:4px solid #fff;display:grid;place-items:center}
+.shutter i{width:52px;height:52px;border-radius:50%;background:#fff}
+.bigok{width:96px;height:96px;margin:6px auto 14px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--rosa)}
+.bigok svg{width:46px;height:46px;stroke-width:2.8}
+.upl{border:1.5px dashed var(--line2);border-radius:16px;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--apoio)}
+.thumbs{display:flex;gap:6px}
+.thumbs .ph{width:62px;height:78px;border-radius:10px;flex:none}
+.radio{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:14px;background:var(--s2);border:1.5px solid transparent;margin-bottom:8px}
+.radio.on{border-color:var(--ac)}
+.radio i{width:18px;height:18px;border-radius:50%;border:2px solid var(--line2);flex:none}
+.radio.on i{border:5px solid var(--ac)}
+.oferta{border-radius:var(--r);background:var(--s2);overflow:hidden;margin-bottom:10px}
+.oferta .ph{height:110px}
+.oferta .in{padding:11px 12px}
+
+
+/* ===== Temas (data-t em cada .scr; telas de momento t-branco/t-roxo/t-rosa e de foto t-foto não mudam) =====
+   Paleta fechada da marca: rosa #FF0065, Pink Deep #E0005A, roxo #7C48C4, preto #000, branco e cinzas neutros.
+   Regras: nada preto no rosa; rosa e roxo nunca um sobre o outro; no claro o símbolo é Pink Deep. */
+.scr[data-t="preto-roxo"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto){
+  --ac:#7C48C4;--act:#B08BE6;--onac:#fff;--cta:#7C48C4;--ctat:#fff;--cr:#7C48C4;--crt:#fff;--crx:#B08BE6}
+.scr[data-t="branco-rosa"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto),
+.scr[data-t="branco-roxo"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto){
+  --ink:#fff;--s2:#F2F2F2;--s3:#E6E6E6;--line:#EBEBEB;--line2:#D4D4D4;--soft:#1A1A1A;--apoio:#555;--muted:#7A7A7A;
+  --tx:#000;--pb:#E0005A;--pbt:#fff;--ac:#E0005A;--act:#E0005A;--onac:#fff;--cta:#E0005A;--ctat:#fff;
+  --cr:#7C48C4;--crt:#fff;--crx:#7C48C4;--lgr:#E0005A;--lgs:#E0005A;--tabbg:rgba(255,255,255,.96);--dimc:rgba(0,0,0,.4);--glass:rgba(255,255,255,.82)}
+.scr[data-t="branco-roxo"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto){
+  --pb:#7C48C4;--ac:#7C48C4;--act:#7C48C4;--cta:#7C48C4}
+.scr[data-t="rosa"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto){
+  --ink:#FF0065;--s2:#E0005A;--s3:#FF3384;--line:#FF4D8F;--line2:#FF80B0;--soft:#fff;--apoio:rgba(255,255,255,.9);--muted:rgba(255,255,255,.74);
+  --tx:#fff;--pb:#fff;--pbt:#E0005A;--ac:#fff;--act:#fff;--onac:#E0005A;--cta:#fff;--ctat:#E0005A;
+  --cr:#fff;--crt:#E0005A;--crx:#fff;--lgr:#fff;--lgs:#fff;--tabbg:#FF0065;--dimc:rgba(224,0,90,.62);--glass:rgba(255,255,255,.22)}
+.scr[data-t="roxo"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto){
+  --ink:#7C48C4;--s2:#8C5ECB;--s3:#9165CD;--line:#A37FD6;--line2:#B79AE0;--soft:#fff;--apoio:#EBE3FA;--muted:rgba(255,255,255,.74);
+  --tx:#fff;--pb:#fff;--pbt:#7C48C4;--ac:#fff;--act:#fff;--onac:#7C48C4;--cta:#fff;--ctat:#7C48C4;
+  --cr:#fff;--crt:#7C48C4;--crx:#fff;--lgr:#fff;--lgs:#fff;--tabbg:#7C48C4;--dimc:rgba(70,36,120,.6);--glass:rgba(255,255,255,.22)}
+/* nada preto no rosa: sem o recorte da câmera e sem selos escuros sobre a tela rosa */
+.scr[data-t="rosa"]:not(.t-branco):not(.t-roxo):not(.t-rosa):not(.t-foto) .notch{display:none}
+.scr[data-t="rosa"]:not(.t-foto) .selo.dk{background:rgba(224,0,90,.75)}
+
+/* ===== Seção de temas (padrão notinhas v2) ===== */
+.temas{padding-top:56px;padding-bottom:10px}
+.tscreens{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 20px 24px}
+.tscreens button{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);font-size:13px;font-weight:600;color:var(--apoio)}
+.tscreens button.on{background:#fff;border-color:#fff;color:#000}
+.themes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.tcard{border:1px solid var(--line);border-radius:18px;background:#0D0D0D;padding:16px 16px 18px;display:flex;flex-direction:column;gap:12px;transition:border-color 160ms}
+.tcard.on{border-color:#fff}
+.tcard header{display:flex;align-items:baseline;gap:8px}
+.tcard h3{font:800 19px var(--fd);letter-spacing:-.02em}
+.tcard header span{margin-left:auto;font-size:11px;font-weight:800;color:#000;background:#fff;padding:2px 8px;border-radius:999px}
+.tcard>p{font-size:13px;color:var(--apoio);min-height:3.9em;line-height:1.5}
+.tsw{display:flex;gap:6px;margin-bottom:14px}
+.tsw i{flex:1;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.14);position:relative}
+.tsw i::after{content:attr(data-l);position:absolute;left:0;right:0;top:34px;font-size:10px;font-style:normal;color:var(--muted);text-align:center}
+.tminis{display:flex;gap:12px;justify-content:center;padding:4px 0}
+.mini{--k:.6;width:calc(320px*var(--k));height:calc(680px*var(--k));position:relative;cursor:pointer;transition:transform 200ms cubic-bezier(.16,1,.3,1)}
+.mini:hover{transform:translateY(-4px)}
+.mini>div{position:absolute;left:0;top:0;transform:scale(var(--k));transform-origin:0 0}
+.mini *{pointer-events:none}
+.mini .phone{cursor:pointer}
+.tcard .pbtn{align-self:flex-start;height:40px;padding:0 18px}
+.tcard.on .pbtn{background:#fff;color:#000;border-color:#fff}
+.themebar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:18px 0 0 28px}
+.themebar>span{font-size:12.5px;color:var(--apoio);font-weight:600;margin-right:4px}
+.tdot{width:30px;height:30px;border-radius:50%;border:2px solid #000;box-shadow:0 0 0 1px var(--line2);background:linear-gradient(135deg,var(--a) 50%,var(--b) 50%)}
+.tdot.on{box-shadow:0 0 0 2px #fff}
+.stage-themes{position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:16px;background:rgba(20,20,20,.9);border:1px solid var(--line);backdrop-filter:blur(12px)}
+.stage-themes button{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;font-size:13px;font-weight:600;color:var(--apoio);white-space:nowrap}
+.stage-themes button .tdot{width:24px;height:24px}
+.stage-themes button.on{background:#fff;color:#000}
+@media (max-width:1180px){.themes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.themes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.mini{transition:none}.mini:hover{transform:none}}
+
+/* ===== Motion: só feedback de toque e troca de tela (transform/opacity) ===== */
+.btn,.ibtn,.chip,.tab,.radio,.lrow,.story{transition:transform 140ms cubic-bezier(.16,1,.3,1),background-color 160ms,opacity 160ms}
+.player .stage [data-go]:active{transform:scale(.97)}
+.toggle::after{transition:left 180ms cubic-bezier(.16,1,.3,1)}
+::view-transition-old(tela),::view-transition-new(tela){animation-duration:240ms;animation-timing-function:cubic-bezier(.16,1,.3,1)}
+#pphone{view-transition-name:tela}
+.sheet{animation:sobe 260ms cubic-bezier(.16,1,.3,1)}
+.player .stage .sheet{animation:sobe 260ms cubic-bezier(.16,1,.3,1)}
+.row .sheet{animation:none}
+@keyframes sobe{from{transform:translateY(40px);opacity:.4}}
+@media (prefers-reduced-motion:reduce){
+  .btn,.ibtn,.chip,.tab,.radio,.lrow,.story,.row .phone{transition:none}
+  .sheet{animation:none}
+  ::view-transition-old(tela),::view-transition-new(tela){animation:none}
+}
+
+/* ===== Player ===== */
+.player{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.96);backdrop-filter:blur(8px);display:none;grid-template-columns:270px 1fr 330px}
+.player.open{display:grid}
+.player .list{border-right:1px solid var(--line);overflow-y:auto;padding:20px 14px}
+.player .list h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 6px 6px}
+.player .list a{display:flex;gap:8px;padding:7px 10px;border-radius:9px;color:var(--soft);text-decoration:none;font-size:12.5px;cursor:pointer}
+.player .list a span{color:var(--faint);font-size:11px;width:42px;flex:none;font-weight:700}
+.player .list a.on{background:rgba(255,0,101,.16);color:#fff}
+.player .list a.on span{color:var(--rosa)}
+.player .stage{padding-left:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto;position:relative;gap:28px}
+.player .stage .phone{transform:scale(1.04);margin:14px 0;cursor:default}
+.player .stage [data-go]{cursor:pointer}
+.player .notes{border-left:1px solid var(--line);padding:26px 22px;overflow-y:auto}
+.player .notes .id{color:var(--rosa);font-weight:800;font-size:13px}
+.player .notes h3{font:900 24px/1.05 var(--fd);letter-spacing:-.03em;margin:4px 0 12px}
+.player .notes .us{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.player .notes .us span{font-size:11px;padding:4px 9px;border-radius:999px;background:rgba(255,0,101,.14);color:var(--rsuave);font-weight:700}
+.player .notes .us span.pv{background:transparent;border:1.5px solid var(--rosa);color:var(--rosa)}
+.player .notes p{color:var(--soft);font-size:13px;line-height:1.6}
+.player .notes .kbd{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px;line-height:1.7}
+.player .notes .kbd b{color:#fff}
+.player .close{position:absolute;top:18px;right:18px}
+.navbtns{display:flex;gap:8px}
+.player.hints [data-go]{outline:2px dashed rgba(255,0,101,.7);outline-offset:2px;border-radius:12px}
+.pbtn{height:34px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line2);color:#fff;font:700 12px var(--fb)}
+.pbtn.p{background:#fff;color:#000;border-color:#fff;height:46px;padding:0 26px;font:800 15px var(--fd)}
+.pbtn.s{height:46px;padding:0 22px;font:800 15px var(--fd)}
+@media (max-width:1100px){.player{grid-template-columns:1fr}.player .list,.player .notes{display:none}.hero .logo{position:static;margin-bottom:20px;height:40px}}
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#000!important}
+  body{padding:7mm 9mm}
+  .player,.hactions,.nav,.dashring{display:none!important}
+  .wrap{max-width:none;padding:0 12px}
+  .hero{padding:24px 0 12px}
+  .hero .logo{position:static;height:34px;margin-bottom:12px}
+  .htitle{font-size:46px}
+  .flow{padding:0;break-before:page}
+  .temas{break-before:page;padding:0}
+  .tscreens,.tcard .pbtn,.themebar{display:none!important}
+  .themes{gap:10px;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .tcard{padding:10px;gap:8px}
+  .tcard>p{font-size:10.5px;min-height:0}
+  .mini{width:320px;height:680px;zoom:.3;overflow:hidden;border-radius:46px}
+  .mini>div{transform:none!important}
+  .mini:hover{transform:none}
+  .mini .lock::before{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(0,0,0,.55)}
+  .temas .sdesc{font-size:10px}
+  .tsw{margin-bottom:10px}.tsw i{height:18px}.tsw i::after{top:20px;font-size:8px}
+  .tcard h3{font-size:15px}
+  .who{margin-bottom:4px}
+  .stitle{font-size:24px}
+  .sdesc{font-size:11.5px;margin-top:4px}
+  .step .lbl{font-size:13px}
+  .step{gap:6px}
+  .step .meta{font-size:9.5px;max-width:196px}
+  .row{flex-wrap:wrap;overflow:visible!important;gap:14px 10px;padding:10px 0 0}
+  .arrow{display:none}
+  .step{break-inside:avoid}
+  .row .phone{width:196px;height:417px;border-radius:32px;padding:5px;box-shadow:none!important;transform:none!important}
+  .row .scr{zoom:.6125;border-radius:42px}
+  footer{padding:24px 0}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="heart" viewBox="0 0 24 24"><path d="M12 20.2l-1.05-.96C6.4 15.1 3.5 12.5 3.5 9.4 3.5 6.9 5.45 5 7.95 5c1.45 0 2.85.7 3.75 1.8C12.6 5.7 14 5 15.45 5 17.95 5 19.9 6.9 19.9 9.4c0 3.1-2.9 5.7-7.45 9.85z"/></symbol>
+    <symbol id="chat" viewBox="0 0 24 24"><path d="M4 18.5V6.5A2.5 2.5 0 016.5 4h11A2.5 2.5 0 0120 6.5v8a2.5 2.5 0 01-2.5 2.5H8z"/></symbol>
+    <symbol id="send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></symbol>
+    <symbol id="lib" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="16" rx="1.5"/><rect x="12" y="4" width="4" height="16" rx="1.2"/><path d="M18 5.5l2.5 14"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/></symbol>
+    <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5c2.6.2 4 2 4.5 4.5"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+    <symbol id="unlock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 017.6-1.7"/></symbol>
+    <symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.8 6 6.2.6-4.7 4.2 1.4 6.2L12 16.8 6.3 20l1.4-6.2L3 9.6 9.2 9z"/></symbol>
+    <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+    <symbol id="camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+    <symbol id="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></symbol>
+    <symbol id="grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></symbol>
+    <symbol id="mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+    <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/></symbol>
+    <symbol id="image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5-5-9 9"/></symbol>
+    <symbol id="video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="pack" viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="13" rx="2.5"/><path d="M7 7V5.5A1.5 1.5 0 018.5 4h7A1.5 1.5 0 0117 5.5V7M3.5 12h17"/></symbol>
+    <symbol id="tag" viewBox="0 0 24 24"><path d="M3.5 12.5V4.5a1 1 0 011-1h8l8 8-9 9z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+    <symbol id="wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></symbol>
+    <symbol id="chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></symbol>
+    <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></symbol>
+    <symbol id="face" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2M9 9v1.5M15 9v1.5M12 9v4h-1M9.5 16c1.5 1 3.5 1 5 0"/></symbol>
+    <symbol id="doc" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.6 1.7-2.3 3-2.3s2.4.7 3 2.3M14 10h4M14 13.5h3"/></symbol>
+    <symbol id="logout" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 8l-4 4 4 4M6 12h10"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+    <symbol id="flip" viewBox="0 0 24 24"><path d="M4 9a8 8 0 0114-3l2 2M20 15a8 8 0 01-14 3l-2-2M20 4v4h-4M4 20v-4h4"/></symbol>
+    <symbol id="text" viewBox="0 0 24 24"><path d="M5 6h14M12 6v13"/></symbol>
+    <symbol id="pix" viewBox="0 0 24 24"><path d="M12 3l4 4-4 4-4-4zM12 13l4 4-4 4-4-4zM3 12l4-4 4 4-4 4zM13 12l4-4 4 4-4 4z"/></symbol>
+    <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="google" viewBox="0 0 24 24"><path d="M21 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.1a4.4 4.4 0 01-1.9 2.9v2.4h3c1.8-1.6 2.8-4 2.8-7z" fill="#4285F4" stroke="none"/><path d="M12 21.5c2.6 0 4.7-.9 6.3-2.3l-3-2.4c-.9.6-2 .9-3.3.9-2.5 0-4.7-1.7-5.4-4H3.4v2.5A9.5 9.5 0 0012 21.5z" fill="#34A853" stroke="none"/><path d="M6.6 13.7a5.7 5.7 0 010-3.6V7.6H3.4a9.5 9.5 0 000 8.6z" fill="#FBBC05" stroke="none"/><path d="M12 6.4c1.4 0 2.7.5 3.7 1.4l2.7-2.7A9.5 9.5 0 003.4 7.6l3.2 2.5c.7-2.2 2.9-3.7 5.4-3.7z" fill="#EA4335" stroke="none"/></symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap" style="position:relative">
+    <span class="logo" id="herologo"></span>
+    <h1 class="htitle">Protótipo<br><em>mobile</em></h1>
+    <p class="hcount">Mobile 1.0 · <span id="nscr"></span> telas · 7 fluxos · fã e criador</p>
+    <p class="hsub">Telas navegáveis do app da Clozzy para os dois lados: o <b>fã</b>, que descobre, assina, compra e conversa, e o <b>criador</b>, que ativa a conta, publica, vende e saca no Pix. Feito a partir de <a href="../functionalities.md" style="color:var(--rosa)">functionalities.md</a> (P01–P15), do <a href="../../marca/uso-da-marca/README.md" style="color:var(--rosa)">manual de uso da marca</a> e do <a href="../prototype.html" style="color:var(--rosa)">protótipo web</a>. Telas com código <b>T-xx</b>; páginas do escopo em <b>P-xx</b>.</p>
+    <div class="hactions">
+      <button class="pbtn p" onclick="openPlayer('T-01')">▶ Navegar como fã</button>
+      <button class="pbtn s" onclick="openPlayer('T-50')">Navegar como criador</button>
+    </div>
+    <div class="themebar" id="themebar"><span>Tema</span></div>
+    <div class="legend">
+      <span class="c-rosa"><i></i>Fã · descobrir, comprar, close</span>
+      <span class="c-roxo"><i></i>Criador · ativar, publicar, vender</span>
+      <span class="c-branco"><i></i>Conta e configurações</span>
+      <span style="color:var(--rosa)"><b class="selo" style="margin-right:2px">PÓS-V1</b>fora do escopo v1 em functionalities.md</span>
+    </div>
+  </div>
+  <span class="dashring" id="heroring"></span>
+</header>
+
+<nav class="nav"><div class="wrap" id="navlinks"></div></nav>
+<section class="wrap temas" id="temas">
+  <div class="who co">Seis combinações · mesma paleta</div>
+  <h2 class="stitle">Temas para escolher</h2>
+  <p class="sdesc">Cada tema troca fundo, superfície, botão, destaque e a cor do criador, sempre dentro de rosa, Pink Deep, roxo, preto e branco. Foto, câmera e story continuam escuros em todos; as telas de momento (conta no branco, ativação no roxo, pagamento aprovado no rosa) também não mudam.</p>
+  <div class="tscreens" id="tscreens"></div>
+  <div class="themes" id="themes"></div>
+</section>
+<main class="wrap" id="gallery"></main>
+<footer>Clozzy · protótipo mobile · fã + criador · conteúdo e pessoas fictícios · 2026-11-11 · web: <a href="../prototype.html">prototype.html</a> · escopo: <a href="../functionalities.md">functionalities.md</a></footer>
+
+<div class="player" id="player">
+  <div class="list" id="plist"></div>
+  <div class="stage" id="pstage">
+    <button class="ibtn close" onclick="closePlayer()" title="Fechar (Esc)" aria-label="Fechar"><svg class="i"><use href="#x"/></svg></button>
+    <div class="stage-themes" id="stage-themes" role="radiogroup" aria-label="Tema"></div>
+    <div id="pphone"></div>
+    <div class="navbtns">
+      <button class="pbtn" onclick="step(-1)">← anterior</button>
+      <button class="pbtn" onclick="goBack()">voltar</button>
+      <button class="pbtn" onclick="toggleHints()">mostrar cliques</button>
+      <button class="pbtn" onclick="step(1)">próxima →</button>
+    </div>
+  </div>
+  <div class="notes" id="pnotes"></div>
+</div>
+
+<script>
+/* ===== Marca (símbolo e palavra oficiais, iguais ao protótipo web) ===== */
+const SYM_INNER='<path d="M89.1 53.42A39.25 39.25 0 0 1 10.85 47.19" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><circle cx="16.53" cy="29.49" r="5.75" fill="var(--lg-ring)"/><path d="M29.72 16.39A39.25 39.25 0 0 1 32.86 14.69" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><path d="M51.3 10.77A39.25 39.25 0 0 1 79.63 24.25" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><polygon points="50,32 55.08,43.01 67.12,44.44 58.22,52.67 60.58,64.56 50,58.64 39.42,64.56 41.78,52.67 32.88,44.44 44.92,43.01" fill="var(--lg-star)" stroke="var(--lg-star)" stroke-width="4.39" stroke-linejoin="round"/>';
+const WORD_INNER='<g transform="translate(1173.7 0)"><path d="M271.3 13.0Q196.3 13.0 139.4 -20.2Q82.5 -53.4 50.9 -112.0Q19.4 -170.5 19.4 -245.5Q19.4 -319.7 50.9 -377.9Q82.5 -436.0 139.4 -469.3Q196.3 -502.5 271.3 -502.5Q356.1 -502.5 417.1 -461.7Q478.2 -421.0 504.2 -351.6L358.7 -286.3Q345.7 -313.8 326.0 -329.5Q306.2 -345.3 272.9 -345.3Q234.3 -345.3 207.7 -318.4Q181.1 -291.4 181.1 -245.5Q181.1 -198.8 207.7 -172.2Q234.3 -145.7 272.9 -145.7Q306.2 -145.7 326.0 -161.0Q345.7 -176.4 358.7 -203.1L504.2 -138.6Q478.0 -70.0 416.3 -28.5Q354.5 13.0 271.3 13.0Z" fill="var(--lg-word)"/></g><g transform="translate(1666.7 0)"><path d="M201.2 5.0Q160.6 5.0 125.7 -10.5Q90.8 -26.1 69.3 -60.8Q47.9 -95.5 47.9 -154.2V-681.0H209.4V-211.4Q209.4 -172.8 221.8 -162.5Q234.3 -152.3 255.8 -152.3V1.1Q246.6 3.0 230.1 4.0Q213.6 5.0 201.2 5.0Z" fill="var(--lg-word)"/></g><g transform="translate(1926.7 0)"><path d="M279.0 13.0Q202.4 13.0 143.9 -19.9Q85.5 -53.0 52.6 -111.1Q19.6 -169.2 19.6 -244.1Q19.6 -320.0 52.6 -378.1Q85.5 -436.2 143.9 -469.4Q202.4 -502.5 279.0 -502.5Q356.7 -502.5 415.3 -469.4Q474.0 -436.2 506.7 -378.1Q539.3 -320.0 539.3 -244.1Q539.3 -169.2 506.7 -111.1Q474.0 -53.0 415.3 -19.9Q356.7 13.0 279.0 13.0ZM279.2 -144.9Q321.1 -144.9 348.2 -172.6Q375.3 -200.3 375.3 -245.0Q375.3 -290.2 348.2 -317.8Q321.1 -345.3 279.2 -345.3Q237.9 -345.3 211.1 -317.8Q184.4 -290.3 184.4 -245.4Q184.4 -200.5 211.1 -172.7Q237.9 -144.9 279.2 -144.9Z" fill="var(--lg-word)"/></g><g transform="translate(2468.7 0)"><path d="M451.7 -142.5V0.0H36.4V-125.4L318.4 -422.9L381.3 -347.0H41.7V-489.5H447.7V-364.8L164.7 -65.8L125.1 -142.5Z" fill="var(--lg-word)"/></g><g transform="translate(2938.7 0)"><path d="M451.7 -142.5V0.0H36.4V-125.4L318.4 -422.9L381.3 -347.0H41.7V-489.5H447.7V-364.8L164.7 -65.8L125.1 -142.5Z" fill="var(--lg-word)"/></g><g transform="translate(3408.7 0)"><path d="M204.1 -28.3 6.5 -489.5H169.7L361.4 -41.3ZM107.5 190.0 397.1 -489.5H560.3L270.7 190.0Z" fill="var(--lg-word)"/></g>';
+const LOGO=(h=28,ring='var(--lgr)',star='var(--lgs)',word='var(--tx)')=>`<span class="logo" style="height:${h}px;--lg-ring:${ring};--lg-star:${star};--lg-word:${word}"><svg viewBox="0 -809.2 3969.11 999.2"><g transform="translate(-52.97 -862.17) scale(10.59)">${SYM_INNER}</g>${WORD_INNER}</svg></span>`;
+const SYM=(s=40,ring='var(--lgr)',star='var(--lgs)')=>`<span class="sym" style="width:${s}px;height:${s}px;--lg-ring:${ring};--lg-star:${star}"><svg viewBox="5 5 90 90">${SYM_INNER}</svg></span>`;
+document.getElementById('herologo').outerHTML=LOGO(52);
+document.getElementById('heroring').innerHTML=`<svg viewBox="5 5 90 90" width="100%" height="100%">${SYM_INNER}</svg>`;
+
+/* ===== Helpers ===== */
+const FOTOS='../../marca/aplicacoes-v2/fotos/';
+const I=(n,c='')=>`<svg class="i ${c}"><use href="#${n}"/></svg>`;
+const bg=(f,x=50,y=40,z=0)=>`background-image:url(${FOTOS}${f}.jpg);background-size:${z?z+'% auto':'cover'};background-position:${x}% ${y}%`;
+const P={ /* pessoas fictícias */
+ lara:{n:'Lara Mendes',u:'laramendes',f:'costas',x:50,y:20,z:210},
+ mel:{n:'Mel Santos',u:'melsantos',f:'labios',x:70,y:50,z:260},
+ duda:{n:'Duda Prado',u:'dudaprado',f:'cetim',x:30,y:40,z:200},
+ theo:{n:'Theo Vidal',u:'theovidal',f:'homem',x:50,y:20,z:220},
+ bia:{n:'Bia Rocha',u:'biarocha',f:'costas',x:40,y:55,z:300},
+ nina:{n:'Nina Alves',u:'ninaalves',f:'labios',x:55,y:65,z:330},
+};
+const av=(k,c='')=>`<i class="av ${c}" style="${bg(P[k].f,P[k].x,P[k].y,P[k].z)}"></i>`;
+const ini=(t,c='')=>`<i class="av ini ${c}">${t}</i>`;
+const ring=(k,cf=false,seen=false,c='')=>`<span class="ring ${cf?'cf':''} ${seen?'seen':''}">${av(k,c)}${cf?`<i class="cfb">${I('star','f')}</i>`:''}</span>`;
+const topo=(t,go='back',right='')=>`<div class="top">${go?`<button class="ibtn" data-go="${go}">${I('back')}</button>`:''}<span class="t">${t}</span><span class="sp"></span>${right}</div>`;
+const tabsFa=(on)=>`<div class="tabbar">${[['home','Início','T-10'],['search','Explorar','T-13'],['lib','Biblioteca','T-30'],['chat','Chat','T-40','3'],['user','Eu','T-33']].map(([i,l,g,d])=>`<button class="tab ${on===l?'on':''}" data-go="${g}">${I(i,'l')}${l}${d?`<i class="dot">${d}</i>`:''}</button>`).join('')}</div>`;
+const tabsCr=(on)=>`<div class="tabbar cri">${[['chart','Painel','T-60'],['grid','Conteúdo','T-72'],['+','','T-61'],['chat','Chat','T-73','5'],['user','Perfil','T-78']].map(([i,l,g,d])=>i==='+'?`<button class="tab plus" data-go="${g}"><b>${I('plus','l')}</b></button>`:`<button class="tab ${on===l?'on':''}" data-go="${g}">${I(i,'l')}${l}${d?`<i class="dot">${d}</i>`:''}</button>`).join('')}</div>`;
+const locked=(f,x,y,z,label,go,extra='')=>`<div class="ph lock" style="${bg(f,x,y,z)};${extra}" ${go?`data-go="${go}"`:''}><div class="lockc"><span class="lk">${I('lock')}</span><span class="xb d" style="font-size:13px">${label}</span></div></div>`;
+const tile=(f,x,y,z,o={})=>o.lock?`<div class="ph lock" style="${bg(f,x,y,z)}"><div class="lockc"><span class="lk" style="width:28px;height:28px">${I('lock','s')}</span>${o.p?`<span class="xb xs">${o.p}</span>`:''}</div></div>`
+  :`<div class="ph" style="${bg(f,x,y,z)}">${o.v?`<span class="vd">${I('play','s')}${o.v}</span>`:''}${o.tag||''}</div>`;
+const qr=()=>{let r='';const N=25;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const f=(x<7&&y<7)||(x>N-8&&y<7)||(x<7&&y>N-8);if(f)continue;if(((x*7+y*13+x*y)%5)<2)r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}
+  const fd=(a,b)=>`<rect x="${a}" y="${b}" width="7" height="7" fill="#000"/><rect x="${a+1}" y="${b+1}" width="5" height="5" fill="#fff"/><rect x="${a+2}" y="${b+2}" width="3" height="3" fill="#000"/>`;
+  return `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" width="100%" height="100%"><g fill="#000">${r}</g>${fd(0,0)}${fd(N-7,0)}${fd(0,N-7)}<rect x="9" y="9" width="7" height="7" rx="1.5" fill="#fff"/><g transform="translate(9.4 9.4) scale(.07)"><g style="--lg-ring:#E0005A;--lg-star:#E0005A">${SYM_INNER}</g></g></svg>`};
+
+/* ===== Telas =====
+   S(id, nome, cor do celular, refs, notas, html, tema da tela); refs com "pós-v1" ficam marcadas. */
+const SCREENS={};
+const S=(id,name,acc,refs,notes,html,tema='')=>SCREENS[id]={id,name,acc,refs,notes,html,tema};
+
+/* ---------- F01 Conta ---------- */
+S('T-01','Abertura','rosa','P01,P08','Primeira tela do app. Foto da direção de arte v2 em tela cheia, o logo oficial e a frase da marca. “Criar conta” leva ao age gate (obrigatório antes de qualquer superfície adulta) e “Já tenho conta” ao login. Com sessão válida, pula direto para o Início (fã) ou para o Painel (criador).',`
+<div class="body flush" style="${bg('costas',50,30,0)};position:relative">
+ <div style="position:absolute;inset:0;background:rgba(0,0,0,.45)"></div>
+ <div style="position:absolute;top:70px;left:0;right:0;display:flex;justify-content:center">${LOGO(40)}</div>
+ <div style="position:absolute;left:20px;right:20px;bottom:30px">
+  <div class="h1" style="font-size:34px">Seu close,<br><em>seu preço.</em></div>
+  <p class="p" style="color:#fff;margin-bottom:18px">O exclusivo de quem você segue. Pago no Pix, liberado na hora.</p>
+  <div class="stack"><button class="btn" data-go="T-02">Criar conta</button><button class="btn gh" data-go="T-04">Já tenho conta · <u>Entrar</u></button></div>
+ </div>
+</div>`,'t-foto');
+S('T-02','Age gate 18+','rosa','P01,P14,P08','Bloqueio de idade antes do cadastro e de qualquer vitrine. A data de nascimento é validada no servidor; menor de 18 vê a tela de saída e não consegue voltar. O aceite fica registrado com data e versão dos termos.',`
+<div class="body" style="display:flex;flex-direction:column">
+ ${topo('','T-01')}
+ <div style="margin:30px 0 20px">${SYM(64)}</div>
+ <div class="h1">Aqui é <em>18+</em></div>
+ <p class="p">A Clozzy tem conteúdo adulto. Para entrar, confirme sua data de nascimento.</p>
+ <div class="field mt20"><label>Data de nascimento</label><div class="inp v f">14 / 03 / 1998<span class="sp"></span>${I('check','s')}</div></div>
+ <div class="check on"><i></i><span>Tenho 18 anos ou mais e aceito ver conteúdo adulto.</span></div>
+ <span style="flex:1"></span>
+ <div class="stack"><button class="btn" data-go="T-03">Entrar no close</button><button class="btn gh">Sair</button></div>
+</div>`);
+S('T-03','Criar conta','rosa','P08','Uma conta só serve para os dois papéis: todo criador começa como fã e ativa a venda depois (P15). Aqui a pessoa só escolhe por onde começar, o que muda a primeira tela depois do cadastro. Google é opcional pós-v1. Termos e Privacidade são aceitos no envio.',`
+<div class="body">
+ ${topo('Criar conta','T-02')}
+ <div class="kick mt8">Como você quer começar?</div>
+ <div class="seg mt8 mb12"><span class="on">${I('heart','s')}Sou fã</span><span data-go="T-50">${I('star','s')}Sou criador</span></div>
+ <div class="field"><label>E-mail</label><div class="inp v f">rafa@email.com</div></div>
+ <div class="field"><label>Nome de usuário</label><div class="inp v">@rafa.lima<span class="sp"></span><span class="okc xs b">disponível</span></div></div>
+ <div class="field"><label>Senha</label><div class="inp v">••••••••••<span class="sp"></span>${I('eye','s')}</div><div class="hint">Mínimo 8 caracteres, com número.</div></div>
+ <div class="check on"><i></i><span>Li e aceito os <u>Termos</u> e a <u>Privacidade</u>.</span></div>
+ <button class="btn mt8" data-go="T-06">Criar conta</button>
+ <div class="divider">ou</div>
+ <button class="btn s">${I('google')}Continuar com Google</button>
+ <button class="btn gh mt8" data-go="T-04">Já tenho conta · <u>Entrar</u></button>
+</div>`);
+S('T-04','Entrar','rosa','P08','Login por e-mail e senha. Erro genérico (“e-mail ou senha não conferem”) para não revelar se a conta existe. Depois de 5 tentativas, pede para esperar. Face ID/digital entra no pós-v1.',`
+<div class="body">
+ ${topo('','T-01')}
+ <div style="margin:18px 0 14px">${SYM(52)}</div>
+ <div class="h1">Que bom te ver <em>de novo.</em></div>
+ <div class="field mt16"><label>E-mail</label><div class="inp v">rafa@email.com</div></div>
+ <div class="field"><label>Senha</label><div class="inp v f">••••••••••<span class="sp"></span>${I('eye','s')}</div></div>
+ <div style="text-align:right;margin:-4px 0 14px"><button class="xs b rs" data-go="T-05">Esqueci a senha</button></div>
+ <button class="btn" data-go="T-10">Entrar</button>
+ <div class="divider">ou</div>
+ <button class="btn s">${I('google')}Entrar com Google</button>
+ <button class="btn gh mt8" data-go="T-03">Não tem conta? <u>Criar agora</u></button>
+</div>`);
+S('T-05','Recuperar senha','rosa','P08','A resposta é sempre a mesma, com ou sem conta (evita descobrir e-mails). O link vale 1 hora e só funciona uma vez.',`
+<div class="body">
+ ${topo('Recuperar senha','T-04')}
+ <div class="h1 mt16">Esqueceu? <em>Acontece.</em></div>
+ <p class="p">Mande seu e-mail que a gente envia um link para criar uma senha nova.</p>
+ <div class="field mt16"><label>E-mail</label><div class="inp v f">rafa@email.com</div></div>
+ <button class="btn mt8" data-go="T-04">Enviar link</button>
+ <div class="card mt20 flex" style="align-items:flex-start">${I('mail','l')}<div><div class="b wh">Confira sua caixa de entrada</div><p class="p">Se existir uma conta com esse e-mail, o link chega em até 2 minutos. Olhe o spam também.</p></div></div>
+</div>`);
+S('T-06','Confirmar e-mail','rosa','P08','Código de 6 dígitos (vale 10 min). Sem confirmar, a pessoa navega mas não compra. “Reenviar” libera depois de 60 s.',`
+<div class="body">
+ ${topo('','T-03')}
+ <div class="h1 mt16">Confirma pra gente <em>que é você.</em></div>
+ <p class="p">Mandamos um código para <b class="wh">rafa@email.com</b>.</p>
+ <div class="flex mt20" style="gap:7px">${['4','8','1','9','',''].map((d,i)=>`<div class="inp ${i===4?'f':''} ${d?'v':''}" style="width:40px;height:52px;justify-content:center;padding:0;font:900 20px var(--fd)">${d}</div>`).join('')}</div>
+ <div class="hint mt8">Reenviar em 0:42</div>
+ <button class="btn mt20" data-go="T-07">Confirmar</button>
+</div>`);
+S('T-07','Do que você curte?','rosa','P02','Opcional, 1 tela. As categorias ordenam o Explorar e as sugestões do Início. Pode pular.',`
+<div class="body ft">
+ ${topo('','T-06','<button class="xs b apoio" data-go="T-10">Pular</button>')}
+ <div class="h1 mt8">Do que você <em>curte?</em></div>
+ <p class="p mb12">Escolha quantas quiser. Isso só muda a ordem do que aparece.</p>
+ <div class="chips">${['Ensaios','Lingerie','Beleza','Fitness','Cosplay','Bastidores','Casais','Dança','Viagem','Moda','Arte','Humor'].map((c,i)=>`<span class="chip ${[0,1,4].includes(i)?'on':''}">${c}</span>`).join('')}</div>
+ <div class="kick mt20 mb8">Criadores para começar</div>
+ ${['lara','duda','nina'].map(k=>`<div class="lrow">${av(k,'md')}<div class="grow"><div class="b wh">${P[k].n}</div><div class="xs muted">@${P[k].u}</div></div><button class="btn xs ${k==='lara'?'':'s'}">${k==='lara'?'Seguindo':'Seguir'}</button></div>`).join('')}
+ <div class="foot"><button class="btn" data-go="T-10">Continuar</button></div>
+</div>`);
+
+/* ---------- F02 Fã · Início, stories, explorar ---------- */
+S('T-10','Início · feed','rosa','P02,pós-v1','Home do fã. No topo, os stories de quem ele segue: anel rosa = story novo, anel <b>tracejado com estrela</b> = story só para o close (assinantes), cinza = visto. No feed, post grátis aparece normal; post do close aparece desfocado com “Assinar”; post pago avulso aparece com o preço e “Desbloquear”. Feed e stories estão marcados como “não fazer na v1” em functionalities.md e entram aqui a pedido.',`
+<div class="body tb">
+ <div class="top">${LOGO(22)}<span class="sp"></span><button class="ibtn" data-go="T-31">${I('bell')}<i class="dot"></i></button></div>
+ <div class="hscroll mb12">
+  <div class="story"><span class="ring seen">${ini('R','md')}</span>Você</div>
+  ${[['lara',1],['mel',0],['duda',1],['nina',0],['theo',0,1]].map(([k,cf,s])=>`<div class="story" data-go="${cf?'T-12':'T-11'}">${ring(k,cf,s)}<span class="ell" style="max-width:60px">${P[k].n.split(' ')[0]}</span></div>`).join('')}
+ </div>
+ <div class="post">
+  <div class="hd" data-go="T-20">${av('lara')}<div class="grow"><div class="b wh">Lara Mendes <span class="selo f" style="height:16px;font-size:8.5px">CLOSE</span></div><div class="xs muted">há 12 min</div></div>${I('more')}</div>
+  <div class="md ph" style="${bg('costas',50,30,0)}"></div>
+  <div class="ac">${I('heart','l')}${I('chat','l')}<span class="sp" style="flex:1"></span>${I('star','l')}</div>
+  <div class="cp"><b class="wh">laramendes</b> Bastidor de ontem. O ensaio inteiro saiu no close 🤍</div>
+ </div>
+ <div class="post">
+  <div class="hd" data-go="T-20">${av('duda')}<div class="grow"><div class="b wh">Duda Prado</div><div class="xs muted">há 1 h · só para o close</div></div>${I('more')}</div>
+  <div class="md" style="position:relative">${locked('cetim',40,40,0,'Só para o close da Duda','T-22','position:absolute;inset:0')}</div>
+  <div class="unlock"><div><div class="b wh">Close da Duda</div><div class="xs muted">48 posts · 6 vídeos</div></div><button class="btn r sm" data-go="T-22">Assinar · R$ 14,90</button></div>
+ </div>
+ <div class="post">
+  <div class="hd">${av('mel')}<div class="grow"><div class="b wh">Mel Santos</div><div class="xs muted">há 3 h · vídeo 1:32</div></div>${I('more')}</div>
+  <div class="md" style="position:relative">${locked('labios',60,50,0,'Batom vermelho · vídeo','T-23','position:absolute;inset:0')}</div>
+  <div class="unlock"><div class="b wh">Desbloquear este post</div><button class="btn r sm" data-go="T-23">R$ 9,90</button></div>
+ </div>
+ ${tabsFa('Início')}
+</div>`);
+S('T-11','Story','rosa','pós-v1','Story aberto: barras de progresso no topo (um por story do dia), toque à direita avança, à esquerda volta, segurar pausa. Responder abre a conversa no chat com o story citado. Some em 24 h, a não ser que a criadora fixe nos destaques do perfil.',`
+<div class="body flush" style="${bg('costas',50,30,0)}">
+ <div style="position:absolute;inset:0;background:rgba(0,0,0,.18)"></div>
+ <div style="position:absolute;top:44px;left:12px;right:12px;z-index:3">
+  <div class="prog"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+  <div class="flex">${av('lara','sm')}<span class="b wh">laramendes</span><span class="xs" style="color:#fff;opacity:.7">2 h</span><span style="flex:1"></span><span class="wh" data-go="T-10">${I('x','l')}</span></div>
+ </div>
+ <div style="position:absolute;left:16px;right:16px;bottom:120px;z-index:3"><span class="selo dk" style="font-size:11px;height:24px">bastidor de hoje 📸</span></div>
+ <div style="position:absolute;left:12px;right:12px;bottom:24px;display:flex;gap:10px;align-items:center;z-index:3">
+  <div class="inp grow" style="background:rgba(0,0,0,.5);border-color:rgba(255,255,255,.4);border-radius:999px;color:#fff" data-go="T-41">Responder para Lara…</div>
+  <span class="wh">${I('heart','l')}</span><span class="wh">${I('send','l')}</span>
+ </div>
+</div>`,'t-foto');
+S('T-12','Story do close (bloqueado)','rosa','pós-v1,P03','Quem não assina vê o story do close desfocado, com o anel tracejado e a estrela (o símbolo da marca). O botão leva direto para o checkout da assinatura; ao assinar, o story abre no mesmo ponto.',`
+<div class="body flush" style="position:relative">
+ <div class="ph lock" style="${bg('cetim',40,40,0)};position:absolute;inset:0"></div>
+ <div style="position:absolute;top:44px;left:12px;right:12px;z-index:3">
+  <div class="prog"><i class="on"></i><i></i><i></i></div>
+  <div class="flex">${av('duda','sm')}<span class="b wh">dudaprado</span><span class="selo w" style="height:18px">${I('star','f')} CLOSE</span><span style="flex:1"></span><span class="wh" data-go="T-10">${I('x','l')}</span></div>
+ </div>
+ <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;z-index:3">
+  ${SYM(70)}
+  <div class="h1 mt16" style="font-size:24px">Esse story é<br>só pro <em>close.</em></div>
+  <p class="p" style="color:#fff">Assine o close da Duda e veja tudo que ela posta só pra quem está dentro.</p>
+  <button class="btn r mt16" data-go="T-22">Entrar no close · R$ 14,90/mês</button>
+  <button class="btn gh" data-go="T-20">Ver perfil</button>
+ </div>
+</div>`,'t-foto');
+S('T-13','Explorar','rosa','P02','Descobrir criadores. Categorias em chips, cards com foto, nome, categoria e “a partir de R$”. Sem ranking social na v1: a ordem segue as categorias escolhidas no onboarding e os mais recentes.',`
+<div class="body tb">
+ <div class="h1 mt8">Explorar</div>
+ <div class="inp mb12" data-go="T-14">${I('search','s')}Buscar nome ou @</div>
+ <div class="hscroll mb12"><span class="chip on">Pra você</span><span class="chip">Ensaios</span><span class="chip">Lingerie</span><span class="chip">Cosplay</span><span class="chip">Fitness</span></div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  ${['lara','duda','mel','nina','theo','bia'].map((k,i)=>`<div style="border-radius:16px;overflow:hidden;background:var(--s2)" data-go="T-20"><div class="ph" style="${bg(P[k].f,P[k].x,P[k].y+10,P[k].z-60)};height:${i%3?140:170}px">${i===0?'<span class="selo f" style="position:absolute;top:8px;left:8px">NOVO DROP</span>':''}</div><div style="padding:8px 10px 10px"><div class="b wh ell">${P[k].n}</div><div class="xs muted">${['Ensaios','Lingerie','Beleza','Cosplay','Fitness','Bastidores'][i]}</div><div class="price" style="font-size:12.5px;margin-top:3px">a partir de R$ ${['4,90','7,90','5,90','6,90','4,90','12,90'][i]}</div></div></div>`).join('')}
+ </div>
+ ${tabsFa('Explorar')}
+</div>`);
+S('T-14','Busca','rosa','P02','Busca por nome ou @, sem acento e com erro de digitação tolerado. Mostra buscas recentes e os perfis que a pessoa já visitou.',`
+<div class="body">
+ <div class="top"><button class="ibtn" data-go="T-13">${I('back')}</button><div class="inp f grow" style="height:38px">${I('search','s')}<span class="wh">lar</span><span class="sp"></span>${I('x','s')}</div></div>
+ <div class="kick mt8 mb8">Perfis</div>
+ ${[['lara','Ensaios · 3,2 mil no close'],['bia','Bastidores · 980 no close']].map(([k,t])=>`<div class="lrow" data-go="T-20">${av(k,'md')}<div class="grow"><div class="b wh"><u style="text-decoration:none;color:var(--act)">Lar</u>${P[k].n.slice(3)}</div><div class="xs muted">@${P[k].u} · ${t}</div></div>${I('chev','s')}</div>`).join('')}
+ <div class="kick mt16 mb8">Buscas recentes</div>
+ ${['cosplay','duda','lingerie'].map(t=>`<div class="lrow"><span class="muted">${I('clock','s')}</span><span class="grow">${t}</span><span class="muted">${I('x','s')}</span></div>`).join('')}
+</div>`);
+
+/* ---------- F03 Fã · Vitrine e compra ---------- */
+S('T-20','Perfil do criador','rosa','P03','A vitrine. Capa, foto com anel de story (toque abre os stories), bio e números. Três ofertas: assinatura do close (recorrente), packs e itens avulsos. Abas: Posts (grade, com o que é do close desfocado), Packs e Destaques. “Mensagem” abre o chat (pós-v1).',`
+<div class="body flush ft">
+ <div class="ph" style="${bg('costas',50,35,0)};height:150px"><div style="position:absolute;top:42px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:3"><button class="ibtn glass" data-go="T-10">${I('back')}</button><button class="ibtn glass">${I('more')}</button></div></div>
+ <div style="padding:0 16px;margin-top:-40px;position:relative">
+  <div class="flex" style="align-items:flex-end"><span data-go="T-11">${ring('lara',1,0,'lg')}</span><span style="flex:1"></span><button class="btn s sm" data-go="T-41">${I('chat','s')}Mensagem</button></div>
+  <div class="h2 mt8" style="font-size:19px">Lara Mendes</div>
+  <div class="xs muted">@laramendes · Ensaios</div>
+  <p class="p mt8" style="color:var(--soft)">Fotos de verão, bastidor e o que não vai pro feed.</p>
+  <div class="flex mt8 sm" style="gap:16px"><span><b class="wh">312</b> posts</span><span><b class="wh">3,2 mil</b> no close</span><span><b class="wh">9</b> packs</span></div>
+  <div class="card mt12" style="border:1.5px solid var(--ac)"><div class="flex between"><div><div class="kick rs">Close da Lara</div><div class="b wh mt4">Tudo do perfil enquanto ativo</div><div class="xs muted">1 pack novo por mês · drops sexta 20h</div></div><div class="price" style="font-size:17px">R$ 19,90<span class="xs muted" style="font-family:var(--fb)">/mês</span></div></div></div>
+  <div class="tabs mt12"><span class="on">Posts</span><span>Packs · 9</span><span>Destaques</span></div>
+ </div>
+ <div class="grid3" style="margin:3px 0 0">
+  ${tile('costas',50,30,180)}${tile('cetim',30,40,0,{lock:1})}${tile('costas',40,60,240,{v:'0:48'})}
+  ${tile('labios',60,50,0,{lock:1,p:'R$ 4,90'})}${tile('costas',60,20,300)}${tile('cetim',70,70,0,{lock:1})}
+ </div>
+ <div class="foot"><button class="btn r" data-go="T-22">Entrar no close · R$ 19,90/mês</button></div>
+</div>`);
+S('T-21','Pack','rosa','P03,P11','Detalhe do pack: prévia permitida (a primeira foto pode ser aberta), o que inclui, quantidade de fotos e vídeos, e “acesso pra sempre na biblioteca”. Quem já assina o close vê o desconto do assinante, se a criadora ativou.',`
+<div class="body flush ft">
+ <div class="ph" style="${bg('cetim',40,40,0)};height:260px"><div style="position:absolute;top:42px;left:12px;z-index:3"><button class="ibtn glass" data-go="T-20">${I('back')}</button></div><span class="selo dk" style="position:absolute;bottom:12px;left:12px">${I('eye','s')} prévia liberada</span></div>
+ <div style="padding:14px 16px">
+  <div class="flex">${av('lara','sm')}<span class="xs muted">Lara Mendes · pack</span></div>
+  <div class="h1 mt8" style="font-size:24px">Noite de cetim</div>
+  <p class="p">Ensaio completo de quinta, luz baixa. Inclui os dois vídeos de bastidor.</p>
+  <div class="flex mt12" style="gap:6px"><span class="chip sm">${I('image','s')}18 fotos</span><span class="chip sm">${I('video','s')}2 vídeos</span><span class="chip sm">${I('unlock','s')}pra sempre</span></div>
+  <div class="thumbs mt12">${tile('cetim',20,20,0,{lock:1})}${tile('cetim',80,60,0,{lock:1})}${tile('costas',30,50,0,{lock:1})}${tile('cetim',50,80,0,{lock:1})}</div>
+ </div>
+ <div class="foot"><div class="grow"><div class="price" style="font-size:19px">R$ 39,90</div><div class="xs muted">pagamento único</div></div><button class="btn r" style="width:auto;padding:0 22px" data-go="T-23">Comprar pack</button></div>
+</div>`);
+S('T-22','Assinar o close','rosa','P04,P03','Checkout da assinatura. Mostra o que libera e o período. Pix é o método da v1: a assinatura é paga mês a mês (lembrete 3 dias antes de vencer). Cartão com renovação automática fica para depois. Planos de 3 e 6 meses só aparecem se a criadora criar (P11).',`
+<div class="body ft">
+ ${topo('Entrar no close','T-20')}
+ <div class="flex mt8">${ring('lara',1,0,'md')}<div><div class="b wh">Close da Lara</div><div class="xs muted">@laramendes · 3,2 mil no close</div></div></div>
+ <div class="kick mt16 mb8">Escolha o período</div>
+ <div class="radio on"><i></i><div class="grow"><div class="b wh">1 mês</div><div class="xs muted">renova só se você pagar de novo</div></div><div class="price">R$ 19,90</div></div>
+ <div class="radio"><i></i><div class="grow"><div class="b wh">3 meses <span class="selo">−15%</span></div><div class="xs muted">R$ 16,92 por mês</div></div><div class="price">R$ 50,75</div></div>
+ <div class="kick mt12 mb8">O que libera</div>
+ ${['Todos os posts e stories do close','1 pack novo por mês','Drops de sexta, 20h','Desconto de 20% nos packs'].map(t=>`<div class="flex sm mb8"><span class="rs">${I('check','s')}</span>${t}</div>`).join('')}
+ <div class="kick mt12 mb8">Pagamento</div>
+ <div class="radio on"><i></i>${I('pix')}<div class="grow b wh">Pix</div><span class="xs muted">liberado na hora</span></div>
+ <div class="foot"><button class="btn r" data-go="T-23">Pagar R$ 19,90 no Pix</button></div>
+</div>`);
+S('T-23','Pix','rosa','P04','QR Code e copia e cola, com contador de 15 minutos. A tela escuta a confirmação do pagamento e vai sozinha para “Liberado”. Se expirar, gera outro sem duplicar a compra (idempotência no mesmo ciclo).',`
+<div class="body ft">
+ ${topo('Pagar no Pix','T-22')}
+ <div style="text-align:center" class="mt8"><div class="kick">Close da Lara · 1 mês</div><div class="price mt4" style="font-size:30px">R$ 19,90</div></div>
+ <div class="qr mt16">${qr()}</div>
+ <div class="flex mt12" style="justify-content:center;gap:6px"><span class="rs">${I('clock','s')}</span><span class="b wh">Expira em 14:32</span></div>
+ <div class="inp v mt12" style="font-size:11px">00020126580014br.gov.bcb.pix0136…<span class="sp"></span><span class="rs">${I('copy','s')}</span></div>
+ <div class="card mt12 sm">1. Abra o app do seu banco<br>2. Pix → Ler QR Code ou Copia e cola<br>3. Volte aqui: libera sozinho</div>
+ <div class="foot"><button class="btn" data-go="T-24">Copiar código Pix</button></div>
+</div>`);
+S('T-24','Liberado!','rosa','P04,P05','Momento de cor: a única tela rosa do fluxo do fã (manual de uso, “pagamento aprovado”). Tudo branco sobre o rosa. Recibo vai por e-mail.',`
+<div class="body" style="display:flex;flex-direction:column;text-align:center">
+ <span style="flex:1"></span>
+ <div class="bigok">${I('check')}</div>
+ <div class="h1" style="font-size:32px">Você está<br>no <em>close.</em></div>
+ <p class="p" style="color:#fff">Pago no Pix. Liberado na hora.<br>O close da Lara já está na sua biblioteca.</p>
+ <div class="card mt16" style="background:var(--deep);text-align:left"><div class="flex between sm"><span>Close da Lara · 1 mês</span><b>R$ 19,90</b></div><div class="flex between xs mt4" style="opacity:.8"><span>Válido até</span><span>11 dez 2026</span></div></div>
+ <span style="flex:1"></span>
+ <div class="stack"><button class="btn" data-go="T-25">Ver o conteúdo</button><button class="btn s" data-go="T-41">Mandar oi pra Lara</button></div>
+</div>`,'t-rosa');
+S('T-25','Conteúdo liberado','rosa','P05','Viewer seguro: stream, sem botão de baixar, marca d’água com o @ de quem comprou. Desliza para os lados entre as mídias do pack. “Na biblioteca” fica sempre acessível.',`
+<div class="body flush" style="background:#000">
+ <div style="position:absolute;top:42px;left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:4"><button class="ibtn glass" data-go="T-30">${I('x')}</button><div class="grow"><div class="b wh">Noite de cetim</div><div class="xs" style="color:#fff;opacity:.7">3 de 20</div></div><button class="ibtn glass">${I('heart')}</button></div>
+ <div class="ph" style="${bg('cetim',50,50,0)};position:absolute;top:96px;bottom:140px;left:0;right:0"><span style="position:absolute;right:10px;bottom:8px;font-size:9px;color:#fff;opacity:.55">@rafa.lima · clozzy</span></div>
+ <div style="position:absolute;left:12px;right:12px;bottom:28px;z-index:3">
+  <div class="thumbs">${tile('cetim',20,20,0)}${tile('costas',40,40,0)}<div class="ph" style="${bg('cetim',50,50,0)};width:62px;height:78px;border-radius:10px;outline:2px solid #fff"></div>${tile('cetim',80,80,0,{v:'1:12'})}</div>
+ </div>
+</div>`,'t-foto');
+
+/* ---------- F04 Fã · Biblioteca, chat, conta ---------- */
+S('T-30','Biblioteca','rosa','P06','Tudo que o fã tem acesso: assinaturas (com status e validade), packs e itens comprados. “Renovar” aparece 3 dias antes de vencer. Expirado continua listado, com “Assinar de novo”.',`
+<div class="body tb">
+ <div class="h1 mt8">Biblioteca</div>
+ <div class="seg mb12"><span class="on">Assinaturas</span><span>Packs</span><span>Itens</span></div>
+ ${[['lara','Close da Lara','ativa · até 11 dez','ok'],['nina','Close da Nina','vence em 2 dias','r'],['mel','Close da Mel','expirou em 30 out','x']].map(([k,t,s,st])=>`<div class="lrow" data-go="${st==='x'?'T-22':'T-20'}">${ring(k,1,st==='x','md')}<div class="grow"><div class="b wh">${t}</div><div class="xs ${st==='ok'?'okc':st==='r'?'rs':'muted'}">${s}</div></div>${st==='ok'?I('chev','s'):`<button class="btn ${st==='r'?'r':'s'} xs">${st==='r'?'Renovar':'Assinar de novo'}</button>`}</div>`).join('')}
+ <div class="kick mt16 mb8">Comprados recentemente</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  ${[['cetim','Noite de cetim','20 mídias'],['labios','Batom vermelho','1 vídeo']].map(([f,t,s])=>`<div data-go="T-25"><div class="ph" style="${bg(f,50,50,0)};height:120px;border-radius:14px"></div><div class="b wh mt4 sm">${t}</div><div class="xs muted">${s}</div></div>`).join('')}
+ </div>
+ ${tabsFa('Biblioteca')}
+</div>`);
+S('T-31','Notificações','rosa','P06,pós-v1','Novos posts e stories do close, respostas no chat, compras confirmadas e avisos de vencimento. As notificações por e-mail (v1) seguem as mesmas regras; push é pós-v1.',`
+<div class="body">
+ ${topo('Notificações','T-10')}
+ <div class="kick mt8 mb8">Hoje</div>
+ ${[['lara','<b class="wh">Lara</b> postou 6 fotos no close','12 min'],['nina','Seu close da <b class="wh">Nina</b> vence em 2 dias','1 h','Renovar'],['mel','<b class="wh">Mel</b> te mandou uma mensagem','3 h'],['duda','<b class="wh">Duda</b> lançou o pack “Renda preta”','5 h']].map(([k,t,h,b])=>`<div class="lrow">${av(k,'md')}<div class="grow sm" style="color:var(--soft)">${t}<div class="xs muted">${h}</div></div>${b?`<button class="btn r xs" data-go="T-22">${b}</button>`:''}</div>`).join('')}
+ <div class="kick mt16 mb8">Esta semana</div>
+ <div class="lrow"><span class="ico rs">${I('check')}</span><div class="grow sm">Compra confirmada: <b class="wh">Noite de cetim</b><div class="xs muted">seg</div></div></div>
+</div>`);
+S('T-40','Chat · conversas','rosa','pós-v1','Lista de conversas do fã. Selo de close em quem ele assina. Mensagens de criadoras aparecem primeiro; a criadora pode limitar o chat só para assinantes. Chat está fora da v1 em functionalities.md e entra aqui a pedido.',`
+<div class="body tb">
+ <div class="h1 mt8">Chat</div>
+ <div class="inp mb12">${I('search','s')}Buscar conversa</div>
+ ${[['lara','Lara Mendes','Que bom que você entrou! 🤍','agora',2],['mel','Mel Santos','📎 Mensagem paga · R$ 12,90','3 h',1],['nina','Nina Alves','Você: amei o personagem 03','ontem'],['duda','Duda Prado','O chat da Duda é só pro close','2 d']].map(([k,n,m,h,u])=>`<div class="lrow" data-go="T-41">${ring(k,k!=='duda',k==='duda','md')}<div class="grow"><div class="flex between"><span class="b wh">${n}</span><span class="xs ${u?'rs b':'muted'}">${h}</span></div><div class="flex between"><span class="xs ${u?'wh':'muted'} ell">${m}</span>${u?`<i class="selo f" style="height:17px;padding:0 6px">${u}</i>`:''}</div></div></div>`).join('')}
+ ${tabsFa('Chat')}
+</div>`);
+S('T-41','Conversa','rosa','pós-v1','Chat 1:1 com a criadora. Ela pode mandar <b>mensagem paga</b> (foto ou vídeo bloqueado com preço): o fã vê desfocado e desbloqueia no Pix sem sair da conversa. Resposta a story aparece com o story citado. Denunciar e bloquear ficam no menu.',`
+<div class="body ft" style="padding-top:0">
+ <div class="top" style="border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:4px 16px 8px"><button class="ibtn" data-go="T-40">${I('back')}</button>${ring('lara',1,0,'sm')}<div class="grow"><div class="b wh">Lara Mendes</div><div class="xs okc">no close · responde em ~1 h</div></div><button class="ibtn">${I('more')}</button></div>
+ <div class="xs muted" style="text-align:center;margin-bottom:8px">hoje</div>
+ <div class="flex" style="gap:6px;justify-content:flex-end;margin-bottom:4px"><span class="xs muted">respondeu ao story</span><div class="ph" style="${bg('costas',50,30,0)};width:44px;height:66px;border-radius:8px"></div></div>
+ <div class="bubble out">esse bastidor ficou lindo 😍<span class="tm">21:02</span></div>
+ <div class="bubble in">Que bom que você entrou! 🤍 Separei uma coisa só pra quem me manda mensagem…<span class="tm">21:10</span></div>
+ <div class="ppv" data-go="T-42"><div class="ph lock" style="${bg('costas',30,60,0)}"><div class="lockc"><span class="lk">${I('lock')}</span><span class="xs b">3 fotos · 1 vídeo</span></div></div><div class="bt"><span class="xs b wh">Pra você</span><button class="btn r xs">R$ 12,90</button></div></div>
+ <div class="foot" style="padding-top:10px"><span class="muted">${I('image','l')}</span><div class="inp grow" style="height:40px;border-radius:999px">Mensagem…</div><button class="ibtn" style="background:var(--cta);color:var(--ctat)">${I('send')}</button></div>
+</div>`);
+S('T-42','Desbloquear mensagem','rosa','pós-v1,P04','Sheet de compra dentro do chat: mesmo Pix do checkout, mesmo registro na biblioteca (“Mensagens”). Ao pagar, a mídia abre no lugar.',`
+<div class="body ft">
+ <div class="under">
+  <div class="bubble in">Separei uma coisa só pra quem me manda mensagem…</div>
+  <div class="ppv"><div class="ph lock" style="${bg('costas',30,60,0)}"></div></div>
+ </div>
+ <div class="dim" data-go="T-41"></div>
+ <div class="sheet"><div class="grab"></div>
+  <div class="flex">${av('lara','md')}<div class="grow"><div class="b wh">Mensagem paga da Lara</div><div class="xs muted">3 fotos · 1 vídeo · fica na sua biblioteca</div></div></div>
+  <div class="flex between mt16"><span class="apoio">Total</span><span class="price" style="font-size:22px">R$ 12,90</span></div>
+  <div class="radio on mt12"><i></i>${I('pix')}<div class="grow b wh">Pix</div><span class="xs muted">liberado na hora</span></div>
+  <button class="btn r mt8" data-go="T-23">Desbloquear no Pix</button>
+ </div>
+</div>`);
+S('T-33','Eu · conta','branco','P07','Conta do fã no tema branco (manual de uso: conta e configurações no claro). Atalho para “Quero vender” (ativa o modo criador, P15), assinaturas, pagamentos, notificações, segurança e legal.',`
+<div class="body tb">
+ <div class="flex mt8">${ini('R','lg')}<div><div class="h2" style="font-size:19px">Rafa Lima</div><div class="xs" style="color:#666">@rafa.lima · fã desde out 2026</div></div></div>
+ <div class="card mt16 flex" data-go="T-50" style="background:var(--roxo);color:#fff">${SYM(36,'#fff','#fff')}<div class="grow"><div class="b">Quero vender meu conteúdo</div><div class="xs" style="opacity:.85">Ative o modo criador em 3 passos</div></div>${I('chev')}</div>
+ <div class="mt12">
+ ${[['star','Minhas assinaturas','3 ativas','T-30'],['wallet','Pagamentos e recibos','',''],['bell','Notificações','',''],['shield','Segurança e senha','',''],['eye','Privacidade','',''],['flag','Ajuda, termos e 18+','','']].map(([i,t,s,g])=>`<div class="lrow" ${g?`data-go="${g}"`:''}><span class="ico">${I(i)}</span><span class="grow b">${t}</span><span class="xs" style="color:#666">${s}</span>${I('chev','s')}</div>`).join('')}
+ <div class="lrow" data-go="T-01"><span class="ico">${I('logout')}</span><span class="grow b" style="color:var(--deep)">Sair</span></div>
+ </div>
+ ${tabsFa('Eu').replace('class="tabbar"','class="tabbar" style="background:#fff;border-color:#EBEBEB"')}
+</div>`,'t-branco');
+
+/* ---------- F05 Criador · ativação ---------- */
+S('T-50','Abrir meu close','roxo','P15','Entrada do modo criador. Tema roxo (manual: “Abrir meu close” no roxo, sem rosa). Explica a taxa e o que vai ser pedido antes de começar.',`
+<div class="body" style="display:flex;flex-direction:column">
+ ${topo('','T-33')}
+ <div class="mt16">${SYM(60,'#fff','#fff')}</div>
+ <div class="h1 mt16" style="font-size:32px">Abra o seu<br><em>close.</em></div>
+ <p class="p">Venda assinatura, packs e mensagens. Você define o preço e recebe no Pix.</p>
+ <div class="mt16">
+ ${[['doc','Seus dados','nome, CPF e data de nascimento'],['face','Verificação','selfie com documento, 2 min'],['pix','Recebimento','chave Pix no seu CPF']].map(([i,t,s],n)=>`<div class="lrow" style="border-color:#A37FD6"><span class="ico" style="background:#8C5ECB">${I(i)}</span><div class="grow"><div class="b">${n+1}. ${t}</div><div class="xs" style="opacity:.8">${s}</div></div></div>`).join('')}
+ </div>
+ <div class="card mt12 sm"><b>Taxa da Clozzy: 15%</b> sobre cada venda. Saque grátis no Pix a partir de R$ 50.</div>
+ <span style="flex:1"></span>
+ <button class="btn" data-go="T-51">Começar</button>
+</div>`,'t-roxo');
+S('T-51','1 · Seus dados','roxo','P15','Dados mínimos para pagar a criadora e cumprir a lei. O CPF precisa bater com o titular da chave Pix (passo 3). Nome artístico é o que aparece no perfil.',`
+<div class="body ft">
+ ${topo('Passo 1 de 3','T-50')}
+ <div class="prog"><i class="on"></i><i></i><i></i></div>
+ <div class="h1" style="font-size:24px">Seus dados</div>
+ <div class="field mt12"><label>Nome completo (igual ao documento)</label><div class="inp v">Lara Mendes Oliveira</div></div>
+ <div class="field"><label>Nome artístico</label><div class="inp v">Lara Mendes</div></div>
+ <div class="field"><label>CPF</label><div class="inp v f">123.456.789-09</div></div>
+ <div class="field"><label>Data de nascimento</label><div class="inp v">22 / 07 / 1997</div></div>
+ <div class="field"><label>País</label><div class="inp v">Brasil<span class="sp"></span>${I('chev','s')}</div></div>
+ <div class="foot"><button class="btn" data-go="T-52">Continuar</button></div>
+</div>`,'t-roxo');
+S('T-52','2 · Verificação','roxo','P15','Selfie segurando o documento. O provedor de verificação valida idade (18+) e se o rosto bate com o documento. Leva até 24 h; enquanto isso a criadora pode montar o perfil em rascunho.',`
+<div class="body flush">
+ <div class="cam" style="${bg('homem',50,25,0)};filter:grayscale(.2)"></div>
+ <div style="position:absolute;inset:0;background:rgba(0,0,0,.35)"></div>
+ <div style="position:absolute;top:44px;left:16px;right:16px;z-index:4">
+  <div class="flex"><button class="ibtn glass" data-go="T-51">${I('back')}</button><span class="b wh">Passo 2 de 3</span></div>
+  <div class="prog mt8"><i class="on"></i><i class="on"></i><i></i></div>
+ </div>
+ <div style="position:absolute;top:130px;left:50%;transform:translateX(-50%);width:200px;height:250px;border-radius:50%;border:3px dashed #fff;z-index:3"></div>
+ <div class="camui"><div class="b wh" style="text-align:center">Rosto dentro do círculo e documento<br>do lado, com a foto visível</div><div class="shutter" data-go="T-53"><i></i></div></div>
+</div>`,'t-foto');
+S('T-53','3 · Recebimento','roxo','P15,P13','Chave Pix no CPF da criadora (não aceita chave de terceiros). Aceite dos termos de criador e da política de repasse.',`
+<div class="body ft">
+ ${topo('Passo 3 de 3','T-52')}
+ <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+ <div class="h1" style="font-size:24px">Onde você <em>recebe</em></div>
+ <div class="field mt12"><label>Tipo de chave</label><div class="chips"><span class="chip on">CPF</span><span class="chip">E-mail</span><span class="chip">Celular</span><span class="chip">Aleatória</span></div></div>
+ <div class="field"><label>Chave Pix</label><div class="inp v f">123.456.789-09</div><div class="hint">Precisa estar no seu CPF.</div></div>
+ <div class="card sm mt8">Repasse: <b>85%</b> de cada venda. Saldo liberado 7 dias depois da compra. Saque mínimo R$ 50.</div>
+ <div class="check on mt12"><i style="border-color:#fff;background:#fff"></i><span style="color:#fff">Aceito os <u>Termos de criador</u> e a <u>Política de repasse</u>.</span></div>
+ <div class="foot"><button class="btn" data-go="T-54">Enviar para análise</button></div>
+</div>`,'t-roxo');
+S('T-54','Em análise','roxo','P15,P09','Enquanto a verificação não sai, o painel abre em modo rascunho: dá para montar perfil, ofertas e subir conteúdo, mas nada é publicado. Aviso por e-mail quando aprovar.',`
+<div class="body" style="display:flex;flex-direction:column;text-align:center">
+ <span style="flex:1"></span>
+ <div style="margin:0 auto">${SYM(90,'#fff','#fff')}</div>
+ <div class="h1 mt20" style="font-size:28px">Quase lá.<br>Estamos <em>conferindo.</em></div>
+ <p class="p">A verificação leva até 24 h. Enquanto isso, monte seu perfil e suas ofertas: tudo fica em rascunho até liberar.</p>
+ <div class="card mt16" style="text-align:left">${[['Dados',1],['Verificação',0],['Recebimento',1]].map(([t,ok])=>`<div class="flex between sm" style="padding:4px 0"><span>${t}</span><span class="b">${ok?'✓ ok':'em análise'}</span></div>`).join('')}</div>
+ <span style="flex:1"></span>
+ <button class="btn" data-go="T-60">Montar meu perfil</button>
+</div>`,'t-roxo');
+
+/* ---------- F06 Criador · Painel e publicar ---------- */
+S('T-60','Painel','roxo','P09','Home da criadora. Saldo e vendas do mês em destaque, gráfico dos últimos 7 dias, assinantes ativos, atalhos e as últimas vendas. A tab bar do criador troca o Explorar por Conteúdo e tem o “+” de publicar no meio.',`
+<div class="body tb">
+ <div class="top">${LOGO(22)}<span class="selo rx">CRIADORA</span><span class="sp"></span><button class="ibtn">${I('bell')}<i class="dot"></i></button></div>
+ <div class="kick mt4">Oi, Lara</div>
+ <div class="h1">R$ 4.812<span class="muted" style="font-size:14px;font-family:var(--fb);font-weight:600"> em novembro</span></div>
+ <div class="card"><div class="flex between"><span class="xs muted">Últimos 7 dias</span><span class="xs okc b">+18%</span></div>
+  <div class="bars">${[30,45,38,60,52,80,95].map((h,i)=>`<i class="${i===6?'on':''}" style="height:${h}%"></i>`).join('')}</div>
+  <div class="flex between xs muted mt4"><span>qua</span><span>hoje</span></div></div>
+ <div class="kpi mt8">
+  <div class="card" data-go="T-75"><span class="xs muted">No close</span><div class="n">3.214</div><span class="xs okc">+46 essa semana</span></div>
+  <div class="card" data-go="T-76"><span class="xs muted">Saldo p/ sacar</span><div class="n">R$ 2.140</div><span class="xs rx b">Sacar no Pix</span></div>
+ </div>
+ <div class="kick mt16 mb8">Últimas vendas</div>
+ ${[['@rafa.lima','Close · 1 mês','19,90','agora'],['@gui_s','Noite de cetim','39,90','12 min'],['@ana.b','Mensagem paga','12,90','1 h']].map(([w,o,v,t])=>`<div class="lrow">${ini(w[1].toUpperCase(),'sm')}<div class="grow"><div class="b wh sm">${w}</div><div class="xs muted">${o} · ${t}</div></div><span class="d xb wh">R$ ${v}</span></div>`).join('')}
+ ${tabsCr('Painel')}
+</div>`);
+S('T-61','Criar','roxo','P12,pós-v1','O “+” abre o que dá para publicar: post no feed (grátis, close ou pago), story (todos ou só close), pack à venda, item avulso e mensagem em massa para os assinantes.',`
+<div class="body tb">
+ <div class="under" style="opacity:.5"><div class="h1">R$ 4.812</div><div class="card" style="height:120px"></div></div>
+ <div class="dim" data-go="T-60"></div>
+ <div class="sheet" style="bottom:0;padding-bottom:30px"><div class="grab"></div>
+  <div class="h2 mb12">O que vamos publicar?</div>
+  ${[['image','Post','fotos ou vídeo no feed','T-62'],['camera','Story','24 h · todos ou só o close','T-63'],['pack','Pack','um conjunto à venda','T-64'],['tag','Item avulso','uma foto ou vídeo com preço','T-64'],['send','Mensagem para o close','para todos os assinantes','T-74']].map(([i,t,s,g])=>`<div class="lrow" data-go="${g}"><span class="ico" style="background:var(--cr);color:var(--crt)">${I(i)}</span><div class="grow"><div class="b wh">${t}</div><div class="xs muted">${s}</div></div>${I('chev','s')}</div>`).join('')}
+ </div>
+</div>`);
+S('T-62','Novo post','roxo','P12,pós-v1','Upload de até 20 mídias, legenda e quem vê: <b>todos</b> (grátis, vira vitrine), <b>só o close</b> (assinantes) ou <b>pago</b> (preço avulso; assinantes do close também pagam, com desconto se ativado). Prévia mostra como o post aparece desfocado para quem não tem acesso. Agendar é opcional.',`
+<div class="body ft">
+ ${topo('Novo post','T-61','<button class="xs b rx">Rascunho</button>')}
+ <div class="thumbs">${tile('cetim',30,30,0)}${tile('costas',50,40,0,{v:'0:32'})}${tile('cetim',70,70,0)}<div class="upl" style="width:62px;height:78px;border-radius:10px">${I('plus')}</div></div>
+ <div class="field mt12"><label>Legenda</label><div class="inp v ta">Ensaio de quinta, luz baixa. O resto tá no close 🤍</div></div>
+ <div class="kick mb8">Quem vê</div>
+ <div class="radio"><i></i><div class="grow"><div class="b wh">Todos</div><div class="xs muted">grátis, aparece como vitrine</div></div></div>
+ <div class="radio on"><i></i><div class="grow"><div class="b wh">Só o close ${I('star','s f')}</div><div class="xs muted">3.214 assinantes</div></div></div>
+ <div class="radio"><i></i><div class="grow"><div class="b wh">Pago</div><div class="xs muted">defina um preço</div></div><span class="d xb muted">R$ 0,00</span></div>
+ <div class="lrow mt4"><span class="grow sm">Agendar publicação</span><span class="toggle"></span></div>
+ <div class="foot"><button class="btn s" style="width:auto;padding:0 16px">${I('eye','s')}Prévia</button><button class="btn cr" data-go="T-65">Publicar</button></div>
+</div>`);
+S('T-63','Novo story','roxo','pós-v1','Câmera do story. Embaixo, a escolha que importa: <b>Todos</b> ou <b>Só o close</b> (anel tracejado com estrela, igual ao símbolo). Dá para usar foto da galeria, texto e colocar um botão “Ver pack” que leva para uma oferta.',`
+<div class="body flush">
+ <div class="cam" style="${bg('labios',60,50,0)}"></div>
+ <div style="position:absolute;top:44px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:4"><button class="ibtn glass" data-go="T-61">${I('x')}</button><div class="flex"><button class="ibtn glass">${I('text')}</button><button class="ibtn glass">${I('tag')}</button></div></div>
+ <div class="camui">
+  <div class="seg" style="background:rgba(0,0,0,.6);width:230px"><span>Todos</span><span class="on">${I('star','s f')} Só o close</span></div>
+  <div class="flex" style="gap:34px;align-items:center"><div class="ph" style="${bg('cetim',50,50,0)};width:38px;height:38px;border-radius:10px;border:2px solid #fff"></div><div class="shutter" data-go="T-65"><i></i></div><button class="ibtn glass">${I('flip')}</button></div>
+  <div class="flex xs b" style="gap:18px;color:#fff"><span style="opacity:.6">POST</span><span>STORY</span><span style="opacity:.6">VÍDEO</span></div>
+ </div>
+</div>`,'t-foto');
+S('T-64','Novo pack','roxo','P11,P12','Pack é um produto: título, descrição, preço, mídias e qual delas é a prévia liberada. Desconto para quem está no close é opcional. Pode ficar em rascunho ou ser publicado.',`
+<div class="body ft">
+ ${topo('Novo pack','T-61')}
+ <div class="upl">${I('image','l')}<span class="b wh sm">18 fotos · 2 vídeos</span><span class="xs">toque para escolher a prévia</span></div>
+ <div class="field mt12"><label>Título</label><div class="inp v">Noite de cetim</div></div>
+ <div class="field"><label>Descrição</label><div class="inp v ta" style="min-height:56px">Ensaio completo de quinta, luz baixa. Inclui os dois vídeos de bastidor.</div></div>
+ <div class="flex" style="gap:8px"><div class="field grow"><label>Preço</label><div class="inp v f">R$ 39,90</div></div><div class="field grow"><label>Você recebe</label><div class="inp v" style="color:var(--ok)">R$ 33,92</div></div></div>
+ <div class="lrow"><span class="grow sm">20% off para o close</span><span class="toggle on cr"></span></div>
+ <div class="foot"><button class="btn s" style="width:auto;padding:0 16px">Rascunho</button><button class="btn cr" data-go="T-65">Publicar pack</button></div>
+</div>`);
+S('T-65','Publicado','roxo','P12','Confirmação com atalhos: ver como o fã vê, compartilhar o link (com prévia segura) e avisar o close por mensagem.',`
+<div class="body" style="display:flex;flex-direction:column;text-align:center">
+ <span style="flex:1"></span>
+ <div class="bigok" style="color:var(--roxo)">${I('check')}</div>
+ <div class="h1" style="font-size:30px">No ar pro<br><em>seu close.</em></div>
+ <p class="p">“Noite de cetim” já aparece no seu perfil e no feed de 3.214 pessoas.</p>
+ <span style="flex:1"></span>
+ <div class="stack"><button class="btn" data-go="T-20">Ver como o fã vê</button><button class="btn s">Compartilhar link</button><button class="btn s" data-go="T-74">Avisar o close</button></div>
+</div>`,'t-roxo');
+
+/* ---------- F07 Criador · Gestão ---------- */
+S('T-70','Ofertas','roxo','P11','Tudo que a criadora vende: a assinatura do close, os packs e os itens avulsos, com vendas e status (ativa, pausada, rascunho). Pausar tira da vitrine sem afetar quem já comprou.',`
+<div class="body tb">
+ ${topo('Ofertas','T-60','<button class="ibtn" data-go="T-64">'+I('plus')+'</button>')}
+ <div class="card" data-go="T-71" style="border:1.5px solid var(--cr)"><div class="flex between"><div><div class="kick rx">Assinatura</div><div class="b wh mt4">Close da Lara</div><div class="xs muted">3.214 ativos · R$ 19,90/mês</div></div><span class="selo ok">ATIVA</span></div></div>
+ <div class="kick mt16 mb8">Packs · 9</div>
+ ${[['cetim','Noite de cetim','R$ 39,90 · 212 vendas','ATIVO'],['costas','Pack verão','R$ 29,90 · 468 vendas','ATIVO'],['labios','Sem filtro','R$ 24,90 · rascunho','RASCUNHO']].map(([f,t,s,st])=>`<div class="lrow"><div class="ph" style="${bg(f,50,50,0)};width:46px;height:56px;border-radius:10px;flex:none"></div><div class="grow"><div class="b wh">${t}</div><div class="xs muted">${s}</div></div><span class="selo ${st==='ATIVO'?'ok':'rx'}">${st}</span></div>`).join('')}
+ <div class="kick mt16 mb8">Itens avulsos · 4</div>
+ <div class="lrow"><div class="ph" style="${bg('costas',30,60,0)};width:46px;height:56px;border-radius:10px;flex:none"></div><div class="grow"><div class="b wh">Banho de luz</div><div class="xs muted">vídeo · R$ 9,90 · 87 vendas</div></div><span class="selo">PAUSADO</span></div>
+ ${tabsCr('')}
+</div>`);
+S('T-71','Editar assinatura','roxo','P11','Preço do close, planos de 3 e 6 meses (opcionais), o que libera e o desconto em packs. Mudar o preço vale para novas assinaturas; quem já assina mantém o preço até o fim do período.',`
+<div class="body ft">
+ ${topo('Close da Lara','T-70')}
+ <div class="field"><label>Preço por mês</label><div class="inp v f">R$ 19,90</div><div class="hint">Você recebe R$ 16,92 por assinante.</div></div>
+ <div class="kick mb8">Planos longos</div>
+ <div class="lrow"><span class="grow sm">3 meses · 15% off</span><span class="toggle on cr"></span></div>
+ <div class="lrow"><span class="grow sm">6 meses · 25% off</span><span class="toggle"></span></div>
+ <div class="kick mt12 mb8">O que libera</div>
+ <div class="chips"><span class="chip on">Posts do close</span><span class="chip on">Stories do close</span><span class="chip on">1 pack/mês</span><span class="chip on">Chat</span><span class="chip">Live (em breve)</span></div>
+ <div class="lrow mt8"><span class="grow sm">Desconto em packs para o close</span><span class="d xb wh">20%</span></div>
+ <div class="foot"><button class="btn s" style="width:auto;padding:0 16px">Pausar</button><button class="btn cr">Salvar</button></div>
+</div>`);
+S('T-72','Conteúdo','roxo','P12','Biblioteca da criadora: tudo que subiu, filtrado por tipo e por quem vê. Selos mostram se é grátis, close, pago ou rascunho. Toque longo seleciona para vincular a uma oferta, arquivar ou remover.',`
+<div class="body tb">
+ <div class="h1 mt8">Conteúdo</div>
+ <div class="hscroll mb12"><span class="chip on">Tudo · 312</span><span class="chip">Close</span><span class="chip">Pagos</span><span class="chip">Grátis</span><span class="chip">Stories</span><span class="chip">Rascunhos</span></div>
+ <div class="grid3">
+  ${[['costas',50,30,0,'GRÁTIS','w'],['cetim',30,40,0,'CLOSE','f'],['costas',40,60,240,'CLOSE','f'],['labios',60,50,0,'R$ 9,90',''],['costas',60,20,300,'RASCUNHO','rx'],['cetim',70,70,0,'CLOSE','f'],['labios',30,70,0,'GRÁTIS','w'],['costas',20,50,0,'CLOSE','f'],['cetim',50,20,0,'R$ 4,90','']].map(([f,x,y,z,t,c],i)=>tile(f,x,y,z,{v:i%4===2?'0:48':'',tag:`<span class="selo tag ${c==='w'?'dk':c}" style="font-size:8.5px;height:17px">${t}</span>`})).join('')}
+ </div>
+ ${tabsCr('Conteúdo')}
+</div>`);
+S('T-73','Chat · criadora','roxo','pós-v1','Caixa de entrada da criadora, separada por <b>Close</b> (assinantes), <b>Compradores</b> e <b>Pedidos</b> (quem não assina). Mostra quanto cada fã já gastou. Ela pode fechar o chat só para o close nas configurações.',`
+<div class="body tb">
+ <div class="h1 mt8">Mensagens</div>
+ <div class="seg mb12"><span class="on">Close · 5</span><span>Compradores</span><span>Pedidos</span></div>
+ ${[['R','@rafa.lima','esse bastidor ficou lindo 😍','agora','R$ 72,70',1],['G','@gui_s','tem pack novo essa semana?','14 min','R$ 39,90',1],['A','@ana.b','✓ desbloqueou sua mensagem','1 h','R$ 145,40',0],['T','@tomas','obrigado pelo vídeo!','ontem','R$ 19,90',0]].map(([l,u,m,h,g,n])=>`<div class="lrow" data-go="T-74">${ini(l,'md')}<div class="grow"><div class="flex between"><span class="b wh">${u}</span><span class="xs ${n?'rx b':'muted'}">${h}</span></div><div class="xs ${n?'wh':'muted'} ell">${m}</div><div class="xs okc">gastou ${g}</div></div></div>`).join('')}
+ ${tabsCr('Chat')}
+</div>`);
+S('T-74','Enviar mensagem paga','roxo','pós-v1,P11','Na conversa (ou em massa para o close), a criadora anexa mídia, escolhe um preço e envia. O fã vê desfocado e desbloqueia no Pix. Mensagem em massa pode excluir quem já comprou.',`
+<div class="body ft" style="padding-top:0">
+ <div class="top" style="border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:4px 16px 8px"><button class="ibtn" data-go="T-73">${I('back')}</button>${ini('R','sm')}<div class="grow"><div class="b wh">@rafa.lima</div><div class="xs okc">no close desde hoje · gastou R$ 72,70</div></div></div>
+ <div class="bubble in">esse bastidor ficou lindo 😍<span class="tm">21:02</span></div>
+ <div class="dim" style="top:auto;height:100%"></div>
+ <div class="sheet"><div class="grab"></div>
+  <div class="h2 mb12">Mensagem paga</div>
+  <div class="thumbs mb12">${tile('costas',30,60,0)}${tile('costas',60,30,0)}${tile('cetim',40,40,0,{v:'0:40'})}<div class="upl" style="width:62px;height:78px;border-radius:10px">${I('plus')}</div></div>
+  <div class="inp v mb8">Separei uma coisa só pra quem me manda mensagem…</div>
+  <div class="flex" style="gap:8px"><div class="inp v f grow">R$ 12,90</div><div class="chips"><span class="chip sm">R$ 9,90</span><span class="chip sm">R$ 19,90</span></div></div>
+  <button class="btn cr mt12" data-go="T-73">${I('send','s')}Enviar bloqueada</button>
+ </div>
+</div>`);
+S('T-75','Assinantes','roxo','P09','Quem está no close: ativos, vencendo e cancelados, com tempo de casa e total gasto. Dá para mandar mensagem direto ou filtrar quem vence nos próximos dias para oferecer um pack.',`
+<div class="body">
+ ${topo('No close · 3.214','T-60')}
+ <div class="seg mb12"><span class="on">Ativos</span><span>Vencendo · 61</span><span>Saíram</span></div>
+ <div class="inp mb8">${I('search','s')}Buscar @</div>
+ ${[['A','@ana.b','8 meses','R$ 145,40'],['R','@rafa.lima','hoje','R$ 72,70'],['G','@gui_s','3 meses','R$ 99,60'],['M','@mari.c','1 ano','R$ 312,00'],['T','@tomas','2 meses','R$ 39,80']].map(([l,u,t,g])=>`<div class="lrow">${ini(l,'md')}<div class="grow"><div class="b wh">${u}</div><div class="xs muted">no close há ${t} · gastou ${g}</div></div><button class="ibtn" data-go="T-74">${I('chat','s')}</button></div>`).join('')}
+</div>`);
+S('T-76','Financeiro','roxo','P13','Saldo disponível (já pode sacar), a liberar (7 dias após cada venda) e o extrato. A taxa de 15% aparece em cada linha para não ter surpresa.',`
+<div class="body">
+ ${topo('Financeiro','T-60')}
+ <div class="card" style="background:var(--cr);color:var(--crt)"><div class="xs" style="opacity:.85">Disponível para sacar</div><div class="d" style="font-size:30px;font-weight:900">R$ 2.140,35</div><div class="xs" style="opacity:.85">+ R$ 1.902,10 a liberar nos próximos 7 dias</div><button class="btn mt12" style="background:var(--crt);color:var(--cr)" data-go="T-77">${I('pix','s')}Sacar no Pix</button></div>
+ <div class="seg mt12 mb8"><span class="on">Extrato</span><span>Saques</span></div>
+ ${[['Close · @rafa.lima','11 nov','19,90','16,92'],['Noite de cetim · @gui_s','11 nov','39,90','33,92'],['Mensagem · @ana.b','11 nov','12,90','10,97'],['Saque Pix','08 nov','','−1.500,00']].map(([t,d,b,l])=>`<div class="lrow"><span class="ico">${I(l.startsWith('−')?'pix':'tag')}</span><div class="grow"><div class="b wh sm">${t}</div><div class="xs muted">${d}${b?` · bruto R$ ${b} · taxa 15%`:' · concluído'}</div></div><span class="d xb ${l.startsWith('−')?'apoio':'okc'}">${l.startsWith('−')?'':'+'}${l}</span></div>`).join('')}
+</div>`);
+S('T-77','Sacar no Pix','roxo','P13','Valor (mínimo R$ 50), chave cadastrada no CPF e confirmação com senha. Cai em minutos; o status fica em “Saques”.',`
+<div class="body ft">
+ ${topo('Sacar','T-76')}
+ <div style="text-align:center" class="mt16"><div class="kick">Quanto você quer sacar?</div><div class="d mt8" style="font-size:40px;font-weight:900;color:var(--tx)">R$ 2.140,35</div><div class="xs muted">disponível: R$ 2.140,35</div></div>
+ <div class="chips mt16" style="justify-content:center"><span class="chip">R$ 500</span><span class="chip">R$ 1.000</span><span class="chip on">Tudo</span></div>
+ <div class="card mt20"><div class="flex between sm"><span class="apoio">Para</span><span class="b wh">CPF ***.456.789-**</span></div><div class="flex between sm mt8"><span class="apoio">Taxa do saque</span><span class="b okc">grátis</span></div><div class="flex between sm mt8"><span class="apoio">Chega</span><span class="b wh">em minutos</span></div></div>
+ <div class="foot"><button class="btn cr" data-go="T-76">Confirmar saque</button></div>
+</div>`);
+S('T-78','Perfil da criadora','roxo','P10','Edição do perfil público: foto, capa, nome artístico, @, bio, categoria e links. “Ver como fã” abre a vitrine (T-20). Publicar/despublicar o perfil inteiro fica aqui também.',`
+<div class="body tb">
+ ${topo('Meu perfil','','<button class="xs b rx" data-go="T-20">Ver como fã</button>')}
+ <div class="ph" style="${bg('costas',50,35,0)};height:100px;border-radius:16px"><button class="ibtn glass" style="position:absolute;right:8px;bottom:8px">${I('camera','s')}</button></div>
+ <div style="margin-top:-30px;padding-left:12px">${ring('lara',1,0,'lg')}</div>
+ <div class="field mt8"><label>Nome artístico</label><div class="inp v">Lara Mendes</div></div>
+ <div class="field"><label>@</label><div class="inp v">laramendes</div></div>
+ <div class="field"><label>Bio</label><div class="inp v ta" style="min-height:52px">Fotos de verão, bastidor e o que não vai pro feed.</div></div>
+ <div class="lrow"><span class="grow sm">Perfil publicado</span><span class="toggle on cr"></span></div>
+ <div class="lrow" data-go="T-70"><span class="grow sm">Ofertas e preços</span>${I('chev','s')}</div>
+ ${tabsCr('Perfil')}
+</div>`);
+
+/* ===== Fluxos: ordem das telas na galeria e no modo navegável ===== */
+const FLOWS=[
+ {id:'conta',n:'F01',who:'co',title:'Entrar e criar conta',color:'c-branco',desc:'Abertura, age gate 18+, cadastro único (todo criador começa como fã), login, recuperação de senha, confirmação de e-mail e interesses. Páginas <code>P01 · P08 · P14</code>.',steps:[['T-01','Abrir'],['T-02','18+'],['T-03','Criar conta'],['T-04','Entrar'],['T-05','Recuperar'],['T-06','Código'],['T-07','Interesses']]},
+ {id:'inicio',n:'F02',who:'fa',title:'Início, stories e explorar',color:'c-rosa',pv:1,desc:'O dia a dia do fã: feed de quem ele segue com post grátis, do close (desfocado) e pago; stories com anel tracejado para o close; explorar e busca. Páginas <code>P02</code> + feed e stories.',steps:[['T-10','Início'],['T-11','Story'],['T-12','Story do close'],['T-13','Explorar'],['T-14','Busca']]},
+ {id:'compra',n:'F03',who:'fa',title:'Vitrine, compra e acesso',color:'c-rosa',desc:'O fluxo canônico da v1: perfil → oferta → Pix → liberado → conteúdo. Assinatura do close, pack e item avulso. Páginas <code>P03 → P04 → P05</code>.',steps:[['T-20','Perfil'],['T-21','Pack'],['T-22','Assinar'],['T-23','Pix'],['T-24','Liberado'],['T-25','Conteúdo']]},
+ {id:'biblio',n:'F04',who:'fa',title:'Biblioteca, chat e conta',color:'c-rosa',pv:1,desc:'O que o fã já tem (assinaturas, packs, itens), notificações, conversas com as criadoras com mensagem paga desbloqueável no Pix, e a conta no tema branco. Páginas <code>P06 · P07</code> + chat.',steps:[['T-30','Biblioteca'],['T-31','Notificações'],['T-40','Conversas'],['T-41','Conversa'],['T-42','Desbloquear'],['T-33','Conta']]},
+ {id:'ativar',n:'F05',who:'cr',title:'Abrir o close (ativar criador)',color:'c-roxo',desc:'De fã para criadora em 3 passos no tema roxo: dados, selfie com documento e chave Pix. Enquanto a verificação sai, o painel abre em rascunho. Página <code>P15</code>.',steps:[['T-50','Abrir'],['T-51','Dados'],['T-52','Selfie'],['T-53','Pix'],['T-54','Em análise']]},
+ {id:'publicar',n:'F06',who:'cr',title:'Painel e publicação',color:'c-roxo',pv:1,desc:'Painel com vendas e saldo, o “+” de criar, post com controle de quem vê (todos, close ou pago), story para todos ou só para o close, pack à venda e confirmação. Páginas <code>P09 · P11 · P12</code> + feed e stories.',steps:[['T-60','Painel'],['T-61','Criar'],['T-62','Post'],['T-63','Story'],['T-64','Pack'],['T-65','Publicado']]},
+ {id:'gestao',n:'F07',who:'cr',title:'Ofertas, conteúdo, fãs e dinheiro',color:'c-roxo',pv:1,desc:'Ofertas e preço do close, biblioteca de conteúdo, mensagens com os fãs e envio de mensagem paga, lista de assinantes, financeiro e saque no Pix, e edição do perfil público. Páginas <code>P10 · P11 · P12 · P13</code> + chat.',steps:[['T-70','Ofertas'],['T-71','Assinatura'],['T-72','Conteúdo'],['T-73','Mensagens'],['T-74','Mensagem paga'],['T-75','Assinantes'],['T-76','Financeiro'],['T-77','Sacar'],['T-78','Perfil']]},
+];
+const ORDER=FLOWS.flatMap(f=>f.steps.map(s=>s[0]));
+document.getElementById('nscr').textContent=ORDER.length;
+const STATUS=`<div class="notch"></div><div class="sb"><span>9:41</span><span class="ic"><i style="width:3px;height:5px"></i><i style="width:3px;height:7px"></i><i style="width:3px;height:9px"></i><i style="width:3px;height:11px;opacity:.5"></i><i style="width:20px;height:10px;border-radius:3px;margin-left:4px"></i></span></div>`;
+/* ===== Temas ===== */
+const THEMES=[
+ {id:'preto-rosa',nome:'Preto + rosa',tag:'atual',desc:'O app de hoje: fundo #000, rosa nos destaques e no anel do close, Pink Deep no botão de compra, roxo só no criador.',sw:['#000','#141414','#E0005A','#FF0065','#7C48C4']},
+ {id:'preto-roxo',nome:'Preto + roxo',desc:'O mesmo preto com o roxo no lugar do rosa em botões, anéis e preços. Mais noturno e discreto; o rosa fica só no logo.',sw:['#000','#141414','#7C48C4','#B08BE6','#7C48C4']},
+ {id:'branco-rosa',nome:'Branco + rosa',desc:'Fundo branco, texto preto, Pink Deep na ação e no destaque. Lê bem de dia e conversa com a conta e o site.',sw:['#fff','#F2F2F2','#E0005A','#E0005A','#7C48C4']},
+ {id:'branco-roxo',nome:'Branco + roxo',desc:'Branco com o roxo como ação e destaque; o símbolo continua Pink Deep, ao lado e nunca sobre o roxo.',sw:['#fff','#F2F2F2','#7C48C4','#7C48C4','#7C48C4']},
+ {id:'rosa',nome:'Rosa total',desc:'A tela inteira no rosa e tudo em branco: botão branco com texto Pink Deep, superfícies em Deep. Nada preto sobre o rosa.',sw:['#FF0065','#E0005A','#fff','#fff','#fff']},
+ {id:'roxo',nome:'Roxo total',desc:'O app inteiro no roxo com tudo em branco, como a ativação do criador hoje. Nenhum rosa sobre o roxo.',sw:['#7C48C4','#8C5ECB','#fff','#fff','#fff']},
+];
+const TSCREENS=[['T-10','Início'],['T-20','Perfil'],['T-22','Assinar'],['T-41','Conversa'],['T-60','Painel'],['T-62','Novo post']];
+let tScreen=['T-10','T-20'];
+const getTheme=()=>{try{return localStorage.getItem('cz-tema')||'preto-rosa'}catch(e){return 'preto-rosa'}};
+let THEME=new URLSearchParams(location.search).get('tema')||getTheme(); if(!THEMES.some(t=>t.id===THEME))THEME='preto-rosa';
+function build(id,t){
+  const s=SCREENS[id];const ph=document.createElement('div');ph.className='phone '+(s.acc||'rosa');
+  ph.innerHTML=`<div class="scr ${s.tema}" data-t="${t||THEME}">${STATUS}${s.html}</div>`;return ph;
+}
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function applyTheme(id,animate){
+  if(animate&&id!==THEME&&document.startViewTransition&&!reduced()){document.startViewTransition(()=>applyTheme(id));return}
+  THEME=id;try{localStorage.setItem('cz-tema',id)}catch(e){}
+  document.querySelectorAll('.scr[data-live]').forEach(sc=>sc.dataset.t=id);
+  document.querySelectorAll('[data-theme-pick]').forEach(b=>{b.classList.toggle('on',b.dataset.themePick===id);if(b.getAttribute('role')==='radio')b.setAttribute('aria-checked',b.dataset.themePick===id)});
+  document.querySelectorAll('.tcard').forEach(c=>c.classList.toggle('on',c.dataset.theme===id));
+}
+const refs=s=>s.refs.split(',').map(r=>`<span class="${r==='pós-v1'?'pv':''}">${r}</span>`).join('');
+
+/* ===== Galeria ===== */
+const gal=document.getElementById('gallery'),nav=document.getElementById('navlinks');
+const WHO={fa:'Fã',cr:'Criador',co:'Fã e criador'};
+FLOWS.forEach(f=>{
+  nav.insertAdjacentHTML('beforeend',`<a href="#${f.id}" class="${f.who==='cr'?'cri':''}"><b>${f.n}</b>${f.title}</a>`);
+  const sec=document.createElement('section');sec.className='flow';sec.id=f.id;
+  sec.innerHTML=`<div class="who ${f.who}">${WHO[f.who]} · ${f.n}</div><h2 class="stitle ${f.who==='cr'?'cri':''}">${f.title}</h2><p class="sdesc">${f.desc}${f.pv?'<span class="pv1">INCLUI PÓS-V1</span>':''}</p>`;
+  const row=document.createElement('div');row.className='row';
+  f.steps.forEach(([id,label],i)=>{
+    if(i)row.insertAdjacentHTML('beforeend',`<span class="arrow ${f.color}"></span>`);
+    const st=document.createElement('div');st.className='step';
+    st.innerHTML=`<span class="lbl ${f.color}">${label}</span>`;
+    const p=build(id);p.querySelector('.scr').dataset.live='';p.addEventListener('click',()=>openPlayer(id));st.appendChild(p);
+    const s=SCREENS[id];
+    st.insertAdjacentHTML('beforeend',`<span class="meta"><b>${id} · ${s.name}</b><br>${s.refs.replaceAll(',',' · ')}</span>`);
+    row.appendChild(st);
+  });
+  sec.appendChild(row);gal.appendChild(sec);
+});
+
+/* ===== Player navegável ===== */
+const player=document.getElementById('player'),pphone=document.getElementById('pphone');
+const plist=document.getElementById('plist'),pnotes=document.getElementById('pnotes');
+let cur=null;const hist=[];
+FLOWS.forEach(f=>{
+  plist.insertAdjacentHTML('beforeend',`<h4>${f.n} · ${WHO[f.who]}</h4>`);
+  f.steps.forEach(([id])=>plist.insertAdjacentHTML('beforeend',`<a data-id="${id}"><span>${id}</span>${SCREENS[id].name}</a>`));
+});
+plist.addEventListener('click',e=>{const a=e.target.closest('a[data-id]');if(a)show(a.dataset.id,true)});
+function show(id,push){
+  if(!SCREENS[id])return;
+  if(push&&cur&&cur!==id)hist.push(cur);
+  cur=id;
+  const troca=()=>{pphone.innerHTML='';const ph=build(id);ph.querySelector('.scr').dataset.live='';pphone.appendChild(ph)};
+  if(document.startViewTransition&&pphone.childElementCount&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(troca);else troca();
+  plist.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.id===id));
+  const s=SCREENS[id];
+  pnotes.innerHTML=`<div class="id">${id}</div><h3>${s.name}</h3><div class="us">${refs(s)}</div><p>${s.notes}</p>
+   <div class="kbd">Clique nos elementos da tela para navegar · <b>←/→</b> anterior/próxima · <b>Backspace</b> voltar · <b>H</b> mostrar áreas clicáveis · <b>T</b> próximo tema · <b>Esc</b> fechar</div>`;
+  history.replaceState(null,'','#'+id);
+}
+function openPlayer(id){hist.length=0;pphone.innerHTML='';player.classList.add('open');document.body.style.overflow='hidden';show(id,false)}
+function closePlayer(){player.classList.remove('open');document.body.style.overflow='';history.replaceState(null,'',location.pathname)}
+function goBack(){const p=hist.pop();if(p)show(p,false)}
+function step(d){const i=ORDER.indexOf(cur);show(ORDER[(i+d+ORDER.length)%ORDER.length],true)}
+function toggleHints(){player.classList.toggle('hints')}
+pphone.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(!g)return;
+  const to=g.dataset.go;if(!to)return;if(to==='back')goBack();else show(to,true);
+});
+document.addEventListener('keydown',e=>{
+  if(!player.classList.contains('open'))return;
+  if(e.key==='Escape')closePlayer();
+  else if(e.key==='ArrowRight')step(1);
+  else if(e.key==='ArrowLeft')step(-1);
+  else if(e.key==='Backspace'){e.preventDefault();goBack()}
+  else if(e.key.toLowerCase()==='h')toggleHints();
+  else if(e.key.toLowerCase()==='t'){const i=THEMES.findIndex(t=>t.id===THEME);applyTheme(THEMES[(i+1)%THEMES.length].id,true)}
+});
+/* ===== Seção de temas, barra do hero e seletor do player ===== */
+const $=q=>document.querySelector(q);
+function renderThemes(){
+  $('#tscreens').innerHTML=TSCREENS.map(([id,l])=>`<button class="${tScreen.includes(id)?'on':''}" data-tscreen="${id}">${l}</button>`).join('');
+  $('#themes').innerHTML=THEMES.map(t=>`<article class="tcard" data-theme="${t.id}">
+    <header><h3>${t.nome}</h3>${t.tag?`<span>${t.tag}</span>`:''}</header>
+    <div class="tsw">${['fundo','superfície','ação','destaque','criador'].map((l,i)=>`<i style="background:${t.sw[i]}" data-l="${l}"></i>`).join('')}</div>
+    <p>${t.desc}</p>
+    <div class="tminis">${tScreen.map(id=>`<div class="mini" role="button" tabindex="0" data-open="${id}" data-open-theme="${t.id}" aria-label="Abrir ${id} no tema ${t.nome}"><div inert>${build(id,t.id).outerHTML}</div></div>`).join('')}</div>
+    <button class="pbtn" data-theme-pick="${t.id}">Usar este tema</button></article>`).join('');
+  applyTheme(THEME);
+}
+$('#tscreens').addEventListener('click',e=>{const b=e.target.closest('[data-tscreen]');if(!b)return;const id=b.dataset.tscreen;
+  tScreen=tScreen.includes(id)?(tScreen.length>1?tScreen.filter(x=>x!==id):tScreen):[...tScreen,id].slice(-2);renderThemes()});
+$('#themes').addEventListener('click',e=>{const pick=e.target.closest('[data-theme-pick]');if(pick){applyTheme(pick.dataset.themePick);return}
+  const m=e.target.closest('[data-open]');if(m){applyTheme(m.dataset.openTheme);openPlayer(m.dataset.open)}});
+$('#themes').addEventListener('keydown',e=>{const m=e.target.closest('[data-open]');if(m&&(e.key==='Enter'||e.key===' ')){e.preventDefault();applyTheme(m.dataset.openTheme);openPlayer(m.dataset.open)}});
+$('#themebar').insertAdjacentHTML('beforeend',THEMES.map(t=>`<button class="tdot" data-theme-pick="${t.id}" style="--a:${t.sw[0]};--b:${t.sw[3]}" title="${t.nome}" aria-label="Tema ${t.nome}"></button>`).join(''));
+$('#themebar').addEventListener('click',e=>{const b=e.target.closest('[data-theme-pick]');if(b)applyTheme(b.dataset.themePick,true)});
+$('#stage-themes').innerHTML=THEMES.map(t=>`<button data-theme-pick="${t.id}" role="radio" title="${t.nome}"><span class="tdot" style="--a:${t.sw[0]};--b:${t.sw[3]}"></span><span>${t.nome}</span></button>`).join('');
+$('#stage-themes').addEventListener('click',e=>{const b=e.target.closest('[data-theme-pick]');if(b)applyTheme(b.dataset.themePick,true)});
+nav.insertAdjacentHTML('afterbegin','<a href="#temas"><b>◐</b>Temas</a>');
+renderThemes();
+if(location.hash&&SCREENS[location.hash.slice(1)])openPlayer(location.hash.slice(1));
+</script>
+</body>
+</html>

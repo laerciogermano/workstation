@@ -1,0 +1,1 @@
+Definir o processo de divisáo dos valores de forma que o Laércio obtenha os 4% do valor investido

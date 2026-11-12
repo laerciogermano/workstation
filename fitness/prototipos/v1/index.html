@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fitness · Protótipo v1</title>
+<meta name="description" content="Protótipo navegável v1 do Fitness: onboarding metabólico, dieta pelo estoque, treino com movimento, avaliação física, vitrine e academias. Rastreável ao PRD v1.1.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="wrap masthead">
+  <div>
+    <span class="wm"><svg class="sym" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="var(--ft-line)" stroke-width="5"/><path d="M16 5a11 11 0 1 1-10.4 14.6" fill="none" stroke="var(--ft-act)" stroke-width="5" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--ft-ink)"/></svg><b>fitness</b></span>
+    <h1>Protótipo <span>v1</span></h1>
+    <p class="lede-xl">O PRD v1.1 inteiro num app em HTML puro, <b>com estado de verdade</b>: o onboarding calcula TMB e meta pela Mifflin–St Jeor, o plano alimentar sai só do seu estoque, marcar refeição ou exercício fecha o balanço do dia, a avaliação recalcula a meta e o treino concluído entra na vitrine se você quiser.</p>
+    <div class="actions">
+      <button class="sbtn p" data-start="F-10">Navegar no protótipo</button>
+      <button class="sbtn s" data-start="F-01">Começar pelo primeiro uso</button>
+      <button class="sbtn s" data-start="F-51">Ver a vitrine</button>
+      <a class="sbtn s" href="#rastreio">Rastreabilidade</a>
+    </div>
+    <div class="themebar" id="themebar"><span>Tema</span></div>
+  </div>
+  <div class="stats">
+    <div><b id="st-screens">–</b><span>telas navegáveis</span></div>
+    <div><b id="st-flows">–</b><span>fluxos</span></div>
+    <div><b id="st-rf">–</b><span>requisitos funcionais cobertos</span></div>
+    <div><b id="st-rn">–</b><span>regras de negócio cobertas</span></div>
+  </div>
+</header>
+
+<nav class="flownav" aria-label="Fluxos"><div class="wrap" id="flownav"></div></nav>
+
+<main class="wrap" id="gallery"></main>
+
+<section class="doc" id="temas"><div class="wrap">
+  <h2>Temas para escolher</h2>
+  <p class="d">Ainda não existe marca do Fitness. Quatro direções com a mesma gramática: uma cor de ação, verde só para “cumpriu”, três cores fixas de macro (proteína, carbo, gordura) e laranja para kcal e streak. O modo escuro é preto puro com cinzas neutros.</p>
+  <div class="tscreens" id="tscreens"></div>
+  <div class="themes" id="themes"></div>
+</div></section>
+
+<section class="doc" id="decisoes"><div class="wrap">
+  <h2>Decisões do protótipo</h2>
+  <p class="d">Tudo vem do <code>docs/prd.md</code> v1.1. Onde o PRD deixa em aberto (“fórmula documentada na implementação”, “faixas seguras”), o protótipo fixa um valor para dar o que testar.</p>
+  <div class="cols">
+    <div><h3>Energia e macros</h3><ul>
+      <li>TMB pela Mifflin–St Jeor; gasto = TMB × fator de atividade (1,2 a 1,9)</li>
+      <li>Déficit padrão 20% (10–30%, seguro até 25%); superávit 10% (5–20%, seguro até 15%); recomposição 10%</li>
+      <li>Acima da faixa ou meta abaixo da TMB pede confirmação (RN-16)</li>
+      <li>Proteína 1,6–2,2 g/kg; gordura 0,9–1 g/kg; carbo no restante</li>
+      <li>Projeção semanal recalcula a TMB com o peso novo, 85% de adesão</li>
+    </ul></div>
+    <div><h3>Dieta e treino</h3><ul>
+      <li>Plano em 4 refeições (25/35/15/25%) só com o estoque; porções arredondadas por grama ou unidade</li>
+      <li>Inviável = sem proteína ou carbo, ou fora de 90–110% da meta</li>
+      <li>Cumpriu = 90–105% da meta; abaixo ou estourou fora disso</li>
+      <li>kcal do exercício = MET × peso × tempo (séries × reps × 3 s + descanso)</li>
+      <li>Movimento em SVG entre duas poses; sem vídeo no MVP</li>
+    </ul></div>
+    <div><h3>Social e privacidade</h3><ul>
+      <li>Personagem = apelido + cor, sem e-mail nem senha; não recupera dados</li>
+      <li>Vitrine começa desligada; peso, medidas, fotos e TMB travados por padrão</li>
+      <li>Só ações reais geram card: treino concluído, dia cumprido, avaliação</li>
+      <li>Apoio (kudos) sem comentários nem DM; sem ranking</li>
+      <li>Academias fictícias em bairros reais de São José dos Pinhais</li>
+    </ul></div>
+  </div>
+  <div class="tok">
+    <div class="sw"><i style="background:#2B4BF2"></i><p><b>--ft-act</b><span>#2B4BF2 · ação</span></p></div>
+    <div class="sw"><i style="background:#16A34A"></i><p><b>--ft-ok</b><span>#16A34A · cumpriu</span></p></div>
+    <div class="sw"><i style="background:#E0457B"></i><p><b>--ft-p</b><span>#E0457B · proteína</span></p></div>
+    <div class="sw"><i style="background:#F2A516"></i><p><b>--ft-c</b><span>#F2A516 · carbo</span></p></div>
+    <div class="sw"><i style="background:#0EA5A4"></i><p><b>--ft-g</b><span>#0EA5A4 · gordura</span></p></div>
+    <div class="sw"><i style="background:#EA580C"></i><p><b>--ft-kc</b><span>#EA580C · kcal, streak</span></p></div>
+    <div class="sw"><i style="background:#0E1116"></i><p><b>--ft-ink</b><span>#0E1116 · texto</span></p></div>
+    <div class="sw"><i style="background:#000"></i><p><b>--ft-cam</b><span>#000 · câmera, escuro</span></p></div>
+  </div>
+</div></section>
+
+<section class="doc" id="rastreio"><div class="wrap">
+  <h2>Rastreabilidade</h2>
+  <p class="d">Cada tela declara os requisitos (PRD §6, RF-xx) e as regras (PRD §7, RN-xx) que cobre. A cobertura é calculada desses metadados. Histórias e BDD ainda não existem na esteira (<code>functionalities.md</code> → <code>user-stories.md</code> → <code>bdd.md</code>).</p>
+  <p class="covh">Requisitos funcionais <span id="cov-rf-n"></span></p><div class="cov" id="cov-rf"></div>
+  <p class="covh">Regras de negócio <span id="cov-rn-n"></span></p><div class="cov" id="cov-rn"></div>
+  <div class="tablewrap"><table class="mt" id="trace"><thead><tr><th>Tela</th><th>Nome</th><th>Fluxo</th><th>Requisitos</th><th>Regras</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<footer class="wrap site">Fitness · protótipo v1 · 2026-11-08 · base: <code>docs/prd.md</code> v1.1 · referência de arquitetura: notinhas.shop protótipo v2.0 · pessoas, academias e fotos são ilustrativos</footer>
+
+<div id="player" role="dialog" aria-modal="true" aria-label="Protótipo navegável">
+  <nav id="plist" aria-label="Telas"><span class="wm"><svg class="sym" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="var(--ft-line)" stroke-width="5"/><path d="M16 5a11 11 0 1 1-10.4 14.6" fill="none" stroke="var(--ft-act)" stroke-width="5" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--ft-ink)"/></svg><b>fitness</b></span></nav>
+  <div id="stage">
+    <div class="stagebar"><button class="sbtn s" id="stage-close">← Galeria</button><button class="sbtn s" id="pn-toggle">Notas e cenários</button></div>
+    <div class="stage-themes" id="stage-themes" role="radiogroup" aria-label="Tema"></div>
+    <div id="live"></div>
+  </div>
+  <aside id="pnotes">
+    <div id="pnotes-body"></div>
+    <div class="scen">
+      <h4>Cenários</h4>
+      <div class="sc"><span>Abertura</span><div><button data-scen="first:false">Já cadastrado</button><button data-scen="first:true">Primeira vez</button><button data-scen="newDevice:true">Aparelho novo</button></div></div>
+      <div class="sc"><span>Objetivo</span><div><button data-scen="goal:definicao">Perder gordura</button><button data-scen="goal:hipertrofia">Ganhar músculo</button><button data-scen="goal:manutencao">Manter</button></div></div>
+      <div class="sc"><span>Estoque</span><div><button data-scen="stock:cheio">Completo</button><button data-scen="stock:pobre">Pobre</button></div></div>
+      <div class="sc"><span>Personagem</span><div><button data-scen="char:com">Com personagem</button><button data-scen="char:sem">Sem</button></div></div>
+      <div class="sc"><span>Rede</span><div><button data-scen="online:true">Online</button><button data-scen="online:false">Offline</button></div></div>
+      <div class="sc"><span>Localização</span><div><button data-scen="gps:true">GPS ativo</button><button data-scen="gps:false">Sem GPS</button></div></div>
+      <div class="sc"><span>Tema</span><div id="scen-theme"></div></div>
+      <div class="sc"><span>Movimento</span><div><button data-scen="reduced:false">Normal</button><button data-scen="reduced:true">Reduzido</button></div></div>
+      <button class="sbtn s" id="scen-reset" style="height:34px;font-size:12px;margin-top:4px">Reiniciar estado</button>
+    </div>
+    <p class="kbd"><kbd>←</kbd> <kbd>→</kbd> telas · <kbd>⌫</kbd> voltar · <kbd>H</kbd> áreas clicáveis · <kbd>T</kbd> próximo tema · <kbd>Esc</kbd> fechar · link direto: <code>#F-10</code></p>
+  </aside>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+Integração default (ex. gpt-4o-mini / Gemini flash); env key; fallback; custo por reply.

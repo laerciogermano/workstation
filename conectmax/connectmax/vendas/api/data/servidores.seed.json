@@ -1,7 +1,7 @@
 {
   "servidores": [
     {
-      "nome": "Contabo VPS 6 — API/Postgres",
+      "nome": "Contabo VPS 6 — legado offline",
       "provedor": "Contabo",
       "produto": "Cloud VPS 6 (2026)",
       "hostname": "vmi3645318",
@@ -12,11 +12,11 @@
       "sshPassword": null,
       "ramGb": null,
       "nestedKvm": false,
-      "status": "active",
-      "notas": "API+web+Postgres /opt/postgres + Mailcow /opt/mailcow-dockerized (web 127.0.0.1:8080/8443 via nginx mail.clozzy.com.br). Dump pré-install: conectmax/backups/20261026-144353."
+      "status": "offline",
+      "notas": "Legado offline (2026-11). Antes: API+web+Postgres. Stack migrada para 185.250.37.82."
     },
     {
-      "nome": "Contabo VDS 24GB — Postgres",
+      "nome": "Contabo VDS 24GB — API/Postgres/web",
       "provedor": "Contabo",
       "produto": "Cloud VDS / Max Performance",
       "hostname": "vmi3645369",
@@ -28,7 +28,7 @@
       "ramGb": 24,
       "nestedKvm": true,
       "status": "active",
-      "notas": "Recriada 2026-11-08. Postgres Docker /opt/postgres:17 (connectmax). Dump app 20261026 + sync portal_franqueado."
+      "notas": "Recriada 2026-11-08. Postgres Docker /opt/postgres:17 + ConnectMax API/web (/opt/connectmax/vendas). nginx default_server → :3000."
     }
   ]
 }

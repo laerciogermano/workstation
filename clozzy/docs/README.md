@@ -17,7 +17,8 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 | Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |
 | Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI para implementar | A produzir |
-| Protótipo | `prototype.html` | Validação visual/interativa do que foi especificado | A produzir |
+| Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado | Pronto (v1, a partir de `functionalities.md` + [manual de uso da marca](../marca/uso-da-marca/README.md)) |
+| Protótipo mobile | [`prototipo-mobile/`](prototipo-mobile/index.html) · [PDF](prototipo-mobile/prototipo-mobile-clozzy.pdf) | Telas do app para fã e criador, galeria por fluxo + modo navegável | Pronto (44 telas, 6 temas; feed, stories e chat marcados pós-v1) |
 
 ## Próximos passos
 

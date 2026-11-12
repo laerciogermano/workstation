@@ -34,7 +34,7 @@ seo:
     scarcity + Vercel hairlines).
 
     One filled CTA color: blue #0069B4. One semantic accent: green #00984B for the
-    lowest price and success. Deep ink #0B1F33 for body — never #000. Mist background
+    lowest price and success. Deep ink #0B1F33 for body text — never #000 on text; every dark background is pure black #000000. Mist background
     #F5F7FA, white cards, soft hairlines. Plus Jakarta Sans carries UI and the ExtraBold
     wordmark. Prices always use tabular figures and always show store + date beside them.
 
@@ -82,6 +82,7 @@ colors:
   accent-deep: "#007A3D"
   accent-soft: "#E6F6EE"
   ink: "#0B1F33"
+  black: "#000000"
   ink-muted: "#5A6B7D"
   canvas: "#F5F7FA"
   surface: "#ffffff"
@@ -90,7 +91,7 @@ colors:
   err-soft: "#FDECEC"
   warn: "#D97706"
   warn-soft: "#FEF3C7"
-  scan-viewport: "#0B1F33"
+  scan-viewport: "#000000"
   gradient-brand: "linear-gradient(135deg, #014380 0%, #0069B4 48%, #00984B 100%)"
 
 typography:
@@ -308,10 +309,11 @@ Repo/code name stays **e-notas**. Public wordmark is always **notinhas.shop**.
 
 - **Primary `#0069B4`:** links, filled primary button, focus rings. Deep `#014380` for titles and hover.
 - **Accent `#00984B`:** menor preço, success, “.shop” in the wordmark. Soft `#E6F6EE` behind the “menor” chip.
-- **Ink `#0B1F33`:** body text. Muted `#5A6B7D` for secondary. Never pure black.
+- **Ink `#0B1F33`:** body text only. Muted `#5A6B7D` for secondary. Never pure black on text.
+- **Black `#000000`:** every dark background — dark app icon, scan viewport, phone frames, toasts, tooltips, dark cards. Never `#0B1F33` as a background (identity rule, 2026-11-08). **Never blue or green on black:** on `#000000` the logo, wordmark and icons are always all white. Only exception: in the dark app icon, the last (short) receipt strip is green `#00984B`.
 - **Canvas `#F5F7FA` / surface `#fff` / hairline `#D5DEE8`:** app floor, cards, borders.
 - **Brand gradient:** `#014380 → #0069B4 → #00984B` at 135° — covers, splash, symbol fill only.
-- **Scan exception:** viewport `#0B1F33` (camera), frame hint in light green.
+- **Scan exception:** viewport `#000000` (camera), frame hint in light green.
 
 ## Typography
 
@@ -335,7 +337,7 @@ Controls and chips are **pills** (`999px`). Cards/panels **14px**. Inputs **8px*
 - **Price card:** green price + chip `menor` + store · date · optional distance.
 - **List / table:** no shadow on rows; mono/tnum on EAN and prices; header on mist.
 - **Tabs:** underline active in deep blue.
-- **Scan:** dark viewport + light status text; success returns to light home.
+- **Scan:** black viewport (`#000000`) + light status text; success returns to light home.
 - **FAB:** primary blue pill, label “Nota”.
 
 ## Do's and Don'ts

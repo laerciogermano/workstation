@@ -506,7 +506,7 @@ export async function extractLeads(opts = {}) {
   const query = String(opts.query || opts.q || "comprador").trim() || "comprador";
   const n = Math.max(
     1,
-    Math.floor(Number(opts.n ?? opts.maxProfiles) || 5),
+    Math.floor(Number(opts.n ?? opts.maxProfiles) || 10),
   );
   const notifyApi = opts.notifyApi !== false;
   const agentId = opts.agentId || resolveAgentId();

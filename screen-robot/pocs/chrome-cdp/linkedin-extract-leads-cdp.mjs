@@ -11,9 +11,9 @@
  *
  * Uso:
  *   CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs
- *   CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 5 --query "comprador"
+ *   CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 10 --query "comprador"
  *   PROFILES_API_URL=http://localhost:3000 AGENT_ID=… AGENT_API_KEY=… \\
- *     CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 5 --query "tech recruiter"
+ *     CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 10 --query "tech recruiter"
  *
  * Saída: screenshots/linkedin-extract-leads-cdp/<stamp>/profiles.json
  * Cliques: Input.dispatchMouseEvent. Regra: se aparecer Pular/Skip, clica.
@@ -48,7 +48,7 @@ function arg(...flags) {
 }
 
 function parseArgs() {
-  let maxProfiles = 5;
+  let maxProfiles = 10;
   let query = 'comprador';
   const n = arg('--max-profiles', '--limit', '-n');
   if (n) {

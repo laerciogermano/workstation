@@ -183,11 +183,11 @@ Cada AVD/conta (`agentId` = `provision.name`, ex. `agent-d`) puxa o próximo tra
 
 **Conferir mensagem (variáveis):** no enqueue, `payload.message` já vem **renderizado** (`{{primeiro_nome}}`/`{{firstname}}`/…); `payload.template` = bruto. Inspecionar: `GET /agente/:id/jobs?status=pending` (ou job done). Teste unitário das vars: `npm test -- --testPathPatterns=prospeccao-template.spec`. **Rollback:** ignore o campo / apague o spec.
 | 4 | `conectar` | Lead do agente (`status=0`) ou livre (ninguém 0\|1\|2) → reserva `0` + job; máx. `AGENT_CONNECT_DAILY_LIMIT` (default **15**)/dia; `.env` local/Contabo: lote **1** + pausa **30 min** (`AGENT_CONNECT_BATCH_SIZE=1`, `AGENT_CONNECT_BATCH_INTERVAL_MS=1800000`); default código **5**/lote + **30 min** |
-| 5 | `extrair_leads` | Até `AGENT_EXTRACT_DAILY_LIMIT` (default **10**) candidatos/agente/dia; cada job `maxProfiles` = `min(EXTRACT_MAX_PROFILES` default **5**, slots restantes); intervalo `AGENT_EXTRACT_INTERVAL_MS` (default **4 h**) via `lastExtractAt` |
+| 5 | `extrair_leads` | Até `AGENT_EXTRACT_DAILY_LIMIT` (default **10**) candidatos/agente/dia; cada job `maxProfiles` = `min(EXTRACT_MAX_PROFILES` default **10** = 1 página People search CDP, slots restantes); intervalo `AGENT_EXTRACT_INTERVAL_MS` (default **4 h**) via `lastExtractAt` |
 
 **Antes → depois (`extrair_leads`):** threshold de estoque (`AGENT_LEAD_THRESHOLD` 10/20, fila &lt; N) → **limite diário obrigatório** `AGENT_EXTRACT_DAILY_LIMIT=10` (todos os agentes extraiem 10/dia); peek: `extractDailyLimit` / `extractedToday` (no lugar de `leadThreshold`). Mantém cooldown `AGENT_EXTRACT_INTERVAL_MS` + `lastExtractAt`. **Rollback:** `AGENT_LEAD_THRESHOLD=10` + gate por `countLeadsCandidatos` / `leadThreshold()`; ignore `extractDailyLimit`/`extractedToday`/`maxProfiles` no payload.
 
-**Antes → depois (`maxProfiles` por run):** job mandava `maxProfiles` = slots restantes do dia (até 10 numa execução) → `min(EXTRACT_MAX_PROFILES, remaining)` (default **5**/script). **Rollback:** `maxProfiles: remaining` em `enqueueExtrairDaily`; `EXTRACT_MAX_PROFILES=10`.
+**Antes → depois (`maxProfiles` por run):** default **5**/script → **10** (1 página People search mapeada no CDP Matheus 2026-11-12). Job = `min(EXTRACT_MAX_PROFILES, remaining)`. **Rollback:** `EXTRACT_MAX_PROFILES=5` (ou default `'5'` em `extractMaxProfilesPerRun`).
 
 **Antes → depois (`verificar_conexoes`):** pending→conectado só via robot manual (`POST :3099/connections` / `npm run linkedin-extract-connections`) → mesmo script, agendado no claim (`AGENT_CONNECTIONS_INTERVAL_MS`, default **4 h**; antes 30 min) quando há `status=1`. Falha também grava `last_connections_at` (backoff). **Rollback:** `AGENT_CONNECTIONS_INTERVAL_MS=1800000` ou remova o tipo do worker/`AGENT_JOB_TYPES`.
 
@@ -752,9 +752,9 @@ PROFILES_API_URL=http://localhost:3000 npm run login-extract-profile-detail -- -
 
 ### `GET /extract/start`
 
-Dispara `npm run login-extract-profiles -- --max-profiles N [--query termo]` em `EXTRACT_CWD` (fire-and-forget). Query `limit`/`n`/`maxProfiles` (default **5**, máx. 500); `q`/`query`/`search` = termo do Search LinkedIn (omitido → script usa `comprador`). Resposta `{ running, kind, pid, startedAt }`. Já rodando → `409`.
+Dispara `npm run login-extract-profiles -- --max-profiles N [--query termo]` em `EXTRACT_CWD` (fire-and-forget). Query `limit`/`n`/`maxProfiles` (default **10**, máx. 500); `q`/`query`/`search` = termo do Search LinkedIn (omitido → script usa `comprador`). Resposta `{ running, kind, pid, startedAt }`. Já rodando → `409`.
 
-**Antes → depois:** default sem `limit`/`n` era **10** → **5**. Override: `?limit=10` (ou `n`/`maxProfiles`). Rollback: voltar default `10` em `extract.service.ts`.
+**Antes → depois:** default sem `limit`/`n` era **5** → **10** (página People search). Override: `?limit=`. Rollback: default `5` em `extract.service.ts`.
 
 ```bash
 curl 'http://localhost:3000/extract/start?limit=50'

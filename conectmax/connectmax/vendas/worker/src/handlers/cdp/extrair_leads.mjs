@@ -15,9 +15,27 @@ export async function run(job, ctx) {
   const { cdpId, cdpUrl } = resolveCdpTarget(ctx);
   const apiUrl = resolveApiUrl(ctx);
 
-  const maxProfiles = String(
-    job?.payload?.maxProfiles || process.env.EXTRACT_MAX_PROFILES || 5,
-  );
+  // Default 10 = 1 página People search (CDP). Respeita slots do dia do payload;
+  // ignora maxProfiles=5 legado da API se EXTRACT_MAX_PROFILES / default for maior.
+  const perRunRaw = Number(process.env.EXTRACT_MAX_PROFILES || 10);
+  const perRun =
+    Number.isFinite(perRunRaw) && perRunRaw >= 1
+      ? Math.min(500, Math.floor(perRunRaw))
+      : 10;
+  const daily = Number(job?.payload?.extractDailyLimit);
+  const today = Number(job?.payload?.extractedToday);
+  let maxProfiles;
+  if (Number.isFinite(daily) && daily >= 0 && Number.isFinite(today) && today >= 0) {
+    const remaining = Math.max(0, Math.floor(daily) - Math.floor(today));
+    maxProfiles = String(Math.min(perRun, remaining > 0 ? remaining : perRun));
+  } else {
+    const fromJob = Number(job?.payload?.maxProfiles);
+    maxProfiles = String(
+      Number.isFinite(fromJob) && fromJob >= 1
+        ? Math.min(500, Math.max(Math.floor(fromJob), perRun))
+        : perRun,
+    );
+  }
   const query = String(
     process.env.EXTRACT_QUERY || job?.payload?.query || '',
   ).trim();

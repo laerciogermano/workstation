@@ -57,7 +57,7 @@ CDP_ID=daniela-hoffmann npm run linkedin-extract-connections-cdp -- --n 20
 CDP_ID=… npm run linkedin-message-cdp -- --url '…' --text 'Oi'
 CDP_ID=… npm run linkedin-unread-messages-cdp -- --max 20
 CDP_ID=… npm run linkedin-profile-messages-cdp -- --url '…' --max 10
-CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
+CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
 ```
 
 ## Antes → depois
@@ -66,7 +66,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
 - **Lifecycle Chrome:** `withLinkedInPage` só fechava o WebSocket → Chrome ficava logado na tela. Agora **provisiona** (`connectCdp`/`startCdp` se down) e **mata** (`stopCdp`) no `finally`. Escape: `keepBrowser: true` / `closeBrowser: false` / `CDP_KEEP_BROWSER=1`. Nested (`page` já aberta, ex. unread→chat) não mata. Rollback: `keepBrowser: true` ou reverta o `finally` com `stopCdp` em [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.
 - Scripts ad-hoc em `pocs/chrome-cdp/linkedin-*-cdp.mjs` (signup/setup) continuam; **ações de worker** passam por aqui.
-- **extract leads CDP:** abria cada `/in/` após o card → **só lista**: parse do HTML/texto do card (name, title, city, current/past, level, action, mutual, photoUrl/photoBase64, profileUrl); sem `goto` no perfil. **Paginação:** ~10/página (`page=1`, `page=2`, …) quando `n > 10`. `POST /profiles` manda `agentId`+`profileUrl` de cara (API reserva conexão).
+- **extract leads CDP:** abria cada `/in/` após o card → **só lista**: parse do HTML/texto do card (name, title, city, current/past, level, action, mutual, photoUrl/photoBase64, profileUrl); sem `goto` no perfil. **Paginação:** ~10/página (`page=1`, `page=2`, …) quando `n > 10`. Default `-n`/`EXTRACT_MAX_PROFILES` = **10** (1 página mapeada no CDP Matheus 2026-11-12). `POST /profiles` manda `agentId`+`profileUrl` de cara (API reserva conexão).
 - **title truncado (“Comprador”):** regex de cidade com flag `/i` fazia `[A-ZÀ-Ü]` casar “material” em “Comprador - material direto Campinas…”. Agora título/cidade saem das **linhas** do card; fallback do regex **sem** `/i` no `[A-ZÀ-Ü]`. Rollback: volte o parse só por `cardText` colapsado + `/i`.
 - **avatar `photoBase64`:** `fetch`/canvas da CDN LinkedIn falham (CORS / canvas tainted) → clip `Page.captureScreenshot` no retângulo do `<img>` → `data:image/jpeg;base64,…` no POST. Rollback: volte `toDataUrl(fetch)` no browser (vai voltar a gravar `null`).
 - **Message ≠ conectado:** botão “Enviar mensagem” em **2º/3º** (Open Profile) ia para status=2 → agora só 1º+Message = connected; Message+3º → `connect` (candidato). `POST` manda `inviteStatus` canônico. Rollback: `inviteStatusFromAction` Message→connected cego.

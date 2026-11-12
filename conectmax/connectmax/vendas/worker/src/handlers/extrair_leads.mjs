@@ -28,7 +28,7 @@ export async function run(job, ctx) {
   const maxProfiles = String(
     job?.payload?.maxProfiles ||
       process.env.EXTRACT_MAX_PROFILES ||
-      5,
+      10,
   );
   const query = String(
     process.env.EXTRACT_QUERY || job?.payload?.query || '',

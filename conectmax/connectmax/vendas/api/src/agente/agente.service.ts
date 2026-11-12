@@ -219,10 +219,10 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
     return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 10;
   }
 
-  /** Máx. perfis por run do script `login-extract-profiles` (default 5). */
+  /** Máx. perfis por run do script (default 10 = 1 página People search CDP). */
   private extractMaxProfilesPerRun(): number {
-    const n = Number(this.config.get('EXTRACT_MAX_PROFILES', '5'));
-    return Number.isFinite(n) && n >= 1 ? Math.min(500, Math.floor(n)) : 5;
+    const n = Number(this.config.get('EXTRACT_MAX_PROFILES', '10'));
+    return Number.isFinite(n) && n >= 1 ? Math.min(500, Math.floor(n)) : 10;
   }
 
   /** Mínimo entre um `extrair_leads` e o próximo (default 4 h). */
@@ -2341,7 +2341,7 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
   /**
    * AC-04: cada agente extrai até AGENT_EXTRACT_DAILY_LIMIT candidatos/dia
    * (default 10), com intervalo mínimo AGENT_EXTRACT_INTERVAL_MS entre runs.
-   * Cada job pede no máx. EXTRACT_MAX_PROFILES (default 5) por execução do script.
+   * Cada job pede no máx. EXTRACT_MAX_PROFILES (default 10 = página People search) por run.
    */
   private async enqueueExtrairDaily(agentId: string): Promise<void> {
     const dailyLimit = this.extractDailyLimit();

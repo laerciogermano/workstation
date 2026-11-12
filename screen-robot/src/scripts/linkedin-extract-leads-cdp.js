@@ -2,7 +2,7 @@
 /**
  * Extrai leads People search (Chrome CDP) — lib worker.
  *
- *   CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 5 --query 'comprador'
+ *   CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
  */
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -28,7 +28,7 @@ async function main() {
     cdpId: args.cdpId,
     cdpUrl: args.cdpUrl,
     query: args.query || "comprador",
-    n: args.n || args.maxResults || 5,
+    n: args.n || args.maxResults || 10,
     outDir,
     agentId: resolveAgentId(),
   });

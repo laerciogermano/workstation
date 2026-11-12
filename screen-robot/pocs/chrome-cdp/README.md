@@ -108,9 +108,9 @@ CDP_URL=http://127.0.0.1:9224 node linkedin-setup-job-cdp.mjs
 # job/company sem flags → profile-defaults.json; --force regrava
 
 # extrair leads (espelho AVD login-extract-profiles): People search → abre perfil → JSON (+ API)
-CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs -n 5 --query "comprador"
+CDP_URL=http://127.0.0.1:9224 node linkedin-extract-leads-cdp.mjs -n 10 --query "comprador"
 # opcional API (mesmo contrato do AVD):
-# PROFILES_API_URL=http://localhost:3000 AGENT_ID=… AGENT_API_KEY=… CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 5 --query "…"
+# PROFILES_API_URL=http://localhost:3000 AGENT_ID=… AGENT_API_KEY=… CDP_URL=… node linkedin-extract-leads-cdp.mjs -n 10 --query "…"
 ```
 
 ## Workers LinkedIn CDP (libs = contrato AVD)

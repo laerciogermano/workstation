@@ -14,6 +14,7 @@ env API_URL=http://185.250.37.82 \
   CDP_URL=http://127.0.0.1:9255 \
   CONTAINER_NAME=cdp-daniela-hoffmann \
   SERIAL=cdp:daniela-hoffmann \
+  EXTRACT_MAX_PROFILES=10 \
   HOST_KIND=localhost HOST_NOME='Macbook M5' HOST_KEY=localhost \
   PROFILES_API_URL=http://185.250.37.82 \
   MESSAGES_API_URL=http://185.250.37.82 \

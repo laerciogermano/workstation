@@ -2,7 +2,7 @@
 
 | | |
 |--|--|
-| Versão | 7.0 · 2026-11-13 |
+| Versão | 8.0 · 2026-11-13 |
 | Natureza | Visão de produto |
 
 ---
@@ -21,17 +21,24 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 3. Público-alvo
+## 3. Personas
 
-| Público | Papel |
+| Persona | Papel |
 |---------|--------|
-| **Organização do evento** | Responsável pelo controle do evento e pela organização da programação |
-| **Participantes** | Pessoas cadastradas que participam do evento |
-| **Participantes em comunicação** | Quem utiliza o aplicativo para enviar mensagem a outro participante |
+| **Organizador** | Responsável pelo controle do evento e pela organização da programação, dos locais e dos participantes |
+| **Participante** | Pessoa cadastrada que consulta a programação, utiliza locais e serviços do evento e se comunica com outros participantes |
 
 ---
 
-## 4. Referências
+## 4. Público-alvo
+
+| Critério | Definição |
+|----------|-----------|
+| **Idade** | A definir |
+
+---
+
+## 5. Referências
 
 O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
 
@@ -51,40 +58,79 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 5. Escopo
+## 6. Escopo
 
-### 5.1 Núcleo do projeto
+### EP-01 — Controle do evento
 
-- Aplicativo oficial do evento  
-- Controle do evento  
-- Cronograma / programação (cidade inteira, com horário)  
-- Locais cadastrados  
-- Identificação de quem participa  
-- Cadastro de participantes  
-- Mensagem entre participantes  
-- Organização compatível com confraternização multi-local  
+| ID | Funcionalidade |
+|----|----------------|
+| F-01.1 | Aplicativo oficial do evento |
+| F-01.2 | Controle operacional do evento pelo organizador |
+| F-01.3 | Organização compatível com confraternização multi-local |
+| F-01.4 | Privacidade e cookies |
+| F-01.5 | Notificações na interface |
 
-### 5.2 Experiência alinhada à referência do projeto
+### EP-02 — Programação e agenda
 
-- Agenda (seleção de dias e eventos do dia)  
-- Lista e detalhe de eventos (data, horário, local, confirmados, texto descritivo, banner)  
-- Check-in  
-- Ingressos / aquisição de ingresso  
-- Carteirinha  
-- Salas  
-- Estacionamento  
-- Produtos  
-- Perfil e conta (edição, senha, check-ins e ingressos, vouchers, pedidos, rateios, rede de empresas, facial)  
-- Privacidade e cookies  
-- Notificações na interface  
+| ID | Funcionalidade |
+|----|----------------|
+| F-02.1 | Cronograma / programação do evento |
+| F-02.2 | Programação na cidade inteira, com horário |
+| F-02.3 | Agenda com seleção de dias |
+| F-02.4 | Eventos do dia |
+| F-02.5 | Lista de eventos (data, horário, título, confirmados) |
+| F-02.6 | Detalhe do evento (banner, data, horário, local, confirmados, texto descritivo) |
 
-### 5.3 Fora de escopo
+### EP-03 — Locais e salas
 
-Itens não previstos nas seções 5.1 e 5.2.
+| ID | Funcionalidade |
+|----|----------------|
+| F-03.1 | Locais cadastrados |
+| F-03.2 | Salas |
+
+### EP-04 — Participantes e conta
+
+| ID | Funcionalidade |
+|----|----------------|
+| F-04.1 | Cadastro de participantes |
+| F-04.2 | Identificação de quem participa |
+| F-04.3 | Perfil e conta (edição e senha) |
+| F-04.4 | Carteirinha |
+| F-04.5 | Registro facial na conta |
+
+### EP-05 — Presença e ingressos
+
+| ID | Funcionalidade |
+|----|----------------|
+| F-05.1 | Check-in |
+| F-05.2 | Confirmados no evento |
+| F-05.3 | Ingressos / aquisição de ingresso |
+| F-05.4 | Check-ins e ingressos na conta |
+
+### EP-06 — Comunicação entre participantes
+
+| ID | Funcionalidade |
+|----|----------------|
+| F-06.1 | Mensagem entre participantes |
+
+### EP-07 — Serviços complementares do evento
+
+| ID | Funcionalidade |
+|----|----------------|
+| F-07.1 | Estacionamento |
+| F-07.2 | Produtos |
+| F-07.3 | Vouchers |
+| F-07.4 | Pedidos |
+| F-07.5 | Rateios |
+| F-07.6 | Rede de empresas |
+
+### Fora de escopo
+
+Itens não previstos nos épicos e funcionalidades acima.
 
 ---
 
-## 6. Prazo
+## 7. Prazo
 
 | Marco | Situação |
 |-------|----------|

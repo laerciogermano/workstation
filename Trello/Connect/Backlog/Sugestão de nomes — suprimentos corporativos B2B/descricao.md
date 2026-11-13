@@ -124,5 +124,87 @@ Escolher o **nome** de uma empresa nova de **suprimentos corporativos B2B** — 
 99. Facilities Go
 100. Supply Já
 
+### Só português (mais)
+101. Supria
+102. Almoxia
+103. Insuma
+104. Abasta
+105. Repona
+106. Cotaja
+107. Estocaja
+108. Provê
+109. Facila
+110. Indireta
+111. Suprimais
+112. Almoxjá
+113. Insumoja
+114. AbasteceJá
+115. Reposul
+116. Cotabras
+117. Estoquebr
+118. Materiá
+119. Prontinha Corp
+120. ÚnicaFonte
+121. FonteÚnica
+122. CasaInsumo
+123. CasaAlmox
+124. RedeInsumo
+125. RedeSupri
+126. PortalAlmox
+127. PortalInsumo
+128. DiaEmpresa
+129. DiaCorporativo
+130. PontoSupri
+131. PontoInsumo
+132. OrdemEntrega
+133. MatériaFácil
+134. CompraFácil
+135. CotaçãoFácil
+136. EntregaCerta
+137. PedidoÚnico
+138. CatálogoÚnico
+139. ForneceBrasil
+140. SupriBrasil
+141. AlmoxBrasil
+142. InsumoBrasil
+143. BaseInsumos
+144. BaseAlmox
+145. FluxoSupri
+146. FluxoAlmox
+147. GestãoInsumos
+148. PrateleiraCorp
+149. PrateleiraÚnica
+150. UmSóPedido
+151. TudoNoPedido
+152. TudoNoPortal
+153. SemFalta
+154. SemEstoqueCliente
+155. ChegaAmanhã
+156. ChegaCerto
+157. VaiDeSupri
+158. VaiDeAlmox
+159. SóSupri
+160. SóInsumo
+161. NovoAlmox
+162. NovoSupri
+163. ClaraCompra
+164. ClaraCotação
+165. RetaEntrega
+166. RetaCompra
+167. LoteÚnico
+168. LoteJá
+169. CaixaCorporativa
+170. CaixaInsumos
+171. BalcãoPJ
+172. BalcãoCorp
+173. MesaDeCompras
+174. SalaDoAlmox
+175. CorredorB2B
+176. GalpãoFácil
+177. DepósitoAmigo
+178. EstoqueParceiro
+179. ParceiroSupri
+180. ParceiroInsumo
+
 ## Observação
 Marca nova de suprimentos corporativos; não reutilizar identidade, domínio nem naming da ConnectMax.

@@ -8,6 +8,7 @@ Listar empresas **similares à ConnectMax** no ramo de **compras corporativas B2
 Cotação → compra → entrega; boleto e prazo; atendimento PJ. Site: https://www.conectmax.com/
 
 ## Brasil
+- BR Supply — https://www.brsupply.com.br
 - GOIG — https://www.goig.com.br
 - iBrasill — https://www.ibrasill.com
 - Mundoware — https://www.mundoware.com.br

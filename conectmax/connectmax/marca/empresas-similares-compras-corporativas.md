@@ -12,6 +12,7 @@ Compras corporativas B2B: cotação → compra → entrega de tecnologia, eletr�
 
 | Empresa | Site |
 |---------|------|
+| BR Supply | https://www.brsupply.com.br |
 | GOIG | https://www.goig.com.br |
 | iBrasill | https://www.ibrasill.com |
 | Mundoware | https://www.mundoware.com.br |

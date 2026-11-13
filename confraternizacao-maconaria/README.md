@@ -216,8 +216,12 @@ Pacote de screenshots de app mobile de **clube/eventos (LIDE Paraná)** enviado 
 
 Interpretação: o cliente aponta **esse tipo de produto** como referência (agenda, eventos, detalhe com local/capacidade, check-in, ingresso, salas, perfil/carteirinha, privacidade). Não é brief de clonar o LIDE; é brief de **paridade de experiência** para o evento da potência.
 
+## Insumos de mercado
+
+Skills, templates de visão, tendências de apps de evento e práticas de build: [`input/referencias-mercado/INDEX.md`](input/referencias-mercado/INDEX.md) · síntese [`input/referencias-mercado/research-local-event-app-visao.md`](input/referencias-mercado/research-local-event-app-visao.md).
+
 ## Próximos passos
 
 → [`docs/README.md`](docs/README.md) → funcionalidades a partir desta visão  
 → validar com o cliente a tabela **Candidatos**  
-→ benchmarking (LIDE + outros apps de evento) → orçamento v1
+→ `benchmark.md` / `praticas.md` a partir dos insumos → orçamento v1

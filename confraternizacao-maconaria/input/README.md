@@ -21,3 +21,7 @@ Material bruto do cliente (WhatsApp, 2026-11-13).
 | 17.52.55 | Perfil: carteirinha, check-ins/ingressos, estacionamento, facial, etc. |
 
 Visão do produto: [`../README.md`](../README.md).
+
+## Referências de mercado (baixadas)
+
+Pacote [`referencias-mercado/`](referencias-mercado/INDEX.md): skills de visão/PRD, templates (Pichler/Moore/SVPG), tendências de apps de evento 2025–26, práticas offline/PWA/12-Factor. Síntese: [`referencias-mercado/research-local-event-app-visao.md`](referencias-mercado/research-local-event-app-visao.md).

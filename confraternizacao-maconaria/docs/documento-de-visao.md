@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.6 · 2026-11-13
+**Versão:** 1.8 · 2026-11-13
 
 ## 1. Contexto
 
@@ -48,86 +48,95 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 6. Casos de uso
+## 6. Escopo por tela
 
-Casos de uso por objeto, com ações concretas que o usuário realiza:
-
-### Conta
-
-- **CU-01** — Cadastrar participante  
-- **CU-02** — Visualizar perfil  
-- **CU-03** — Editar perfil  
-- **CU-04** — Alterar senha  
-- **CU-05** — Cadastrar facial  
-- **CU-06** — Aceitar ou rejeitar cookies de privacidade  
-
-### Participante
-
-- **CU-07** — Visualizar quem está participando  
-- **CU-08** — Enviar mensagem para outro participante  
-
-### Local
-
-- **CU-09** — Cadastrar local  
-- **CU-10** — Visualizar salas  
-
-### Programação / evento
-
-- **CU-11** — Cadastrar item da programação (com horário e local na cidade)  
-- **CU-12** — Visualizar lista de eventos (data, horário, título, imagem e confirmados)  
-- **CU-13** — Visualizar detalhe do evento (banner, data, horário, local, confirmados e sobre)  
-- **CU-14** — Fazer check-in no evento  
-- **CU-15** — Comprar ingresso do evento  
+Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
 ### Agenda
 
-- **CU-16** — Selecionar dia  
-- **CU-17** — Visualizar eventos do dia  
+- **CU-01** — Ver boas-vindas e status da conta  
+- **CU-02** — Abrir acesso rápido (carteirinha, ingressos, estacionamento, comprar ingresso)  
+- **CU-03** — Selecionar dia  
+- **CU-04** — Ver eventos do dia  
+
+### Eventos
+
+- **CU-05** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
+- **CU-06** — Abrir detalhe do evento  
+- **CU-07** — Fazer check-in  
+- **CU-08** — Comprar ingresso  
+
+### Detalhe do evento
+
+- **CU-09** — Ver banner, data, horário, local, confirmados e descrição  
+
+### Salas
+
+- **CU-10** — Ver salas / locais  
+
+### Produtos
+
+- **CU-11** — Ver produtos  
+
+### Perfil
+
+- **CU-12** — Ver perfil  
+- **CU-13** — Editar perfil  
+- **CU-14** — Alterar senha  
+- **CU-15** — Cadastrar facial  
+- **CU-16** — Abrir carteirinha, check-ins e ingressos, vouchers, estacionamento, pedidos, rateios e rede de empresas  
 
 ### Carteirinha
 
-- **CU-18** — Visualizar carteirinha  
+- **CU-17** — Ver carteirinha  
 
-### Ingresso
+### Check-ins e ingressos
 
-- **CU-19** — Visualizar ingressos da conta  
-
-### Check-in
-
-- **CU-20** — Visualizar check-ins da conta  
+- **CU-18** — Ver check-ins da conta  
+- **CU-19** — Ver ingressos da conta  
 
 ### Estacionamento
 
-- **CU-21** — Visualizar vagas de estacionamento  
+- **CU-20** — Ver vagas de estacionamento  
 
-### Produto
+### Vouchers
 
-- **CU-22** — Visualizar produtos  
+- **CU-21** — Ver vouchers  
 
-### Voucher
+### Pedidos
 
-- **CU-23** — Visualizar vouchers  
+- **CU-22** — Ver pedidos  
 
-### Pedido
+### Rateios
 
-- **CU-24** — Visualizar pedidos  
-
-### Rateio
-
-- **CU-25** — Visualizar rateios  
+- **CU-23** — Ver rateios  
 
 ### Rede de empresas
 
-- **CU-26** — Visualizar rede de empresas  
+- **CU-24** — Ver rede de empresas  
 
-### Notificação
+### Notificações
 
-- **CU-27** — Visualizar notificações  
+- **CU-25** — Ver notificações  
 
-### Navegação
+### Menu
 
-- **CU-28** — Abrir menu  
-- **CU-29** — Navegar entre Agenda, Eventos, Salas e Produtos  
+- **CU-26** — Abrir menu  
+- **CU-27** — Navegar entre Agenda, Eventos, Salas e Produtos  
+
+### Cadastro
+
+- **CU-28** — Cadastrar participante  
+
+### Participantes
+
+- **CU-29** — Ver quem está participando  
+- **CU-30** — Enviar mensagem para outro participante  
+
+### Organização (organizador)
+
+- **CU-31** — Cadastrar local  
+- **CU-32** — Cadastrar item da programação (horário e local na cidade)  
 
 ---
 

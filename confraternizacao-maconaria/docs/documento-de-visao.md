@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 2.9 · 2026-11-13
+**Versão:** 3.2 · 2026-11-13
 
 ## 1. Contexto
 
@@ -52,74 +52,67 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
-### Home
+### Autenticação e cadastro
 
-Boas-vindas no topo, calendário em seguida e lista de eventos na parte inferior.
+- **CU-01** — Cadastrar participante: cria a conta do participante no aplicativo.  
+- **CU-02** — Autenticar: entra no aplicativo com as credenciais da conta.  
 
-- **CU-01** — Ver boas-vindas: exibe saudação e identificação do participante na abertura do app.  
-- **CU-02** — Ver calendário: mostra os dias da programação na parte superior da Home.  
-- **CU-03** — Selecionar dia no calendário: filtra a lista de eventos pelo dia escolhido.  
-- **CU-04** — Ver lista de eventos abaixo do calendário: lista os eventos do dia selecionado.  
-- **CU-05** — Abrir evento a partir da lista: leva ao detalhe do evento escolhido.  
-- **CU-06** — Ver listas de inscrição: mostra as inscrições disponíveis ou já feitas a partir da Home.  
-- **CU-07** — Inscrever-se no evento: confirma a participação e libera o chat do evento.  
+### Eventos (Home)
 
-### Eventos
+Tela inicial do app. Mapa no topo (localização dos eventos), boas-vindas em seguida, calendário e lista de eventos na parte inferior.
 
-- **CU-08** — Ver lista de eventos: apresenta data, horário, título, local e confirmados.  
-- **CU-09** — Abrir detalhe do evento: abre a tela com as informações completas do evento.  
+- **CU-03** — Ver mapa: exibe no topo a localização dos eventos na cidade.  
+- **CU-04** — Ver boas-vindas: exibe saudação e identificação do participante.  
+- **CU-05** — Ver calendário: mostra os dias da programação.  
+- **CU-06** — Selecionar dia no calendário: filtra a lista de eventos pelo dia escolhido.  
+- **CU-07** — Ver lista de eventos: apresenta data, horário, título, local e confirmados.  
+- **CU-08** — Abrir evento a partir da lista: leva à tela do evento escolhido.  
+- **CU-09** — Abrir evento a partir do mapa: leva à tela do evento pelo ponto no mapa.  
 
-### Detalhe do evento
+### Evento
+
+Tela de cada evento, com as funcionalidades referentes a esse evento. A inscrição libera o acesso ao chat (grupo do evento).
 
 - **CU-10** — Ver data, horário, local, confirmados e descrição: consulta as informações do evento.  
-- **CU-11** — Inscrever-se no evento: confirma a inscrição a partir do detalhe.  
+- **CU-11** — Inscrever-se no evento: confirma a participação e libera o grupo.  
+- **CU-12** — Ver quem está participando: identifica os inscritos desse evento.  
+- **CU-13** — Acessar o grupo do evento: abre o chat liberado pela inscrição.  
 
 ### Inscrições
 
-A inscrição libera o acesso ao chat (grupo do evento).
-
-- **CU-12** — Ver lista de inscrições: lista as inscrições do participante.  
-- **CU-13** — Inscrever-se no evento: realiza a inscrição e libera o grupo.  
-- **CU-14** — Acessar o grupo liberado pela inscrição: abre o chat do evento após inscrito.  
+- **CU-14** — Ver lista de inscrições: lista as inscrições do participante.  
+- **CU-15** — Abrir evento a partir da inscrição: leva à tela do evento inscrito.  
 
 ### Chat
 
 Menu de chat com grupos e conversas privadas. O acesso ao grupo do evento depende da inscrição.
 
-- **CU-15** — Abrir menu de chat: acessa a área de mensagens.  
-- **CU-16** — Ver lista de grupos: lista os grupos liberados pelas inscrições.  
-- **CU-17** — Abrir grupo: entra na conversa coletiva do evento.  
-- **CU-18** — Ver lista de conversas privadas: lista os chats individuais.  
-- **CU-19** — Abrir conversa privada: abre o diálogo com outro participante.  
-- **CU-20** — Enviar mensagem no grupo: publica mensagem no grupo do evento.  
-- **CU-21** — Enviar mensagem privada: envia mensagem direta a outro participante.  
+- **CU-16** — Abrir menu de chat: acessa a área de mensagens.  
+- **CU-17** — Ver lista de grupos: lista os grupos liberados pelas inscrições.  
+- **CU-18** — Abrir grupo: entra na conversa coletiva do evento.  
+- **CU-19** — Ver lista de conversas privadas: lista os chats individuais.  
+- **CU-20** — Abrir conversa privada: abre o diálogo com outro participante.  
+- **CU-21** — Enviar mensagem no grupo: publica mensagem no grupo do evento.  
+- **CU-22** — Enviar mensagem privada: envia mensagem direta a outro participante.  
 
 ### Menu
 
-- **CU-22** — Abrir menu: exibe as opções principais de navegação.  
-- **CU-23** — Ir para Eventos: navega para a lista de eventos.  
-- **CU-24** — Ir para Inscrições: navega para a lista de inscrições.  
-- **CU-25** — Ir para Chat: navega para grupos e conversas privadas.  
+- **CU-23** — Abrir menu: exibe as opções principais de navegação.  
+- **CU-24** — Ir para Eventos: volta à Home de eventos.  
+- **CU-25** — Ir para Inscrições: navega para a lista de inscrições.  
+- **CU-26** — Ir para Chat: navega para grupos e conversas privadas.  
 
 ### Menu da conta
 
-- **CU-26** — Abrir menu da conta: acessa as opções da conta do participante.  
-- **CU-27** — Ver perfil: consulta os dados cadastrais.  
-- **CU-28** — Editar perfil: altera nome e demais dados do perfil.  
-- **CU-29** — Alterar senha: redefine a senha de acesso.  
-
-### Cadastro
-
-- **CU-30** — Cadastrar participante: cria a conta do participante no aplicativo.  
-
-### Participantes
-
-- **CU-31** — Ver quem está participando: identifica os inscritos do evento.  
+- **CU-27** — Abrir menu da conta: acessa as opções da conta do participante.  
+- **CU-28** — Ver perfil: consulta os dados cadastrais.  
+- **CU-29** — Editar perfil: altera nome e demais dados do perfil.  
+- **CU-30** — Alterar senha: redefine a senha de acesso.  
 
 ### Organização (organizador)
 
-- **CU-32** — Cadastrar local: registra um local da programação na cidade.  
-- **CU-33** — Cadastrar item da programação: cria evento com horário e local.  
+- **CU-31** — Cadastrar local: registra um local da programação na cidade.  
+- **CU-32** — Cadastrar item da programação: cria evento com horário e local.  
 
 ---
 

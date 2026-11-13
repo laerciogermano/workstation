@@ -1,5 +1,7 @@
 # Documento de visão — Confraternização Maçônica
 
+**Versão:** 1.0 · 2026-11-13
+
 ## 1. Contexto
 
 No próximo ano será realizado em Curitiba um **evento mundial** da maçonaria, em comemoração aos **125 anos** da instituição organizadora. O encontro tem caráter de **confraternização**, com **programação distribuída pela cidade** e organizada por **horários**.

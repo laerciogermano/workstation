@@ -2,7 +2,7 @@
 
 | | |
 |--|--|
-| Versão | 8.2 · 2026-11-13 |
+| Versão | 8.3 · 2026-11-13 |
 | Natureza | Visão de produto |
 
 ---
@@ -73,79 +73,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 7. Escopo
-
-### EP-01 — Controle do evento
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-01.1 | Aplicativo oficial do evento |
-| F-01.2 | Controle operacional do evento pelo organizador |
-| F-01.3 | Organização compatível com confraternização multi-local |
-| F-01.4 | Privacidade e cookies |
-| F-01.5 | Notificações na interface |
-
-### EP-02 — Programação e agenda
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-02.1 | Cronograma / programação do evento |
-| F-02.2 | Programação na cidade inteira, com horário |
-| F-02.3 | Agenda com seleção de dias |
-| F-02.4 | Eventos do dia |
-| F-02.5 | Lista de eventos (data, horário, título, confirmados) |
-| F-02.6 | Detalhe do evento (banner, data, horário, local, confirmados, texto descritivo) |
-
-### EP-03 — Locais e salas
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-03.1 | Locais cadastrados |
-| F-03.2 | Salas |
-
-### EP-04 — Participantes e conta
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-04.1 | Cadastro de participantes |
-| F-04.2 | Identificação de quem participa |
-| F-04.3 | Perfil e conta (edição e senha) |
-| F-04.4 | Carteirinha |
-| F-04.5 | Registro facial na conta |
-
-### EP-05 — Presença e ingressos
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-05.1 | Check-in |
-| F-05.2 | Confirmados no evento |
-| F-05.3 | Ingressos / aquisição de ingresso |
-| F-05.4 | Check-ins e ingressos na conta |
-
-### EP-06 — Comunicação entre participantes
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-06.1 | Mensagem entre participantes |
-
-### EP-07 — Serviços complementares do evento
-
-| ID | Funcionalidade |
-|----|----------------|
-| F-07.1 | Estacionamento |
-| F-07.2 | Produtos |
-| F-07.3 | Vouchers |
-| F-07.4 | Pedidos |
-| F-07.5 | Rateios |
-| F-07.6 | Rede de empresas |
-
-### Fora de escopo
-
-Itens não previstos nos épicos e funcionalidades acima.
-
----
-
-## 8. Prazo
+## 7. Prazo
 
 | Marco | Situação |
 |-------|----------|

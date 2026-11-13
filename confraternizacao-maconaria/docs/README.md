@@ -4,5 +4,5 @@ Visão: [`documento-de-visao.md`](documento-de-visao.md)
 
 | Artefato | Status |
 |----------|--------|
-| Visão | v8.2 |
+| Visão | v8.3 |
 | Funcionalidades / US / BDD / … | A produzir |

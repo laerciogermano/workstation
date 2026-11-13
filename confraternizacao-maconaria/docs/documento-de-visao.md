@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.0 · 2026-11-13
+**Versão:** 1.1 · 2026-11-13
 
 ## 1. Contexto
 
@@ -65,6 +65,32 @@ O projeto adota, como referência de experiência, o padrão de aplicativos de e
 - Notificações na interface  
 
 A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
+
+### Imagens de referência
+
+**Home com privacidade e cookies**
+
+![Home com modal de privacidade e cookies](referencias/01-home-privacidade.jpeg)
+
+**Agenda**
+
+![Agenda com eventos do dia e acesso rápido](referencias/02-agenda.jpeg)
+
+**Lista de eventos**
+
+![Lista de eventos com data, horário e confirmados](referencias/03-lista-eventos.jpeg)
+
+**Check-in e ingresso**
+
+![Ações de check-in e comprar ingresso](referencias/04-checkin-ingresso.jpeg)
+
+**Detalhe do evento**
+
+![Detalhe do evento com data, horário, local e confirmados](referencias/05-detalhe-evento.jpeg)
+
+**Perfil**
+
+![Perfil e informações da conta](referencias/06-perfil.jpeg)
 
 ---
 

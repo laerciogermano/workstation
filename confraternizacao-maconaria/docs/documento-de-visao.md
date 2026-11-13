@@ -2,7 +2,7 @@
 
 | | |
 |--|--|
-| Versão | 8.3 · 2026-11-13 |
+| Versão | 8.4 · 2026-11-13 |
 | Natureza | Visão de produto |
 
 ---
@@ -34,7 +34,7 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 | Critério | Definição |
 |----------|-----------|
-| **Idade** | A definir |
+| **Idade** | 45 a 65 anos |
 
 ---
 

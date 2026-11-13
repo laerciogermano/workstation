@@ -12,4 +12,5 @@ Como registrar: [`README.md`](README.md).
 | 004 | 2026-11-13 | Visão só insumos do cliente | [004-2026-11-13-visao-so-insumos-cliente.md](004-2026-11-13-visao-so-insumos-cliente.md) | v3.0: apenas áudio/transcrição + descrições dos prints; sem inventar. |
 | 005 | 2026-11-13 | Visão em seis seções | [005-2026-11-13-visao-seis-secoes.md](005-2026-11-13-visao-seis-secoes.md) | v4.0: contexto, objetivo, público-alvo, referências, escopo, prazo. |
 | 006 | 2026-11-13 | Visão linguagem diretoria | [006-2026-11-13-visao-linguagem-diretoria.md](006-2026-11-13-visao-linguagem-diretoria.md) | v5.0: tom formal; sem orçamento. |
+| 007 | 2026-11-13 | Visão sem mencionar áudio | [007-2026-11-13-visao-sem-mencao-audio.md](007-2026-11-13-visao-sem-mencao-audio.md) | v6.0: fala do projeto; sem citar áudio/prints no corpo. |
 | 004 | 2026-11-13 | Baixar insumos de mercado (visão, skills, práticas, event apps) | [004-2026-11-13-baixar-insumos-mercado.md](004-2026-11-13-baixar-insumos-mercado.md) | Skills, templates de visão, tendências 2025–26 de apps de evento e práticas de desenvolvimento em `input/referencias-mercado/`. |

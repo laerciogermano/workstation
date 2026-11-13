@@ -1,10 +1,8 @@
 # Docs
 
-Fonte de verdade: [`documento-de-visao.md`](documento-de-visao.md) (linguagem diretoria; sem orçamento; só áudio + prints).
-
-Insumos: [`../input/README.md`](../input/README.md).
+Visão: [`documento-de-visao.md`](documento-de-visao.md)
 
 | Artefato | Status |
 |----------|--------|
-| Visão | v5.0 |
-| Funcionalidades / US / BDD / … | A produzir — só a partir da visão |
+| Visão | v6.0 |
+| Funcionalidades / US / BDD / … | A produzir |

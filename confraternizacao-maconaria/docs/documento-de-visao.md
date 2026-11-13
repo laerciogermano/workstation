@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.3 · 2026-11-13
+**Versão:** 1.4 · 2026-11-13
 
 ## 1. Contexto
 
@@ -52,51 +52,53 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 Casos de uso derivados das funcionalidades citadas e das imagens de referência:
 
-- O organizador acessa o aplicativo oficial para controlar o evento  
-- O organizador organiza a confraternização com programação na cidade inteira  
-- O organizador cadastra o cronograma / programação do evento  
-- O organizador define horários na programação  
-- O organizador cadastra os locais do evento  
-- O organizador visualiza quem está participando  
-- O participante realiza cadastro no evento  
-- O participante envia mensagem para outro participante  
-- O participante abre o aplicativo e vê boas-vindas com nome e foto de perfil  
-- O participante abre o menu do aplicativo  
-- O participante visualiza notificações pelo sino  
-- O participante visualiza badges de status, incluindo contagem de check-ins  
-- O participante acessa rapidamente a carteirinha  
-- O participante acessa rapidamente os ingressos  
-- O participante acessa rapidamente o estacionamento  
-- O participante acessa rapidamente a compra de ingresso  
-- O participante gerencia privacidade e cookies (essenciais; desempenho/análise opcional; rejeitar não essenciais, salvar escolha ou aceitar todos)  
-- O participante navega pela agenda e seleciona um dia  
-- O participante visualiza os eventos do dia selecionado  
-- O participante navega entre as abas Agenda, Eventos, Salas e Produtos  
-- O participante consulta a lista de eventos com data e horário  
-- O participante consulta a lista de eventos com imagem  
-- O participante consulta a lista de eventos com título  
-- O participante visualiza a quantidade de confirmados (X/Y) em cada evento  
-- O participante abre um evento e escolhe fazer check-in para confirmar presença  
-- O participante abre um evento e escolhe comprar ingresso  
-- O participante abre o detalhe do evento e visualiza o banner  
-- O participante abre o detalhe do evento e visualiza a data  
-- O participante abre o detalhe do evento e visualiza o horário  
-- O participante abre o detalhe do evento e visualiza o local  
-- O participante abre o detalhe do evento e visualiza os confirmados  
-- O participante abre o detalhe do evento e lê o texto “sobre o evento”  
-- O participante consulta as salas do evento  
-- O participante consulta os produtos  
-- O participante visualiza o próprio perfil com foto e nome  
-- O participante edita o perfil  
-- O participante registra ou visualiza facial cadastrada  
-- O participante visualiza a carteirinha  
-- O participante altera a senha  
-- O participante consulta check-ins e ingressos na conta  
-- O participante consulta vouchers  
-- O participante consulta vagas de estacionamento  
-- O participante consulta pedidos  
-- O participante consulta rateios  
-- O participante consulta a rede de empresas  
+| Índice | Caso de uso |
+|--------|-------------|
+| CU-01 | O organizador acessa o aplicativo oficial para controlar o evento |
+| CU-02 | O organizador organiza a confraternização com programação na cidade inteira |
+| CU-03 | O organizador cadastra o cronograma / programação do evento |
+| CU-04 | O organizador define horários na programação |
+| CU-05 | O organizador cadastra os locais do evento |
+| CU-06 | O organizador visualiza quem está participando |
+| CU-07 | O participante realiza cadastro no evento |
+| CU-08 | O participante envia mensagem para outro participante |
+| CU-09 | O participante abre o aplicativo e vê boas-vindas com nome e foto de perfil |
+| CU-10 | O participante abre o menu do aplicativo |
+| CU-11 | O participante visualiza notificações pelo sino |
+| CU-12 | O participante visualiza badges de status, incluindo contagem de check-ins |
+| CU-13 | O participante acessa rapidamente a carteirinha |
+| CU-14 | O participante acessa rapidamente os ingressos |
+| CU-15 | O participante acessa rapidamente o estacionamento |
+| CU-16 | O participante acessa rapidamente a compra de ingresso |
+| CU-17 | O participante gerencia privacidade e cookies (essenciais; desempenho/análise opcional; rejeitar não essenciais, salvar escolha ou aceitar todos) |
+| CU-18 | O participante navega pela agenda e seleciona um dia |
+| CU-19 | O participante visualiza os eventos do dia selecionado |
+| CU-20 | O participante navega entre as abas Agenda, Eventos, Salas e Produtos |
+| CU-21 | O participante consulta a lista de eventos com data e horário |
+| CU-22 | O participante consulta a lista de eventos com imagem |
+| CU-23 | O participante consulta a lista de eventos com título |
+| CU-24 | O participante visualiza a quantidade de confirmados (X/Y) em cada evento |
+| CU-25 | O participante abre um evento e escolhe fazer check-in para confirmar presença |
+| CU-26 | O participante abre um evento e escolhe comprar ingresso |
+| CU-27 | O participante abre o detalhe do evento e visualiza o banner |
+| CU-28 | O participante abre o detalhe do evento e visualiza a data |
+| CU-29 | O participante abre o detalhe do evento e visualiza o horário |
+| CU-30 | O participante abre o detalhe do evento e visualiza o local |
+| CU-31 | O participante abre o detalhe do evento e visualiza os confirmados |
+| CU-32 | O participante abre o detalhe do evento e lê o texto “sobre o evento” |
+| CU-33 | O participante consulta as salas do evento |
+| CU-34 | O participante consulta os produtos |
+| CU-35 | O participante visualiza o próprio perfil com foto e nome |
+| CU-36 | O participante edita o perfil |
+| CU-37 | O participante registra ou visualiza facial cadastrada |
+| CU-38 | O participante visualiza a carteirinha |
+| CU-39 | O participante altera a senha |
+| CU-40 | O participante consulta check-ins e ingressos na conta |
+| CU-41 | O participante consulta vouchers |
+| CU-42 | O participante consulta vagas de estacionamento |
+| CU-43 | O participante consulta pedidos |
+| CU-44 | O participante consulta rateios |
+| CU-45 | O participante consulta a rede de empresas |
 
 ---
 

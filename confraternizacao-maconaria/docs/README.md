@@ -3,7 +3,7 @@
 **Por quê:** índice dos artefatos derivados da visão.  
 **Fonte de verdade do produto:** [`documento-de-visao.md`](documento-de-visao.md).
 
-Insumos: [`../input/README.md`](../input/README.md).  
+Insumos: [`../input/README.md`](../input/README.md) · mercado [`../input/referencias-mercado/INDEX.md`](../input/referencias-mercado/INDEX.md).  
 Regras da IA: [`../config/config-ia.md`](../config/config-ia.md).  
 Timeline: [`../prompts/timeline.md`](../prompts/timeline.md).
 

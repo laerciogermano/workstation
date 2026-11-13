@@ -1,0 +1,11 @@
+Print do app: aba Eventos (lista).
+
+Cards com data/hora, thumbnail, título e confirmados:
+- 17 NOV 19:00 — Conexões à Mesa com Edson Vasconcelos (0/55)
+- 19 NOV 08:30 — 5º Fórum LIDE Paraná Sustentabilidade (38/230)
+- 23 NOV 08:30 — Conexões à Mesa com Mila De Olano (0/15)
+- 24 NOV 18:30 — Prêmio Líderes do Paraná 2026 (0/60)
+- 01 DEZ 08:00 — Comitê Temático LIDE Paraná - Sustentabilidade & Ações Sociais (0/30)
+- 01 DEZ — Comitê Temático LIDE Paraná - Justiça: Marketing & Mercado
+
+Tab bar: Eventos ativa.

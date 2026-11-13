@@ -1,0 +1,5 @@
+Print do app mobile (LIDE / clube): mesma tela que 17.49.25 — home com modal "Privacidade e cookies".
+
+Fundo: boas-vindas a PAULO, badges de status, acesso rápido (Carteirinha, Ingressos, Estacionamento, Comprar ingresso).
+
+Modal: cookies essenciais sempre ativos; desempenho/análise opcional; ações Rejeitar não essenciais, Salvar escolha, Aceitar todos.

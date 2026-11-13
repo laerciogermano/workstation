@@ -1,0 +1,5 @@
+Print do app: lista Eventos com bottom sheet sobre o "5º Fórum LIDE Paraná Sustentabilidade".
+
+Sheet: "Selecione o que deseja fazer."
+Opções: Fazer check-in ("Confirme sua presença no evento") e Comprar ingresso ("Adquira seu ingresso para o evento").
+Lista ao fundo mostra os mesmos cards (Conexões à Mesa, Fórum, etc.); o fórum está com menu "…".

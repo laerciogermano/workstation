@@ -1,0 +1,4 @@
+Print do app: tela de perfil de PAULO SAMPAIO.
+
+Foto circular sobre header azul; badges Responsável e Facial cadastrada; botão "Editar perfil".
+Menu Informações da Conta: Minha carteirinha, Alterar senha, Check-ins e ingressos, Vouchers Lanchonete, Vagas de estacionamento, Pedidos, Meus rateios, Rede de Empresas.

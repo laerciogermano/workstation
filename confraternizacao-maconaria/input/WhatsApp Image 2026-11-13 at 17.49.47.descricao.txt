@@ -1,0 +1,7 @@
+Print do app mobile: home Agenda completa, sem modal.
+
+Header azul; card "BEM-VINDO Olá, PAULO" com foto, badges Adimplente / LIDE Global / 0/100 check-ins; acesso rápido Carteirinha, Ingressos, Estacionamento, Comprar ingresso.
+
+Bloco "Faça o check-in": semana Sex–Qui (13–19), dia 13 selecionado em azul.
+"Eventos do dia": "Nenhum evento para o dia selecionado."
+Tab bar: Agenda (ativa), Eventos, Salas, Produtos.

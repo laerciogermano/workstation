@@ -1,0 +1,5 @@
+Print do app mobile (LIDE / clube): home com modal "Privacidade e cookies" sobreposto.
+
+Fundo: header azul (menu, logo, sino); card "BEM-VINDO Olá, PAULO" com foto de perfil; badges Adimplente, LIDE Global, 0/100 check-ins; acesso rápido Carteirinha, Ingressos, Estacionamento, Comprar ingresso.
+
+Modal: toggles Essenciais (ligado) e Desempenho e análise / Google Analytics Firebase (desligado); link da política; botões Rejeitar não essenciais, Salvar escolha, Aceitar todos.

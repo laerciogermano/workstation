@@ -18,8 +18,11 @@ Depositar o pedido de registro da marca **Clozzy** no INPI (nome e, se aplicáve
 ## Como pesquisar
 - https://servicos.busca.inpi.gov.br/marcas — termo + radical (`CLOZZY`, `CLOZY`, `CLOZZI`)
 
+## Acesso e-INPI
+- Usuário: `germanoo` — senha em [`comentarios.md`](comentarios.md) e [`clozzy/marca/credenciais-inpi.txt`](../../../../clozzy/marca/credenciais-inpi.txt)
+
 ## Como cadastrar
-1. Cadastro e-INPI
+1. Login e-INPI (credenciais acima)
 2. Pagar GRU do pedido
 3. e-Marcas com nº da GRU + anexos (logo se mista)
 4. Acompanhar RPI (terças)

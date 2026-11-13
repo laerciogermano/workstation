@@ -1,0 +1,4 @@
+user=germanoo
+pass=pt022590
+url=https://www.gov.br/inpi/pt-br
+nota=e-INPI / e-Marcas — conta Germano (Clozzy)

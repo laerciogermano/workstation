@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.8 · 2026-11-13
+**Versão:** 2.2 · 2026-11-13
 
 ## 1. Contexto
 
@@ -48,99 +48,7 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 6. Escopo por tela
-
-Funcionalidades agrupadas pela tela em que o usuário as realiza:
-
-### Agenda
-
-- **CU-01** — Ver boas-vindas e status da conta  
-- **CU-02** — Abrir acesso rápido (carteirinha, ingressos, estacionamento, comprar ingresso)  
-- **CU-03** — Selecionar dia  
-- **CU-04** — Ver eventos do dia  
-
-### Eventos
-
-- **CU-05** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
-- **CU-06** — Abrir detalhe do evento  
-- **CU-07** — Fazer check-in  
-- **CU-08** — Comprar ingresso  
-
-### Detalhe do evento
-
-- **CU-09** — Ver banner, data, horário, local, confirmados e descrição  
-
-### Salas
-
-- **CU-10** — Ver salas / locais  
-
-### Produtos
-
-- **CU-11** — Ver produtos  
-
-### Perfil
-
-- **CU-12** — Ver perfil  
-- **CU-13** — Editar perfil  
-- **CU-14** — Alterar senha  
-- **CU-15** — Cadastrar facial  
-- **CU-16** — Abrir carteirinha, check-ins e ingressos, vouchers, estacionamento, pedidos, rateios e rede de empresas  
-
-### Carteirinha
-
-- **CU-17** — Ver carteirinha  
-
-### Check-ins e ingressos
-
-- **CU-18** — Ver check-ins da conta  
-- **CU-19** — Ver ingressos da conta  
-
-### Estacionamento
-
-- **CU-20** — Ver vagas de estacionamento  
-
-### Vouchers
-
-- **CU-21** — Ver vouchers  
-
-### Pedidos
-
-- **CU-22** — Ver pedidos  
-
-### Rateios
-
-- **CU-23** — Ver rateios  
-
-### Rede de empresas
-
-- **CU-24** — Ver rede de empresas  
-
-### Notificações
-
-- **CU-25** — Ver notificações  
-
-### Menu
-
-- **CU-26** — Abrir menu  
-- **CU-27** — Navegar entre Agenda, Eventos, Salas e Produtos  
-
-### Cadastro
-
-- **CU-28** — Cadastrar participante  
-
-### Participantes
-
-- **CU-29** — Ver quem está participando  
-- **CU-30** — Enviar mensagem para outro participante  
-
-### Organização (organizador)
-
-- **CU-31** — Cadastrar local  
-- **CU-32** — Cadastrar item da programação (horário e local na cidade)  
-
----
-
-## 7. Referências
+## 6. Referências
 
 O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
 
@@ -150,10 +58,7 @@ O projeto adota, como referência de experiência, o padrão de aplicativos de e
 - Ingressos  
 - Carteirinha  
 - Salas  
-- Estacionamento  
-- Produtos  
 - Perfil e conta  
-- Privacidade e cookies  
 - Notificações na interface  
 
 A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
@@ -172,9 +77,9 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ![Lista de eventos com data, horário e confirmados](referencias/03-lista-eventos.jpeg)
 
-**Check-in e ingresso**
+**Check-in**
 
-![Ações de check-in e comprar ingresso](referencias/04-checkin-ingresso.jpeg)
+![Ação de check-in no evento](referencias/04-checkin-ingresso.jpeg)
 
 **Detalhe do evento**
 
@@ -186,7 +91,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 8. Sites de referência maçônicos
+## 7. Sites de referência maçônicos
 
 | Instituição | Site |
 |-------------|------|
@@ -196,6 +101,88 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 | Grande Oriente do Brasil (GOB) | [http://www.gob.org.br/](http://www.gob.org.br/) |
 | Confederação Maçônica do Brasil (COMAB) | [https://comab.org.br/](https://comab.org.br/) |
 | Confederação da Maçonaria Simbólica do Brasil (CMSB) | [http://www.cmsb.org.br/](http://www.cmsb.org.br/) |
+
+---
+
+## 8. Escopo por tela
+
+Funcionalidades agrupadas pela tela em que o usuário as realiza:
+
+### Agenda
+
+- **CU-01** — Ver boas-vindas e status da conta  
+- **CU-02** — Abrir acesso rápido (carteirinha, ingressos)  
+- **CU-03** — Selecionar dia  
+- **CU-04** — Ver eventos do dia  
+
+### Eventos
+
+- **CU-05** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
+- **CU-06** — Abrir detalhe do evento  
+- **CU-07** — Fazer check-in  
+
+### Detalhe do evento
+
+- **CU-08** — Ver banner, data, horário, local, confirmados e descrição  
+
+### Salas
+
+- **CU-09** — Ver salas / locais  
+
+### Perfil
+
+- **CU-10** — Ver perfil  
+- **CU-11** — Editar perfil  
+- **CU-12** — Alterar senha  
+- **CU-13** — Abrir carteirinha, check-ins e ingressos, vouchers, pedidos, rateios e rede de empresas  
+
+### Carteirinha
+
+- **CU-14** — Ver carteirinha  
+
+### Check-ins e ingressos
+
+- **CU-15** — Ver check-ins da conta  
+- **CU-16** — Ver ingressos da conta  
+
+### Vouchers
+
+- **CU-17** — Ver vouchers  
+
+### Pedidos
+
+- **CU-18** — Ver pedidos  
+
+### Rateios
+
+- **CU-19** — Ver rateios  
+
+### Rede de empresas
+
+- **CU-20** — Ver rede de empresas  
+
+### Notificações
+
+- **CU-21** — Ver notificações  
+
+### Menu
+
+- **CU-22** — Abrir menu  
+- **CU-23** — Navegar entre Agenda, Eventos e Salas  
+
+### Cadastro
+
+- **CU-24** — Cadastrar participante  
+
+### Participantes
+
+- **CU-25** — Ver quem está participando  
+- **CU-26** — Enviar mensagem para outro participante  
+
+### Organização (organizador)
+
+- **CU-27** — Cadastrar local  
+- **CU-28** — Cadastrar item da programação (horário e local na cidade)  
 
 ---
 

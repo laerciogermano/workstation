@@ -1,8 +1,9 @@
 # Docs
 
-Visão: [`documento-de-visao.md`](documento-de-visao.md)
+Visão: [`documento-de-visao.md`](documento-de-visao.md) · [`documento-de-visao.pdf`](documento-de-visao.pdf)
 
 | Artefato | Status |
 |----------|--------|
-| Visão | v8.5 |
+| Visão | atual |
+| PDF | [`documento-de-visao.pdf`](documento-de-visao.pdf) |
 | Funcionalidades / US / BDD / … | A produzir |

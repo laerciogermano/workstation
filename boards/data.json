@@ -1289,5 +1289,87 @@
         "status": "todo"
       }
     ]
+  },
+  "confraternizacao-maconaria": {
+    "name": "Confraternização Maçônica",
+    "blurb": "App do evento mundial da potência",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "cfm-t-0",
+            "title": "Validar visão com o cliente"
+          },
+          {
+            "id": "cfm-t-1",
+            "title": "Benchmarking de apps de evento"
+          },
+          {
+            "id": "cfm-t-2",
+            "title": "Montar orçamento v1"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "cfm-t-visao",
+            "title": "Documento de visão"
+          }
+        ]
+      }
+    ],
+    "description": "Aplicativo da potência maçônica para controle do evento mundial de confraternização em Curitiba (125 anos): programação, locais, participantes e mensagens.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "done"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "benchmarking",
+        "title": "Benchmarking",
+        "status": "todo"
+      },
+      {
+        "id": "orcamento",
+        "title": "Orçamento",
+        "status": "todo"
+      },
+      {
+        "id": "identidade",
+        "title": "Identidade visual",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo alta fidelidade",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery (US/EP)",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
   }
 }

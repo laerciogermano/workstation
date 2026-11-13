@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.2 · 2026-11-13
+**Versão:** 3.3 · 2026-11-13
 
 ## 1. Contexto
 
@@ -66,53 +66,46 @@ Tela inicial do app. Mapa no topo (localização dos eventos), boas-vindas em se
 - **CU-05** — Ver calendário: mostra os dias da programação.  
 - **CU-06** — Selecionar dia no calendário: filtra a lista de eventos pelo dia escolhido.  
 - **CU-07** — Ver lista de eventos: apresenta data, horário, título, local e confirmados.  
-- **CU-08** — Abrir evento a partir da lista: leva à tela do evento escolhido.  
-- **CU-09** — Abrir evento a partir do mapa: leva à tela do evento pelo ponto no mapa.  
+- **CU-08** — Abrir evento: leva à tela do evento escolhido, pela lista ou pelo ponto no mapa.  
 
 ### Evento
 
-Tela de cada evento, com as funcionalidades referentes a esse evento. A inscrição libera o acesso ao chat (grupo do evento).
+Tela de cada evento, com as funcionalidades referentes a esse evento. A inscrição libera o acesso ao grupo do evento no Chat.
 
-- **CU-10** — Ver data, horário, local, confirmados e descrição: consulta as informações do evento.  
-- **CU-11** — Inscrever-se no evento: confirma a participação e libera o grupo.  
-- **CU-12** — Ver quem está participando: identifica os inscritos desse evento.  
-- **CU-13** — Acessar o grupo do evento: abre o chat liberado pela inscrição.  
+- **CU-09** — Ver data, horário, local, confirmados e descrição: consulta as informações do evento.  
+- **CU-10** — Inscrever-se no evento: confirma a participação e libera o grupo.  
+- **CU-11** — Ver quem está participando: identifica os inscritos desse evento.  
 
 ### Inscrições
 
-- **CU-14** — Ver lista de inscrições: lista as inscrições do participante.  
-- **CU-15** — Abrir evento a partir da inscrição: leva à tela do evento inscrito.  
+- **CU-12** — Ver lista de inscrições: lista as inscrições do participante, com acesso ao evento.  
 
 ### Chat
 
-Menu de chat com grupos e conversas privadas. O acesso ao grupo do evento depende da inscrição.
+Grupos e conversas privadas. O acesso ao grupo do evento depende da inscrição.
 
-- **CU-16** — Abrir menu de chat: acessa a área de mensagens.  
-- **CU-17** — Ver lista de grupos: lista os grupos liberados pelas inscrições.  
-- **CU-18** — Abrir grupo: entra na conversa coletiva do evento.  
-- **CU-19** — Ver lista de conversas privadas: lista os chats individuais.  
-- **CU-20** — Abrir conversa privada: abre o diálogo com outro participante.  
-- **CU-21** — Enviar mensagem no grupo: publica mensagem no grupo do evento.  
-- **CU-22** — Enviar mensagem privada: envia mensagem direta a outro participante.  
+- **CU-13** — Ver lista de grupos: lista os grupos liberados pelas inscrições.  
+- **CU-14** — Abrir grupo: entra na conversa coletiva do evento.  
+- **CU-15** — Ver lista de conversas privadas: lista os chats individuais.  
+- **CU-16** — Abrir conversa privada: abre o diálogo com outro participante.  
+- **CU-17** — Enviar mensagem: publica no grupo ou envia direto ao participante.  
 
 ### Menu
 
-- **CU-23** — Abrir menu: exibe as opções principais de navegação.  
-- **CU-24** — Ir para Eventos: volta à Home de eventos.  
-- **CU-25** — Ir para Inscrições: navega para a lista de inscrições.  
-- **CU-26** — Ir para Chat: navega para grupos e conversas privadas.  
+- **CU-18** — Abrir menu: exibe a navegação principal.  
+- **CU-19** — Navegar entre Eventos, Inscrições e Chat: troca de seção pelo menu.  
 
 ### Menu da conta
 
-- **CU-27** — Abrir menu da conta: acessa as opções da conta do participante.  
-- **CU-28** — Ver perfil: consulta os dados cadastrais.  
-- **CU-29** — Editar perfil: altera nome e demais dados do perfil.  
-- **CU-30** — Alterar senha: redefine a senha de acesso.  
+- **CU-20** — Abrir menu da conta: acessa as opções da conta do participante.  
+- **CU-21** — Ver perfil: consulta os dados cadastrais.  
+- **CU-22** — Editar perfil: altera nome e demais dados do perfil.  
+- **CU-23** — Alterar senha: redefine a senha de acesso.  
 
 ### Organização (organizador)
 
-- **CU-31** — Cadastrar local: registra um local da programação na cidade.  
-- **CU-32** — Cadastrar item da programação: cria evento com horário e local.  
+- **CU-24** — Cadastrar local: registra um local da programação na cidade.  
+- **CU-25** — Cadastrar item da programação: cria evento com horário e local.  
 
 ---
 

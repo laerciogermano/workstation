@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.2 · 2026-11-13
+**Versão:** 1.3 · 2026-11-13
 
 ## 1. Contexto
 
@@ -48,57 +48,55 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 6. Funcionalidades do aplicativo
+## 6. Casos de uso
 
-Lista consolidada a partir das funcionalidades citadas e das imagens de referência:
+Casos de uso derivados das funcionalidades citadas e das imagens de referência:
 
-- Aplicativo oficial do evento  
-- Controle do evento  
-- Nível de organização do evento  
-- Cronograma / programação  
-- Programação na cidade inteira  
-- Horários na programação  
-- Locais cadastrados  
-- Cadastro de participantes  
-- Identificação de quem está participando  
-- Mensagem de um participante para outro  
-- Boas-vindas com nome e foto de perfil  
-- Menu  
-- Notificações (sino)  
-- Badges de status (incluindo check-ins)  
-- Acesso rápido à carteirinha  
-- Acesso rápido aos ingressos  
-- Acesso rápido ao estacionamento  
-- Acesso rápido a comprar ingresso  
-- Privacidade e cookies (essenciais; desempenho/análise opcional; rejeitar não essenciais, salvar escolha, aceitar todos)  
-- Agenda com seleção de dias  
-- Listagem de eventos do dia  
-- Navegação por abas: Agenda, Eventos, Salas e Produtos  
-- Lista de eventos com data e horário  
-- Lista de eventos com imagem  
-- Lista de eventos com título  
-- Quantidade de confirmados (X/Y) na lista de eventos  
-- Fazer check-in (confirmar presença no evento)  
-- Comprar ingresso  
-- Detalhe do evento com banner  
-- Detalhe do evento com data  
-- Detalhe do evento com horário  
-- Detalhe do evento com local  
-- Detalhe do evento com confirmados  
-- Detalhe do evento com texto “sobre o evento”  
-- Salas  
-- Produtos  
-- Perfil com foto e nome  
-- Editar perfil  
-- Facial cadastrada  
-- Minha carteirinha  
-- Alterar senha  
-- Check-ins e ingressos na conta  
-- Vouchers  
-- Vagas de estacionamento  
-- Pedidos  
-- Rateios  
-- Rede de empresas  
+- O organizador acessa o aplicativo oficial para controlar o evento  
+- O organizador organiza a confraternização com programação na cidade inteira  
+- O organizador cadastra o cronograma / programação do evento  
+- O organizador define horários na programação  
+- O organizador cadastra os locais do evento  
+- O organizador visualiza quem está participando  
+- O participante realiza cadastro no evento  
+- O participante envia mensagem para outro participante  
+- O participante abre o aplicativo e vê boas-vindas com nome e foto de perfil  
+- O participante abre o menu do aplicativo  
+- O participante visualiza notificações pelo sino  
+- O participante visualiza badges de status, incluindo contagem de check-ins  
+- O participante acessa rapidamente a carteirinha  
+- O participante acessa rapidamente os ingressos  
+- O participante acessa rapidamente o estacionamento  
+- O participante acessa rapidamente a compra de ingresso  
+- O participante gerencia privacidade e cookies (essenciais; desempenho/análise opcional; rejeitar não essenciais, salvar escolha ou aceitar todos)  
+- O participante navega pela agenda e seleciona um dia  
+- O participante visualiza os eventos do dia selecionado  
+- O participante navega entre as abas Agenda, Eventos, Salas e Produtos  
+- O participante consulta a lista de eventos com data e horário  
+- O participante consulta a lista de eventos com imagem  
+- O participante consulta a lista de eventos com título  
+- O participante visualiza a quantidade de confirmados (X/Y) em cada evento  
+- O participante abre um evento e escolhe fazer check-in para confirmar presença  
+- O participante abre um evento e escolhe comprar ingresso  
+- O participante abre o detalhe do evento e visualiza o banner  
+- O participante abre o detalhe do evento e visualiza a data  
+- O participante abre o detalhe do evento e visualiza o horário  
+- O participante abre o detalhe do evento e visualiza o local  
+- O participante abre o detalhe do evento e visualiza os confirmados  
+- O participante abre o detalhe do evento e lê o texto “sobre o evento”  
+- O participante consulta as salas do evento  
+- O participante consulta os produtos  
+- O participante visualiza o próprio perfil com foto e nome  
+- O participante edita o perfil  
+- O participante registra ou visualiza facial cadastrada  
+- O participante visualiza a carteirinha  
+- O participante altera a senha  
+- O participante consulta check-ins e ingressos na conta  
+- O participante consulta vouchers  
+- O participante consulta vagas de estacionamento  
+- O participante consulta pedidos  
+- O participante consulta rateios  
+- O participante consulta a rede de empresas  
 
 ---
 

@@ -11,6 +11,7 @@
 | [`design-system-conect-tech-v1.html`](design-system-conect-tech-v1.html) | Design system v1 **ConectTech** (tokens + componentes) |
 | [`design-system-conect-tech-v1.pdf`](design-system-conect-tech-v1.pdf) / [`.zip`](design-system-conect-tech-v1.zip) | PDF + pacote (HTML + assets) — card [EiaT9dZf](https://trello.com/c/EiaT9dZf) |
 | [`logos/README.md`](logos/README.md) | Propostas de logo (A/B/C) |
+| [`empresas-similares-compras-corporativas.md`](empresas-similares-compras-corporativas.md) | Lista BR + internacional — compras corporativas B2B (card Done local) |
 
 ## Como gerar PDF
 

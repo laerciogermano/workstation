@@ -1,12 +1,10 @@
 # Confraternização Maçônica
 
-App da **potência** para o evento mundial em **Curitiba** (125 anos): controle com programação, locais, participantes, cadastro e mensagens — conforme o pedido no áudio; prints LIDE só como referência visual enviada.
+App da potência para o evento mundial em Curitiba (125 anos), conforme pedido no áudio; prints LIDE como referência.
 
-## Documento de visão (canônico)
+## Documento de visão
 
-→ [`docs/documento-de-visao.md`](docs/documento-de-visao.md) — **v3.0**: somente áudio/transcrição + descrições dos prints. Sem inventar escopo.
-
-## Pastas
+→ [`docs/documento-de-visao.md`](docs/documento-de-visao.md) — contexto · objetivo · público-alvo · referências · escopo · prazo
 
 | | |
 |--|--|

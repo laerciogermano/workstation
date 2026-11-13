@@ -206,5 +206,109 @@ Escolher o **nome** de uma empresa nova de **suprimentos corporativos B2B** — 
 179. ParceiroSupri
 180. ParceiroInsumo
 
+### Combinações: suprimentos + desenvolvimento
+181. SupriDev
+182. SupriTech
+183. AlmoxTech
+184. InsumoTech
+185. AbastaTech
+186. SupriSoft
+187. AlmoxSoft
+188. InsumoSoft
+189. SupriCode
+190. AlmoxCode
+191. PortalDev
+192. PortalTech
+193. EstoqueDev
+194. EstoqueTech
+195. CompraDev
+196. CompraTech
+197. CotaçãoTech
+198. EntregaTech
+199. FluxoDev
+200. FluxoTech
+201. BaseTech
+202. BaseDev
+203. PrateleiraTech
+204. ForneceTech
+205. UmSóSistema
+206. Pedido + Código
+207. Supri + Sistema
+208. Almox Digital
+209. Insumo Digital
+210. Compra Digital
+211. Portal Único Tech
+212. Stack Supri
+213. Stack Almox
+214. Stack Insumo
+215. Ops Supri
+216. Ops Almox
+217. Ops Insumo
+218. Build & Supply
+219. Code & Supply
+220. Soft & Supri
+221. Dev & Almox
+222. Tech & Insumo
+223. Supply Soft
+224. Supply Tech
+225. Supply Dev
+226. Supply Stack
+227. Supply Ops
+228. Supply Code
+229. Corp Soft Supri
+230. Corp Tech Almox
+231. Sistema de Insumos
+232. Sistema Almox
+233. App do Almox
+234. App de Compras
+235. Plataforma Supri
+236. Plataforma Insumo
+237. Integra Supri
+238. Integra Almox
+239. Automação Almox
+240. Automação Compras
+241. IA Compras
+242. IA Almox
+243. Dados do Estoque
+244. Dashboard Almox
+245. Nuvem Supri
+246. Nuvem Almox
+247. Squad Supri
+248. Squad Almox
+249. Diagnóstico + Entrega
+250. Do Pedido ao Sistema
+251. Do Insumo ao App
+252. Do Almox ao Código
+253. Compra e Constrói
+254. Abastece e Desenvolve
+255. Fornece e Integra
+256. Cotação e Código
+257. Pedido e Produto
+258. Catálogo e Plataforma
+259. Estoque e Sprint
+260. Suprimentos + Software
+
+### Marcas inventadas (híbridas)
+261. Supridev
+262. Supritech
+263. Almotech
+264. Insumitech
+265. Abastatech
+266. Suprisoft
+267. Cotatech
+268. Estotech
+269. Fluxotech
+270. Integrasupri
+271. Automox
+272. Autosupri
+273. Softalmox
+274. Softsupri
+275. Devsupri
+276. Devalmox
+277. Techsupri
+278. Techalmox
+279. Opsupri
+280. Opsalmox
+
 ## Observação
 Marca nova de suprimentos corporativos; não reutilizar identidade, domínio nem naming da ConnectMax.

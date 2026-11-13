@@ -9,3 +9,7 @@ Card criado com 36 sugestões (curtos, compostos, corporativos, inventivos + lin
 ### 3. local — 2026-11-13
 
 +80 nomes só em português (101–180).
+
+### 4. local — 2026-11-13
+
++100 combinações suprimentos + desenvolvimento de software (181–280).

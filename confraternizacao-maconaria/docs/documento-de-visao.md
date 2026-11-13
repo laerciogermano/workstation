@@ -2,9 +2,8 @@
 
 | | |
 |--|--|
-| Versão | 8.1 · 2026-11-13 |
+| Versão | 8.2 · 2026-11-13 |
 | Natureza | Visão de produto |
-| Funcionalidades do áudio | [`funcionalidades-audio.md`](funcionalidades-audio.md) |
 
 ---
 
@@ -39,7 +38,22 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 5. Referências
+## 5. Funcionalidades citadas
+
+- Controle do evento  
+- Cronograma / programação  
+- Programação na cidade inteira  
+- Horários na programação  
+- Locais cadastrados  
+- Cadastro de participantes  
+- Identificação de quem está participando  
+- Mensagem de um participante para outro  
+- Nível de organização do evento  
+- Aplicativo oficial do evento  
+
+---
+
+## 6. Referências
 
 O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
 
@@ -59,7 +73,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 6. Escopo
+## 7. Escopo
 
 ### EP-01 — Controle do evento
 
@@ -131,7 +145,7 @@ Itens não previstos nos épicos e funcionalidades acima.
 
 ---
 
-## 7. Prazo
+## 8. Prazo
 
 | Marco | Situação |
 |-------|----------|

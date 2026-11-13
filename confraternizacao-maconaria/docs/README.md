@@ -4,6 +4,5 @@ Visão: [`documento-de-visao.md`](documento-de-visao.md)
 
 | Artefato | Status |
 |----------|--------|
-| Visão | v8.1 |
-| Funcionalidades do áudio | [`funcionalidades-audio.md`](funcionalidades-audio.md) |
+| Visão | v8.2 |
 | Funcionalidades / US / BDD / … | A produzir |

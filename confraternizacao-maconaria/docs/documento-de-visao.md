@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.1 · 2026-11-13
+**Versão:** 1.2 · 2026-11-13
 
 ## 1. Contexto
 
@@ -48,7 +48,61 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 6. Referências
+## 6. Funcionalidades do aplicativo
+
+Lista consolidada a partir das funcionalidades citadas e das imagens de referência:
+
+- Aplicativo oficial do evento  
+- Controle do evento  
+- Nível de organização do evento  
+- Cronograma / programação  
+- Programação na cidade inteira  
+- Horários na programação  
+- Locais cadastrados  
+- Cadastro de participantes  
+- Identificação de quem está participando  
+- Mensagem de um participante para outro  
+- Boas-vindas com nome e foto de perfil  
+- Menu  
+- Notificações (sino)  
+- Badges de status (incluindo check-ins)  
+- Acesso rápido à carteirinha  
+- Acesso rápido aos ingressos  
+- Acesso rápido ao estacionamento  
+- Acesso rápido a comprar ingresso  
+- Privacidade e cookies (essenciais; desempenho/análise opcional; rejeitar não essenciais, salvar escolha, aceitar todos)  
+- Agenda com seleção de dias  
+- Listagem de eventos do dia  
+- Navegação por abas: Agenda, Eventos, Salas e Produtos  
+- Lista de eventos com data e horário  
+- Lista de eventos com imagem  
+- Lista de eventos com título  
+- Quantidade de confirmados (X/Y) na lista de eventos  
+- Fazer check-in (confirmar presença no evento)  
+- Comprar ingresso  
+- Detalhe do evento com banner  
+- Detalhe do evento com data  
+- Detalhe do evento com horário  
+- Detalhe do evento com local  
+- Detalhe do evento com confirmados  
+- Detalhe do evento com texto “sobre o evento”  
+- Salas  
+- Produtos  
+- Perfil com foto e nome  
+- Editar perfil  
+- Facial cadastrada  
+- Minha carteirinha  
+- Alterar senha  
+- Check-ins e ingressos na conta  
+- Vouchers  
+- Vagas de estacionamento  
+- Pedidos  
+- Rateios  
+- Rede de empresas  
+
+---
+
+## 7. Referências
 
 O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
 
@@ -94,7 +148,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 7. Sites de referência maçônicos
+## 8. Sites de referência maçônicos
 
 | Instituição | Site |
 |-------------|------|
@@ -107,7 +161,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ---
 
-## 8. Prazo
+## 9. Prazo
 
 | Marco | Situação |
 |-------|----------|

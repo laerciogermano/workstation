@@ -5,6 +5,7 @@
 **No fluxo:** [`visão`](../README.md) → **este índice** → funcionalidades → histórias → BDD → telas → componentes → protótipo.
 
 Derivados do [documento de visão](../README.md).  
+Insumos (áudio + prints de referência): [`../input/README.md`](../input/README.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
 Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 

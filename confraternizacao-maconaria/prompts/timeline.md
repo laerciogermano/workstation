@@ -7,3 +7,5 @@ Como registrar: [`README.md`](README.md).
 | # | Data | Título | Arquivo | Resumo |
 |---|------|--------|---------|--------|
 | 001 | 2026-11-13 | Criar projeto e documento de visão | [001-2026-11-13-criar-projeto-visao.md](001-2026-11-13-criar-projeto-visao.md) | Criar pasta do projeto confraternizacao-maconaria a partir do pedido falado do cliente (evento mundial Curitiba / 125 anos); primeiro artefato = documento de visão. |
+| 002 | 2026-11-13 | Atualizar visão com input | [002-2026-11-13-atualizar-visao-com-input.md](002-2026-11-13-atualizar-visao-com-input.md) | Incorporar prints LIDE (agenda, eventos, check-in, ingresso, salas, carteirinha) na visão; separar v1 vs candidatos. |
+| 002 | 2026-11-13 | Baixar insumos de mercado (visão, skills, práticas, event apps) | [002-2026-11-13-baixar-insumos-mercado.md](002-2026-11-13-baixar-insumos-mercado.md) | Skills, templates de visão, tendências 2025–26 de apps de evento e práticas de desenvolvimento em `input/referencias-mercado/`. |

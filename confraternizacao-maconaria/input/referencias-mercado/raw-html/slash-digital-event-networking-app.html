@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light" data-page-group="Insight">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="content-language" content="en">
+<script>try{if(localStorage.getItem("slash-theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
+<title>Event networking app: how to build one that works</title>
+<meta name="description" content="How to build an event networking app: invitation-only access, agenda, directory, 1:1 meetings, offline mode, AI and app store rules, with real examples.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Slash Digital Lab">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F4F6F8">
+<link rel="canonical" href="https://slash-digital.io/en/insights/event-networking-app/">
+<link rel="alternate" hreflang="es-CO" href="https://slash-digital.io/insights/event-networking-app/">
+<link rel="alternate" hreflang="en" href="https://slash-digital.io/en/insights/event-networking-app/">
+<link rel="alternate" hreflang="fr-FR" href="https://slash-digital.io/fr/insights/event-networking-app/">
+<link rel="alternate" hreflang="x-default" href="https://slash-digital.io/insights/event-networking-app/">
+<link rel="alternate" type="text/markdown" href="index.md" title="Markdown">
+<link rel="alternate" type="application/rss+xml" title="Slash Digital Lab · Insights" href="https://slash-digital.io/en/insights/feed.xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-10-08">
+<meta property="article:modified_time" content="2026-10-08">
+<meta property="article:section" content="Strategy and regulation">
+<meta property="og:site_name" content="Slash Digital Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_CO">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:url" content="https://slash-digital.io/en/insights/event-networking-app/">
+<meta property="og:title" content="Event networking app: how to build one that works">
+<meta property="og:description" content="How to build an event networking app: invitation-only access, agenda, directory, 1:1 meetings, offline mode, AI and app store rules, with real examples.">
+<meta property="og:image" content="https://slash-digital.io/assets/og/og-default.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Slash Digital Lab: digital products, applied AI, DOOH and pentest">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@SlashDigitalLab">
+<meta name="twitter:title" content="Event networking app: how to build one that works">
+<meta name="twitter:description" content="How to build an event networking app: invitation-only access, agenda, directory, 1:1 meetings, offline mode, AI and app store rules, with real examples.">
+<meta name="twitter:image" content="https://slash-digital.io/assets/og/og-default.jpg">
+<link rel="stylesheet" href="/assets/css/slash.css?v=4b074bcb3a">
+<link rel="stylesheet" href="/assets/css/inner.css?v=73667918a6">
+<link rel="stylesheet" href="/assets/css/insights.css?v=e6135208e0">
+<noscript><style>.reveal{opacity:1;translate:none;scale:none}</style></noscript>
+<script src="/assets/js/consent.js?v=34baf631f5" defer></script>
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/api/*","/*.pdf","/*.zip"]}},{"not":{"selector_matches":"[hreflang], [download], [target=_blank], [rel~=nofollow]"}}]},"eagerness":"moderate"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://slash-digital.io/#organization","name":"Slash Digital Lab","legalName":"Slash Digital Lab SAS","url":"https://slash-digital.io/","logo":"https://slash-digital.io/assets/og/logo-512.png","sameAs":["https://www.linkedin.com/company/slash-digital-lab","https://clutch.co/profile/slash-digital-lab","https://x.com/SlashDigitalLab"]},{"@type":"WebSite","@id":"https://slash-digital.io/#website","url":"https://slash-digital.io/","name":"Slash Digital Lab","alternateName":"Slash Digital Lab SAS","publisher":{"@id":"https://slash-digital.io/#organization"},"inLanguage":["es","en","fr"]},{"@type":"WebPage","@id":"https://slash-digital.io/en/insights/event-networking-app/#webpage","url":"https://slash-digital.io/en/insights/event-networking-app/","name":"Event networking app: how to build one that works","description":"How to build an event networking app: invitation-only access, agenda, directory, 1:1 meetings, offline mode, AI and app store rules, with real examples.","inLanguage":"en","isPartOf":{"@id":"https://slash-digital.io/#website"},"about":{"@id":"https://slash-digital.io/#organization"},"publisher":{"@id":"https://slash-digital.io/#organization"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://slash-digital.io/assets/og/og-default.jpg"},"dateModified":"2026-10-08","breadcrumb":{"@id":"https://slash-digital.io/en/insights/event-networking-app/#breadcrumb"}},{"@type":"BreadcrumbList","@id":"https://slash-digital.io/en/insights/event-networking-app/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://slash-digital.io/en/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://slash-digital.io/en/insights/"},{"@type":"ListItem","position":3,"name":"Event networking app","item":"https://slash-digital.io/en/insights/event-networking-app/"}]},{"@type":"Article","@id":"https://slash-digital.io/en/insights/event-networking-app/#article","headline":"From agenda to meeting: how to build a great event networking app","description":"How to build an event networking app: invitation-only access, agenda, directory, 1:1 meetings, offline mode, AI and app store rules, with real examples.","inLanguage":"en","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@id":"https://slash-digital.io/team/jean-martial/#person","@type":"Person","name":"Jean Martial","url":"https://slash-digital.io/en/team/jean-martial/"},"publisher":{"@id":"https://slash-digital.io/#organization"},"mainEntityOfPage":{"@id":"https://slash-digital.io/en/insights/event-networking-app/#webpage"},"image":"https://slash-digital.io/assets/og/og-default.jpg","articleSection":"Strategy and regulation","wordCount":1777,"keywords":"event networking app, event app, attendee app, Colombia Tech Week, Colombia Tech Fest, Réseau Mazette, Flutter","citation":["https://developer.apple.com/app-store/review/guidelines/","https://support.google.com/googleplay/android-developer/answer/13327111","https://support.google.com/googleplay/android-developer/answer/9876937","https://developer.apple.com/distribute/app-review/","https://developer.apple.com/testflight/","https://support.google.com/googleplay/android-developer/answer/14151465","https://developer.android.com/develop/ui/views/notifications/notification-permission","https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications","https://eur-lex.europa.eu/eli/reg/2016/679/oj","https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981","https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50","https://www.noticiasrcn.com/tendencias/colombia-tech-day-2026-bogota-fechas-1049201"]},{"@type":"FAQPage","@id":"https://slash-digital.io/en/insights/event-networking-app/#faq","inLanguage":"en","mainEntity":[{"@type":"Question","name":"What features does an event networking app need?","acceptedAnswer":{"@type":"Answer","text":"At minimum: controlled access, a home screen with what's next, an agenda with filters and favorites, a venue map, a searchable directory, meeting requests, 1:1 chat, a personal calendar and notifications. Add offline access for the venue, and blocking, reporting and account deletion for the stores."}},{"@type":"Question","name":"Open signup or invitation?","acceptedAnswer":{"@type":"Answer","text":"For a closed guest list, invitation: the organizer knows who gets in and there is no open signup to moderate. For a membership network, a members-only login with the website's credentials, as in the Réseau Mazette app."}},{"@type":"Question","name":"Must attendees be able to delete their account in the app?","acceptedAnswer":{"@type":"Answer","text":"Yes, if the app supports account creation: Apple requires in-app account deletion (guideline 5.1.1(v)), and Google Play requires an in-app path plus a web link to request deletion."}},{"@type":"Question","name":"How long does publishing on the App Store and Google Play take?","acceptedAnswer":{"@type":"Answer","text":"Apple says it typically reviews at least 50% of submissions in under 24 hours and 90% in under 48, and accepts expedited requests for releases tied to an event. On Google Play, a personal developer account created after November 13, 2023 first needs a closed test with at least 12 testers for at least 14 days. Our advice: leave weeks, not days."}},{"@type":"Question","name":"How much does an event networking app cost?","acceptedAnswer":{"@type":"Answer","text":"It depends on the platforms, custom flows (invitations, zones, sponsors), integrations, offline mode, AI features, on-site support and maintenance between editions. Slash has not published prices for this service; we quote after a free first read."}}]}]}</script>
+</head>
+<body class="is-inner">
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="/en/" aria-label="Slash Digital Lab (logo: S/ash Digital Lab)"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M20 3 8 29h4L24 3h-4Z" fill="var(--accent)"/>
+        <path d="M13 3 5 21h3.4L16 3h-3Z" fill="var(--text)" opacity=".85"/>
+      </svg>
+      <span class="word" aria-hidden="true">S<b>/</b>ash <span class="lab">Digital Lab</span></span></a>
+    <nav class="nav-links" aria-label="Main">
+    <div class="nav-item nav-item--mega">
+      <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="menu-services">Services<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="nav-panel nav-panel--mega" id="menu-services">
+        <div class="mega">
+          <div class="mega-groups">
+          <div class="mega-group">
+            <a class="mega-h" href="/en/ai/">Artificial intelligence&nbsp;<i aria-hidden="true">→</i></a>
+            <ul><li><a href="/en/ai-lab/">Slash AI Lab</a></li><li><a href="/en/ai-agents/">AI agents</a></li><li><a href="/en/ai-chatbots/">AI chatbots</a></li><li><a href="/en/ai-consulting/">AI consulting</a></li><li><a href="/en/ai-training/">AI training</a></li><li><a href="/en/fine-tuning/">Fine-tuning &amp; RAG</a></li><li><a href="/en/computer-vision/">Computer vision</a></li></ul>
+          </div>
+          <div class="mega-group">
+            <a class="mega-h" href="/en/digital-products/">Digital product &amp; software&nbsp;<i aria-hidden="true">→</i></a>
+            <ul><li><a href="/en/custom-software/">Custom software</a></li><li><a href="/en/web-applications/">Web applications</a></li><li><a href="/en/mobile-applications/">Mobile apps</a></li></ul>
+          </div>
+          <div class="mega-group">
+            <a class="mega-h" href="/en/data/">Data &amp; automation&nbsp;<i aria-hidden="true">→</i></a>
+            <ul><li><a href="/en/automation/">Automation</a></li></ul>
+          </div>
+          <div class="mega-group">
+            <a class="mega-h" href="/en/dooh/">DOOH &amp; experiences&nbsp;<i aria-hidden="true">→</i></a>
+            <ul><li><a href="/en/interactive-experiences/">Interactive experiences</a></li></ul>
+          </div>
+          <div class="mega-group">
+            <a class="mega-h" href="/en/cybersecurity/">Cybersecurity&nbsp;<i aria-hidden="true">→</i></a>
+            <ul><li><a href="/en/pentest/">Pentest Colombia</a></li></ul>
+          </div>
+          </div>
+          <a class="mega-all" href="/en/services/">
+            <span class="mega-all-k">5 families · 18 services</span>
+            <b>All services&nbsp;<i aria-hidden="true">→</i></b>
+            <span class="mega-all-p">AI, digital product, data, DOOH and cybersecurity: everything we do, on one page.</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <a href="/en/case-studies/">Work</a>
+    <a href="/en/ai-lab/">AI Lab</a>
+    <a href="/en/pentest/">Pentest</a>
+    <div class="nav-item">
+      <button type="button" class="nav-trigger" aria-expanded="false" aria-controls="menu-about">About<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="nav-panel nav-panel--list" id="menu-about">
+        <ul class="nav-list"><li><a href="/en/about/">About</a></li><li><a href="/en/team/">Team</a></li><li><a href="/en/clients/">Clients</a></li><li><a href="/en/company-facts/">Company facts</a></li><li><a href="/en/pledge/">Environmental pledge</a></li></ul>
+      </div>
+    </div>
+    <a href="/en/insights/" aria-current="true">Insights</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn btn-primary nav-cta" href="/en/contact/">Start a project</a>
+      <button type="button" class="icon-btn theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M20.4 15.4A8.7 8.7 0 0 1 8.6 3.7a.8.8 0 0 0-1.05 1 8.2 8.2 0 1 0 11.1 11.15.8.8 0 0 0 1.02-1.05 8.6 8.6 0 0 1 .73-.4Z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.15" fill="currentColor"/>
+          <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <path d="M12 3.15v1.5M12 19.35v1.5M4.85 4.9l1.1 1.15M18.05 18l1.1 1.1M3.15 12h1.5M19.35 12h1.5M4.85 19.1l1.1-1.15M18.05 6l1.1-1.15"/>
+          </g>
+        </svg>
+      </button>
+      <div class="lang-pill" role="group" aria-label="Idioma / Language / Langue"><a href="/insights/event-networking-app/" hreflang="es" lang="es">ES</a><a href="/en/insights/event-networking-app/" hreflang="en" lang="en" aria-current="page">EN</a><a href="/fr/insights/event-networking-app/" hreflang="fr" lang="fr">FR</a></div>
+      <button type="button" class="icon-btn burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Menu">
+        <span class="burger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <nav class="drawer-panel" aria-label="Mobile menu">
+    <details class="drawer-group">
+      <summary><span>Services<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><small>01</small></summary>
+      <div class="drawer-sub">
+        <div class="drawer-fam">
+          <a class="drawer-fam-h" href="/en/ai/">Artificial intelligence&nbsp;<i aria-hidden="true">→</i></a>
+          <ul><li><a href="/en/ai-lab/">Slash AI Lab</a></li><li><a href="/en/ai-agents/">AI agents</a></li><li><a href="/en/ai-chatbots/">AI chatbots</a></li><li><a href="/en/ai-consulting/">AI consulting</a></li><li><a href="/en/ai-training/">AI training</a></li><li><a href="/en/fine-tuning/">Fine-tuning &amp; RAG</a></li><li><a href="/en/computer-vision/">Computer vision</a></li></ul>
+        </div>
+        <div class="drawer-fam">
+          <a class="drawer-fam-h" href="/en/digital-products/">Digital product &amp; software&nbsp;<i aria-hidden="true">→</i></a>
+          <ul><li><a href="/en/custom-software/">Custom software</a></li><li><a href="/en/web-applications/">Web applications</a></li><li><a href="/en/mobile-applications/">Mobile apps</a></li></ul>
+        </div>
+        <div class="drawer-fam">
+          <a class="drawer-fam-h" href="/en/data/">Data &amp; automation&nbsp;<i aria-hidden="true">→</i></a>
+          <ul><li><a href="/en/automation/">Automation</a></li></ul>
+        </div>
+        <div class="drawer-fam">
+          <a class="drawer-fam-h" href="/en/dooh/">DOOH &amp; experiences&nbsp;<i aria-hidden="true">→</i></a>
+          <ul><li><a href="/en/interactive-experiences/">Interactive experiences</a></li></ul>
+        </div>
+        <div class="drawer-fam">
+          <a class="drawer-fam-h" href="/en/cybersecurity/">Cybersecurity&nbsp;<i aria-hidden="true">→</i></a>
+          <ul><li><a href="/en/pentest/">Pentest Colombia</a></li></ul>
+        </div>
+        <a class="drawer-all" href="/en/services/">All services&nbsp;<i aria-hidden="true">→</i></a>
+      </div>
+    </details>
+    <a href="/en/case-studies/"><span>Work</span><small>02</small></a>
+    <a href="/en/ai-lab/"><span>AI Lab</span><small>03</small></a>
+    <a href="/en/pentest/"><span>Pentest</span><small>04</small></a>
+    <details class="drawer-group">
+      <summary><span>About<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><small>05</small></summary>
+      <div class="drawer-sub">
+        <ul><li><a href="/en/about/">About</a></li><li><a href="/en/team/">Team</a></li><li><a href="/en/clients/">Clients</a></li><li><a href="/en/company-facts/">Company facts</a></li><li><a href="/en/pledge/">Environmental pledge</a></li></ul>
+      </div>
+    </details>
+    <a href="/en/insights/" aria-current="true"><span>Insights</span><small>06</small></a>
+    <a class="btn btn-primary drawer-cta" href="/en/contact/">Start a project</a>
+    <p class="drawer-foot">Slash Digital Lab. AI in production, no promises</p>
+  </nav>
+</div>
+<main id="main">
+<section class="hero inner-hero" id="top" aria-label="Intro" data-h3d="data">
+    <canvas id="particles" aria-hidden="true"></canvas>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-glow two" aria-hidden="true"></div>
+    <div class="wrap hero-content">
+      <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="/en/">Home</a> <span aria-hidden="true">/</span> <a href="/en/insights/">Insights</a> <span aria-hidden="true">/</span> <span>Event networking app</span></nav>
+      <div class="rise"><span class="eyebrow">Strategy and regulation · October 2026</span><h1 class="h1">From agenda to meeting: how to build a great event networking app</h1><p class="lede">We built the apps for Colombia Tech Week 2026 and its festival, Colombia Tech Fest, and the native app of Réseau Mazette. Here is what works, screen by screen, and what Apple, Google and the law require before doors open.</p>
+      <div class="hero-chips"><span class="chip"><b>Aug 13–14, 2026</b> Colombia Tech Fest, Bogotá</span><span class="chip"><b>30 min</b> slots for 1:1 meeting requests</span><span class="chip"><b>2 stores</b> one Flutter codebase (Mazette)</span></div></div>
+      <div class="cta-row reveal" data-d="3">
+        <a class="btn btn-primary magnetic" href="/en/contact/">Start a project</a>
+        <a class="btn btn-ghost magnetic" href="/en/insights/">All insights</a>
+      </div>
+    </div>
+  </section>
+<section class="page-section unique-seo art" aria-label="How to build a great event networking app">
+  <div class="wrap">
+    <div class="art-grid">
+      <aside class="art-aside" aria-label="About this analysis">
+        <div class="art-author">
+          <img src="/assets/founders/jean-martial.webp" alt="" width="48" height="48" loading="lazy" decoding="async">
+          <div><b><a href="/en/team/jean-martial/" rel="author">Jean Martial</a></b><span>CEO and co-founder, Slash Digital Lab</span></div>
+        </div>
+        <dl class="art-facts">
+          <div><dt>Published</dt><dd><time datetime="2026-10-08">October 8, 2026</time></dd></div>
+          <div><dt>Reading time</dt><dd>7 min</dd></div>
+          <div><dt>Topic</dt><dd><a href="/en/insights/#strategy">Strategy and regulation</a></dd></div>
+        </dl>
+        <nav class="toc" aria-label="In this article">
+          <details open><summary>In this article</summary>
+          <ol><li><a href="#s-what-matters">What makes an event networking app work?</a></li><li><a href="#s-access">Open signup or invitation-only access?</a></li><li><a href="#s-home-agenda">What should the home screen show?</a></li><li><a href="#s-directory-meetings">How do you turn a directory into meetings?</a></li><li><a href="#s-venue-offline">What happens when the venue network fails?</a></li><li><a href="#s-community">What changes when the app must live all year?</a></li><li><a href="#s-ai">Where does AI help in a networking app?</a></li><li><a href="#s-launch-checklist">Should you build your own app or rent an event platform?</a></li></ol>
+          </details>
+        </nav>
+      </aside>
+      <div class="art-main">
+        <div class="qa">
+          <span class="qa-k">In short</span>
+          <p>A great event networking app turns an agenda and a guest list into meetings that actually happen. It needs controlled access, a home screen that answers “what's next for me”, a directory that leads to a meeting request and a 1:1 chat, screens that survive a failing venue network, and the safety and privacy rules Apple and Google require.</p>
+        </div>
+        <aside class="art-bridge" aria-label="For your company">
+          <span class="qa-k">For your company</span>
+          <p>AI inside your mobile app? Slash Digital Lab builds mobile apps from Bogotá, with embedded AI where it adds value.</p>
+          <a class="art-bridge-go" href="/en/mobile-applications/">Mobile apps <i aria-hidden="true">→</i></a>
+        </aside>
+        <div class="prose">
+        <h2 id="s-what-matters">What makes an event networking app work?</h2>
+        <p>It works when meetings happen; map, notifications and sponsors serve that goal. Plan for three moments: <b>before</b> (invitation, profile, agenda), <b>during</b> (what's next, where, with whom) and <b>after</b> (contacts and follow-up).</p>
+        <p>Colombia Tech Week 2026 ran in Bogotá from August 10 to 16, and its festival, Colombia Tech Fest, was held open-air at Parque El Chicó on August 13 and 14. We were a Gold Sponsor of the week and built <a href="/en/case-studies/colombia-tech-week-2026/">its official app</a> for thousands of attendees and <a href="/en/case-studies/colombia-tech-fest/">the festival's attendee app</a>, invitation-only and owned by the festival. We also built the native Flutter app of <a href="/en/case-studies/mazette/">Réseau Mazette</a>, a network of French-speaking professionals and entrepreneurs in Spain.</p>
+        <div class="art-table-wrap" role="region" tabindex="0" aria-label="Two jobs, two designs."><table class="art-table"><caption>Two jobs, two designs.</caption><thead><tr><th scope="col">Criterion</th><th scope="col">Event app (Colombia Tech Week, Colombia Tech Fest)</th><th scope="col">Community app (Réseau Mazette)</th></tr></thead><tbody><tr><th scope="row">Lifespan</th><td>One week, reusable</td><td>All year</td></tr><tr><th scope="row">Access</th><td>Invitation only</td><td>Members only</td></tr><tr><th scope="row">Core screens</th><td>Home, map, agenda, networking, chat, calendar</td><td>Members, events, resources, messages, Mia</td></tr><tr><th scope="row">How people meet</th><td>Meeting requests, 30-minute slots, 1:1 chat</td><td>Events by city, circles, messages</td></tr><tr><th scope="row">Where AI sits</th><td>Search and filters do the work</td><td>Mia, a copilot in its own tab</td></tr><tr><th scope="row">Who owns it</th><td>The festival (Colombia Tech Fest)</td><td>The network</td></tr></tbody></table></div>
+        <p>Planning one? See how we build <a href="/en/mobile-applications/">mobile apps with built-in AI</a>.</p>
+        <h2 id="s-access">Open signup or invitation-only access?</h2>
+        <p>For a closed guest list, invitation-only: the organizer knows who gets in, the directory stays trustworthy and there is no open signup to moderate.</p>
+        <p>In the Colombia Tech Fest app, a first-time guest pastes the emailed code or opens the organizer's link, then follows numbered steps: invitation, privacy, password, profile, agenda. The login screen states “Sin registro público” (no public signup). The Mazette app is members-only, with the website's credentials.</p>
+        <p><b>Make consent its own step.</b> Colombia's Law 1581 of 2012 requires prior, express and informed authorization that can be consulted later (Articles 3 and 9), with a copy kept (Article 17). The GDPR requires a legal basis and data protection by design and by default (Article 25).</p>
+        <p><b>Build in the store rules.</b> If people can create an account, Apple requires in-app deletion (guideline 5.1.1(v)) and Google Play also wants a web link to request it; in our reading, activating an invitation counts as creating one. Adding social login (Google, LinkedIn) would bring in Apple's guideline 4.8, which requires an equivalent option limited to name and email that can hide the email; apps that use only their own accounts, like these two, are exempt.</p>
+        <figure class="art-gallery" style="--n:2">
+          <div class="art-gallery-row">
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-invitation.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-invitation.webp" alt="Invitation access screen of the Colombia Tech Fest app: invitation code field, numbered steps from invitation to agenda and a Validate invitation button (Spanish interface)" width="750" height="1569" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Invitation-only access</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/mazette-login.webp" data-lb><img src="/assets/insights/event-networking-app/mazette-login.webp" alt="Login screen of the Réseau Mazette app: notice that the app is for members only and uses the same credentials as the website, with email and password fields (French interface)" width="390" height="844" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Members only</figcaption>
+          </figure>
+          </div>
+          <figcaption class="art-gallery-cap">Colombia Tech Fest and Réseau Mazette apps (2026).</figcaption>
+        </figure>
+        <h2 id="s-home-agenda">What should the home screen show?</h2>
+        <p>What's next for this person, first. The Colombia Tech Fest home greets the guest by first name and opens on “Próximo en tu día” (next in your day): the time and zone of the next session. Below: shortcuts to map, agenda, networking and calendar, day tabs and a search by title, speaker or company.</p>
+        <p>The agenda filters by zone and category (fireside chat, panel, keynote, workshop); a star saves a session to favorites, which feed the personal calendar, and the agenda updates live. The map shows the venue's two zones and its open-access food and brand spaces.</p>
+        <p><b>Our recommendation:</b> design for ten-second glances between sessions, with time, place and one action per card. Give sponsors a visible slot, like the home carousel, not a step in the attendee's path; a sponsor who wants more deserves a live experience at the venue (see <a href="/en/insights/generative-ai-brand-experiences/">generative AI in brand experiences</a>).</p>
+        <figure class="art-gallery" style="--n:3">
+          <div class="art-gallery-row">
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-home.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-home.webp" alt="Home screen of the Colombia Tech Fest app: sponsor carousel, greeting with the first name, shortcuts to map, agenda, networking and calendar, the next session of the day and a session search (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>What's next, first</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-agenda.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-agenda.webp" alt="Agenda of the Colombia Tech Fest app: day tabs, zone and category filters, search by speaker or company, and session cards with time, zone, title, speakers and a favorite star (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Agenda with filters and favorites</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-map.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-map.webp" alt="Venue map in the Colombia Tech Fest app: illustrated plan with two zones, zoom and full-screen controls, and a list of open-access venue experiences (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Venue map</figcaption>
+          </figure>
+          </div>
+          <figcaption class="art-gallery-cap">Colombia Tech Fest, July 2026 test build; profile photo blurred.</figcaption>
+        </figure>
+        <h2 id="s-directory-meetings">How do you turn a directory into meetings?</h2>
+        <p>With a short path: find someone, see when they are free, ask, talk. In the apps we built for Colombia Tech Week and Colombia Tech Fest, it takes five steps:</p>
+        <ol><li><b>Profile</b>: role, industry, company and availability in 30-minute blocks.</li><li><b>Search</b>: by name, company or role, with filters; on a tablet, industry chips such as Fintech or Healthtech.</li><li><b>Request</b>: one profile button asks for a meeting, another blocks the user.</li><li><b>Chat</b>: a conversation starts as a request, under “Solicitudes enviadas” (sent) for the sender and “Invitaciones” for the recipient, so both can agree to meet.</li><li><b>Calendar</b>: “Mi calendario” brings together favorite sessions and meetings, with a “Solicitar reunión” (request a meeting) button.</li></ol>
+        <p><b>The stores require a safety layer.</b> Apple's guideline 1.2 asks apps with user-generated content to filter objectionable material, act on reports promptly, offer a way to block abusive users and publish contact details; Google Play requires accepted terms, in-app reporting and blocking, and blocking in one-to-one messaging.</p>
+        <figure class="art-gallery" style="--n:3">
+          <div class="art-gallery-row">
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-directory.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-directory.webp" alt="Networking directory of the Colombia Tech Fest app: filters button, search by name, company or role, a contact counter and a list of attendees with blurred names and photos (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Searchable directory with filters</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-chat.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-chat.webp" alt="Chat tab of the Colombia Tech Fest app: one conversation and two sent requests with their first message, with names, photos and messages blurred (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Requests before the chat</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/ctw-calendar.webp" data-lb><img src="/assets/insights/event-networking-app/ctw-calendar.webp" alt="My calendar in the Colombia Tech Fest app: favorite sessions and meetings in one place, a Request a meeting button and day tabs (Spanish interface)" width="750" height="1533" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Sessions and meetings together</figcaption>
+          </figure>
+          </div>
+          <figcaption class="art-gallery-cap">Colombia Tech Fest, July 2026 test build; attendees' names, photos and messages blurred.</figcaption>
+        </figure>
+        <h2 id="s-venue-offline">What happens when the venue network fails?</h2>
+        <p>The app must stay useful. Colombia Tech Fest was an open-air festival in a park, and its app had to hold up when most guests connect at once: it has offline maps and a live agenda, and it was built for that peak. Our recommendations:</p>
+        <ul><li>Store on the phone the agenda, map, calendar and profiles of the people each attendee will meet.</li><li>Queue offline actions (favorites, messages, requests) and sync them when the network returns.</li><li>Load-test the peak: everyone signing in and searching within the same minutes.</li><li>Give organizers admin tools, like Colombia Tech Fest's, for last-minute changes.</li></ul>
+        <p><b>Notifications need permission.</b> Since Android 13 (API level 33), apps need the <code>POST_NOTIFICATIONS</code> permission, which Android suggests requesting after a user action, for example. iOS apps must ask too, and Apple recommends asking in context, such as after the person schedules a first task. Our equivalent: after the first favorite, not at launch.</p>
+        <div class="callout" role="note"><span class="callout-k">Field test we recommend</span><p>The day before, walk the venue with a phone in airplane mode: agenda, map, calendar and meetings must open. Then reconnect and check that pending actions sync.</p></div>
+        <h2 id="s-community">What changes when the app must live all year?</h2>
+        <p>The job changes: the app must give members reasons to return between events, not carry them through one week. Réseau Mazette holds events in cities such as Málaga, Barcelona, Valencia and Madrid; its app combines events by city, discussion circles by topic and city, shared resources, messaging, memberships and Mia.</p>
+        <p>Home greets the member with upcoming events and the newest members. Event cards show a poster, place or “online”, date and price. Resources hold searchable replays of webinars and talks, and the profile shows membership status and directory visibility.</p>
+        <p>Two decisions carry the rest: the same login and brand as the website, and one Flutter codebase on the App Store and Google Play, so every member gets the same full product.</p>
+        <p>An event app's job ends with the event, yet Colombia Tech Fest owns its app, ready for future editions. <b>Our recommendation:</b> if your event repeats, budget for an app you reopen, not rebuild.</p>
+        <figure class="art-gallery" style="--n:2">
+          <div class="art-gallery-row">
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/mazette-events-v2.webp" data-lb><img src="/assets/insights/event-networking-app/mazette-events-v2.webp" alt="Events list of the Réseau Mazette app with Alicante, Barcelona, Madrid and online filters, and cards showing a poster, place or online, date and price (French interface)" width="390" height="845" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Events filtered by city</figcaption>
+          </figure>
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/mazette-circles-v2.webp" data-lb><img src="/assets/insights/event-networking-app/mazette-circles-v2.webp" alt="Messages in the Réseau Mazette app: a button to subscribe to discussion circles, and circles by topic and city with unread dots and blurred previews (French interface)" width="390" height="845" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Circles by topic and city</figcaption>
+          </figure>
+          </div>
+          <figcaption class="art-gallery-cap">Réseau Mazette app; message previews blurred.</figcaption>
+        </figure>
+        <h2 id="s-ai">Where does AI help in a networking app?</h2>
+        <p>Where the question is open and the answer is spread across screens, like Mia's sample question: “What are the upcoming events and who is attending?” Where a list or a filter already works, a copilot adds little.</p>
+        <p>In the Mazette app, Mia has a dedicated tab and answers about events, participants, shared resources, the member directory and practical information. The screen asks for precise requests (city, topic, first name) and states that Mia follows the same visibility rules as the website: the main lesson. Our recommendations:</p>
+        <ul><li><b>Inherit the app's permissions</b>: a member hidden from the directory must never appear in an answer.</li><li><b>Treat member-written text as untrusted</b>: profiles and messages can carry instructions aimed at the model (see <a href="/en/insights/prompt-injection-agents/">prompt injection and agent security</a>).</li><li><b>Say it is an AI</b>: since August 2, 2026, Article 50(1) of the EU AI Act requires telling people they are interacting with an AI system unless it is obvious (see <a href="/en/insights/ai-regulation-2026/">our 2026 regulatory map</a>).</li><li><b>Explain suggestions and keep them opt-in</b>: if the app proposes whom to meet, it says why.</li></ul>
+        <div class="callout" role="note"><span class="callout-k">Our rule</span><p>If a person cannot see a piece of data in the app, the assistant cannot either. Enforce permissions on the server, before the model receives any context, not in the prompt.</p></div>
+        <figure class="art-gallery" style="--n:1">
+          <div class="art-gallery-row">
+          <figure class="art-shot">
+            <a class="art-zoom" href="/assets/insights/event-networking-app/mazette-mia-v2.webp" data-lb><img src="/assets/insights/event-networking-app/mazette-mia-v2.webp" alt="A conversation with Mia in the Réseau Mazette app: it declines to dump all its knowledge, then answers step by step how to start a business in Spain (market study, legal structure, paperwork), with a button to clear the conversation (French interface)" width="390" height="845" loading="lazy" decoding="async"><span class="visually-hidden"> (enlarge)</span></a>
+            <figcaption>Mia, the network's copilot</figcaption>
+          </figure>
+          </div>
+        </figure>
+        <h2 id="s-launch-checklist">Should you build your own app or rent an event platform?</h2>
+        <p>Our rule of thumb: rent a white-label platform if your event fits its template and you won't reuse the product; build your own to own the product and its data, reuse it each edition or run custom flows (invitations, zones, sponsors).</p>
+        <div class="art-table-wrap" role="region" tabindex="0" aria-label="No prices: cost depends on scope."><table class="art-table"><caption>No prices: cost depends on scope.</caption><thead><tr><th scope="col">Criterion</th><th scope="col">Own app</th><th scope="col">Event platform (white-label SaaS)</th></tr></thead><tbody><tr><th scope="row">Ownership and reuse</th><td>Yours, reusable</td><td>Licensed from the vendor</td></tr><tr><th scope="row">Brand</th><td>Yours everywhere</td><td>Depends on the plan</td></tr><tr><th scope="row">Data control</th><td>You set hosting, retention and deletion</td><td>Set by the contract</td></tr><tr><th scope="row">Custom flows</th><td>Whatever the event needs</td><td>What the platform allows</td></tr><tr><th scope="row">Time to launch</th><td>Longer the first time</td><td>Shorter if the template fits</td></tr><tr><th scope="row">Cost model</th><td>Build and maintenance across editions</td><td>License per event, attendee or year</td></tr></tbody></table></div>
+        <h3>Before doors open: the checklist</h3>
+        <ol><li>Invitations tested end to end: email, code, link, resend.</li><li>Consent as its own step, with a record, and in-app account deletion (plus Google Play's web link).</li><li>Block and report on profiles and chat, published contact, a named moderator.</li><li>Agenda, map and calendar offline; offline actions queued.</li><li>Notification permission requested in context.</li><li>A peak load test and admin access for last-minute changes.</li><li>Review buffer: Apple says it typically reviews at least 50% of submissions in under 24 hours and 90% in under 48, and accepts expedited requests tied to an event.</li><li>Test tracks: TestFlight takes up to 10,000 external testers once App Review approves a first build; on Google Play, personal accounts created after November 13, 2023 need a closed test with at least 12 testers for at least 14 days before production.</li><li>On-site help for lost invitations and forgotten passwords.</li><li>After the event: contact export or follow-up, and a date for deleting data.</li></ol>
+        <p><b>In Colombia</b>, the Superintendence of Industry and Commerce (SIC) supervises Law 1581 of 2012: keep proof of every authorization.</p>
+        <p><b>In Europe</b>, under GDPR Article 25, personal data must not by default be made accessible to an indefinite number of people without the person's intervention: make directory visibility a choice. An AI assistant also falls under Article 50 of the AI Act. General information, not legal advice.</p>
+        </div>
+        <div class="takeaways">
+          <h3>Key takeaways</h3>
+          <ul><li>Measure a networking app in meetings that happen; design the path from profile to meeting first.</li><li>Invitation-only access keeps the directory trustworthy; make consent its own step.</li><li>Home answers “what's next for me”; favorites feed one personal calendar.</li><li>Plan for the venue: offline agenda and map, queued actions and a peak load test.</li><li>An AI copilot inherits the app's permissions, distrusts member text and says it is an AI.</li></ul>
+        </div>
+        <section class="art-sources" aria-labelledby="art-sources-h">
+          <h2 id="art-sources-h">Sources</h2>
+          <ol><li><a href="https://developer.apple.com/app-store/review/guidelines/" target="_blank" rel="noopener noreferrer">App Review Guidelines (1.2 User-Generated Content, 4.8 Login Services, 5.1.1(v) Account Sign-In)</a><span class="src-meta"> · Apple Developer, 2026-10</span></li><li><a href="https://support.google.com/googleplay/android-developer/answer/13327111" target="_blank" rel="noopener noreferrer">Understanding Google Play's app account deletion requirements</a><span class="src-meta"> · Google Play Console Help, 2026-10</span></li><li><a href="https://support.google.com/googleplay/android-developer/answer/9876937" target="_blank" rel="noopener noreferrer">User Generated Content</a><span class="src-meta"> · Google Play Developer Policy Center, 2026-10</span></li><li><a href="https://developer.apple.com/distribute/app-review/" target="_blank" rel="noopener noreferrer">App Review (review times and expedited reviews)</a><span class="src-meta"> · Apple Developer, 2026-10</span></li><li><a href="https://developer.apple.com/testflight/" target="_blank" rel="noopener noreferrer">TestFlight</a><span class="src-meta"> · Apple Developer, 2026-10</span></li><li><a href="https://support.google.com/googleplay/android-developer/answer/14151465" target="_blank" rel="noopener noreferrer">App testing requirements for new personal developer accounts</a><span class="src-meta"> · Google Play Console Help, 2026-10</span></li><li><a href="https://developer.android.com/develop/ui/views/notifications/notification-permission" target="_blank" rel="noopener noreferrer">Notification runtime permission</a><span class="src-meta"> · Android Developers, 2026-10</span></li><li><a href="https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications" target="_blank" rel="noopener noreferrer">Asking permission to use notifications</a><span class="src-meta"> · Apple Developer Documentation, 2026-10</span></li><li><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj" target="_blank" rel="noopener noreferrer">Regulation (EU) 2016/679 (GDPR), Articles 6 and 25</a><span class="src-meta"> · EUR-Lex, 2016-04-27</span></li><li><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981" target="_blank" rel="noopener noreferrer">Ley Estatutaria 1581 de 2012 (protección de datos personales)</a><span class="src-meta"> · Función Pública, Gestor Normativo, 2012-10-17</span></li><li><a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50" target="_blank" rel="noopener noreferrer">AI Act, Article 50: transparency obligations for providers and deployers of certain AI systems</a><span class="src-meta"> · European Commission, AI Act Service Desk, 2026-07-27</span></li><li><a href="https://www.noticiasrcn.com/tendencias/colombia-tech-day-2026-bogota-fechas-1049201" target="_blank" rel="noopener noreferrer">Colombia Tech Fest 2026 llega a Bogotá: el festival de tecnología a cielo abierto más grande del país</a><span class="src-meta"> · Noticias RCN, 2026-08-11</span></li></ol>
+        </section>
+        <p class="art-note">Editorial note: this analysis reflects the public information available on the review date. Models, prices and rules change fast; every third-party figure links to its source, and our opinions are labeled as such. Spotted an error? Write to contact@slash-digital.io.</p>
+      </div>
+    </div>
+  </div>
+  <script>(function(){var n=document.querySelector(".toc");if(!n)return;var d=n.querySelector("details"),q=window.matchMedia("(max-width:1039px)");function fit(){if(!d)return;if(q.matches)d.removeAttribute("open");else d.setAttribute("open","")}fit();if(q.addEventListener)q.addEventListener("change",fit);if(!("IntersectionObserver"in window))return;var m={},c=null;n.querySelectorAll('a[href^="#"]').forEach(function(a){m[a.getAttribute("href").slice(1)]=a});var o=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var a=m[e.target.id];if(!a||a===c)return;if(c)c.removeAttribute("aria-current");a.setAttribute("aria-current","location");c=a})},{rootMargin:"-15% 0px -70% 0px"});Object.keys(m).forEach(function(id){var el=document.getElementById(id);if(el)o.observe(el)})})();</script>
+  <script>(function lightboxClient(T) {
+  const links = [...document.querySelectorAll(".prose a[data-lb]")];
+  if (!links.length || typeof HTMLDialogElement !== "function") return;
+  const items = links.map(a => {
+    const img = a.querySelector("img"), cap = a.closest("figure").querySelector("figcaption");
+    return { src: a.getAttribute("href"), alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), cap: cap ? cap.textContent.trim() : img.alt };
+  });
+  const icon = d => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>`;
+  let dlg, img, capEl, countEl, idx = 0;
+  const show = i => {
+    idx = (i + items.length) % items.length;
+    const it = items[idx];
+    img.width = +it.w; img.height = +it.h; img.alt = it.alt; img.src = it.src;
+    capEl.textContent = it.cap;
+    countEl.textContent = `${idx + 1} / ${items.length}`;
+  };
+  const build = () => {
+    dlg = document.createElement("dialog");
+    dlg.className = "art-lb";
+    dlg.setAttribute("aria-label", T.label);
+    dlg.innerHTML = `<div class="art-lb-stage"><img alt="" decoding="async"></div><div class="art-lb-bar"><p class="art-lb-cap"></p><span class="art-lb-count" aria-hidden="true"></span></div>`
+      + `<button type="button" class="art-lb-btn art-lb-close" aria-label="${T.close}">${icon("M6 6l12 12M18 6L6 18")}</button>`
+      + (items.length > 1 ? `<button type="button" class="art-lb-btn art-lb-prev" aria-label="${T.prev}">${icon("M15 5l-7 7 7 7")}</button><button type="button" class="art-lb-btn art-lb-next" aria-label="${T.next}">${icon("M9 5l7 7-7 7")}</button>` : "");
+    img = dlg.querySelector("img");
+    capEl = dlg.querySelector(".art-lb-cap");
+    countEl = dlg.querySelector(".art-lb-count");
+    /* clean up here rather than on the "close" event, which some embedded browsers never fire */
+    const shut = () => { if (dlg.open) dlg.close(); document.documentElement.classList.remove("art-lb-lock"); img.removeAttribute("src"); };
+    dlg.querySelector(".art-lb-close").addEventListener("click", shut);
+    dlg.querySelector(".art-lb-prev")?.addEventListener("click", () => show(idx - 1));
+    dlg.querySelector(".art-lb-next")?.addEventListener("click", () => show(idx + 1));
+    dlg.addEventListener("click", e => { if (e.target === dlg || e.target.classList.contains("art-lb-stage")) shut(); });
+    dlg.addEventListener("keydown", e => {
+      if (e.key === "Escape") { e.preventDefault(); shut(); }
+      else if (items.length > 1 && e.key === "ArrowRight") { e.preventDefault(); show(idx + 1); }
+      else if (items.length > 1 && e.key === "ArrowLeft") { e.preventDefault(); show(idx - 1); }
+    });
+    let x0 = null, y0 = 0;
+    dlg.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") { x0 = e.clientX; y0 = e.clientY; } });
+    dlg.addEventListener("pointerup", e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0, dy = e.clientY - y0;
+      x0 = null;
+      if (items.length > 1 && Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.3) show(idx + (dx < 0 ? 1 : -1));
+    });
+    dlg.addEventListener("close", () => document.documentElement.classList.remove("art-lb-lock"));
+    document.body.appendChild(dlg);
+  };
+  links.forEach((a, i) => a.addEventListener("click", e => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (!dlg) build();
+    show(i);
+    document.documentElement.classList.add("art-lb-lock");
+    dlg.showModal();
+  }));
+})({"label":"Screenshots, full size","close":"Close","prev":"Previous image","next":"Next image"});</script>
+</section>
+<section class="page-section unique-seo" id="faq" aria-label="Frequently asked questions">
+  <div class="wrap"><div class="sec-head">
+      <span class="eyebrow reveal">Frequently asked questions</span>
+      <div class="row">
+        <h2 class="h2 reveal" data-d="1">The questions we hear often</h2>
+        
+      </div>
+    </div><div class="faq reveal" data-d="2">
+      <details><summary>What features does an event networking app need?</summary><p>At minimum: controlled access, a home screen with what's next, an agenda with filters and favorites, a venue map, a searchable directory, meeting requests, 1:1 chat, a personal calendar and notifications. Add offline access for the venue, and blocking, reporting and account deletion for the stores.</p></details>
+      <details><summary>Open signup or invitation?</summary><p>For a closed guest list, invitation: the organizer knows who gets in and there is no open signup to moderate. For a membership network, a members-only login with the website's credentials, as in the Réseau Mazette app.</p></details>
+      <details><summary>Must attendees be able to delete their account in the app?</summary><p>Yes, if the app supports account creation: Apple requires in-app account deletion (guideline 5.1.1(v)), and Google Play requires an in-app path plus a web link to request deletion.</p></details>
+      <details><summary>How long does publishing on the App Store and Google Play take?</summary><p>Apple says it typically reviews at least 50% of submissions in under 24 hours and 90% in under 48, and accepts expedited requests for releases tied to an event. On Google Play, a personal developer account created after November 13, 2023 first needs a closed test with at least 12 testers for at least 14 days. Our advice: leave weeks, not days.</p></details>
+      <details><summary>How much does an event networking app cost?</summary><p>It depends on the platforms, custom flows (invitations, zones, sponsors), integrations, offline mode, AI features, on-site support and maintenance between editions. Slash has not published prices for this service; we quote after a free first read.</p></details>
+    </div>  </div>
+</section>
+<section data-llms-skip class="page-section unique-seo" aria-label="Keep reading">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal">Keep reading</span>
+      <div class="row">
+        <h2 class="h2 reveal" data-d="1">More analysis to read next</h2>
+        
+      </div>
+    </div>
+    <div class="ins-grid ins-3">
+      <a class="ins-card reveal" data-d="1" data-topic="security" href="/en/insights/guardrails-production/">
+        <span class="ins-k">Cybersecurity</span>
+        <h3>Guardrails that work in production</h3>
+        <p>The seven layers of a guardrail stack, the 2026 guard models compared, how to measure them in your languages and two reference architectures.</p>
+        <span class="ins-meta"><time class="ins-upd" datetime="2026-10-30">Updated Oct 30, 2026</time><span>9 min</span><span>Rémy Sanchez</span></span>
+      </a>
+      <a class="ins-card reveal" data-d="2" data-topic="strategy" href="/en/insights/ai-costs/">
+        <span class="ins-k">Strategy and regulation</span>
+        <h3>The real cost of AI</h3>
+        <p>How AI is billed now, why cost per solved task beats price per token, savings levers with figures, hidden costs and a worked local vs API break-even.</p>
+        <span class="ins-meta"><time class="ins-upd" datetime="2026-10-28">Updated Oct 28, 2026</time><span>9 min</span><span>Esteban Zuleta</span></span>
+      </a>
+      <a class="ins-card reveal" data-d="3" data-topic="agents" href="/en/insights/chatbot-vs-ai-agent/">
+        <span class="ins-k">Agents and engineering</span>
+        <h3>Chatbot vs AI agent: which one your business needs</h3>
+        <p>A chatbot answers, an agent acts. Definitions from Anthropic and OpenAI, a decision table, agent washing, costs, risks and when a plain workflow or form is the better buy.</p>
+        <span class="ins-meta"><time datetime="2026-10-12">Oct 12, 2026</time><span>8 min</span><span>Rémy Sanchez</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+<section data-llms-skip class="page-section unique-seo" aria-label="Related capabilities">
+  <div class="wrap"><div class="sec-head">
+      <span class="eyebrow reveal">Related capabilities</span>
+      <div class="row">
+        <h2 class="h2 reveal" data-d="1">Where to next</h2>
+        
+      </div>
+    </div><div class="svc-grid auto">
+      <a class="svc-card reveal" data-d="1" href="/en/mobile-applications/">
+        <span class="svc-num">Mobile</span>
+        <h3>Mobile apps</h3>
+        <p>Production iOS/Android apps: native or cross-platform, AI included.</p>
+        <span class="svc-more"><span>Learn more</span><i aria-hidden="true">→</i></span>
+      </a>
+      <a class="svc-card reveal" data-d="2" href="/en/interactive-experiences/">
+        <span class="svc-num">Phygital</span>
+        <h3>Interactive experiences</h3>
+        <p>Physical + digital: boothless photobooth, brand mosaics and WebGL moments.</p>
+        <span class="svc-more"><span>Learn more</span><i aria-hidden="true">→</i></span>
+      </a>
+      <a class="svc-card reveal" data-d="3" href="/en/case-studies/co-nect-heavent-2026/">
+        <span class="svc-num">CO-NECT</span>
+        <h3>CO-NECT × Heavent 2026</h3>
+        <p>AI trade portraits that light up the LED wall for CO-NECT's 70th</p>
+        <span class="svc-more"><span>Learn more</span><i aria-hidden="true">→</i></span>
+      </a>
+    </div>  </div>
+</section>
+<section data-llms-skip class="page-section" aria-label="CTA">
+  <div class="wrap">
+    <div class="cta-band reveal" data-d="2">
+      <span class="eyebrow">Talk to Slash</span>
+      <h2 class="h2">Let's put it in production</h2>
+      <p>Tell us your challenge. We reply within 24 business hours with an honest first read: if we can help, we'll say how; if not, we'll say who can.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary magnetic" href="/en/contact/">Start a project</a>
+        <a class="btn btn-whatsapp magnetic" data-cta="generate_lead" data-method="whatsapp" href="https://wa.me/573214119660?text=Hi%20Esteban%2C%20I'd%20like%20to%20talk%20about%20a%20project%20with%20Slash." target="_blank" rel="noopener noreferrer"><svg class="wa-ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.84-.2-.49-.4-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74 1.48.64 1.84.7 2.5.59.38-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.17-.47-.29z"/></svg><span>Direct WhatsApp to Esteban</span></a>
+      </div>
+      <p class="micro">I reply personally. No endless forms, no canned replies.</p>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="foot-cols">
+      <div class="foot-brand">
+        <a class="logo" href="/en/" aria-label="Slash Digital Lab (logo: S/ash Digital Lab)"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M20 3 8 29h4L24 3h-4Z" fill="var(--accent)"/>
+        <path d="M13 3 5 21h3.4L16 3h-3Z" fill="var(--text)" opacity=".85"/>
+      </svg>
+          <span class="word" aria-hidden="true">S<b>/</b>ash <span class="lab">Digital Lab</span></span></a>
+        <p>A digital and AI lab founded in 2022. Digital products, applied AI, DOOH and cybersecurity for brands that can't afford to fail.</p>
+        <div class="foot-nap">
+          <span>Carrera 8A 97-07 · Bogotá, Colombia</span>
+          <a href="mailto:contact@slash-digital.io">contact@slash-digital.io</a>
+          <a href="tel:+573126975726">+57 312 697 5726</a>
+        </div>
+        <div class="foot-social">
+          <a href="https://www.linkedin.com/company/slash-digital-lab" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5ZM.5 8h4V24h-4V8Zm7.5 0h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-8.5c0-2-.7-3.4-2.5-3.4-1.87 0-2.62 1.27-2.62 3.35V24h-4V8Z"/></svg></a>
+          <a href="https://x.com/SlashDigitalLab" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.4l-5.8-7.58-6.63 7.58H.49l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93Zm-1.29 19.5h2.04L6.49 3.24H4.3L17.61 20.65Z"/></svg></a>
+          <a href="https://wa.me/573214119660?text=Hi%20Esteban%2C%20I'd%20like%20to%20talk%20about%20a%20project%20with%20Slash." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg class="wa-ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.84-.2-.49-.4-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74 1.48.64 1.84.7 2.5.59.38-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.17-.47-.29z"/></svg></a>
+        </div>
+      </div>
+      <nav class="foot-nav" aria-label="Footer">
+        <div class="foot-col"><p class="foot-h">Services</p><ul><li><a href="/en/ai/">Artificial intelligence</a></li><li><a href="/en/digital-products/">Digital product &amp; software</a></li><li><a href="/en/data/">Data &amp; automation</a></li><li><a href="/en/dooh/">DOOH &amp; experiences</a></li><li><a href="/en/cybersecurity/">Cybersecurity</a></li><li><a href="/en/pentest/">Pentest Colombia</a></li><li><a href="/en/nearshore-software-development/">Nearshore development</a></li><li><a class="foot-all" href="/en/services/">All services&nbsp;<i aria-hidden="true">→</i></a></li></ul></div>
+        <div class="foot-col"><p class="foot-h">Company</p><ul><li><a href="/en/about/">About</a></li><li><a href="/en/team/">Team</a></li><li><a href="/en/clients/">Clients</a></li><li><a href="/en/case-studies/">Case studies</a></li><li><a href="/en/ai-lab/">Slash AI Lab</a></li><li><a href="/en/insights/">Insights</a></li><li><a href="/en/company-facts/">Company facts</a></li><li><a href="/en/contact/">Contact</a></li></ul></div>
+        <div class="foot-col"><p class="foot-h">Legal &amp; transparency</p><ul><li><a href="/en/privacy/">Privacy notice</a></li><li><a href="/en/ripite-privacy/">ri-PITE privacy policy</a></li><li><a href="/en/cookies/">Cookie policy</a></li><li><a href="/en/pledge/">Environmental pledge</a></li>
+          <li><button type="button" class="foot-consent" data-consent-open>Cookie preferences</button></li>
+          <li><a href="/security.txt">security.txt</a></li>
+          <li><a href="/llms.txt">llms.txt</a></li>
+          <li><a href="/sitemap.xml">sitemap.xml</a></li></ul></div>
+      </nav>
+    </div>
+    <div class="foot-base">
+      <p>© 2026 Slash Digital Lab SAS · NIT 901670192-8 · Bogotá, Colombia</p>
+      <span class="foot-lang"><a href="/insights/event-networking-app/" hreflang="es" lang="es">ES</a><a href="/en/insights/event-networking-app/" hreflang="en" lang="en" aria-current="page">EN</a><a href="/fr/insights/event-networking-app/" hreflang="fr" lang="fr">FR</a></span>
+      <a href="https://wa.me/573214119660?text=Hi%20Esteban%2C%20I'd%20like%20to%20talk%20about%20a%20project%20with%20Slash." target="_blank" rel="noopener noreferrer">Message Esteban</a>
+      <p class="mb0">Made in Bogotá · Spoken in Spanish, English and French</p>
+    </div>
+  </div>
+</footer>
+<a class="wa-fab" id="wa-fab" href="https://wa.me/573214119660?text=Hi%20Esteban%2C%20I'd%20like%20to%20talk%20about%20a%20project%20with%20Slash." target="_blank" rel="noopener noreferrer" aria-label="Message Esteban Zuleta on WhatsApp" title="Message Esteban Zuleta on WhatsApp"><span class="wa-fab-ico" aria-hidden="true"><svg class="wa-ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.84-.2-.49-.4-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74 1.48.64 1.84.7 2.5.59.38-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.17-.47-.29z"/></svg></span><span class="wa-fab-label">Message Esteban</span></a>
+<script src="/assets/js/slash-runtime.js?v=9890341054"></script>
+<script type="module" src="/assets/js/hero-3d-inner.js?v=6"></script>
+</body>
+</html>

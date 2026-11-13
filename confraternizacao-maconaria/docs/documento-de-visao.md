@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 1.5 · 2026-11-13
+**Versão:** 1.6 · 2026-11-13
 
 ## 1. Contexto
 
@@ -50,83 +50,84 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ## 6. Casos de uso
 
-Casos de uso derivados das funcionalidades citadas e das imagens de referência, organizados por seção:
+Casos de uso por objeto, com ações concretas que o usuário realiza:
 
-### Autenticação e conta
+### Conta
 
-- **CU-01** — Cadastro no evento  
-- **CU-02** — Alterar senha  
+- **CU-01** — Cadastrar participante  
+- **CU-02** — Visualizar perfil  
 - **CU-03** — Editar perfil  
-- **CU-04** — Visualizar perfil (foto e nome)  
-- **CU-05** — Registrar ou visualizar facial cadastrada  
-- **CU-06** — Gerenciar privacidade e cookies  
+- **CU-04** — Alterar senha  
+- **CU-05** — Cadastrar facial  
+- **CU-06** — Aceitar ou rejeitar cookies de privacidade  
 
-### Home e navegação
+### Participante
 
-- **CU-07** — Acessar o aplicativo oficial do evento  
-- **CU-08** — Ver boas-vindas com nome e foto  
-- **CU-09** — Abrir o menu  
-- **CU-10** — Visualizar notificações (sino)  
-- **CU-11** — Visualizar badges de status (incluindo check-ins)  
-- **CU-12** — Navegar entre as abas Agenda, Eventos, Salas e Produtos  
+- **CU-07** — Visualizar quem está participando  
+- **CU-08** — Enviar mensagem para outro participante  
 
-### Acesso rápido
+### Local
 
-- **CU-13** — Acessar carteirinha  
-- **CU-14** — Acessar ingressos  
-- **CU-15** — Acessar estacionamento  
-- **CU-16** — Acessar compra de ingresso  
+- **CU-09** — Cadastrar local  
+- **CU-10** — Visualizar salas  
 
-### Organização do evento
+### Programação / evento
 
-- **CU-17** — Controlar o evento  
-- **CU-18** — Organizar confraternização com programação na cidade inteira  
-- **CU-19** — Cadastrar cronograma / programação  
-- **CU-20** — Definir horários na programação  
-- **CU-21** — Cadastrar locais  
-- **CU-22** — Visualizar quem está participando  
+- **CU-11** — Cadastrar item da programação (com horário e local na cidade)  
+- **CU-12** — Visualizar lista de eventos (data, horário, título, imagem e confirmados)  
+- **CU-13** — Visualizar detalhe do evento (banner, data, horário, local, confirmados e sobre)  
+- **CU-14** — Fazer check-in no evento  
+- **CU-15** — Comprar ingresso do evento  
 
 ### Agenda
 
-- **CU-23** — Selecionar um dia na agenda  
-- **CU-24** — Visualizar eventos do dia selecionado  
+- **CU-16** — Selecionar dia  
+- **CU-17** — Visualizar eventos do dia  
 
-### Eventos
+### Carteirinha
 
-- **CU-25** — Consultar lista de eventos (data e horário)  
-- **CU-26** — Consultar lista de eventos (imagem)  
-- **CU-27** — Consultar lista de eventos (título)  
-- **CU-28** — Visualizar confirmados (X/Y) na lista  
-- **CU-29** — Abrir detalhe do evento (banner)  
-- **CU-30** — Abrir detalhe do evento (data)  
-- **CU-31** — Abrir detalhe do evento (horário)  
-- **CU-32** — Abrir detalhe do evento (local)  
-- **CU-33** — Abrir detalhe do evento (confirmados)  
-- **CU-34** — Abrir detalhe do evento (sobre o evento)  
-- **CU-35** — Fazer check-in (confirmar presença)  
-- **CU-36** — Comprar ingresso  
+- **CU-18** — Visualizar carteirinha  
 
-### Salas
+### Ingresso
 
-- **CU-37** — Consultar salas do evento  
+- **CU-19** — Visualizar ingressos da conta  
 
-### Produtos e serviços
+### Check-in
 
-- **CU-38** — Consultar produtos  
-- **CU-39** — Consultar vouchers  
-- **CU-40** — Consultar vagas de estacionamento  
-- **CU-41** — Consultar pedidos  
-- **CU-42** — Consultar rateios  
+- **CU-20** — Visualizar check-ins da conta  
 
-### Carteirinha e presença
+### Estacionamento
 
-- **CU-43** — Visualizar carteirinha  
-- **CU-44** — Consultar check-ins e ingressos na conta  
+- **CU-21** — Visualizar vagas de estacionamento  
 
-### Comunicação e rede
+### Produto
 
-- **CU-45** — Enviar mensagem para outro participante  
-- **CU-46** — Consultar rede de empresas  
+- **CU-22** — Visualizar produtos  
+
+### Voucher
+
+- **CU-23** — Visualizar vouchers  
+
+### Pedido
+
+- **CU-24** — Visualizar pedidos  
+
+### Rateio
+
+- **CU-25** — Visualizar rateios  
+
+### Rede de empresas
+
+- **CU-26** — Visualizar rede de empresas  
+
+### Notificação
+
+- **CU-27** — Visualizar notificações  
+
+### Navegação
+
+- **CU-28** — Abrir menu  
+- **CU-29** — Navegar entre Agenda, Eventos, Salas e Produtos  
 
 ---
 

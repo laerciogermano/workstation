@@ -1,89 +1,88 @@
 # Documento de visão — Confraternização Maçônica
 
-| Campo | Valor |
-|-------|--------|
-| Versão | **4.0** (2026-11-13) |
-| Regra | Só o que está no áudio/transcrição ou nas descrições dos prints. |
-| Fontes | [`../input/pedido-cliente.txt`](../input/pedido-cliente.txt) · [`../input/WhatsApp Audio 2026-11-13 at 17.46.52.transcricao.txt`](../input/WhatsApp%20Audio%202026-11-13%20at%2017.46.52.transcricao.txt) · `../input/*.descricao.txt` |
+| | |
+|--|--|
+| Versão | 5.0 · 2026-11-13 |
+| Natureza | Visão de produto |
+| Base | Áudio e prints enviados pelo demandante ([`../input/`](../input/README.md)) |
 
 ---
 
-## Contexto
+## 1. Contexto
 
-Ano que vem haverá um **evento mundial** da maçonaria em **Curitiba**, para comemorar os **125 anos** da **potência**. É um evento de **confraternização**, com **programação na cidade inteira** e **horários**.
+No próximo ano, a potência realizará em Curitiba um **evento mundial** da maçonaria, em comemoração aos seus **125 anos**. Trata-se de uma **confraternização** com **programação distribuída pela cidade** e organizada por **horários**.
 
-O cliente pediu um **aplicativo da potência** para o **controle do evento** e um **orçamento**. Disse que ainda **não explicou tudo** o que precisa, que **não está muito ligado** no assunto e que **vai procurar apps de evento**; pediu que, se houver **referência**, seja olhada para ver **quanto se cobra**. Em seguida enviou **prints** de um app mobile de clube/eventos (**LIDE**) como referência visual.
-
----
-
-## Objetivo
-
-Montar o **aplicativo da potência** que faça o **controle do evento**, cobrindo o que o áudio pediu (programação, locais, participantes/cadastro, mensagens, organização) e alinhado ao tipo de app mostrado nos prints de referência — e **orçar** esse trabalho.
+Para esse evento, a potência necessita de um **aplicativo próprio** que concentre o **controle operacional** da confraternização. O demandante encaminhou **referências visuais** de aplicativo mobile de eventos (prints LIDE) e indicou que também pesquisará soluções semelhantes no mercado. O detalhamento funcional ainda pode ser complementado pelo demandante.
 
 ---
 
-## Público-alvo
+## 2. Objetivo
 
-| Quem | Base |
-|------|------|
-| **Potência / organização do evento** | Áudio: “aplicativo da minha potência”, “controle do evento”, “nível de organização” |
-| **Participantes** | Áudio: “quem está participando”, “o pessoal vai lá, faz um cadastro”; print: usuário logado com perfil, agenda, eventos, check-in, ingresso, carteirinha |
-| **Quem troca mensagem** | Áudio: “montar uma mensagem para o outro” |
+Disponibilizar o **aplicativo oficial da potência** para o **controle do evento mundial**, assegurando programação, locais, participantes e comunicação entre inscritos, em linha com a natureza multi-local da confraternização e com o padrão de experiência ilustrado nas referências enviadas.
 
 ---
 
-## Referências
+## 3. Público-alvo
 
-| Referência | O que é |
-|------------|---------|
-| Áudio WhatsApp 2026-11-13 17.46.52 | Pedido falado (orçamento + o que precisa) — [`../input/WhatsApp Audio 2026-11-13 at 17.46.52.ogg`](../input/WhatsApp%20Audio%202026-11-13%20at%2017.46.52.ogg) · [transcrição](../input/WhatsApp%20Audio%202026-11-13%20at%2017.46.52.transcricao.txt) |
-| Prints LIDE (mesmo dia) | App mobile de referência: Agenda, Eventos, Salas, Produtos; check-in; ingresso; carteirinha; detalhe com local; perfil — índice em [`../input/README.md`](../input/README.md) |
-| Busca do próprio cliente | Áudio: “vou ter que procurar uns aplicativos aqui de evento” / “vou procurar por aqui também” |
-
-**Nos prints aparece:** boas-vindas e foto; badges (Adimplente, LIDE Global, check-ins); acesso rápido Carteirinha / Ingressos / Estacionamento / Comprar ingresso; faixa de dias e eventos do dia; lista de eventos (data/hora, título, confirmados X/Y); ações Fazer check-in e Comprar ingresso; detalhe (banner, data, horário, local, sobre, confirmados); perfil (editar, senha, carteirinha, check-ins e ingressos, vouchers, estacionamento, pedidos, rateios, rede de empresas, facial cadastrada); modal Privacidade e cookies; sino no header.
-
-Conteúdo LIDE nos cards (nomes de eventos/locais do print) **não** é o conteúdo do evento da potência.
+| Público | Papel |
+|---------|--------|
+| **Potência / organização do evento** | Responsável pelo controle do evento e pela organização da programação |
+| **Participantes** | Pessoas que se cadastram e constam como participantes do evento |
+| **Participantes em comunicação** | Quem utiliza o aplicativo para enviar mensagem a outro participante |
 
 ---
 
-## Escopo
+## 4. Referências
 
-### Do áudio
+| Item | Descrição |
+|------|-----------|
+| Demanda falada | Áudio de 13/11/2026 — evento, aplicativo da potência e necessidades de controle ([áudio](../input/WhatsApp%20Audio%202026-11-13%20at%2017.46.52.ogg) · [transcrição](../input/WhatsApp%20Audio%202026-11-13%20at%2017.46.52.transcricao.txt)) |
+| Referência visual | Prints de aplicativo mobile LIDE (agenda, eventos, check-in, ingressos, carteirinha, salas, perfil) — [`../input/README.md`](../input/README.md) |
+| Pesquisa do demandante | Indicação de busca própria por aplicativos de evento |
+
+**Elementos presentes na referência visual:** agenda (dias e eventos do dia); lista e detalhe de eventos (data, horário, local, confirmados, descrição); check-in; ingressos; carteirinha; salas; estacionamento; produtos; perfil (dados da conta, check-ins e ingressos, vouchers, pedidos, rateios, rede de empresas, registro facial); privacidade e cookies; indicação de notificações na interface.
+
+O conteúdo editorial dos prints (nomes de eventos e locais LIDE) serve apenas como exemplo de interface — **não** constitui a programação do evento da potência.
+
+---
+
+## 5. Escopo
+
+### 5.1 Definido na demanda falada
 
 - Aplicativo da potência  
 - Controle do evento  
 - Cronograma / programação (cidade inteira, com horário)  
 - Locais cadastrados  
-- Quem está participando  
-- Cadastro  
-- Mensagem de um para o outro  
-- Algum nível de organização  
-- Orçamento  
+- Identificação de quem participa  
+- Cadastro de participantes  
+- Mensagem entre participantes  
+- Nível de organização compatível com confraternização multi-local  
 
-### Dos prints (referência visual enviada)
+### 5.2 Presente na referência visual enviada
 
-- Agenda (dias + eventos do dia)  
-- Lista e detalhe de eventos (data, hora, local, confirmados, sobre, banner)  
+- Agenda (seleção de dias e eventos do dia)  
+- Lista e detalhe de eventos (data, horário, local, confirmados, texto descritivo, banner)  
 - Check-in  
-- Ingressos / comprar ingresso  
+- Ingressos / aquisição de ingresso  
 - Carteirinha  
 - Salas  
 - Estacionamento  
 - Produtos  
-- Perfil (editar, senha, check-ins e ingressos, vouchers, pedidos, rateios, rede de empresas, facial)  
+- Perfil e conta (edição, senha, check-ins e ingressos, vouchers, pedidos, rateios, rede de empresas, facial)  
 - Privacidade e cookies  
-- Sino (notificação na UI)  
+- Notificação na interface (ícone de sino)  
 
-### Fora
+### 5.3 Fora de escopo deste documento
 
-Tudo que **não** está no áudio nem nas descrições dos prints.
+Qualquer capacidade **ausente** da demanda falada e das descrições dos prints enviados.
 
 ---
 
-## Prazo
+## 6. Prazo
 
-| O que foi dito | Fonte |
-|----------------|--------|
-| **Ano que vem** (evento mundial em Curitiba) | Áudio |
-
-Não há no material data de dia/mês do evento nem prazo de entrega do app além disso. Orçamento pedido **agora** (áudio + prints de 2026-11-13).
+| Marco | Situação |
+|-------|----------|
+| Realização do evento | **Próximo ano**, em Curitiba (conforme demanda falada) |
+| Data exata do evento | **Não informada** no material recebido |
+| Prazo de entrega do aplicativo | **Não informado** além da vinculação ao evento do próximo ano |

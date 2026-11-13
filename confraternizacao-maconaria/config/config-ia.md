@@ -53,7 +53,6 @@ README.md (portal)
         │               └── screens-bdd.md
         │                   └── components.md
         │                       └── prototype.html
-        └── (comercial) benchmark.md → orcamento.md
 ```
 
 | Ordem | Artefato | Próximo |
@@ -68,5 +67,3 @@ README.md (portal)
 | 6 | `screens-bdd.md` | `components.md` |
 | 7 | `components.md` | `prototype.html` |
 | 8 | `prototype.html` | *(fim da árvore de produto)* |
-
-Paralelo comercial (pedido do cliente): `benchmark.md` → `orcamento.md` — não substitui a árvore acima.

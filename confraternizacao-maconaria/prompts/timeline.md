@@ -11,4 +11,5 @@ Como registrar: [`README.md`](README.md).
 | 003 | 2026-11-13 | Documento de visão v2 (mercado) | [003-2026-11-13-documento-visao-v2-mercado.md](003-2026-11-13-documento-visao-v2-mercado.md) | Visão canônica completa: Pichler + quatro jobs event apps + MoSCoW + métricas. |
 | 004 | 2026-11-13 | Visão só insumos do cliente | [004-2026-11-13-visao-so-insumos-cliente.md](004-2026-11-13-visao-so-insumos-cliente.md) | v3.0: apenas áudio/transcrição + descrições dos prints; sem inventar. |
 | 005 | 2026-11-13 | Visão em seis seções | [005-2026-11-13-visao-seis-secoes.md](005-2026-11-13-visao-seis-secoes.md) | v4.0: contexto, objetivo, público-alvo, referências, escopo, prazo. |
+| 006 | 2026-11-13 | Visão linguagem diretoria | [006-2026-11-13-visao-linguagem-diretoria.md](006-2026-11-13-visao-linguagem-diretoria.md) | v5.0: tom formal; sem orçamento. |
 | 004 | 2026-11-13 | Baixar insumos de mercado (visão, skills, práticas, event apps) | [004-2026-11-13-baixar-insumos-mercado.md](004-2026-11-13-baixar-insumos-mercado.md) | Skills, templates de visão, tendências 2025–26 de apps de evento e práticas de desenvolvimento em `input/referencias-mercado/`. |

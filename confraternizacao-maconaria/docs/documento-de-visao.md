@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 2.2 · 2026-11-13
+**Versão:** 2.4 · 2026-11-13
 
 ## 1. Contexto
 
@@ -108,81 +108,91 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
+### Tela inicial
+
+Boas-vindas no topo, calendário em seguida e lista de eventos na parte inferior.
+
+- **CU-01** — Ver boas-vindas  
+- **CU-02** — Ver calendário  
+- **CU-03** — Selecionar dia no calendário  
+- **CU-04** — Ver lista de eventos abaixo do calendário  
+- **CU-05** — Abrir evento a partir da lista  
+
 ### Agenda
 
-- **CU-01** — Ver boas-vindas e status da conta  
-- **CU-02** — Abrir acesso rápido (carteirinha, ingressos)  
-- **CU-03** — Selecionar dia  
-- **CU-04** — Ver eventos do dia  
+- **CU-06** — Ver status da conta  
+- **CU-07** — Abrir acesso rápido (carteirinha, ingressos)  
+- **CU-08** — Selecionar dia  
+- **CU-09** — Ver eventos do dia  
 
 ### Eventos
 
-- **CU-05** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
-- **CU-06** — Abrir detalhe do evento  
-- **CU-07** — Fazer check-in  
+- **CU-10** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
+- **CU-11** — Abrir detalhe do evento  
+- **CU-12** — Fazer check-in  
 
 ### Detalhe do evento
 
-- **CU-08** — Ver banner, data, horário, local, confirmados e descrição  
+- **CU-13** — Ver banner, data, horário, local, confirmados e descrição  
 
 ### Salas
 
-- **CU-09** — Ver salas / locais  
+- **CU-14** — Ver salas / locais  
 
 ### Perfil
 
-- **CU-10** — Ver perfil  
-- **CU-11** — Editar perfil  
-- **CU-12** — Alterar senha  
-- **CU-13** — Abrir carteirinha, check-ins e ingressos, vouchers, pedidos, rateios e rede de empresas  
+- **CU-15** — Ver perfil  
+- **CU-16** — Editar perfil  
+- **CU-17** — Alterar senha  
+- **CU-18** — Abrir carteirinha, check-ins e ingressos, vouchers, pedidos, rateios e rede de empresas  
 
 ### Carteirinha
 
-- **CU-14** — Ver carteirinha  
+- **CU-19** — Ver carteirinha  
 
 ### Check-ins e ingressos
 
-- **CU-15** — Ver check-ins da conta  
-- **CU-16** — Ver ingressos da conta  
+- **CU-20** — Ver check-ins da conta  
+- **CU-21** — Ver ingressos da conta  
 
 ### Vouchers
 
-- **CU-17** — Ver vouchers  
+- **CU-22** — Ver vouchers  
 
 ### Pedidos
 
-- **CU-18** — Ver pedidos  
+- **CU-23** — Ver pedidos  
 
 ### Rateios
 
-- **CU-19** — Ver rateios  
+- **CU-24** — Ver rateios  
 
 ### Rede de empresas
 
-- **CU-20** — Ver rede de empresas  
+- **CU-25** — Ver rede de empresas  
 
 ### Notificações
 
-- **CU-21** — Ver notificações  
+- **CU-26** — Ver notificações  
 
 ### Menu
 
-- **CU-22** — Abrir menu  
-- **CU-23** — Navegar entre Agenda, Eventos e Salas  
+- **CU-27** — Abrir menu  
+- **CU-28** — Navegar entre Tela inicial, Agenda, Eventos e Salas  
 
 ### Cadastro
 
-- **CU-24** — Cadastrar participante  
+- **CU-29** — Cadastrar participante  
 
 ### Participantes
 
-- **CU-25** — Ver quem está participando  
-- **CU-26** — Enviar mensagem para outro participante  
+- **CU-30** — Ver quem está participando  
+- **CU-31** — Enviar mensagem para outro participante  
 
 ### Organização (organizador)
 
-- **CU-27** — Cadastrar local  
-- **CU-28** — Cadastrar item da programação (horário e local na cidade)  
+- **CU-32** — Cadastrar local  
+- **CU-33** — Cadastrar item da programação (horário e local na cidade)  
 
 ---
 

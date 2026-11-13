@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 2.7 · 2026-11-13
+**Versão:** 2.8 · 2026-11-13
 
 ## 1. Contexto
 
@@ -48,60 +48,7 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ---
 
-## 6. Referências
-
-O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
-
-- Agenda (dias e eventos do dia)  
-- Lista e detalhe de eventos (data, horário, local, confirmados, descrição)  
-- Inscrição em eventos  
-- Chat (grupos e privados)  
-- Perfil e conta  
-
-A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
-
-### Imagens de referência
-
-**Home com privacidade e cookies**
-
-![Home com modal de privacidade e cookies](referencias/01-home-privacidade.jpeg)
-
-**Agenda**
-
-![Agenda com eventos do dia e acesso rápido](referencias/02-agenda.jpeg)
-
-**Lista de eventos**
-
-![Lista de eventos com data, horário e confirmados](referencias/03-lista-eventos.jpeg)
-
-**Ação no evento**
-
-![Ação no evento](referencias/04-checkin-ingresso.jpeg)
-
-**Detalhe do evento**
-
-![Detalhe do evento com data, horário, local e confirmados](referencias/05-detalhe-evento.jpeg)
-
-**Perfil**
-
-![Perfil e informações da conta](referencias/06-perfil.jpeg)
-
----
-
-## 7. Sites de referência maçônicos
-
-| Instituição | Site |
-|-------------|------|
-| Grande Oriente do Brasil – Paraná (GOB-PR) | [https://gob-pr.org.br/](https://gob-pr.org.br/) |
-| Maçonaria do Paraná | [https://maconariadoparana.org.br/](https://maconariadoparana.org.br/) |
-| Grande Loja do Paraná (GLP) | [https://www.glp.org.br/](https://www.glp.org.br/) |
-| Grande Oriente do Brasil (GOB) | [http://www.gob.org.br/](http://www.gob.org.br/) |
-| Confederação Maçônica do Brasil (COMAB) | [https://comab.org.br/](https://comab.org.br/) |
-| Confederação da Maçonaria Simbólica do Brasil (CMSB) | [http://www.cmsb.org.br/](http://www.cmsb.org.br/) |
-
----
-
-## 8. Escopo por tela
+## 6. Escopo por tela
 
 Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
@@ -176,10 +123,63 @@ Menu de chat com grupos e conversas privadas. O acesso ao grupo do evento depend
 
 ---
 
-## 9. Prazo
+## 7. Prazo
 
 | Marco | Situação |
 |-------|----------|
 | Realização do evento | Próximo ano, em Curitiba |
 | Data exata do evento | A definir |
 | Entrega do aplicativo | Vinculada à realização do evento no próximo ano; cronograma detalhado a definir |
+
+---
+
+## 8. Referências
+
+O projeto adota, como referência de experiência, o padrão de aplicativos de evento/clube com:
+
+- Agenda (dias e eventos do dia)  
+- Lista e detalhe de eventos (data, horário, local, confirmados, descrição)  
+- Inscrição em eventos  
+- Chat (grupos e privados)  
+- Perfil e conta  
+
+A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
+
+### Imagens de referência
+
+**Home com privacidade e cookies**
+
+![Home com modal de privacidade e cookies](referencias/01-home-privacidade.jpeg)
+
+**Agenda**
+
+![Agenda com eventos do dia e acesso rápido](referencias/02-agenda.jpeg)
+
+**Lista de eventos**
+
+![Lista de eventos com data, horário e confirmados](referencias/03-lista-eventos.jpeg)
+
+**Ação no evento**
+
+![Ação no evento](referencias/04-checkin-ingresso.jpeg)
+
+**Detalhe do evento**
+
+![Detalhe do evento com data, horário, local e confirmados](referencias/05-detalhe-evento.jpeg)
+
+**Perfil**
+
+![Perfil e informações da conta](referencias/06-perfil.jpeg)
+
+---
+
+## 9. Sites de referência maçônicos
+
+| Instituição | Site |
+|-------------|------|
+| Grande Oriente do Brasil – Paraná (GOB-PR) | [https://gob-pr.org.br/](https://gob-pr.org.br/) |
+| Maçonaria do Paraná | [https://maconariadoparana.org.br/](https://maconariadoparana.org.br/) |
+| Grande Loja do Paraná (GLP) | [https://www.glp.org.br/](https://www.glp.org.br/) |
+| Grande Oriente do Brasil (GOB) | [http://www.gob.org.br/](http://www.gob.org.br/) |
+| Confederação Maçônica do Brasil (COMAB) | [https://comab.org.br/](https://comab.org.br/) |
+| Confederação da Maçonaria Simbólica do Brasil (CMSB) | [http://www.cmsb.org.br/](http://www.cmsb.org.br/) |

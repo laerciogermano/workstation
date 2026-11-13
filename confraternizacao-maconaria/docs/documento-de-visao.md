@@ -2,8 +2,9 @@
 
 | | |
 |--|--|
-| Versão | 8.0 · 2026-11-13 |
+| Versão | 8.1 · 2026-11-13 |
 | Natureza | Visão de produto |
+| Funcionalidades do áudio | [`funcionalidades-audio.md`](funcionalidades-audio.md) |
 
 ---
 

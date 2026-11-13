@@ -12,4 +12,5 @@ Cada documento-fonte `.txt`/`.yaml` tem um resumo em tópicos no arquivo `<nome>
 | [`imagens/`](imagens/README.md) | Pinturas/artes afins (Wikimedia); catálogo e exclusões por copyright |
 | [`threads-instagram-mapa.md`](threads-instagram-mapa.md) | Threads do Instagram (abr–out/2026) aproveitáveis no livro: os 25 mais importantes, mapa por capítulo/seção da v3, cuidados e descartados |
 | [`obras-a-adicionar.md`](obras-a-adicionar.md) | Obras famosas (BR + internacionais) ligadas à tese e ainda ausentes da v3; prioridade e capítulo sugerido |
+| [`culturas-antigas-a-adicionar.md`](culturas-antigas-a-adicionar.md) | Egito faraônico, Mesopotâmia e artes do fio do cap. 2 ainda sem prancha (banco para v6+) |
 | Raiz desta pasta | Documentos e notas (briefing, tratados, livros, yaml de abertura) |

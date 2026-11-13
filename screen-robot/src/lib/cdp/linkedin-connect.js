@@ -2,7 +2,8 @@
  * Conectar em perfil LinkedIn via URL (CDP / web).
  * Mesma interface de `../linkedin-connect.js` (AVD), trocando `serial` por sessão CDP.
  *
- * Fluxo: se Connect/Conectar já está no hero → clica nele (sem abrir ⋮).
+ * Fluxo: se Aceitar/Accept (convite recebido) → clica → upsert status=2.
+ * Senão, se Connect/Conectar já está no hero → clica nele (sem abrir ⋮).
  * Senão: Mais → menuitem Conectar → Enviar sem nota/Skip → Pending.
  * Já conectado (Mensagem + sem Conectar/Seguir) → só upsert status=2, sem clicar.
  * Manipulação só via human-cdp (clickAt/click).
@@ -28,6 +29,7 @@ import {
   resolveAgentId,
 } from "../linkedin-connect.js";
 import {
+  clickAcceptIncoming,
   clickByTexts,
   clickProfileMenuConnect,
   clickSkipInvite,
@@ -132,6 +134,7 @@ function isAlreadyConnectedSignals(sig) {
     sig?.hasMessage &&
       !sig?.hasConnect &&
       !sig?.hasMenuConnect &&
+      !sig?.hasAccept &&
       !sig?.pending &&
       !sig?.hasFollow,
   );
@@ -281,6 +284,33 @@ export async function connectByLinkedInUrl(opts) {
           };
         }
         return { ok: true, status: "already", url, steps, notify };
+      }
+
+      // Pessoa te convidou: Aceitar/Accept (+ Ignorar) → aceita e status=2
+      if (sig.hasAccept && !didConnect && !skipped) {
+        await shot(page, opts.outDir, "02-accept-incoming.png");
+        if (!dryRun) {
+          const hit = await clickAcceptIncoming(page, steps);
+          if (!hit) {
+            return {
+              ok: false,
+              status: "failed",
+              url,
+              steps,
+              error: "Aceitar sinalizado mas botão não clicável",
+            };
+          }
+          await sleep(WAIT_AFTER_TAP_MS);
+        }
+        return finishAlreadyConnected(page, {
+          url,
+          steps,
+          outDir: opts.outDir,
+          dryRun,
+          notifyApi,
+          agentId,
+          reason: "accepted_incoming",
+        });
       }
 
       // Já 1º grau: Mensagem + sem Conectar/Seguir → só status=2 na base

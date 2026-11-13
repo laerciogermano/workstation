@@ -299,6 +299,52 @@ export async function clickSkipInvite(page, steps) {
   return hit;
 }
 
+/**
+ * Aceitar convite recebido no hero (Accept/Aceitar; aria “Accept … invitation”).
+ * Não confunde com Skip/Ignorar do modal “Enviar sem nota”.
+ */
+export async function findAcceptIncoming(page) {
+  return page.evaluate(`(() => {
+    const labelOf = (el) => {
+      const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      return { aria, txt, both: (aria + ' ' + txt).replace(/\\s+/g, ' ').trim() };
+    };
+    const isAccept = (aria, txt, both) =>
+      /^(accept|aceitar)$/i.test(txt) ||
+      /^(accept|aceitar)$/i.test(aria) ||
+      /^(accept|aceitar)\\b.+(invitation|convite)/i.test(aria) ||
+      /^(accept|aceitar)\\b.+(invitation|convite)/i.test(both) ||
+      /aceitar o convite|accept .+ invitation/i.test(aria);
+    /** @type {{ cx: number, cy: number, text: string, y: number }[]} */
+    const hits = [];
+    for (const el of document.querySelectorAll('button, [role=button], a')) {
+      const r = el.getBoundingClientRect();
+      if (r.y < 72 || r.width < 2 || r.height < 2) continue;
+      if (r.bottom < 0 || r.top > innerHeight) continue;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"], [role=menuitem], .artdeco-dropdown__item, [role=menu]')) continue;
+      const { aria, txt, both } = labelOf(el);
+      if (!isAccept(aria, txt, both)) continue;
+      hits.push({
+        cx: r.x + r.width / 2,
+        cy: r.y + r.height / 2,
+        text: (txt || aria).slice(0, 80),
+        y: r.y,
+      });
+    }
+    hits.sort((a, b) => a.y - b.y);
+    return hits[0] ? { cx: hits[0].cx, cy: hits[0].cy, text: hits[0].text } : null;
+  })()`);
+}
+
+export async function clickAcceptIncoming(page, steps) {
+  const hit = await findAcceptIncoming(page);
+  if (!hit) return null;
+  await page.clickAt(hit.cx, hit.cy);
+  steps?.push(`accept:${hit.text}@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
+  return hit;
+}
+
 /** Snapshot de sinais da página (perfil / modal / 404). */
 export async function profileSignals(page) {
   return page.evaluate(`(() => {
@@ -390,6 +436,20 @@ export async function profileSignals(page) {
         /enviar mensagem|send a message/i.test(aria)
       );
     });
+    // Convite recebido (pessoa te convidou): Aceitar / Accept (+ Ignorar ao lado)
+    const hasAccept = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.y < 72 || r.width < 2 || r.height < 2) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"], [role=menuitem], .artdeco-dropdown__item, [role=menu]')) return false;
+      const { aria, txt, both } = labelOf(el);
+      return (
+        /^(accept|aceitar)$/i.test(txt) ||
+        /^(accept|aceitar)$/i.test(aria) ||
+        /^(accept|aceitar)\\b.+(invitation|convite)/i.test(aria) ||
+        /^(accept|aceitar)\\b.+(invitation|convite)/i.test(both) ||
+        /aceitar o convite|accept .+ invitation/i.test(aria)
+      );
+    });
     // Seguir (não Seguindo/Following) — ausência + Mensagem ≈ já conectado
     const hasFollow = [...document.querySelectorAll('button, [role=button], a')].some((el) => {
       const r = el.getBoundingClientRect();
@@ -437,6 +497,7 @@ export async function profileSignals(page) {
       hasConnect,
       hasMenuConnect,
       hasMessage,
+      hasAccept,
       hasFollow,
       hasSkip,
       hasMore,

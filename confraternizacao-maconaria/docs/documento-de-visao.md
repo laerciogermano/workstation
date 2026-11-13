@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 2.4 · 2026-11-13
+**Versão:** 2.7 · 2026-11-13
 
 ## 1. Contexto
 
@@ -54,12 +54,9 @@ O projeto adota, como referência de experiência, o padrão de aplicativos de e
 
 - Agenda (dias e eventos do dia)  
 - Lista e detalhe de eventos (data, horário, local, confirmados, descrição)  
-- Check-in  
-- Ingressos  
-- Carteirinha  
-- Salas  
+- Inscrição em eventos  
+- Chat (grupos e privados)  
 - Perfil e conta  
-- Notificações na interface  
 
 A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
 
@@ -77,9 +74,9 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ![Lista de eventos com data, horário e confirmados](referencias/03-lista-eventos.jpeg)
 
-**Check-in**
+**Ação no evento**
 
-![Ação de check-in no evento](referencias/04-checkin-ingresso.jpeg)
+![Ação no evento](referencias/04-checkin-ingresso.jpeg)
 
 **Detalhe do evento**
 
@@ -108,7 +105,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
-### Tela inicial
+### Home
 
 Boas-vindas no topo, calendário em seguida e lista de eventos na parte inferior.
 
@@ -117,77 +114,60 @@ Boas-vindas no topo, calendário em seguida e lista de eventos na parte inferior
 - **CU-03** — Selecionar dia no calendário  
 - **CU-04** — Ver lista de eventos abaixo do calendário  
 - **CU-05** — Abrir evento a partir da lista  
-
-### Agenda
-
-- **CU-06** — Ver status da conta  
-- **CU-07** — Abrir acesso rápido (carteirinha, ingressos)  
-- **CU-08** — Selecionar dia  
-- **CU-09** — Ver eventos do dia  
+- **CU-06** — Ver listas de inscrição  
+- **CU-07** — Inscrever-se no evento  
 
 ### Eventos
 
-- **CU-10** — Ver lista de eventos (data, horário, título, imagem e confirmados)  
-- **CU-11** — Abrir detalhe do evento  
-- **CU-12** — Fazer check-in  
+- **CU-08** — Ver lista de eventos (data, horário, título, local e confirmados)  
+- **CU-09** — Abrir detalhe do evento  
 
 ### Detalhe do evento
 
-- **CU-13** — Ver banner, data, horário, local, confirmados e descrição  
+- **CU-10** — Ver data, horário, local, confirmados e descrição  
+- **CU-11** — Inscrever-se no evento  
 
-### Salas
+### Inscrições
 
-- **CU-14** — Ver salas / locais  
+A inscrição libera o acesso ao chat (grupo do evento).
 
-### Perfil
+- **CU-12** — Ver lista de inscrições  
+- **CU-13** — Inscrever-se no evento  
+- **CU-14** — Acessar o grupo liberado pela inscrição  
 
-- **CU-15** — Ver perfil  
-- **CU-16** — Editar perfil  
-- **CU-17** — Alterar senha  
-- **CU-18** — Abrir carteirinha, check-ins e ingressos, vouchers, pedidos, rateios e rede de empresas  
+### Chat
 
-### Carteirinha
+Menu de chat com grupos e conversas privadas. O acesso ao grupo do evento depende da inscrição.
 
-- **CU-19** — Ver carteirinha  
-
-### Check-ins e ingressos
-
-- **CU-20** — Ver check-ins da conta  
-- **CU-21** — Ver ingressos da conta  
-
-### Vouchers
-
-- **CU-22** — Ver vouchers  
-
-### Pedidos
-
-- **CU-23** — Ver pedidos  
-
-### Rateios
-
-- **CU-24** — Ver rateios  
-
-### Rede de empresas
-
-- **CU-25** — Ver rede de empresas  
-
-### Notificações
-
-- **CU-26** — Ver notificações  
+- **CU-15** — Abrir menu de chat  
+- **CU-16** — Ver lista de grupos  
+- **CU-17** — Abrir grupo  
+- **CU-18** — Ver lista de conversas privadas  
+- **CU-19** — Abrir conversa privada  
+- **CU-20** — Enviar mensagem no grupo  
+- **CU-21** — Enviar mensagem privada  
 
 ### Menu
 
-- **CU-27** — Abrir menu  
-- **CU-28** — Navegar entre Tela inicial, Agenda, Eventos e Salas  
+- **CU-22** — Abrir menu  
+- **CU-23** — Ir para Eventos  
+- **CU-24** — Ir para Inscrições  
+- **CU-25** — Ir para Chat  
+
+### Menu da conta
+
+- **CU-26** — Abrir menu da conta  
+- **CU-27** — Ver perfil  
+- **CU-28** — Editar perfil  
+- **CU-29** — Alterar senha  
 
 ### Cadastro
 
-- **CU-29** — Cadastrar participante  
+- **CU-30** — Cadastrar participante  
 
 ### Participantes
 
-- **CU-30** — Ver quem está participando  
-- **CU-31** — Enviar mensagem para outro participante  
+- **CU-31** — Ver quem está participando  
 
 ### Organização (organizador)
 

@@ -2,22 +2,22 @@
 
 | | |
 |--|--|
-| Versão | 6.0 · 2026-11-13 |
+| Versão | 7.0 · 2026-11-13 |
 | Natureza | Visão de produto |
 
 ---
 
 ## 1. Contexto
 
-No próximo ano, a potência realizará em Curitiba um **evento mundial** da maçonaria, em comemoração aos seus **125 anos**. O encontro tem caráter de **confraternização**, com **programação distribuída pela cidade** e organizada por **horários**.
+No próximo ano será realizado em Curitiba um **evento mundial** da maçonaria, em comemoração aos **125 anos** da instituição organizadora. O encontro tem caráter de **confraternização**, com **programação distribuída pela cidade** e organizada por **horários**.
 
-O projeto **Confraternização Maçônica** consiste no **aplicativo oficial da potência** destinado ao **controle operacional** desse evento.
+O projeto **Confraternização Maçônica** consiste no **aplicativo oficial do evento**, destinado ao **controle operacional** dessa confraternização.
 
 ---
 
 ## 2. Objetivo
 
-Disponibilizar o aplicativo da potência para o controle do evento mundial, assegurando programação, locais, participantes e comunicação entre inscritos, de forma compatível com a confraternização multi-local em Curitiba.
+Disponibilizar o aplicativo oficial para o controle do evento mundial, assegurando programação, locais, participantes e comunicação entre inscritos, de forma compatível com a confraternização multi-local em Curitiba.
 
 ---
 
@@ -25,7 +25,7 @@ Disponibilizar o aplicativo da potência para o controle do evento mundial, asse
 
 | Público | Papel |
 |---------|--------|
-| **Potência / organização do evento** | Responsável pelo controle do evento e pela organização da programação |
+| **Organização do evento** | Responsável pelo controle do evento e pela organização da programação |
 | **Participantes** | Pessoas cadastradas que participam do evento |
 | **Participantes em comunicação** | Quem utiliza o aplicativo para enviar mensagem a outro participante |
 
@@ -47,7 +47,7 @@ O projeto adota, como referência de experiência, o padrão de aplicativos de e
 - Privacidade e cookies  
 - Notificações na interface  
 
-A programação, os locais e os participantes exibidos no aplicativo serão os do **evento da potência**, e não os de outras instituições usadas apenas como referência de interface.
+A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
 
 ---
 
@@ -55,7 +55,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 ### 5.1 Núcleo do projeto
 
-- Aplicativo da potência  
+- Aplicativo oficial do evento  
 - Controle do evento  
 - Cronograma / programação (cidade inteira, com horário)  
 - Locais cadastrados  

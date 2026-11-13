@@ -1,6 +1,6 @@
 # Confraternização Maçônica
 
-Aplicativo da potência para o evento mundial em Curitiba (125 anos).
+Aplicativo oficial do evento mundial em Curitiba (125 anos).
 
 ## Documento de visão
 

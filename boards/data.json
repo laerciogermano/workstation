@@ -1300,7 +1300,7 @@
         "cards": [
           {
             "id": "cfm-t-0",
-            "title": "Validar visão com o cliente"
+            "title": "Validar Must e perguntas abertas com o cliente"
           },
           {
             "id": "cfm-t-1",
@@ -1322,6 +1322,10 @@
         "title": "Feito",
         "cards": [
           {
+            "id": "cfm-t-visao-v2",
+            "title": "Documento de visão v2 (mercado)"
+          },
+          {
             "id": "cfm-t-visao",
             "title": "Documento de visão"
           }
@@ -1332,7 +1336,7 @@
     "sections": [
       {
         "id": "visao",
-        "title": "Visão / escopo",
+        "title": "Visão / escopo (v2)",
         "status": "done"
       },
       {

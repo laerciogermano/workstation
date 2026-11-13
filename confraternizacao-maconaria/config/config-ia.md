@@ -43,21 +43,23 @@ Isso significa:
 ## Árvore de execução
 
 ```text
-README.md (visão)
-└── docs/README.md
-    ├── functionalities.md
-    │   └── user-stories.md
-    │       └── bdd.md
-    │           └── screens.md
-    │               └── screens-bdd.md
-    │                   └── components.md
-    │                       └── prototype.html
-    └── (comercial) benchmark.md → orcamento.md
+README.md (portal)
+└── docs/documento-de-visao.md   ← visão canônica v2
+    └── docs/README.md
+        ├── functionalities.md
+        │   └── user-stories.md
+        │       └── bdd.md
+        │           └── screens.md
+        │               └── screens-bdd.md
+        │                   └── components.md
+        │                       └── prototype.html
+        └── (comercial) benchmark.md → orcamento.md
 ```
 
 | Ordem | Artefato | Próximo |
 |-------|----------|---------|
-| 0 | [`../README.md`](../README.md) (visão) | [`../docs/README.md`](../docs/README.md) |
+| 0 | [`../README.md`](../README.md) (portal) | [`../docs/documento-de-visao.md`](../docs/documento-de-visao.md) |
+| 0b | [`../docs/documento-de-visao.md`](../docs/documento-de-visao.md) | [`../docs/README.md`](../docs/README.md) |
 | 1 | [`../docs/README.md`](../docs/README.md) | `../docs/functionalities.md` |
 | 2 | `functionalities.md` | `user-stories.md` |
 | 3 | `user-stories.md` | `bdd.md` |

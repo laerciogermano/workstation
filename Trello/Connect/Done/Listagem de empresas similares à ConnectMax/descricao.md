@@ -1,31 +1,32 @@
 ## Objetivo
-Listar empresas **similares à ConnectMax** no ramo de **compras corporativas B2B** (revenda de produtos para empresas: tecnologia, eletrônicos, eletrodomésticos, materiais básicos) — Brasil e internacional.
+Listar empresas **similares à ConnectMax** em compras corporativas B2B — com ênfase em **suprimentos corporativos** e, em paralelo, revenda de TI.
 
 ## Documento
 [`conectmax/connectmax/marca/empresas-similares-compras-corporativas.md`](../../../../conectmax/connectmax/marca/empresas-similares-compras-corporativas.md)
 
-## Ramo
-Cotação → compra → entrega; boleto e prazo; atendimento PJ. Site: https://www.conectmax.com/
-
-## Brasil
+## Suprimentos corporativos — Brasil
 - BR Supply — https://www.brsupply.com.br
-- GOIG — https://www.goig.com.br
-- iBrasill — https://www.ibrasill.com
-- Mundoware — https://www.mundoware.com.br
-- Itcomtech — https://www.itcomtech.com.br
-- MultiNetwork — https://multinetwork.com.br
+- Korpex — https://www.korpex.com.br
+- CorporativoSupply — https://www.corporativosupply.com.br
+- Zamca — https://zamca.com.br
+- General Supri — https://www.generalsupri.com.br
+- Gimba — https://www.gimba.com.br
+- Espacial Suprimentos — https://www.espacial.com.br
+- FCW Distribuidora — https://www.fcwdistribuidora.com.br
 - Kalunga Empresas — https://www.kalunga.com.br
 - Magalu Empresas — https://www.magaluempresas.com.br
-- FCW Distribuidora — https://www.fcwdistribuidora.com.br
+- Nortel — https://nortel.com.br
+- Grainger Brasil — https://www.grainger.com.br
+- Soluparts — https://soluparts.com/pt-br/
+- Nimbi Private — https://nimbi.com.br
 
-## Internacional
-- CDW — https://www.cdw.com
-- Insight Enterprises — https://www.insight.com
-- Softchoice — https://www.softchoice.com
-- SHI International — https://www.shi.com
-- Connection — https://www.connection.com
-- Zones — https://www.zones.com
-- World Wide Technology — https://www.wwt.com
-- Amazon Business — https://business.amazon.com
-- Computacenter — https://www.computacenter.com
+## Suprimentos corporativos — Internacional
 - Staples Business Advantage — https://www.staplesadvantage.com
+- Quill — https://www.quill.com
+- ODP Business Solutions — https://www.odpbusiness.com
+- Lyreco — https://www.lyreco.com
+- Manutan — https://www.manutan.com
+- W.W. Grainger — https://www.grainger.com
+- Amazon Business — https://business.amazon.com
+
+## Revenda TI — ver documento completo

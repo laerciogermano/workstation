@@ -70,12 +70,12 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 | Instituição | Site |
 |-------------|------|
-| Grande Oriente do Brasil – Paraná (GOB-PR) | https://gob-pr.org.br/ |
-| Maçonaria do Paraná | https://maconariadoparana.org.br/ |
-| Grande Loja do Paraná (GLP) | https://www.glp.org.br/ |
-| Grande Oriente do Brasil (GOB) | http://www.gob.org.br/ |
-| Confederação Maçônica do Brasil (COMAB) | https://comab.org.br/ |
-| Confederação da Maçonaria Simbólica do Brasil (CMSB) | http://www.cmsb.org.br/ |
+| Grande Oriente do Brasil – Paraná (GOB-PR) | [https://gob-pr.org.br/](https://gob-pr.org.br/) |
+| Maçonaria do Paraná | [https://maconariadoparana.org.br/](https://maconariadoparana.org.br/) |
+| Grande Loja do Paraná (GLP) | [https://www.glp.org.br/](https://www.glp.org.br/) |
+| Grande Oriente do Brasil (GOB) | [http://www.gob.org.br/](http://www.gob.org.br/) |
+| Confederação Maçônica do Brasil (COMAB) | [https://comab.org.br/](https://comab.org.br/) |
+| Confederação da Maçonaria Simbólica do Brasil (CMSB) | [http://www.cmsb.org.br/](http://www.cmsb.org.br/) |
 
 ---
 

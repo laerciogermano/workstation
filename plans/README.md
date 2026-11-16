@@ -13,7 +13,7 @@ Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ## Visão
 
-O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board (quadro/todo), no **Gantt** (calendário), no **Flow** (ordem, sem datas), na Árvore de execução e no Explorar. Planos são modelados como **linguagem visual de fluxo (FOP)** exportável para código.
+O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board (quadro/todo), no **Gantt** (calendário), no **Flow** (ordem, sem datas), no **Fluxograma** (canvas tipo n8n), na Árvore de execução e no Explorar. Planos são modelados como **linguagem visual de fluxo (FOP)** exportável para código.
 
 Sistemas também são fluxos de execução: o próprio Plans serve para **codificar sistemas**, não só listas de tarefas. O **agente** de cada atividade é quem (ou o quê) executa — pessoa, modelo de IA (GPT, Claude, etc.) ou biblioteca/máquina — sem misturar o roteiro com o ator.
 
@@ -41,7 +41,7 @@ Orquestrações misturam humano, IA e máquina em silos distintos: não há um l
 
 ## Objetivo
 
-Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt** (calendário), **Flow** (ordem, sem datas), **Árvore de execução** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
+Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt** (calendário), **Flow** (ordem, sem datas), **Fluxograma** (canvas tipo n8n), **Árvore de execução** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
 
 ## Proposta de valor
 

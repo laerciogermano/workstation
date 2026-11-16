@@ -534,6 +534,40 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .ctx hr { border: 0; border-top: 1px solid var(--line); margin: 4px 6px; }
 .ctx .danger { color: var(--fail); }
 
+
+/* Fluxograma (estilo n8n) */
+.diagram { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.diagram .dtoolbar { display:flex; align-items:center; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); flex:none; }
+.diagram .dcanvas { flex:1; overflow:auto; position:relative; min-height:0;
+  background-color: var(--panel);
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 35%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.diagram .dworld { position:relative; }
+.diagram .dworld > svg { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
+.diagram .dworld > svg path.wire { fill:none; stroke:var(--line-2); stroke-width:2; }
+.diagram .dworld > svg path.wire.on { stroke:var(--ok); }
+.diagram .dworld > svg path.wire.run { stroke:var(--run); }
+.diagram .dworld > svg path.wire.fail { stroke:var(--fail); }
+.diagram .dworld > svg path.wire.par { stroke-dasharray:5 4; stroke:var(--run); }
+.dnode { position:absolute; width:220px; min-height:72px; background:var(--paper); border:1px solid var(--line-2); border-radius:10px; box-shadow:0 2px 8px rgba(20,24,30,.08); display:grid; grid-template-columns:44px 1fr; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
+.dnode:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line-2)); box-shadow:0 6px 18px rgba(20,24,30,.12); }
+.dnode.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 8px 22px rgba(20,24,30,.14); }
+.dnode .ico-box { display:grid; place-items:center; border-radius:9px 0 0 9px; color:#fff; background:var(--c, var(--idle)); }
+.dnode .ico-box svg { width:22px; height:22px; stroke-width:2.2; }
+.dnode .body { padding:10px 12px 10px 10px; display:flex; flex-direction:column; gap:4px; min-width:0; justify-content:center; }
+.dnode .body b { font-size:13px; font-weight:600; line-height:1.25; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.dnode .body .sub { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.dnode .port { position:absolute; width:10px; height:10px; border-radius:50%; background:var(--paper); border:2px solid var(--line-2); top:50%; transform:translateY(-50%); z-index:2; }
+.dnode .port.in { left:-6px; }
+.dnode .port.out { right:-6px; }
+.dnode.sel .port, .dnode:hover .port { border-color:var(--accent); }
+.dnode.exec .port.out { border-color:var(--run); background:color-mix(in srgb, var(--run) 25%, var(--paper)); }
+.dnode.ok .port.out { border-color:var(--ok); background:color-mix(in srgb, var(--ok) 25%, var(--paper)); }
+.dnode.fail .port.out { border-color:var(--fail); background:color-mix(in srgb, var(--fail) 25%, var(--paper)); }
+.dsticky { position:absolute; width:180px; min-height:70px; background:color-mix(in srgb, var(--warn) 18%, var(--paper)); border:1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius:4px; padding:10px 12px; font-size:12px; color:var(--body); box-shadow:1px 2px 0 rgba(20,24,30,.06); pointer-events:none; }
+.dsticky b { display:block; font-weight:700; color:var(--ink); margin-bottom:4px; font-size:13px; }
+
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
 .tree-c { position: relative; }
@@ -592,8 +626,8 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
   <div class="wrap">
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
-      <h1>Uma atividade, cinco jeitos de ver</h1>
-      <p>Explorar, Board, Gantt (calendário), Flow (ordem, sem datas) e Árvore de execução sobre a mesma unidade, com responsáveis do tipo pessoa, IA ou máquina. As telas estão agrupadas pelos fluxos das histórias (US-01 a US-33). Clique numa tela para navegar.</p>
+      <h1>Uma atividade, vários jeitos de ver</h1>
+      <p>Explorar, Board, Gantt (calendário), Flow (ordem), Fluxograma (canvas tipo n8n) e Árvore sobre a mesma unidade, com responsáveis do tipo pessoa, IA ou máquina. As telas estão agrupadas pelos fluxos das histórias (US-01 a US-33). Clique numa tela para navegar.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -741,8 +775,8 @@ function agChip(id, short) {
   return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}"><span class="ico">${inner}</span>${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
-const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", tree: "Atividade", explorar: "Arquivo" };
-const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["tree", "network", "Árvore"]];
+const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", explorar: "Arquivo" };
+const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"]];
 
 // ================= janela =================
 const DEF = { v: "board", plan: "onb", fm: "ordem", catTab: "pessoa" };
@@ -762,7 +796,7 @@ function win(s) {
       ${explorer(s)}
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
-        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "tree" ? tree(s) : catalog(s)}
+        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : catalog(s)}
           ${s.drawer ? drawer(s) : ""}${s.cfg && s.v === "board" ? cfgPanel(s) : ""}${s.tnode && s.v === "tree" ? procPanel(s) : ""}
         </div>
       </section>
@@ -831,6 +865,10 @@ function bar(s) {
     acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
       <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>
       <button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
+  }
+  if (s.v === "diagram") {
+    acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+      <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>`;
   }
   if (s.v === "tree") acts = `<button class="btn pri" data-act="tnew-root">${icon("plus")}Atividade</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div>
@@ -922,6 +960,7 @@ function drawer(s) {
         <button class="btn" data-act="open-in" data-v="board" data-id="${u.id}">${icon("kanban")}Board</button>
         <button class="btn" data-act="open-in" data-v="gantt" data-id="${u.id}">${icon("chart-gantt")}Gantt</button>
         <button class="btn" data-act="open-in" data-v="flow" data-id="${u.id}">${icon("workflow")}Flow</button>
+        <button class="btn" data-act="open-in" data-v="diagram" data-id="${u.id}">${icon("waypoints")}Fluxograma</button>
         <button class="btn" data-act="open-in" data-v="tree" data-id="${u.id}">${icon("network")}Árvore</button>
         <button class="btn" data-act="reveal" data-id="${u.id}">${icon("folder-tree")}Explorar</button></div></div>
     </div>
@@ -1163,6 +1202,81 @@ function machPanel(s) {
     </div></div>`;
 }
 
+
+// ----- Fluxograma (canvas tipo n8n) -----
+function diagram(s) {
+  const rows = ganttRows(s.plan);
+  const { layout } = flowLayout(s.plan);
+  const leaves = rows.filter(({ u }) => !kidsPlan(u.id).some(k => !k.arch && !isFolder(k)));
+  const NW = 220, NH = 78, GX = 88, GY = 28, PX = 56, PY = 48;
+  // agrupa por passo
+  const byStep = {};
+  leaves.forEach(({ u }) => {
+    const L = layout[u.id] || { s: 0, e: 0 };
+    (byStep[L.s] ||= []).push(u);
+  });
+  const steps = Object.keys(byStep).map(Number).sort((a, b) => a - b);
+  const pos = {};
+  let maxY = 0;
+  steps.forEach((step, si) => {
+    const list = byStep[step];
+    const colH = list.length * NH + (list.length - 1) * GY;
+    list.forEach((u, i) => {
+      const x = PX + si * (NW + GX);
+      const y = PY + i * (NH + GY);
+      pos[u.id] = { x, y, w: NW, h: NH };
+      maxY = Math.max(maxY, y + NH);
+    });
+  });
+  const maxX = steps.length ? PX + (steps.length - 1) * (NW + GX) + NW + PX : 400;
+  const H = Math.max(maxY + PY, 420), W = Math.max(maxX, 720);
+  const center = id => {
+    const p = pos[id];
+    return p ? { x: p.x + p.w / 2, y: p.y + p.h / 2, l: p.x, r: p.x + p.w, t: p.y, b: p.y + p.h } : null;
+  };
+  const wire = (a, b, cls) => {
+    const A = center(a), B = center(b); if (!A || !B) return "";
+    const x1 = A.r, y1 = A.y, x2 = B.l, y2 = B.y;
+    const dx = Math.max(40, (x2 - x1) * 0.45);
+    return `<path class="wire ${cls || ""}" d="M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}"/>`;
+  };
+  let wires = "";
+  DEPS.forEach(([a, b]) => {
+    if (!pos[a] || !pos[b]) return;
+    const ub = $u(b);
+    const cls = ub?.st === "fail" ? "fail" : ub?.st === "exec" ? "run" : ub?.st === "ok" ? "on" : "";
+    wires += wire(a, b, cls);
+  });
+  PARS.forEach(([a, b]) => {
+    if (!pos[a] || !pos[b]) return;
+    // marca visual leve entre paralelos (mesmo passo)
+    const A = center(a), B = center(b);
+    if (!A || !B) return;
+    const x = Math.min(A.l, B.l) - 18;
+    wires += `<path class="wire par" d="M${x} ${A.y} V${B.y}"/>`;
+  });
+  const nodes = leaves.map(({ u }) => {
+    const p = pos[u.id]; if (!p) return "";
+    const a = agent(u.agent);
+    const c = a ? `var(--t-${a.type})` : "var(--idle)";
+    const ic = a ? TYPES[a.type].ic : "circle-dashed";
+    const sub = a ? `${TYPES[a.type].one} · ${esc(a.name)}` : "sem responsável";
+    const st = u.st ? ` ${u.st === "ok" ? "ok" : u.st === "exec" ? "exec" : u.st === "fail" ? "fail" : ""}` : "";
+    return `<div class="dnode${s.sel === u.id ? " sel" : ""}${st}" data-act="drawer" data-id="${u.id}" style="left:${p.x}px;top:${p.y}px;--c:${c}">
+      <div class="ico-box">${icon(ic)}</div>
+      <div class="body"><b>${esc(u.title)}</b><span class="sub">${sub}${u.st ? stBadge(u.st) : ""}</span></div>
+      <span class="port in" aria-hidden="true"></span><span class="port out" aria-hidden="true"></span>
+    </div>`;
+  }).join("");
+  const sticky = `<div class="dsticky" style="left:16px;top:16px"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Fluxograma · canvas tipo n8n. Portas à esquerda (entrada) e à direita (saída). Paralelos na mesma coluna.</div>`;
+  return `<div class="diagram">${runbarHtml(s)}
+    <div class="dtoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon("waypoints")} Fluxograma</span>
+      <div class="legend"><span>nó = etapa</span><span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div></div>
+    <div class="dcanvas"><div class="dworld" style="width:${W}px;height:${H}px">
+      <svg width="${W}" height="${H}">${wires}</svg>${sticky}${nodes}
+    </div></div></div>`;
+}
+
 // ----- Árvore de execução -----
 function tree(s) {
   const NW = 236, NH = 52, GX = 52, GY = 14, PX = 24, PY = 22;
@@ -1207,7 +1321,7 @@ function procPanel(s) {
     <div class="side-h"><span class="k">${icon("code-xml")}Procedimento da máquina</span><span class="sp"></span><button class="ib" data-act="close-proc">${icon("x")}</button></div>
     <div class="side-b"><b style="font-size:18px;font-weight:600">${esc(u.title)}</b>${agChip(u.agent)}
       <div class="editor" style="border:1px solid var(--line);border-radius:8px;min-height:260px;flex:none"><div class="ln">${Array.from({ length: Math.max((u.code || "").split("\n").length, 10) }, (_, i) => i + 1).join("\n")}</div><textarea spellcheck="false" data-code="${u.id}" rows="${Math.max((u.code || "").split("\n").length, 10)}">${esc(u.code || "")}</textarea></div>
-      <p style="font-size:12px;color:var(--muted)">Na Árvore dá para editar o código. Entradas, saídas, console e execução ficam no editor completo do Gantt.</p>
+      <p style="font-size:12px;color:var(--muted)">Na Árvore dá para editar o código. Entradas, saídas, console e execução ficam no editor completo do Flow.</p>
       <button class="btn" data-act="mach" data-id="${u.id}" style="align-self:flex-start">${icon("workflow")}Abrir no editor do Flow</button></div></aside>`;
 }
 
@@ -1234,7 +1348,7 @@ function ctxMenu(s) {
   return `<div class="ctx" style="left:${s.ctx.x}px;top:${s.ctx.y}px" role="menu">
     ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
-    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-tree", "network", "Abrir na Árvore") + "<hr>" : ""}
+    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-diagram", "waypoints", "Abrir no Fluxograma") + it("open-in-tree", "network", "Abrir na Árvore") + "<hr>" : ""}
     ${it("ask-rm", "trash-2", "Remover", "⌫", "danger")}</div>`;
 }
 function confirmDlg(s) {
@@ -1243,7 +1357,7 @@ function confirmDlg(s) {
   const name = us.length === 1 ? `“${esc(us[0].title)}”` : `${us.length} itens`;
   return `<div class="scrim" data-act="scrim"><div class="modal confirm" role="alertdialog" aria-label="Remover">
     <div class="modal-h"><h3>Remover ${name}?</h3></div>
-    <div class="b">${n ? `<p>Também saem <b>${n} item${n > 1 ? "s" : ""} filho${n > 1 ? "s" : ""}</b>. A remoção vale para todas as visões: Board, Gantt, Flow, Árvore e Explorar.</p>` : `<p>A unidade sai de todas as visões: Board, Gantt, Flow, Árvore e Explorar.</p>`}<p style="font-size:12px;color:var(--muted)">Para guardar sem apagar, use Arquivar no detalhe.</p></div>
+    <div class="b">${n ? `<p>Também saem <b>${n} item${n > 1 ? "s" : ""} filho${n > 1 ? "s" : ""}</b>. A remoção vale para todas as visões: Board, Gantt, Flow, Fluxograma, Árvore e Explorar.</p>` : `<p>A unidade sai de todas as visões: Board, Gantt, Flow, Fluxograma, Árvore e Explorar.</p>`}<p style="font-size:12px;color:var(--muted)">Para guardar sem apagar, use Arquivar no detalhe.</p></div>
     <div class="f"><button class="btn" data-act="confirm-no">Cancelar</button><button class="btn pri" data-act="confirm-yes" style="background:var(--fail);border-color:var(--fail);color:#fff">${icon("trash-2")}Remover</button></div></div></div>`;
 }
 const slug = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -1350,10 +1464,13 @@ const FLOWS = [
   { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
     desc: "Mesmo desenho de barras do Gantt, sem calendário nem dias: eixo por ordem (passo). Filhos com a mesma largura; sequencial e paralelo. Modo Estado (FOP) liga saídas a entradas e exporta código. Máquina se programa aqui.",
     steps: [["T-32", "Flow · ordem"], ["T-33", "Programar máquina"], ["T-34", "Estado (FOP)"], ["T-35", "Exportar código"]] },
-  { id: "arvore", n: "06", title: "Árvore de execução", us: "US-15 · US-16",
+  { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
+    desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. A mesma unidade do plano, sem calendário.",
+    steps: [["T-36", "Fluxograma"]] },
+  { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
     desc: "A floresta de atividades fora do eixo do tempo: várias raízes, responsáveis em cada nó, criar filha, desaninhar e excluir subárvore. Nó de máquina abre o procedimento ali mesmo.",
     steps: [["T-40", "Árvore"], ["T-41", "Nova atividade filha"], ["T-42", "Procedimento da máquina"]] },
-  { id: "config", n: "07", title: "Configurações", us: "US-03",
+  { id: "config", n: "08", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
     steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
 };
@@ -1363,11 +1480,11 @@ const SCREENS = {
   "T-02": { s: { v: "board", sel: "f2", newn: { parent: "f2", kind: "file" } }, name: "Novo arquivo", us: ["US-20", "US-24"], notes: "Novo arquivo ou nova pasta entram como filho do item selecionado (ou na raiz). O título é digitado na própria linha, como em uma IDE: Enter cria, Esc cancela. O arquivo novo já aparece como card no Board, na raia e coluna iniciais." },
   "T-03": { s: { v: "board", sel: "u12", ctx: { id: "u12", x: 170, y: 290 } }, name: "Menu de contexto", us: ["US-21", "US-23", "US-26", "US-27", "US-30", "US-32"], notes: "Botão direito em qualquer nó: novo, renomear (F2), duplicar (novos UUIDs), recortar, copiar, colar, copiar caminho, abrir em outra visão e remover. Os atalhos valem com a árvore em foco. Arrastar e soltar muda o pai; movimento que criaria ciclo é bloqueado." },
   "T-04": { s: { v: "board", q: "propo" }, name: "Buscar na árvore", us: ["US-28", "US-29"], notes: "Filtra pelo título enquanto digita e abre automaticamente o caminho até cada resultado, com o trecho encontrado marcado. “Recolher tudo” fecha todas as pastas." },
-  "T-05": { s: { v: "board", sel: "u9", confirm: ["u9"] }, name: "Remover com filhos", us: ["US-21", "US-01"], notes: "Remover um nó com filhos pede confirmação e diz quantos saem junto. A exclusão é global: some de Board, Gantt, Flow, Árvore e Explorar. Para guardar, a saída é arquivar." },
+  "T-05": { s: { v: "board", sel: "u9", confirm: ["u9"] }, name: "Remover com filhos", us: ["US-21", "US-01"], notes: "Remover um nó com filhos pede confirmação e diz quantos saem junto. A exclusão é global: some de Board, Gantt, Flow, Fluxograma, Árvore e Explorar. Para guardar, a saída é arquivar." },
   "T-10": { s: { v: "board" }, name: "Board", us: ["US-05", "US-06", "US-07"], notes: "Cinco colunas × três raias, sem limite de WIP. Arraste cards entre células. Card filho mostra o pai; mover o pai leva a subárvore. Em “Execução IA”, card com responsável IA roda (pendente → em execução → concluída). Falhou e cancelada mostram “Tentar de novo”." },
   "T-11": { s: { v: "board", newCard: { col: "c1", lane: "l2" } }, name: "Novo card", us: ["US-05"], notes: "Criar card no próprio board, direto na célula: título obrigatório e contexto opcional (orçamento, preferências, restrições). O card vira arquivo no Explorar, dentro da pasta da raia." },
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
-  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Árvore ou Explorar. Arquivar e excluir no rodapé." },
+  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore ou Explorar. Arquivar e excluir no rodapé." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
   "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Seletor de plano no topo. Barras por início e fim (dia de hoje marcado), duração derivada, setas de fim → início e marca de paralelo. O pai mostra o roll-up dos filhos (menor início, maior fim) e fica vermelho se algum filho falhou. Tarefas sem data ficam na faixa de baixo." },
   "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
@@ -1459,6 +1576,7 @@ function tFor(s) {
   if (s.v === "board") return s.cfg ? "T-12" : s.newCard ? "T-11" : "T-10";
   if (s.v === "gantt") return U.some(u => u.st === "exec" && u.plan === s.plan && agent(u.agent)?.type === "ia") ? "T-31" : "T-30";
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; if (s.fm === "fop") return "T-34"; return "T-32"; }
+  if (s.v === "diagram") return "T-36";
   if (s.v === "tree") return s.tnode ? "T-42" : s.tnew ? "T-41" : s.rev ? "T-01" : "T-40";
   return "T-10";
 }
@@ -1474,9 +1592,9 @@ function fit() {
   holder.dataset.scale = s;
 }
 function paint(keepScroll = true) {
-  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
+  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .dcanvas, .tree, .cat, .side-b").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
-  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .dcanvas, .tree, .cat, .side-b").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
   const t = tFor(cur); curT = t; const s = SCREENS[t];
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
@@ -1540,7 +1658,7 @@ function cloneTree(id, parent) {
   const c = { ...JSON.parse(JSON.stringify(src)), id: "n" + (++seq), uuid: uuidFor(seq), parent, title, st: src.st ? "pendente" : undefined };
   U.push(c); kidsPlan(id).forEach(k => cloneTree(k.id, c.id)); return c;
 }
-function revealIn(id, v) { const u = $u(id); let p = u?.parent; while (p) { OPEN.add(p); p = $u(p).parent; } view(v, { sel: id, flash: id }); if ((v === "gantt" || v === "flow") && u && u.plan) cur.plan = u.plan; }
+function revealIn(id, v) { const u = $u(id); let p = u?.parent; while (p) { OPEN.add(p); p = $u(p).parent; } view(v, { sel: id, flash: id }); if ((v === "gantt" || v === "flow" || v === "diagram") && u && u.plan) cur.plan = u.plan; }
 function winPoint(e) { const r = holder.querySelector(".win").getBoundingClientRect(), s = +holder.dataset.scale || 1; return { x: Math.min((e.clientX - r.left) / s, 1440 - 246), y: Math.min((e.clientY - r.top) / s, 900 - 440) }; }
 
 // ----- ações (cliques) -----
@@ -1563,6 +1681,7 @@ const ACT = {
   "open-in-board": t => revealIn(t.dataset.id, "board"),
   "open-in-gantt": t => revealIn(t.dataset.id, "gantt"),
   "open-in-flow": t => revealIn(t.dataset.id, "flow"),
+  "open-in-diagram": t => revealIn(t.dataset.id, "diagram"),
   "open-in-tree": t => revealIn(t.dataset.id, "tree"),
   "open-in": t => revealIn(t.dataset.id, t.dataset.v),
   reveal: t => { const id = t.dataset.id; if (cur.v === "tree") cur.rev = true; let p = $u(id).parent; while (p) { OPEN.add(p); p = $u(p).parent; } unset("drawer", "picker"); cur.sel = id; cur.flash = id; setTimeout(() => { const n = holder.querySelector(`.node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30); },
@@ -1644,7 +1763,7 @@ holder.addEventListener("click", e => {
     const now = Date.now(), dbl = lastNode.id === id && now - lastNode.t < 420; lastNode = { id, t: now };
     if (dbl && !isFolder(u)) { if (cur.v === "catalog") view("board"); cur.from = "explorar"; cur.drawer = u.id; cur.sel = u.id; paint(); return; }
     if (isFolder(u)) { OPEN.has(id) && cur.sel === id ? OPEN.delete(id) : OPEN.add(id); cur.sel = id; paint(); return; }
-    cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("board", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow") && u.plan) cur.plan = u.plan;
+    cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("board", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow" || cur.v === "diagram") && u.plan) cur.plan = u.plan;
     paint(); return;
   }
   if (cardEl) { const id = cardEl.dataset.card; unset("cfg", "newCard", "from"); cur.drawer = id; cur.sel = id; paint(); return; }

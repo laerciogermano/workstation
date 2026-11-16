@@ -22,12 +22,18 @@ Disponibilizar um front-end em que se cadastram listas (base de e-mails), criam-
 | CU-04 | Enviar e-mails da campanha | Operador de marketing | Dispara o envio da campanha para a lista configurada. |
 | CU-05 | Acompanhar progresso do envio | Operador de marketing | Vê o progresso do envio de e-mails da campanha. |
 
+## Produção
+
+**URL:** https://marketing.conectmax.email  
+Deploy Contabo: [`deploy/README.md`](deploy/README.md)
+
 ## Implementação
 
 | Pasta | O quê |
 |---|---|
 | [`api/`](api/) | Express 5 + TypeScript strict + PostgreSQL — HTTP (`src/server.ts`) e worker de envio (`src/worker.ts`) |
 | [`web/`](web/) | React 19 + Vite — telas de campanhas e listas (marca Connect) |
+| [`deploy/`](deploy/README.md) | Contabo: rsync, systemd, nginx, SMTP Mailcow |
 | [`docs/arquitetura.md`](docs/arquitetura.md) | Containers, módulos, fluxo de envio, dados, segurança |
 | [`docs/adr/`](docs/adr/) | Decisões (monólito modular; fila no Postgres) |
 | [`AGENTS.md`](AGENTS.md) | Comandos e regras para quem mexer no código |

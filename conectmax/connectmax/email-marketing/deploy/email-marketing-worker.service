@@ -1,0 +1,16 @@
+[Unit]
+Description=Connect email-marketing worker (SMTP)
+After=network.target docker.service email-marketing-api.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/email-marketing/api
+EnvironmentFile=/srv/email-marketing/.env
+ExecStart=/usr/bin/node dist/worker.js
+Restart=on-failure
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

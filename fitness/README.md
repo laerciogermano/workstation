@@ -102,7 +102,8 @@ O Fitness trata saúde e performance como um **sistema integrado**: o que você 
 | **Vitrine / gamificação** | “Strava de academia”: feed opt-in de atividades, streaks, conquistas, desafios e resultados |
 | **Personagens** | Buscar personagens; ver valores e resultados públicos compartilhados |
 | **Academias próximas** | Descobrir academias por GPS/busca; vincular personagem; ver atividade local |
-| **Acompanhamento diário** | Visão do dia: meta calórica, treino, refeições, progresso e atalhos para vitrine/academias |
+| **Acompanhamento diário** | Visão do dia: meta calórica, treino, refeições, progresso e atalhos para gamificação/vitrine/academias |
+| **Gamificação Strava** | Domínio da academia (90 dias), coroa do exercício, ranking semanal, desafios e títulos — só com treino publicado |
 
 ### Fora de escopo (v1)
 

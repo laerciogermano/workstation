@@ -13,7 +13,7 @@ App (front + back): [`../app/README.md`](../app/README.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
-| PRD | [`prd.md`](prd.md) | Requisitos, regras de negócio e jornadas | v1.1 |
+| PRD | [`prd.md`](prd.md) | Requisitos, regras de negócio e jornadas | v1.2 |
 | Funcionalidades | `functionalities.md` | Capacidades de cada seção e página em bullets | A produzir |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |

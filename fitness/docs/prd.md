@@ -4,9 +4,9 @@
 |---|---|
 | Produto | **Fitness** — hub de treino, dieta e métricas com base metabólica |
 | Código / pasta | `works/fitness` |
-| Versão do documento | 1.1 (2026-11-08) |
+| Versão do documento | 1.2 (2026-11-16) |
 | Release alvo | **PRD + visão alinhada** (esteira de docs / protótipo depois) |
-| Fontes | [Visão](../README.md) · [Índice docs](README.md) · Prompts [`001`](../prompts/001-2026-09-04-criar-projeto.md), [`002`](../prompts/002-2026-09-07-marcar-dieta-cumprimento.md), [`003`](../prompts/003-2026-11-08-prd-funcionalidades.md), [`004`](../prompts/004-2026-11-08-vitrine-gamificacao-academias.md) |
+| Fontes | [Visão](../README.md) · [Índice docs](README.md) · Prompts [`001`](../prompts/001-2026-09-04-criar-projeto.md), [`002`](../prompts/002-2026-09-07-marcar-dieta-cumprimento.md), [`003`](../prompts/003-2026-11-08-prd-funcionalidades.md), [`004`](../prompts/004-2026-11-08-vitrine-gamificacao-academias.md), [`007`](../prompts/007-2026-11-16-gamificacao-strava.md) |
 
 ---
 
@@ -16,7 +16,7 @@ O **Fitness** é o app diário de **treino + dieta + avaliação física**, sem 
 
 Na **primeira abertura**, o onboarding **é o cadastro metabólico e de objetivos** (idade, altura, gênero, peso e demais inputs). Com isso o app calcula **TMB**, **gasto calórico diário** e, conforme o objetivo (hipertrofia → **superávit**; perda de gordura → **déficit**; manutenção → **manutenção**), define **macros**, **projeções** e monta **dieta a partir dos ingredientes disponíveis** e **treino diário**. O usuário marca refeições e exercícios feitos, registra **medidas com fita métrica** e **fotos** numa timeline, e recebe **insights** a partir do acompanhamento.
 
-Há ainda a **vitrine de gamificação** — um “Strava de academia”: feed de atividades/resultados, busca de personagens com valores e conquistas, e descoberta de **academias próximas** para treinar.
+Há ainda a **gamificação estilo Strava** (domínio da academia, coroa do exercício, ranking semanal, desafios e títulos) e a **vitrine** (feed de atividades/resultados, busca de personagens), além da descoberta de **academias próximas**.
 
 Não substitui médico/nutricionista; valores são estimativas de apoio.
 
@@ -37,6 +37,7 @@ Rotina fragmentada (treino num app, dieta em outro, medidas no papel, fotos no �
 | O7 | Avaliação física | Medidas (fita) + fotos em timeline + insights de progresso |
 | O8 | Vitrine “Strava de academia” | Feed de atividades/resultados compartilhados com opt-in |
 | O9 | Descoberta social e local | Buscar personagens (valores/resultados) e academias próximas |
+| O10 | Gamificação Strava de academia | Domínio, coroas, ranking e desafios só com ações reais; sem dados sensíveis no placar |
 
 ### Não-objetivos (v1)
 
@@ -175,6 +176,19 @@ Abrir app → fingerprint (vínculo silencioso)
 | RF-50 | Ver atividade/resultados recentes da academia na vitrine (quando houver personagens públicos vinculados) |
 | RF-51 | Sem marketplace de matrícula/pagamento no v1 — só descoberta e vínculo social |
 
+### 6.11 Gamificação estilo Strava (domínio, coroas, desafios) — *must*
+
+Analogias de academia ao que o Strava faz na rua: Local Legend → domínio da academia; KOM/QOM → coroa do exercício; challenges → desafios semanais/mensais; club leaderboard → ranking da academia.
+
+| ID | Requisito |
+|---|---|
+| RF-52 | **Hub de gamificação**: visão unificada de domínio da academia, coroas, ranking, desafios ativos e atalho para títulos |
+| RF-53 | **Domínio da academia** (Local Legend): personagem com mais check-ins (treinos publicados vinculados) nos últimos 90 dias “domina” o local; mostrar dono atual, histórico curto e gap para disputar |
+| RF-54 | **Ranking da academia** na semana: check-ins, volume e/ou kcal estimada; exibir top + posição da pessoa (tom de apoio, sem humilhação) |
+| RF-55 | **Coroa do exercício** (KOM): melhor marca publicada de um exercício naquela academia (carga×reps ou reps); listar contenders e melhor pessoal |
+| RF-56 | **Catálogo de desafios** semanais/mensais com progresso, participação opt-in e prêmio (título/medalha) |
+| RF-57 | **Títulos e medalhas** conquistados (ativos e arquivados quando a coroa/domínio for tomado); exibição no perfil público sujeita a opt-in |
+
 ## 7. Regras de negócio
 
 | ID | Regra |
@@ -202,6 +216,8 @@ Abrir app → fingerprint (vínculo silencioso)
 | RN-20 | Academias próximas exigem permissão de localização ou busca manual por texto; sem permissão, só busca textual |
 | RN-21 | Vínculo a academia não implica matrícula, pagamento nem endosso comercial no v1 |
 | RN-22 | Gamificação da vitrine só conta ações reais já definidas (treino, dieta, métrica) |
+| RN-23 | Domínio, ranking e coroas exigem personagem público + treino **publicado** com academia vinculada; só leitura sem personagem |
+| RN-24 | Placares de gamificação **não** usam peso corporal, medidas detalhadas, fotos nem TMB |
 
 ## 8. Modelo conceitual
 
@@ -225,6 +241,9 @@ Abrir app → fingerprint (vínculo silencioso)
 | **Vitrine** | Feed estilo Strava de academia com atividades/resultados opt-in |
 | **Resultado / valor** | Métrica compartilhada no perfil ou card (PR, streak, volume, etc.) |
 | **Academia** | Local de treino descobribile por proximidade/busca; vínculo social opcional |
+| **Domínio** | Título de quem mais fez check-in publicado na academia em 90 dias (Local Legend) |
+| **Coroa** | Melhor marca publicada de um exercício naquela academia (KOM) |
+| **Título / medalha** | Prêmio de domínio, coroa ou desafio; pode ser arquivado se outro tomar |
 
 ## 9. Jornadas principais
 
@@ -238,6 +257,7 @@ Abrir app → fingerprint (vínculo silencioso)
 8. **Vitrine:** criar personagem → optar por compartilhar → ver feed / publicar treino concluído.
 9. **Buscar personagens:** busca → perfil com valores/resultados públicos.
 10. **Academias próximas:** permitir localização (ou buscar bairro) → lista → vincular / ver atividade local.
+11. **Gamificação:** abrir hub → ver domínio da academia / coroa do exercício / ranking da semana → entrar em desafio → título no perfil (opt-in).
 
 ## 10. Requisitos não funcionais (diretrizes)
 
@@ -275,14 +295,14 @@ Abrir app → fingerprint (vínculo silencioso)
 | Overclaim de insights | Tom factual; sem diagnóstico |
 | Vazamento de dados de saúde na vitrine | Default privado; toggles granulares; RN-18 |
 | Catálogo de academias incompleto | Busca manual + cadastro comunitário leve *should*; parceiros depois |
-| Comparação social tóxica | Tom de apoio; sem ranking humilhante no MVP |
+| Comparação social tóxica | Tom de apoio; ranking mostra top + sua posição; sem placar de peso/medidas (RN-24) |
 
 ## 13. Roadmap alto nível
 
 | Fase | Entrega |
 |---|---|
-| **MVP** | Fingerprint · onboarding · TMB/gasto/estratégia/macros · projeções · estoque→dieta · checks · treino+movimento · medidas/fotos/insights · personagem · vitrine · busca de personagens · academias próximas |
-| **v1.1** | Kudos · desafios avançados · mais modalidades · export/backup · wearables leves · enriquecimento do catálogo de academias |
+| **MVP** | Fingerprint · onboarding · TMB/gasto/estratégia/macros · projeções · estoque→dieta · checks · treino+movimento · medidas/fotos/insights · personagem · vitrine · busca · academias · gamificação (domínio, coroas, ranking, desafios) |
+| **v1.1** | Mais modalidades de desafio · heat map de frequência · clubs entre academias · export/backup · wearables leves · enriquecimento do catálogo |
 | **v2** | Conta opcional / sync multi-dispositivo · macros avançados · comparação avançada de fotos · DM/moderação madura se fizer sentido |
 
 ## 14. Glossário
@@ -292,6 +312,7 @@ Abrir app → fingerprint (vínculo silencioso)
 | **Fingerprint** | ID do dispositivo que vincula os dados privados sem conta |
 | **Personagem** | Perfil público opcional (apelido) para vitrine e busca |
 | **Vitrine** | Feed estilo Strava de academia (atividades e resultados) |
+| **Domínio / Coroa** | Local Legend e KOM adaptados à academia |
 | **TMB** | Taxa metabólica basal |
 | **Gasto diário / TDEE** | Estimativa de calorias gastas no dia |
 | **Déficit / Superávit** | Comer abaixo / acima do gasto |

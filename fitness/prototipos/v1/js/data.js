@@ -229,16 +229,56 @@ const CHALLENGES = [
   { id: 'c3', nome: 'Medida a cada 14 dias', of: 1, ico: 'ruler', base: 'medida' },
 ];
 
+/* Gamificação estilo Strava → academia (domínio, coroa, ranking, desafios) */
+const LEGENDS = [
+  { gym: 'forja', nick: 'marcos.supino', visits: 41, days: 90, held: 18 },
+  { gym: 'box41', nick: 'ana.calistenia', visits: 37, days: 90, held: 52 },
+  { gym: 'studio', nick: 'bruno.medindo', visits: 22, days: 90, held: 9 },
+  { gym: 'arena', nick: 'dani.agacha', visits: 48, days: 90, held: 31 },
+  { gym: 'ponte', nick: 'lu.recomp', visits: 19, days: 90, held: 4 },
+];
+const CROWNS = [
+  { id: 'supino-forja', ex: 'Supino', gym: 'forja', nick: 'marcos.supino', val: '100 kg × 5', since: 'há 6 dias', contenders: 14 },
+  { id: 'agacha-forja', ex: 'Agachamento', gym: 'forja', nick: 'dani.agacha', val: '90 kg × 5', since: 'há 2 dias', contenders: 22 },
+  { id: 'barra-box41', ex: 'Barra fixa', gym: 'box41', nick: 'ana.calistenia', val: '12 reps', since: 'há 1 dia', contenders: 9 },
+  { id: 'terra-arena', ex: 'Levantamento terra', gym: 'arena', nick: 'dani.agacha', val: '110 kg × 3', since: 'há 4 dias', contenders: 11 },
+  { id: 'remada-forja', ex: 'Remada curvada', gym: 'forja', nick: 'joao.ovoearroz', val: '70 kg × 8', since: 'há 9 dias', contenders: 8 },
+];
+const RANK_WEEK = [
+  { nick: 'dani.agacha', visits: 5, vol: 28400, kcal: 2180 },
+  { nick: 'marcos.supino', visits: 4, vol: 19600, kcal: 1640 },
+  { nick: 'joao.ovoearroz', visits: 4, vol: 15200, kcal: 1480 },
+  { nick: 'carla.no.ferro', visits: 3, vol: 12400, kcal: 1120, you: true },
+  { nick: 'tiago.bulking', visits: 2, vol: 8100, kcal: 740 },
+];
+const CHAL_CAT = [
+  { id: 'nov-volume', nome: 'Novembro de volume', tipo: 'mensal', desc: 'Some 50 t de volume em treinos publicados na sua academia.', of: 50, unit: 't', prog: 28.4, ico: 'dumbbell', prize: 'Título Volume de novembro' },
+  { id: 'streak-21', nome: '21 dias em movimento', tipo: 'mensal', desc: 'Ação real (treino, dieta ou medida) por 21 dias seguidos.', of: 21, unit: 'dias', prog: 13, ico: 'flame', prize: 'Medalha Constância' },
+  { id: 'dono-semana', nome: 'Dono da semana', tipo: 'semanal', desc: 'Mais check-ins na sua academia nesta semana.', of: 5, unit: 'treinos', prog: 3, ico: 'crown', prize: 'Coroa semanal da academia' },
+  { id: 'proteina-7', nome: 'Proteína 7/7', tipo: 'semanal', desc: 'Feche a proteína na meta sete dias.', of: 7, unit: 'dias', prog: 5, ico: 'egg', prize: 'Medalha Proteína' },
+  { id: 'pr-mes', nome: 'Um PR no mês', tipo: 'mensal', desc: 'Bata um recorde pessoal em qualquer exercício e publique.', of: 1, unit: 'PR', prog: 0, ico: 'trophy', prize: 'Medalha PR' },
+];
+const TITLES = [
+  { id: 't1', nome: 'Dona da Forja · 18 dias', ico: 'crown', when: 'out/2026', gym: 'forja' },
+  { id: 't2', nome: 'Proteína 7/7 × 3', ico: 'egg', when: 'set/2026' },
+  { id: 't3', nome: '100 treinos', ico: 'trophy', when: 'ago/2026' },
+  { id: 't4', nome: 'Coroa · Agachamento (Forja)', ico: 'crown', when: 'jul/2026', gym: 'forja', lost: true },
+];
+const legendOf = (gym) => LEGENDS.find((l) => l.gym === gym);
+const crownOf = (id) => CROWNS.find((c) => c.id === id);
+const chalOf = (id) => CHAL_CAT.find((c) => c.id === id);
+
 /* ---------- fluxos e telas (metadados de rastreio no screens.js) ---------- */
-/* Ordem de prioridade do produto: onboarding → medições → progresso → treino → dieta → restante.
-   Antes (até 2026-11-16): E02 hoje/progresso, E03 dieta, E04 treino, E05 avaliação. */
+/* Ordem: onboarding → medições → progresso → treino → dieta → gamificação → vitrine → academias → perfil.
+   Antes (até 2026-11-16): progresso/dieta/treino antes da avaliação; sem épico dedicado de gamificação Strava. */
 const FLOWS = [
   { id: 'e01', n: 'E01', title: 'Primeiro uso', desc: 'Sem conta: o fingerprint vincula os dados em silêncio. O onboarding é o cadastro metabólico: dados, rotina e objetivo viram TMB, gasto, estratégia, macros e projeção.', steps: ['F-01', 'F-02', 'F-03', 'F-04', 'F-05', 'F-06'] },
   { id: 'e02', n: 'E02', title: 'Avaliação física', desc: 'Fita métrica, peso e fotos datadas numa timeline. Compare dois pontos lado a lado. Medições vêm antes do dashboard: sem corpo medido, o progresso não tem base.', steps: ['F-40', 'F-41', 'F-42', 'F-43'] },
   { id: 'e03', n: 'E03', title: 'Hoje e progresso', desc: 'A home do dia fecha o balanço: meta, consumido, treino e atalhos. O dashboard mostra a projeção com premissas e os insights só usam o que foi registrado.', steps: ['F-10', 'F-11', 'F-12'] },
   { id: 'e04', n: 'E04', title: 'Treino do dia', desc: 'Musculação e calistenia no mesmo modelo. Cada exercício tem detalhe, visualização do movimento e estimativa de calorias que entra no balanço.', steps: ['F-30', 'F-31', 'F-32'] },
   { id: 'e05', n: 'E05', title: 'Dieta pelo estoque', desc: 'Informe o que tem em casa; o plano usa só isso e respeita a meta. Marque cada refeição e veja se cumpriu, ficou abaixo ou estourou.', steps: ['F-20', 'F-21', 'F-22', 'F-23', 'F-24'] },
-  { id: 'e06', n: 'E06', title: 'Vitrine e personagens', desc: '“Strava de academia” com opt-in: personagem público sem conta, feed de resultados reais, busca e perfil com só o que a pessoa escolheu mostrar.', steps: ['F-50', 'F-51', 'F-52', 'F-53', 'F-54'] },
-  { id: 'e07', n: 'E07', title: 'Academias próximas', desc: 'GPS com permissão ou busca por bairro. Vincule seu personagem a uma academia e veja a atividade local.', steps: ['F-55', 'F-56'] },
-  { id: 'e08', n: 'E08', title: 'Perfil e estados', desc: 'Recálculo ao mudar peso ou objetivo, limites seguros, sem rede e troca de aparelho.', steps: ['F-60', 'F-61', 'F-62'] },
+  { id: 'e06', n: 'E06', title: 'Gamificação Strava', desc: 'Domínio da academia (Local Legend), coroa do exercício (KOM), ranking semanal por check-in/volume, desafios mensais e títulos — tudo a partir de treino real, sem peso nem medidas privadas.', steps: ['F-70', 'F-71', 'F-72', 'F-73', 'F-74', 'F-75'] },
+  { id: 'e07', n: 'E07', title: 'Vitrine e personagens', desc: 'Feed de resultados reais com opt-in: personagem público sem conta, busca e perfil com só o que a pessoa escolheu mostrar.', steps: ['F-50', 'F-51', 'F-52', 'F-53', 'F-54'] },
+  { id: 'e08', n: 'E08', title: 'Academias próximas', desc: 'GPS com permissão ou busca por bairro. Vincule seu personagem a uma academia e veja a atividade local.', steps: ['F-55', 'F-56'] },
+  { id: 'e09', n: 'E09', title: 'Perfil e estados', desc: 'Recálculo ao mudar peso ou objetivo, limites seguros, sem rede e troca de aparelho.', steps: ['F-60', 'F-61', 'F-62'] },
 ];

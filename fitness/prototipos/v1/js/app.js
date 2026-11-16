@@ -14,8 +14,8 @@ const S0 = () => ({
   char: { nick: 'carla.no.ferro', cor: 0, gym: 'forja' }, optIn: true, hideOld: false,
   share: { objetivo: true, streak: true, treinos: true, prs: true, dieta: true, evolucao: false, peso: false, medidas: false, fotos: false },
   nickIn: '', corIn: 1, gymIn: null, posts: [], kudos: [], queue: 0,
-  vtab: 'todos', q: '', qobj: 'todos', qgym: false, gq: '',
-  sel: { meal: 'almoco', ex: 'agachamento', nick: 'ana.calistenia', gym: 'forja' },
+  vtab: 'todos', q: '', qobj: 'todos', qgym: false, gq: '', rtab: 'visits', ctab: 'todos',
+  sel: { meal: 'almoco', ex: 'agachamento', nick: 'ana.calistenia', gym: 'forja', crown: 'agacha-forja', chal: 'nov-volume' },
   sheet: null, toast: null,
 });
 let S = S0();
@@ -23,7 +23,7 @@ let S = S0();
 const ORDER = FLOWS.flatMap((f) => f.steps);
 const flowOf = (id) => FLOWS.find((f) => f.steps.includes(id));
 const GATED = ORDER.filter((id) => /^F-(1|2|3|4)\d$|^F-60$/.test(id));
-const NEEDS_NET = ['F-51', 'F-52', 'F-53', 'F-55', 'F-56'];
+const NEEDS_NET = ['F-51', 'F-52', 'F-53', 'F-55', 'F-56', 'F-70', 'F-71', 'F-72', 'F-73', 'F-74', 'F-75'];
 let SHEET_ANIM = false, TOAST_ANIM = false;
 
 /* ---------- render ---------- */
@@ -148,6 +148,9 @@ const ACTS = {
   hideold: () => { S.hideOld = !S.hideOld; if (S.hideOld) { S._hidden = S.posts; S.posts = []; } else if (S._hidden) { S.posts = S._hidden; } paint(); },
   kudo: (a) => { S.kudos = S.kudos.includes(a) ? S.kudos.filter((x) => x !== a) : [...S.kudos, a]; paint(); },
   vtab: (a) => { S.vtab = a; paint(); },
+  rtab: (a) => { S.rtab = a; paint(); },
+  ctab: (a) => { S.ctab = a; paint(); },
+  joinchal: (a) => { const c = chalOf(a); flash(c ? `Participando · ${c.nome}` : 'Desafio'); paint(); },
   qobj: (a) => { S.qobj = a; paint(); },
   qgym: () => { S.qgym = !S.qgym; paint(); },
   gq: (a) => { S.gq = S.gq === a ? '' : a; paint(); },
@@ -239,8 +242,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ---------- galeria + rastreabilidade ---------- */
-const ALL_RF = Array.from({ length: 51 }, (_, i) => 'RF-' + String(i + 1).padStart(2, '0'));
-const ALL_RN = ['RN-01', 'RN-01b', ...Array.from({ length: 21 }, (_, i) => 'RN-' + String(i + 2).padStart(2, '0'))];
+const ALL_RF = Array.from({ length: 57 }, (_, i) => 'RF-' + String(i + 1).padStart(2, '0'));
+const ALL_RN = ['RN-01', 'RN-01b', ...Array.from({ length: 23 }, (_, i) => 'RN-' + String(i + 2).padStart(2, '0'))];
 function buildGallery() {
   const gal = $('#gallery'), nv = $('#flownav');
   FLOWS.forEach((f) => {

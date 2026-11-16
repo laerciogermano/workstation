@@ -170,7 +170,8 @@ const SCREENS = {
       ${t.s.ex.length ? `<article class="tcard" ${go('F-30')}>${figure(EXS[t.s.ex[0]].anim, { cls: 'sm', animate: false })}<div><p class="tag">${t.s.mod}</p><h3>${t.s.nome.split(' · ')[0]}</h3><p class="tnum">${t.done.length}/${t.s.ex.length} exercícios · ${S.sessDone ? 'concluído' : `≈ ${n0(t.allK)} kcal`}</p><div class="bar sm"><i style="width:${(t.done.length / t.s.ex.length) * 100}%"></i></div></div>${ico('next')}</article>` : `<article class="tcard rest">${ico('clock')}<div><h3>Descanso ativo</h3><p>Caminhada leve conta no gasto.</p></div></article>`}
       <div class="shortcuts">
         <button ${go('F-40')}>${ico('ruler')}<span>Medida</span></button><button ${go('F-41')}>${ico('camera')}<span>Foto</span></button>
-        <button ${go('F-51')}>${ico('trophy')}<span>Vitrine</span></button><button ${go('F-55')}>${ico('pin')}<span>Academias</span></button>
+        <button ${go('F-70')}>${ico('crown')}<span>Gamificação</span></button><button ${go('F-51')}>${ico('trophy')}<span>Vitrine</span></button>
+        <button ${go('F-55')}>${ico('pin')}<span>Academias</span></button>
       </div>
     </div>${tabbar('F-10')}`;
   } },
@@ -382,7 +383,153 @@ const SCREENS = {
     </div>`;
   } },
 
-/* =================== E06 vitrine =================== */
+/* =================== E06 gamificação Strava =================== */
+'F-70': { name: 'Hub de gamificação', rf: ['RF-52', 'RF-40', 'RF-57'], rn: ['RN-22', 'RN-23', 'RN-24'],
+  notes: 'Entrada do épico: domínio da academia, coroas de exercício, ranking semanal e desafios. Só ações reais contam; peso e medidas privadas não entram (RN-24).',
+  render() {
+    const gym = S.char && S.char.gym ? gymOf(S.char.gym) : GYMS[0];
+    const leg = legendOf(gym.id);
+    const myCrowns = CROWNS.filter((c) => c.gym === gym.id).slice(0, 3);
+    const you = RANK_WEEK.find((r) => r.you);
+    return `<div class="body tb">${brandbar(`<button class="ib" ${go('F-51')} aria-label="Vitrine">${ico('trophy')}</button>`)}
+      <h1 class="h-lg tight">Gamificação</h1>
+      <p class="lede-sm">Strava de academia: domínio, coroas e desafios a partir do que você treinou de verdade.</p>
+      <button class="legend-card" ${go('F-71', { gym: gym.id })}>
+        <span class="lg-ico">${ico('crown')}</span>
+        <div><p class="tag">Domínio · 90 dias</p><h3>${gym.nome}</h3>
+          <p>${leg ? `@${leg.nick} · ${leg.visits} check-ins` : 'Ainda sem dono'} · você ${you ? you.visits + ' esta semana' : '—'}</p></div>${ico('next')}
+      </button>
+      <div class="shortcuts four">
+        <button ${go('F-72', { gym: gym.id })}>${ico('rank')}<span>Ranking</span></button>
+        <button ${go('F-73')}>${ico('medal')}<span>Coroas</span></button>
+        <button ${go('F-74')}>${ico('bolt')}<span>Desafios</span></button>
+        <button ${go('F-75')}>${ico('spark')}<span>Títulos</span></button>
+      </div>
+      <div class="sec-h"><h2>Coroas em ${gym.nome.split(' ')[0]}</h2><button ${go('F-73')}>Ver todas</button></div>
+      <ul class="pl crown-list">${myCrowns.map((c) => {
+        const ch = charOf(c.nick); const mine = S.char && c.nick === S.char.nick;
+        return `<li ${go('F-73', { crown: c.id })}>${avatar(c.nick, ch ? ch.cor : 0)}<div><b>${c.ex}${mine ? ' <i class="you-t">sua</i>' : ''}</b><span>${c.val} · ${c.contenders} disputando</span></div><span class="crown-badge">${ico('crown')}</span></li>`;
+      }).join('')}</ul>
+      <div class="sec-h"><h2>Desafios ativos</h2><button ${go('F-74')}>Catálogo</button></div>
+      <div class="chal">${CHAL_CAT.filter((c) => c.prog < c.of).slice(0, 3).map((c) => {
+        const p = Math.min(100, (c.prog / c.of) * 100);
+        return `<article ${go('F-74', { chal: c.id })}>${ico(c.ico)}<b>${c.nome}</b><div class="bar sm"><i style="width:${p}%"></i></div><span class="tnum">${c.prog}/${c.of} ${c.unit}</span></article>`;
+      }).join('')}</div>
+      ${note('Sem personagem público você vê o hub, mas domínio e ranking só com opt-in e academia vinculada.', 'info')}
+    </div>${tabbar('F-51')}`;
+  } },
+'F-71': { name: 'Domínio da academia', rf: ['RF-53', 'RF-49'], rn: ['RN-21', 'RN-23', 'RN-24'],
+  notes: 'Analog Local Legend do Strava: quem mais fez check-in (treino publicado na academia) nos últimos 90 dias “domina” o local. Não é matrícula nem endosso (RN-21).',
+  render() {
+    const g = gymOf(S.sel.gym) || GYMS[0];
+    const leg = legendOf(g.id);
+    const holder = leg ? charOf(leg.nick) : null;
+    const youVisits = S.char && S.char.gym === g.id ? 28 : 0;
+    const gap = leg ? Math.max(0, leg.visits - youVisits + 1) : 1;
+    const mine = S.char && leg && leg.nick === S.char.nick;
+    return `<div class="body">${topbar('Domínio', { sub: g.nome + ' · últimos 90 dias' })}
+      <section class="legend-hero${mine ? ' mine' : ''}">
+        <span class="lg-ico xl">${ico('crown')}</span>
+        ${holder ? avatar(leg.nick, holder.cor, 'xl') : `<span class="av xl empty-av">?</span>`}
+        <h2>${mine ? 'Você domina aqui' : holder ? `@${leg.nick}` : 'Ainda sem dono'}</h2>
+        <p>${leg ? `${leg.visits} check-ins · coroa há ${leg.held} dias` : 'Publique treinos vinculados a esta academia para disputar.'}</p>
+      </section>
+      <div class="kpis three">${stat(leg ? leg.visits : 0, 'check-ins')}${stat(leg ? leg.held : 0, 'dias com coroa')}${stat(youVisits, 'seus check-ins')}</div>
+      ${!mine && S.char && S.char.gym === g.id ? note(`Faltam cerca de ${gap} check-ins para tomar o domínio — só contam treinos publicados.`, 'crown') : ''}
+      ${!S.char ? `<button class="btn s" ${go('F-50')}>Criar personagem para disputar</button>` : S.char.gym !== g.id ? `<button class="btn s" ${act('gymlink', g.id)}>${ico('pin')}Treino aqui para entrar na disputa</button>` : ''}
+      <div class="sec-h"><h2>Como funciona</h2></div>
+      <ul class="bullets"><li>Check-in = treino <b>concluído e publicado</b> com esta academia vinculada</li><li>Janela móvel de 90 dias (como Local Legend no Strava)</li><li>Peso, medidas e fotos nunca entram no placar</li></ul>
+      <div class="row2"><button class="btn s" ${go('F-72', { gym: g.id })}>${ico('rank')}Ranking da semana</button><button class="btn s" ${go('F-56', { gym: g.id })}>Ver academia</button></div>
+    </div>`;
+  } },
+'F-72': { name: 'Ranking da academia', rf: ['RF-54'], rn: ['RN-23', 'RN-24'],
+  notes: 'Placar semanal da academia: check-ins, volume e kcal estimada da sessão. Mostra top + sua posição; tom de apoio, sem humilhar quem está atrás.',
+  render() {
+    const g = gymOf(S.sel.gym) || GYMS[0];
+    const metric = S.rtab || 'visits';
+    const label = { visits: 'check-ins', vol: 'volume (kg)', kcal: 'kcal' }[metric];
+    const sorted = [...RANK_WEEK].sort((a, b) => (metric === 'visits' ? b.visits - a.visits : metric === 'vol' ? b.vol - a.vol : b.kcal - a.kcal));
+    return `<div class="body">${topbar('Ranking', { sub: g.nome + ' · esta semana' })}
+      ${seg([['visits', 'Check-ins'], ['vol', 'Volume'], ['kcal', 'kcal']], metric, 'rtab')}
+      <ol class="lb">${sorted.map((r, i) => {
+        const c = charOf(r.nick) || (r.you && S.char ? { nick: S.char.nick, cor: S.char.cor } : { nick: r.nick, cor: 0 });
+        const v = metric === 'visits' ? r.visits : metric === 'vol' ? n0(r.vol) : n0(r.kcal);
+        return `<li class="${r.you ? 'you' : ''}${i === 0 ? ' top' : ''}" ${r.you ? '' : go('F-53', { nick: r.nick })}>
+          <span class="pos tnum">${i + 1}</span>${avatar(c.nick, c.cor)}
+          <div><b>${r.you ? 'Você' : '@' + r.nick}${i === 0 ? ' ' + ico('crown') : ''}</b><span>${r.visits} treinos · ${n0(r.vol)} kg</span></div>
+          <b class="tnum metric">${v}</b></li>`;
+      }).join('')}</ol>
+      ${note(`Critério: ${label}. Só personagens públicos com treino publicado nesta academia.`, 'info')}
+      <button class="btn s" ${go('F-71', { gym: g.id })}>${ico('crown')}Ver domínio (90 dias)</button>
+    </div>`;
+  } },
+'F-73': { name: 'Coroa do exercício', rf: ['RF-55'], rn: ['RN-23', 'RN-24'],
+  notes: 'Analog KOM/QOM do Strava: melhor marca publicada do exercício naquela academia (carga×reps ou reps). Contenders = quem treinou o mesmo movimento ali recentemente.',
+  render() {
+    const c0 = crownOf(S.sel.crown) || CROWNS[0];
+    const list = CROWNS.filter((c) => !S.sel.crown || c.gym === c0.gym);
+    const focus = crownOf(S.sel.crown) || list[0];
+    const holder = charOf(focus.nick);
+    const mine = S.char && focus.nick === S.char.nick;
+    const yourBest = focus.ex === 'Agachamento' ? '50 kg × 8' : focus.ex === 'Supino' ? '40 kg × 8' : '—';
+    return `<div class="body">${topbar('Coroas', { sub: gymOf(focus.gym).nome })}
+      <section class="legend-hero sm${mine ? ' mine' : ''}">
+        <span class="lg-ico">${ico('crown')}</span>
+        ${avatar(focus.nick, holder ? holder.cor : 0, 'lg')}
+        <h2>${focus.ex}</h2>
+        <p class="tnum big">${focus.val}</p>
+        <p>${mine ? 'Sua coroa' : '@' + focus.nick} · ${focus.since} · ${focus.contenders} na disputa</p>
+      </section>
+      ${S.char ? `<div class="card"><ul class="mstat"><li><span>Seu melhor aqui</span><b class="tnum">${yourBest}</b></li><li><span>Para tomar a coroa</span><b>publique um PR acima de ${focus.val}</b></li></ul></div>` : note('Crie personagem e vincule a academia para disputar coroas.', 'user')}
+      <div class="sec-h"><h2>Outras coroas</h2></div>
+      <ul class="pl crown-list">${list.map((c) => {
+        const ch = charOf(c.nick);
+        return `<li class="${c.id === focus.id ? 'on' : ''}" ${go('F-73', { crown: c.id })}>${avatar(c.nick, ch ? ch.cor : 0)}<div><b>${c.ex}</b><span>${c.val} · @${c.nick}</span></div><span class="crown-badge">${ico('crown')}</span></li>`;
+      }).join('')}</ul>
+    </div>`;
+  } },
+'F-74': { name: 'Desafios', rf: ['RF-56', 'RF-40'], rn: ['RN-22', 'RN-23'],
+  notes: 'Catálogo estilo desafios Strava: semanais e mensais. Progresso só com ação real; prêmio vira título/medalha no perfil se a vitrine estiver ligada.',
+  render() {
+    const filter = S.ctab || 'todos';
+    const list = CHAL_CAT.filter((c) => filter === 'todos' || c.tipo === filter);
+    const focus = chalOf(S.sel.chal);
+    return `<div class="body">${topbar('Desafios', { sub: 'Semanais e mensais · opt-in' })}
+      ${seg([['todos', 'Todos'], ['semanal', 'Semana'], ['mensal', 'Mês']], filter, 'ctab')}
+      ${focus ? `<section class="card chal-focus"><div class="ch-h">${ico(focus.ico)}<h2 class="h-sm">${focus.nome}</h2>${chip(focus.tipo, 'meta')}</div>
+        <p>${focus.desc}</p>
+        <div class="bar"><i style="width:${Math.min(100, (focus.prog / focus.of) * 100)}%"></i></div>
+        <p class="tnum">${focus.prog} / ${focus.of} ${focus.unit}</p>
+        <p class="hint">Prêmio: ${focus.prize}</p>
+        <button class="btn p sm" ${act('joinchal', focus.id)}>${focus.prog > 0 ? 'Continuar' : 'Participar'}</button>
+      </section>` : ''}
+      <div class="chal-grid">${list.map((c) => {
+        const done = c.prog >= c.of; const p = Math.min(100, (c.prog / c.of) * 100);
+        return `<article class="chal-card${done ? ' ok' : ''}" ${go('F-74', { chal: c.id })}>
+          ${ico(c.ico)}<b>${c.nome}</b><span class="tag">${c.tipo}</span>
+          <div class="bar sm"><i style="width:${p}%"></i></div>
+          <span class="tnum">${done ? 'Concluído' : `${c.prog}/${c.of} ${c.unit}`}</span>
+        </article>`;
+      }).join('')}</div>
+      ${note('Participar não publica sozinho: só o que você já marca como público na vitrine.', 'lock')}
+    </div>`;
+  } },
+'F-75': { name: 'Títulos e medalhas', rf: ['RF-57'], rn: ['RN-17', 'RN-24'],
+  notes: 'Histórico de títulos (domínio, coroas, desafios). Títulos perdidos ficam no arquivo. Exibir no perfil público exige opt-in (RN-17).',
+  render() {
+    const active = TITLES.filter((t) => !t.lost);
+    const lost = TITLES.filter((t) => t.lost);
+    return `<div class="body">${topbar('Títulos', { sub: S.char ? '@' + S.char.nick : 'Sem personagem' })}
+      <div class="kpis three">${stat(active.length, 'ativos')}${stat(lost.length, 'arquivados')}${stat(TITLES.length, 'no total')}</div>
+      <div class="sec-h"><h2>No peito</h2></div>
+      <ul class="title-list">${active.map((t) => `<li><span class="lg-ico">${ico(t.ico)}</span><div><b>${t.nome}</b><span>${t.when}${t.gym ? ' · ' + gymOf(t.gym).nome : ''}</span></div></li>`).join('')}</ul>
+      ${lost.length ? `<div class="sec-h"><h2>Arquivo</h2></div><ul class="title-list dim">${lost.map((t) => `<li><span class="lg-ico">${ico(t.ico)}</span><div><b>${t.nome}</b><span>Perdida ${t.when} · alguém tomou a coroa</span></div></li>`).join('')}</ul>` : ''}
+      <div class="pubrow"><div><b>Mostrar títulos no perfil</b><span>Aparece no personagem público</span></div>${toggle(S.share.prs, 'share', 'Títulos', 'prs')}</div>
+      <button class="btn s" ${go('F-70')}>Voltar ao hub</button>
+    </div>`;
+  } },
+
+/* =================== E07 vitrine =================== */
 'F-50': { name: 'Criar personagem público', rf: ['RF-42', 'RF-46', 'RF-38', 'RF-49'], rn: ['RN-01b', 'RN-17', 'RN-18'],
   notes: 'Identidade pública opcional: apelido + avatar, sem e-mail nem senha (RN-01b). O que compartilhar começa com o sensível desligado e travado por padrão; publicar exige ligar o opt-in.',
   render() {
@@ -405,7 +552,8 @@ const SCREENS = {
     return `<div class="body tb">${brandbar(`<button class="ib" ${go('F-52')} aria-label="Buscar personagens">${ico('search')}</button>`)}
       <h1 class="h-lg tight">Vitrine</h1>
       ${banner}
-      <div class="chal">${CHALLENGES.map((c) => { const v = Math.min(c.of, challengeProg(c)); return `<article class="${v >= c.of ? 'ok' : ''}">${ico(c.ico)}<b>${c.nome}</b><div class="bar sm"><i style="width:${(v / c.of) * 100}%"></i></div><span class="tnum">${v}/${c.of}</span></article>`; }).join('')}</div>
+      <div class="chal">${CHALLENGES.map((c) => { const v = Math.min(c.of, challengeProg(c)); return `<article class="${v >= c.of ? 'ok' : ''}" ${go('F-74')}>${ico(c.ico)}<b>${c.nome}</b><div class="bar sm"><i style="width:${(v / c.of) * 100}%"></i></div><span class="tnum">${v}/${c.of}</span></article>`; }).join('')}</div>
+      <button class="gymline" ${go('F-70')}>${ico('crown')}<span>Domínio, coroas e ranking</span>${ico('next')}</button>
       ${S.char && S.char.gym ? seg([['todos', 'Todos'], ['gym', gymOf(S.char.gym).nome]], S.vtab, 'vtab') : ''}
       <button class="gymline" ${go('F-55')}>${ico('pin')}<span>Academias perto de você</span>${ico('next')}</button>
       <div class="feed">${list.map(fcard).join('')}</div>
@@ -454,7 +602,7 @@ const SCREENS = {
     </div>`;
   } },
 
-/* =================== E07 academias =================== */
+/* =================== E08 academias =================== */
 'F-55': { name: 'Academias próximas', rf: ['RF-47', 'RF-48'], rn: ['RN-20'],
   notes: 'Com GPS: mapa e lista por distância. Sem permissão (cenário “Sem GPS”): só busca por bairro ou cidade (RN-20). Card com distância, bairro, modalidades e personagens públicos.',
   render() {
@@ -479,13 +627,14 @@ const SCREENS = {
       <div class="kpis three">${stat(g.n + (mine ? 1 : 0), 'personagens')}${stat(posts.length, 'atividades hoje')}${stat(g.hora.split('–')[0] === '24 horas' ? '24 h' : g.hora.split('–')[0], 'abre')}</div>
       <div class="chips">${g.mod.map((m) => chip(m, 'meta')).join('')}${chip(ico('clock') + g.hora, 'meta')}</div>
       ${people.length ? `<div class="sec-h"><h2>Quem treina aqui</h2></div><div class="people">${people.map((c) => `<button ${go('F-53', { nick: c.nick })}>${avatar(c.nick, c.cor)}<span>${c.nick}</span></button>`).join('')}${mine ? `<button>${avatar(S.char.nick, S.char.cor)}<span>você</span></button>` : ''}</div>` : ''}
+      <button class="gymline" ${go('F-71', { gym: g.id })}>${ico('crown')}<span>${(() => { const l = legendOf(g.id); return l ? `@${l.nick} domina · ${l.visits} check-ins` : 'Disputar domínio desta academia'; })()}</span>${ico('next')}</button>
       <div class="sec-h"><h2>Atividade recente</h2></div>
       <div class="feed">${posts.map(fcard).join('') || '<p class="hint">Ninguém publicou daqui ainda.</p>'}</div>
       <div class="footcta">${S.char ? `<button class="btn ${mine ? 's' : 'p'}" ${act('gymlink', g.id)}>${mine ? ico('check') + 'Você treina aqui' : ico('pin') + 'Treino aqui'}</button>` : `<button class="btn s" ${go('F-50')}>Criar personagem para vincular</button>`}</div>
     </div>`;
   } },
 
-/* =================== E08 perfil e estados =================== */
+/* =================== E09 perfil e estados =================== */
 'F-60': { name: 'Você · perfil e recálculo', rf: ['RF-10', 'RF-03', 'RF-14'], rn: ['RN-07', 'RN-08', 'RN-15', 'RN-16'],
   notes: 'Editar peso, objetivo ou atividade mostra antes → depois de meta e macros na hora (RN-07). “Aplicar” troca a estratégia e regenera o plano. O ID do fingerprint fica visível.',
   render() {

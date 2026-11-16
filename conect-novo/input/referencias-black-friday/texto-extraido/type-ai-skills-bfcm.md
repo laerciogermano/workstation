@@ -1,0 +1,345 @@
+# Extraído de `type-ai-skills-bfcm.html`
+
+Fonte: arquivo local raw-html/type-ai-skills-bfcm.html
+
+---
+
+Schedule a demo and get $100 in free credits
+
+We’ll set up your first automations with you on a call.
+
+Book a demo
+
+In this article
+
+What AI skills help ecommerce teams prepare for BFCM?
+
+The AI skills that help most before Black Friday Cyber Monday check the things that are expensive to get wrong at peak: tracking, the ad budget, discount setup, shipping cutoff dates and support macros. During the week you need one trusted status at each check time, and afterward a read on whether BFCM customers were worth it.
+
+An AI skill is a packaged set of instructions, scripts and sample data that Claude or Codex follows the same way every time. For BFCM that matters more than usual: the same checks run several times in a few weeks, against new numbers each time, and a mistake costs margin, ad spend or customer trust when there is no time to fix it.
+
+The BFCM Skills collection puts 16 skills in order across three phases. Seven are new: Tracking Preflight, Budget Planner, Offer Config QA, Live Pulse, Shipping Cutoff Checker, Support Macros and Cohort Quality. Nine are existing library skills that fit the same calendar, such as Promo Margin Guard, Inventory Stockout Risk and Daily Revenue Check. The table covers the seven new skills plus Promo Margin Guard, which most BFCM discount decisions start from.
+
+Every skill in this guide is published with its full files in the BFCM Skills collection in the Type.com Skills Library. For how ecommerce teams run this kind of work together, see Type.com's ecommerce page .
+
+Skills at a glance
+
+Skill Best for What you get
+
+BFCM Tracking & Attribution Preflight Growth and analytics leads, by Oct 31, then again before the Nov 20 change freeze A READY / FIX BEFORE BFCM / NOT READY verdict and a fix list dated back from Black Friday
+
+BFCM Holiday Budget Planner Founders and growth leads setting the BFCM budget in October, then the source plan for peak week A daily budget per channel for Nov 1 – Dec 6, projected MER and contribution, and pull-back and scale lines for every day
+
+BFCM Offer & Discount Config QA Ecommerce and merchandising leads, by Nov 10 and again with test checkouts by Nov 17 Findings against the plan, the worst-case price of every SKU, test carts with the totals to expect, and a dated fix list
+
+Promo Margin Guard Founders, finance and growth leads after every promo and before the next sitewide sale A promo P&L by discount code, the codes that lost money, breakeven depth per SKU, and an exclusion list
+
+BFCM Live Pulse Founders and growth leads at each check time from Thanksgiving to the Tuesday after Cyber Monday A Slack-ready status draft with pacing, MER against the day's lines, alerts, and any proposed budget change for approval
+
+Holiday Shipping Cutoff Checker Ops and CX leads, by Nov 10, then mid-December as each shipping service's last safe order date arrives Last safe order dates per service and checkout rate, the BFCM backlog, risky promises, and a dated messaging calendar
+
+Holiday Support Macros CX leads, by Nov 13 for drafts and Nov 20 for macros live in the helpdesk A day-by-day ticket and staffing forecast, policy gaps with decide-by dates, stale macros, and a full set of holiday macros
+
+BFCM Cohort Quality Finance and growth leads in January, and before next year's discount and budget decisions Contribution, repeat rate and payback for BFCM buyers versus October and January buyers, cut by discount, source and product
+
+Which AI skills should ecommerce teams use for BFCM?
+
+These eight skills cover tracking, the budget, discount margin and setup, live pacing, shipping cutoffs, support and the post-season cohort review, in the order you'd run them.
+
+Each skill runs on files you export and ships with a fictional sample store, Fernhill Goods, plus the output it should produce, so you can check it works before you use your own numbers. The examples below come from those sample runs.
+
+1 . BFCM Tracking & Attribution Preflight
+
+BFCM Tracking & Attribution Preflight compares each ad platform's purchase events with Shopify orders, audits UTMs on real orders, and dates every fix so you get two weeks of clean data before Black Friday.
+
+Every budget call during peak week rests on tracking that has to be right before it starts. In the sample, Meta's deduplication had failed for 12 days, so Meta counted 422 purchases for 233 Shopify orders (1.81x). The preflight flags that kind of gap as something to investigate, shows last year's platform-versus-Shopify gap as a reporting difference rather than a correction, and never adds platform ROAS together.
+
+Best for Growth and analytics leads, by Oct 31, then again before the Nov 20 change freeze
+
+Works from 28 days of daily Shopify orders and Meta, Google Ads and TikTok purchase events; optionally orders with UTMs and last year's BFCM week
+
+You get A READY / FIX BEFORE BFCM / NOT READY verdict and a fix list dated back from Black Friday
+
+View BFCM Tracking & Attribution Preflight in the Skills Library
+
+2 . BFCM Holiday Budget Planner
+
+BFCM Holiday Budget Planner plans a daily, per-channel ad budget for Nov 1 – Dec 6 from MER and contribution margin rather than platform ROAS, shaped on last year's BFCM curve with a capped ramp.
+
+It works out the MER you need to break even at your BFCM discount (3.06 at 25% off in the sample) and the MER that keeps your margin floor, then never raises spend more than 30% a day or cuts it more than 50%. Each day gets its own pull-back and scale lines, written to a CSV that Live Pulse reads on the day. It refuses to plan from platform ROAS and stops on spend columns it can't identify instead of dropping them.
+
+Best for Founders and growth leads setting the BFCM budget in October, then the source plan for peak week
+
+Works from Daily Shopify net sales, orders and ad spend by channel for last October to December and the last 90 days, plus your margin, fees, returns and planned discount
+
+You get A daily budget per channel for Nov 1 – Dec 6, projected MER and contribution, and pull-back and scale lines for every day
+
+View BFCM Holiday Budget Planner in the Skills Library
+
+3 . BFCM Offer & Discount Config QA
+
+BFCM Offer & Discount Config QA checks every live Shopify discount against the offer plan, models Shopify's combination rules to find each SKU's worst-case price, and writes test carts that expose each bug before launch.
+
+Discount mistakes surface as margin you can't get back. In the sample, the sitewide 25% sale stacked with WELCOME10, so 11 SKUs could go 32.5% off and two sold below unit cost, and free shipping had lost its $75 minimum. Each finding comes with a test cart: the total to expect, and the total that proves the bug is still there.
+
+Best for Ecommerce and merchandising leads, by Nov 10 and again with test checkouts by Nov 17
+
+Works from Your offer plan, a read-only export of Shopify discounts (or the settings copied by hand), and products with collections, unit cost and inventory
+
+You get Findings against the plan, the worst-case price of every SKU, test carts with the totals to expect, and a dated fix list
+
+View BFCM Offer & Discount Config QA in the Skills Library
+
+4 . Promo Margin Guard
+
+Promo Margin Guard prices a discount or promotion after COGS, shipping, payment fees, refunds and expected returns, names the codes that lost money, and solves the deepest discount each product can carry.
+
+Promo revenue shows up right away, while the returns arrive weeks later. This separates booked margin from expected margin and turns the result into an instruction for the next sale: these SKUs out, these capped, the rest fine at the planned depth. It measures contribution margin only (no ad spend, overheads or incrementality), so pair it with cohort LTV before cutting a welcome code that buys repeat customers.
+
+Best for Founders, finance and growth leads after every promo and before the next sitewide sale
+
+Works from Shopify promotion orders and line items, plus a product cost file with landed cost and return rate per SKU
+
+You get A promo P&L by discount code, the codes that lost money, breakeven depth per SKU, and an exclusion list
+
+View Promo Margin Guard in the Skills Library
+
+5 . BFCM Live Pulse
+
+BFCM Live Pulse turns hourly sales and ad spend into a status update at each check time, pacing the day against the plan, judging blended MER against the planner's lines, and flagging stalled orders, checkout drops, leaked codes and low stock.
+
+Peak week needs one number everyone trusts and a rule for when to move budget. Live Pulse compares sales and spend to the same minute, calls DATA INCOMPLETE when a budgeted channel's spend is missing or stale, and won't propose SCALE while spend reads behind pace, because a lagging spend read makes MER look better than it is. Every SCALE or PULL BACK line is labelled "Proposed (needs approval)", and it never posts or changes a budget itself.
+
+Best for Founders and growth leads at each check time from Thanksgiving to the Tuesday after Cyber Monday
+
+Works from The Budget Planner's daily CSV, hourly Shopify sales for today and last year's matching day, and cumulative ad spend with read times
+
+You get A Slack-ready status draft with pacing, MER against the day's lines, alerts, and any proposed budget change for approval
+
+View BFCM Live Pulse in the Skills Library
+
+6 . Holiday Shipping Cutoff Checker
+
+Holiday Shipping Cutoff Checker works out the last day customers can order on each shipping service and still get it by the holiday, models the BFCM backlog, and checks every delivery promise against those dates.
+
+A wrong order-by date turns into refunds and tickets in the third week of December. In the sample, the site banner said order by Dec 18 when Standard needed orders by Mon Dec 14, and the BFCM backlog meant orders placed Thu Nov 26 – Mon Nov 30 shipped within 3 business days instead of 1. The checker shows where every date came from and writes the copy for each switch: BFCM shipping note, cutoff reminders, expedited only, then e-gift cards.
+
+Best for Ops and CX leads, by Nov 10, then mid-December as each shipping service's last safe order date arrives
+
+Works from Warehouse cutoff time, working days and capacity, carrier transit by zone, orders by zone, and every place you show a delivery promise
+
+You get Last safe order dates per service and checkout rate, the BFCM backlog, risky promises, and a dated messaging calendar
+
+View Holiday Shipping Cutoff Checker in the Skills Library
+
+7 . Holiday Support Macros
+
+Holiday Support Macros forecasts holiday ticket volume and staffing from projected orders, finds ticket types with no written policy, catches stale macros, and drafts holiday macros whose dates and promises come only from your policies or the Cutoff Checker.
+
+Support repeats what the macros say thousands of times, so one wrong date becomes a wave of follow-ups. The macros take their order-by dates and same-day cutoff from the Cutoff Checker when you pass its result, warn when your policies disagree, and never promise same-day shipping during the BFCM backlog. Anything the policies don't cover is reported as a gap with a date to decide it by, never filled in.
+
+Best for CX leads, by Nov 13 for drafts and Nov 20 for macros live in the helpdesk
+
+Works from Last season's tickets exported to CSV, your holiday policies in writing, and optionally the planner's plan JSON and the Cutoff Checker's result
+
+You get A day-by-day ticket and staffing forecast, policy gaps with decide-by dates, stale macros, and a full set of holiday macros
+
+View Holiday Support Macros in the Skills Library
+
+8 . BFCM Cohort Quality
+
+BFCM Cohort Quality compares the customers you first acquired during last year's BFCM week with October and January buyers at the same ages, so you can see whether Black Friday customers were worth what they cost.
+
+A big Black Friday can hide a weak cohort. In the sample, BFCM 2025 customers were worth $31.49 in contribution each at 180 days, against $52.54 for October buyers (40% less). The skill cuts BFCM buyers by first-order discount depth, source and entry product, judges deep discounts on repeat behaviour rather than first-order margin, and recommends the discount depth and new-customer cost to carry into next year's plan.
+
+Best for Finance and growth leads in January, and before next year's discount and budget decisions
+
+Works from A full Shopify order export, the same economics file as the Budget Planner, and optionally daily ad spend by channel
+
+You get Contribution, repeat rate and payback for BFCM buyers versus October and January buyers, cut by discount, source and product
+
+View BFCM Cohort Quality in the Skills Library
+
+When should you run each BFCM skill?
+
+Work back from a change freeze on Nov 20: tracking and the budget by Oct 31, offers, shipping and stock by Nov 10, support drafts by Nov 13, then status checks during the week and a cohort review in January.
+
+BFCM 2026 runs from Thanksgiving on Nov 26 through Cyber Monday on Nov 30, with many brands' sales starting days earlier and ending the Tuesday after. Most teams freeze site, discount and macro changes about a week before, so the useful question is what has to be checked, fixed and checked again before that freeze.
+
+The collection's timeline answers that in order. Tracking comes first because every later decision reads it. The budget comes next because Live Pulse, the Shipping Cutoff Checker and Support Macros all take their numbers from the plan. Offers, shipping promises and macros follow, each with a first pass and a re-check.
+
+All 16 skills on one calendar. The dark chips are the seven new skills; the rest are existing library skills. The BFCM timeline
+
+By Do this Skills
+
+Oct 31 First tracking preflight and bounce check; set the budget plan and daily guardrails from MER, not platform ROAS Tracking Preflight, Bounce Guard, Budget Planner, Promo Margin Guard
+
+Nov 10 First offer QA; shipping cutoffs and backlog; feed and stock checks; tracking fixed so you have two weeks of clean data Offer Config QA, Shipping Cutoff Checker, Product Feed Auditor, Inventory Stockout Risk
+
+Nov 13 Support ticket forecast and macro drafts Support Macros
+
+Nov 17 Support macro review; final offer QA and test checkouts; tracking re-check Support Macros, Offer Config QA, Tracking Preflight
+
+Nov 20 Change freeze; approved macros go live; shipping promises corrected Support Macros, Shipping Cutoff Checker
+
+Nov 26 – Dec 1 Status drafts at each check time; daily revenue check each morning Live Pulse, Daily Revenue Check
+
+Mid-December Switch delivery messaging on each service's last safe order date Shipping Cutoff Checker
+
+January onward Review the BFCM cohort and plan next year Cohort Quality
+
+How do you plan a BFCM ad budget with AI?
+
+Set the BFCM budget from the MER that keeps your margin after COGS, shipping, fees and returns, not from platform ROAS, and give every day its own pull-back and scale lines before the week starts.
+
+Platform ROAS overstates sales at peak: each platform claims credit for the same orders, so adding them up gives a number bigger than Shopify's. MER, Shopify net sales divided by all ad spend, avoids that double counting. The planner starts from your unit economics and works out the MER you need: in the sample, 3.06 to break even at 25% off and 4.83 to keep 12% of net sales after ads on sale days.
+
+It then shapes a daily budget from last year's BFCM curve, adjusted for how demand is running now, and caps the ramp so spend never jumps more than 30% in a day. In the sample, that gives $61,059 over Nov 1 – Dec 6 at a planned MER of 3.90, peaking at $6,672 on Black Friday. When a curve is assumed rather than fitted from your data, the plan says so and shows what happens if spend returns less.
+
+The planner's sample plan. Black Friday gets its own lines (4.00, 4.71 and 5.18), and Live Pulse reads them on the day.
+
+Export daily sales and spend
+
+Last October to December plus the last 90 days: Shopify net sales (gross sales minus discounts, before returns, excluding tax and shipping), orders, new-customer orders and spend per channel. Rename each platform's spend column to meta_spend, google_spend, tiktok_spend or other_spend; the planner stops rather than guess what an unrecognised column is.
+
+Write down your economics once
+
+Gross margin, shipping and fulfillment per order, payment fees, return rate, the planned discount and its dates, and either a margin floor or a target MER. Cohort Quality reuses the same file in January.
+
+Agree the lines before the week starts
+
+Read each day's pull-back and scale MER with whoever approves budget changes. Those are the lines Live Pulse uses at noon and 6 pm, so the discussion happens in October, not on Black Friday afternoon.
+
+How do you check BFCM discounts before launch?
+
+Check every live discount against the offer plan, model how Shopify combines them to find each product's worst-case price, and test the riskiest carts before launch.
+
+BFCM discounts are usually built weeks ahead and scheduled, so problems only show up once customers start using them. Offer Config QA compares each discount with the plan: type, value, targeting, minimums, who can use it, usage limits and dates in store time. It also models Shopify's combination rules to find the worst-case price of every SKU, which is where a stacked welcome code can push items below cost.
+
+In the sample, four problems would have shipped: the sitewide sale reached five SKUs the plan excluded, it stacked with WELCOME10 to 32.5% off, free shipping had lost its $75 minimum, and a summer code was still live. The fix list is dated to Nov 10, with test checkouts again by Nov 17.
+
+Pair it with Promo Margin Guard, which works out the deepest discount each product can carry after COGS, shipping, fees and expected returns. Run it before you fix the sale's depth, then let Offer QA check that the discounts as built match.
+
+Each finding comes with a test cart: what checkout should show, and the total that proves the bug is still there.
+
+How do you set holiday shipping cutoffs and support macros?
+
+Give every shipping service a last safe order date based on where your customers live and how fast the warehouse clears the BFCM backlog, then make the site, emails and support macros say the same thing.
+
+Holiday Shipping Cutoff Checker works out, for each service and checkout rate, the last day an order can be placed and still arrive in time for at least 95% of customers, weighted by where your orders go. In the sample, that is Mon Dec 14 for Standard and Mon Dec 21 for Express, for delivery by Thu Dec 24. It also models the BFCM backlog: orders placed Thu Nov 26 – Mon Nov 30 ship within 3 business days, and the warehouse catches up on Thu Dec 3.
+
+Then it checks every promise against those dates. The sample site banner said order by Dec 18, four days too late for Standard, and a gift guide email promised delivery by Christmas with no order-by date at all. The checker lists each one with corrected copy and a dated calendar for switching from the BFCM shipping note to cutoff reminders, then to expedited only, then to e-gift cards.
+
+Holiday Support Macros uses the same dates. It forecasts tickets day by day from projected orders, flags ticket types your policies don't cover (price adjustments are the usual one), and drafts macros whose dates and promises come only from your written policies or the checker's result. In the sample, the order-by macro lists Standard by Monday, December 14 and Express by Monday, December 21, and qualifies same-day shipping during the Black Friday rush.
+
+Sample macro: Holiday 2026 - Shipping: holiday order-by dates
+
+Hi {{customer_first_name}},
+
+Here are the last days to order for delivery by Thursday, December 24:
+
+- Standard: order by Monday, December 14
+
+- Express: order by Monday, December 21
+
+These dates hold for most addresses (95% of our customers).
+
+Orders placed by 1 pm ET on a business day usually ship the same day, but not during our Black Friday rush: orders placed from Thursday, November 26 to Monday, November 30 ship within 3 business days, and same-day shipping resumes once we're caught up, which we expect by Thursday, December 3.
+
+Choose Standard or Express at checkout. If you've already ordered, reply with your order number and I'll check which one you picked.
+
+Thanks,
+
+{{agent_first_name}}
+
+Use one set of dates for the site, emails, SMS and macros.
+
+Model the backlog: same-day shipping usually stops for a few days after Black Friday.
+
+Pass the checker's result to Support Macros so macros pick up its dates and warn when policies disagree.
+
+Have macros approved and live by Nov 20, and retire the backlog sentence once you've caught up.
+
+How do the BFCM skills hand off to each other?
+
+The planner's files feed Live Pulse, the Shipping Cutoff Checker, Support Macros and Cohort Quality, so one set of numbers carries from October planning to the January review.
+
+Most BFCM spreadsheets disagree with each other by Thanksgiving: the budget assumes one order volume, the warehouse plans for another, and support staffs for a third. The new skills share files instead. The planner's daily CSV gives Live Pulse its plan and lines for each day. The same CSV, with the planner's AOV, gives the Shipping Cutoff Checker orders per day for its backlog model. The planner's JSON gives Support Macros projected orders for its ticket forecast.
+
+Two details matter. Run the Shipping Cutoff Checker with the planner's AOV (88.66 in the sample); without it the checker stops, because the plan has net sales rather than orders. And when you give Support Macros the plan JSON, pass only last season's orders alongside it so the two don't overlap.
+
+One plan, five skills. Each file is checked when it's read, and a missing or unknown field stops the run.
+
+How do you monitor Black Friday sales and ad spend in real time?
+
+At each check time, compare sales and spend to the same minute, judge blended MER against that day's lines, and propose a budget change only when the data is complete and a person approves it.
+
+Live Pulse reads the planner's daily CSV, hourly Shopify sales for today and last year's matching day, and cumulative spend from every ad account. It paces today against the plan using last year's hourly curve and computes MER with sales cut off at the same minute as the earliest spend read, so a late read can't make the day look better than it is.
+
+Budget calls follow strict rules. SCALE needs this check and the previous one above the scale line, with spend on pace; it is blocked when a channel's spend reads behind, because lagging spend makes MER look high. PULL BACK needs MER below the line. A missing, stale or $0 reading for a budgeted channel gives DATA INCOMPLETE instead of a call. Any proposed change is labelled for approval, and alerts for leaked codes, checkout drops, falling AOV or low stock come first, because those can look like an ad problem.
+
+The sample 2 pm Black Friday draft: on pace, MER inside the lines, so HOLD, plus the leaked code that needs fixing now.
+
+Example automation instructions for peak week
+
+At 12:00 and 18:00 ET from Nov 26 to Dec 1, use /bfcm-live-pulse with today's planner CSV row, the latest hourly Shopify export, last year's matching day, and cumulative spend from every ad account with read times.
+
+Post the draft in #bfcm-war-room for review. Never change a budget, discount or store setting. If the call is DATA INCOMPLETE, say which export is missing and stop.
+
+Any SCALE or PULL BACK stays a proposal until the budget owner approves it in the thread.
+
+How do you tell whether BFCM customers were worth it?
+
+In January, compare the customers you first acquired during BFCM with October and January buyers at the same ages, and carry the result into next year's discount depth and budget.
+
+BFCM Cohort Quality finds every customer whose first order fell in last year's BFCM week and tracks repeat rate and contribution at 30, 60, 90, 180 and 365 days, showing only horizons the whole cohort has reached. In the sample, BFCM 2025 customers were worth $31.49 each at 180 days, about 40% less than October or January buyers.
+
+It then cuts BFCM buyers by discount depth, source and first product to show which offers bought customers who came back. Its recommendations feed straight into next year's plan: the discount depth for new and existing customers, the products to prospect with, and the new-customer cost and return rate to give the Budget Planner.
+
+How do you run the BFCM skills together in Type.com?
+
+In Type.com, a team connects its tools once, installs the collection from the Skills Library into a shared Space, and runs each skill in Slack or the Type.com app, on demand or as a scheduled automation.
+
+A BFCM Space gives everyone the same skills, files and history: growth runs the preflight and the plan, ops runs the Shipping Cutoff Checker, CX runs Support Macros, and the whole team sees Live Pulse in the same thread during the week. Each person can work with Claude or Codex on the subscriptions the team already pays for.
+
+Recurring runs, like Live Pulse at noon and 6 pm, can be scheduled as automations. Test each one privately before you enable it, and check the first scheduled run reaches the right channel. When someone improves a skill, for example by tightening a stock alert threshold, everyone running it gets the change.
+
+Before trusting any skill with this year's numbers, run its bundled sample and confirm it matches the expected output, then run it on a period you already know the answer to. If it disagrees with what your team found by hand, the gap is usually a definition worth settling before November.
+
+Start in October with Tracking Preflight and the Budget Planner.
+
+Agree the daily MER lines and who approves budget changes before peak week.
+
+Use one set of shipping dates everywhere, from the checker.
+
+Keep every budget change a proposal until a person approves it.
+
+Review the BFCM cohort in January and feed it into next year's plan.
+
+Book a demo
+
+Frequently asked questions
+
+What is the BFCM Skills collection?
+
+The BFCM Skills collection in the Type.com Skills Library groups 16 skills for getting a Shopify brand through Black Friday and Cyber Monday: seven new BFCM skills and nine existing library skills, including Ecommerce Bounce Guard. They are arranged in three phases: get ready (October to the Nov 20 change freeze), run it (Thanksgiving to the Tuesday after Cyber Monday) and review it (December and January).
+
+When should we start using these skills before BFCM?
+
+Start in October. Tracking Preflight and the Budget Planner come first because everything else depends on clean tracking and an agreed budget: the preflight's fix list is dated so you have two weeks of clean data before Black Friday. Offer QA, the Shipping Cutoff Checker and the support forecast follow by mid-November, so changes are done before a Nov 20 freeze.
+
+Do these skills change our Shopify store or ad accounts?
+
+No. The seven new skills are read-only and run on files you export: they never change a discount, budget, macro or store setting, and Live Pulse never posts to Slack by itself. Budget changes from Live Pulse are labelled "Proposed (needs approval)". The existing library skills in the collection keep their own rules, so read each one's page before you connect an account with write access.
+
+Do the BFCM skills work with Claude and Codex?
+
+Yes. Each skill is a SKILL.md folder with scripts that need Python 3.8 or newer and nothing else to install, so it runs in Type.com and in other agent environments that read SKILL.md, such as Claude Code and Codex. In Type.com, the team can run them with Claude or Codex on the subscriptions it already pays for.
+
+Can Live Pulse run on its own during peak week?
+
+Not on its own. Live Pulse builds a Slack-ready draft from the exports you give it at each check time. In Type.com you can schedule it as an automation and send the draft to a channel, but the hourly sales and spend exports still have to reach it, so test the whole run on a normal day before Thanksgiving and keep a person approving any budget change.
+
+How were these skills tested?
+
+The skills were tested offline on a fictional store, Fernhill Goods, with sample data and expected outputs for each skill, plus runs that pass files from one skill to the next. They were not tested against live Shopify, ad platform, carrier or helpdesk accounts. Run each skill's sample first, then run it on a period you already know the answer to before you trust it with this year's numbers.

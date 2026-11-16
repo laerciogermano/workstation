@@ -42,3 +42,12 @@ Visão `chat` (T-60/T-61): thread + composer ligados ao `sel` do Explorar (`CHAT
 **Antes → depois:** sem aba Chat → `VIEWS` + `chat()` + fluxo `08` na galeria.
 
 **Voltar:** remover entrada `chat` de `VIEWS`/`FLOWS`/`SCREENS` e a função `chat()`.
+
+## Gantt · e0…eN + dock
+
+- `gm: cal|fop` — Calendário vs Estado (FOP); `ganttFopStates()` gera e0…eN; T-37.
+- Menu transversal: `.vdock` absoluto no centro inferior de `.content` (saiu do `.bar`).
+
+**Antes → depois:** Gantt só deps de calendário + seg no topo → estados FOP + dock inferior.
+
+**Voltar:** `gm`/`T-37`/`ganttFopStates` off; recolocar `.seg` no `.bar`.

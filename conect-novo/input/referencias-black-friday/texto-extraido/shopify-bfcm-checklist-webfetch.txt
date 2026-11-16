@@ -1,0 +1,451 @@
+Black Friday Checklist 2025: 25 BFCM Prep Steps - Shopify UK
+
+Skip to Content
+
+Start selling with Shopify today
+
+Start your free trial with Shopify today—then use these resources to guide you through every step of the process.
+
+Start for free How does Shopify work
+
+# Black Friday Checklist 2025: 25 BFCM Prep Steps
+
+Get your online store ready for BFCM 2025 with this comprehensive Black Friday checklist. 25 actionable preparation steps for record-breaking holiday sales.
+
+LD
+
+by Lizzie Davey 29 Jul 2025 • 20 min read
+
+Shopify merchants achieved a record$11.5 billion in sales during Black Friday Cyber Monday (BFCM) 2024. If you want to make the most of BFCM 2025, it’s critical you start planning early.
+
+This Black Friday checklist can help you execute a marketing strategy to reach—and surpass—your holiday sales goals.
+
+Here’s a handy BFCM checklist for this year:
+
+Start selling with Shopify
+
+Enter your email
+
+Start for free
+
+You agree to receive Shopify marketing emails.
+
+Start for free
+
+1. Plan for a longer sales period
+2. Leverage data to identify products to promote during BFCM
+3. Organize your upcoming sales
+4. Assess your site for mobile-friendliness
+5. Test and prepare your store for traffic surges
+6. Create contingency plans
+7. Craft an irresistible BFCM offer
+8. Double down on your top sales channels
+9. Retarget past visitors and customers
+10. Plan and launch your email marketing campaigns early
+11. Update your homepage with seasonal creative
+12. Go international
+13. Benchmark and grow your conversion rate
+14. Increase conversions with buy now, pay later
+15. Leverage chatbots to drive conversions
+16. Assess your checkout experience
+17. Set your holiday shipping strategy
+18. Optimize order and fulfillment workflows
+19. Serve shoppers in person with Shopify POS
+20. Reward loyal customers
+21. Provide prompt and personal customer support
+22. Offer easy and hassle-free returns
+23. Turn seasonal shoppers into year-round customers
+24. Monitor analytics for actionable insights
+25. Reflect on what worked and what didn’t
+
+Build your dream online store today
+
+Join the ranks of the world’s best online stores with Shopify’s powerful tools and features. With the highest-converting checkout, Shopify stores sell more products, lower your costs, and save you time.
+
+## Early Black Friday preparation
+
+Prep for the biggest shopping holiday of the year with these top tips.
+
+### 1. Plan for a longer sales period
+
+BFCM will again be dominated by online shopping. However, there will also be sales and promotions in the months and weeks leading up to the event, and opportunities to drive in-person shopping.
+
+In fact, ecommerce sales starting two weeks prior to and including BFCM weekend grew by 45% in 2024, compared to the equivalent period in 2023. It’s no longer simply a flash sale.
+
+With shoppers starting earlier and considering whether to buy online or in-person, start communicating your offers as early as possible—and extending them beyond BFCM, if financially and operationally feasible. Include these timelines in your Black Friday sales strategy to maximize sales and revenue opportunities.
+
+### 2. Leverage data to identify products for BFCM promotion
+
+Picking and ordering the products you want to promote for BFCM should be done as early as possible, especially if you rely on suppliers to source or manufacture inventory. Suppliers have been operating above capacity since the pandemic and need plenty of lead time to get your products ready and delivered on time.
+
+There are multiple ways to forecast seasonal demand and identify what merchandise to re-up for BFCM, including:
+
+- Shopify Reports. If you run on Shopify, use Shopify reports and analytics to help in decision-making. For example, the sales by product report can filter by the previous year’s BFCM dates so you can see which products typically sell well at that time.
+- ABC analysis. ABC Analysis helps you identify your best- and worst-performing products. A-grade products are your money makers and make up 80% of your revenue; B-grade is in the middle and represents 15% of revenue; and C-grade products may be dead stock and represent products that make up only 5% of revenue. BFCM is an opportunity to drive revenue by featuring A-grade products with modest discounts, as well as deep discounts on dead stock.
+- Inventory management systems. Inventory management software helps track inventory, monitor stock within the supply chain, and streamline operations, among other tasks important during high-demand times like Black Friday. Inventory management tools are available through Shopify, as well as Stocky and ShipHero on the Shopify app store.
+
+### 3. Organize your upcoming sales
+
+BFCM promotions can have a lot of moving pieces, so staying organized is crucial. Take the following steps to stay on top of the details:
+
+- Create a “planned sales map” in Google Sheets or Excel to give a simple outline of all upcoming sales and promotions.
+- Input the products you want to run holiday specials on and schedule sales start dates and prices.
+- Input the date ranges for other promotions, like free or discounted shipping.
+- Schedule your rollout of promotional messaging for each offer.
+
+## Technical and security preparation
+
+Don’t forget about the technical side of things. You want to make it as easy as possible for shoppers to buy from you—here’s how.
+
+### 4. Assess your site for mobile-friendliness
+
+Mobile shopping apps were overwhelmingly the top choice for holiday shoppers in 2024, with 81% planning to use them during BFCM(an increase from 68% in 2023 and 2022). For small businesses, being mobile-first is essential. A few questions to ask yourself to assess how mobile-commerce-ready your site are:
+
+- What’s your online store’s user experience like on mobile?
+- Is it easy and intuitive to make purchases on your site?
+- Is your website mobile responsive?
+
+Shopify Themes are responsive and mobile-friendly. But if you run on another platform, test how your site looks and performs on mobile.
+
+### 5. Test and prepare your store for traffic surges
+
+A slow website will lose customers. Optimizing your website’s performance for Black Friday traffic surges is critical to help avoid slow load times or site crashes. Test and prepare your ecommerce store in the following ways:
+
+- Use analytics tools such as PageSpeed Insights and Pingdom to achieve faster loading speeds.
+- Assess the architecture of your site, making sure it’s not overloaded with unnecessary tools that could slow it down.
+- Keep customers engaged by minimizing pop-ups displaying deals and special offers, so they can browse and convert without disruption.
+- Optimize your product pages for conversion by including clear calls-to-action(CTA), descriptions, and payment methods.
+- Implement an SSL certificate to keep your site encrypted and secure to prevent fraud.
+- Set up DMARC, SPF, and DKIM records to protect your brand’s domain from email spoofing. During big sales periods, scammers often impersonate trusted brands via email. DMARC helps mail providers verify that emails sent from your domain are legit, helping protect both your customers and your brand.
+- Make sure you have DDoS protection in place, especially if you’re expecting a major traffic surge. A distributed denial-of-service (DDoS) attack could overwhelm your servers and bring your store offline at the worst possible time. Most CDN or hosting providers offer protection or mitigations, so double-check what’s included in your plan.
+
+### 6. Create contingency plans
+
+Creating a contingency plan means routinely asking yourself uncomfortable questions and preparing for the worst-case scenario: Are the proper backup systems in place if the site crashes? What happens if the shipping company experiences supply chain delays?
+
+Taking the necessary steps upfront minimizes the possibility of having to troubleshoot later—when every minute counts during BFCM.
+
+## Marketing strategies
+
+Get your campaigns off the ground with these BFCM-specific marketing strategies.
+
+### 7. Craft an irresistible BFCM offer
+
+During BFCM 2024, 67,000 Shopify merchants had their highest-selling day ever, boasting an average cart price of $108.56. A common strategy retailers use during the event is to run a “jaw-dropping” sale on a popular item to attract customers to their store. Once customers visit your online store for the deep discount, there’s a chance they buy other items on their way to the checkout.
+
+Jewelry brand Rani and Co. ran a 30% sale across multiple product lines.
+
+This resulted in its biggest Black Friday yet.
+
+View this post on Instagram
+
+A post shared by Rani & Co. Jewellery (@raniandco)
+
+There are numerous apps available to Shopify merchants that help boost order value and conversions. These apps can promote:
+
+- Discounts, sales, and limited-time offers
+- Product upsells and cross-sells
+- Cart completion and reduced abandonment
+
+Occasionally, a majorly discounted flagship product serves as a loss leader, as customers add higher-priced items to their order carts to make up for the difference. The goal from a business standpoint is to gain revenue in excess of the loss.
+
+You don’t necessarily have to offer a discount, either.
+
+Beauty subscription box Tribe Beauty Box prefers to get creative with its BFCM offers. “I think that Black Friday Cyber Monday for subscription boxes is a very unique opportunity,” says founder Bili Boboe-Balogun. “Rather than discounting the product, what we like to do is create mystery boxes, which we offer as a gift to customers when subscribing.”
+
+### 8. Double down on your top sales channels
+
+If you haven’t yet embraced multichannel selling, it’s time to try it. If you’re already selling on multiple channels, identify which are the most lucrative for your business and double down for BFCM.
+
+Shopify offers sales channels to make it easier to reach buyers on popular social media platforms like Instagram, Facebook, TikTok, Pinterest, and more. By leveraging these channels in Shopify, you can easily sync your products, inventory, and other tasks across channels and centralize everything within your admin console.
+
+### 9. Retarget past visitors and customers
+
+If you haven’t already, set up the Meta pixel to retarget previous site visitors and customers. The Meta pixel lets you remarket to them and track specific actions, such as which product page they viewed. The tool also tracks:
+
+- Page views
+- Purchases
+- Add to cart
+- Other actions
+
+One of the biggest benefits of using the Meta pixel is its ability to re-engage people already familiar with your brand—but who may have forgotten about your store or missed your sale. Meta retargeting can also help increase conversions and drive return on investment(ROI), since these visitors already have brand awareness.
+
+### 10. Plan and launch your email marketing campaigns early
+
+Email is a crucial channel in your Black Friday marketing strategy. Start planning and scheduling emails well ahead of your BFCM promotions. Here are some tips to help you make the most of your email marketing strategy:
+
+- Optimize your site for email capture. Make it easy for visitors to stay informed about your upcoming sales, even if they’re not ready to buy right away, by placing email collection fields and sign-up pop-ups on various pages of your store. Consider offering early access to encourage sign-ups. Make sure the email addresses you collect are high quality and that you have consent to send promotional emails.
+- Personalize your email campaigns. Personalization is an effective retention strategy to boost open rates and engagement. To stand out, leverage Shopify Messaging to customize your subject lines, preview, or body text with the customer’s first name, and include offers and product recommendations based on their purchase history. This can lead to more opens, clicks, and conversions.
+- Send “warm-up” emails with hints and teasers. Whether your BFCM offer is a discount, an exclusive product, free shipping, donations to charity, or a unique-to-you promotion, start teasing it early so subscribers are on the lookout when it drops. Consider exclusive offers to various customer segments, like your VIPs.
+- Thank your customers when your sale ends. Strengthen customer relationships with a follow-up email after BFCM wraps. Be careful not to over-communicate, since purchasers are likely getting order-related emails in the days following BFCM. Schedule your thank-you emails five to seven days post-event.
+- Create abandoned cart emails. During BFCM, online shoppers are more likely to abandon their carts, but it’s more of a “see you later” than a farewell for over a third of them. An automatically triggered email can help capture some of these abandoned conversions.
+
+Meat and seafood subscription service ButcherBox starts its Black Friday promotions early with a giveaway.
+
+“One of the most successful campaigns that we do, which actually starts before Black Friday Cyber Monday, is [a promotion to] start a subscription and get a free turkey,” says founder and CEO Mike Salguero.
+
+View this post on Instagram
+
+A post shared by ButcherBox (@butcher_box)
+
+### 11. Update your homepage with seasonal creative
+
+Your homepage is a key place to showcase seasonal offers. You can incorporate seasonal motifs into the hero image on your site and extend that imagery to multiple sales channels for a memorable, cohesive campaign.
+
+If you lack design expertise, consider using a tool like Canva or hiring a Shopify expert.
+
+If you’re a Shopify merchant, Shopify’s theme editor makes it easier and faster to make changes to your online store. It offers a smoother, more intuitive experience with faster load times.
+
+### 12. Go international
+
+Though it began in the US, Black Friday has grown in popularity internationally. In 2024, top-selling countries on Shopify included the US, the UK, Australia, Canada, and Germany.
+
+Having an online store already allows you to expand beyond your primary market, but Shopify Markets gives you the tools and support to grow globally with confidence.
+
+The platform allows you to create custom buying experiences with currencies, languages, domains, and payment methods that align with the markets you’re targeting. These features help you drive conversions with your international customers and increase visibility on search engine results pages (SERPs).
+
+## Conversion optimization
+
+Optimize sales by making sure your website is set up for success.
+
+### 13. Benchmark and grow your conversion rate
+
+Getting customers to your site is only one piece of the BFCM success puzzle. You also have to convert those visitors into paying customers.
+
+Increasing your conversion rate by just 1% could lead to significant increases in sales. To determine your benchmark, research what the standard ecommerce conversion rate is for a business like yours. Factors to consider include geographic location, gross merchandise value (GMV), and targeted industry verticals (such as apparel and accessories, home and garden, or health and beauty).
+
+Use the ecommerce conversion rate calculator to:
+
+- See how you compare to other brands of the same size and industry
+- Get actionable tips on how to boost your conversion rate
+- Identify gaps in your current strategy and find opportunities for improvement
+
+### 14. Increase conversion with buy now, pay later
+
+Buy now, pay later (BNPL) is an increasingly popular payment option. More than a quarter of US consumers have used BNPL services. Examples include Afterpay, Affirm, and Klarna.
+
+Shop Pay Installments is the native buy now, pay later solution on Shopify. IT offers customers several installment payment options, some interest-free. A premium installment package is also available to select merchants. Shop Pay Installments can decrease cart abandonment by as much as 28% and increase average order value by up to 50%.
+
+### 15. Leverage chatbots to drive conversion
+
+Depending on your business model, you may not have 24/7 customer service. Overcome this hurdle by leveraging chatbots, which can engage and answer questions from customers on your website and social channels like Facebook and Instagram, and within mobile apps.
+
+Chatbots can answer specific queries quickly—just as if the customer were interacting with a customer service representative. That immediacy helps improve customer satisfaction and, in turn, boosts conversion rates.
+
+If you’re using Shopify, there are multiple ways to connect with shoppers via chat. Shopify Inbox gives you an easy way to streamline communications with potential (and returning) customers, wherever they are.
+
+Inbox gives you valuable context about your customers, including what items they’ve added to (or removed) from their carts. You can even add FAQs to your chat window to quickly give shoppers the answers they need to feel confident buying from your store. And post-purchase, customers can check their order status directly in the chat.
+
+### 16. Assess your checkout experience
+
+Make sure to examine your checkout process, especially on mobile. Having to fill in every field can slow the checkout process and hurt conversion rates. Services like Shop Pay, Apple Pay, and Google Pay speed things up by autofilling saved information and reducing the keystrokes or clicks required to make a purchase. Simplifying the checkout process can help boost mobile conversions.
+
+Shop Pay, in particular, is the internet’s highest converting checkout, lifting conversions by up to 50% relative to guest checkout providers.
+
+Shop Pay also speeds up the process by four times. Checkouts going through Shop Pay have an average checkout-to-order rate of 1.72 times that of guest checkouts.
+
+Free Reading List: Conversion Optimization for Beginners
+
+Turn more website visitors into customers by getting a crash course in conversion optimization. Access our free, curated list of high-impact articles below.
+
+Get the free reading list
+
+## Logistics and fulfillment
+
+Make the fulfillment process as slick as it can be.
+
+### 17. Set your holiday shipping strategy
+
+Defining a shipping and delivery strategy is important for every business, but it’s not a one-and-done deal. Revisit your shipping strategy during busy seasons like BFCM to assess your shipping and consider offers that could help boost sales and conversions—like free shipping at purchase tiers.
+
+For example, you might offer reduced shipping on orders over $50, but free shipping over $75. Or, local customers may be able to take advantage of additional free shipping options, like buy online and pick up in store.
+
+Customers expect fast and free shipping—ideally, a combination of the two. In fact, 90% of shoppers say they’ll wait two to three days for delivery.
+
+During BFCM, offering expedited shipping may also help you close the sale. That’s because customers benefit from quick delivery and reduced chance of product damage—and free up storage space in your warehouse. But keep in mind: Expedited shipping can be expensive, so to make it worthwhile for your business you must consider projected sales. Use shipping software to help you meet expectations.
+
+Be sure to share your shipping policy across your FAQ page, email campaigns, and other marketing channels. Communicate shipping transit times at checkout so your customers know when to expect their deliveries, even before completing their purchase. Be transparent about potential delays—whether due to carriers or other fulfillment issues.
+
+### 18. Optimize order and fulfillment workflows
+
+A high volume of sales within a short period can make it more difficult to fulfill and get orders to customers quickly. Here are some ways you can optimize your fulfillment workflows and get your back office in order for BFCM:
+
+- Organize your fulfillment area. Whether using a warehouse or your basement to fulfill orders, you want to make sure your fulfillment area is stocked with adequate supplies and that your most popular products are easily accessible for quicker picking and packing.
+- Get helping hands. You will likely get an influx of orders over the BFCM period, so if you’re a small business, recruit friends or hire additional staff to help fulfill and ship orders.
+- Over-communicate. Communicate clearly and regularly with your fulfillment and local delivery staff to help avoid errors and save time. Consider using the Shopify Timeline feature in your admin to share instructions internally with staff about orders, customers, and fulfillment.
+- Group orders. Plan in advance how you want to prioritize your orders, then group them by commonality for quicker processing.
+
+Some common ways to organize and group orders include:
+
+- Customer priority. Organize orders by customer priority and fulfill orders to your most loyal customers first to show appreciation. Use order tags, available on the Shopify App Store, to identify your most important customers.
+- Shipping requirements. Organize orders by shipping priority, so customers who pay for expedited shipping get their orders first. You can also organize by delivery method, so products fulfilled by local delivery or specific shipping providers can be processed together.
+- Product type. Group your orders by product type to optimize the time it takes to pick and pack. Pro tip: Define product weight and dimensions in your Shopify store admin so that when it’s time for fulfillment, you can pick the most appropriate packaging and shipping options.
+
+Shopify merchants can use the ecommerce automation solution Flow to build customized workflows that streamline tasks across their store and apps.
+
+### 19. Serve shoppers in person with Shopify POS
+
+The ecommerce share of overall retail sales worldwide is projected to be 20.5% in 2025. This leaves a large percentage of sales attributed to brick-and-mortar stores or other in-person shopping experiences. That means the best-prepared businesses must have the capabilities to serve shoppers during the holidays—and all other times of the year—wherever they choose to shop.
+
+Consider holding a pop-up shop to reach your target audience in person, perhaps at a local market or by partnering with another retailer, leveraging Shopify POS to make in-person sales.
+
+## Customer experience and retention
+
+Give customers a thoroughly enjoyable experience so they keep coming back, even after BFCM ends.
+
+### 20. Reward loyal customers
+
+Reward loyal customers with your best deals, such as tiered-spending rewards, extra discounts and coupons, early access to Black Friday sales, perks for friends and family referrals, and bonus points through your customer loyalty program. For example, you can offer existing subscribers to your email list exclusive sales.
+
+By incorporating these tactics into your customer marketing plan, you can email and retarget previous customers and strengthen your relationship with them. This can encourage repeat customers, boost sales, and increase brand awareness through word-of-mouth marketing. Check out loyalty apps for more inspiration.
+
+Loop Earplugs offered an even bigger discount than its 20% to 30% off for returning customers.
+
+“Last year, we gave early access to our community and a higher discount that nobody else could get,” co-founder Dimitri O explains. “And it was so successful that we’re going to do that this year again, the 48 hours before Black Friday.”
+
+### 21. Provide prompt and personal customer support
+
+Black Friday is a potentially hectic time for customer support. Part of providing a fantastic experience is having quick response times—and being courteous and respectful to customers.
+
+Make sure your customer service training includes best practices for communication, conflict resolution, and problem-solving. For example, have a few standard phrases and replies prepared to help your team deliver more consistent, helpful service when responding to customer issues:
+
+- A lost or delayed order
+- Dissatisfaction with a purchase
+- Delivery of damaged products
+
+Remember to train your team to have strong listening skills and empathy, so they can engage and communicate effectively with customers in a genuine way.
+
+“We try to manage expectations as good as we can with our customers by announcing some potential delay[s] in shipment dates,” Dimitri O says. “The one thing that we really do scale is our customer support team. Internally, we are there as well to answer any questions, any tickets that we can.”
+
+### 22. Offer easy and hassle-free returns
+
+No Black Friday checklist is complete without tips for handling returns and exchanges. Returns are a key part of any customer experience, but especially during Black Friday. A recent survey found that 41% of shoppers won’t make an online purchase if there’s no option to return a product for free.
+
+Make sure you have a return policy that is clear, fair, and well-communicated on your store’s website. Consider showcasing your return policy in the following places:
+
+- Shipping and returns policy page
+- FAQ page
+- Products page
+- In your order notification emails
+
+Find the best returns management system that integrates seamlessly with your operations and ecommerce store.
+
+As part of a smart returns strategy, you may wish to temporarily extend your returns and exchanges policy during the holiday season.
+
+### 23. Turn seasonal shoppers into year-round customers
+
+BFCM doesn’t end when the sale wraps—now you have new customers with the potential to become repeat buyers. Take steps to maintain and nurture those relationships.
+
+Keep your customers engaged year-round by staying active on social media and sending post-purchase emails. If these seasonal shoppers didn’t sign up for your email list or follow your social media accounts, retargeting might be your next best option for bringing them back.
+
+## Analytics and post-BFCM
+
+Keep your BFCM campaigns working hard long after the actual event.
+
+### 24. Monitor analytics for actionable insights
+
+There’s a lot you can learn from your Shopify analytics, including how your Black Friday marketing efforts translate into visits and sales. Since marketing is a key part of BFCM, make sure to brush up on how you can track, measure, and improve your marketing campaigns directly in Shopify using built-in analytics tools. The overview dashboard shows key sales, orders, and online store visitor data, and you can dive deeper into specific reports for additional insights.
+
+To take your analytics further, set up and utilize additional user-tracking tools to gather detailed data about user behavior during BFCM. There are heat map apps, activity logs, and other useful metrics available in the Shopify App Store that can help you answer questions like:
+
+- Where are visitors clicking?
+- How do customers read your product pages?
+- What regions of the country generate more sales?
+
+### 25. Reflect on what worked and what didn’t
+
+BFCM and the holiday season are an opportunity to learn from both wins and missteps. The lessons you learn have their own distinct value beyond revenue generated. That’s why it’s important to track everything and reflect on what worked and what didn’t.
+
+As you implement new strategies and tactics this year, make sure to take notes and capture screenshots to document your decisions and outcomes. These records provide a benchmark for next year’s holiday season.
+
+Remember that you might not see the results immediately.
+
+While one-off sales are a bonus during BFCM, the ultimate win is turning those one-off buyers into long-term, loyal customers, and that might not happen right away.
+
+## Here’s to a successful BFCM and holiday season
+
+Preparation, planning, and starting early are the keys to a successful holiday season. This Black Friday checklist covers most of what you need to succeed during this year’s upcoming sale events—with online sales expected to hit record numbers. Use it to put your store in a strong position this holiday season.
+
+If this is your first Black Friday Cyber Monday, treat it as a learning experience. Stay motivated and ambitious, set realistic expectations, and remember to enjoy the ride.
+
+## Read more
+
+- 21 Hot TikTok Trends and How To Find New Ones
+- How to Start a Candle Business (with Examples)
+- 17 Ways to Get More Followers on Instagram (2024)
+- Unified Commerce- What's in Store for the Next Generation of Retail
+- What Is Marketing? A Definition and Basics Guide
+- Reach the Right Shoppers at the Right Time With Shopify's Google Channel
+- Get to know and engage with your audience with customer segmentation
+- 12 Inspiring Social Media Campaign Examples
+- What is Account-Based Marketing (ABM)? Definition and Guide
+- Etsy Dropshipping: The Definitive Guide
+
+## Black Friday checklist FAQ
+
+### How do you structure a Black Friday sale?
+
+There are several ways you can structure a Black Friday sale, including:
+
+- Extend your promotional period.
+- Test your website for speed and user friendliness.
+- Craft a tempting offer.
+- Start your email marketing campaigns early.
+- Optimize order fulfillment, shipping, and delivery.
+- Offer hassle-free returns.
+
+### When should I start my Black Friday sales?
+
+With brands and consumers stretching the holiday shopping season well before Black Friday Cyber Monday, consider starting deals as early as the beginning of November.
+
+### How do you attract customers on Black Friday?
+
+There are several ways to attract customers during Black Friday. You can:
+
+- Promote your offers early and often
+- Think mobile first
+- Retarget site visitors and reward past customers
+- Invest in paid marketing strategies
+- Offer buy online, pick up in store (BOPIS) options
+
+### What are the top 3 selling items on Black Friday?
+
+Clothing, shoes, and accessories are the three bestselling items on Black Friday, according to market research company NielsenIQ (NIQ). Electronics are also top sellers.
+
+LD
+
+by Lizzie Davey Updated on 29 Jul 2025
+
+Share article
+
+## popular posts
+
+Social Media Optimization How To Make Money on Instagram in 2025 (9 Actionable Ideas) 2023-11-08
+
+Starting Up How To Start an Ecommerce Business: Guide for 2025 2023-09-01
+
+Guides What Is Dropshipping and How Does It Work? (2025) 2023-12-05
+
+Find an Idea What Is Print on Demand & How To Start a Business (2025) 2023-11-09
+
+Sell Online How To Create a Website in 9 Steps (2025) 2023-09-20
+
+Starting Up How To Start an Online Store in 2025 (Step-by-Step Guide) 2023-11-23
+
+Find an Idea How To Make and Sell Merch Your Fans Will Love (2025) 2023-12-02
+
+Sell Online 10 Best Ecommerce Website Builders for Your Online Store (2025) 2023-11-06
+
+## The newsletter for entrepreneurs
+
+Join millions of self-starters in getting business resources, tips, and inspiring stories in your inbox.
+
+Enter emailSubscribe
+
+Unsubscribe anytime. By entering your email, you agree to receive marketing emails from Shopify. By proceeding, you agree to the Terms and Conditions and Privacy Policy.
+
+## Sell anywhere with Shopify
+
+Learn on the go. Try Shopify for free, and explore all the tools you need to start, run, and grow your business.
+
+Start free then enjoy 3 months for £1/month

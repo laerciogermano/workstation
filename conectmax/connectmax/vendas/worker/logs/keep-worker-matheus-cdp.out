@@ -1,0 +1,72 @@
+[keep-worker] watch start-worker-matheus-cdp → /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker/./scripts/start-worker-matheus-cdp.sh (backoff 5000ms)
+——— 09:36:48 start-worker-matheus-cdp (log também em logs/worker-matheus-cdp.out) ———
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+12/11/2026 09:36:48 [ddc7f46c] ——— worker iniciado ———
+12/11/2026 09:36:48 [ddc7f46c] API http://185.250.37.82
+12/11/2026 09:36:48 [ddc7f46c] agente ddc7f46c-2361-4ed2-aa4d-a32319f97721 · Chrome CDP · perfil=matheus-conectmax · http://127.0.0.1:9267
+12/11/2026 09:36:48 [ddc7f46c] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+12/11/2026 09:36:48 [ddc7f46c] cadastrando/atualizando agente na API (enroll)…
+12/11/2026 09:36:48 [ddc7f46c] enroll OK (já existia) · faltam dados LinkedIn no painel · online
+12/11/2026 09:36:48 [ddc7f46c] ⚠ complete o LinkedIn em /agentes antes de rodar jobs de verdade
+12/11/2026 09:36:48 [ddc7f46c] ciclo #1: pedindo job na API…
+12/11/2026 09:36:49 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+12/11/2026 09:36:49 [ddc7f46c] ciclo #1: peguei job «enviar conexão» (conectar) prioridade=4 id=c0683855-5d0a-4b54-9244-3cc1ead9c7db
+12/11/2026 09:36:49 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/luiz-augusto-braga-83bbb613b · conexão=0068ae8f-1e2b-45e6-8cbe-dcdd67db8c44
+12/11/2026 09:36:49 [ddc7f46c] executando «enviar conexão» em Chrome CDP (matheus-conectmax)…
+12/11/2026 09:36:49 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/luiz-augusto-braga-83bbb613b --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/luiz-augusto-braga-83bbb613b --no-shot
+
+cdpId=matheus-conectmax cdpUrl=http://127.0.0.1:9267 url=https://www.linkedin.com/in/luiz-augusto-braga-83bbb613b
+[keep-worker] watch start-worker-matheus-cdp → /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker/./scripts/start-worker-matheus-cdp.sh (backoff 5000ms)
+——— 13:42:05 start-worker-matheus-cdp (log também em logs/worker-matheus-cdp.out) ———
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+16/11/2026 13:42:05 [ddc7f46c] ——— worker iniciado ———
+16/11/2026 13:42:05 [ddc7f46c] API http://185.250.37.82
+16/11/2026 13:42:05 [ddc7f46c] agente ddc7f46c-2361-4ed2-aa4d-a32319f97721 · Chrome CDP · perfil=matheus-conectmax · http://127.0.0.1:9267
+16/11/2026 13:42:05 [ddc7f46c] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+16/11/2026 13:42:05 [ddc7f46c] cadastrando/atualizando agente na API (enroll)…
+16/11/2026 13:42:05 [ddc7f46c] enroll OK (já existia) · faltam dados LinkedIn no painel · online
+16/11/2026 13:42:05 [ddc7f46c] ⚠ complete o LinkedIn em /agentes antes de rodar jobs de verdade
+16/11/2026 13:42:05 [ddc7f46c] ciclo #1: pedindo job na API…
+16/11/2026 13:42:06 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+16/11/2026 13:42:06 [ddc7f46c] ciclo #1: fila vazia — sem trabalho na fila (prioridades vazias)
+16/11/2026 13:42:06 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+[keep-worker] watch start-worker-matheus-cdp → /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker/./scripts/start-worker-matheus-cdp.sh (backoff 5000ms)
+——— 16:15:40 start-worker-matheus-cdp (log também em logs/worker-matheus-cdp.out) ———
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+16/11/2026 16:15:41 [ddc7f46c] ——— worker iniciado ———
+16/11/2026 16:15:41 [ddc7f46c] API http://185.250.37.82
+16/11/2026 16:15:41 [ddc7f46c] agente ddc7f46c-2361-4ed2-aa4d-a32319f97721 · Chrome CDP · perfil=matheus-conectmax · http://127.0.0.1:9267
+16/11/2026 16:15:41 [ddc7f46c] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+16/11/2026 16:15:41 [ddc7f46c] cadastrando/atualizando agente na API (enroll)…
+16/11/2026 16:15:41 [ddc7f46c] enroll OK (já existia) · faltam dados LinkedIn no painel · online
+16/11/2026 16:15:41 [ddc7f46c] ⚠ complete o LinkedIn em /agentes antes de rodar jobs de verdade
+16/11/2026 16:15:41 [ddc7f46c] ciclo #1: pedindo job na API…
+16/11/2026 16:15:42 [ddc7f46c] ciclo #1: peguei job «enviar mensagem» (enviar_prospeccao) prioridade=3 id=c98d4227-035c-4506-9cd3-a4fc80c34cf5
+16/11/2026 16:15:42 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/anderson-machado-662043b0 · conexão=d1578468-e1e8-480a-8fc2-1e584b97763c
+16/11/2026 16:15:42 [ddc7f46c] executando «enviar mensagem» em Chrome CDP (matheus-conectmax)…
+16/11/2026 16:15:42 [spawn] iniciando robô: npm run linkedin-message-cdp -- --url https://www.linkedin.com/in/anderson-machado-662043b0 --text Olá, Anderson, tudo bem contigo?
+
+Anderson, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id b32a790d-994a-43de-a824-fb186f3f0b29
+16/11/2026 16:15:42 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+
+> screen-robot@1.0.0 linkedin-message-cdp
+> node scripts/linkedin-message-cdp.js --url https://www.linkedin.com/in/anderson-machado-662043b0 --text Olá, Anderson, tudo bem contigo?
+
+Anderson, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id b32a790d-994a-43de-a824-fb186f3f0b29
+

@@ -938,7 +938,8 @@ function openSheet(name) { holder.querySelector(".scrim").classList.add("open");
 function closeSheet() { holder.querySelectorAll(".scrim, .bsheet").forEach(x => x.classList.remove("open")); if (cur) cur.sheet = null; }
 
 document.addEventListener("click", e => {
-  const tb = e.target.closest("[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
+  // button[data-tema]: <html data-tema> também existe — sem "button" todo clique virava setTema
+  const tb = e.target.closest("button[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
   const o = e.target.closest("[data-open]"); if (o) { openT(o.dataset.open); return; }
   if (e.target.closest("[data-close]")) { closePlayer(); return; }
   const sp = e.target.closest("[data-step]"); if (sp) { step(+sp.dataset.step); return; }

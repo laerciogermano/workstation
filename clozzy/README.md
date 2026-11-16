@@ -12,60 +12,66 @@ Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 
 ## Visão
 
-O **Clozzy** é o site onde **influencers** vendem **conteúdo exclusivo** direto para fãs — e onde o fã **compra, acessa e acompanha** esse conteúdo num só lugar. Em vez de depender só de feed gratuito, DM ou plataformas genéricas, a relação vira **catálogo pago + acesso claro**: o criador monetiza o exclusivo; o fã sabe o que compra e onde consome.
+O **Clozzy** é a **rede social do close**: o lugar onde a influencer conduz, no **privado**, o relacionamento e o **processo de vendas** com o cliente — com atenção **exclusiva**, não diluída num feed compartilhado nem num catálogo genérico de packs.
+
+Há conteúdo **bloqueado** (só quem entra no close ou compra vê). A unidade não é “mais um pack na prateleira”; é a **proximidade** entre criadora e fã: conversa, oferta, liberação e consumo no mesmo círculo.
 
 ## Problema
 
-Criadores e fãs já trocam atenção e desejo de conteúdo “por trás das cortinas”, mas a venda e o acesso ficam fragmentados.
+Influencers já monetizam desejo e exclusividade, mas o caminho atual empurra para **vitrine compartilhada** (packs, marketplaces, DMs soltas) em vez de um espaço onde a atenção ao cliente é **dela**, contínua e privada.
 
 | Dor | O que acontece hoje |
 |-----|---------------------|
-| **Monetização frágil do exclusivo** | O melhor conteúdo do influencer fica no gratis, em tip avulso ou em canal difícil de organizar — sem vitrine clara de venda. |
-| **Acesso confuso para o fã** | Quem paga não sabe bem o que comprou, onde abre e até quando vale. |
-| **Plataformas genéricas** | Marketplaces e redes sociais não foram feitos para o fluxo *perfil → exclusivo → compra → biblioteca*. |
-| **Confiança e entrega** | Sem produto bem definido (o que é exclusivo, o que está incluso, o que é recorrente), a compra vira risco para os dois lados. |
+| **Atenção diluída** | Packs e canais abertos tratam o fã como comprador de lote — não como alguém no círculo próximo. |
+| **Venda fora do relacionamento** | O processo de vendas fica espalhado (DM, link, tip, plataforma genérica), sem um lugar privado onde a criadora conduz do interesse à compra. |
+| **Exclusivo sem “close”** | Conteúdo trancado existe, mas sem a sensação de rede social íntima: perfil, presença, bloqueio e liberação no mesmo fio. |
+| **Acesso confuso** | Quem paga não sabe bem o que liberou, onde abre e até quando vale. |
 
-O influencer **já produz** conteúdo que o público quer além do feed. O fã **já quer** pagar por isso. O que falta é um **site de venda e consumo** pensado para esse exclusivo.
+O fã já quer **mais perto**. A criadora já quer **vender no privado**. Falta a rede pensada para esse close — não só para empilhar packs.
 
 ## Para quem
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Influencer / criador** | Quem tem audiência e conteúdo exclusivo para monetizar | Publicar, precificar e vender o exclusivo com vitrine e entrega simples |
-| **Fã / comprador** | Quem segue o criador e quer o conteúdo pago | Descobrir, comprar e acessar o exclusivo sem fricção |
-| **Operação / dono da plataforma** | Quem opera o Clozzy | Cadastro de criadores, catálogo, pagamento e acesso sob controle |
+| **Influencer / criadora** | Quem tem audiência e quer monetizar com atenção exclusiva | Conduzir no privado o relacionamento, o conteúdo bloqueado e a venda |
+| **Fã / cliente** | Quem segue e quer proximidade paga | Entrar no close, comprar o que estiver bloqueado e sentir atenção exclusiva |
+| **Operação / dono da plataforma** | Quem opera o Clozzy | Cadastro, close, pagamento, bloqueio/liberação e acesso sob controle |
 
 ## Objetivo
 
-Ser o **lugar padrão** para **vender e consumir conteúdo exclusivo de influencers**: catálogo claro, compra simples e acesso garantido ao que foi pago.
+Ser a **rede social padrão do close pago**: proximidade privada entre criadora e cliente, com conteúdo bloqueado, processo de vendas no mesmo espaço e acesso claro ao que foi liberado.
 
 ## Proposta de valor
 
-O Clozzy trata o exclusivo como **produto de vitrine**, não como favor na DM. O criador monta o que vende; o fã compra e entra na biblioteca.
+O Clozzy não é “mais um marketplace de packs”. É o **círculo próximo** da criadora: ela atende o cliente com exclusividade; o conteúdo sensível fica bloqueado até a compra ou a entrada no close; a venda acontece **dentro** dessa relação — não à margem dela.
 
 | Necessidade | O que o Clozzy faz |
 |-------------|--------------------|
-| Vitrine do exclusivo | Perfil do influencer com ofertas e preview permitido |
-| Venda direta | Compra (avulsa e/ou assinatura, conforme escopo) com confirmação clara |
-| Acesso pós-compra | Biblioteca / área logada com o conteúdo liberado |
-| Clareza do produto | Título, descrição, tipo de mídia, o que está incluso |
+| Proximidade exclusiva | Close privado: atenção da criadora para o cliente, não feed massificado |
+| Venda no privado | Processo de vendas (interesse → oferta → pagamento → liberação) no mesmo espaço da relação |
+| Conteúdo bloqueado | Prévia pública; o resto trancado até assinar o close ou comprar |
+| Clareza do produto | O que está no close, o que é avulso/pack, o que libera e por quanto tempo |
+| Acesso pós-liberação | Biblioteca / área do fã com o que ele tem direito de ver |
 | Confiança | Status do pedido, acesso válido e regras do exclusivo visíveis |
 
 ### Exemplos
 
-**Criador publica um pack** — Marina sobe um pack de fotos/vídeos exclusivos, define preço e preview. O pack aparece no perfil dela no Clozzy.
+**Close da Marina** — o fã entra no close dela: vê o que estava bloqueado, recebe a atenção privada e acompanha drops exclusivos enquanto a relação estiver ativa.
 
-**Fã compra e acessa** — João segue Marina, vê o pack, paga e passa a ver o conteúdo na biblioteca dele.
+**Venda no privado** — no close, Marina conduz a conversa, oferece um conteúdo ou um pack, recebe o Pix e libera — sem mandar o cliente para outra plataforma.
 
-**Assinatura do canal** (se no escopo) — o fã assina o canal exclusivo e recebe novos drops enquanto a assinatura estiver ativa.
+**Conteúdo bloqueado na vitrine** — no perfil, parte da mídia aparece borrada/trancada; só quem está no close ou comprou abre.
+
+**Pack como complemento** — o pack continua existindo, mas como oferta **dentro** da lógica de proximidade — não como o centro do produto.
 
 ## Princípios
 
-1. **Exclusivo é produto** — tem nome, preço, escopo e entrega; não é tip sem definição.
-2. **Vitrine → compra → acesso** — o fluxo canônico não se perde em chat ou link avulso.
-3. **Criador no centro** — a unidade de descoberta é o perfil / canal do influencer.
-4. **Acesso honestamente delimitado** — o fã sabe o que pode ver e por quanto tempo / sob qual regra.
-5. **Plataforma de venda, não rede social completa** — foco em catálogo, pagamento e consumo do exclusivo.
+1. **Close primeiro** — a unidade é a proximidade exclusiva entre criadora e cliente; pack é oferta, não a alma do produto.
+2. **Atenção exclusiva, não compartilhada** — o cliente no close sente o círculo privado, não a prateleira pública.
+3. **Venda no privado** — o processo de vendas vive na relação (close / conversa / liberação), não só num checkout solto.
+4. **Bloqueado até liberar** — conteúdo pago fica trancado; preview não entrega o exclusivo.
+5. **Rede social de proximidade** — perfil, presença, bloqueio e acesso no mesmo fio; não marketplace genérico nem feed infinito de massa.
+6. **Acesso honestamente delimitado** — o fã sabe o que pode ver e sob qual regra.
 
 ## Escopo da visão
 
@@ -73,35 +79,46 @@ O Clozzy trata o exclusivo como **produto de vitrine**, não como favor na DM. O
 
 | Área | Em escopo |
 |------|-----------|
-| **Perfis de criador** | Página pública do influencer com bio e catálogo |
-| **Ofertas de conteúdo** | Cadastro de itens exclusivos (pack, post, mídia) com preço e preview |
+| **Perfis de criadora** | Página pública com bio, prévias e o que está bloqueado |
+| **Close** | Assinatura / entrada no círculo privado da criadora |
+| **Conteúdo bloqueado** | Liberação por close, pack ou item; preview sem entregar o pago |
+| **Ofertas** | Close, pack e avulso com preço e o que inclui |
+| **Venda no privado** | Fluxo de oferta → pagamento → liberação ligado à relação com a criadora |
 | **Compra** | Checkout e confirmação de pagamento |
-| **Acesso** | Liberação do conteúdo comprado na área do fã |
-| **Biblioteca** | Lista do que o fã já adquiriu |
-| **Conta** | Login / cadastro de fã e de criador |
-| **Gestão do criador** | Publicar, editar, precificar e ver o que está à venda |
+| **Acesso** | Área do fã com o conteúdo liberado |
+| **Biblioteca** | Lista do que o fã já adquiriu / tem no close |
+| **Conta** | Login / cadastro de fã e de criadora |
+| **Gestão da criadora** | Publicar, bloquear por regra, precificar, ver fãs e vendas |
 
 ### Fora de escopo (v1)
 
-- Rede social completa (feed infinito, stories, DMs como produto principal)
+- Feed infinito massificado (rede “aberta” como produto principal)
 - Live streaming como núcleo
 - App nativo (pode vir depois; v1 é site)
-- Marketplace genérico de qualquer tipo de produto físico
+- Marketplace genérico de produto físico
 - Moderação avançada / compliance completo de todas as jurisdições no dia um (tratar como evolução)
 
 ## Modelo conceitual
 
-### Criador
+### Criadora
 
-Influencer (ou conta de marca/pessoa) que publica e vende conteúdo exclusivo no Clozzy.
+Influencer que conduz o close, publica conteúdo bloqueado e vende no privado.
 
-### Fã
+### Fã / cliente
 
-Usuário que descobre, compra e consome o exclusivo.
+Quem entra no close, compra o que estiver bloqueado e consome o liberado.
 
-### Oferta / produto exclusivo
+### Close
 
-Unidade vendável: pack, post, coleção ou acesso a canal — com metadados, preço e regra de acesso.
+Círculo privado e pago da criadora: atenção exclusiva + acesso ao que ela libera para quem está dentro.
+
+### Conteúdo bloqueado
+
+Mídia ou oferta visível como trancada até close, pack ou compra avulsa.
+
+### Oferta
+
+Unidade vendável: close (recorrente), pack ou item — com metadados, preço e regra de acesso.
 
 ### Pedido / compra
 
@@ -109,31 +126,29 @@ Transação que liga fã → oferta → pagamento → direito de acesso.
 
 ### Biblioteca
 
-Conjunto de conteúdos que o fã tem direito de ver após compra (ou assinatura ativa).
-
-### Canal (opcional na v1)
-
-Agrupamento recorrente de drops do mesmo criador sob assinatura ou catálogo contínuo.
+Conjunto de conteúdos que o fã tem direito de ver após compra ou close ativo.
 
 ## Critérios de sucesso
 
-- O criador consegue **publicar e precificar** ao menos um exclusivo e vê-lo na própria vitrine.
-- O fã consegue **encontrar, comprar e abrir** o conteúdo sem sair do fluxo do site.
-- Fica claro **o que foi comprado** e **onde acessar** depois.
-- A vitrine do criador comunica o exclusivo sem expor o conteúdo pago no preview.
-- Contas de criador e fã cobrem o caminho mínimo de venda e consumo.
+- A criadora consegue **abrir um close**, publicar conteúdo **bloqueado** e conduzir uma venda até a liberação.
+- O fã consegue **entrar no close**, **comprar** o que estiver trancado e **abrir** o conteúdo sem sair do fluxo.
+- Fica claro o que é **atenção exclusiva** (close) versus oferta pontual (pack/item).
+- A vitrine comunica exclusividade **sem** expor o conteúdo pago no preview.
+- Contas de criadora e fã cobrem o caminho mínimo de proximidade, venda e consumo.
 
 ## Glossário
 
 | Termo | Significado |
 |-------|-------------|
-| **Exclusivo** | Conteúdo pago, fora do feed gratuito principal do criador |
-| **Oferta** | Produto à venda (pack, post, assinatura…) |
+| **Close** | Círculo privado e pago da criadora; atenção exclusiva + conteúdo liberado para quem está dentro |
+| **Exclusivo** | Conteúdo pago / bloqueado, fora do feed gratuito principal |
+| **Bloqueado** | Visível como trancado até close ou compra |
+| **Oferta** | Produto à venda (close, pack, item) |
 | **Preview** | Trecho ou capa pública que não entrega o conteúdo pago |
 | **Biblioteca** | Área do fã com o que ele tem direito de acessar |
-| **Canal** | Agrupamento contínuo de conteúdo de um criador |
-| **Drop** | Novo conteúdo publicado no canal ou catálogo |
+| **Pack** | Bundle pontual de mídias; complemento do close, não o centro |
+| **Drop** | Novo conteúdo publicado no close ou no catálogo |
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) — índice da esteira; em seguida `functionalities.md` a partir desta visão
+→ [`docs/README.md`](docs/README.md) — índice da esteira; em seguida alinhar `functionalities.md` a esta visão (close + venda no privado)

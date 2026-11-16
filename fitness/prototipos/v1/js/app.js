@@ -295,6 +295,7 @@ const THEMES = [
   { id: 'preto', nome: 'Preto', desc: 'Fundo preto puro e cinzas neutros. Ação em cobalto claro, mesma gramática do claro.', sw: ['#5B7BFF', '#34D27F', '#F2F2F2', '#000000'] },
   { id: 'lima', nome: 'Lima sobre preto', tag: 'academia', desc: 'Preto + lima elétrico (Sprint). Progress rings e treino noturno — menos “app de saúde”.', sw: ['#C6F432', '#34D27F', '#F2F2F2', '#000000'] },
   { id: 'pista', nome: 'Pista', tag: 'cardio', desc: 'Escuro + laranja vivo nos CTAs (sem peach, sem mint). Corrida / streak.', sw: ['#FF4D00', '#FF5C14', '#F2F2F2', '#0B0B0B'] },
+  { id: 'zona', nome: 'Zona', tag: 'cardio', desc: 'Laranja vivo nos botões + verde neon do Next no “cumpriu” (fonte preta).', sw: ['#FF4D00', '#39FF14', '#F2F2F2', '#0B0B0B'] },
   { id: 'volt', nome: 'Volt', tag: 'energia', desc: 'Preto + amarelo elétrico. Sinal de alerta de academia, PR, “vai”.', sw: ['#FFD400', '#FFE566', '#F2F2F2', '#000000'] },
   { id: 'next', nome: 'Next', tag: 'radical', desc: 'Preto + verde neon ácido (Next Fitness / gym dark). CTA chamativo, contraste máximo.', sw: ['#39FF14', '#7CFF6B', '#F2F2F2', '#000000'] },
   { id: 'esmeralda', nome: 'Esmeralda', tag: 'performance', desc: 'Carvão + verde-água saturado. Academia premium, recovery tech.', sw: ['#00D68F', '#34E0A8', '#E8F5EF', '#070D0B'] },

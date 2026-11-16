@@ -43,16 +43,25 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** devolver `chat` em `VIEWS`; remover `estados`/`copilotPanel`/`.body.copilot-on`.
 
-## Gantt · e0…eN + dock
+## Gantt · só calendário + dock
 
-- `gm: cal|fop` — Calendário vs Estado (FOP); `ganttFopStates()` gera e0…eN; T-37.
-- Menu transversal: `.vdock` absoluto no centro inferior de `.content` (saiu do `.bar`).
+- Gantt sem modo Estado / `gm` / marcas e0…eN (T-37 removido).
+- Menu transversal: `.vdock` absoluto no centro inferior de `.content`.
 
-**Antes → depois:** Gantt só deps de calendário + seg no topo → estados FOP + dock inferior.
+**Antes → depois:** Calendário + Estado (FOP) no Gantt → só calendário; estados na visão `estados`.
 
-**Voltar:** `gm`/`T-37`/`ganttFopStates` off; recolocar `.seg` no `.bar`.
+**Voltar:** restaurar `gm`/`T-37`/`ganttFopStates` no histórico git.
 
-## Flow · sem modo FOP
+## Estados · árvore de dados
+
+- `planStateObject(plan)` → `{ root, sources }`; UI = árvore chave/valor + `state.json`.
+- Expand/collapse: `EST_OPEN` + `est-tog`. T-70.
+
+**Antes → depois:** cards e0…eN / Gantt FOP → objeto `root` aninhado pelas pastas das refs de saída.
+
+**Voltar:** reintroduzir `ganttFopStates` + cards e0…eN.
+
+## Flow · I/O nas tasks
 
 Flow só ordem: `.funit` = quadrados entrada | função | saída. Sem toggle Ordem/Estado e sem legenda.
 

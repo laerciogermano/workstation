@@ -5,7 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/).  
-Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
+Fundamentos de fluxo: [`inputs/`](inputs/README.md) (quando houver).
 
 **URL protótipo:** https://plans.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
 
@@ -13,13 +13,13 @@ Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ## Visão
 
-O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board, **Gantt**, **Flow**, **Fluxograma**, Árvore, **Estados** (e0…eN), **Copiloto** (painel direito) e Explorar. Planos são modelados como **linguagem visual de fluxo (FOP)** exportável para código.
+O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board, **Gantt**, **Flow**, **Fluxograma**, Árvore, **Estados** (objeto `root` + árvore chave/valor), **Copiloto** (painel direito) e Explorar. Planos são modelados como **linguagem visual de fluxo** exportável para código.
 
 Sistemas também são fluxos de execução: o próprio Plans serve para **codificar sistemas**, não só listas de tarefas. O **agente** de cada atividade é quem (ou o quê) executa — pessoa, modelo de IA (GPT, Claude, etc.) ou biblioteca/máquina — sem misturar o roteiro com o ator.
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, calendário + modo **Estado (FOP)** com marcas **e0…eN**. A visão **Estados** no dock lista esses contextos. No **Flow**, só ordem (passo): cada etapa é **entrada □ | função | saída □**. O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**. Ref.: `flow/input/Programação Orientada a Fluxo.pdf`.
+No **Gantt**, só calendário (barras + deps). A visão **Estados** no dock mostra o estado do plano como **estrutura de dados** (`{ root }` + árvore chave→valor). No **Flow**, só ordem (passo): cada etapa é **entrada □ | função | saída □**. O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**.
 
 ## Problema
 

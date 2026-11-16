@@ -286,14 +286,6 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .btn svg { width: 15px; height: 15px; }
 .sel-in { height: 30px; border: 1px solid var(--line-2); border-radius: 7px; background: var(--paper); padding: 0 8px; font-weight: 500; }
 .viewport { flex: 1; position: relative; overflow: hidden; min-height: 0; padding-bottom: 58px; }
-.estate { position: absolute; top: 48px; bottom: 0; width: 0; border-left: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent); z-index: 2; pointer-events: none; }
-.estate b { position: absolute; top: -22px; left: 0; transform: translateX(-50%); font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--accent); background: var(--paper); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); border-radius: 4px; padding: 0 5px; white-space: nowrap; }
-.gbar .io { position: absolute; inset: auto 0 -13px 0; display: flex; justify-content: space-between; gap: 4px; pointer-events: none; }
-.gbar .io span { font-family: var(--mono); font-size: 9px; color: var(--accent); background: var(--paper); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 3px; padding: 0 3px; max-width: 72px; overflow: hidden; text-overflow: ellipsis; }
-.gbar .io span.in { color: var(--muted); border-color: var(--line-2); }
-.est-list .art .mono { font-size: 13px; }
-.est-list .keys { grid-column: 1 / -1; font-family: var(--mono); font-size: 11px; color: var(--body); word-break: break-word; }
-
 /* chips */
 .ag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--body); white-space: nowrap; min-width: 0; }
 .ag .ico { width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; color: #fff; font-size: 9px; font-weight: 700; }
@@ -461,7 +453,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gbar.parent::before { left: 0; border-left-color: var(--ink); } .gbar.parent::after { right: 0; border-right-color: var(--ink); }
 .gbar.parent.fail { background: var(--fail); } .gbar.parent.fail::before { border-top-color: var(--fail); border-left-color: var(--fail); } .gbar.parent.fail::after { border-top-color: var(--fail); border-right-color: var(--fail); }
 .gbar .lbl-out { position: absolute; left: calc(100% + 13px); color: var(--muted); font-weight: 500; }
-/* Flow · entrada | função | saída (PDF FOP) */
+/* Flow · entrada | função | saída */
 .funit { position: absolute; top: 4px; height: 30px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 3px; align-items: center; z-index: 2; min-width: 72px; }
 .funit .fio { display: flex; flex-direction: column; gap: 2px; justify-content: center; max-height: 30px; overflow: hidden; }
 .funit .sq { display: block; width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid var(--line-2); background: var(--paper); flex: none; box-sizing: border-box; }
@@ -649,20 +641,24 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
 
-/* Estados · visão FOP e0…eN */
-.estados { height:100%; overflow:auto; padding:20px 24px 72px; }
-.estados .eh { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; }
-.estados .eh h2 { font-size:22px; font-weight:600; letter-spacing:-0.02em; }
-.estados .eh p { font-size:13px; color:var(--muted); max-width:520px; line-height:1.45; }
-.estados .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:12px; }
-.estados .ecard { border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px; }
-.estados .ecard .hid { display:flex; align-items:center; gap:8px; }
-.estados .ecard .hid b { font-family:var(--mono); font-size:16px; color:var(--accent); }
-.estados .ecard .hid span { font-size:11px; color:var(--muted); margin-left:auto; }
-.estados .ecard .keys { font-family:var(--mono); font-size:12px; color:var(--ink); line-height:1.4; word-break:break-word; min-height:2.8em; }
-.estados .ecard .via { font-size:12px; color:var(--muted); }
-.estados .block { margin-top:22px; }
-.estados .block h3 { font-size:13px; font-weight:600; color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+/* Estados · árvore de dados (root + chave/valor) */
+.estados { height:100%; display:grid; grid-template-columns: minmax(0, 1fr) 320px; min-height:0; }
+.estados .eh { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:16px 20px 12px; border-bottom:1px solid var(--line); }
+.estados .eh h2 { font-size:20px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+.estados .eh p { font-size:13px; color:var(--muted); max-width:480px; line-height:1.45; }
+.estados .etree { overflow:auto; padding:12px 16px 72px; min-height:0; }
+.estados .erow { display:grid; grid-template-columns:16px 1fr auto; gap:6px; align-items:center; min-height:28px; padding:2px 6px; border-radius:6px; font-size:13px; }
+.estados .erow:hover { background:var(--wash); }
+.estados .erow .car { color:var(--muted); display:grid; place-items:center; cursor:pointer; border:0; background:none; padding:0; width:16px; height:16px; }
+.estados .erow .car svg { width:14px; height:14px; transition:transform .15s; }
+.estados .erow.open > .car svg { transform:rotate(90deg); }
+.estados .erow .k { font-family:var(--mono); font-weight:600; color:var(--ink); }
+.estados .erow .k .badge { font-size:10px; font-weight:600; color:var(--muted); margin-left:6px; font-family:var(--sans, inherit); }
+.estados .erow .v { font-family:var(--mono); font-size:12px; color:var(--accent); max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.estados .erow .src { font-size:11px; color:var(--muted); }
+.estados .ejson { border-left:1px solid var(--line); background:var(--panel); display:flex; flex-direction:column; min-height:0; }
+.estados .ejson h3 { font-size:12px; font-weight:600; color:var(--muted); padding:12px 14px 8px; flex:none; }
+.estados .ejson pre { margin:0; flex:1; overflow:auto; padding:0 14px 72px; font-family:var(--mono); font-size:12px; line-height:1.55; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
 
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
@@ -723,7 +719,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
       <h1>Uma atividade, vários jeitos de ver</h1>
-      <p>Explorar, Board, Gantt, Flow, Fluxograma, Árvore e Estados (e0…eN) no dock inferior. Copiloto = painel à direita, ícone no topo. Clique numa tela para navegar.</p>
+      <p>Explorar, Board, Gantt, Flow, Fluxograma, Árvore e Estados (árvore de dados) no dock inferior. Copiloto = painel à direita, ícone no topo. Clique numa tela para navegar.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -831,6 +827,7 @@ U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "f
 const DEPS = [["u3", "u4"], ["u4", "u5"], ["u5", "u6"], ["u10", "u11"], ["u11", "u12"], ["u12", "u13"], ["u12", "u14"], ["u13", "u15"], ["u14", "u15"], ["u20", "u22"]];
 const PARS = [["u13", "u14"]];
 const OPEN = new Set(["f1", "f2", "f3", "u2", "u9"]);
+const EST_OPEN = new Set(["root"]);
 let CLIP = null;
 let seq = 100;
 
@@ -877,7 +874,7 @@ const CHAT = {};
 const COPILOT = { open: false, tabs: [], active: null, seq: 0 };
 
 // ================= janela =================
-const DEF = { v: "board", plan: "onb", fm: "ordem", gm: "cal", catTab: "pessoa" };
+const DEF = { v: "board", plan: "onb", fm: "ordem", catTab: "pessoa" };
 function viewDock(s) {
   return `<nav class="vdock" aria-label="Visões">${VIEWS.map(([id, ic, n]) => `<button data-act="view" data-v="${id}" aria-current="${s.v === id}">${icon(ic)}${n}</button>`).join("")}</nav>`;
 }
@@ -1140,75 +1137,21 @@ function runbarHtml(s) {
   const running = U.filter(u => u.plan === s.plan && u.st === "exec" && agent(u.agent)?.type === "ia");
   return running.length ? `<div class="runbar"><b>${icon("loader-circle")}Executando ${running.length} tarefa${running.length > 1 ? "s" : ""} de IA</b><span>${running.map(u => esc(u.title)).join(" · ")}</span><span class="sp"></span><span>Só tarefas com responsável IA rodam. Pessoas e máquinas seguem como estão.</span><button class="btn" data-act="cancel-run">${icon("square")}Cancelar</button></div>` : "";
 }
-/** Estados FOP no eixo do Gantt: e0 (inicial) → e1, e2… após cada onda de saídas. */
-function ganttFopStates(plan) {
-  const rows = ganttRows(plan);
-  const leaves = rows.map(r => r.u).filter(u => {
-    if (rollup(u).s == null) return false;
-    return !kidsPlan(u.id).some(k => !k.arch && !isFolder(k));
-  });
-  const minS = leaves.length ? Math.min(...leaves.map(u => rollup(u).s)) : 0;
-  const states = [{ id: "e0", day: minS, data: {}, via: [], label: "contexto inicial · ∅" }];
-  const bag = {};
-  const byEnd = {};
-  leaves.forEach(u => { (byEnd[rollup(u).e] ||= []).push(u); });
-  let n = 0;
-  Object.keys(byEnd).map(Number).sort((a, b) => a - b).forEach(day => {
-    const batch = byEnd[day];
-    const writers = batch.filter(u => (u.outs || []).length);
-    if (!writers.length && !batch.some(u => (u.ins || []).length)) return;
-    writers.forEach(u => (u.outs || []).forEach(([name, ref]) => { bag[name] = { from: u.id, ref, title: u.title }; }));
-    if (!writers.length) return;
-    n += 1;
-    const keys = Object.keys(bag);
-    states.push({
-      id: "e" + n,
-      day: Math.min(day + 1, NDAYS - 1),
-      data: { ...bag },
-      via: writers.map(u => u.id),
-      label: writers.map(u => u.title).join(" · ") + (keys.length ? ` → { ${keys.join(", ")} }` : ""),
-    });
-  });
-  return states;
-}
-function ganttStatePanel(s, states) {
-  const { orphans, missing } = fopCheck(s.plan);
-  return `<aside class="fop est-list">
-    <div><h4>${icon("database")}Estados · e0…e${Math.max(0, states.length - 1)}</h4>
-      <p style="font-size:12px;color:var(--muted);margin:6px 0 8px">Função muda o estado; dado circula. Cada <span class="mono">eN</span> é o contexto após uma onda de saídas no calendário.</p>
-      ${states.map(st => {
-        const keys = Object.keys(st.data);
-        return `<div class="art"><span class="mono">${st.id}</span><span>marca no dia ${st.day + 1}</span>
-          <span class="keys">${keys.length ? keys.map(k => k).join(" · ") : "∅"}</span>
-          <span>${esc(st.label)}</span></div>`;
-      }).join("")}</div>
-    <div><h4>${icon("shield-check")}Validação</h4>
-      ${orphans.length ? orphans.map(([name, u]) => `<div class="chk warn">${icon("triangle-alert")}<div>Saída órfã <span class="mono">${name}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Toda saída tem destino</div></div>`}
-      ${missing.length ? missing.map(([name, u]) => `<div class="chk fail">${icon("circle-x")}<div>Entrada sem origem <span class="mono">${name}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Contexto completo</div></div>`}
-    </div>
-    <div><h4>${icon("layers")}Camadas</h4><div style="margin-top:8px">
-      <div class="layer"><b>${icon("cpu")}http · máquina</b><span>Endereços concretos de I/O; camada substituível.</span></div>
-      <div class="layer"><b>${icon("bot")}IA</b><span>Mudança de estado generativa — mesmo roteiro, outro modelo.</span></div>
-      <div class="layer"><b>${icon("user")}pessoa</b><span>Checkpoint humano no fluxo.</span></div></div></div>
-  </aside>`;
-}
 function gantt(s) {
-  const fop = s.gm === "fop";
   const rowsAll = ganttRows(s.plan);
   const rows = rowsAll.filter(r => rollup(r.u).s != null);
   const nod = rowsAll.filter(r => rollup(r.u).s == null);
-  const states = ganttFopStates(s.plan);
-  const LW = fop ? 280 : 380;
-  const avail = 1152 - LW - (fop ? 300 : 0) - 2;
+  const LW = 380;
+  const avail = 1152 - LW - 2;
   const W = Math.max(24, Math.floor(avail / NDAYS));
   const RH = 38;
   const idx = {}; rows.forEach((r, i) => idx[r.u.id] = i);
   const days = Array.from({ length: NDAYS }, (_, i) => dayLabel(i));
   const left = rows.map(({ u, d }) => {
     const has = kidsPlan(u.id).some(k => !k.arch), a = agent(u.agent), r = rollup(u);
-    return `<div class="grow gl-cols${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="${fop ? "grid-template-columns:1fr 28px" : ""}">
+    return `<div class="grow gl-cols${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}">
       <span class="nm${has ? " par" : ""}" style="padding-left:${d * 16}px"><span class="car">${has ? icon("chevron-down") : ""}</span><b>${esc(u.title)}</b>${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>
-      ${fop ? agChip(u.agent, true) : `${agChip(u.agent)}<span class="dur num">${r.e - r.s + 1}d</span>`}</div>`;
+      ${agChip(u.agent)}<span class="dur num">${r.e - r.s + 1}d</span></div>`;
   }).join("");
   const bars = rows.map(({ u }) => {
     const r = rollup(u), has = kidsPlan(u.id).some(k => !k.arch);
@@ -1216,11 +1159,7 @@ function gantt(s) {
     if (has) return `<div class="rr"><div class="gbar parent${r.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="left:${x}px;width:${w}px" title="${esc(u.title)} · roll-up dos filhos"></div></div>`;
     const a = agent(u.agent), c = a ? `var(--t-${a.type})` : "var(--idle)";
     const prog = u.st === "ok" || u.col === COLS[COLS.length - 1].id ? 1 : u.st === "exec" ? .55 : u.id === "u12" ? .6 : 0;
-    const io = fop && ((u.ins || []).length || (u.outs || []).length)
-      ? `<span class="io">${(u.ins || []).length ? `<span class="in" title="entradas">${(u.ins || []).join(", ")}</span>` : "<span></span>"}${(u.outs || []).length ? `<span title="saídas">${(u.outs || []).map(o => o[0]).join(", ")}</span>` : ""}</span>`
-      : "";
-    const lbl = fop ? "" : `<span class="lbl-out">${u.st ? ST[u.st][2] : esc(a?.name || "")}</span>`;
-    return `<div class="rr"><div class="gbar${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${x}px;width:${w}px">${prog ? `<span class="fill" style="width:${prog * 100}%"></span>` : ""}${u.st ? icon(ST[u.st][1]) : ""}${w > 90 ? esc(u.title) : ""}${lbl}${io}</div></div>`;
+    return `<div class="rr"><div class="gbar${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${x}px;width:${w}px">${prog ? `<span class="fill" style="width:${prog * 100}%"></span>` : ""}${u.st ? icon(ST[u.st][1]) : ""}${w > 90 ? esc(u.title) : ""}<span class="lbl-out">${u.st ? ST[u.st][2] : esc(a?.name || "")}</span></div></div>`;
   }).join("");
   const H = rows.length * RH;
   const anchor = (id, end) => { const r = rollup($u(id)); return [end ? (r.e + 1) * W - 3 : r.s * W + 3, idx[id] * RH + RH / 2]; };
@@ -1230,51 +1169,18 @@ function gantt(s) {
     const ym = y2 - RH / 2 + 1;
     return `M${x1} ${y1} H${x1 + 7} V${ym} H${x2 - 9} V${y2} H${x2 - 2}`;
   };
-  let svg = "", pills = "";
-  if (!fop) {
-    DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => svg += `<path class="dep" d="${route(a, b)}" marker-end="url(#ah)"/>`);
-    PARS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => { const [x1, y1] = anchor(a, false), [, y2] = anchor(b, false); svg += `<path class="dep par" d="M${x1 - 6} ${y1} H${x1 - 12} V${y2} H${x1 - 6}"/>`; });
-  } else {
-    const prod = {}; rows.forEach(({ u }) => (u.outs || []).forEach(([name]) => prod[name] = u.id));
-    const used = new Set();
-    rows.forEach(({ u }) => (u.ins || []).forEach(name => {
-      const src = prod[name]; if (!src || idx[src] == null || idx[u.id] == null) return; used.add(name);
-      const [x1, y1] = anchor(src, true), [x2, y2] = anchor(u.id, false);
-      const mx = Math.max(x1 + 10, Math.min(x2 - 10, (x1 + x2) / 2));
-      svg += `<path class="st-link" d="M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2 - 2} ${y2}" marker-end="url(#ahs)"/>`;
-    }));
-    const done = new Set();
-    rows.forEach(({ u }) => (u.ins || []).forEach(name => {
-      const src = prod[name]; if (!src || idx[src] == null || done.has(name)) return; done.add(name);
-      const [x1, y1] = anchor(src, true);
-      pills += `<span class="pill-s" style="left:${x1 + 4 + name.length * 3}px;top:${48 + y1 - 11}px">${name}</span>`;
-    }));
-    rows.forEach(({ u }) => (u.outs || []).forEach(([name]) => {
-      if (!used.has(name) && u.id !== "u15" && idx[u.id] != null) {
-        const [x1, y1] = anchor(u.id, true);
-        pills += `<span class="pill-s orphan" style="left:${x1 + 14 + name.length * 3}px;top:${48 + y1 + 9}px">${name} · órfã</span>`;
-      }
-    }));
-  }
-  const stateMarks = states.map(st => {
-    const leftPx = Math.min(Math.max(st.day, 0), NDAYS - 1) * W + (st.id === "e0" ? 2 : 0);
-    return `<div class="estate" style="left:${leftPx}px"><b>${st.id}</b></div>`;
-  }).join("");
-  const svgEl = `<svg class="gsvg" width="${NDAYS * W}" height="${H}"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--muted)"/></marker><marker id="ahs" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--accent)"/></marker></defs>${svg}</svg>`;
-  const modes = `<div style="display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid var(--line)"><nav class="seg sm"><button data-act="gm" data-m="cal" aria-current="${!fop}">${icon("calendar-range")}Calendário</button><button data-act="gm" data-m="fop" aria-current="${fop}">${icon("workflow")}Estado (FOP)</button></nav>
-    <div class="legend">${fop
-      ? `<span><i class="s"></i>saída → entrada</span><span class="mono">e0…e${Math.max(0, states.length - 1)}</span><span>dado + função</span>`
-      : `<span><i></i>sequencial (fim → início)</span><span><i class="p"></i>paralelo</span><span class="mono">e0…eN</span>`}
-      <span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div></div>`;
-  return `<div class="gantt">${runbarHtml(s)}${modes}
+  let svg = "";
+  DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => svg += `<path class="dep" d="${route(a, b)}" marker-end="url(#ah)"/>`);
+  PARS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => { const [x1, y1] = anchor(a, false), [, y2] = anchor(b, false); svg += `<path class="dep par" d="M${x1 - 6} ${y1} H${x1 - 12} V${y2} H${x1 - 6}"/>`; });
+  const svgEl = `<svg class="gsvg" width="${NDAYS * W}" height="${H}"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--muted)"/></marker></defs>${svg}</svg>`;
+  return `<div class="gantt">${runbarHtml(s)}
     <div class="gmain"><div class="gscroll"><div class="gtable" style="grid-template-columns:${LW}px ${NDAYS * W}px">
-      <div class="gleft"><div class="ghead"><div class="gl-cols" style="${fop ? "grid-template-columns:1fr 28px" : ""}"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : "Tarefas · Plano padrão"}</span>${fop ? "" : "<span>Responsável</span><span style=\"text-align:right\">Dur.</span>"}</div></div>${left}</div>
+      <div class="gleft"><div class="ghead"><div class="gl-cols"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : "Tarefas · Plano padrão"}</span><span>Responsável</span><span style="text-align:right">Dur.</span></div></div>${left}</div>
       <div class="gright"><div class="ghead"><div class="gdays">${days.map((d, i) => `<div class="${d.wk ? "wk" : ""}${i === TODAY ? " today" : ""}" style="width:${W}px">${W >= 34 ? d.wd : d.wd[0]}<b class="num">${d.dn}</b></div>`).join("")}</div></div>
         <div class="gbg">${days.map(d => `<div class="${d.wk ? "wk" : ""}" style="width:${W}px"></div>`).join("")}</div>
         <div class="gtoday" style="left:${TODAY * W + W / 2}px"></div>
-        ${stateMarks}
-        <div class="grows-r">${bars}</div>${svgEl}${fop ? pills : ""}</div>
-    </div></div>${fop ? ganttStatePanel(s, states) : ""}</div>
+        <div class="grows-r">${bars}</div>${svgEl}</div>
+    </div></div></div>
     ${nod.length ? `<div class="nodate">${icon("calendar-x-2")}Sem datas, fora do eixo:${nod.map(r => `<button class="lk" data-act="drawer" data-id="${r.u.id}">${agChip(r.u.agent, true)}${esc(r.u.title)}</button>`).join("")}</div>` : ""}
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
@@ -1612,34 +1518,77 @@ function copilotPanel(s) {
     </div></aside>`;
 }
 
-// ----- Estados · e0…eN (visão transversal) -----
+// ----- Estados · estrutura de dados (root + árvore chave/valor) -----
+/** Estado do plano: objeto { root } com árvore aninhada pelas pastas das refs de saída. */
+function planStateObject(plan) {
+  const root = {};
+  const sources = {};
+  ganttRows(plan).forEach(({ u }) => {
+    (u.outs || []).forEach(([name, ref]) => {
+      const parts = String(ref || name).split("/").filter(Boolean);
+      const dirs = parts.slice(0, -1);
+      let node = root;
+      dirs.forEach(d => {
+        if (!node[d] || typeof node[d] !== "object" || Array.isArray(node[d])) node[d] = {};
+        node = node[d];
+      });
+      node[name] = ref;
+      sources[name] = { id: u.id, title: u.title, st: u.st || null };
+    });
+  });
+  return { root, sources };
+}
+function seedEstOpen(obj, path) {
+  EST_OPEN.add(path);
+  if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+    Object.entries(obj).forEach(([k, v]) => {
+      if (v && typeof v === "object" && !Array.isArray(v)) seedEstOpen(v, path ? path + "." + k : k);
+    });
+  }
+}
+function renderStateRows(obj, path, depth, sources) {
+  return Object.entries(obj).map(([k, v]) => {
+    const p = path ? path + "." + k : k;
+    const isObj = v && typeof v === "object" && !Array.isArray(v);
+    if (isObj) {
+      const opened = EST_OPEN.has(p);
+      const n = Object.keys(v).length;
+      return `<div class="erow${opened ? " open" : ""}" style="padding-left:${8 + depth * 14}px">
+        <button type="button" class="car" data-act="est-tog" data-p="${esc(p)}" aria-label="${opened ? "Recolher" : "Expandir"}">${icon("chevron-right")}</button>
+        <span class="k">${esc(k)}<span class="badge">${n}</span></span>
+        <span class="v">{${n}}</span>
+      </div>${opened ? renderStateRows(v, p, depth + 1, sources) : ""}`;
+    }
+    const src = sources[k];
+    return `<div class="erow" style="padding-left:${8 + depth * 14}px">
+      <span class="car"></span>
+      <span class="k">${esc(k)}${src ? `<span class="badge">${esc(src.title)}</span>` : ""}</span>
+      <span class="v" title="${esc(String(v))}">${esc(String(v))}</span>
+    </div>`;
+  }).join("");
+}
 function estados(s) {
-  const states = ganttFopStates(s.plan);
-  const { orphans, missing, prod } = fopCheck(s.plan);
-  const arts = Object.entries(prod || {});
-  const cons = n => ganttRows(s.plan).filter(({ u }) => (u.ins || []).includes(n)).map(r => r.u.title);
+  const { root, sources } = planStateObject(s.plan);
+  const tree = { root };
+  if (!EST_OPEN.has("__seeded__")) {
+    seedEstOpen(tree, "");
+    EST_OPEN.add("__seeded__");
+  }
+  EST_OPEN.add("root");
+  const json = JSON.stringify(tree, null, 2);
+  const keys = Object.keys(sources).length;
   return `<div class="estados">
     <div class="eh">
       <div><h2>${icon("database")} Estados</h2>
-        <p>Programação Orientada a Fluxo: <span class="mono">e0</span> é o contexto inicial; cada <span class="mono">eN</span> seguinte é o estado após uma onda de saídas no plano.</p></div>
-      <select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+        <p>Objeto do plano: <span class="mono">root</span> e árvore chave → valor (${keys} artefato${keys === 1 ? "" : "s"}).</p></div>
     </div>
-    <div class="grid">${states.map(st => {
-      const keys = Object.keys(st.data);
-      return `<article class="ecard"><div class="hid"><b>${st.id}</b><span>dia ${st.day + 1}</span></div>
-        <div class="keys">${keys.length ? keys.join(" · ") : "∅"}</div>
-        <div class="via">${esc(st.label)}</div>
-        ${st.via?.length ? `<div class="via">via ${st.via.map(id => esc($u(id)?.title || id)).join(", ")}</div>` : ""}
-      </article>`;
-    }).join("")}</div>
-    <div class="block"><h3>${icon("shield-check")} Validação</h3>
-      <div class="chk ok">${icon("circle-check")}<div>Sem ciclo de estado</div></div>
-      ${orphans.length ? orphans.map(([n, u]) => `<div class="chk warn">${icon("triangle-alert")}<div>Saída órfã <span class="mono">${n}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Toda saída tem destino</div></div>`}
-      ${missing.length ? missing.map(([n, u]) => `<div class="chk fail">${icon("circle-x")}<div>Entrada sem origem <span class="mono">${n}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Contexto completo</div></div>`}
+    <div class="etree">
+      ${Object.keys(root).length ? renderStateRows(tree, "", 0, sources) : `<p style="color:var(--muted);font-size:13px;padding:8px">Nenhuma saída neste plano.</p>`}
     </div>
-    <div class="block"><h3>${icon("arrow-left-right")} Artefatos · ${arts.length}</h3>
-      ${arts.map(([n, u]) => { const c = cons(n); return `<div class="art${!c.length && orphans.some(o => o[0] === n) ? " orphan" : ""}"><span class="mono">${n}</span><span>de</span>${esc(u.title)}<span>para</span>${c.length ? c.map(esc).join(", ") : "—"}</div>`; }).join("") || `<p style="color:var(--muted);font-size:13px">Nenhum artefato neste plano.</p>`}
-    </div>
+    <aside class="ejson" aria-label="JSON do estado">
+      <h3>${icon("braces")} state.json</h3>
+      <pre>${esc(json)}</pre>
+    </aside>
   </div>`;
 }
 
@@ -1824,11 +1773,11 @@ const FLOWS = [
   { id: "detalhe", n: "03", title: "Detalhe da unidade", us: "US-01 · US-02",
     desc: "Painel lateral comum às visões. Mesmo UUID, vocabulário da visão de origem (card, tarefa, etapa, atividade, arquivo), responsável escolhido do catálogo, estado, hierarquia e atalhos para abrir em outra visão.",
     steps: [["T-20", "Detalhe"], ["T-21", "Atribuir responsável"]] },
-  { id: "gantt", n: "04", title: "Gantt", us: "US-08 a US-11 · FOP",
-    desc: "Cronograma com calendário e modo Estado (FOP): marcas e0…eN, entradas/saídas nas barras, saída→entrada no tempo. Roll-up no pai; tarefas sem data à parte.",
-    steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"], ["T-37", "Estado e0…eN"]] },
+  { id: "gantt", n: "04", title: "Gantt", us: "US-08 a US-11",
+    desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas. Roll-up no pai; tarefas sem data à parte.",
+    steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"]] },
   { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
-    desc: "Eixo por ordem (passo), sem calendário. Cada etapa é entrada □ | função | saída □ — endereços de I/O como no PDF de Programação Orientada a Fluxo. Máquina se programa aqui; exporta código.",
+    desc: "Eixo por ordem (passo), sem calendário. Cada etapa é entrada □ | função | saída □. Máquina se programa aqui; exporta código.",
     steps: [["T-32", "Flow"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
     desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. Zoom com scroll e pan arrastando o fundo.",
@@ -1839,9 +1788,9 @@ const FLOWS = [
   { id: "copilot", n: "08", title: "Copiloto", us: "harness",
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
     steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
-  { id: "estados", n: "09", title: "Estados", us: "FOP · e0…eN",
-    desc: "Visão transversal dos estados do plano: e0 (contexto inicial) e e1, e2… após cada onda de saídas, com artefatos, validação e camadas.",
-    steps: [["T-70", "Estados e0…eN"]] },
+  { id: "estados", n: "09", title: "Estados", us: "estrutura de dados",
+    desc: "Estado do plano como objeto: root e árvore chave → valor (saídas aninhadas pelo path da ref), com JSON ao lado.",
+    steps: [["T-70", "Árvore de estado"]] },
   { id: "config", n: "10", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
     steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
@@ -1858,16 +1807,15 @@ const SCREENS = {
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
   "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Copiloto ou Explorar. Arquivar e excluir no rodapé." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
-  "T-30": { s: { v: "gantt", gm: "cal" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Alterna Calendário / Estado (FOP). Barras por início e fim (hoje marcado), setas fim→início e paralelo. Marcas e0…eN no eixo quando o plano tem I/O. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
-  "T-31": { s: { v: "gantt", gm: "cal", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
-  "T-37": { s: { v: "gantt", gm: "fop", plan: "onb" }, name: "Estado e0…eN", us: ["US-08", "US-12", "FOP"], notes: "No Gantt, modo Estado (FOP) do PDF de Programação Orientada a Fluxo: e0 = contexto inicial; e1, e2… = estado após cada onda de saídas no calendário. Barras mostram entradas/saídas; traços ligam saída→entrada; painel lista o conteúdo de cada eN, validação e camadas substituíveis." },
-  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Eixo por passo (sem calendário). Cada task mostra quadradinhos de entrada à esquerda, a função no meio e saídas à direita — como a função com n endereços de I/O do PDF de FOP. Quem não tem data no Gantt entra pela ordem." },
+  "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Barras por início e fim (hoje marcado), setas fim→início e paralelo. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
+  "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
+  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Eixo por passo (sem calendário). Cada task mostra quadradinhos de entrada à esquerda, a função no meio e saídas à direita. Quem não tem data no Gantt entra pela ordem." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
   "T-35": { s: { v: "flow", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
-  "T-70": { s: { v: "estados", plan: "onb" }, name: "Estados e0…eN", us: ["FOP"], notes: "Visão Estados no dock: cards e0 (∅) … eN com os dados do contexto após cada onda de saídas, validação (órfãs / entradas sem origem) e lista de artefatos. Independente do Gantt, mas usa o mesmo plano." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["estado"], notes: "Visão Estados no dock: objeto { root } com árvore chave→valor (saídas do plano aninhadas pelo path da ref) e painel JSON. Expandir/recolher nós; troca de plano na barra." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com uma raiz por pasta, da esquerda para a direita. Cada nó mostra responsável, estado e quantos descendentes tem. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -1951,7 +1899,6 @@ function tFor(s) {
   if (s.drawer) return s.picker ? "T-21" : "T-20";
   if (s.v === "board") return s.cfg ? "T-12" : s.newCard ? "T-11" : "T-10";
   if (s.v === "gantt") {
-    if (s.gm === "fop") return "T-37";
     return U.some(u => u.st === "exec" && u.plan === s.plan && agent(u.agent)?.type === "ia") ? "T-31" : "T-30";
   }
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; return "T-32"; }
@@ -2127,7 +2074,10 @@ const ACT = {
   "up-col": t => { const i = COLS.findIndex(c => c.id === t.dataset.id); if (i > 0) [COLS[i - 1], COLS[i]] = [COLS[i], COLS[i - 1]]; },
   "up-lane": t => { const i = LANES.findIndex(c => c.id === t.dataset.id); if (i > 0) [LANES[i - 1], LANES[i]] = [LANES[i], LANES[i - 1]]; },
   fm: t => { cur.fm = t.dataset.m; unset("mach"); },
-  gm: t => { cur.gm = t.dataset.m; unset("mach"); },
+  "est-tog": t => {
+    const p = t.dataset.p;
+    if (EST_OPEN.has(p)) EST_OPEN.delete(p); else EST_OPEN.add(p);
+  },
   "run-plan": () => { const ids = U.filter(u => u.plan === cur.plan && agent(u.agent)?.type === "ia" && u.st === "pendente").map(u => u.id); if (!ids.length) { toast("Nenhuma tarefa de IA pendente. Falhas só voltam com “Tentar de novo”.", "info"); return; } startRun(ids); return false; },
   "cancel-run": () => { U.filter(u => u.plan === cur.plan && u.st === "exec").forEach(u => u.st = "cancel"); toast("Execução cancelada", "ban"); },
   export: () => { cur.exp = true; cur.expTab = cur.expTab || "ir"; },

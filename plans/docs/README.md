@@ -5,7 +5,7 @@
 **No fluxo:** [`visão`](../README.md) → **este índice** → [`functionalities.md`](functionalities.md) → [`user-stories.md`](user-stories.md) → … → [`prototype.html`](prototype.html). Guia a navegação; o conteúdo de produto vive nos arquivos listados.
 
 Derivados do [documento de visão](../README.md).  
-Fundamentos FOP: [`../inputs/`](../inputs/).  
+Inputs: [`../inputs/README.md`](../inputs/README.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 
 | Artefato | Arquivo | Papel no fluxo |

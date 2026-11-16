@@ -291,10 +291,10 @@ buildGallery();
 
 /* ---------- temas ---------- */
 const THEMES = [
-  { id: 'cobalto', nome: 'Cobalto', tag: 'proposta', desc: 'Ação em azul-cobalto, verde só para “cumpriu”. Fundo claro neutro — referência “health app” mainstream.', sw: ['#2B4BF2', '#16A34A', '#0E1116', '#F4F5F7'] },
+  { id: 'cobalto', nome: 'Cobalto', desc: 'Ação em azul-cobalto, verde só para “cumpriu”. Fundo claro neutro — referência “health app” mainstream.', sw: ['#2B4BF2', '#16A34A', '#0E1116', '#F4F5F7'] },
   { id: 'preto', nome: 'Preto', desc: 'Fundo preto puro e cinzas neutros. Ação em cobalto claro, mesma gramática do claro.', sw: ['#5B7BFF', '#34D27F', '#F2F2F2', '#000000'] },
   { id: 'lima', nome: 'Lima sobre preto', tag: 'academia', desc: 'Preto + lima elétrico (Sprint). Progress rings e treino noturno — menos “app de saúde”.', sw: ['#C6F432', '#34D27F', '#F2F2F2', '#000000'] },
-  { id: 'pista', nome: 'Pista', tag: 'cardio', desc: 'Escuro + laranja vivo nos CTAs (sem peach, sem mint). Corrida / streak.', sw: ['#FF4D00', '#FF5C14', '#F2F2F2', '#0B0B0B'] },
+  { id: 'pista', nome: 'Pista', tag: 'padrão', desc: 'Escuro + laranja vivo nos CTAs (sem peach, sem mint). Corrida / streak.', sw: ['#FF4D00', '#FF5C14', '#F2F2F2', '#0B0B0B'] },
   { id: 'zona', nome: 'Zona', tag: 'cardio', desc: 'Laranja vivo nos botões + verde neon do Next no “cumpriu” (fonte preta).', sw: ['#FF4D00', '#39FF14', '#F2F2F2', '#0B0B0B'] },
   { id: 'volt', nome: 'Volt', tag: 'energia', desc: 'Preto + amarelo elétrico. Sinal de alerta de academia, PR, “vai”.', sw: ['#FFD400', '#FFE566', '#F2F2F2', '#000000'] },
   { id: 'next', nome: 'Next', tag: 'radical', desc: 'Preto + verde neon ácido (Next Fitness / gym dark). CTA chamativo, contraste máximo.', sw: ['#39FF14', '#7CFF6B', '#F2F2F2', '#000000'] },
@@ -307,7 +307,7 @@ const THEMES = [
 ];
 const TSCREENS = [['F-10', 'Hoje'], ['F-21', 'Dieta'], ['F-30', 'Treino'], ['F-42', 'Corpo'], ['F-51', 'Vitrine'], ['F-05', 'Base']];
 let tScreen = ['F-10', 'F-51'];
-function getTheme() { try { return localStorage.getItem('ft-theme') || 'cobalto'; } catch (e) { return 'cobalto'; } }
+function getTheme() { try { return localStorage.getItem('ft-theme') || 'pista'; } catch (e) { return 'pista'; } }
 function applyTheme(id, animate) {
   const root = document.documentElement;
   if (animate && root.dataset.theme !== id && document.startViewTransition && !reducedMotion()) { root.dataset.vt = 'theme'; const t = document.startViewTransition(() => applyTheme(id)); [t.ready, t.updateCallbackDone].forEach((pr) => pr.catch(() => {})); t.finished.catch(() => {}).finally(() => { delete root.dataset.vt; }); return; }

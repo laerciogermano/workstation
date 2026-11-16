@@ -7,6 +7,8 @@
 Derivados: [`docs/`](docs/).  
 Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
+**URL protótipo:** https://plans.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
+
 ---
 
 ## Visão

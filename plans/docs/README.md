@@ -17,6 +17,7 @@ Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 | Screens BDD | [`screens-bdd.md`](screens-bdd.md) | Mesmos critérios, agrupados por tela |
 | Componentes | [`components.md`](components.md) | Inventário de UI para implementar |
 | Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado |
+| Protótipo desktop (galeria + navegável) | [`../prototipo/index.html`](../prototipo/index.html) | Mesmo padrão dos protótipos RoleGo, Confraternização e Fitness: telas T-xx por fluxo com as US, modo navegável com notas e temas. Só desktop |
 
 ## Próximos passos
 

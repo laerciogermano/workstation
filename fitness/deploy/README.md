@@ -5,6 +5,8 @@
 **DNS:** Hostinger (zona `laerciogermano.com`) · A `fitness` → `185.250.37.82`  
 **Conteúdo:** [`prototipos/v1/`](../prototipos/v1/)
 
+**Temas (v1):** 12 — Cobalto, Preto, Lima, Pista (laranja sem mint), Volt (amarelo), Next (verde neon), Esmeralda, Forja, Giz (tijolo/âmbar), Sálvia, Musgo, Neon. Pista/Giz usam família quente em ação + “cumpriu”; voltar: `git checkout` do CSS/JS do protótipo + `publicar.sh`.
+
 ## Republicar
 
 ```bash

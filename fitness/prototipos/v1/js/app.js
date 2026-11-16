@@ -75,12 +75,19 @@ function flash(msg, extra = {}) {
   toastTimer = setTimeout(() => { S.toast = null; const t = $('.toast', live); if (t) { t.classList.add('out'); setTimeout(() => t.remove(), 200); } }, 2800);
 }
 function fit() {
-  const sw = Math.max(0, stage.clientWidth - 32), sh = Math.max(0, stage.clientHeight - 90);
-  const raw = Math.min(1, sw / 414 || 0, sh / 868 || 0);
-  const k = Math.max(0.35, raw || 1).toFixed(3);
-  live.style.setProperty('--s', k); document.documentElement.style.setProperty('--s', k);
+  if (!player.classList.contains('open')) return;
+  const padX = 32, padY = 90;
+  const sw = Math.max(0, stage.clientWidth - padX), sh = Math.max(0, stage.clientHeight - padY);
+  let raw = Math.min(1, sw > 0 ? sw / 414 : 1, sh > 0 ? sh / 868 : 1);
+  if (!(raw > 0)) raw = 1;
+  const k = Math.max(0.4, Math.min(1, raw)).toFixed(3);
+  live.style.setProperty('--s', k);
+  document.documentElement.style.setProperty('--s', k);
 }
 addEventListener('resize', () => cur && player.classList.contains('open') && fit());
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(() => cur && player.classList.contains('open') && fit()).observe(stage);
+}
 function notes() {
   const sc = SCREENS[cur], f = flowOf(cur);
   const tags = (arr, cls) => arr.map((x) => `<span class="tg ${cls}">${x}</span>`).join('');
@@ -90,9 +97,17 @@ function notes() {
   document.querySelectorAll('[data-scen]').forEach((b) => { const [k, v] = b.dataset.scen.split(':'); b.classList.toggle('on', scenVal(k) === v); });
 }
 function openPlayer(id) {
-  hist.length = 0; player.classList.add('open'); document.body.style.overflow = 'hidden'; cur = id; paint();
-  requestAnimationFrame(() => { fit(); requestAnimationFrame(fit); });
-  $('#stage-close').focus({ preventScroll: true });
+  hist.length = 0;
+  player.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  cur = id;
+  live.style.setProperty('--s', '1');
+  paint();
+  const refit = () => fit();
+  requestAnimationFrame(() => { refit(); requestAnimationFrame(refit); });
+  setTimeout(refit, 50);
+  setTimeout(refit, 200);
+  try { $('#stage-close').focus({ preventScroll: true }); } catch (e) { /* ignore */ }
 }
 function closePlayer() { player.classList.remove('open'); document.body.style.overflow = ''; history.replaceState(null, '', location.pathname); }
 

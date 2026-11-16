@@ -36,6 +36,8 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 ### Projetos
 
+Hub público: [**Centralizador**](centralizador/README.md) — https://centralizador.laerciogermano.com/
+
 | | Projeto | Descrição | Links |
 |:--:|:--------|:----------|:------|
 | 🔤 | [**Flow Language**](flow-language/) | Linguagem ↔ visualização de fluxo (IR, sync) | [visão](flow-language/README.md) · [docs](flow-language/docs/) · [config IA](flow-language/config/config-ia.md) |

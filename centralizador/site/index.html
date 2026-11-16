@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Centralizador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #ffffff;
+      --paper-2: #f4f1ea;
+      --ink: #14120f;
+      --body: #44423d;
+      --accent: #e0402b;
+      --line: #e7e3db;
+      --radius: 6px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #f7efe4 0%, transparent 55%),
+        radial-gradient(900px 420px at 100% 0%, #efe8de 0%, transparent 50%),
+        var(--paper);
+      color: var(--ink);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: var(--accent); color: var(--paper); }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 2.75rem 0 4.5rem;
+    }
+
+    .brand {
+      font-family: "Archivo", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      margin-bottom: 0.35rem;
+    }
+
+    .brand span { color: var(--accent); }
+
+    .meta {
+      font-family: "Archivo", system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--body);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 2.25rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: transform 140ms var(--ease), background 140ms var(--ease), border-color 140ms var(--ease);
+    }
+
+    .card:hover {
+      transform: translateY(-1px);
+      background: var(--paper-2);
+      border-color: #d7d1c6;
+    }
+
+    .card__img {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      background: #ebe6dc;
+    }
+
+    .card__body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding: 1rem 1rem 1.1rem;
+      flex: 1;
+    }
+
+    .card__title {
+      font-family: "Archivo", system-ui, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .card__desc {
+      color: var(--body);
+      font-size: 0.98rem;
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .card__go {
+      margin-top: 0.55rem;
+      font-family: "Archivo", system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      border-bottom: 1.5px solid var(--accent);
+      align-self: flex-start;
+      padding-bottom: 1px;
+      word-break: break-all;
+    }
+
+    .card:hover .card__go { color: var(--accent); }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      font-family: "Archivo", system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--body);
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100%, calc(100% - 1.5rem)); padding-top: 1.75rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .card:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1 class="brand">Centralizador<span>.</span></h1>
+    <p class="meta" id="count">—</p>
+    <div class="grid" id="grid"></div>
+    <footer>centralizador.laerciogermano.com</footer>
+  </main>
+  <script>
+    const projects = [
+      {
+        title: "Connect",
+        desc: "Dashboard de leads e automação LinkedIn.",
+        img: "img/connect.jpg",
+        url: "http://185.250.37.82/dashboard",
+      },
+      {
+        title: "Connect Tech",
+        desc: "Consultoria e desenvolvimento de software.",
+        img: "img/connect-tech.jpg",
+        url: "http://185.250.37.82/",
+      },
+      {
+        title: "Fitness",
+        desc: "Treino, dieta e métricas com gamificação.",
+        img: "img/fitness.jpg",
+        url: "https://fitness.laerciogermano.com/",
+      },
+      {
+        title: "Clozzy",
+        desc: "Conteúdo exclusivo de influencers para fãs.",
+        img: "img/clozzy.jpg",
+        url: "https://clozzy.link/",
+      },
+      {
+        title: "e-notas",
+        desc: "Índice de preços via QR de nota fiscal.",
+        img: "img/e-notas.jpg",
+        url: "https://notinhas.shop/",
+      },
+      {
+        title: "RoleGo",
+        desc: "Descoberta de festas, shows e eventos próximos.",
+        img: "img/role-go.jpg",
+        url: "https://rolego.com.br/",
+      },
+      {
+        title: "Confraternização",
+        desc: "App da potência — evento mundial Curitiba.",
+        img: "img/ov.jpg",
+        url: "https://confraternizacao.laerciogermano.com/",
+      },
+      {
+        title: "Eternos Mutáveis",
+        desc: "Manuscrito / tese filosófica.",
+        img: "img/eternos-mutaveis.jpg",
+        url: "https://eternos-mutaveis.laerciogermano.com/",
+      },
+      {
+        title: "Email marketing",
+        desc: "Campanhas ConnectMax via Mailcow.",
+        img: "img/connect.jpg",
+        url: "https://marketing.conectmax.email/",
+      },
+      {
+        title: "Cupido",
+        desc: "Match anônimo com contexto e encontro.",
+        img: "img/cupido.jpg",
+        url: null,
+      },
+      {
+        title: "Board",
+        desc: "Kanban próprio — substituto do Trello.",
+        img: "img/board.jpg",
+        url: null,
+      },
+      {
+        title: "Plans",
+        desc: "Orquestrador: board, Gantt e árvore.",
+        img: "img/plans.jpg",
+        url: null,
+      },
+      {
+        title: "Context Recorder",
+        desc: "Memória contínua de mic, desktop e OCR.",
+        img: "img/context-recorder.jpg",
+        url: null,
+      },
+      {
+        title: "Flow",
+        desc: "Linguagem e fundamentos de fluxo.",
+        img: "img/flow.jpg",
+        url: null,
+      },
+      {
+        title: "Filme Metafísico",
+        desc: "Filme O Metafísico — visão e roteiro.",
+        img: "img/filme-metafisico.jpg",
+        url: null,
+      },
+      {
+        title: "Financeiro",
+        desc: "Gastos, cartões e finanças pessoais.",
+        img: "img/financeiro.jpg",
+        url: null,
+      },
+      {
+        title: "low-chat",
+        desc: "Persona + contexto + LLM barato.",
+        img: "img/low-chat.jpg",
+        url: null,
+      },
+      {
+        title: "Agent Shop",
+        desc: "Comprar, nomear e agendar agentes.",
+        img: "img/agent-shop.jpg",
+        url: null,
+      },
+      {
+        title: "Hurble",
+        desc: "Roulette social + perfil, amigos e DM.",
+        img: "img/hurble.jpg",
+        url: null,
+      },
+      {
+        title: "Jiu-jitsu",
+        desc: "App de jiu-jitsu.",
+        img: "img/jiu-jitsu.jpg",
+        url: null,
+      },
+      {
+        title: "Caronas",
+        desc: "Caronas compartilhadas.",
+        img: "img/caronas.jpg",
+        url: null,
+      },
+      {
+        title: "Aulas",
+        desc: "Árvore de seções e conteúdo didático.",
+        img: "img/aulas.jpg",
+        url: null,
+      },
+    ];
+
+    const grid = document.getElementById("grid");
+    const live = projects.filter((p) => p.url);
+    document.getElementById("count").textContent =
+      projects.length + " projetos · " + live.length + " no ar";
+
+    for (const p of projects) {
+      const el = document.createElement(p.url ? "a" : "div");
+      el.className = "card";
+      if (p.url) {
+        el.href = p.url;
+        el.target = "_blank";
+        el.rel = "noopener noreferrer";
+      } else {
+        el.setAttribute("aria-disabled", "true");
+        el.style.opacity = "0.72";
+      }
+      const host = p.url
+        ? p.url.replace(/^https?:\/\//, "").replace(/\/$/, "")
+        : "em breve";
+      el.innerHTML =
+        '<img class="card__img" src="' + p.img + '" alt="" loading="lazy" />' +
+        '<div class="card__body">' +
+        '<h2 class="card__title">' + p.title + "</h2>" +
+        '<p class="card__desc">' + p.desc + "</p>" +
+        '<span class="card__go">' + host + "</span>" +
+        "</div>";
+      grid.appendChild(el);
+    }
+  </script>
+</body>
+</html>

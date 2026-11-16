@@ -466,7 +466,8 @@ export async function notifyRecentConnectionsAccepted({
  * POST {base}/client-linkedin-messages
  *
  * @param {{
- *   profileUrl: string,
+ *   profileUrl?: string,
+ *   clienteLinkedinId?: string,
  *   agentId?: string,
  *   peerName?: string|null,
  *   messages?: Array<{ direction: "sent"|"received", message: string, sender?: string|null, time?: string|null }>,
@@ -483,11 +484,13 @@ export async function notifyLinkedInMessages(opts = {}) {
     return { notified: false, reason: "MESSAGES_API_URL/PROFILES_API_URL ausente" };
   }
   const url = `${base}/client-linkedin-messages`;
+  const clienteLinkedinId = String(opts.clienteLinkedinId || "").trim();
   const body = {
-    profileUrl: opts.profileUrl,
     agentId: String(opts.agentId || resolveAgentId() || "default").trim() || "default",
     peerName: opts.peerName || null,
   };
+  if (clienteLinkedinId) body.clienteLinkedinId = clienteLinkedinId;
+  else body.profileUrl = opts.profileUrl;
   if (opts.messages?.length) {
     body.messages = opts.messages;
   } else {

@@ -35,9 +35,12 @@ async function main() {
     text,
     dryRun: args.dryRun,
     outDir,
+    clienteLinkedinId: args.clienteLinkedinId,
   });
   console.log(JSON.stringify(result, null, 2));
   if (!result.ok) process.exitCode = 1;
+  // Se LinkedIn enviou mas DB falhou: ainda exit 0 — falhar o job reenfileira
+  // e dispara outro envio real. Persistência deve funcionar (normalize + id).
 }
 
 main().catch((e) => {

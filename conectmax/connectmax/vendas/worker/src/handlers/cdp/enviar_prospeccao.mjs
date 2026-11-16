@@ -26,6 +26,10 @@ export async function run(job, ctx) {
     throw new Error('enviar_prospeccao: payload.message obrigatório');
   }
 
+  const clienteLinkedinId = String(
+    job?.payload?.clienteLinkedinId || '',
+  ).trim();
+
   const args = [
     'run',
     'linkedin-message-cdp',
@@ -36,8 +40,17 @@ export async function run(job, ctx) {
     message,
     '--no-shot',
   ];
+  if (clienteLinkedinId) {
+    args.push('--cliente-linkedin-id', clienteLinkedinId);
+  }
 
-  const code = await spawnNpm(cwd, args, cdpScriptEnv(ctx, apiUrl));
+  const code = await spawnNpm(
+    cwd,
+    args,
+    cdpScriptEnv(ctx, apiUrl, {
+      ...(clienteLinkedinId ? { CLIENTE_LINKEDIN_ID: clienteLinkedinId } : {}),
+    }),
+  );
   if (code !== 0) {
     throw new Error(`linkedin-message-cdp exit=${code} url=${profileUrl}`);
   }

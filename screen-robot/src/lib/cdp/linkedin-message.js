@@ -47,6 +47,7 @@ async function isComposerOpen(page) {
  *   dryRun?: boolean,
  *   closePage?: boolean,
  *   agentId?: string,
+ *   clienteLinkedinId?: string,
  * }} opts
  */
 export async function sendLinkedInMessage(opts) {
@@ -55,13 +56,32 @@ export async function sendLinkedInMessage(opts) {
   if (!message) throw new Error("texto da mensagem vazio");
   const url = normalizeLinkedInProfileUrl(opts.url);
   if (!url) throw new Error(`URL inválida: ${opts.url}`);
+  const agentId = opts.agentId || resolveAgentId();
+  const clienteLinkedinId = String(opts.clienteLinkedinId || "").trim() || null;
 
   await assertConnectionAcceptedForSend({
     profileUrl: url,
-    agentId: opts.agentId || resolveAgentId(),
+    agentId,
   });
 
   const steps = [];
+  const persistSent = async () => {
+    let db = null;
+    try {
+      db = await notifyLinkedInMessages({
+        profileUrl: url,
+        clienteLinkedinId: clienteLinkedinId || undefined,
+        agentId,
+        direction: "sent",
+        message,
+        occurredAt: new Date().toISOString(),
+      });
+      steps.push(db.notified ? "db:message:sent" : `db:skip:${db.reason}`);
+    } catch (e) {
+      steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
+    }
+    return db;
+  };
 
   return withLinkedInPage(opts, async (page) => {
     await page.goto(url);
@@ -105,20 +125,7 @@ export async function sendLinkedInMessage(opts) {
         await sleep(WAIT_TAP_MS);
         await shot(page, opts.outDir, "05-sent.png");
         steps.push("send:confirmed");
-
-        let db = null;
-        try {
-          db = await notifyLinkedInMessages({
-            profileUrl: url,
-            agentId: opts.agentId || resolveAgentId(),
-            direction: "sent",
-            message,
-            occurredAt: new Date().toISOString(),
-          });
-          steps.push(db.notified ? "db:message:sent" : `db:skip:${db.reason}`);
-        } catch (e) {
-          steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
-        }
+        const db = await persistSent();
         return { ok: true, status: "sent", url, text: message, steps, db };
       }
       steps.push("compose:href-miss");
@@ -159,20 +166,7 @@ export async function sendLinkedInMessage(opts) {
         await sleep(WAIT_TAP_MS);
         await shot(page, opts.outDir, "05-sent.png");
         steps.push("send:confirmed");
-
-        let db = null;
-        try {
-          db = await notifyLinkedInMessages({
-            profileUrl: url,
-            agentId: opts.agentId || resolveAgentId(),
-            direction: "sent",
-            message,
-            occurredAt: new Date().toISOString(),
-          });
-          steps.push(db.notified ? "db:message:sent" : `db:skip:${db.reason}`);
-        } catch (e) {
-          steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
-        }
+        const db = await persistSent();
         return { ok: true, status: "sent", url, text: message, steps, db };
       }
 

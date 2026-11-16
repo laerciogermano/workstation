@@ -22,6 +22,7 @@ import { ClientConnectionLinkedin } from '../client-connections-linkedin/client-
 import { ClientConnectionLinkedinStatus } from '../client-connections-linkedin/client-connection-linkedin-status';
 import { ClientLinkedinMessage } from '../client-linkedin-messages/client-linkedin-message.entity';
 import { ClientLinkedinMessageDirection } from '../client-linkedin-messages/client-linkedin-message-direction';
+import { messageFingerprint } from '../client-linkedin-messages/client-linkedin-messages.service';
 import { AgentJob } from './agent-job.entity';
 import {
   AGENT_JOB_PRIORITY,
@@ -1027,6 +1028,9 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
     }
     if (job.type === 'enviar_prospeccao') {
       runtime.lastProspeccaoAt = new Date();
+      // Rede de segurança: job done ⇒ garante `sent` no DB (evita reenvio se
+      // o robô enviou no LinkedIn mas o POST /client-linkedin-messages falhou).
+      await this.ensureProspeccaoSentFromJob(agentId, job);
     }
     if (runtime.currentJobId === job.id) {
       runtime.currentJobId = null;
@@ -2043,6 +2047,60 @@ export class AgenteService implements OnModuleInit, OnModuleDestroy {
         hint: 'perfil → tap N connections → mark-accepted (lote 20)',
       },
     });
+  }
+
+  /**
+   * Após `enviar_prospeccao` done: grava `sent` se ainda não houver nenhuma.
+   * Usa `clienteLinkedinId` + `message` do payload do job.
+   */
+  private async ensureProspeccaoSentFromJob(
+    agentId: string,
+    job: AgentJob,
+  ): Promise<void> {
+    const p = (job.payload || {}) as Record<string, unknown>;
+    const clienteLinkedinId = String(p.clienteLinkedinId || '').trim();
+    const message = String(p.message || '').trim();
+    if (!clienteLinkedinId || !message) {
+      this.logger.warn(
+        `prospeccao done sem clienteLinkedinId/message job=${job.id}`,
+      );
+      return;
+    }
+    const already = await this.messages.count({
+      where: {
+        agentId,
+        clienteLinkedinId,
+        direction: ClientLinkedinMessageDirection.SENT,
+      },
+    });
+    if (already > 0) return;
+
+    const fingerprint = messageFingerprint(
+      ClientLinkedinMessageDirection.SENT,
+      message,
+    );
+    try {
+      await this.messages.save(
+        this.messages.create({
+          clienteLinkedinId,
+          agentId,
+          direction: ClientLinkedinMessageDirection.SENT,
+          sender: null,
+          message,
+          timeLabel: null,
+          occurredAt: new Date(),
+          fingerprint,
+        }),
+      );
+      this.logger.log(
+        `prospeccao sent backfill job=${job.id} clienteLinkedin=${clienteLinkedinId}`,
+      );
+    } catch (e) {
+      // Unique race / fingerprint já existe — ok.
+      this.logger.warn(
+        `prospeccao sent backfill falhou job=${job.id}: ${String((e as Error)?.message || e).slice(0, 160)}`,
+      );
+    }
   }
 
   /**

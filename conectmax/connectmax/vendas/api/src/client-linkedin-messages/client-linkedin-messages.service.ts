@@ -13,22 +13,22 @@ import { Cliente } from '../clientes/cliente.entity';
 import { ClientLinkedinMessageDirection } from './client-linkedin-message-direction';
 import { ClientLinkedinMessage } from './client-linkedin-message.entity';
 import {
+  normalizeLinkedInProfileUrl,
+  stubNameFromLinkedInUrl,
+} from '../clientes/linkedin-url';
+import {
   ClientLinkedinMessageItemDto,
   UpsertClientLinkedinMessagesDto,
 } from './create-client-linkedin-message.dto';
 
+/** URL canônica; aceita slug com acento (evita `/in/débora` → `/in/d`). */
 function normalizeProfileUrl(raw: string): string {
-  const s = String(raw || '').trim();
-  const m = s.match(
-    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([A-Za-z0-9._%-]+)/i,
+  return (
+    normalizeLinkedInProfileUrl(raw) ||
+    String(raw || '')
+      .trim()
+      .replace(/\/$/, '')
   );
-  if (!m) return s.replace(/\/$/, '');
-  return `https://www.linkedin.com/in/${decodeURIComponent(m[1])}`;
-}
-
-function slugFromProfileUrl(url: string): string {
-  const m = url.match(/linkedin\.com\/in\/([^/?#]+)/i);
-  return m ? decodeURIComponent(m[1]) : 'LinkedIn contact';
 }
 
 /** Corpo estável p/ dedupe (acento/case/espaços). */
@@ -450,11 +450,22 @@ export class ClientLinkedinMessagesService {
       );
     }
 
+    const slug = profileUrl.replace(
+      /^https?:\/\/(?:www\.)?linkedin\.com\/in\//i,
+      '',
+    );
+    // Stub truncado (bug antigo ASCII) não cria lead fantasma `/in/d`.
+    if (slug.length < 3) {
+      throw new BadRequestException(
+        `profileUrl slug inválido/truncado: ${profileUrl}`,
+      );
+    }
+
     let row = await this.clienteLinkedin.findOneBy({ profileUrl });
     if (row) return row.id;
 
     const nome =
-      String(dto.peerName || '').trim() || slugFromProfileUrl(profileUrl);
+      String(dto.peerName || '').trim() || stubNameFromLinkedInUrl(profileUrl);
     const cliente = await this.clientes.save(
       this.clientes.create({ nome }),
     );

@@ -42,6 +42,9 @@ export async function run(job, ctx) {
   if (!apiUrl) throw new Error('PROFILES_API_URL ou API_URL obrigatório');
 
   const agentId = String(ctx.agentId || process.env.AGENT_ID || '').trim();
+  const clienteLinkedinId = String(
+    job?.payload?.clienteLinkedinId || '',
+  ).trim();
   const args = [
     'run',
     'linkedin-message',
@@ -53,6 +56,9 @@ export async function run(job, ctx) {
     '--no-shot',
   ];
   if (serial) args.push('--device', serial);
+  if (clienteLinkedinId) {
+    args.push('--cliente-linkedin-id', clienteLinkedinId);
+  }
 
   const code = await spawnNpm(cwd, args, {
     ...process.env,
@@ -61,6 +67,7 @@ export async function run(job, ctx) {
     ...(serial ? { ADB_SERIAL: serial, SERIAL: serial } : {}),
     ...(ctx.apiKey ? { AGENT_API_KEY: ctx.apiKey } : {}),
     ...(agentId ? { AGENT_ID: agentId } : {}),
+    ...(clienteLinkedinId ? { CLIENTE_LINKEDIN_ID: clienteLinkedinId } : {}),
   });
 
   if (code !== 0) {

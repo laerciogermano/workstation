@@ -54,7 +54,7 @@ Endpoints: `POST /connect`, `POST|GET /connections`, `POST /message`, `POST|GET 
 CDP_ID=marina-costa npm run linkedin-connect-cdp -- --url 'https://www.linkedin.com/in/…'
 CDP_ID=daniela-hoffmann npm run linkedin-extract-connections-cdp -- --n 20
 # lista vazia ("0 conexão") → ok:true count=0 (não erro)
-CDP_ID=… npm run linkedin-message-cdp -- --url '…' --text 'Oi'
+CDP_ID=… npm run linkedin-message-cdp -- --url '…' --text 'Oi' [--cliente-linkedin-id UUID]
 CDP_ID=… npm run linkedin-unread-messages-cdp -- --max 20
 CDP_ID=… npm run linkedin-profile-messages-cdp -- --url '…' --max 10
 CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
@@ -63,6 +63,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
 ## Antes → depois
 
 - **Enviar mensagem (composer):** (1) sticky topo `y≈27`; (2) clique CDP no hero **não abre** overlay; (3) `page.fill` char-a-char/`textContent` deixava **Enviar disabled**. Sintoma: `não abriu composer / não enviou` (Débora Mendes 2026-11-16). Agora: `openProfileComposer` → `goto /messaging/compose/…`; `fillMessageComposer` → select+Backspace + `Input.insertText` (Enter p/ `\n`). Rollback: clique/`page.fill` em [`linkedin-message.js`](linkedin-message.js) / [`linkedin-dom.js`](linkedin-dom.js).
+- **Persistência após send:** `--cliente-linkedin-id` / `CLIENTE_LINKEDIN_ID` no POST (evita lookup por URL truncada). Rollback: só `profileUrl`.
 - **Debug overlay:** workers e `human-cdp` **só** injetam overlay com `debug: true` explícito; omitido/`false` → sem script de UI (ToS LinkedIn: não alterar aparência). `connectCdp` não herda `meta.debug`. Rollback: herdar meta / `debug: opts.debug` em [`session.js`](session.js) + `registry.mjs`.
 - **Lifecycle Chrome:** antes **matava** o Chrome no `finally` (`stopCdp`) → cada job reabria e roubava foco. Agora **default = manter aberto**: `closeTab` (aba de trabalho) + standby `about:blank`; próximo job reusa a porta sem `startCdp`. Escape p/ matar: `closeBrowser: true` / `keepBrowser: false` / `CDP_CLOSE_BROWSER=1` / `CDP_KEEP_BROWSER=0`. Nested (`page`) não fecha aba. Rollback: `closeBrowser: true` ou recoloque `stopCdp` no `finally` de [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.

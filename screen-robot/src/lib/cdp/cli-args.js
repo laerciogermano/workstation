@@ -10,6 +10,8 @@ export function parseCdpArgs(argv, { requireUrl = false } = {}) {
   let dryRun = false;
   let noShot = false;
   let sync = false;
+  let clienteLinkedinId =
+    String(process.env.CLIENTE_LINKEDIN_ID || "").trim() || null;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--url") url = String(argv[++i] || "").trim();
@@ -24,6 +26,12 @@ export function parseCdpArgs(argv, { requireUrl = false } = {}) {
       cdpId = String(argv[++i] || "").trim();
     else if (a === "--cdp-url" || a === "--cdpUrl")
       cdpUrl = String(argv[++i] || "").trim();
+    else if (
+      a === "--cliente-linkedin-id" ||
+      a === "--clienteLinkedinId" ||
+      a === "--cliente-id"
+    )
+      clienteLinkedinId = String(argv[++i] || "").trim() || null;
     else if (a === "--dry-run") dryRun = true;
     else if (a === "--no-shot") noShot = true;
     else if (a === "--sync") sync = true;
@@ -42,6 +50,7 @@ export function parseCdpArgs(argv, { requireUrl = false } = {}) {
     maxResults: Number.isFinite(maxResults) ? Math.floor(maxResults) : null,
     cdpId: cdpId || undefined,
     cdpUrl: cdpUrl || undefined,
+    clienteLinkedinId: clienteLinkedinId || undefined,
     dryRun,
     noShot,
     sync,

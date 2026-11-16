@@ -137,6 +137,8 @@ Use **chave global** no supervisor.
 
 **Antes → depois (enviar_prospeccao):** stub (`ALLOW_STUB=1` → done fake) → spawn `npm run linkedin-message -- --url … --text … --no-shot`. **Rollback:** `enviar_prospeccao: makeStub('enviar_prospeccao')` em `handlers/index.mjs`.
 
+**Antes → depois (anti-repeat prospecção):** job done sem `sent` (POST messages 403 por slug acento) → AC-02 reenviava. Handler passa `--cliente-linkedin-id` do payload; API normaliza slug + backfill no `complete`. **Rollback:** remova o flag nos handlers; reverta API.
+
 **Antes → depois (ler_mensagens):** só listava Unread (job done sem gravar) → `--sync` resolve URL (`GET /clientes?q=nome`) e chama `listProfileMessages` (persiste sent/received). Pula Sponsored. Exige `PROFILES_API_URL`/`API_URL` + `AGENT_API_KEY`. **Rollback:** remova `--sync` em `handlers/ler_mensagens.mjs` (volta a só listar).
 
 **Antes → depois (fechar app):** jobs deixavam LinkedIn aberto → libs/scripts fazem `closeLinkedInApp` / `force-stop` no `finally` (unread passa `closeApp: false` nos chats do sync). **Rollback:** `closeApp: false` ou remova o `finally` no screen-robot.

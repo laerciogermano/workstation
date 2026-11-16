@@ -87,6 +87,8 @@ Identidade canônica (canal-agnóstica) em `clientes`. Dados de LinkedIn na filh
 
 **Antes → depois (slug acento):** `normalizeLinkedInProfileUrl` com `[A-Za-z0-9._%-]` cortava `débora-…` → `/in/d` → charset `[^\s/?#]+` em [`linkedin-url.ts`](src/clientes/linkedin-url.ts) (+ espelho em connections). Rollback: charset ASCII.
 
+**Antes → depois (prospecção repetida / slug em messages):** `client-linkedin-messages` ainda usava regex ASCII → POST após envio real virava `/in/d` → 403 → job `done` sem `sent` → AC-02 reenfileirava e o robô mandava de novo. Agora: mesmo `normalizeLinkedInProfileUrl`; worker passa `--cliente-linkedin-id`; `complete(enviar_prospeccao)` faz backfill de `sent` se faltar. Rollback: regex local ASCII + sem id no CLI + sem backfill no complete.
+
 **Antes → depois (lead global):** upsert podia criar 2ª linha (URL truncada vs full; soft-delete de outro agente) → `findExistingLinkedinForExtract` (URL + prefixo + fuzzy, incl. deleted); convidado/conectado por **qualquer** agente permanece fora de Candidatos; `POST` conexão `status=0` falha com 409 se outro agente já tem 1|2. Rollback: exact-URL-only + `deletedAt: null` cego no upsert.
 
 ### Empresas (`empresas`)

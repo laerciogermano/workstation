@@ -19,7 +19,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, o plano usa **calendário** (início/fim por dia) e o modo **Estado (FOP)** com marcas **e0, e1, e2…** (contexto após cada onda de saídas), entradas/saídas nas barras e ligações saída→entrada no tempo — alinhado a `flow/input/Programação Orientada a Fluxo.pdf`. No **Flow**, o mesmo desenho de barras trabalha só por **ordem** (passo). O **Fluxograma** é canvas tipo n8n com zoom no scroll. O **Chat** é harness no arquivo do Explorar. O menu de visões fica **fixo no centro inferior**. O modo Estado no Flow/Gantt liga **dados** e **funções** — compiláveis via FOP-IR.
+No **Gantt**, calendário + modo **Estado (FOP)** com marcas **e0…eN**. A visão **Estados** no dock lista esses contextos. O **Copiloto** é painel fixo à **direita** (ícone de chat no topo, abas estilo Cursor), harness do arquivo da aba — não entra no menu transversal. O menu de visões fica **fixo no centro inferior**. Alinhado a `flow/input/Programação Orientada a Fluxo.pdf`.
 
 ## Problema
 

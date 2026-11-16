@@ -35,13 +35,13 @@ No canvas (T-36): **scroll** = zoom in/out no cursor; **arrastar o fundo** = pan
 
 **Voltar:** remover `DVIEW` / listeners de wheel-pan e restaurar `overflow:auto` no `.dcanvas`.
 
-## Chat · harness
+## Copiloto · painel direito
 
-Visão `chat` (T-60/T-61): thread + composer ligados ao `sel` do Explorar (`CHAT[id]`). Sem arquivo, composer bloqueado.
+Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `copilotPanel()` à direita (abas `COPILOT.tabs`). T-60/T-61. Visão **Estados** = `v: "estados"` (T-70) no dock.
 
-**Antes → depois:** sem aba Chat → `VIEWS` + `chat()` + fluxo `08` na galeria.
+**Antes → depois:** Chat como item do menu → copiloto lateral + Estados no transversal.
 
-**Voltar:** remover entrada `chat` de `VIEWS`/`FLOWS`/`SCREENS` e a função `chat()`.
+**Voltar:** devolver `chat` em `VIEWS`; remover `estados`/`copilotPanel`/`.body.copilot-on`.
 
 ## Gantt · e0…eN + dock
 

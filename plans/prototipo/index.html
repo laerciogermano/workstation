@@ -208,7 +208,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .tb .cmdk { display: flex; align-items: center; gap: 8px; width: 300px; height: 28px; border: 1px solid var(--line); background: var(--paper); border-radius: 7px; padding: 0 10px; color: var(--muted); }
 .tb .cmdk kbd { margin-left: auto; font-family: var(--mono); font-size: 11px; }
 .av { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; background: var(--t-pessoa); flex: none; }
-.body { flex: 1; display: grid; grid-template-columns: 288px 1fr; min-height: 0; }
+.body { flex: 1; display: grid; grid-template-columns: 288px minmax(0, 1fr); min-height: 0; }
+.body.copilot-on { grid-template-columns: 288px minmax(0, 1fr) 340px; }
 
 /* Explorar */
 .ex { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
@@ -593,36 +594,61 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .dsticky { position:absolute; width:180px; min-height:70px; background:color-mix(in srgb, var(--warn) 18%, var(--paper)); border:1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius:4px; padding:10px 12px; font-size:12px; color:var(--body); box-shadow:1px 2px 0 rgba(20,24,30,.06); pointer-events:none; }
 .dsticky b { display:block; font-weight:700; color:var(--ink); margin-bottom:4px; font-size:13px; }
 
-/* Chat · harness contextual ao arquivo */
-.chat { height:100%; display:flex; flex-direction:column; min-height:0; background:var(--paper); }
-.chat-ctx { flex:none; display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
-.chat-ctx .pill { display:flex; align-items:center; gap:10px; min-width:0; flex:1; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); }
+/* Copiloto · painel fixo à direita (abas estilo Cursor) */
+.copilot { background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.copilot-tabs { flex: none; display: flex; align-items: stretch; gap: 0; border-bottom: 1px solid var(--line); background: var(--wash); overflow-x: auto; scrollbar-width: thin; min-height: 36px; }
+.copilot-tabs .tab { flex: none; max-width: 140px; display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; font-weight: 500; height: 36px; cursor: pointer; }
+.copilot-tabs .tab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.copilot-tabs .tab:hover { color: var(--ink); background: color-mix(in srgb, var(--paper) 50%, transparent); }
+.copilot-tabs .tab.on { background: var(--panel); color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.copilot-tabs .tab .x { width: 18px; height: 18px; border: 0; border-radius: 4px; background: none; color: var(--muted); display: grid; place-items: center; padding: 0; opacity: 0; }
+.copilot-tabs .tab:hover .x, .copilot-tabs .tab.on .x { opacity: 1; }
+.copilot-tabs .tab .x:hover { background: var(--wash); color: var(--ink); }
+.copilot-tabs .add { flex: none; width: 32px; border: 0; background: none; color: var(--muted); display: grid; place-items: center; }
+.copilot-tabs .add:hover { color: var(--accent); background: var(--paper); }
+.chat-ctx { flex:none; display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); }
+.chat-ctx .pill { display:flex; align-items:center; gap:8px; min-width:0; flex:1; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--paper); }
 .chat-ctx .pill .fi { color:var(--accent); flex:none; }
-.chat-ctx .pill .meta { min-width:0; display:flex; flex-direction:column; gap:2px; }
-.chat-ctx .pill b { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.chat-ctx .pill .path { font-family:var(--mono); font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.chat-ctx .tag { flex:none; font-size:11px; font-weight:600; color:var(--accent); background:color-mix(in srgb, var(--accent) 11%, var(--paper)); border-radius:6px; padding:4px 8px; }
-.chat-ctx.empty { color:var(--muted); font-size:13px; }
-.chat-thread { flex:1; overflow:auto; padding:20px 24px 12px; display:flex; flex-direction:column; gap:14px; }
-.chat-thread .empty { margin:auto; max-width:420px; text-align:center; color:var(--muted); font-size:14px; line-height:1.5; }
-.chat-thread .empty b { display:block; color:var(--ink); font-size:16px; margin-bottom:6px; }
-.msg { max-width:720px; display:flex; flex-direction:column; gap:6px; }
+.chat-ctx .pill .meta { min-width:0; display:flex; flex-direction:column; gap:1px; }
+.chat-ctx .pill b { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chat-ctx .pill .path { font-family:var(--mono); font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chat-ctx .tag { flex:none; font-size:10px; font-weight:600; color:var(--accent); background:color-mix(in srgb, var(--accent) 11%, var(--paper)); border-radius:5px; padding:3px 6px; }
+.chat-ctx.empty { color:var(--muted); font-size:12px; padding:10px 12px; }
+.chat-thread { flex:1; overflow:auto; padding:14px 12px 10px; display:flex; flex-direction:column; gap:12px; min-height:0; }
+.chat-thread .empty { margin:auto; max-width:260px; text-align:center; color:var(--muted); font-size:13px; line-height:1.45; }
+.chat-thread .empty b { display:block; color:var(--ink); font-size:14px; margin-bottom:6px; }
+.msg { max-width:100%; display:flex; flex-direction:column; gap:5px; }
 .msg.user { align-self:flex-end; align-items:flex-end; }
 .msg.assistant { align-self:flex-start; }
-.msg .who { font-size:11px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:6px; }
-.msg .bubble { padding:10px 14px; border-radius:12px; font-size:14px; line-height:1.5; white-space:pre-wrap; }
-.msg.user .bubble { background:var(--ink); color:var(--paper); border-bottom-right-radius:4px; }
-.msg.assistant .bubble { background:var(--wash); border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px; }
-.msg .tools { display:flex; flex-wrap:wrap; gap:6px; }
-.msg .tools .btn { font-size:12px; }
-.chat-compose { flex:none; border-top:1px solid var(--line); padding:12px 16px 14px; background:var(--panel); display:flex; flex-direction:column; gap:8px; }
-.chat-compose .chips { display:flex; flex-wrap:wrap; gap:6px; }
-.chat-compose .chips button { border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:4px 10px; font-size:12px; color:var(--body); }
+.msg .who { font-size:10px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:5px; }
+.msg .bubble { padding:8px 11px; border-radius:10px; font-size:13px; line-height:1.45; white-space:pre-wrap; }
+.msg.user .bubble { background:var(--ink); color:var(--paper); border-bottom-right-radius:3px; }
+.msg.assistant .bubble { background:var(--wash); border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:3px; }
+.msg .tools { display:flex; flex-wrap:wrap; gap:5px; }
+.msg .tools .btn { font-size:11px; height:26px; padding:0 8px; }
+.chat-compose { flex:none; border-top:1px solid var(--line); padding:10px 12px 12px; display:flex; flex-direction:column; gap:8px; background:var(--panel); }
+.chat-compose .chips { display:flex; flex-wrap:wrap; gap:5px; }
+.chat-compose .chips button { border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:3px 8px; font-size:11px; color:var(--body); }
 .chat-compose .chips button:hover { border-color:var(--accent); color:var(--accent); }
-.chat-compose form { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:end; }
-.chat-compose textarea { width:100%; min-height:44px; max-height:120px; resize:vertical; border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:var(--paper); font:inherit; font-size:14px; outline:none; }
+.chat-compose form { display:grid; grid-template-columns:1fr auto; gap:6px; align-items:end; }
+.chat-compose textarea { width:100%; min-height:56px; max-height:140px; resize:vertical; border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:var(--paper); font:inherit; font-size:13px; outline:none; }
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
+
+/* Estados · visão FOP e0…eN */
+.estados { height:100%; overflow:auto; padding:20px 24px 72px; }
+.estados .eh { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.estados .eh h2 { font-size:22px; font-weight:600; letter-spacing:-0.02em; }
+.estados .eh p { font-size:13px; color:var(--muted); max-width:520px; line-height:1.45; }
+.estados .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:12px; }
+.estados .ecard { border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px; }
+.estados .ecard .hid { display:flex; align-items:center; gap:8px; }
+.estados .ecard .hid b { font-family:var(--mono); font-size:16px; color:var(--accent); }
+.estados .ecard .hid span { font-size:11px; color:var(--muted); margin-left:auto; }
+.estados .ecard .keys { font-family:var(--mono); font-size:12px; color:var(--ink); line-height:1.4; word-break:break-word; min-height:2.8em; }
+.estados .ecard .via { font-size:12px; color:var(--muted); }
+.estados .block { margin-top:22px; }
+.estados .block h3 { font-size:13px; font-weight:600; color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
 
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
@@ -683,7 +709,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
       <h1>Uma atividade, vários jeitos de ver</h1>
-      <p>Explorar, Board, Gantt (calendário + estados e0…eN), Flow, Fluxograma, Árvore e Chat sobre a mesma unidade. Menu de visões fixo no centro inferior. Clique numa tela para navegar.</p>
+      <p>Explorar, Board, Gantt, Flow, Fluxograma, Árvore e Estados (e0…eN) no dock inferior. Copiloto = painel à direita, ícone no topo. Clique numa tela para navegar.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -831,16 +857,19 @@ function agChip(id, short) {
   return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}"><span class="ico">${inner}</span>${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
-const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", chat: "Contexto", explorar: "Arquivo" };
-const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["chat", "message-square", "Chat"]];
+const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", estados: "Estado", explorar: "Arquivo" };
+const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["estados", "database", "Estados"]];
 const CHAT = {};
+const COPILOT = { open: false, tabs: [], active: null, seq: 0 };
 
 // ================= janela =================
 const DEF = { v: "board", plan: "onb", fm: "ordem", gm: "cal", catTab: "pessoa" };
 function viewDock(s) {
   return `<nav class="vdock" aria-label="Visões">${VIEWS.map(([id, ic, n]) => `<button data-act="view" data-v="${id}" aria-current="${s.v === id}">${icon(ic)}${n}</button>`).join("")}</nav>`;
 }
+function copilotOpen(s) { return !!(COPILOT.open || s.copilot); }
 function win(s) {
+  const co = copilotOpen(s);
   return `<div class="win" data-win>
     <header class="tb">
       <span class="dots"><i></i><i></i><i></i></span>
@@ -849,18 +878,20 @@ function win(s) {
       <span class="sp"></span>
       <span class="cmdk">${icon("search")}Buscar ou executar comando<kbd>⌘K</kbd></span>
       <span class="sp"></span>
+      <button class="ib${co ? " on" : ""}" data-act="copilot-toggle" title="Copiloto" aria-pressed="${co}" aria-label="Abrir ou fechar copiloto">${icon("message-square")}</button>
       <button class="ib">${icon("bell")}</button>
       <span class="av">AS</span>
     </header>
-    <div class="body">
+    <div class="body${co ? " copilot-on" : ""}">
       ${explorer(s)}
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
-        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : s.v === "chat" ? chat(s) : catalog(s)}
+        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : s.v === "estados" ? estados(s) : catalog(s)}
           ${s.drawer ? drawer(s) : ""}${s.cfg && s.v === "board" ? cfgPanel(s) : ""}${s.tnode && s.v === "tree" ? procPanel(s) : ""}
         </div>
         ${viewDock(s)}
       </section>
+      ${co ? copilotPanel(s) : ""}
     </div>
     ${s.ctx ? ctxMenu(s) : ""}${s.confirm ? confirmDlg(s) : ""}${s.exp ? exportDlg(s) : ""}
     <div class="toast" role="status" aria-live="polite"></div>
@@ -932,7 +963,8 @@ function bar(s) {
       <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>`;
   }
   if (s.v === "tree") acts = `<button class="btn pri" data-act="tnew-root">${icon("plus")}Atividade</button>`;
-  if (s.v === "chat") acts = `<button class="btn" data-act="chat-clear"${s.sel && CHAT[s.sel]?.length ? "" : " disabled"}>${icon("eraser")}Limpar thread</button>`;
+  if (s.v === "estados") acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+    <button class="btn" data-act="view" data-v="gantt">${icon("chart-gantt")}Ver no Gantt</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div><div class="acts">${acts}</div></div>`;
 }
 function catBar() {
@@ -1020,7 +1052,7 @@ function drawer(s) {
         <button class="btn" data-act="open-in" data-v="flow" data-id="${u.id}">${icon("workflow")}Flow</button>
         <button class="btn" data-act="open-in" data-v="diagram" data-id="${u.id}">${icon("waypoints")}Fluxograma</button>
         <button class="btn" data-act="open-in" data-v="tree" data-id="${u.id}">${icon("network")}Árvore</button>
-        <button class="btn" data-act="open-in" data-v="chat" data-id="${u.id}">${icon("message-square")}Chat</button>
+        <button class="btn" data-act="copilot-open" data-id="${u.id}">${icon("message-square")}Copiloto</button>
         <button class="btn" data-act="reveal" data-id="${u.id}">${icon("folder-tree")}Explorar</button></div></div>
     </div>
     <div class="side-f"><button class="btn ghost" data-act="archive" data-id="${u.id}">${icon(u.arch ? "archive-restore" : "archive")}${u.arch ? "Desarquivar" : "Arquivar"}</button><span class="sp"></span><button class="btn ghost danger" data-act="ask-rm" data-id="${u.id}">${icon("trash-2")}Excluir</button></div>
@@ -1471,11 +1503,7 @@ function diagram(s) {
     </div></div></div>`;
 }
 
-// ----- Chat · harness contextual ao arquivo -----
-function chatFile(s) {
-  const u = $u(s.sel);
-  return u && !isFolder(u) ? u : null;
-}
+// ----- Copiloto · harness contextual (painel direito) -----
 function harnessTools(u) {
   const tools = [
     { act: "open-in", v: "flow", label: "Abrir no Flow", ic: "workflow" },
@@ -1492,11 +1520,39 @@ function harnessReply(u, text) {
   const st = u.st ? ST[u.st][2] : "sem execução";
   return `Harness com contexto em ${p}.\nArquivo “${u.title}” · ${a ? TYPES[a.type].one + " " + a.name : "sem responsável"} · ${st}.\n\nPedido: “${text}”.\n\nPosso decompor em etapas filhas, atualizar o contexto, reatribuir o responsável, retentar a execução ou abrir a mesma unidade em outra visão — sem sair deste arquivo.`;
 }
-function chatMessages(s) {
-  const u = chatFile(s);
-  if (!u) return [];
-  if (CHAT[u.id]?.length) return CHAT[u.id];
-  if (s.chatSeed) {
+function ensureCopilotTab(fileId, seed) {
+  let tab = COPILOT.tabs.find(t => t.fileId === fileId);
+  if (!tab) {
+    const u = $u(fileId);
+    tab = { id: "c" + (++COPILOT.seq), fileId: fileId || null, title: u && !isFolder(u) ? u.title : "Novo chat" };
+    COPILOT.tabs.push(tab);
+  }
+  COPILOT.active = tab.id;
+  if (seed && fileId && !CHAT[fileId]?.length) {
+    const u = $u(fileId);
+    if (u) CHAT[fileId] = [
+      { role: "user", text: seed.q },
+      { role: "assistant", text: harnessReply(u, seed.q), tools: harnessTools(u) },
+    ];
+  }
+  return tab;
+}
+function syncCopilotFromSpec(s) {
+  if (!s?.copilot) return;
+  COPILOT.open = true;
+  if (s.sel && $u(s.sel) && !isFolder($u(s.sel))) ensureCopilotTab(s.sel, s.chatSeed);
+  else if (!COPILOT.tabs.length) ensureCopilotTab(null);
+}
+function activeCopilotTab(s) {
+  const tabs = COPILOT.tabs.length ? COPILOT.tabs : (s.copilot && s.sel ? [{ id: "seed", fileId: s.sel, title: $u(s.sel)?.title || "Chat" }] : []);
+  const active = COPILOT.active && tabs.some(t => t.id === COPILOT.active) ? COPILOT.active : tabs[0]?.id;
+  return { tabs, active, tab: tabs.find(t => t.id === active) || null };
+}
+function chatMessagesFor(fileId, s) {
+  if (!fileId) return [];
+  if (CHAT[fileId]?.length) return CHAT[fileId];
+  if (s.chatSeed && s.sel === fileId) {
+    const u = $u(fileId);
     const q = s.chatSeed.q;
     return [
       { role: "user", text: q },
@@ -1505,47 +1561,44 @@ function chatMessages(s) {
   }
   return [];
 }
-function materializeChatSeed() {
-  if (cur?.v !== "chat" || !cur.chatSeed) return;
-  const u = chatFile(cur);
-  if (!u || CHAT[u.id]?.length) return;
-  const q = cur.chatSeed.q;
-  CHAT[u.id] = [
-    { role: "user", text: q },
-    { role: "assistant", text: harnessReply(u, q), tools: harnessTools(u) },
-  ];
-}
 function sendChat(text) {
-  const u = chatFile(cur);
+  const { tab } = activeCopilotTab(cur || {});
+  const u = tab?.fileId ? $u(tab.fileId) : null;
   const q = (text || "").trim();
-  if (!u) { toast("Selecione um arquivo no Explorar — o harness usa esse contexto", "triangle-alert"); return; }
+  if (!u || isFolder(u)) { toast("Abra uma aba com arquivo — ou selecione no Explorar e +", "triangle-alert"); return; }
   if (!q) return;
-  materializeChatSeed();
+  if (cur?.chatSeed && !CHAT[u.id]?.length) ensureCopilotTab(u.id, cur.chatSeed);
   (CHAT[u.id] ||= []).push({ role: "user", text: q });
   paint();
   const reply = harnessReply(u, q);
   const tools = harnessTools(u);
   setTimeout(() => {
     (CHAT[u.id] ||= []).push({ role: "assistant", text: reply, tools });
-    if (player.classList.contains("open") && cur?.v === "chat") paint();
+    if (player.classList.contains("open") && copilotOpen(cur || {})) paint();
   }, 420);
 }
-function chat(s) {
-  const u = chatFile(s);
-  const msgs = chatMessages(s);
-  const chips = u ? [
+function copilotPanel(s) {
+  const { tabs, active, tab } = activeCopilotTab(s);
+  const u = tab?.fileId ? $u(tab.fileId) : null;
+  const fileOk = u && !isFolder(u);
+  const msgs = fileOk ? chatMessagesFor(u.id, s) : [];
+  const chips = fileOk ? [
     u.st === "fail" ? "Corrigir a falha e retentar" : "Resumir o que falta nesta etapa",
     "Decompor em etapas filhas",
     "Atualizar o contexto com restrições",
     "Abrir no Fluxograma",
   ] : [];
-  const ctx = u
-    ? `<div class="chat-ctx"><div class="pill">${icon("file-text", "fi")}<div class="meta"><b>${esc(u.title)}</b><span class="path">/${esc(path(u.id).join("/"))} · ${u.uuid.slice(0, 13)}…</span></div>${agChip(u.agent, true)}${stBadge(u.st)}</div><span class="tag">${icon("bot")}harness</span></div>`
-    : `<div class="chat-ctx empty">${icon("message-square")}Selecione um arquivo no Explorar — o chat é um harness contextual a esse arquivo.</div>`;
-  const thread = !u
-    ? `<div class="empty"><b>Sem contexto</b>O harness só age sobre a unidade apontada na árvore. Clique num arquivo à esquerda.</div>`
+  const tabsHtml = `<div class="copilot-tabs" role="tablist">
+    ${tabs.map(t => `<div class="tab${t.id === active ? " on" : ""}" data-act="copilot-tab" data-id="${t.id}" role="tab" aria-selected="${t.id === active}" tabindex="0"><span>${esc(t.title)}</span><button type="button" class="x" data-act="copilot-close-tab" data-id="${t.id}" title="Fechar" aria-label="Fechar aba">${icon("x")}</button></div>`).join("")}
+    <button type="button" class="add" data-act="copilot-add" title="Nova aba">${icon("plus")}</button>
+  </div>`;
+  const ctx = fileOk
+    ? `<div class="chat-ctx"><div class="pill">${icon("file-text", "fi")}<div class="meta"><b>${esc(u.title)}</b><span class="path">/${esc(path(u.id).join("/"))}</span></div>${agChip(u.agent, true)}</div><span class="tag">${icon("bot")}harness</span></div>`
+    : `<div class="chat-ctx empty">${icon("message-square")}Nova aba sem arquivo — selecione no Explorar e use +, ou abra pelo detalhe.</div>`;
+  const thread = !fileOk
+    ? `<div class="empty"><b>Sem contexto</b>O copiloto é harness do arquivo da aba ativa. Apontar no Explorar + nova aba, ou “Abrir no Copiloto”.</div>`
     : !msgs.length
-      ? `<div class="empty"><b>Harness pronto</b>Peça o que precisar sobre <b style="display:inline;font-size:inherit">${esc(u.title)}</b>: decompor, corrigir, reatribuir, exportar. O contexto (caminho, responsável, estado, entradas/saídas) já está ligado.</div>`
+      ? `<div class="empty"><b>Harness pronto</b>Peça o que precisar sobre <b style="display:inline;font-size:inherit">${esc(u.title)}</b>.</div>`
       : msgs.map(m => {
           const tools = (m.tools || []).map(t => {
             if (t.act === "open-in") return `<button class="btn" data-act="open-in" data-v="${t.v}" data-id="${u.id}">${icon(t.ic)}${esc(t.label)}</button>`;
@@ -1554,13 +1607,44 @@ function chat(s) {
           }).join("");
           return `<div class="msg ${m.role}"><span class="who">${m.role === "user" ? icon("user") + "Você" : icon("bot") + "Harness"}</span><div class="bubble">${esc(m.text)}</div>${tools ? `<div class="tools">${tools}</div>` : ""}</div>`;
         }).join("");
-  return `<div class="chat">${ctx}
+  return `<aside class="copilot" aria-label="Copiloto">${tabsHtml}${ctx}
     <div class="chat-thread" data-chat-thread>${thread}</div>
     <div class="chat-compose">
-      ${u ? `<div class="chips">${chips.map(c => `<button type="button" data-act="chat-chip" data-q="${esc(c)}">${esc(c)}</button>`).join("")}</div>` : ""}
-      <form data-form="chat"><textarea name="q" rows="2" placeholder="${u ? "Peça qualquer coisa sobre este arquivo…" : "Selecione um arquivo para conversar"}" ${u ? "" : "disabled"} aria-label="Mensagem"></textarea>
-        <button class="btn pri" ${u ? "" : "disabled"}>${icon("send")}Enviar</button></form>
-    </div></div>`;
+      ${fileOk ? `<div class="chips">${chips.map(c => `<button type="button" data-act="chat-chip" data-q="${esc(c)}">${esc(c)}</button>`).join("")}</div>` : ""}
+      <form data-form="chat"><textarea name="q" rows="2" placeholder="${fileOk ? "Pedir ao harness…" : "Escolha um arquivo para a aba"}" ${fileOk ? "" : "disabled"} aria-label="Mensagem"></textarea>
+        <button class="btn pri" ${fileOk ? "" : "disabled"}>${icon("send")}</button></form>
+    </div></aside>`;
+}
+
+// ----- Estados · e0…eN (visão transversal) -----
+function estados(s) {
+  const states = ganttFopStates(s.plan);
+  const { orphans, missing, prod } = fopCheck(s.plan);
+  const arts = Object.entries(prod || {});
+  const cons = n => ganttRows(s.plan).filter(({ u }) => (u.ins || []).includes(n)).map(r => r.u.title);
+  return `<div class="estados">
+    <div class="eh">
+      <div><h2>${icon("database")} Estados</h2>
+        <p>Programação Orientada a Fluxo: <span class="mono">e0</span> é o contexto inicial; cada <span class="mono">eN</span> seguinte é o estado após uma onda de saídas no plano.</p></div>
+      <select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+    </div>
+    <div class="grid">${states.map(st => {
+      const keys = Object.keys(st.data);
+      return `<article class="ecard"><div class="hid"><b>${st.id}</b><span>dia ${st.day + 1}</span></div>
+        <div class="keys">${keys.length ? keys.join(" · ") : "∅"}</div>
+        <div class="via">${esc(st.label)}</div>
+        ${st.via?.length ? `<div class="via">via ${st.via.map(id => esc($u(id)?.title || id)).join(", ")}</div>` : ""}
+      </article>`;
+    }).join("")}</div>
+    <div class="block"><h3>${icon("shield-check")} Validação</h3>
+      <div class="chk ok">${icon("circle-check")}<div>Sem ciclo de estado</div></div>
+      ${orphans.length ? orphans.map(([n, u]) => `<div class="chk warn">${icon("triangle-alert")}<div>Saída órfã <span class="mono">${n}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Toda saída tem destino</div></div>`}
+      ${missing.length ? missing.map(([n, u]) => `<div class="chk fail">${icon("circle-x")}<div>Entrada sem origem <span class="mono">${n}</span><small>${esc(u.title)}</small></div></div>`).join("") : `<div class="chk ok">${icon("circle-check")}<div>Contexto completo</div></div>`}
+    </div>
+    <div class="block"><h3>${icon("arrow-left-right")} Artefatos · ${arts.length}</h3>
+      ${arts.map(([n, u]) => { const c = cons(n); return `<div class="art${!c.length && orphans.some(o => o[0] === n) ? " orphan" : ""}"><span class="mono">${n}</span><span>de</span>${esc(u.title)}<span>para</span>${c.length ? c.map(esc).join(", ") : "—"}</div>`; }).join("") || `<p style="color:var(--muted);font-size:13px">Nenhum artefato neste plano.</p>`}
+    </div>
+  </div>`;
 }
 
 // ----- Árvore de execução -----
@@ -1634,7 +1718,7 @@ function ctxMenu(s) {
   return `<div class="ctx" style="left:${s.ctx.x}px;top:${s.ctx.y}px" role="menu">
     ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
-    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-diagram", "waypoints", "Abrir no Fluxograma") + it("open-in-tree", "network", "Abrir na Árvore") + it("open-in-chat", "message-square", "Abrir no Chat") + "<hr>" : ""}
+    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-diagram", "waypoints", "Abrir no Fluxograma") + it("open-in-tree", "network", "Abrir na Árvore") + it("copilot-open", "message-square", "Abrir no Copiloto") + "<hr>" : ""}
     ${it("ask-rm", "trash-2", "Remover", "⌫", "danger")}</div>`;
 }
 function confirmDlg(s) {
@@ -1756,10 +1840,13 @@ const FLOWS = [
   { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
     desc: "A floresta de atividades fora do eixo do tempo: várias raízes, responsáveis em cada nó, criar filha, desaninhar e excluir subárvore. Nó de máquina abre o procedimento ali mesmo.",
     steps: [["T-40", "Árvore"], ["T-41", "Nova atividade filha"], ["T-42", "Procedimento da máquina"]] },
-  { id: "chat", n: "08", title: "Chat", us: "harness",
-    desc: "Harness em forma de chat, amarrado ao arquivo selecionado no Explorar. Pedidos livres (decompor, corrigir, reatribuir, abrir em outra visão) usam caminho, responsável, estado e I/O daquela unidade.",
-    steps: [["T-60", "Chat · contexto"], ["T-61", "Resposta do harness"]] },
-  { id: "config", n: "09", title: "Configurações", us: "US-03",
+  { id: "copilot", n: "08", title: "Copiloto", us: "harness",
+    desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
+    steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
+  { id: "estados", n: "09", title: "Estados", us: "FOP · e0…eN",
+    desc: "Visão transversal dos estados do plano: e0 (contexto inicial) e e1, e2… após cada onda de saídas, com artefatos, validação e camadas.",
+    steps: [["T-70", "Estados e0…eN"]] },
+  { id: "config", n: "10", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
     steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
 ];
@@ -1773,7 +1860,7 @@ const SCREENS = {
   "T-10": { s: { v: "board" }, name: "Board", us: ["US-05", "US-06", "US-07"], notes: "Cinco colunas × três raias, sem limite de WIP. Arraste cards entre células. Card filho mostra o pai; mover o pai leva a subárvore. Em “Execução IA”, card com responsável IA roda (pendente → em execução → concluída). Falhou e cancelada mostram “Tentar de novo”." },
   "T-11": { s: { v: "board", newCard: { col: "c1", lane: "l2" } }, name: "Novo card", us: ["US-05"], notes: "Criar card no próprio board, direto na célula: título obrigatório e contexto opcional (orçamento, preferências, restrições). O card vira arquivo no Explorar, dentro da pasta da raia." },
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
-  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Chat ou Explorar. Arquivar e excluir no rodapé." },
+  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Copiloto ou Explorar. Arquivar e excluir no rodapé." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
   "T-30": { s: { v: "gantt", gm: "cal" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Alterna Calendário / Estado (FOP). Barras por início e fim (hoje marcado), setas fim→início e paralelo. Marcas e0…eN no eixo quando o plano tem I/O. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
   "T-31": { s: { v: "gantt", gm: "cal", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
@@ -1783,8 +1870,9 @@ const SCREENS = {
   "T-34": { s: { v: "flow", fm: "fop" }, name: "Estado (FOP)", us: ["US-12", "US-19"], notes: "No Flow, o modo Estado liga saídas a entradas (IA → IA inclusive). Seleção, repetição e paralelo aparecem no roteiro. O painel valida: ciclo bloqueia, saída órfã avisa, contexto incompleto impede a execução. Camadas mostram o que é substituível." },
   "T-35": { s: { v: "flow", fm: "fop", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
-  "T-60": { s: { v: "chat", sel: "u13" }, name: "Chat · contexto", us: ["harness"], notes: "Visão Chat: o harness conversa só sobre o arquivo apontado no Explorar (aqui “Traduzir proposta”). Barra de contexto com caminho, UUID, responsável e estado. Sem arquivo selecionado, o composer fica bloqueado." },
-  "T-61": { s: { v: "chat", sel: "u13", chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Resposta do harness", us: ["harness"], notes: "Pedido livre → resposta do harness com o contexto do arquivo (caminho, agente GPT, estado falhou). Atalhos na resposta abrem Flow, Fluxograma, detalhe ou “Tentar de novo”. Trocar o arquivo na árvore muda o contexto da thread." },
+  "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
+  "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Estados e0…eN", us: ["FOP"], notes: "Visão Estados no dock: cards e0 (∅) … eN com os dados do contexto após cada onda de saídas, validação (órfãs / entradas sem origem) e lista de artefatos. Independente do Gantt, mas usa o mesmo plano." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com uma raiz por pasta, da esquerda para a direita. Cada nó mostra responsável, estado e quantos descendentes tem. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -1873,7 +1961,8 @@ function tFor(s) {
   }
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; if (s.fm === "fop") return "T-34"; return "T-32"; }
   if (s.v === "diagram") return "T-36";
-  if (s.v === "chat") return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
+  if (s.v === "estados") return "T-70";
+  if (s.copilot) return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
   if (s.v === "tree") return s.tnode ? "T-42" : s.tnew ? "T-41" : s.rev ? "T-01" : "T-40";
   return "T-10";
 }
@@ -1909,7 +1998,7 @@ function paint(keepScroll = true) {
 function show(spec, push = true) {
   if (push && cur) hist.push(JSON.parse(JSON.stringify(cur)));
   cur = spec;
-  materializeChatSeed();
+  syncCopilotFromSpec(cur);
   if (cur.runDemo) { delete cur.runDemo; startRun(["u14"]); return; }
   if (document.startViewTransition && !reduced && push) document.startViewTransition(() => paint(false)); else paint(false);
 }
@@ -1984,10 +2073,41 @@ const ACT = {
   "open-in-flow": t => revealIn(t.dataset.id, "flow"),
   "open-in-diagram": t => revealIn(t.dataset.id, "diagram"),
   "open-in-tree": t => revealIn(t.dataset.id, "tree"),
-  "open-in-chat": t => revealIn(t.dataset.id, "chat"),
   "open-in": t => revealIn(t.dataset.id, t.dataset.v),
   "chat-chip": t => { sendChat(t.dataset.q); return false; },
-  "chat-clear": () => { if (cur.sel) CHAT[cur.sel] = []; unset("chatSeed"); },
+  "copilot-toggle": () => {
+    COPILOT.open = !COPILOT.open;
+    if (COPILOT.open && !COPILOT.tabs.length) {
+      const u = $u(cur.sel);
+      if (u && !isFolder(u)) ensureCopilotTab(u.id);
+      else ensureCopilotTab(null);
+    }
+    unset("chatSeed");
+  },
+  "copilot-open": t => {
+    const id = t.dataset.id;
+    COPILOT.open = true;
+    ensureCopilotTab(id);
+    cur.sel = id;
+    unset("ctx", "drawer", "chatSeed");
+  },
+  "copilot-tab": t => { COPILOT.active = t.dataset.id; },
+  "copilot-add": () => {
+    const u = $u(cur.sel);
+    if (u && !isFolder(u)) ensureCopilotTab(u.id);
+    else ensureCopilotTab(null);
+    COPILOT.open = true;
+  },
+  "copilot-close-tab": (t, e) => {
+    e?.stopPropagation?.();
+    const id = t.dataset.id;
+    const i = COPILOT.tabs.findIndex(x => x.id === id);
+    if (i < 0) return false;
+    COPILOT.tabs.splice(i, 1);
+    if (COPILOT.active === id) COPILOT.active = COPILOT.tabs[Math.max(0, i - 1)]?.id || null;
+    if (!COPILOT.tabs.length) { COPILOT.open = false; unset("copilot", "chatSeed"); }
+    return true;
+  },
   reveal: t => { const id = t.dataset.id; if (cur.v === "tree") cur.rev = true; let p = $u(id).parent; while (p) { OPEN.add(p); p = $u(p).parent; } unset("drawer", "picker"); cur.sel = id; cur.flash = id; setTimeout(() => { const n = holder.querySelector(`.node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30); },
   "ask-rm": t => { const id = t.dataset.id; unset("ctx"); const ids = (cur.multi || []).includes(id) ? cur.multi : [id]; const hasKids = ids.some(i => desc(i).length); if (hasKids) cur.confirm = ids; else { removeIds(ids); unset("drawer", "multi"); cur.sel = null; toast(ids.length > 1 ? `${ids.length} itens removidos` : "Removido de todas as visões", "trash-2"); } },
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },

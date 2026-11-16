@@ -186,6 +186,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 
 **Antes → depois (type):** `keyDown` com `text` + `insertText` → cada char duplicado (Rafaela→RRaaffaaeellaa). Agora: keyDown/Up sem `text`; só `insertText` insere. `fill` clear: `el.select()` + Backspace + setter nativo (Cmd+A CDP falhava no FB). Rollback: keyDown com `text` + clear só Ctrl+A.
 
+**Antes → depois (fill contenteditable):** clear usava `HTMLInputElement.prototype.value` em `div[contenteditable]` → `Illegal invocation`; `textContent=''` deixava Enviar disabled (React LI). Agora: INPUT/TEXTAREA → setter `value`; contenteditable → só select+Backspace (sem zerar DOM). Rollback: setter genérico anterior.
+
 **Antes → depois (debug):** fora do bot-lab mostrava “fora do bot-lab” sem veredito → painel com detector portátil (trajetória/cliques/teclas/foco) e veredito live humano/robô/inconclusivo. No lab, usa o trilho nativo. Rollback: `debug: false`.
 
 **Antes → depois (debug persistente):** overlay herdava `meta.debug` se omitisse a flag → agora **só** `debug: true` explícito; omitido/`false` grava `meta.debug=false` e **não** chama `enableDebugOverlay` / `addScript`. Keeper só injeta overlay se `meta.debug`. Scripts já no processo Chrome somem com restart (`stopCdp`/`startCdp`). Rollback: herdar `meta.debug` no `wantDebug` de `connectCdp`.

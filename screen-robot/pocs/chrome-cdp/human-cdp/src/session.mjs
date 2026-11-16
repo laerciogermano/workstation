@@ -427,11 +427,23 @@ export class HumanCdpSession {
       await this.evaluate(`(() => {
         const el = document.querySelector(${JSON.stringify(selector)});
         if (!el) return;
-        const proto = Object.getPrototypeOf(el);
-        const desc = Object.getOwnPropertyDescriptor(proto, 'value')
-          || Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-        if (desc?.set) desc.set.call(el, '');
-        else el.value = '';
+        const tag = (el.tagName || '').toUpperCase();
+        if (tag === 'INPUT' || tag === 'TEXTAREA') {
+          const proto = Object.getPrototypeOf(el);
+          const desc = Object.getOwnPropertyDescriptor(proto, 'value')
+            || Object.getOwnPropertyDescriptor(
+              tag === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype,
+              'value',
+            );
+          if (desc?.set) desc.set.call(el, '');
+          else el.value = '';
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+          return;
+        }
+        // contenteditable (ex.: composer LI): NÃO zerar textContent —
+        // quebra o estado React e o Enviar fica disabled. Select+Backspace acima basta.
+        if (el.isContentEditable) return;
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
       })()`);

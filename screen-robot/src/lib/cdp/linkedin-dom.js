@@ -163,6 +163,112 @@ export async function findProfileMore(page) {
 }
 
 /**
+ * Message / Enviar mensagem do hero do perfil.
+ * Ignora sticky topo (y&lt;80) e cards laterais — o sticky clica e não abre o overlay.
+ */
+export async function findProfileMessage(page) {
+  return page.evaluate(`(() => {
+    const els = [...document.querySelectorAll('button, [role=button], a')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return false;
+      if (r.y < 80) return false; // sticky header / nav
+      if (r.bottom < 0 || r.top > innerHeight) return false;
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"]')) return false;
+      const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      return (
+        /^(message|mensagem|send a message|enviar mensagem)$/i.test(txt) ||
+        /^(message|mensagem)\\b/i.test(aria) ||
+        /enviar mensagem|send a message/i.test(aria)
+      );
+    });
+    const ranked = els
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        const txt = (el.innerText || el.getAttribute('aria-label') || '')
+          .replace(/\\s+/g, ' ')
+          .trim()
+          .slice(0, 40);
+        return {
+          cx: r.x + r.width / 2,
+          cy: r.y + r.height / 2,
+          y: r.y,
+          text: txt,
+        };
+      })
+      .sort((a, b) => a.y - b.y);
+    return ranked[0] || null;
+  })()`);
+}
+
+/** @param {object} page @param {{ steps?: string[] }} [opts] */
+export async function clickProfileMessage(page, opts = {}) {
+  const hit = await findProfileMessage(page);
+  if (!hit) return null;
+  await page.clickAt(hit.cx, hit.cy);
+  opts.steps?.push(`click:${hit.text}@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
+  return hit;
+}
+
+/**
+ * Href do CTA Mensagem do hero (`/messaging/compose/?…&interop=msgOverlay`).
+ * Clique CDP no botão não abre o overlay — usar `page.goto(href)`.
+ * @returns {Promise<string|null>}
+ */
+export async function findProfileComposeHref(page) {
+  return page.evaluate(`(() => {
+    const els = [...document.querySelectorAll('a[href*="messaging/compose"]')];
+    const ranked = [];
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      if (r.y < 80) continue; // sticky topo
+      if (el.closest('aside, .scaffold-layout__aside, [data-view-name="profile-card"]')) continue;
+      const aria = (el.getAttribute('aria-label') || '').replace(/\\s+/g, ' ').trim();
+      const txt = (el.innerText || '').replace(/\\s+/g, ' ').trim();
+      const ok =
+        /^(message|mensagem|send a message|enviar mensagem)$/i.test(txt) ||
+        /enviar mensagem|send a message/i.test(aria) ||
+        /^(message|mensagem)\\b/i.test(aria);
+      if (!ok) continue;
+      ranked.push({ href: el.href, y: r.y });
+    }
+    ranked.sort((a, b) => a.y - b.y);
+    return ranked[0]?.href || null;
+  })()`);
+}
+
+/**
+ * Abre composer: goto no compose href (clique sintético não abre overlay LI).
+ * @param {object} page
+ * @param {{ steps?: string[], waitMs?: number }} [opts]
+ * @returns {Promise<boolean>}
+ */
+export async function openProfileComposer(page, opts = {}) {
+  const href = await findProfileComposeHref(page);
+  if (!href) return false;
+  await page.goto(href);
+  opts.steps?.push(`goto:compose`);
+  await sleep(opts.waitMs ?? 4_000);
+  const open = await page.evaluate(`(() => !!(
+    document.querySelector('div.msg-form__contenteditable') ||
+    document.querySelector('.msg-form__contenteditable[contenteditable="true"]') ||
+    document.querySelector('div[role="textbox"][contenteditable="true"]') ||
+    document.querySelector('.msg-overlay-conversation-bubble')
+  ))()`);
+  return Boolean(open);
+}
+
+/** @param {object} page @param {{ steps?: string[] }} [opts] */
+export async function clickProfileMore(page, opts = {}) {
+  const hit = await findProfileMore(page);
+  if (!hit) return null;
+  await page.clickAt(hit.cx, hit.cy);
+  opts.steps?.push(`click:${hit.text}@${Math.round(hit.cx)},${Math.round(hit.cy)}`);
+  return hit;
+}
+
+/**
  * Conectar/Connect do menu overflow do perfil atual (vanity da URL).
  * Ignora cards laterais / outros vanityName.
  */
@@ -523,7 +629,11 @@ export async function clickFirstSelector(page, selectors, steps) {
   return null;
 }
 
-/** Texto exato no composer LinkedIn messaging (só human-cdp fill). */
+/**
+ * Texto no composer LinkedIn messaging.
+ * Char-a-char / textContent leave Enviar disabled — usa click + select/Backspace
+ * + `Input.insertText` em blocos; `\n` vira Enter.
+ */
 export async function fillMessageComposer(page, text, steps) {
   const selectors = [
     'div.msg-form__contenteditable',
@@ -531,14 +641,72 @@ export async function fillMessageComposer(page, text, steps) {
     'div[role="textbox"][contenteditable="true"]',
     '.msg-form .msg-form__msg-content-container--scrollable div[contenteditable="true"]',
   ];
-  for (const sel of selectors) {
-    const box = await page.boundingBox(sel).catch(() => null);
-    if (!box) continue;
-    await page.fill(sel, text);
-    steps?.push(`composer:${sel}`);
-    return true;
+  let sel = null;
+  for (const s of selectors) {
+    const box = await page.boundingBox(s).catch(() => null);
+    if (box) {
+      sel = s;
+      break;
+    }
   }
-  return false;
+  if (!sel) return false;
+
+  await page.click(sel);
+  await sleep(120);
+  await page.evaluate(`(() => {
+    const el = document.querySelector(${JSON.stringify(sel)});
+    if (!el) return;
+    el.focus();
+    if (window.getSelection) {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(range);
+    }
+  })()`);
+  await sleep(40);
+  await page.send("Input.dispatchKeyEvent", {
+    type: "keyDown",
+    key: "Backspace",
+    code: "Backspace",
+    windowsVirtualKeyCode: 8,
+  });
+  await page.send("Input.dispatchKeyEvent", {
+    type: "keyUp",
+    key: "Backspace",
+    code: "Backspace",
+    windowsVirtualKeyCode: 8,
+  });
+  await sleep(80);
+
+  const parts = String(text).split(/\n/);
+  for (let i = 0; i < parts.length; i++) {
+    if (i > 0) {
+      await page.send("Input.dispatchKeyEvent", {
+        type: "keyDown",
+        key: "Enter",
+        code: "Enter",
+        windowsVirtualKeyCode: 13,
+        nativeVirtualKeyCode: 13,
+      });
+      await page.send("Input.dispatchKeyEvent", {
+        type: "keyUp",
+        key: "Enter",
+        code: "Enter",
+        windowsVirtualKeyCode: 13,
+        nativeVirtualKeyCode: 13,
+      });
+      await sleep(40);
+    }
+    if (parts[i]) {
+      await page.send("Input.insertText", { text: parts[i] });
+      await sleep(30);
+    }
+  }
+  await sleep(200);
+  steps?.push(`composer:${sel}`);
+  return true;
 }
 
 export async function clickSendMessage(page, steps) {

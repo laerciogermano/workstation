@@ -9,6 +9,8 @@ import {
 } from "../linkedin-connect.js";
 import {
   clickByTexts,
+  clickProfileMore,
+  openProfileComposer,
   profileSignals,
   shot,
   sleep,
@@ -131,18 +133,21 @@ export async function listProfileMessages(opts) {
       }
       const sig = await profileSignals(page);
       if (sig.hasMessage) {
-        await clickByTexts(
-          page,
-          ["Message", "Mensagem", "Send a message", "Enviar mensagem"],
-          { steps },
-        );
-        await sleep(WAIT_TAP_MS);
+        const okCompose = await openProfileComposer(page, {
+          steps,
+          waitMs: WAIT_TAP_MS + 2_000,
+        });
+        if (okCompose) {
+          opened = true;
+          break;
+        }
         continue;
       }
       if (sig.hasMore) {
-        await clickByTexts(page, ["More", "Mais"], { steps });
+        await clickProfileMore(page, { steps });
         await sleep(WAIT_TAP_MS);
         await clickByTexts(page, ["Message", "Mensagem", "Send a message"], {
+          menuOnly: true,
           steps,
         });
         await sleep(WAIT_TAP_MS);

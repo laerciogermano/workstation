@@ -62,6 +62,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
 
 ## Antes → depois
 
+- **Enviar mensagem (composer):** (1) sticky topo `y≈27`; (2) clique CDP no hero **não abre** overlay; (3) `page.fill` char-a-char/`textContent` deixava **Enviar disabled**. Sintoma: `não abriu composer / não enviou` (Débora Mendes 2026-11-16). Agora: `openProfileComposer` → `goto /messaging/compose/…`; `fillMessageComposer` → select+Backspace + `Input.insertText` (Enter p/ `\n`). Rollback: clique/`page.fill` em [`linkedin-message.js`](linkedin-message.js) / [`linkedin-dom.js`](linkedin-dom.js).
 - **Debug overlay:** workers e `human-cdp` **só** injetam overlay com `debug: true` explícito; omitido/`false` → sem script de UI (ToS LinkedIn: não alterar aparência). `connectCdp` não herda `meta.debug`. Rollback: herdar meta / `debug: opts.debug` em [`session.js`](session.js) + `registry.mjs`.
 - **Lifecycle Chrome:** antes **matava** o Chrome no `finally` (`stopCdp`) → cada job reabria e roubava foco. Agora **default = manter aberto**: `closeTab` (aba de trabalho) + standby `about:blank`; próximo job reusa a porta sem `startCdp`. Escape p/ matar: `closeBrowser: true` / `keepBrowser: false` / `CDP_CLOSE_BROWSER=1` / `CDP_KEEP_BROWSER=0`. Nested (`page`) não fecha aba. Rollback: `closeBrowser: true` ou recoloque `stopCdp` no `finally` de [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.

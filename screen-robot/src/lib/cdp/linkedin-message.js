@@ -10,8 +10,10 @@ import {
 } from "../linkedin-connect.js";
 import {
   clickByTexts,
+  clickProfileMore,
   clickSendMessage,
   fillMessageComposer,
+  openProfileComposer,
   profileSignals,
   shot,
   sleep,
@@ -20,7 +22,19 @@ import { withLinkedInPage } from "./session.js";
 
 const WAIT_VIEW_MS = Number(process.env.LINKEDIN_MSG_WAIT_VIEW_MS || 5_000);
 const WAIT_TAP_MS = Number(process.env.LINKEDIN_MSG_WAIT_TAP_MS || 2_000);
+const WAIT_COMPOSE_MS = Number(process.env.LINKEDIN_MSG_WAIT_COMPOSE_MS || 4_000);
 const MAX_ROUNDS = 14;
+
+async function isComposerOpen(page) {
+  return page.evaluate(`(() => {
+    return !!(
+      document.querySelector('div.msg-form__contenteditable') ||
+      document.querySelector('.msg-form__contenteditable[contenteditable="true"]') ||
+      document.querySelector('div[role="textbox"][contenteditable="true"]') ||
+      document.querySelector('.msg-overlay-conversation-bubble')
+    );
+  })()`);
+}
 
 /**
  * @param {{
@@ -55,20 +69,64 @@ export async function sendLinkedInMessage(opts) {
     await sleep(WAIT_VIEW_MS);
     await shot(page, opts.outDir, "01-perfil.png");
 
-    let openedComposer = false;
+    // Preferir goto compose: clique CDP no "Enviar mensagem" não abre o overlay.
+    if (!dryRun) {
+      const opened = await openProfileComposer(page, {
+        steps,
+        waitMs: WAIT_COMPOSE_MS,
+      });
+      if (opened) {
+        steps.push("composer");
+        await shot(page, opts.outDir, "02-composer.png");
+        const filled = await fillMessageComposer(page, message, steps);
+        if (!filled) {
+          return {
+            ok: false,
+            status: "failed",
+            url,
+            text: message,
+            steps,
+            error: "composer não aceitou texto",
+          };
+        }
+        await shot(page, opts.outDir, "03-pasted.png");
+        await shot(page, opts.outDir, "04-before-send.png");
+        const sent = await clickSendMessage(page, steps);
+        if (!sent) {
+          return {
+            ok: false,
+            status: "failed",
+            url,
+            text: message,
+            steps,
+            error: "botão Send não encontrado",
+          };
+        }
+        await sleep(WAIT_TAP_MS);
+        await shot(page, opts.outDir, "05-sent.png");
+        steps.push("send:confirmed");
 
+        let db = null;
+        try {
+          db = await notifyLinkedInMessages({
+            profileUrl: url,
+            agentId: opts.agentId || resolveAgentId(),
+            direction: "sent",
+            message,
+            occurredAt: new Date().toISOString(),
+          });
+          steps.push(db.notified ? "db:message:sent" : `db:skip:${db.reason}`);
+        } catch (e) {
+          steps.push(`db:error:${String(e?.message || e).slice(0, 120)}`);
+        }
+        return { ok: true, status: "sent", url, text: message, steps, db };
+      }
+      steps.push("compose:href-miss");
+    }
+
+    // Fallback: Mais → Message no menu (quando não há CTA Mensagem no hero)
     for (let round = 0; round < MAX_ROUNDS; round++) {
-      const composerOpen = await page.evaluate(`(() => {
-        return !!(
-          document.querySelector('div.msg-form__contenteditable') ||
-          document.querySelector('.msg-form__contenteditable[contenteditable="true"]') ||
-          document.querySelector('div[role="textbox"][contenteditable="true"]') ||
-          document.querySelector('.msg-overlay-conversation-bubble')
-        );
-      })()`);
-
-      if (composerOpen || openedComposer) {
-        openedComposer = true;
+      if (await isComposerOpen(page)) {
         steps.push("composer");
         await shot(page, opts.outDir, "02-composer.png");
         if (dryRun) {
@@ -122,12 +180,11 @@ export async function sendLinkedInMessage(opts) {
       if (sig.hasMessage) {
         await shot(page, opts.outDir, "01b-message-btn.png");
         if (!dryRun) {
-          await clickByTexts(
-            page,
-            ["Message", "Mensagem", "Send a message", "Enviar mensagem"],
-            { steps },
-          );
-          await sleep(WAIT_TAP_MS);
+          const opened = await openProfileComposer(page, {
+            steps,
+            waitMs: WAIT_COMPOSE_MS,
+          });
+          if (!opened) await sleep(WAIT_TAP_MS);
         }
         continue;
       }
@@ -135,12 +192,12 @@ export async function sendLinkedInMessage(opts) {
       if (sig.hasMore) {
         await shot(page, opts.outDir, "01c-more.png");
         if (!dryRun) {
-          await clickByTexts(page, ["More", "Mais", "More actions"], { steps });
+          await clickProfileMore(page, { steps });
           await sleep(WAIT_TAP_MS);
           await clickByTexts(
             page,
             ["Message", "Mensagem", "Send a message", "Enviar mensagem"],
-            { steps },
+            { menuOnly: true, steps },
           );
           await sleep(WAIT_TAP_MS);
         }

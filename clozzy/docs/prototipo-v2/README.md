@@ -24,17 +24,17 @@ Cores: Pink Deep `#E0005A` (único rosa), roxo `#7C48C4` (lado da criadora), pre
 
 | Tema | Fundo | Botão | Acento |
 |---|---|---|---|
-| Noite (padrão) | preto `#000` | branco | arco rosa; Studio roxo |
+| Meia-rosa (padrão) | preto `#000` | branco | arco pink em tudo (sem roxo) |
+| Noite | preto `#000` | branco | arco rosa; Studio roxo |
 | Dia | branco | Pink Deep; Studio roxo | rosa |
 | Neblina | cinza `#F1F1F1` + cartões brancos | preto | arco rosa; Studio roxo |
 | Meia-noite | preto `#000` | branco | arco roxo em tudo |
-| Meia-rosa | preto `#000` | branco | arco pink em tudo (sem roxo) |
 | Pink | Pink Deep | branco | tudo branco |
 | Roxo | roxo | branco | tudo branco |
 
 “Liberado” (C-24) é sempre Pink Deep; telas de foto e câmera (C-01, C-11, C-25, C-42) não mudam com o tema.
 
-Antes → depois: 6 temas → 7 (`meia-rosa`). Voltar: remover o item `meia-rosa` em `js/data.js`, as regras `data-t="meia-rosa"` em `styles.css` e as menções a “sete” nos textos.
+Antes → depois: tema padrão `noite` → `meia-rosa` (`index.html` `data-theme`, `getTheme`/`themeNow` em `js/app.js`, tag em `js/data.js`). Voltar: default `noite` e tag `padrão` de novo na Noite.
 
 ## Tendências e o que evitamos
 

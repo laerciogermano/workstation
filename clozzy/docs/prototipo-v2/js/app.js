@@ -23,7 +23,7 @@ let SHEET_ANIM = false, TOAST_ANIM = false;
 const $ = (s, r = document) => r.querySelector(s);
 
 /* ---------- render ---------- */
-const themeNow = () => document.documentElement.dataset.theme || 'noite';
+const themeNow = () => document.documentElement.dataset.theme || 'meia-rosa';
 function screenHTML(id) {
   try { return SCREENS[id].render(); } catch (e) { console.error(id, e); return `<div class="body"><p class="muted">Erro em ${id}: ${esc(e.message)}</p></div>`; }
 }
@@ -230,7 +230,7 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('[data-open]')) e.target.click(); });
 
 /* ---------- temas ---------- */
-function getTheme() { const q = new URLSearchParams(location.search).get('tema'); if (q && THEMES.some((t) => t.id === q)) return q; try { return localStorage.getItem('cz-theme') || 'noite'; } catch (e) { return 'noite'; } }
+function getTheme() { const q = new URLSearchParams(location.search).get('tema'); if (q && THEMES.some((t) => t.id === q)) return q; try { return localStorage.getItem('cz-theme') || 'meia-rosa'; } catch (e) { return 'meia-rosa'; } }
 function applyTheme(id, animate) {
   const root = document.documentElement;
   if (animate && root.dataset.theme !== id && document.startViewTransition && !reducedMotion()) { root.dataset.vt = 'theme'; const t = document.startViewTransition(() => applyTheme(id)); [t.ready, t.updateCallbackDone].forEach((p) => p.catch(() => {})); t.finished.catch(() => {}).finally(() => { delete root.dataset.vt; }); return; }

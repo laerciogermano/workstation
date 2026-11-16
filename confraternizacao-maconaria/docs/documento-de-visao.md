@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.5 · 2026-11-13
+**Versão:** 3.6 · 2026-11-16
 
 ## 1. Contexto
 
@@ -131,6 +131,10 @@ O projeto adota, como referência de experiência, o padrão de aplicativos de e
 
 A programação, os locais e os participantes exibidos no aplicativo serão os do **evento do projeto**, e não os de outras instituições usadas apenas como referência de interface.
 
+### Cores e estilo
+
+A referência de **cores e estilo visual** do aplicativo é o site [https://gop.org.br](https://gop.org.br).
+
 ### Imagens de referência
 
 **Home com privacidade e cookies**
@@ -163,6 +167,7 @@ A programação, os locais e os participantes exibidos no aplicativo serão os d
 
 | Instituição | Site |
 |-------------|------|
+| Grande Oriente do Paraná (GOP) — **cores e estilo** | [https://gop.org.br](https://gop.org.br) |
 | Grande Oriente do Brasil – Paraná (GOB-PR) | [https://gob-pr.org.br/](https://gob-pr.org.br/) |
 | Maçonaria do Paraná | [https://maconariadoparana.org.br/](https://maconariadoparana.org.br/) |
 | Grande Loja do Paraná (GLP) | [https://www.glp.org.br/](https://www.glp.org.br/) |

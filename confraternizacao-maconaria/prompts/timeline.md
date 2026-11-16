@@ -14,3 +14,4 @@ Como registrar: [`README.md`](README.md).
 | 006 | 2026-11-13 | Visão linguagem diretoria | [006-2026-11-13-visao-linguagem-diretoria.md](006-2026-11-13-visao-linguagem-diretoria.md) | v5.0: tom formal; sem orçamento. |
 | 007 | 2026-11-13 | Visão sem mencionar áudio | [007-2026-11-13-visao-sem-mencao-audio.md](007-2026-11-13-visao-sem-mencao-audio.md) | v6.0: fala do projeto; sem citar áudio/prints no corpo. |
 | 004 | 2026-11-13 | Baixar insumos de mercado (visão, skills, práticas, event apps) | [004-2026-11-13-baixar-insumos-mercado.md](004-2026-11-13-baixar-insumos-mercado.md) | Skills, templates de visão, tendências 2025–26 de apps de evento e práticas de desenvolvimento em `input/referencias-mercado/`. |
+| 008 | 2026-11-16 | Referência de cores e estilo GOP | [008-2026-11-16-visao-cores-estilo-gop.md](008-2026-11-16-visao-cores-estilo-gop.md) | Visão v3.6: cores e estilo visual = https://gop.org.br. |

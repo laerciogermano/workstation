@@ -34,3 +34,11 @@ No canvas (T-36): **scroll** = zoom in/out no cursor; **arrastar o fundo** = pan
 **Antes → depois:** `.dcanvas` só com `overflow:auto` (sem zoom) → transform em `.dworld` + wheel/pan.
 
 **Voltar:** remover `DVIEW` / listeners de wheel-pan e restaurar `overflow:auto` no `.dcanvas`.
+
+## Chat · harness
+
+Visão `chat` (T-60/T-61): thread + composer ligados ao `sel` do Explorar (`CHAT[id]`). Sem arquivo, composer bloqueado.
+
+**Antes → depois:** sem aba Chat → `VIEWS` + `chat()` + fluxo `08` na galeria.
+
+**Voltar:** remover entrada `chat` de `VIEWS`/`FLOWS`/`SCREENS` e a função `chat()`.

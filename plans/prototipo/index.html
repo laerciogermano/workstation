@@ -573,6 +573,37 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .dsticky { position:absolute; width:180px; min-height:70px; background:color-mix(in srgb, var(--warn) 18%, var(--paper)); border:1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius:4px; padding:10px 12px; font-size:12px; color:var(--body); box-shadow:1px 2px 0 rgba(20,24,30,.06); pointer-events:none; }
 .dsticky b { display:block; font-weight:700; color:var(--ink); margin-bottom:4px; font-size:13px; }
 
+/* Chat · harness contextual ao arquivo */
+.chat { height:100%; display:flex; flex-direction:column; min-height:0; background:var(--paper); }
+.chat-ctx { flex:none; display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
+.chat-ctx .pill { display:flex; align-items:center; gap:10px; min-width:0; flex:1; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); }
+.chat-ctx .pill .fi { color:var(--accent); flex:none; }
+.chat-ctx .pill .meta { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.chat-ctx .pill b { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chat-ctx .pill .path { font-family:var(--mono); font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chat-ctx .tag { flex:none; font-size:11px; font-weight:600; color:var(--accent); background:color-mix(in srgb, var(--accent) 11%, var(--paper)); border-radius:6px; padding:4px 8px; }
+.chat-ctx.empty { color:var(--muted); font-size:13px; }
+.chat-thread { flex:1; overflow:auto; padding:20px 24px 12px; display:flex; flex-direction:column; gap:14px; }
+.chat-thread .empty { margin:auto; max-width:420px; text-align:center; color:var(--muted); font-size:14px; line-height:1.5; }
+.chat-thread .empty b { display:block; color:var(--ink); font-size:16px; margin-bottom:6px; }
+.msg { max-width:720px; display:flex; flex-direction:column; gap:6px; }
+.msg.user { align-self:flex-end; align-items:flex-end; }
+.msg.assistant { align-self:flex-start; }
+.msg .who { font-size:11px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.msg .bubble { padding:10px 14px; border-radius:12px; font-size:14px; line-height:1.5; white-space:pre-wrap; }
+.msg.user .bubble { background:var(--ink); color:var(--paper); border-bottom-right-radius:4px; }
+.msg.assistant .bubble { background:var(--wash); border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px; }
+.msg .tools { display:flex; flex-wrap:wrap; gap:6px; }
+.msg .tools .btn { font-size:12px; }
+.chat-compose { flex:none; border-top:1px solid var(--line); padding:12px 16px 14px; background:var(--panel); display:flex; flex-direction:column; gap:8px; }
+.chat-compose .chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chat-compose .chips button { border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:4px 10px; font-size:12px; color:var(--body); }
+.chat-compose .chips button:hover { border-color:var(--accent); color:var(--accent); }
+.chat-compose form { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:end; }
+.chat-compose textarea { width:100%; min-height:44px; max-height:120px; resize:vertical; border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:var(--paper); font:inherit; font-size:14px; outline:none; }
+.chat-compose textarea:focus { border-color:var(--accent); }
+.chat-compose textarea:disabled { opacity:.55; }
+
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
 .tree-c { position: relative; }
@@ -632,7 +663,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
       <h1>Uma atividade, vários jeitos de ver</h1>
-      <p>Explorar, Board, Gantt (calendário), Flow (ordem), Fluxograma (canvas tipo n8n) e Árvore sobre a mesma unidade, com responsáveis do tipo pessoa, IA ou máquina. As telas estão agrupadas pelos fluxos das histórias (US-01 a US-33). Clique numa tela para navegar.</p>
+      <p>Explorar, Board, Gantt (calendário), Flow (ordem), Fluxograma (canvas tipo n8n), Árvore e Chat (harness contextual ao arquivo) sobre a mesma unidade, com responsáveis do tipo pessoa, IA ou máquina. As telas estão agrupadas pelos fluxos das histórias. Clique numa tela para navegar.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -780,8 +811,9 @@ function agChip(id, short) {
   return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}"><span class="ico">${inner}</span>${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
-const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", explorar: "Arquivo" };
-const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"]];
+const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", chat: "Contexto", explorar: "Arquivo" };
+const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["chat", "message-square", "Chat"]];
+const CHAT = {};
 
 // ================= janela =================
 const DEF = { v: "board", plan: "onb", fm: "ordem", catTab: "pessoa" };
@@ -801,7 +833,7 @@ function win(s) {
       ${explorer(s)}
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
-        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : catalog(s)}
+        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : s.v === "chat" ? chat(s) : catalog(s)}
           ${s.drawer ? drawer(s) : ""}${s.cfg && s.v === "board" ? cfgPanel(s) : ""}${s.tnode && s.v === "tree" ? procPanel(s) : ""}
         </div>
       </section>
@@ -876,6 +908,7 @@ function bar(s) {
       <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>`;
   }
   if (s.v === "tree") acts = `<button class="btn pri" data-act="tnew-root">${icon("plus")}Atividade</button>`;
+  if (s.v === "chat") acts = `<button class="btn" data-act="chat-clear"${s.sel && CHAT[s.sel]?.length ? "" : " disabled"}>${icon("eraser")}Limpar thread</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div>
     <nav class="seg" aria-label="Visões">${VIEWS.map(([id, ic, n]) => `<button data-act="view" data-v="${id}" aria-current="${s.v === id}">${icon(ic)}${n}</button>`).join("")}</nav>
     <div class="acts">${acts}</div></div>`;
@@ -967,6 +1000,7 @@ function drawer(s) {
         <button class="btn" data-act="open-in" data-v="flow" data-id="${u.id}">${icon("workflow")}Flow</button>
         <button class="btn" data-act="open-in" data-v="diagram" data-id="${u.id}">${icon("waypoints")}Fluxograma</button>
         <button class="btn" data-act="open-in" data-v="tree" data-id="${u.id}">${icon("network")}Árvore</button>
+        <button class="btn" data-act="open-in" data-v="chat" data-id="${u.id}">${icon("message-square")}Chat</button>
         <button class="btn" data-act="reveal" data-id="${u.id}">${icon("folder-tree")}Explorar</button></div></div>
     </div>
     <div class="side-f"><button class="btn ghost" data-act="archive" data-id="${u.id}">${icon(u.arch ? "archive-restore" : "archive")}${u.arch ? "Desarquivar" : "Arquivar"}</button><span class="sp"></span><button class="btn ghost danger" data-act="ask-rm" data-id="${u.id}">${icon("trash-2")}Excluir</button></div>
@@ -1328,6 +1362,98 @@ function diagram(s) {
     </div></div></div>`;
 }
 
+// ----- Chat · harness contextual ao arquivo -----
+function chatFile(s) {
+  const u = $u(s.sel);
+  return u && !isFolder(u) ? u : null;
+}
+function harnessTools(u) {
+  const tools = [
+    { act: "open-in", v: "flow", label: "Abrir no Flow", ic: "workflow" },
+    { act: "open-in", v: "diagram", label: "Fluxograma", ic: "waypoints" },
+    { act: "drawer", label: "Abrir detalhe", ic: "panel-right" },
+  ];
+  if (u.st === "fail" || u.st === "cancel") tools.unshift({ act: "retry", label: "Tentar de novo", ic: "rotate-ccw" });
+  if (agent(u.agent)?.type === "maquina") tools.push({ act: "mach", label: "Programar máquina", ic: "code-xml" });
+  return tools;
+}
+function harnessReply(u, text) {
+  const a = agent(u.agent);
+  const p = "/" + path(u.id).join("/");
+  const st = u.st ? ST[u.st][2] : "sem execução";
+  return `Harness com contexto em ${p}.\nArquivo “${u.title}” · ${a ? TYPES[a.type].one + " " + a.name : "sem responsável"} · ${st}.\n\nPedido: “${text}”.\n\nPosso decompor em etapas filhas, atualizar o contexto, reatribuir o responsável, retentar a execução ou abrir a mesma unidade em outra visão — sem sair deste arquivo.`;
+}
+function chatMessages(s) {
+  const u = chatFile(s);
+  if (!u) return [];
+  if (CHAT[u.id]?.length) return CHAT[u.id];
+  if (s.chatSeed) {
+    const q = s.chatSeed.q;
+    return [
+      { role: "user", text: q },
+      { role: "assistant", text: harnessReply(u, q), tools: harnessTools(u) },
+    ];
+  }
+  return [];
+}
+function materializeChatSeed() {
+  if (cur?.v !== "chat" || !cur.chatSeed) return;
+  const u = chatFile(cur);
+  if (!u || CHAT[u.id]?.length) return;
+  const q = cur.chatSeed.q;
+  CHAT[u.id] = [
+    { role: "user", text: q },
+    { role: "assistant", text: harnessReply(u, q), tools: harnessTools(u) },
+  ];
+}
+function sendChat(text) {
+  const u = chatFile(cur);
+  const q = (text || "").trim();
+  if (!u) { toast("Selecione um arquivo no Explorar — o harness usa esse contexto", "triangle-alert"); return; }
+  if (!q) return;
+  materializeChatSeed();
+  (CHAT[u.id] ||= []).push({ role: "user", text: q });
+  paint();
+  const reply = harnessReply(u, q);
+  const tools = harnessTools(u);
+  setTimeout(() => {
+    (CHAT[u.id] ||= []).push({ role: "assistant", text: reply, tools });
+    if (player.classList.contains("open") && cur?.v === "chat") paint();
+  }, 420);
+}
+function chat(s) {
+  const u = chatFile(s);
+  const msgs = chatMessages(s);
+  const chips = u ? [
+    u.st === "fail" ? "Corrigir a falha e retentar" : "Resumir o que falta nesta etapa",
+    "Decompor em etapas filhas",
+    "Atualizar o contexto com restrições",
+    "Abrir no Fluxograma",
+  ] : [];
+  const ctx = u
+    ? `<div class="chat-ctx"><div class="pill">${icon("file-text", "fi")}<div class="meta"><b>${esc(u.title)}</b><span class="path">/${esc(path(u.id).join("/"))} · ${u.uuid.slice(0, 13)}…</span></div>${agChip(u.agent, true)}${stBadge(u.st)}</div><span class="tag">${icon("bot")}harness</span></div>`
+    : `<div class="chat-ctx empty">${icon("message-square")}Selecione um arquivo no Explorar — o chat é um harness contextual a esse arquivo.</div>`;
+  const thread = !u
+    ? `<div class="empty"><b>Sem contexto</b>O harness só age sobre a unidade apontada na árvore. Clique num arquivo à esquerda.</div>`
+    : !msgs.length
+      ? `<div class="empty"><b>Harness pronto</b>Peça o que precisar sobre <b style="display:inline;font-size:inherit">${esc(u.title)}</b>: decompor, corrigir, reatribuir, exportar. O contexto (caminho, responsável, estado, entradas/saídas) já está ligado.</div>`
+      : msgs.map(m => {
+          const tools = (m.tools || []).map(t => {
+            if (t.act === "open-in") return `<button class="btn" data-act="open-in" data-v="${t.v}" data-id="${u.id}">${icon(t.ic)}${esc(t.label)}</button>`;
+            if (t.act === "drawer") return `<button class="btn" data-act="drawer" data-id="${u.id}">${icon(t.ic)}${esc(t.label)}</button>`;
+            return `<button class="btn" data-act="${t.act}" data-id="${u.id}">${icon(t.ic)}${esc(t.label)}</button>`;
+          }).join("");
+          return `<div class="msg ${m.role}"><span class="who">${m.role === "user" ? icon("user") + "Você" : icon("bot") + "Harness"}</span><div class="bubble">${esc(m.text)}</div>${tools ? `<div class="tools">${tools}</div>` : ""}</div>`;
+        }).join("");
+  return `<div class="chat">${ctx}
+    <div class="chat-thread" data-chat-thread>${thread}</div>
+    <div class="chat-compose">
+      ${u ? `<div class="chips">${chips.map(c => `<button type="button" data-act="chat-chip" data-q="${esc(c)}">${esc(c)}</button>`).join("")}</div>` : ""}
+      <form data-form="chat"><textarea name="q" rows="2" placeholder="${u ? "Peça qualquer coisa sobre este arquivo…" : "Selecione um arquivo para conversar"}" ${u ? "" : "disabled"} aria-label="Mensagem"></textarea>
+        <button class="btn pri" ${u ? "" : "disabled"}>${icon("send")}Enviar</button></form>
+    </div></div>`;
+}
+
 // ----- Árvore de execução -----
 function tree(s) {
   const NW = 236, NH = 52, GX = 52, GY = 14, PX = 24, PY = 22;
@@ -1399,7 +1525,7 @@ function ctxMenu(s) {
   return `<div class="ctx" style="left:${s.ctx.x}px;top:${s.ctx.y}px" role="menu">
     ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
-    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-diagram", "waypoints", "Abrir no Fluxograma") + it("open-in-tree", "network", "Abrir na Árvore") + "<hr>" : ""}
+    ${u && !isFolder(u) ? it("open-in-board", "kanban", "Abrir no Board") + it("open-in-gantt", "chart-gantt", "Abrir no Gantt") + it("open-in-flow", "workflow", "Abrir no Flow") + it("open-in-diagram", "waypoints", "Abrir no Fluxograma") + it("open-in-tree", "network", "Abrir na Árvore") + it("open-in-chat", "message-square", "Abrir no Chat") + "<hr>" : ""}
     ${it("ask-rm", "trash-2", "Remover", "⌫", "danger")}</div>`;
 }
 function confirmDlg(s) {
@@ -1521,7 +1647,10 @@ const FLOWS = [
   { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
     desc: "A floresta de atividades fora do eixo do tempo: várias raízes, responsáveis em cada nó, criar filha, desaninhar e excluir subárvore. Nó de máquina abre o procedimento ali mesmo.",
     steps: [["T-40", "Árvore"], ["T-41", "Nova atividade filha"], ["T-42", "Procedimento da máquina"]] },
-  { id: "config", n: "08", title: "Configurações", us: "US-03",
+  { id: "chat", n: "08", title: "Chat", us: "harness",
+    desc: "Harness em forma de chat, amarrado ao arquivo selecionado no Explorar. Pedidos livres (decompor, corrigir, reatribuir, abrir em outra visão) usam caminho, responsável, estado e I/O daquela unidade.",
+    steps: [["T-60", "Chat · contexto"], ["T-61", "Resposta do harness"]] },
+  { id: "config", n: "09", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
     steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
 ];
@@ -1535,7 +1664,7 @@ const SCREENS = {
   "T-10": { s: { v: "board" }, name: "Board", us: ["US-05", "US-06", "US-07"], notes: "Cinco colunas × três raias, sem limite de WIP. Arraste cards entre células. Card filho mostra o pai; mover o pai leva a subárvore. Em “Execução IA”, card com responsável IA roda (pendente → em execução → concluída). Falhou e cancelada mostram “Tentar de novo”." },
   "T-11": { s: { v: "board", newCard: { col: "c1", lane: "l2" } }, name: "Novo card", us: ["US-05"], notes: "Criar card no próprio board, direto na célula: título obrigatório e contexto opcional (orçamento, preferências, restrições). O card vira arquivo no Explorar, dentro da pasta da raia." },
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
-  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore ou Explorar. Arquivar e excluir no rodapé." },
+  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Chat ou Explorar. Arquivar e excluir no rodapé." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
   "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Seletor de plano no topo. Barras por início e fim (dia de hoje marcado), duração derivada, setas de fim → início e marca de paralelo. O pai mostra o roll-up dos filhos (menor início, maior fim) e fica vermelho se algum filho falhou. Tarefas sem data ficam na faixa de baixo." },
   "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
@@ -1544,6 +1673,8 @@ const SCREENS = {
   "T-34": { s: { v: "flow", fm: "fop" }, name: "Estado (FOP)", us: ["US-12", "US-19"], notes: "No Flow, o modo Estado liga saídas a entradas (IA → IA inclusive). Seleção, repetição e paralelo aparecem no roteiro. O painel valida: ciclo bloqueia, saída órfã avisa, contexto incompleto impede a execução. Camadas mostram o que é substituível." },
   "T-35": { s: { v: "flow", fm: "fop", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
+  "T-60": { s: { v: "chat", sel: "u13" }, name: "Chat · contexto", us: ["harness"], notes: "Visão Chat: o harness conversa só sobre o arquivo apontado no Explorar (aqui “Traduzir proposta”). Barra de contexto com caminho, UUID, responsável e estado. Sem arquivo selecionado, o composer fica bloqueado." },
+  "T-61": { s: { v: "chat", sel: "u13", chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Resposta do harness", us: ["harness"], notes: "Pedido livre → resposta do harness com o contexto do arquivo (caminho, agente GPT, estado falhou). Atalhos na resposta abrem Flow, Fluxograma, detalhe ou “Tentar de novo”. Trocar o arquivo na árvore muda o contexto da thread." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com uma raiz por pasta, da esquerda para a direita. Cada nó mostra responsável, estado e quantos descendentes tem. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -1629,6 +1760,7 @@ function tFor(s) {
   if (s.v === "gantt") return U.some(u => u.st === "exec" && u.plan === s.plan && agent(u.agent)?.type === "ia") ? "T-31" : "T-30";
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; if (s.fm === "fop") return "T-34"; return "T-32"; }
   if (s.v === "diagram") return "T-36";
+  if (s.v === "chat") return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
   if (s.v === "tree") return s.tnode ? "T-42" : s.tnew ? "T-41" : s.rev ? "T-01" : "T-40";
   return "T-10";
 }
@@ -1644,9 +1776,11 @@ function fit() {
   holder.dataset.scale = s;
 }
 function paint(keepScroll = true) {
-  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
+  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
-  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  const chatThread = holder.querySelector("[data-chat-thread]");
+  if (chatThread && cur.v === "chat") chatThread.scrollTop = chatThread.scrollHeight;
   const t = tFor(cur); curT = t; const s = SCREENS[t];
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
@@ -1662,6 +1796,7 @@ function paint(keepScroll = true) {
 function show(spec, push = true) {
   if (push && cur) hist.push(JSON.parse(JSON.stringify(cur)));
   cur = spec;
+  materializeChatSeed();
   if (cur.runDemo) { delete cur.runDemo; startRun(["u14"]); return; }
   if (document.startViewTransition && !reduced && push) document.startViewTransition(() => paint(false)); else paint(false);
 }
@@ -1736,7 +1871,10 @@ const ACT = {
   "open-in-flow": t => revealIn(t.dataset.id, "flow"),
   "open-in-diagram": t => revealIn(t.dataset.id, "diagram"),
   "open-in-tree": t => revealIn(t.dataset.id, "tree"),
+  "open-in-chat": t => revealIn(t.dataset.id, "chat"),
   "open-in": t => revealIn(t.dataset.id, t.dataset.v),
+  "chat-chip": t => { sendChat(t.dataset.q); return false; },
+  "chat-clear": () => { if (cur.sel) CHAT[cur.sel] = []; unset("chatSeed"); },
   reveal: t => { const id = t.dataset.id; if (cur.v === "tree") cur.rev = true; let p = $u(id).parent; while (p) { OPEN.add(p); p = $u(p).parent; } unset("drawer", "picker"); cur.sel = id; cur.flash = id; setTimeout(() => { const n = holder.querySelector(`.node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30); },
   "ask-rm": t => { const id = t.dataset.id; unset("ctx"); const ids = (cur.multi || []).includes(id) ? cur.multi : [id]; const hasKids = ids.some(i => desc(i).length); if (hasKids) cur.confirm = ids; else { removeIds(ids); unset("drawer", "multi"); cur.sel = null; toast(ids.length > 1 ? `${ids.length} itens removidos` : "Removido de todas as visões", "trash-2"); } },
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },
@@ -1893,6 +2031,9 @@ holder.addEventListener("keydown", e => {
   }
   if (t.closest(".tnew") && e.key === "Escape") { e.stopPropagation(); unset("tnew"); paint(); return; }
   if (t.closest(".newcard") && e.key === "Escape") { e.stopPropagation(); unset("newCard"); paint(); return; }
+  if (t.closest('form[data-form="chat"] textarea') && (e.key === "Enter" && (e.metaKey || e.ctrlKey))) {
+    e.preventDefault(); sendChat(t.value); return;
+  }
   if (t.matches("[data-code]") && e.key === "Tab") { e.preventDefault(); const s = t.selectionStart; t.setRangeText("  ", s, t.selectionEnd, "end"); t.dispatchEvent(new Event("input", { bubbles: true })); }
 });
 holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren) { const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren"); setTimeout(paint, 0); } });
@@ -1916,6 +2057,9 @@ holder.addEventListener("submit", e => {
     if (!v("n")) return;
     CAT.push({ id: "k" + (++seq), type: cur.catTab, name: v("n"), sub: v("d") || TYPES[cur.catTab].one });
     paint(); toast(`${v("n")} entrou no catálogo`);
+  }
+  if (f.dataset.form === "chat") {
+    sendChat(v("q"));
   }
 });
 // arrastar: cards entre células, nós na árvore

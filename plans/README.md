@@ -13,13 +13,13 @@ Fundamentos de fluxo: [`inputs/`](inputs/) (FOP — Flow Oriented Programming).
 
 ## Visão
 
-O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board (quadro/todo), no **Gantt** (calendário), no **Flow** (ordem, sem datas), no **Fluxograma** (canvas tipo n8n), na Árvore de execução e no Explorar. Planos são modelados como **linguagem visual de fluxo (FOP)** exportável para código.
+O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board (quadro/todo), no **Gantt** (calendário), no **Flow** (ordem, sem datas), no **Fluxograma** (canvas tipo n8n), na Árvore de execução, no **Chat** (harness contextual ao arquivo) e no Explorar. Planos são modelados como **linguagem visual de fluxo (FOP)** exportável para código.
 
 Sistemas também são fluxos de execução: o próprio Plans serve para **codificar sistemas**, não só listas de tarefas. O **agente** de cada atividade é quem (ou o quê) executa — pessoa, modelo de IA (GPT, Claude, etc.) ou biblioteca/máquina — sem misturar o roteiro com o ator.
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, o plano usa **calendário** (início/fim por dia). No **Flow**, o mesmo desenho de barras trabalha só por **ordem** (passo): sem dia nem duração em datas; filhos com a mesma largura; sequencial e paralelo. O **Fluxograma** é canvas tipo n8n com **zoom no scroll** e pan no fundo. O modo Estado (FOP) no Flow liga **dados** (entradas/saídas) e **funções** (procedimentos) — compiláveis via FOP-IR. Em cadeias sequenciais, a **saída** de uma etapa alimenta a **entrada** da seguinte — inclusive entre execuções de IA.
+No **Gantt**, o plano usa **calendário** (início/fim por dia). No **Flow**, o mesmo desenho de barras trabalha só por **ordem** (passo): sem dia nem duração em datas; filhos com a mesma largura; sequencial e paralelo. O **Fluxograma** é canvas tipo n8n com **zoom no scroll** e pan no fundo. O **Chat** é um **harness** amarrado ao arquivo selecionado no Explorar: pedidos livres usam caminho, responsável, estado e I/O daquela unidade. O modo Estado (FOP) no Flow liga **dados** (entradas/saídas) e **funções** (procedimentos) — compiláveis via FOP-IR. Em cadeias sequenciais, a **saída** de uma etapa alimenta a **entrada** da seguinte — inclusive entre execuções de IA.
 
 ## Problema
 
@@ -41,7 +41,7 @@ Orquestrações misturam humano, IA e máquina em silos distintos: não há um l
 
 ## Objetivo
 
-Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt** (calendário), **Flow** (ordem, sem datas), **Fluxograma** (canvas tipo n8n), **Árvore de execução** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
+Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt** (calendário), **Flow** (ordem, sem datas), **Fluxograma** (canvas tipo n8n), **Árvore de execução**, **Chat** (harness no arquivo apontado) e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
 
 ## Proposta de valor
 

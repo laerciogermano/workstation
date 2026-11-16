@@ -461,6 +461,20 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gbar.parent::before { left: 0; border-left-color: var(--ink); } .gbar.parent::after { right: 0; border-right-color: var(--ink); }
 .gbar.parent.fail { background: var(--fail); } .gbar.parent.fail::before { border-top-color: var(--fail); border-left-color: var(--fail); } .gbar.parent.fail::after { border-top-color: var(--fail); border-right-color: var(--fail); }
 .gbar .lbl-out { position: absolute; left: calc(100% + 13px); color: var(--muted); font-weight: 500; }
+/* Flow · entrada | função | saída (PDF FOP) */
+.funit { position: absolute; top: 4px; height: 30px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 3px; align-items: center; z-index: 2; min-width: 72px; }
+.funit .fio { display: flex; flex-direction: column; gap: 2px; justify-content: center; max-height: 30px; overflow: hidden; }
+.funit .sq { display: block; width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid var(--line-2); background: var(--paper); flex: none; box-sizing: border-box; }
+.funit .sq.in { border-color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.funit .sq.out { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--paper)); }
+.funit .sq.empty { border-style: dashed; opacity: .45; }
+.funit .fmid { height: 26px; border-radius: 5px; background: color-mix(in srgb, var(--c) 22%, var(--paper)); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); color: var(--ink); font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0 6px; white-space: nowrap; overflow: hidden; cursor: pointer; min-width: 0; position: relative; }
+.funit .fmid:hover { border-color: var(--c); }
+.funit .fmid.sel { box-shadow: 0 0 0 2px var(--accent); }
+.funit .fmid .fill { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 40%, transparent); border-radius: 4px 0 0 4px; z-index: -1; }
+.funit.parent-wrap { top: 12px; height: 14px; }
+.funit.parent-wrap .fmid { height: 10px; border-radius: 2px; background: var(--ink); border: 0; padding: 0; }
+.funit.parent-wrap .fmid.fail { background: var(--fail); }
 .gsvg { position: absolute; left: 0; top: 48px; pointer-events: none; z-index: 1; overflow: visible; }
 .gsvg .dep { fill: none; stroke: var(--muted); stroke-width: 1.3; }
 .gsvg .dep.par { stroke-dasharray: 2 3; stroke: var(--run); }
@@ -1265,33 +1279,38 @@ function gantt(s) {
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function flow(s) {
-  const fop = s.fm === "fop";
   const rows = ganttRows(s.plan);
   const { layout, nSteps } = flowLayout(s.plan);
-  const LW = fop ? 250 : 320;
-  const avail = 1152 - LW - (fop ? 300 : 0) - 2;
-  const W = Math.max(88, Math.floor(avail / Math.max(nSteps, 1)));
+  const LW = 320;
+  const avail = 1152 - LW - 2;
+  const W = Math.max(96, Math.floor(avail / Math.max(nSteps, 1)));
   const RH = 38;
   const idx = {}; rows.forEach((r, i) => idx[r.u.id] = i);
   const left = rows.map(({ u, d }) => {
     const has = kidsPlan(u.id).some(k => !k.arch && !isFolder(k)), a = agent(u.agent);
-    const L = layout[u.id] || { s: 0, e: 0 };
-    return `<div class="grow gl-cols${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="${fop ? "grid-template-columns:1fr 24px" : "grid-template-columns:1fr 112px"}">
+    return `<div class="grow gl-cols${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="grid-template-columns:1fr 112px">
       <span class="nm${has ? " par" : ""}" style="padding-left:${d * 16}px"><span class="car">${has ? icon("chevron-down") : ""}</span><b>${esc(u.title)}</b>${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>
-      ${fop ? agChip(u.agent, true) : `${agChip(u.agent)}`}</div>`;
+      ${agChip(u.agent)}</div>`;
   }).join("");
+  const sq = (n, kind) => `<i class="sq ${kind}" title="${esc(n)}" aria-label="${kind === "in" ? "entrada" : "saída"} ${esc(n)}"></i>`;
   const bars = rows.map(({ u }) => {
     const L = layout[u.id] || { s: 0, e: 0 };
     const has = kidsPlan(u.id).some(k => !k.arch && !isFolder(k));
-    const x = L.s * W + 3, w = (L.e - L.s + 1) * W - 6;
+    const x = L.s * W + 3, w = Math.max(72, (L.e - L.s + 1) * W - 6);
     if (has) {
-      const st = kidsPlan(u.id).some(k => k.st === "fail") ? "fail" : kidsPlan(u.id).some(k => k.st === "exec") ? "exec" : null;
-      return `<div class="rr"><div class="gbar parent${st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="left:${x}px;width:${w}px" title="${esc(u.title)} · span dos filhos"></div></div>`;
+      const st = kidsPlan(u.id).some(k => k.st === "fail") ? "fail" : null;
+      return `<div class="rr"><div class="funit parent-wrap" style="left:${x}px;width:${w}px"><div class="fio"></div><div class="fmid${st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" title="${esc(u.title)}"></div><div class="fio"></div></div></div>`;
     }
     const a = agent(u.agent), c = a ? `var(--t-${a.type})` : "var(--idle)";
     const prog = u.st === "ok" || u.col === COLS[COLS.length - 1].id ? 1 : u.st === "exec" ? .55 : u.id === "u12" ? .6 : 0;
-    const lbl = fop ? "" : `<span class="lbl-out">${u.st ? ST[u.st][2] : esc(a?.name || "")}</span>`;
-    return `<div class="rr"><div class="gbar${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${x}px;width:${w}px">${prog ? `<span class="fill" style="width:${prog * 100}%"></span>` : ""}${u.st ? icon(ST[u.st][1]) : ""}${w > 72 ? esc(u.title) : ""}${lbl}</div></div>`;
+    const ins = u.ins || [], outs = (u.outs || []).map(o => o[0]);
+    const inHtml = ins.length ? ins.slice(0, 3).map(n => sq(n, "in")).join("") : `<i class="sq empty in" title="sem entrada"></i>`;
+    const outHtml = outs.length ? outs.slice(0, 3).map(n => sq(n, "out")).join("") : `<i class="sq empty out" title="sem saída"></i>`;
+    return `<div class="rr"><div class="funit" style="left:${x}px;width:${w}px;--c:${c}">
+      <div class="fio" title="entradas">${inHtml}</div>
+      <div class="fmid${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}">${prog ? `<span class="fill" style="width:${prog * 100}%"></span>` : ""}${u.st ? icon(ST[u.st][1]) : ""}<span style="overflow:hidden;text-overflow:ellipsis">${esc(u.title)}</span></div>
+      <div class="fio" title="saídas">${outHtml}</div>
+    </div></div>`;
   }).join("");
   const H = rows.length * RH;
   const spanOf = id => layout[id] || { s: 0, e: 0 };
@@ -1302,41 +1321,18 @@ function flow(s) {
     const ym = y2 - RH / 2 + 1;
     return `M${x1} ${y1} H${x1 + 7} V${ym} H${x2 - 9} V${y2} H${x2 - 2}`;
   };
-  let svg = "", pills = "";
-  if (!fop) {
-    DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => svg += `<path class="dep" d="${route(a, b)}" marker-end="url(#ah)"/>`);
-    PARS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => { const [x1, y1] = anchor(a, false), [, y2] = anchor(b, false); svg += `<path class="dep par" d="M${x1 - 6} ${y1} H${x1 - 12} V${y2} H${x1 - 6}"/>`; });
-  } else {
-    const prod = {}; rows.forEach(({ u }) => (u.outs || []).forEach(([n]) => prod[n] = u.id));
-    const used = new Set();
-    rows.forEach(({ u }) => (u.ins || []).forEach(n => {
-      const src = prod[n]; if (!src || idx[src] == null) return; used.add(n);
-      const [x1, y1] = anchor(src, true), [x2, y2] = anchor(u.id, false);
-      const mx = Math.max(x1 + 10, Math.min(x2 - 10, (x1 + x2) / 2));
-      svg += `<path class="st-link" d="M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2 - 2} ${y2}" marker-end="url(#ahs)"/>`;
-    }));
-    const done = new Set();
-    rows.forEach(({ u }) => (u.ins || []).forEach(n => {
-      const src = prod[n]; if (!src || idx[src] == null || done.has(n)) return; done.add(n);
-      const [x1, y1] = anchor(src, true);
-      pills += `<span class="pill-s" style="left:${x1 + 4 + n.length * 3}px;top:${48 + y1 - 11}px">${n}</span>`;
-    }));
-    rows.forEach(({ u }) => (u.outs || []).forEach(([n]) => { if (!used.has(n) && u.id !== "u15") { const [x1, y1] = anchor(u.id, true); pills += `<span class="pill-s orphan" style="left:${x1 + 14 + n.length * 3}px;top:${48 + y1 + 9}px">${n} · órfã</span>`; } }));
-    if (idx.u12 != null && idx.u13 != null) { const [x, y] = anchor("u12", true); pills += `<span class="struct dia" style="left:${x + 10}px;top:${48 + y + RH / 2}px">${icon("git-fork")}seleção: aprovada?</span>`; }
-    if (idx.u13 != null) { const [x, y] = anchor("u13", false); pills += `<span class="struct" style="left:${x - 4}px;top:${48 + y - 15}px">${icon("repeat")}para cada idioma [en, es]</span>`; }
-    if (idx.u14 != null) { const [x, y] = anchor("u14", false); pills += `<span class="struct" style="left:${x + 4}px;top:${48 + y + 15}px;background:var(--run)">${icon("split")}paralelo</span>`; }
-  }
-  const svgEl = `<svg class="gsvg" width="${nSteps * W}" height="${H}"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--muted)"/></marker><marker id="ahs" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--accent)"/></marker></defs>${svg}</svg>`;
-  const modes = `<div style="display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid var(--line)"><nav class="seg sm"><button data-act="fm" data-m="ordem" aria-current="${!fop}">${icon("list-ordered")}Ordem</button><button data-act="fm" data-m="fop" aria-current="${fop}">${icon("workflow")}Estado (FOP)</button></nav>
-    <div class="legend">${fop ? `<span><i class="s"></i>saída → entrada (estado)</span><span>${icon("git-fork")}seleção</span><span>${icon("repeat")}repetição</span>` : `<span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>filhos com a mesma largura</span>`}<span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div></div>`;
+  let svg = "";
+  DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => svg += `<path class="dep" d="${route(a, b)}" marker-end="url(#ah)"/>`);
+  PARS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => { const [x1, y1] = anchor(a, false), [, y2] = anchor(b, false); svg += `<path class="dep par" d="M${x1 - 6} ${y1} H${x1 - 12} V${y2} H${x1 - 6}"/>`; });
+  const svgEl = `<svg class="gsvg" width="${nSteps * W}" height="${H}"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--muted)"/></marker></defs>${svg}</svg>`;
   const stepsHead = Array.from({ length: nSteps }, (_, i) => `<div style="width:${W}px"><span>passo</span><b class="num">${i + 1}</b></div>`).join("");
-  return `<div class="gantt flow">${runbarHtml(s)}${modes}
+  return `<div class="gantt flow">${runbarHtml(s)}
     <div class="gmain"><div class="gscroll"><div class="gtable" style="grid-template-columns:${LW}px ${nSteps * W}px">
-      <div class="gleft"><div class="ghead"><div class="gl-cols" style="${fop ? "grid-template-columns:1fr 24px" : "grid-template-columns:1fr 112px"}"><span>${s.plan === "onb" ? "Etapas · Onboarding Acme" : "Etapas · Plano padrão"}</span>${fop ? "" : "<span>Responsável</span>"}</div></div>${left}</div>
+      <div class="gleft"><div class="ghead"><div class="gl-cols" style="grid-template-columns:1fr 112px"><span>${s.plan === "onb" ? "Etapas · Onboarding Acme" : "Etapas · Plano padrão"}</span><span>Responsável</span></div></div>${left}</div>
       <div class="gright"><div class="ghead"><div class="gdays gsteps">${stepsHead}</div></div>
         <div class="gbg">${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}</div>
-        <div class="grows-r">${bars}</div>${svgEl}${pills}</div>
-    </div></div>${fop ? fopPanel(s) : ""}</div>
+        <div class="grows-r">${bars}</div>${svgEl}</div>
+    </div></div></div>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -1832,8 +1828,8 @@ const FLOWS = [
     desc: "Cronograma com calendário e modo Estado (FOP): marcas e0…eN, entradas/saídas nas barras, saída→entrada no tempo. Roll-up no pai; tarefas sem data à parte.",
     steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"], ["T-37", "Estado e0…eN"]] },
   { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
-    desc: "Mesmo desenho de barras do Gantt, sem calendário nem dias: eixo por ordem (passo). Filhos com a mesma largura; sequencial e paralelo. Modo Estado (FOP) liga saídas a entradas e exporta código. Máquina se programa aqui.",
-    steps: [["T-32", "Flow · ordem"], ["T-33", "Programar máquina"], ["T-34", "Estado (FOP)"], ["T-35", "Exportar código"]] },
+    desc: "Eixo por ordem (passo), sem calendário. Cada etapa é entrada □ | função | saída □ — endereços de I/O como no PDF de Programação Orientada a Fluxo. Máquina se programa aqui; exporta código.",
+    steps: [["T-32", "Flow"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
     desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. Zoom com scroll e pan arrastando o fundo.",
     steps: [["T-36", "Fluxograma"]] },
@@ -1865,10 +1861,9 @@ const SCREENS = {
   "T-30": { s: { v: "gantt", gm: "cal" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Alterna Calendário / Estado (FOP). Barras por início e fim (hoje marcado), setas fim→início e paralelo. Marcas e0…eN no eixo quando o plano tem I/O. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
   "T-31": { s: { v: "gantt", gm: "cal", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
   "T-37": { s: { v: "gantt", gm: "fop", plan: "onb" }, name: "Estado e0…eN", us: ["US-08", "US-12", "FOP"], notes: "No Gantt, modo Estado (FOP) do PDF de Programação Orientada a Fluxo: e0 = contexto inicial; e1, e2… = estado após cada onda de saídas no calendário. Barras mostram entradas/saídas; traços ligam saída→entrada; painel lista o conteúdo de cada eN, validação e camadas substituíveis." },
-  "T-32": { s: { v: "flow", fm: "ordem" }, name: "Flow · ordem", us: ["US-12", "US-19"], notes: "Sem calendário e sem dias: o eixo é a ordem de execução (passo 1, 2, 3…). Barras no mesmo formato do Gantt, mas todos os filhos têm a mesma largura. Sequencial avança o passo; paralelo compartilha o passo. Quem não tem data no Gantt entra aqui pela ordem." },
-  "T-33": { s: { v: "flow", mach: "u15", sel: "u15", fm: "ordem" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
-  "T-34": { s: { v: "flow", fm: "fop" }, name: "Estado (FOP)", us: ["US-12", "US-19"], notes: "No Flow, o modo Estado liga saídas a entradas (IA → IA inclusive). Seleção, repetição e paralelo aparecem no roteiro. O painel valida: ciclo bloqueia, saída órfã avisa, contexto incompleto impede a execução. Camadas mostram o que é substituível." },
-  "T-35": { s: { v: "flow", fm: "fop", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
+  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Eixo por passo (sem calendário). Cada task mostra quadradinhos de entrada à esquerda, a função no meio e saídas à direita — como a função com n endereços de I/O do PDF de FOP. Quem não tem data no Gantt entra pela ordem." },
+  "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
+  "T-35": { s: { v: "flow", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
@@ -1959,7 +1954,7 @@ function tFor(s) {
     if (s.gm === "fop") return "T-37";
     return U.some(u => u.st === "exec" && u.plan === s.plan && agent(u.agent)?.type === "ia") ? "T-31" : "T-30";
   }
-  if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; if (s.fm === "fop") return "T-34"; return "T-32"; }
+  if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; return "T-32"; }
   if (s.v === "diagram") return "T-36";
   if (s.v === "estados") return "T-70";
   if (s.copilot) return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";

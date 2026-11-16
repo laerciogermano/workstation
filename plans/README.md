@@ -19,7 +19,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, calendário + modo **Estado (FOP)** com marcas **e0…eN**. A visão **Estados** no dock lista esses contextos. O **Copiloto** é painel fixo à **direita** (ícone de chat no topo, abas estilo Cursor), harness do arquivo da aba — não entra no menu transversal. O menu de visões fica **fixo no centro inferior**. Alinhado a `flow/input/Programação Orientada a Fluxo.pdf`.
+No **Gantt**, calendário + modo **Estado (FOP)** com marcas **e0…eN**. A visão **Estados** no dock lista esses contextos. No **Flow**, só ordem (passo): cada etapa é **entrada □ | função | saída □**. O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**. Ref.: `flow/input/Programação Orientada a Fluxo.pdf`.
 
 ## Problema
 

@@ -51,3 +51,11 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 **Antes → depois:** Gantt só deps de calendário + seg no topo → estados FOP + dock inferior.
 
 **Voltar:** `gm`/`T-37`/`ganttFopStates` off; recolocar `.seg` no `.bar`.
+
+## Flow · sem modo FOP
+
+Flow só ordem: `.funit` = quadrados entrada | função | saída. Sem toggle Ordem/Estado e sem legenda.
+
+**Antes → depois:** `fm` + painel FOP + T-34 → removidos; I/O nas próprias tasks.
+
+**Voltar:** restaurar `fm`/`fopPanel`/T-34 no `flow()`.

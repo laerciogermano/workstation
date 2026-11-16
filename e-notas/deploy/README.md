@@ -51,19 +51,23 @@ Não dá para rodar **dois** stacks Mailcow no mesmo IP (portas 25/465/587/993).
 
 **Rollback:** A `mail` + SPF → `144.126.154.90` (só se o host legado voltar); `docker compose down` em `/opt/mailcow-dockerized`; `rm` site nginx `mail-brsupply`.
 
-### Domínio `conectmax.email` (Mailcow Contabo 2026-11-03)
+### Domínio `conectmax.email` (Mailcow Contabo — atualizado 2026-11-16)
 
-1. Mailcow API: `add/domain` + DKIM + mailbox `contato@conectmax.email`
-2. `ADDITIONAL_SAN=mail.notinhas.shop,mail.conectmax.email` + nginx vhost
-3. DNS Hostinger (pendente se ainda sem A/MX):
-   - A `mail` → `144.126.154.90`
-   - MX `@` → `mail.conectmax.email` (prio 10)
-   - TXT `@` → `v=spf1 mx a:mail.conectmax.email ip4:144.126.154.90 ~all`
-   - TXT `dkim._domainkey` → valor DKIM (`GET /api/v1/get/dkim/conectmax.email`)
-   - TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:contato@conectmax.email`
-4. Após DNS A `mail`: expand LE `certbot certonly --nginx -d mail.clozzy.com.br -d mail.notinhas.shop -d mail.conectmax.email --cert-name mail-clozzy-notinhas` (ou emitir novo) + copiar p/ `data/assets/ssl/`
+**Atual:** domínio + DKIM + caixas no Mailcow `185.250.37.82`; DNS Hostinger → Contabo; LE `mail.conectmax.email`; nginx `mail-conectmax`.
 
-**Rollback mail conectmax:** apagar mailbox/domínio no Mailcow; remover MX/SPF/DKIM/DMARC/A `mail` na Hostinger; reverter nginx/`ADDITIONAL_SAN`.
+| Tipo | Nome | Valor |
+|------|------|--------|
+| A | `@` / `mail` | `185.250.37.82` |
+| MX | `@` | `mail.conectmax.email` (prio 10) |
+| TXT | `@` | `v=spf1 mx a:mail.conectmax.email ip4:185.250.37.82 ~all` |
+| TXT | `dkim._domainkey` | DKIM Mailcow (`GET /api/v1/get/dkim/conectmax.email` via `:8443`) |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:contato@conectmax.email` |
+
+Caixas: `contato@` · `marketing@` (SMTP campanhas). Webmail: https://mail.conectmax.email/SOGo/ · SMTP `mail.conectmax.email:587`.
+
+**Antes → depois:** DNS/`ip4`/`mail` A em `144.126.154.90` (offline) → `185.250.37.82` + domínio recriado no Mailcow novo + LE próprio.
+
+**Rollback:** A/`mail`/SPF de volta a `144…` (só se legado voltar); apagar domínio/mailboxes no Mailcow; `rm` site nginx `mail-conectmax`; tirar `mail.conectmax.email` de `ADDITIONAL_SAN`.
 
 ## Domínio `notinhas.shop`
 

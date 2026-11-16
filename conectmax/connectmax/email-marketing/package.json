@@ -1,0 +1,17 @@
+{
+  "name": "connect-email-marketing",
+  "private": true,
+  "workspaces": ["api", "web"],
+  "scripts": {
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "migrate": "npm run migrate -w api",
+    "seed:operator": "npm run seed:operator -w api --",
+    "dev:api": "npm run dev -w api",
+    "dev:worker": "npm run dev:worker -w api",
+    "dev:web": "npm run dev -w web",
+    "typecheck": "npm run typecheck -w api && npm run typecheck -w web",
+    "test": "npm test -w api",
+    "build": "npm run build -w api && npm run build -w web"
+  }
+}

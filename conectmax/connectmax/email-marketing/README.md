@@ -21,3 +21,28 @@ Disponibilizar um front-end em que se cadastram listas (base de e-mails), criam-
 | CU-03 | Configurar lista da campanha | Operador de marketing | Define para qual lista a campanha envia. |
 | CU-04 | Enviar e-mails da campanha | Operador de marketing | Dispara o envio da campanha para a lista configurada. |
 | CU-05 | Acompanhar progresso do envio | Operador de marketing | Vê o progresso do envio de e-mails da campanha. |
+
+## Implementação
+
+| Pasta | O quê |
+|---|---|
+| [`api/`](api/) | Express 5 + TypeScript strict + PostgreSQL — HTTP (`src/server.ts`) e worker de envio (`src/worker.ts`) |
+| [`web/`](web/) | React 19 + Vite — telas de campanhas e listas (marca Connect) |
+| [`docs/arquitetura.md`](docs/arquitetura.md) | Containers, módulos, fluxo de envio, dados, segurança |
+| [`docs/adr/`](docs/adr/) | Decisões (monólito modular; fila no Postgres) |
+| [`AGENTS.md`](AGENTS.md) | Comandos e regras para quem mexer no código |
+
+### Rodar local
+
+```bash
+npm install
+npm run infra:up                 # Postgres :5434 + Mailpit (caixa de e-mails de teste em http://localhost:8025)
+cp .env.example api/.env
+npm run migrate
+npm run seed:operator -- voce@connect.com.br 'senha-com-12+'
+npm run dev:api                  # :4000
+npm run dev:worker               # envia a fila
+npm run dev:web                  # http://localhost:5173
+```
+
+Testes: `npm test` (unitários + integração no Postgres do compose).

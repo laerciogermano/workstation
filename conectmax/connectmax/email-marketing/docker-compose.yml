@@ -1,0 +1,30 @@
+# Serviços de apoio para desenvolvimento local.
+# Postgres na 5434 para não colidir com outros projetos do workspace.
+services:
+  postgres:
+    image: postgres:16
+    container_name: email-marketing-postgres
+    environment:
+      POSTGRES_USER: email_marketing
+      POSTGRES_PASSWORD: email_marketing
+      POSTGRES_DB: email_marketing
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U email_marketing"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # SMTP de desenvolvimento: captura os e-mails e mostra em http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.21
+    container_name: email-marketing-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  pgdata:

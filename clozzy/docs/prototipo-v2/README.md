@@ -12,7 +12,7 @@ Local: `index.html` (servir a pasta, ex.: `python3 -m http.server` e abrir `http
 - **40 telas em 6 fluxos** (C-01 a C-58): chegada e conta · descobrir · vitrine e compra (perfil → resumo → Pix → liberado → conteúdo, mais Pix expirado) · área do fã (biblioteca, passe do close, avisos, conversas, conta, ajuda, denúncia) · virar criadora (dados, selfie com documento, chave Pix, análise) · Clozzy Studio (resumo, perfil, ofertas, editar oferta, conteúdos, publicar, fãs, financeiro, saque).
 - **Estado de verdade:** comprar libera na biblioteca, cancelar mantém acesso até o fim do período, compra repetida não cobra, sem conta vai para Entrar e volta para a compra, Studio só abre com a conta ativa, saque entra como “processando”.
 - **Cenários** no painel de notas: logado / sem conta, assina ou não o close da Lara, Pix confirma / expira, biblioteca vazia, criadora (só fã, em análise, ativa), tema, movimento reduzido.
-- **Padrão de apresentação** dos protótipos Fitness / Confraternização / RoleGo: abertura com ações, temas e números; navegação por fluxos; galeria com códigos; temas em cards com miniaturas; decisões; rastreabilidade; modo navegável (lista · celular · notas). Atalhos `← →` telas, `⌫` voltar, `H` áreas clicáveis, `T` próximo tema, `Esc` fechar. Link direto `#C-20`, tema pela URL `?tema=pink`.
+- **Padrão de apresentação** dos protótipos Fitness / Confraternização / RoleGo: abertura com ações, temas e números; navegação por fluxos; galeria com códigos; temas em cards com miniaturas; decisões; rastreabilidade; modo navegável (lista · celular · notas). Atalhos `← →` telas, `⌫` voltar, `H` áreas clicáveis, `T` próximo tema, `Esc` fechar. Link direto `#C-20`, tema pela URL `?tema=meia-rosa`.
 
 ## Marca
 
@@ -28,10 +28,13 @@ Cores: Pink Deep `#E0005A` (único rosa), roxo `#7C48C4` (lado da criadora), pre
 | Dia | branco | Pink Deep; Studio roxo | rosa |
 | Neblina | cinza `#F1F1F1` + cartões brancos | preto | arco rosa; Studio roxo |
 | Meia-noite | preto `#000` | branco | arco roxo em tudo |
+| Meia-rosa | preto `#000` | branco | arco pink em tudo (sem roxo) |
 | Pink | Pink Deep | branco | tudo branco |
 | Roxo | roxo | branco | tudo branco |
 
 “Liberado” (C-24) é sempre Pink Deep; telas de foto e câmera (C-01, C-11, C-25, C-42) não mudam com o tema.
+
+Antes → depois: 6 temas → 7 (`meia-rosa`). Voltar: remover o item `meia-rosa` em `js/data.js`, as regras `data-t="meia-rosa"` em `styles.css` e as menções a “sete” nos textos.
 
 ## Tendências e o que evitamos
 
@@ -42,7 +45,7 @@ Pesquisa em 2026-11-16 (fontes na seção “Decisões” do protótipo). Entrar
 | Arquivo | O que é |
 |---|---|
 | `index.html` | Apresentação + player |
-| `styles.css` | Apresentação, tokens dos 6 temas e telas |
+| `styles.css` | Apresentação, tokens dos 7 temas e telas |
 | `js/brand.js` | Sprite SVG da marca (gerado) |
 | `js/data.js` | Criadoras, ofertas, biblioteca, fluxos, metadados das telas, temas |
 | `js/ui.js` | Ícones de linha próprios, marca, avatar, selo do close, QR, gráfico |

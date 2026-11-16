@@ -156,6 +156,7 @@ const THEMES = [
   { id: 'dia', nome: 'Dia', sw: ['#fff', '#000', '#E0005A', '#69C353'], desc: 'Branco com texto preto e o Pink Deep no botão de compra. Studio troca o rosa pelo roxo. O mais próximo de uma loja.' },
   { id: 'neblina', nome: 'Neblina', sw: ['#F2F2F2', '#fff', '#000', '#E0005A'], desc: 'Cinza neutro com cartões brancos e botão preto. Editorial e calmo; o rosa fica no arco e nos pontos.' },
   { id: 'meia', nome: 'Meia-noite', sw: ['#000', '#fff', '#7C48C4', '#69C353'], desc: 'O preto da Noite com o arco roxo em tudo: a marca do lado da criadora levada para o app inteiro. Roxo só em forma, nunca em texto.' },
+  { id: 'meia-rosa', nome: 'Meia-rosa', sw: ['#000', '#fff', '#E0005A', '#69C353'], desc: 'Espelho da Meia-noite com Pink Deep no lugar do roxo: arco rosa em tudo, inclusive no Studio. Sem roxo.' },
   { id: 'pink', nome: 'Pink', sw: ['#E0005A', '#fff'], desc: 'Pink Deep em tudo e tudo branco em cima: nada preto, nada verde no rosa (o selo do close vira branco). Sem roxo, nem no Studio.' },
   { id: 'roxo', nome: 'Roxo', sw: ['#7C48C4', '#fff'], desc: 'Roxo inteiro, tudo branco em cima, sem rosa e sem verde. Pensado para o Clozzy Studio, mas vale para o app todo.' },
 ];

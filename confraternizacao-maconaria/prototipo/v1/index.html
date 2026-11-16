@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confraternização 125 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+/* Layout: app de celular em moldura no desktop, tela cheia no celular. Bordô do GOP como cor de marca, ardósia como tinta. */
+:root {
+  --brand: #740012;
+  --brand-deep: #4b000c;
+  --ink: #1d2939;
+  --body: #475467;
+  --muted: #667085;
+  --line: #d9dfe8;
+  --paper: #ffffff;
+  --surface: #f2f4f7;
+  --stage: #e9ecf1;
+  --on-brand: #ffffff;
+  --ok: #168b41;
+  --ok-bg: #e7f4ec;
+  --park: #dfe9dc;
+  --road: #ffffff;
+  --map: #eef0f3;
+  --radius: 10px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Newsreader", Georgia, serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #a3283c; --brand-deep: #5c0a18; --ink: #eef0f3; --body: #c3c9d3; --muted: #98a2b3;
+    --line: #2c3442; --paper: #161b24; --surface: #1f2632; --stage: #0d1118; --on-brand: #ffffff;
+    --ok: #4cc27a; --ok-bg: #16301f; --park: #1d2a22; --road: #2b3340; --map: #1a202a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #a3283c; --brand-deep: #5c0a18; --ink: #eef0f3; --body: #c3c9d3; --muted: #98a2b3;
+  --line: #2c3442; --paper: #161b24; --surface: #1f2632; --stage: #0d1118; --on-brand: #ffffff;
+  --ok: #4cc27a; --ok-bg: #16301f; --park: #1d2a22; --road: #2b3340; --map: #1a202a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--stage);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  display: flex; align-items: center; justify-content: center; gap: 48px;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* palco do desktop */
+.side { max-width: 300px; display: flex; flex-direction: column; gap: 16px; }
+.side h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.side p { font-family: var(--font-body); color: var(--body); margin: 0; font-size: 18px; }
+.side .tag { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.jump button { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+.jump button:hover { border-color: var(--ink); }
+
+.phone {
+  width: 390px; max-width: 100%; height: min(844px, calc(100% - 48px));
+  background: var(--surface); border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 10px #10141b, 0 30px 60px -20px rgba(16,20,27,.45);
+  display: flex; flex-direction: column;
+}
+@media (max-width: 760px) {
+  body { display: block; }
+  .side { display: none; }
+  .phone { width: 100%; height: 100%; border-radius: 0; box-shadow: none; }
+}
+
+/* barra superior */
+.topbar {
+  background: var(--brand); color: var(--on-brand);
+  padding: 14px 16px; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; flex: none;
+}
+.phone:not(.mobile) .topbar { padding-top: 22px; }
+.round {
+  width: 48px; height: 48px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: var(--on-brand);
+  display: grid; place-items: center;
+}
+.round:hover { background: rgba(255,255,255,.24); }
+.round svg { width: 22px; height: 22px; }
+.mark { justify-self: center; display: flex; align-items: center; gap: 10px; }
+.mark .seal {
+  width: 36px; height: 36px; border: 1.5px solid rgba(255,255,255,.75); border-radius: 50%;
+  display: grid; place-items: center; font-weight: 800; font-size: 13px; letter-spacing: -0.02em;
+}
+.mark .words { font-size: 12px; line-height: 1.15; font-weight: 600; letter-spacing: .02em; }
+.mark .words b { display: block; font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
+.avatar {
+  width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--brand-deep); color: #fff; font-weight: 700; font-size: 16px; border: 0;
+}
+.topbar .avatar { border: 2px solid rgba(255,255,255,.6); }
+
+.view { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
+.pad { padding: 20px 16px 28px; display: flex; flex-direction: column; gap: 22px; }
+
+/* tab bar */
+.tabs {
+  flex: none; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--paper);
+  border-top: 1px solid var(--line); padding: 8px 8px 18px;
+}
+.tabs button {
+  border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font-size: 13px; color: var(--muted); padding: 6px 0; position: relative; min-height: 56px;
+}
+.tabs button svg { width: 24px; height: 24px; }
+.tabs button .ic { padding: 4px 18px; border-radius: 999px; transition: background .16s var(--ease); }
+.tabs button[aria-current="page"] { color: var(--brand); font-weight: 700; }
+.tabs button[aria-current="page"] .ic { background: color-mix(in srgb, var(--brand) 12%, transparent); }
+.badge {
+  position: absolute; top: 2px; left: calc(50% + 8px); background: var(--brand); color: #fff;
+  font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; padding: 0 5px;
+}
+
+/* seção */
+.sec-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.sec-title h2 { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.sec-title span { font-size: 14px; color: var(--muted); }
+
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+
+/* mapa */
+.map { position: relative; overflow: hidden; }
+.map svg.city { display: block; width: 100%; height: auto; }
+.pin {
+  position: absolute; transform: translate(-50%, -100%); border: 0; background: none; padding: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.pin .dot {
+  background: var(--brand); color: #fff; border: 2px solid #fff; border-radius: 8px; padding: 3px 7px;
+  font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: 0 2px 6px rgba(16,20,27,.25);
+}
+.pin .stem { width: 2px; height: 8px; background: var(--brand); }
+.pin.mine .dot { background: var(--ink); }
+.pin.mine .stem { background: var(--ink); }
+.pin:hover .dot, .pin:focus-visible .dot { transform: scale(1.06); }
+.map-legend { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.map-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+/* boas-vindas */
+.hello { padding: 18px; display: flex; gap: 14px; align-items: center; }
+.hello h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.hello p { margin: 4px 0 0; font-family: var(--font-body); font-size: 17px; color: var(--body); line-height: 1.4; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 18px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border-radius: 999px;
+  padding: 7px 12px; font-size: 14px; font-weight: 600;
+}
+.chip svg { width: 16px; height: 16px; color: var(--brand); }
+
+/* calendário */
+.days { display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px; gap: 6px; }
+.day {
+  border: 0; background: none; border-radius: 8px; padding: 10px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-height: 72px;
+}
+.day .wd { font-size: 13px; color: var(--muted); font-weight: 600; }
+.day .dn { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.day .ct { font-size: 12px; color: var(--muted); }
+.day:hover { background: var(--surface); }
+.day[aria-pressed="true"] { background: var(--brand); color: #fff; }
+.day[aria-pressed="true"] .wd, .day[aria-pressed="true"] .ct { color: rgba(255,255,255,.8); }
+.month { display: flex; justify-content: space-between; padding: 12px 16px 4px; font-size: 15px; font-weight: 700; }
+.month span { color: var(--muted); font-weight: 500; font-size: 14px; }
+
+/* lista de eventos */
+.list { display: flex; flex-direction: column; }
+.ev {
+  display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; text-align: left;
+  border: 0; background: none; padding: 14px 16px; border-top: 1px solid var(--line); width: 100%;
+}
+.ev:first-child { border-top: 0; }
+.ev:hover { background: var(--surface); }
+.ev .time { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.ev .time small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 4px; letter-spacing: 0; }
+.ev h3 { font-size: 17px; font-weight: 700; line-height: 1.25; }
+.ev .meta { font-size: 14px; color: var(--body); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.ev .meta span { display: inline-flex; align-items: center; gap: 4px; }
+.ev .meta svg { width: 15px; height: 15px; color: var(--muted); }
+.ev > svg { width: 20px; height: 20px; color: var(--muted); }
+.status { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+.status.in { background: var(--ok-bg); color: var(--ok); }
+.status.full { background: var(--surface); color: var(--muted); }
+.status svg { width: 13px; height: 13px; }
+.bar { height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; margin-top: 8px; max-width: 180px; }
+.bar i { display: block; height: 100%; background: var(--brand); border-radius: 2px; }
+
+/* detalhe */
+.hero { background: var(--brand-deep); color: #fff; padding: 22px 18px 24px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
+.hero::after {
+  content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.12); box-shadow: 0 0 0 26px rgba(255,255,255,.03), 0 0 0 52px rgba(255,255,255,.025);
+}
+.hero .row { display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; }
+.hero .label { background: #fff; color: var(--brand-deep); font-size: 12px; font-weight: 800; letter-spacing: .1em; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; }
+.hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; text-transform: uppercase; }
+.info { padding: 4px 16px; }
+.info .it { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.info .it:first-child { border-top: 0; }
+.info .ico { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; }
+.info .ico svg { width: 20px; height: 20px; color: var(--brand); }
+.info small { display: block; font-size: 13px; color: var(--muted); }
+.info b { font-weight: 600; font-size: 16px; }
+.prose { font-family: var(--font-body); font-size: 18px; line-height: 1.55; color: var(--body); margin: 0; }
+
+.btn {
+  min-height: 54px; border-radius: var(--radius); border: 0; font-weight: 700; font-size: 17px; padding: 0 20px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  transition: background .16s var(--ease), transform .12s var(--ease);
+}
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; }
+.btn.primary { background: var(--brand); color: #fff; }
+.btn.primary:hover { background: var(--brand-deep); }
+.btn.ghost { background: var(--paper); border: 1.5px solid var(--line); color: var(--ink); }
+.btn.ghost:hover { border-color: var(--ink); }
+.btn.done { background: var(--ok-bg); color: var(--ok); }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--surface) 70%, transparent); padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+/* pessoas */
+.person { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); }
+.person:first-child { border-top: 0; }
+.person .avatar { width: 44px; height: 44px; font-size: 15px; }
+.person b { display: block; font-size: 16px; font-weight: 700; }
+.person small { color: var(--muted); font-size: 14px; }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); display: grid; place-items: center; color: var(--brand); }
+.icon-btn:hover { border-color: var(--brand); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+.av-1 { background: #5b6b84; } .av-2 { background: #7a5c3e; } .av-3 { background: #3f6f5a; } .av-4 { background: #6a4b7a; }
+.av-5 { background: #8a3b2e; } .av-6 { background: #2f5d7c; } .av-0 { background: var(--brand-deep); }
+
+/* segmentado */
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px; }
+.seg button { border: 0; background: none; min-height: 44px; border-radius: 7px; font-weight: 600; font-size: 15px; color: var(--body); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* chat */
+.thread { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; border: 0; border-top: 1px solid var(--line); background: none; width: 100%; text-align: left; }
+.thread:first-child { border-top: 0; }
+.thread:hover { background: var(--surface); }
+.thread .gico { width: 52px; height: 52px; border-radius: 12px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; line-height: 1.05; text-align: center; }
+.thread .avatar { width: 52px; height: 52px; }
+.thread b { display: block; font-size: 16px; font-weight: 700; line-height: 1.25; }
+.thread p { margin: 2px 0 0; font-size: 14px; color: var(--body); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.thread .when { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.thread .unread { background: var(--brand); color: #fff; font-size: 12px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: grid; place-items: center; padding: 0 6px; }
+.locked { display: flex; gap: 12px; padding: 14px 16px; font-size: 15px; color: var(--body); align-items: center; }
+.locked svg { width: 20px; height: 20px; color: var(--muted); flex: none; }
+
+.convo { display: flex; flex-direction: column; height: 100%; }
+.convo-head { background: var(--paper); border-bottom: 1px solid var(--line); padding: 12px 16px; display: flex; gap: 12px; align-items: center; }
+.convo-head b { display: block; font-size: 16px; }
+.convo-head small { color: var(--muted); font-size: 13px; }
+.msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 82%; display: flex; flex-direction: column; gap: 3px; }
+.msg .who { font-size: 13px; font-weight: 700; color: var(--brand); }
+.msg .bubble { background: var(--paper); border: 1px solid var(--line); padding: 10px 13px; border-radius: 14px 14px 14px 4px; font-size: 16px; line-height: 1.4; }
+.msg .at { font-size: 12px; color: var(--muted); }
+.msg.me { align-self: flex-end; align-items: flex-end; }
+.msg.me .bubble { background: var(--brand); color: #fff; border-color: var(--brand); border-radius: 14px 14px 4px 14px; }
+.daymark { align-self: center; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.composer { display: grid; grid-template-columns: 1fr 52px; gap: 8px; padding: 10px 12px 14px; background: var(--paper); border-top: 1px solid var(--line); }
+.composer input { min-height: 52px; border: 1.5px solid var(--line); border-radius: 26px; padding: 0 18px; background: var(--surface); font-size: 16px; }
+.composer input:focus { outline: none; border-color: var(--brand); }
+.composer button { width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--brand); color: #fff; display: grid; place-items: center; }
+.composer button svg { width: 22px; height: 22px; }
+
+/* formulários */
+.form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.field input, .field select, .field textarea {
+  min-height: 52px; border: 1.5px solid var(--line); border-radius: var(--radius); padding: 12px 14px; background: var(--paper); font-size: 17px; width: 100%;
+}
+.field textarea { min-height: 96px; resize: vertical; font-family: var(--font-body); font-size: 17px; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
+.field .hint { font-size: 13px; color: var(--muted); }
+.field .err { font-size: 14px; color: var(--brand); font-weight: 600; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* entrada */
+.auth { background: var(--brand-deep); color: #fff; min-height: 100%; display: flex; flex-direction: column; }
+.auth-top { padding: 56px 24px 28px; display: flex; flex-direction: column; gap: 18px; position: relative; overflow: hidden; }
+.auth-top::after {
+  content: ""; position: absolute; right: -80px; top: -40px; width: 260px; height: 260px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.12); box-shadow: 0 0 0 30px rgba(255,255,255,.035), 0 0 0 60px rgba(255,255,255,.025);
+}
+.auth-top .big { font-size: 64px; font-weight: 800; letter-spacing: -0.04em; line-height: .9; }
+.auth-top .big span { display: block; font-size: 20px; letter-spacing: 0; font-weight: 600; margin-top: 8px; }
+.auth-top p { margin: 0; font-family: var(--font-body); font-size: 18px; color: rgba(255,255,255,.82); max-width: 30ch; }
+.auth-card { background: var(--surface); color: var(--ink); border-radius: 22px 22px 0 0; padding: 24px 18px 28px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+.auth-card h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.link { background: none; border: 0; color: var(--brand); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; padding: 8px 0; font-size: 16px; }
+
+/* gaveta e folha */
+.scrim { position: absolute; inset: 0; background: rgba(10,12,16,.45); z-index: 20; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease); }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 82%; background: var(--paper); z-index: 21;
+  transform: translateX(-102%); transition: transform .28s var(--ease); display: flex; flex-direction: column;
+}
+.drawer.open { transform: none; }
+.drawer-head { background: var(--brand); color: #fff; padding: 40px 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+.drawer-head b { font-size: 20px; font-weight: 800; }
+.drawer-head small { font-size: 14px; opacity: .85; }
+.nav { padding: 10px; display: flex; flex-direction: column; gap: 2px; }
+.nav button {
+  display: flex; align-items: center; gap: 14px; border: 0; background: none; padding: 0 14px; min-height: 56px; border-radius: 10px; font-size: 17px; font-weight: 600; text-align: left;
+}
+.nav button svg { width: 22px; height: 22px; color: var(--muted); }
+.nav button:hover { background: var(--surface); }
+.nav button[aria-current="page"] { background: color-mix(in srgb, var(--brand) 10%, transparent); color: var(--brand); }
+.nav button[aria-current="page"] svg { color: var(--brand); }
+.nav .divider { height: 1px; background: var(--line); margin: 8px 14px; }
+.nav .group { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 10px 14px 4px; }
+.drawer-foot { margin-top: auto; padding: 16px 24px 24px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; background: var(--paper); z-index: 21; border-radius: 22px 22px 0 0;
+  transform: translateY(102%); transition: transform .28s var(--ease); padding: 10px 10px 24px;
+}
+.sheet.open { transform: none; }
+.grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 12px; }
+.sheet .who { display: flex; gap: 14px; align-items: center; padding: 6px 14px 14px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.sheet .who b { display: block; font-size: 18px; font-weight: 800; }
+.sheet .who small { color: var(--muted); font-size: 14px; }
+
+.toast {
+  position: absolute; left: 16px; right: 16px; bottom: 96px; z-index: 30; background: var(--ink); color: var(--paper);
+  border-radius: 12px; padding: 14px 16px; font-size: 15px; font-weight: 600; display: flex; gap: 10px; align-items: center;
+  transform: translateY(20px); opacity: 0; pointer-events: none; transition: transform .24s var(--ease), opacity .2s var(--ease);
+}
+.toast.show { transform: none; opacity: 1; }
+.toast svg { width: 20px; height: 20px; color: var(--ok); flex: none; }
+
+.profile-head { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 16px 18px; text-align: center; }
+.profile-head .avatar { width: 88px; height: 88px; font-size: 30px; }
+.profile-head h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.profile-head p { margin: 0; color: var(--body); font-size: 15px; }
+.kv { padding: 4px 16px; }
+.kv div { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 16px; }
+.kv div:first-child { border-top: 0; }
+.kv span { color: var(--muted); }
+.kv b { font-weight: 600; text-align: right; }
+
+.page-head { display: flex; flex-direction: column; gap: 6px; }
+.page-head h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.page-head p { margin: 0; color: var(--body); font-size: 16px; }
+.empty { padding: 28px 18px; text-align: center; color: var(--body); font-family: var(--font-body); font-size: 18px; }
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+.stat-row div { padding: 14px 12px; border-left: 1px solid var(--line); }
+.stat-row div:first-child { border-left: 0; }
+.stat-row b { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.stat-row span { font-size: 13px; color: var(--muted); }
+.place { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); align-items: center; }
+.place:first-child { border-top: 0; }
+.place b { display: block; font-size: 16px; }
+.place small { font-size: 14px; color: var(--muted); }
+.place .cap { font-size: 14px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer, .sheet, .scrim, .toast, .btn, .tabs button .ic { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<aside class="side" aria-label="Sobre o protótipo">
+  <h1>Confraternização Maçônica · 125 anos</h1>
+  <p>Protótipo navegável do aplicativo oficial do evento em Curitiba.</p>
+  <div class="jump" id="jump">
+    <button data-go="entrar">Entrar</button>
+    <button data-go="eventos">Eventos</button>
+    <button data-go="evento-e2">Evento</button>
+    <button data-go="inscricoes">Inscrições</button>
+    <button data-go="chat">Chat</button>
+    <button data-go="grupo-e2">Grupo</button>
+    <button data-go="perfil">Perfil</button>
+    <button data-go="organizacao">Organização</button>
+  </div>
+  <div class="tag">Datas, locais e pessoas são de exemplo. A data real do evento ainda será definida.</div>
+</aside>
+
+<div class="phone" id="phone">
+  <div id="app" style="display:flex;flex-direction:column;height:100%;"></div>
+
+  <div class="scrim" id="scrim"></div>
+  <nav class="drawer" id="drawer" aria-label="Menu principal"></nav>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Menu da conta"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+// ---------- dados de exemplo ----------
+const DAYS = [
+  { id: "d22", wd: "Qui", dn: 22, full: "Quinta, 22 de abril de 2027" },
+  { id: "d23", wd: "Sex", dn: 23, full: "Sexta, 23 de abril de 2027" },
+  { id: "d24", wd: "Sáb", dn: 24, full: "Sábado, 24 de abril de 2027" },
+  { id: "d25", wd: "Dom", dn: 25, full: "Domingo, 25 de abril de 2027" },
+];
+// posições no mapa estilizado (viewBox 360x210)
+const PLACES = [
+  { id: "l1", name: "Templo sede", area: "Centro", addr: "Rua XV de Novembro, Centro", cap: 500, x: 186, y: 132 },
+  { id: "l2", name: "Teatro Guaíra", area: "Centro", addr: "Praça Santos Andrade, s/n", cap: 2100, x: 226, y: 98 },
+  { id: "l3", name: "Santa Felicidade", area: "Santa Felicidade", addr: "Av. Manoel Ribas, Santa Felicidade", cap: 800, x: 66, y: 46 },
+  { id: "l4", name: "Praça Tiradentes", area: "Centro", addr: "Ponto da Linha Turismo", cap: 120, x: 183, y: 112 },
+  { id: "l5", name: "Museu Oscar Niemeyer", area: "Centro Cívico", addr: "Rua Mal. Hermes, 999", cap: 450, x: 192, y: 70 },
+  { id: "l6", name: "Ópera de Arame", area: "Abranches", addr: "Rua João Gava, 970", cap: 1500, x: 150, y: 40 },
+  { id: "l7", name: "Parque Barigui", area: "Bigorrilho", addr: "Av. Cândido Hartmann", cap: 300, x: 110, y: 100 },
+  { id: "l8", name: "Jardim Botânico", area: "Jardim Botânico", addr: "Rua Eng. Ostoja Roguski", cap: 80, x: 262, y: 140 },
+  { id: "l9", name: "Expo Barigui", area: "Mossunguê", addr: "Rua Prof. Pedro V. Parigot de Souza", cap: 1600, x: 96, y: 118 },
+];
+let EVENTS = [
+  { id: "e1", day: "d22", time: "09:00", end: "12:00", title: "Credenciamento e café de boas-vindas", place: "l1", conf: 312, cap: 500, kind: "Recepção",
+    desc: "Retirada de credenciais e kits das delegações. Café servido no salão nobre, com recepção dos irmãos vindos de fora do país." },
+  { id: "e2", day: "d22", time: "15:00", end: "18:30", title: "Sessão magna de abertura", place: "l2", conf: 1840, cap: 2100, kind: "Sessão",
+    desc: "Abertura oficial das comemorações dos 125 anos, com a presença das potências convidadas e das delegações estrangeiras. Traje: terno escuro." },
+  { id: "e3", day: "d22", time: "20:00", end: "23:30", title: "Jantar de confraternização", place: "l3", conf: 620, cap: 800, kind: "Jantar",
+    desc: "Jantar típico no bairro italiano de Curitiba, aberto a irmãos e cunhadas. Transporte sai do Teatro Guaíra às 19:15." },
+  { id: "e4", day: "d23", time: "09:30", end: "12:30", title: "Linha Turismo com as delegações", place: "l4", conf: 120, cap: 120, kind: "Passeio",
+    desc: "Percurso pelos principais pontos da cidade em ônibus reservado, com guia bilíngue." },
+  { id: "e5", day: "d23", time: "14:00", end: "17:00", title: "Painel: 125 anos de história", place: "l5", conf: 410, cap: 450, kind: "Painel",
+    desc: "Historiadores e ex-grão-mestres revisitam a fundação, os templos e as figuras que marcaram a potência no Paraná." },
+  { id: "e6", day: "d23", time: "19:30", end: "21:30", title: "Concerto comemorativo", place: "l6", conf: 1390, cap: 1500, kind: "Cultura",
+    desc: "Orquestra convidada apresenta repertório preparado para o aniversário, com abertura pelo coral das lojas." },
+  { id: "e7", day: "d24", time: "08:00", end: "10:00", title: "Caminhada no Barigui", place: "l7", conf: 140, cap: 300, kind: "Família",
+    desc: "Caminhada leve de 3 km em volta do lago, com café ao final. Aberta a familiares." },
+  { id: "e8", day: "d24", time: "10:30", end: "12:00", title: "Visita guiada ao Jardim Botânico", place: "l8", conf: 76, cap: 80, kind: "Família",
+    desc: "Grupo reduzido, com guia. Ponto de encontro em frente à estufa." },
+  { id: "e9", day: "d24", time: "21:00", end: "02:00", title: "Baile de gala dos 125 anos", place: "l9", conf: 1210, cap: 1600, kind: "Gala",
+    desc: "Noite de gala com orquestra ao vivo. Traje: black tie. Mesas organizadas por delegação." },
+  { id: "e10", day: "d25", time: "11:00", end: "12:30", title: "Sessão de encerramento", place: "l1", conf: 288, cap: 500, kind: "Sessão",
+    desc: "Encerramento solene, entrega de medalhas comemorativas e leitura da carta dos 125 anos." },
+];
+const PEOPLE = [
+  { id: "u1", name: "Ir. João Ferreira", from: "Lisboa, Portugal", av: 1 },
+  { id: "u2", name: "Ir. Roberto Almeida", from: "Londrina, PR", av: 2 },
+  { id: "u3", name: "Bro. Michael Grant", from: "Edimburgo, Escócia", av: 3 },
+  { id: "u4", name: "Ir. Antônio Kowalski", from: "Curitiba, PR", av: 4 },
+  { id: "u5", name: "Ir. Hernán Ruiz", from: "Montevidéu, Uruguai", av: 5 },
+  { id: "u6", name: "Ir. Sérgio Tavares", from: "Ponta Grossa, PR", av: 6 },
+  { id: "u7", name: "Ir. Marcos Bittencourt", from: "Florianópolis, SC", av: 1 },
+  { id: "u8", name: "Ir. Luiz Carlos Prado", from: "São Paulo, SP", av: 2 },
+];
+const ME = { name: "Paulo Ribeiro", short: "Paulo", initials: "PR", loja: "Loja Luz do Iguaçu nº 41", oriente: "Curitiba, PR", pais: "Brasil",
+  email: "paulo.ribeiro@exemplo.com", phone: "(41) 99999-0000", cim: "12.345", organizer: true };
+
+const state = {
+  logged: false, authMode: "login", day: "d22", enrolled: new Set(["e2", "e3", "e5"]),
+  chatTab: "grupos", groupReads: { e2: 4, e3: 2, e5: 0 },
+};
+const GROUP_MSGS = {
+  e2: [
+    { who: "Ir. Antônio Kowalski", at: "09:12", text: "Bom dia, irmãos. Portões do Guaíra abrem às 14:00." },
+    { who: "Ir. Hernán Ruiz", at: "09:40", text: "La delegación uruguaya llega al aeropuerto a las 11. ¿Hay traslado?" },
+    { who: "Ir. Antônio Kowalski", at: "09:52", text: "Há sim, Ir. Hernán. Van na saída do desembarque com placa do evento." },
+    { who: "Ir. Roberto Almeida", at: "10:05", text: "Alguém de Londrina indo de carro? Sobram duas vagas." },
+  ],
+  e3: [
+    { who: "Ir. Sérgio Tavares", at: "Ontem", text: "Ônibus sai do Guaíra às 19:15 em ponto." },
+    { who: "Ir. Marcos Bittencourt", at: "Ontem", text: "Cunhadas podem sentar na mesma mesa da delegação?" },
+  ],
+  e5: [ { who: "Ir. Luiz Carlos Prado", at: "Seg", text: "Vou levar fotos do templo antigo para o painel." } ],
+};
+const DMS = [
+  { id: "p1", with: "u1", unread: 1, msgs: [
+    { me: false, at: "08:31", text: "Paulo, chego quinta cedo. Podemos nos encontrar no credenciamento?" },
+  ]},
+  { id: "p2", with: "u3", unread: 0, msgs: [
+    { me: true, at: "Ter", text: "Welcome to Curitiba, brother! Let me know if you need anything." },
+    { me: false, at: "Ter", text: "Thank you, Paulo. Looking forward to the concert at the Ópera de Arame." },
+  ]},
+  { id: "p3", with: "u2", unread: 0, msgs: [
+    { me: false, at: "Seg", text: "Fechado, te pego no hotel às 14:15." },
+  ]},
+];
+
+// ---------- utilidades ----------
+const $ = (s, el = document) => el.querySelector(s);
+const ev = id => EVENTS.find(e => e.id === id);
+const place = id => PLACES.find(p => p.id === id);
+const person = id => PEOPLE.find(p => p.id === id);
+const day = id => DAYS.find(d => d.id === id);
+const fmt = n => n.toLocaleString("pt-BR");
+const initials = name => name.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const icon = (n, cls = "") => `<i data-lucide="${n}" class="${cls}"></i>`;
+const confOf = e => e.conf + (state.enrolled.has(e.id) && !e._base ? 0 : 0);
+
+function toast(msg) {
+  const t = $("#toast");
+  t.innerHTML = icon("circle-check") + `<span>${esc(msg)}</span>`;
+  lucide.createIcons();
+  t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+// ---------- rotas ----------
+function go(r) { if (location.hash.slice(1) === r) render(); else location.hash = r; }
+function route() {
+  const h = location.hash.slice(1) || (state.logged ? "eventos" : "entrar");
+  return h;
+}
+
+// ---------- partes ----------
+function topbar(left = "menu") {
+  const l = left === "menu"
+    ? `<button class="round" data-act="drawer" aria-label="Abrir menu">${icon("menu")}</button>`
+    : `<button class="round" data-act="back" data-to="${left}" aria-label="Voltar">${icon("chevron-left")}</button>`;
+  return `<header class="topbar">${l}
+    <div class="mark" aria-label="Confraternização 125 anos"><div class="seal">125</div><div class="words">Confraternização<b>Curitiba 2027</b></div></div>
+    <button class="avatar" data-act="sheet" aria-label="Abrir menu da conta">${ME.initials}</button></header>`;
+}
+function tabs(cur) {
+  const unread = Object.entries(state.groupReads).filter(([k]) => state.enrolled.has(k)).reduce((a, [, v]) => a + v, 0) + DMS.reduce((a, d) => a + d.unread, 0);
+  const t = [["eventos", "calendar-days", "Eventos"], ["inscricoes", "ticket", "Inscrições"], ["chat", "message-circle", "Chat"]];
+  return `<nav class="tabs" aria-label="Seções">${t.map(([r, i, l]) =>
+    `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}><span class="ic">${icon(i)}</span>${l}${r === "chat" && unread ? `<span class="badge num">${unread}</span>` : ""}</button>`).join("")}</nav>`;
+}
+function shell(cur, body, left = "menu") {
+  return topbar(left) + `<main class="view" id="view">${body}</main>` + tabs(cur);
+}
+function eventRow(e) {
+  const p = place(e.place), mine = state.enrolled.has(e.id), full = e.conf >= e.cap && !mine;
+  const pct = Math.min(100, Math.round(e.conf / e.cap * 100));
+  return `<button class="ev" data-go="evento-${e.id}">
+    <div class="time num">${e.time}<small>${day(e.day).wd} ${day(e.day).dn}</small></div>
+    <div><h3>${esc(e.title)}</h3>
+      <div class="meta"><span>${icon("map-pin")}${esc(p.name)}</span><span class="num">${icon("users")}${fmt(e.conf)} de ${fmt(e.cap)}</span></div>
+      ${mine ? `<div style="margin-top:8px"><span class="status in">${icon("check")}Inscrito</span></div>`
+        : full ? `<div style="margin-top:8px"><span class="status full">Lotado</span></div>`
+        : `<div class="bar"><i style="width:${pct}%"></i></div>`}
+    </div>${icon("chevron-right")}</button>`;
+}
+function cityMap(dayId) {
+  const evs = EVENTS.filter(e => e.day === dayId);
+  const pins = evs.map(e => {
+    const p = place(e.place);
+    return `<button class="pin ${state.enrolled.has(e.id) ? "mine" : ""}" style="left:${p.x / 360 * 100}%;top:${p.y / 210 * 100}%" data-go="evento-${e.id}" aria-label="${esc(e.title)}, ${e.time}, ${esc(p.name)}"><span class="dot num">${e.time}</span><span class="stem"></span></button>`;
+  }).join("");
+  return `<div class="card map">
+    <svg class="city" viewBox="0 0 360 210" aria-hidden="true">
+      <rect width="360" height="210" fill="var(--map)"/>
+      <path d="M86 84 q20 -10 34 6 q8 16 -8 26 q-22 8 -30 -10 q-4 -14 4 -22z" fill="var(--park)"/>
+      <path d="M244 128 q18 -8 30 4 q6 14 -10 20 q-20 4 -24 -10z" fill="var(--park)"/>
+      <path d="M140 26 q14 -6 22 6 q4 12 -10 16 q-14 0 -14 -12z" fill="var(--park)"/>
+      <path d="M176 58 q14 -4 22 4 q2 10 -10 12 q-12 0 -12 -10z" fill="var(--park)"/>
+      <g stroke="var(--road)" stroke-linecap="round" fill="none">
+        <path d="M0 150 L120 128 L200 116 L360 96" stroke-width="7"/>
+        <path d="M20 10 L80 50 L150 92 L200 116 L250 160 L300 210" stroke-width="7"/>
+        <path d="M200 0 L198 116 L190 210" stroke-width="6"/>
+        <path d="M0 64 L66 46 L150 40 L230 30 L360 18" stroke-width="5"/>
+        <path d="M100 210 L120 128 L110 60 L130 0" stroke-width="4"/>
+        <path d="M260 0 L250 60 L262 140 L280 210" stroke-width="4"/>
+        <path d="M0 110 L96 118 L200 116" stroke-width="3"/>
+        <path d="M150 92 L230 70 L360 60" stroke-width="3"/>
+      </g>
+      <g font-family="Archivo, sans-serif" font-size="9" font-weight="600" fill="var(--muted)" letter-spacing=".06em">
+        <text x="214" y="132">CENTRO</text><text x="30" y="30">SANTA FELICIDADE</text><text x="270" y="178">JARDIM BOTÂNICO</text><text x="226" y="62">CABRAL</text><text x="22" y="140">MOSSUNGUÊ</text>
+      </g>
+    </svg>${pins}
+    <div class="map-legend"><span><i style="background:var(--brand)"></i>Programação do dia</span><span><i style="background:var(--ink)"></i>Inscrito</span></div>
+  </div>`;
+}
+
+// ---------- telas ----------
+function scrAuth() {
+  const login = state.authMode === "login";
+  return `<div class="view"><div class="auth">
+    <div class="auth-top">
+      <div class="mark" style="justify-self:start"><div class="seal">125</div><div class="words">Confraternização<b>Maçônica</b></div></div>
+      <div class="big num">125 anos<span>Curitiba · abril de 2027</span></div>
+      <p>Programação, locais e encontro entre irmãos de todas as delegações.</p>
+    </div>
+    <div class="auth-card">
+      <h2>${login ? "Entrar" : "Criar conta"}</h2>
+      <form class="form" id="authForm" novalidate>
+        ${login ? "" : `
+        <div class="field"><label for="f-nome">Nome completo</label><input id="f-nome" autocomplete="name" value=""></div>
+        <div class="grid2">
+          <div class="field"><label for="f-loja">Loja</label><input id="f-loja" placeholder="Nome e número"></div>
+          <div class="field"><label for="f-cim">CIM</label><input id="f-cim" inputmode="numeric" placeholder="Nº de cadastro"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f-cidade">Cidade</label><input id="f-cidade"></div>
+          <div class="field"><label for="f-pais">País</label><select id="f-pais"><option>Brasil</option><option>Portugal</option><option>Uruguai</option><option>Argentina</option><option>Outro</option></select></div>
+        </div>`}
+        <div class="field"><label for="f-email">E-mail</label><input id="f-email" type="email" autocomplete="email" value="${login ? ME.email : ""}"></div>
+        <div class="field"><label for="f-senha">Senha</label><input id="f-senha" type="password" autocomplete="${login ? "current-password" : "new-password"}" value="${login ? "123456789" : ""}">
+          ${login ? "" : `<span class="hint">Mínimo de 8 caracteres.</span>`}</div>
+        <div class="err" id="authErr" role="alert" style="color:var(--brand);font-weight:600;font-size:14px"></div>
+        <button class="btn primary" type="submit">${login ? "Entrar" : "Criar conta"}</button>
+      </form>
+      <div style="text-align:center;font-size:16px;color:var(--body)">${login ? "Primeira vez no evento?" : "Já tem conta?"}
+        <button class="link" data-act="authmode">${login ? "Criar conta" : "Entrar"}</button></div>
+    </div></div></div>`;
+}
+
+function scrEventos() {
+  const d = day(state.day), list = EVENTS.filter(e => e.day === state.day).sort((a, b) => a.time.localeCompare(b.time));
+  const mine = [...state.enrolled].length;
+  return shell("eventos", `<div class="pad">
+    ${cityMap(state.day)}
+    <section class="card">
+      <div class="hello"><div class="avatar av-0">${ME.initials}</div>
+        <div><h1>Olá, Ir. ${ME.short}</h1><p>Seja bem-vindo às comemorações dos 125 anos.</p></div></div>
+      <div class="chips"><span class="chip">${icon("ticket")}<span class="num">${mine}</span> inscrições</span><span class="chip">${icon("landmark")}${ME.loja.replace("Loja ", "")}</span></div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <div class="sec-title"><h2>Programação</h2><span>Abril 2027</span></div>
+      <div class="card"><div class="days" role="group" aria-label="Dias da programação">${DAYS.map(x => {
+        const n = EVENTS.filter(e => e.day === x.id).length;
+        return `<button class="day" data-day="${x.id}" aria-pressed="${x.id === state.day}"><span class="wd">${x.wd}</span><span class="dn num">${x.dn}</span><span class="ct num">${n} ${n === 1 ? "evento" : "eventos"}</span></button>`;
+      }).join("")}</div></div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <div class="sec-title"><h2>${d.full.split(",")[0]}, ${d.dn} de abril</h2><span class="num">${list.length} ${list.length === 1 ? "evento" : "eventos"}</span></div>
+      <div class="card list">${list.length ? list.map(eventRow).join("") : `<div class="empty">Nenhum evento neste dia.</div>`}</div>
+    </section></div>`);
+}
+
+function scrEvento(id) {
+  const e = ev(id); if (!e) return scrEventos();
+  const p = place(e.place), d = day(e.day), mine = state.enrolled.has(id), full = e.conf >= e.cap && !mine;
+  const att = PEOPLE.slice(0, 6);
+  return shell("eventos", `
+    <div class="hero">
+      <div class="row"><span class="label">${esc(e.kind)}</span><span class="num">${d.dn}/04/2027 · ${e.time}</span></div>
+      <h1>${esc(e.title)}</h1>
+    </div>
+    <div class="pad">
+      <section class="card info">
+        <div class="it"><div class="ico">${icon("calendar")}</div><div><small>Data</small><b>${d.full}</b></div></div>
+        <div class="it"><div class="ico">${icon("clock")}</div><div><small>Horário</small><b class="num">${e.time} às ${e.end}</b></div></div>
+        <div class="it"><div class="ico">${icon("map-pin")}</div><div><small>Local</small><b>${esc(p.name)}</b><small>${esc(p.addr)}</small></div></div>
+        <div class="it"><div class="ico">${icon("users")}</div><div><small>Confirmados</small><b class="num">${fmt(e.conf)} de ${fmt(e.cap)}</b></div></div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:10px">
+        <div class="sec-title"><h2>Sobre o evento</h2></div>
+        <p class="prose">${esc(e.desc)}</p>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:10px">
+        <div class="sec-title"><h2>Participantes</h2><span class="num">${fmt(e.conf)}</span></div>
+        <div class="card">${att.map(personRow).join("")}
+          <button class="btn ghost" style="border:0;border-top:1px solid var(--line);border-radius:0 0 var(--radius) var(--radius)" data-go="participantes-${id}">Ver todos os participantes</button></div>
+      </section>
+    </div>
+    <div class="sticky">
+      ${mine
+        ? `<div class="btn-row"><button class="btn done" data-act="unenroll" data-id="${id}">${icon("check")}Inscrito</button><button class="btn primary" data-go="grupo-${id}">${icon("message-circle")}Grupo</button></div>`
+        : full ? `<button class="btn ghost" disabled>Vagas esgotadas</button>`
+        : `<button class="btn primary" data-act="enroll" data-id="${id}">${icon("ticket")}Inscrever-se</button>`}
+    </div>`, "eventos");
+}
+function personRow(u) {
+  return `<div class="person"><div class="avatar av-${u.av}">${initials(u.name)}</div><div><b>${esc(u.name)}</b><small>${esc(u.from)}</small></div>
+    <button class="icon-btn" data-act="dm" data-uid="${u.id}" aria-label="Enviar mensagem para ${esc(u.name)}">${icon("message-circle")}</button></div>`;
+}
+function scrParticipantes(id) {
+  const e = ev(id);
+  return shell("eventos", `<div class="pad">
+    <div class="page-head"><h1>Participantes</h1><p>${esc(e.title)} · <span class="num">${fmt(e.conf)}</span> confirmados</p></div>
+    <div class="field"><label for="busca">Buscar</label><input id="busca" placeholder="Nome, loja ou cidade" data-filter="people"></div>
+    <div class="card" id="peopleList">${PEOPLE.map(personRow).join("")}</div></div>`, `evento-${id}`);
+}
+
+function scrInscricoes() {
+  const list = EVENTS.filter(e => state.enrolled.has(e.id)).sort((a, b) => (a.day + a.time).localeCompare(b.day + b.time));
+  return shell("inscricoes", `<div class="pad">
+    <div class="page-head"><h1>Minhas inscrições</h1><p class="num">${list.length} ${list.length === 1 ? "evento" : "eventos"} na sua agenda</p></div>
+    ${DAYS.map(d => {
+      const l = list.filter(e => e.day === d.id); if (!l.length) return "";
+      return `<section style="display:flex;flex-direction:column;gap:10px"><div class="sec-title"><h2>${d.wd} ${d.dn} de abril</h2></div>
+        <div class="card list">${l.map(eventRow).join("")}</div></section>`;
+    }).join("") || `<div class="card empty">Você ainda não se inscreveu em nenhum evento.<div style="margin-top:14px"><button class="btn primary" data-go="eventos">Ver programação</button></div></div>`}
+  </div>`);
+}
+
+function scrChat() {
+  const groups = EVENTS.filter(e => state.enrolled.has(e.id));
+  const locked = EVENTS.filter(e => !state.enrolled.has(e.id)).length;
+  const g = state.chatTab === "grupos";
+  return shell("chat", `<div class="pad">
+    <div class="page-head"><h1>Chat</h1></div>
+    <div class="seg" role="group" aria-label="Tipo de conversa">
+      <button data-tab="grupos" aria-pressed="${g}">Grupos dos eventos</button><button data-tab="privadas" aria-pressed="${!g}">Conversas privadas</button>
+    </div>
+    ${g ? `<div class="card">${groups.map(e => {
+        const m = (GROUP_MSGS[e.id] || []).slice(-1)[0], un = state.groupReads[e.id] || 0;
+        return `<button class="thread" data-go="grupo-${e.id}"><div class="gico num">${day(e.day).wd}<br>${day(e.day).dn}</div>
+          <div><b>${esc(e.title)}</b><p>${m ? `${esc(m.who.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ")[0])}: ${esc(m.text)}` : "Grupo criado. Diga olá."}</p></div>
+          <div class="when"><span class="num">${m ? m.at : ""}</span>${un ? `<span class="unread num">${un}</span>` : ""}</div></button>`;
+      }).join("") || `<div class="empty">Inscreva-se em um evento para entrar no grupo dele.</div>`}
+      ${locked ? `<div class="locked" style="border-top:1px solid var(--line)">${icon("lock")}<span><b class="num">${locked}</b> grupos ficam disponíveis quando você se inscreve no evento.</span></div>` : ""}</div>`
+    : `<div class="card">${DMS.map(d => {
+        const u = person(d.with), m = d.msgs.slice(-1)[0];
+        return `<button class="thread" data-go="conversa-${d.id}"><div class="avatar av-${u.av}">${initials(u.name)}</div>
+          <div><b>${esc(u.name)}</b><p>${m.me ? "Você: " : ""}${esc(m.text)}</p></div>
+          <div class="when"><span class="num">${m.at}</span>${d.unread ? `<span class="unread num">${d.unread}</span>` : ""}</div></button>`;
+      }).join("")}</div>
+      <p style="margin:0;color:var(--body);font-size:15px">Para iniciar uma conversa, abra a lista de participantes de um evento.</p>`}
+  </div>`);
+}
+
+function convo(title, sub, back, msgs, kind, id) {
+  return topbar(back) + `<main class="view" style="overflow:hidden"><div class="convo">
+    <div class="convo-head">${kind === "g" ? `<div class="thread" style="padding:0;border:0;grid-template-columns:52px"><div class="gico num">${sub.split("|")[0]}</div></div>` : `<div class="avatar av-${sub.split("|")[0]}">${initials(title)}</div>`}
+      <div><b>${esc(title)}</b><small>${esc(sub.split("|")[1])}</small></div></div>
+    <div class="msgs" id="msgs"><span class="daymark">Hoje</span>${msgs.map(m => {
+      const me = kind === "g" ? m.who === "me" : m.me;
+      return `<div class="msg ${me ? "me" : ""}">${kind === "g" && !me ? `<span class="who">${esc(m.who)}</span>` : ""}<div class="bubble">${esc(m.text)}</div><span class="at num">${m.at}</span></div>`;
+    }).join("")}</div>
+    <form class="composer" id="composer" data-kind="${kind}" data-id="${id}"><input id="msgInput" placeholder="Escreva uma mensagem" aria-label="Mensagem" autocomplete="off"><button type="submit" aria-label="Enviar">${icon("send")}</button></form>
+  </div></main>`;
+}
+function scrGrupo(id) {
+  const e = ev(id);
+  if (!state.enrolled.has(id)) return shell("chat", `<div class="pad"><div class="card empty">${icon("lock")}<p>O grupo de “${esc(e.title)}” abre quando você se inscreve no evento.</p><button class="btn primary" data-go="evento-${id}">Ver evento</button></div></div>`, "chat");
+  state.groupReads[id] = 0;
+  return convo(e.title, `${day(e.day).wd} ${day(e.day).dn}|${fmt(e.conf)} participantes · ${place(e.place).name}`, "chat", GROUP_MSGS[id] || (GROUP_MSGS[id] = []), "g", id);
+}
+function scrConversa(id) {
+  const d = DMS.find(x => x.id === id); d.unread = 0; const u = person(d.with);
+  return convo(u.name, `${u.av}|${u.from}`, "chat", d.msgs, "p", id);
+}
+
+function scrPerfil() {
+  return shell("", `<div class="profile-head"><div class="avatar av-0">${ME.initials}</div><h1>Ir. ${esc(ME.name)}</h1><p>${esc(ME.loja)} · ${esc(ME.oriente)}</p>
+      ${ME.organizer ? `<span class="chip">${icon("shield-check")}Organizador</span>` : ""}</div>
+    <div class="pad" style="padding-top:0">
+      <section class="card stat-row">
+        <div><b class="num">${state.enrolled.size}</b><span>Inscrições</span></div>
+        <div><b class="num">${Object.keys(GROUP_MSGS).filter(k => state.enrolled.has(k)).length}</b><span>Grupos</span></div>
+        <div><b class="num">${DMS.length}</b><span>Conversas</span></div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:10px"><div class="sec-title"><h2>Dados cadastrais</h2></div>
+        <div class="card kv">
+          <div><span>Nome</span><b>${esc(ME.name)}</b></div><div><span>Loja</span><b>${esc(ME.loja)}</b></div>
+          <div><span>CIM</span><b class="num">${esc(ME.cim)}</b></div><div><span>Oriente</span><b>${esc(ME.oriente)}</b></div>
+          <div><span>País</span><b>${esc(ME.pais)}</b></div><div><span>E-mail</span><b>${esc(ME.email)}</b></div><div><span>Telefone</span><b class="num">${esc(ME.phone)}</b></div>
+        </div></section>
+      <div class="btn-row"><button class="btn ghost" data-go="editar-perfil">${icon("pencil")}Editar</button><button class="btn ghost" data-go="senha">${icon("key-round")}Senha</button></div>
+    </div>`, "eventos");
+}
+function scrEditar() {
+  return shell("", `<div class="pad"><div class="page-head"><h1>Editar perfil</h1></div>
+    <form class="form" id="profileForm">
+      <div class="field"><label for="p-nome">Nome</label><input id="p-nome" value="${esc(ME.name)}"></div>
+      <div class="field"><label for="p-loja">Loja</label><input id="p-loja" value="${esc(ME.loja)}"></div>
+      <div class="grid2"><div class="field"><label for="p-oriente">Oriente</label><input id="p-oriente" value="${esc(ME.oriente)}"></div>
+        <div class="field"><label for="p-pais">País</label><input id="p-pais" value="${esc(ME.pais)}"></div></div>
+      <div class="field"><label for="p-email">E-mail</label><input id="p-email" type="email" value="${esc(ME.email)}"></div>
+      <div class="field"><label for="p-tel">Telefone</label><input id="p-tel" inputmode="tel" value="${esc(ME.phone)}"></div>
+      <button class="btn primary" type="submit">Salvar alterações</button>
+    </form></div>`, "perfil");
+}
+function scrSenha() {
+  return shell("", `<div class="pad"><div class="page-head"><h1>Alterar senha</h1></div>
+    <form class="form" id="pwForm" novalidate>
+      <div class="field"><label for="s-atual">Senha atual</label><input id="s-atual" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="s-nova">Nova senha</label><input id="s-nova" type="password" autocomplete="new-password"><span class="hint">Mínimo de 8 caracteres.</span></div>
+      <div class="field"><label for="s-conf">Repita a nova senha</label><input id="s-conf" type="password" autocomplete="new-password"></div>
+      <div class="err" id="pwErr" role="alert" style="color:var(--brand);font-weight:600;font-size:14px"></div>
+      <button class="btn primary" type="submit">Alterar senha</button>
+    </form></div>`, "perfil");
+}
+
+function scrOrganizacao() {
+  const total = EVENTS.reduce((a, e) => a + e.conf, 0);
+  return shell("", `<div class="pad">
+    <div class="page-head"><h1>Organização</h1><p>Locais e programação do evento</p></div>
+    <section class="card stat-row">
+      <div><b class="num">${EVENTS.length}</b><span>Eventos</span></div><div><b class="num">${PLACES.length}</b><span>Locais</span></div><div><b class="num">${fmt(total)}</b><span>Inscrições</span></div>
+    </section>
+    <div class="btn-row"><button class="btn primary" data-go="novo-evento">${icon("calendar-plus")}Evento</button><button class="btn ghost" data-go="novo-local">${icon("map-pin-plus")}Local</button></div>
+    <section style="display:flex;flex-direction:column;gap:10px"><div class="sec-title"><h2>Locais cadastrados</h2><span class="num">${PLACES.length}</span></div>
+      <div class="card">${PLACES.map(p => `<div class="place"><div><b>${esc(p.name)}</b><small>${esc(p.addr)}</small></div><span class="cap num">${fmt(p.cap)} lugares</span></div>`).join("")}</div></section>
+  </div>`, "eventos");
+}
+function scrNovoLocal() {
+  return shell("", `<div class="pad"><div class="page-head"><h1>Cadastrar local</h1></div>
+    <form class="form" id="placeForm" novalidate>
+      <div class="field"><label for="l-nome">Nome do local</label><input id="l-nome" placeholder="Ex.: Memorial de Curitiba"></div>
+      <div class="field"><label for="l-end">Endereço</label><input id="l-end" placeholder="Rua, número"></div>
+      <div class="grid2"><div class="field"><label for="l-bairro">Bairro</label><input id="l-bairro"></div>
+        <div class="field"><label for="l-cap">Capacidade</label><input id="l-cap" inputmode="numeric" placeholder="Pessoas"></div></div>
+      <div class="err" id="lErr" role="alert" style="color:var(--brand);font-weight:600;font-size:14px"></div>
+      <button class="btn primary" type="submit">Cadastrar local</button>
+    </form></div>`, "organizacao");
+}
+function scrNovoEvento() {
+  return shell("", `<div class="pad"><div class="page-head"><h1>Novo item da programação</h1></div>
+    <form class="form" id="evForm" novalidate>
+      <div class="field"><label for="n-titulo">Título</label><input id="n-titulo" placeholder="Ex.: Almoço das delegações"></div>
+      <div class="grid2"><div class="field"><label for="n-dia">Dia</label><select id="n-dia">${DAYS.map(d => `<option value="${d.id}">${d.wd} ${d.dn}/04</option>`).join("")}</select></div>
+        <div class="field"><label for="n-hora">Horário</label><input id="n-hora" type="time" value="12:30"></div></div>
+      <div class="field"><label for="n-local">Local</label><select id="n-local">${PLACES.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select></div>
+      <div class="field"><label for="n-vagas">Vagas</label><input id="n-vagas" inputmode="numeric" value="200"></div>
+      <div class="field"><label for="n-desc">Descrição</label><textarea id="n-desc" placeholder="O que acontece, traje, transporte"></textarea></div>
+      <div class="err" id="nErr" role="alert" style="color:var(--brand);font-weight:600;font-size:14px"></div>
+      <button class="btn primary" type="submit">Publicar na programação</button>
+    </form></div>`, "organizacao");
+}
+
+// ---------- menus ----------
+function renderDrawer(cur) {
+  const item = (r, i, l) => `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}>${icon(i)}${l}</button>`;
+  $("#drawer").innerHTML = `<div class="drawer-head"><div class="mark"><div class="seal">125</div><div class="words">Confraternização<b>Maçônica</b></div></div>
+      <div><b>Ir. ${esc(ME.name)}</b><br><small>${esc(ME.loja)}</small></div></div>
+    <div class="nav">${item("eventos", "calendar-days", "Eventos")}${item("inscricoes", "ticket", "Inscrições")}${item("chat", "message-circle", "Chat")}
+      ${ME.organizer ? `<div class="divider"></div><div class="group">Organização</div>${item("organizacao", "clipboard-list", "Painel")}${item("novo-evento", "calendar-plus", "Novo evento")}${item("novo-local", "map-pin-plus", "Novo local")}` : ""}
+    </div><div class="drawer-foot">Curitiba · 22 a 25 de abril de 2027</div>`;
+  $("#sheet").innerHTML = `<div class="grab"></div><div class="who"><div class="avatar av-0">${ME.initials}</div><div><b>Ir. ${esc(ME.name)}</b><small>${esc(ME.email)}</small></div></div>
+    <div class="nav">${item("perfil", "user-round", "Ver perfil")}${item("editar-perfil", "pencil", "Editar perfil")}${item("senha", "key-round", "Alterar senha")}
+      <div class="divider"></div><button data-act="logout">${icon("log-out")}Sair</button></div>`;
+}
+function closeOverlays() { ["scrim", "drawer", "sheet"].forEach(i => $("#" + i).classList.remove("open")); }
+
+// ---------- render ----------
+function render() {
+  closeOverlays();
+  let r = route();
+  if (!state.logged && r !== "entrar") { state.logged = true; } // atalhos laterais entram direto
+  if (state.logged && r === "entrar") state.logged = false;
+  const [base, ...rest] = r.split("-"); const arg = rest.join("-");
+  const map = {
+    entrar: scrAuth, eventos: scrEventos, inscricoes: scrInscricoes, chat: scrChat, perfil: scrPerfil, organizacao: scrOrganizacao, senha: scrSenha,
+    evento: () => scrEvento(arg), participantes: () => scrParticipantes(arg), grupo: () => scrGrupo(arg), conversa: () => scrConversa(arg),
+    editar: scrEditar, novo: () => arg === "local" ? scrNovoLocal() : scrNovoEvento(),
+  };
+  $("#app").innerHTML = (map[base] || scrEventos)();
+  renderDrawer(base === "evento" ? "eventos" : r);
+  lucide.createIcons();
+  const m = $("#msgs"); if (m) m.scrollTop = m.scrollHeight;
+  const v = $("#view"); if (v && !m) v.scrollTop = 0;
+}
+
+// ---------- eventos ----------
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-act],[data-day],[data-tab]"); if (!t) { if (e.target.id === "scrim") closeOverlays(); return; }
+  if (t.dataset.go) { go(t.dataset.go); return; }
+  if (t.dataset.day) { state.day = t.dataset.day; render(); return; }
+  if (t.dataset.tab) { state.chatTab = t.dataset.tab; render(); return; }
+  const a = t.dataset.act;
+  if (a === "drawer") { $("#scrim").classList.add("open"); $("#drawer").classList.add("open"); }
+  if (a === "sheet") { $("#scrim").classList.add("open"); $("#sheet").classList.add("open"); }
+  if (a === "back") go(t.dataset.to);
+  if (a === "authmode") { state.authMode = state.authMode === "login" ? "signup" : "login"; render(); }
+  if (a === "logout") { state.logged = false; state.authMode = "login"; go("entrar"); }
+  if (a === "enroll") { const x = ev(t.dataset.id); state.enrolled.add(x.id); x.conf++; state.groupReads[x.id] = state.groupReads[x.id] || 0; render(); toast("Inscrição confirmada. O grupo do evento foi liberado no Chat."); }
+  if (a === "unenroll") { const x = ev(t.dataset.id); state.enrolled.delete(x.id); x.conf--; render(); toast("Inscrição cancelada."); }
+  if (a === "dm") {
+    const uid = t.dataset.uid; let d = DMS.find(x => x.with === uid);
+    if (!d) { d = { id: "p" + (DMS.length + 1), with: uid, unread: 0, msgs: [] }; DMS.unshift(d); }
+    go("conversa-" + d.id);
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.dataset.filter === "people") {
+    const q = e.target.value.toLowerCase();
+    $("#peopleList").innerHTML = PEOPLE.filter(p => (p.name + p.from).toLowerCase().includes(q)).map(personRow).join("") || `<div class="empty">Ninguém encontrado com “${esc(e.target.value)}”.</div>`;
+    lucide.createIcons();
+  }
+});
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target, val = id => ($("#" + id)?.value || "").trim();
+  if (f.id === "authForm") {
+    const err = $("#authErr");
+    if (!/\S+@\S+\.\S+/.test(val("f-email"))) { err.textContent = "Informe um e-mail válido."; return; }
+    if (val("f-senha").length < 8) { err.textContent = "A senha precisa ter pelo menos 8 caracteres."; return; }
+    if (state.authMode === "signup" && !val("f-nome")) { err.textContent = "Informe seu nome completo."; return; }
+    if (state.authMode === "signup") { ME.name = val("f-nome"); ME.short = ME.name.split(" ")[0]; ME.initials = initials(ME.name); ME.email = val("f-email");
+      if (val("f-loja")) ME.loja = val("f-loja"); if (val("f-cidade")) ME.oriente = val("f-cidade"); ME.pais = val("f-pais"); if (val("f-cim")) ME.cim = val("f-cim"); }
+    state.logged = true; go("eventos");
+    if (state.authMode === "signup") toast("Conta criada. Bem-vindo ao evento.");
+  }
+  if (f.id === "composer") {
+    const text = val("msgInput"); if (!text) return;
+    const now = new Date().toTimeString().slice(0, 5);
+    if (f.dataset.kind === "g") GROUP_MSGS[f.dataset.id].push({ who: "me", at: now, text });
+    else DMS.find(x => x.id === f.dataset.id).msgs.push({ me: true, at: now, text });
+    render(); $("#msgInput").focus();
+  }
+  if (f.id === "profileForm") {
+    ME.name = val("p-nome"); ME.short = ME.name.split(" ")[0]; ME.initials = initials(ME.name);
+    ME.loja = val("p-loja"); ME.oriente = val("p-oriente"); ME.pais = val("p-pais"); ME.email = val("p-email"); ME.phone = val("p-tel");
+    go("perfil"); toast("Perfil atualizado.");
+  }
+  if (f.id === "pwForm") {
+    const err = $("#pwErr");
+    if (!val("s-atual")) { err.textContent = "Informe a senha atual."; return; }
+    if (val("s-nova").length < 8) { err.textContent = "A nova senha precisa ter pelo menos 8 caracteres."; return; }
+    if (val("s-nova") !== val("s-conf")) { err.textContent = "As duas senhas novas não são iguais."; return; }
+    go("perfil"); toast("Senha alterada.");
+  }
+  if (f.id === "placeForm") {
+    const err = $("#lErr");
+    if (!val("l-nome") || !val("l-end")) { err.textContent = "Preencha nome e endereço do local."; return; }
+    PLACES.push({ id: "l" + (PLACES.length + 1), name: val("l-nome"), area: val("l-bairro"), addr: val("l-end") + (val("l-bairro") ? ", " + val("l-bairro") : ""),
+      cap: parseInt(val("l-cap")) || 100, x: 150 + Math.random() * 120, y: 60 + Math.random() * 90 });
+    go("organizacao"); toast("Local cadastrado.");
+  }
+  if (f.id === "evForm") {
+    const err = $("#nErr");
+    if (!val("n-titulo")) { err.textContent = "Dê um título ao evento."; return; }
+    if (!val("n-hora")) { err.textContent = "Informe o horário."; return; }
+    const id = "e" + (EVENTS.length + 1 + Math.floor(Math.random() * 1000));
+    const [h, m] = val("n-hora").split(":").map(Number);
+    EVENTS.push({ id, day: val("n-dia"), time: val("n-hora"), end: String((h + 2) % 24).padStart(2, "0") + ":" + String(m).padStart(2, "0"),
+      title: val("n-titulo"), place: val("n-local"), conf: 0, cap: parseInt(val("n-vagas")) || 100, kind: "Evento", desc: val("n-desc") || "Descrição a definir." });
+    state.day = val("n-dia"); go("evento-" + id); toast("Evento publicado na programação.");
+  }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeOverlays(); });
+window.addEventListener("hashchange", render);
+$("#scrim").addEventListener("click", closeOverlays);
+if (window.matchMedia("(max-width: 760px)").matches) $("#phone").classList.add("mobile");
+render();
+</script>
+</body>
+</html>

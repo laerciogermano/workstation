@@ -291,10 +291,14 @@ buildGallery();
 
 /* ---------- temas ---------- */
 const THEMES = [
-  { id: 'cobalto', nome: 'Cobalto', tag: 'proposta', desc: 'Ação em azul-cobalto, verde só para “cumpriu”. Fundo claro neutro. Macros com três cores fixas.', sw: ['#2B4BF2', '#16A34A', '#0E1116', '#F4F5F7'] },
+  { id: 'cobalto', nome: 'Cobalto', tag: 'proposta', desc: 'Ação em azul-cobalto, verde só para “cumpriu”. Fundo claro neutro — referência “health app” mainstream.', sw: ['#2B4BF2', '#16A34A', '#0E1116', '#F4F5F7'] },
   { id: 'preto', nome: 'Preto', desc: 'Fundo preto puro e cinzas neutros. Ação em cobalto claro, mesma gramática do claro.', sw: ['#5B7BFF', '#34D27F', '#F2F2F2', '#000000'] },
-  { id: 'lima', nome: 'Lima sobre preto', desc: 'Academia à noite: preto, ação em lima elétrico. Mais energia, menos “app de saúde”.', sw: ['#C6F432', '#34D27F', '#F2F2F2', '#000000'] },
-  { id: 'giz', nome: 'Giz e tijolo', desc: 'Papel quente e ação em tijolo, como quadro de box de calistenia. Mais humano.', sw: ['#C2410C', '#15803D', '#1C1917', '#F5F1EA'] },
+  { id: 'lima', nome: 'Lima sobre preto', tag: 'academia', desc: 'Preto + lima elétrico (Sprint). Progress rings e treino noturno — menos “app de saúde”.', sw: ['#C6F432', '#34D27F', '#F2F2F2', '#000000'] },
+  { id: 'pista', nome: 'Pista', tag: 'cardio', desc: 'Escuro + laranja de corrida (Strava / zonas Garmin). Outdoor, pace, streak.', sw: ['#FC4C02', '#34D27F', '#F2F2F2', '#0B0B0B'] },
+  { id: 'forja', nome: 'Forja', tag: 'musculação', desc: 'Grafite + azul elétrico (Gym Floor). Força, coaching, piso da academia.', sw: ['#2D9CDB', '#34D27F', '#E8EAED', '#121417'] },
+  { id: 'giz', nome: 'Giz e tijolo', tag: 'box', desc: 'Papel quente e ação em tijolo — quadro de calistenia / boutique.', sw: ['#C2410C', '#15803D', '#1C1917', '#F5F1EA'] },
+  { id: 'salvia', nome: 'Sálvia', tag: 'recuperação', desc: 'Verde sálvia e fundo frio (Flow / yoga). Mobilidade, descanso, mind-body.', sw: ['#4F7A5A', '#15803D', '#1F2A22', '#F2F6F3'] },
+  { id: 'neon', nome: 'Neon dia', tag: 'energia', desc: 'Claro com magenta vivo (Nike Run Club / mainstream). Motivação em fundo branco.', sw: ['#E11D48', '#16A34A', '#0E1116', '#FAFAFA'] },
 ];
 const TSCREENS = [['F-10', 'Hoje'], ['F-21', 'Dieta'], ['F-30', 'Treino'], ['F-42', 'Corpo'], ['F-51', 'Vitrine'], ['F-05', 'Base']];
 let tScreen = ['F-10', 'F-51'];

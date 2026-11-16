@@ -18,7 +18,9 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 | Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI para implementar | A produzir |
 | Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado | Pronto (v1, a partir de `functionalities.md` + [manual de uso da marca](../marca/uso-da-marca/README.md)) |
-| Protótipo v2 | [`prototipo-v2/`](prototipo-v2/README.md) · https://clozzy.laerciogermano.com/ · [`deploy/`](../deploy/README.md) | Todas as funcionalidades na identidade mais recente (verde · letras redondas), 7 temas, padrão Fitness/RoleGo | Pronto (40 telas, 6 fluxos, P01–P15 + pós-v1) |
+| Site público | [`site/`](site/README.md) · https://clozzy.laerciogermano.com/ · [`deploy/`](../deploy/README.md) | Home (logo + links) · protótipo · manual da marca | Pronto |
+| Protótipo v2 | [`prototipo-v2/`](prototipo-v2/README.md) · https://clozzy.laerciogermano.com/prototipo/ | Todas as funcionalidades na identidade mais recente (verde · letras redondas), 7 temas, padrão Fitness/RoleGo | Pronto (40 telas, 6 fluxos, P01–P15 + pós-v1) |
+| Manual da marca | [`../marca/identidade-verde-letras-redondas/`](../marca/identidade-verde-letras-redondas/README.md) · https://clozzy.laerciogermano.com/marca/ | Identidade atual (estrela macia · verde · letras redondas), HTML + PDF | Pronto |
 | Protótipo mobile | [`prototipo-mobile/`](prototipo-mobile/index.html) · [PDF](prototipo-mobile/prototipo-mobile-clozzy.pdf) | Telas do app para fã e criador, galeria por fluxo + modo navegável | Pronto (44 telas, 6 temas; feed, stories e chat marcados pós-v1) |
 
 ## Próximos passos

@@ -4,7 +4,7 @@
 **Importante:** cobre todas as páginas de [`functionalities.md`](../functionalities.md) (P01–P15) e marca feed, stories e conversas como pós-v1.
 **No fluxo:** visão → funcionalidades → **protótipo** → histórias → BDD.
 
-**URL:** https://clozzy.laerciogermano.com/ · deploy: [`../../deploy/README.md`](../../deploy/README.md)  
+**URL:** https://clozzy.laerciogermano.com/prototipo/ · home: https://clozzy.laerciogermano.com/ · marca: https://clozzy.laerciogermano.com/marca/ · deploy: [`../../deploy/README.md`](../../deploy/README.md)  
 Local: `index.html` (servir a pasta, ex.: `python3 -m http.server` e abrir `http://localhost:8000/`).
 
 ## O que tem

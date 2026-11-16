@@ -18,3 +18,11 @@ SSHPASS='…' bash deploy/publicar.sh
 1. hPanel → DNS `laerciogermano.com` → excluir A `plans`
 2. Contabo: `rm /etc/nginx/sites-enabled/plans /etc/nginx/sites-available/plans; rm -rf /opt/plans; nginx -t && systemctl reload nginx`
 3. `certbot delete --cert-name plans.laerciogermano.com`
+
+## Galeria vazia (só hero + Temas)
+
+Causa: `const FLOWS = [ … ];` fechado como `};` → `SyntaxError` e o script para antes de `buildGallery()`.
+
+**Antes → depois:** `};` após o último fluxo → `];`.
+
+**Voltar:** restaurar o `index.html` do commit anterior em `/opt/plans` (ou republicar o artefato antigo).

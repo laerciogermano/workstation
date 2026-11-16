@@ -453,10 +453,13 @@ const SCREENS = {
       <ol class="lb">${sorted.map((r, i) => {
         const c = charOf(r.nick) || (r.you && S.char ? { nick: S.char.nick, cor: S.char.cor } : { nick: r.nick, cor: 0 });
         const v = metric === 'visits' ? r.visits : metric === 'vol' ? n0(r.vol) : n0(r.kcal);
-        return `<li class="${r.you ? 'you' : ''}${i === 0 ? ' top' : ''}" ${r.you ? '' : go('F-53', { nick: r.nick })}>
+        const unit = metric === 'visits' ? '' : metric === 'vol' ? ' kg' : ' kcal';
+        const cls = ['lb-row', r.you ? 'is-me' : '', i === 0 ? 'is-top' : ''].filter(Boolean).join(' ');
+        return `<li class="${cls}" ${r.you ? '' : go('F-53', { nick: r.nick })}>
           <span class="pos tnum">${i + 1}</span>${avatar(c.nick, c.cor)}
-          <div><b>${r.you ? 'Você' : '@' + r.nick}${i === 0 ? ' ' + ico('crown') : ''}</b><span>${r.visits} treinos · ${n0(r.vol)} kg</span></div>
-          <b class="tnum metric">${v}</b></li>`;
+          <div class="lb-meta"><b>${r.you ? 'Você' : '@' + r.nick}</b><span>${r.visits} treinos · ${n0(r.vol)} kg</span></div>
+          ${i === 0 ? `<span class="lb-crown" aria-hidden="true">${ico('crown')}</span>` : ''}
+          <b class="tnum metric">${v}${unit}</b></li>`;
       }).join('')}</ol>
       ${note(`Critério: ${label}. Só personagens públicos com treino publicado nesta academia.`, 'info')}
       <button class="btn s" ${go('F-71', { gym: g.id })}>${ico('crown')}Ver domínio (90 dias)</button>

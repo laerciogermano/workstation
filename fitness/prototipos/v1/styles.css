@@ -640,14 +640,17 @@ ul.pl.crown-list { margin-bottom: 8px; } ul.pl.crown-list li.on { background: co
 .bullets li { display: flex; gap: 8px; align-items: flex-start; }
 .bullets li::before { content: '·'; color: var(--ft-act); font-weight: 800; flex: none; line-height: 1.4; }
 ol.lb { list-style: none; display: flex; flex-direction: column; border: 1px solid var(--ft-line); border-radius: 18px; overflow: hidden; background: var(--ft-surface); margin: 12px 0; }
-ol.lb li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-width: 0; }
-ol.lb li + li { border-top: 1px solid var(--ft-line-2); }
-ol.lb .pos { width: 22px; font-weight: 800; color: var(--ft-muted); font-size: 13px; flex: none; }
-ol.lb li > div { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-ol.lb b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } ol.lb span { font-size: 11.5px; color: var(--ft-muted); }
-ol.lb .metric { font-size: 15px; font-weight: 800; flex: none; }
-ol.lb li.you { background: var(--ft-act-soft); } ol.lb li.top .pos { color: var(--ft-kc); }
-ol.lb li.top .i { width: 14px; height: 14px; color: var(--ft-kc); vertical-align: -2px; }
+ol.lb .lb-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-width: 0; width: 100%; position: relative; box-sizing: border-box; }
+ol.lb .lb-row + .lb-row { border-top: 1px solid var(--ft-line-2); }
+ol.lb .pos { width: 22px; font-weight: 800; color: var(--ft-muted); font-size: 13px; flex: none; text-align: center; }
+ol.lb .lb-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+ol.lb .lb-meta b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ol.lb .lb-meta span { font-size: 11.5px; color: var(--ft-muted); }
+ol.lb .lb-crown { color: var(--ft-kc); flex: none; display: grid; place-items: center; }
+ol.lb .lb-crown .i { width: 16px; height: 16px; }
+ol.lb .metric { font-size: 15px; font-weight: 800; flex: none; white-space: nowrap; }
+ol.lb .lb-row.is-me { background: var(--ft-act-soft); }
+ol.lb .lb-row.is-top .pos { color: var(--ft-kc); }
 .chal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
 .chal-card { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 16px; background: var(--ft-surface); border: 1px solid var(--ft-line); text-align: left; cursor: pointer; min-width: 0; }
 .chal-card > .i { color: var(--ft-act); width: 20px; height: 20px; flex: none; }

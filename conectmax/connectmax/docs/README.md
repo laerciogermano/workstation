@@ -13,3 +13,4 @@
 | Mapa visual do portal | [`portal-mapa/README.md`](portal-mapa/README.md) | Prints CDP + funcionalidades por tela (listagens e edição) | Feito |
 | Portal API (faturas) | [`../../portal-api/README.md`](../../portal-api/README.md) | `GET /faturas` com login automático no portal | Feito |
 | Planilhas funil (xlsx) | [`planilhas-funil/`](planilhas-funil/README.md) | Snapshot local Orçamentos / Pedidos / Faturamento 2025–2026 | Feito |
+| Visão e-mail marketing | [`../email-marketing/README.md`](../email-marketing/README.md) | Contexto, objetivo e casos de uso (campanhas, listas, envio) | Feito |

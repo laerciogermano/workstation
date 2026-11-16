@@ -55,12 +55,14 @@ docs/                architecture.md (C4 lean) · adr/ (MADR)
 | Fluxo | Telas | Rotas |
 |---|---|---|
 | E01 Primeiro uso | F-01…F-06 | `/bem-vindo`, `/comecar/{voce,rotina,objetivo,base,macros}` |
-| E02 Hoje e progresso | F-10…F-12 | `/`, `/progresso`, `/insights` |
-| E03 Dieta pelo estoque | F-20…F-24 | `/dieta/estoque`, `/dieta`, `/dieta/refeicao/:id`, `/dieta/fechar`, `/dieta/incompleto` |
+| E02 Avaliação física | F-40…F-43 | `/corpo/medir`, `/corpo/foto`, `/corpo`, `/corpo/comparar` |
+| E03 Hoje e progresso | F-10…F-12 | `/`, `/progresso`, `/insights` |
 | E04 Treino | F-30…F-32 | `/treino`, `/treino/exercicio/:id`, `/treino/concluido` |
-| E05 Avaliação física | F-40…F-43 | `/corpo/medir`, `/corpo/foto`, `/corpo`, `/corpo/comparar` |
+| E05 Dieta pelo estoque | F-20…F-24 | `/dieta/estoque`, `/dieta`, `/dieta/refeicao/:id`, `/dieta/fechar`, `/dieta/incompleto` |
 | E06 Vitrine | F-50…F-54 | `/vitrine/personagem`, `/vitrine`, `/vitrine/buscar`, `/p/:nick`, `/vitrine/privacidade` |
 | E07 Academias | F-55, F-56 | `/academias`, `/academias/:id` |
 | E08 Perfil e estados | F-60…F-62 | `/voce`, offline (inline), aparelho novo (boot) |
+
+Ordem de prioridade (desde 2026-11-16): onboarding → medições → progresso → treino → dieta → restante. Antes: progresso/dieta/treino vinham antes da avaliação.
 
 Diferenças deliberadas do protótipo: carga editável por exercício e PR real (melhor carga anterior); fotos reais pela câmera (getUserMedia ou galeria) guardadas só no aparelho; mapa posicionado por lat/lng reais; os quatro temas viram preferência em **Você**.

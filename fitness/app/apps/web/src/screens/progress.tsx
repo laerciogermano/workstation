@@ -1,4 +1,4 @@
-/** E02 · Dashboard de projeção (F-11) e insights (F-12). RF-16, RF-30, RF-33, RF-34 · RN-09, RN-13, RN-14, RN-15. */
+/** E03 · Dashboard de projeção (F-11) e insights (F-12). RF-16, RF-30, RF-33, RF-34 · RN-09, RN-13, RN-14, RN-15. */
 import type { Insight } from '@fitness/contracts';
 import { STRATEGY_LABEL, daysBetween, expectedWeeklyRate, goalOf, n0, n1, sgn } from '@fitness/domain';
 import { Link } from 'react-router';

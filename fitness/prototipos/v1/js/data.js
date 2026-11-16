@@ -230,12 +230,14 @@ const CHALLENGES = [
 ];
 
 /* ---------- fluxos e telas (metadados de rastreio no screens.js) ---------- */
+/* Ordem de prioridade do produto: onboarding → medições → progresso → treino → dieta → restante.
+   Antes (até 2026-11-16): E02 hoje/progresso, E03 dieta, E04 treino, E05 avaliação. */
 const FLOWS = [
   { id: 'e01', n: 'E01', title: 'Primeiro uso', desc: 'Sem conta: o fingerprint vincula os dados em silêncio. O onboarding é o cadastro metabólico: dados, rotina e objetivo viram TMB, gasto, estratégia, macros e projeção.', steps: ['F-01', 'F-02', 'F-03', 'F-04', 'F-05', 'F-06'] },
-  { id: 'e02', n: 'E02', title: 'Hoje e progresso', desc: 'A home do dia fecha o balanço: meta, consumido, treino e atalhos. O dashboard mostra a projeção com premissas e os insights só usam o que foi registrado.', steps: ['F-10', 'F-11', 'F-12'] },
-  { id: 'e03', n: 'E03', title: 'Dieta pelo estoque', desc: 'Informe o que tem em casa; o plano usa só isso e respeita a meta. Marque cada refeição e veja se cumpriu, ficou abaixo ou estourou.', steps: ['F-20', 'F-21', 'F-22', 'F-23', 'F-24'] },
+  { id: 'e02', n: 'E02', title: 'Avaliação física', desc: 'Fita métrica, peso e fotos datadas numa timeline. Compare dois pontos lado a lado. Medições vêm antes do dashboard: sem corpo medido, o progresso não tem base.', steps: ['F-40', 'F-41', 'F-42', 'F-43'] },
+  { id: 'e03', n: 'E03', title: 'Hoje e progresso', desc: 'A home do dia fecha o balanço: meta, consumido, treino e atalhos. O dashboard mostra a projeção com premissas e os insights só usam o que foi registrado.', steps: ['F-10', 'F-11', 'F-12'] },
   { id: 'e04', n: 'E04', title: 'Treino do dia', desc: 'Musculação e calistenia no mesmo modelo. Cada exercício tem detalhe, visualização do movimento e estimativa de calorias que entra no balanço.', steps: ['F-30', 'F-31', 'F-32'] },
-  { id: 'e05', n: 'E05', title: 'Avaliação física', desc: 'Fita métrica, peso e fotos datadas numa timeline. Compare dois pontos lado a lado.', steps: ['F-40', 'F-41', 'F-42', 'F-43'] },
+  { id: 'e05', n: 'E05', title: 'Dieta pelo estoque', desc: 'Informe o que tem em casa; o plano usa só isso e respeita a meta. Marque cada refeição e veja se cumpriu, ficou abaixo ou estourou.', steps: ['F-20', 'F-21', 'F-22', 'F-23', 'F-24'] },
   { id: 'e06', n: 'E06', title: 'Vitrine e personagens', desc: '“Strava de academia” com opt-in: personagem público sem conta, feed de resultados reais, busca e perfil com só o que a pessoa escolheu mostrar.', steps: ['F-50', 'F-51', 'F-52', 'F-53', 'F-54'] },
   { id: 'e07', n: 'E07', title: 'Academias próximas', desc: 'GPS com permissão ou busca por bairro. Vincule seu personagem a uma academia e veja a atividade local.', steps: ['F-55', 'F-56'] },
   { id: 'e08', n: 'E08', title: 'Perfil e estados', desc: 'Recálculo ao mudar peso ou objetivo, limites seguros, sem rede e troca de aparelho.', steps: ['F-60', 'F-61', 'F-62'] },

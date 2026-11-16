@@ -149,7 +149,7 @@ const SCREENS = {
     </div>`;
   } },
 
-/* =================== E02 hoje =================== */
+/* =================== E03 hoje e progresso =================== */
 'F-10': { name: 'Hoje', rf: ['RF-35', 'RF-36', 'RF-21', 'RF-27', 'RF-12'], rn: ['RN-11', 'RN-12'],
   notes: 'A home fecha o dia: meta, consumido, treino e balanço (gasto + treino − consumido). Marcar refeição aqui mesmo, sem abrir a dieta (RF-36). O insight do topo sai só de dados registrados.',
   render() {
@@ -201,7 +201,7 @@ const SCREENS = {
     </div>`;
   } },
 
-/* =================== E03 dieta =================== */
+/* =================== E05 dieta =================== */
 'F-20': { name: 'Estoque de ingredientes', rf: ['RF-17', 'RF-22'], rn: ['RN-10'],
   notes: 'O estoque é a fronteira do plano: nada fora daqui entra (RN-10). Ligue/desligue itens e gere de novo; com estoque pobre o gerador avisa (F-24).',
   render() {
@@ -328,7 +328,7 @@ const SCREENS = {
     </div>`;
   } },
 
-/* =================== E05 avaliação =================== */
+/* =================== E02 avaliação física =================== */
 'F-40': { name: 'Nova avaliação com fita', rf: ['RF-29', 'RF-30'], rn: ['RN-13', 'RN-07'],
   notes: 'Fita métrica + peso, datados. Cada campo mostra o último valor e a diferença ao vivo. Salvar com peso novo recalcula TMB, meta e macros (RN-07).',
   render() {

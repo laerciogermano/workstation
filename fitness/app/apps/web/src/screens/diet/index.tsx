@@ -1,4 +1,4 @@
-/** E03 · Dieta pelo estoque (F-20..F-24). RF-17..22 · RN-10, RN-11, RN-22. */
+/** E05 · Dieta pelo estoque (F-20..F-24). RF-17..22 · RN-10, RN-11, RN-22. */
 import type { DietDayResponse } from '@fitness/contracts';
 import {
   DAY_STATUS_LABEL,

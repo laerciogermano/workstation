@@ -1,4 +1,4 @@
-/** E05 · Avaliação física (F-40..F-43). RF-29..32 · RN-07, RN-13, RN-18. */
+/** E02 · Avaliação física (F-40..F-43). RF-29..32 · RN-07, RN-13, RN-18. */
 import {
   MEASURES,
   type MeasureId,

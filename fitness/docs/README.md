@@ -8,7 +8,7 @@ Derivados do [documento de visão](../README.md).
 PRD canônico: [`prd.md`](prd.md).  
 Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).  
 Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).  
-Protótipo navegável: [`../prototipos/v1/index.html`](../prototipos/v1/index.html) (31 telas, rastreia RF/RN do PRD).  
+Protótipo navegável: [`../prototipos/v1/index.html`](../prototipos/v1/index.html) (31 telas, rastreia RF/RN do PRD) · publicado em https://fitness.laerciogermano.com/ ([`../deploy/README.md`](../deploy/README.md)).  
 App (front + back): [`../app/README.md`](../app/README.md).
 
 | Artefato | Arquivo | Papel no fluxo | Status |

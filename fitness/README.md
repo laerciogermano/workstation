@@ -6,7 +6,7 @@
 
 Derivados: [`docs/`](docs/).  
 Timeline de prompts: [`prompts/`](prompts/).  
-Protótipo v1: [`prototipos/v1/index.html`](prototipos/v1/index.html).  
+Protótipo v1: [`prototipos/v1/index.html`](prototipos/v1/index.html) · https://fitness.laerciogermano.com/ ([`deploy/README.md`](deploy/README.md)).  
 App (front + back): [`app/`](app/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

@@ -75,8 +75,9 @@ function flash(msg, extra = {}) {
   toastTimer = setTimeout(() => { S.toast = null; const t = $('.toast', live); if (t) { t.classList.add('out'); setTimeout(() => t.remove(), 200); } }, 2800);
 }
 function fit() {
-  const sw = stage.clientWidth - 32, sh = stage.clientHeight - 90;
-  const k = Math.min(1, sw / 414, sh / 868).toFixed(3);
+  const sw = Math.max(0, stage.clientWidth - 32), sh = Math.max(0, stage.clientHeight - 90);
+  const raw = Math.min(1, sw / 414 || 0, sh / 868 || 0);
+  const k = Math.max(0.35, raw || 1).toFixed(3);
   live.style.setProperty('--s', k); document.documentElement.style.setProperty('--s', k);
 }
 addEventListener('resize', () => cur && player.classList.contains('open') && fit());
@@ -88,7 +89,11 @@ function notes() {
   const on = document.querySelector('#plist a.on'); if (on) on.scrollIntoView({ block: 'nearest' });
   document.querySelectorAll('[data-scen]').forEach((b) => { const [k, v] = b.dataset.scen.split(':'); b.classList.toggle('on', scenVal(k) === v); });
 }
-function openPlayer(id) { hist.length = 0; player.classList.add('open'); document.body.style.overflow = 'hidden'; cur = id; paint(); $('#stage-close').focus({ preventScroll: true }); }
+function openPlayer(id) {
+  hist.length = 0; player.classList.add('open'); document.body.style.overflow = 'hidden'; cur = id; paint();
+  requestAnimationFrame(() => { fit(); requestAnimationFrame(fit); });
+  $('#stage-close').focus({ preventScroll: true });
+}
 function closePlayer() { player.classList.remove('open'); document.body.style.overflow = ''; history.replaceState(null, '', location.pathname); }
 
 /* ---------- ações ---------- */

@@ -170,8 +170,7 @@ const SCREENS = {
       ${t.s.ex.length ? `<article class="tcard" ${go('F-30')}>${figure(EXS[t.s.ex[0]].anim, { cls: 'sm', animate: false })}<div><p class="tag">${t.s.mod}</p><h3>${t.s.nome.split(' · ')[0]}</h3><p class="tnum">${t.done.length}/${t.s.ex.length} exercícios · ${S.sessDone ? 'concluído' : `≈ ${n0(t.allK)} kcal`}</p><div class="bar sm"><i style="width:${(t.done.length / t.s.ex.length) * 100}%"></i></div></div>${ico('next')}</article>` : `<article class="tcard rest">${ico('clock')}<div><h3>Descanso ativo</h3><p>Caminhada leve conta no gasto.</p></div></article>`}
       <div class="shortcuts">
         <button ${go('F-40')}>${ico('ruler')}<span>Medida</span></button><button ${go('F-41')}>${ico('camera')}<span>Foto</span></button>
-        <button ${go('F-70')}>${ico('crown')}<span>Gamificação</span></button><button ${go('F-51')}>${ico('trophy')}<span>Vitrine</span></button>
-        <button ${go('F-55')}>${ico('pin')}<span>Academias</span></button>
+        <button ${go('F-70')}>${ico('crown')}<span>Coroas</span></button><button ${go('F-51')}>${ico('trophy')}<span>Vitrine</span></button>
       </div>
     </div>${tabbar('F-10')}`;
   } },
@@ -399,7 +398,7 @@ const SCREENS = {
         <div><p class="tag">Domínio · 90 dias</p><h3>${gym.nome}</h3>
           <p>${leg ? `@${leg.nick} · ${leg.visits} check-ins` : 'Ainda sem dono'} · você ${you ? you.visits + ' esta semana' : '—'}</p></div>${ico('next')}
       </button>
-      <div class="shortcuts four">
+      <div class="shortcuts">
         <button ${go('F-72', { gym: gym.id })}>${ico('rank')}<span>Ranking</span></button>
         <button ${go('F-73')}>${ico('medal')}<span>Coroas</span></button>
         <button ${go('F-74')}>${ico('bolt')}<span>Desafios</span></button>

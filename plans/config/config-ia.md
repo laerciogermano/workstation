@@ -12,6 +12,10 @@ Fontes da esteira: [`../docs/README.md`](../docs/README.md).
 
 ## Regras
 
+### Protótipo navegável — sem tela branca
+
+Ao criar/alterar o player (Navegar / foco F): usar `grid-template-areas` com `stage` nomeado; em `.player.focus` (laterais `display: none`) o grid deve ser só `"stage"` + `minmax(0, 1fr)` — senão a janela some e fica tela cinza. Sempre `.player.open { display: grid }` + `fit()` com piso e rAF no open. Contrato: [`.cursor/rules/prototipo-player-navegar.mdc`](../../.cursor/rules/prototipo-player-navegar.mdc).
+
 ### Cascata de próximos passos
 
 **Para toda alteração em um arquivo da esteira de documentação, seguir os `Próximos passos` do documento até finalizar a árvore de execução.**

@@ -1,0 +1,62 @@
+---
+description: Player de protótipo — evitar tela branca ao Navegar (grid-template-areas)
+alwaysApply: true
+---
+
+# Protótipo: Navegar sem tela branca
+
+Sempre que criar ou editar um **protótipo navegável** (galeria + player `#player` / `.player` com lista · stage · notas), aplicar este contrato — o bug recorrente é tela cinza/branca ao clicar em **Navegar**.
+
+## Causa
+
+1. `#player` / `.player` começa com `display: none` e abre com a classe `open` → **obrigatório** `#player.open { display: grid; }` (sem isso o overlay não aparece e o `body` fica `overflow: hidden`).
+2. Em viewport estreita (`max-width: ~1100px`) ou modo foco, `plist` / `notes` vão para `display: none`. Se o grid continuar com **3 tracks** do tipo `0 1fr 0` ou `250px 1fr 320px`, o **único filho restante (stage) ocupa a 1ª track**. Com track `0` (ou a lista “fantasma”), o stage fica com **largura 0**, `overflow: hidden` corta o telefone/janela → só o fundo do player (cinza/branco).
+3. `fit()` / `scale` com `clientWidth === 0` pode zerar ou negativar o zoom e sumir com a tela.
+
+## Fix obrigatório (copiar o padrão Fitness)
+
+```css
+#player {
+  display: none;
+  grid-template-columns: 250px minmax(0, 1fr) 320px;
+  grid-template-areas: "list stage notes";
+}
+#player.open { display: grid; }
+#plist { grid-area: list; }
+#stage { grid-area: stage; min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#pnotes { grid-area: notes; }
+
+@media (max-width: 1100px) {
+  #player {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "stage";
+  }
+  #plist { display: none; }
+  #pnotes {
+    grid-area: unset; position: absolute; /* drawer */ transform: translateX(100%);
+  }
+  #player.notes-open #pnotes { transform: none; }
+}
+```
+
+Modo foco (só janela): `grid-template-areas: "stage"` + `minmax(0, 1fr)` — **nunca** deixar `display: none` nas laterais sem reduzir o grid a uma área nomeada `stage`.
+
+## JS
+
+- `fit()`: só com player aberto; `Math.max(0, …)`; se largura/altura do stage for 0, usar escala `1` (não `0`); piso ~`0.35–0.4`.
+- `openPlayer`: após `classList.add('open')` + `paint()`, `requestAnimationFrame` (duplo) + `setTimeout(fit, 80)`.
+- Cache-bust em CSS/JS (`?v=…`) ao republicar.
+
+## Checklist antes de entregar
+
+- [ ] `#player.open { display: grid }`
+- [ ] `grid-template-areas` com `stage` nomeado
+- [ ] Media/foco **não** usa `0 1fr 0` com laterais `display: none`
+- [ ] `fit()` resistente a stage 0
+- [ ] Teste: janela &lt; 1100px → Navegar → telefone/janela visível (não só fundo cinza)
+
+## Refs
+
+- Fitness corrigido: `fitness/prototipos/v1/styles.css` (player)
+- Clozzy: `clozzy/docs/prototipo-v2/styles.css`
+- Plans: `plans/prototipo/index.html`

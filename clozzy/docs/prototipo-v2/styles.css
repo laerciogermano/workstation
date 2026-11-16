@@ -113,12 +113,18 @@ code { font: 600 .86em ui-monospace, 'SF Mono', Menlo, monospace; background: rg
 .mt tr[data-open]:hover td { background: #FAFAFA; }
 .site { padding-top: 64px; padding-bottom: 48px; font-size: 13px; color: var(--c-muted); }
 
-/* =================== player =================== */
-#player { position: fixed; inset: 0; z-index: 100; background: var(--c-stage); display: none; grid-template-columns: 250px 1fr 320px; }
+/* =================== player ===================
+   grid-template-areas obrigatório: se plist/pnotes forem display:none sem área nomeada,
+   o stage cai na 1ª track (width 0) → tela cinza/branca ao Navegar. Ver .cursor/rules/prototipo-player-navegar.mdc */
+#player {
+  position: fixed; inset: 0; z-index: 100; background: var(--c-stage); display: none;
+  grid-template-columns: 250px minmax(0, 1fr) 320px;
+  grid-template-areas: "list stage notes";
+}
 #player.open { display: grid; }
-#player.notes-off { grid-template-columns: 250px 1fr 0; }
+#player.notes-off { grid-template-columns: 250px minmax(0, 1fr); grid-template-areas: "list stage"; }
 #player.notes-off #pnotes { display: none; }
-#plist { overflow-y: auto; padding: 22px 14px 40px; background: var(--c-surface); border-right: 1px solid var(--c-line); }
+#plist { grid-area: list; overflow-y: auto; padding: 22px 14px 40px; background: var(--c-surface); border-right: 1px solid var(--c-line); min-width: 0; }
 #plist .wm { display: block; margin: 0 8px 20px; }
 #plist .lg-chrome { height: 24px; }
 .pl-f p { font-size: 12px; font-weight: 800; color: var(--c-muted); padding: 14px 8px 6px; }
@@ -127,16 +133,23 @@ code { font: 600 .86em ui-monospace, 'SF Mono', Menlo, monospace; background: rg
 #plist a:hover { background: #F4F4F4; }
 #plist a.on { background: var(--c-ink); color: #fff; }
 #plist a.on b { color: #9A9A9A; }
-#stage { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#stage {
+  grid-area: stage; position: relative; overflow: hidden; min-width: 0; min-height: 0;
+  display: flex; align-items: center; justify-content: center; padding: 56px 16px 24px;
+}
 .stagebar { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; z-index: 3; }
 .stagebar .sbtn { height: 38px; }
 .stage-themes { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 3; }
 .stage-themes button { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--c-surface); box-shadow: inset 0 0 0 1px var(--c-line); }
 .stage-themes button.on { box-shadow: inset 0 0 0 2px var(--c-ink); }
 .stage-themes .tdot { width: 24px; height: 24px; }
-#live { width: 414px; height: 868px; transform: scale(var(--s, 1)); transform-origin: center; flex: none; margin-top: 30px; }
+#live {
+  position: relative; flex: none; width: 414px; height: 868px;
+  transform: scale(var(--s, 1)); transform-origin: center center;
+}
 #live.hot [data-go], #live.hot [data-act] { outline: 2px dashed var(--pink); outline-offset: -2px; }
-#pnotes { overflow-y: auto; padding: 26px 22px 40px; background: var(--c-surface); border-left: 1px solid var(--c-line); }
+#pn-toggle { display: none; }
+#pnotes { grid-area: notes; overflow-y: auto; padding: 26px 22px 40px; background: var(--c-surface); border-left: 1px solid var(--c-line); min-width: 0; }
 .pn-id { font: 900 48px/1 var(--f-d); letter-spacing: -.04em; color: #CFCFCF; }
 #pnotes h3 { font: 800 26px/1.05 var(--f-d); letter-spacing: -.03em; margin-top: 4px; }
 .pn-flow { font-size: 13px; color: var(--c-muted); margin-top: 6px; }
@@ -867,8 +880,21 @@ html.rm *, html.rm *::before, html.rm *::after { animation: none !important; tra
   .masthead { grid-template-columns: 1fr; }
   .cols { grid-template-columns: 1fr; }
   .cov { grid-template-columns: repeat(5, 1fr); }
-  #player { grid-template-columns: 0 1fr 0; }
-  #plist, #pnotes { display: none; }
+  /* stage na área nomeada — NUNCA "0 1fr 0" com plist/pnotes display:none (coluna 0 = tela branca) */
+  #player {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "stage";
+  }
+  #plist { display: none; }
+  #pnotes {
+    grid-area: unset; position: absolute; right: 0; top: 0; bottom: 0;
+    width: min(320px, 92vw); transform: translateX(100%);
+    transition: transform .35s var(--ease); z-index: 5; border-left: 1px solid var(--c-line);
+  }
+  #player.notes-open #pnotes { transform: none; }
+  #player.notes-off #pnotes { display: block; transform: translateX(100%); }
+  #pn-toggle { display: inline-flex; }
+  .stage-themes { top: 60px; right: 16px; transform: none; flex-direction: row; }
 }
 @media (max-width: 640px) {
   .wrap { padding: 0 18px; }

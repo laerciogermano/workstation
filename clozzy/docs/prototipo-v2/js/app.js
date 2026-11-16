@@ -80,8 +80,11 @@ function flash(msg) {
 function fit() {
   if (!player.classList.contains('open')) return;
   const sw = Math.max(0, stage.clientWidth - 32), sh = Math.max(0, stage.clientHeight - 96);
-  const k = Math.max(0.42, Math.min(1, sw / 414, sh / 868)).toFixed(3);
+  let raw = Math.min(1, sw > 0 ? sw / 414 : 1, sh > 0 ? sh / 868 : 1);
+  if (!(raw > 0)) raw = 1;
+  const k = Math.max(0.4, Math.min(1, raw)).toFixed(3);
   live.style.setProperty('--s', k);
+  document.documentElement.style.setProperty('--s', k);
 }
 addEventListener('resize', () => cur && fit());
 if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => cur && fit()).observe(stage);
@@ -202,7 +205,10 @@ addEventListener('keydown', (e) => {
   else if (e.key.toLowerCase() === 't') { const j = THEMES.findIndex((t) => t.id === themeNow()); applyTheme(THEMES[(j + 1) % THEMES.length].id, true); }
 });
 $('#stage-close').addEventListener('click', closePlayer);
-$('#pn-toggle').addEventListener('click', () => player.classList.toggle('notes-off'));
+$('#pn-toggle').addEventListener('click', () => {
+  if (matchMedia('(max-width: 1100px)').matches) player.classList.toggle('notes-open');
+  else player.classList.toggle('notes-off');
+});
 
 /* ---------- galeria ---------- */
 function gallery() {

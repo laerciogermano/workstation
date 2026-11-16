@@ -11,6 +11,10 @@ Timeline de prompts: [`../prompts/timeline.md`](../prompts/timeline.md).
 
 ## Regras
 
+### Protótipo navegável — sem tela branca
+
+Ao criar/alterar o player (Navegar): usar `grid-template-areas` com `stage` nomeado; **nunca** `grid-template-columns: 0 1fr 0` com `#plist`/`#pnotes` em `display: none` (o stage cai na coluna 0 → tela cinza). Sempre `#player.open { display: grid }` + `fit()` com piso e rAF no open. Contrato completo: [`.cursor/rules/prototipo-player-navegar.mdc`](../../.cursor/rules/prototipo-player-navegar.mdc).
+
 ### Salvar todos os prompts
 
 **Todo prompt recebido neste projeto deve ser gravado na timeline antes (ou junto) da entrega.**

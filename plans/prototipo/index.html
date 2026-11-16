@@ -535,15 +535,20 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .ctx .danger { color: var(--fail); }
 
 
-/* Fluxograma (estilo n8n) */
+/* Fluxograma (estilo n8n) — zoom scroll + pan no canvas */
 .diagram { height: 100%; display: flex; flex-direction: column; min-height: 0; }
 .diagram .dtoolbar { display:flex; align-items:center; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); flex:none; }
-.diagram .dcanvas { flex:1; overflow:auto; position:relative; min-height:0;
+.diagram .dtoolbar .dz { display:inline-flex; align-items:center; gap:2px; margin-left:auto; }
+.diagram .dtoolbar .dz .pct { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:40px; text-align:center; }
+.diagram .dcanvas { flex:1; overflow:hidden; position:relative; min-height:0; cursor:grab; touch-action:none;
   background-color: var(--panel);
+}
+.diagram .dcanvas.panning { cursor:grabbing; }
+.diagram .dworld { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform;
   background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 35%, transparent) 1px, transparent 1px);
   background-size: 18px 18px;
+  background-color: transparent;
 }
-.diagram .dworld { position:relative; }
 .diagram .dworld > svg { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
 .diagram .dworld > svg path.wire { fill:none; stroke:var(--line-2); stroke-width:2; }
 .diagram .dworld > svg path.wire.on { stroke:var(--ok); }
@@ -1203,7 +1208,47 @@ function machPanel(s) {
 }
 
 
-// ----- Fluxograma (canvas tipo n8n) -----
+// ----- Fluxograma (canvas tipo n8n) — zoom/pan -----
+const DVIEW = { z: 1, x: 24, y: 16 };
+const DZ_MIN = 0.25, DZ_MAX = 2.5;
+let dPan = null;
+function applyDiagramView() {
+  const world = holder.querySelector(".dworld");
+  if (!world) return;
+  world.style.transform = `translate(${DVIEW.x}px, ${DVIEW.y}px) scale(${DVIEW.z})`;
+  const pct = holder.querySelector("[data-dz-pct]");
+  if (pct) pct.textContent = Math.round(DVIEW.z * 100) + "%";
+}
+function diagramLocalPoint(canvas, clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = rect.width ? canvas.clientWidth / rect.width : 1;
+  const sy = rect.height ? canvas.clientHeight / rect.height : 1;
+  return { x: (clientX - rect.left) * sx, y: (clientY - rect.top) * sy };
+}
+function diagramZoomAt(canvas, lx, ly, nextZ) {
+  const z0 = DVIEW.z;
+  const z = Math.min(DZ_MAX, Math.max(DZ_MIN, nextZ));
+  if (Math.abs(z - z0) < 1e-6) return;
+  const wx = (lx - DVIEW.x) / z0;
+  const wy = (ly - DVIEW.y) / z0;
+  DVIEW.z = z;
+  DVIEW.x = lx - wx * z;
+  DVIEW.y = ly - wy * z;
+  applyDiagramView();
+}
+function diagramFit() {
+  const canvas = holder.querySelector(".dcanvas");
+  const world = holder.querySelector(".dworld");
+  if (!canvas || !world) return;
+  const W = parseFloat(world.style.width) || world.offsetWidth || 720;
+  const H = parseFloat(world.style.height) || world.offsetHeight || 420;
+  const pad = 56;
+  const z = Math.min(1.15, (canvas.clientWidth - pad) / W, (canvas.clientHeight - pad) / H);
+  DVIEW.z = Math.max(DZ_MIN, Math.min(DZ_MAX, z));
+  DVIEW.x = (canvas.clientWidth - W * DVIEW.z) / 2;
+  DVIEW.y = Math.max(12, (canvas.clientHeight - H * DVIEW.z) / 2);
+  applyDiagramView();
+}
 function diagram(s) {
   const rows = ganttRows(s.plan);
   const { layout } = flowLayout(s.plan);
@@ -1268,10 +1313,16 @@ function diagram(s) {
       <span class="port in" aria-hidden="true"></span><span class="port out" aria-hidden="true"></span>
     </div>`;
   }).join("");
-  const sticky = `<div class="dsticky" style="left:16px;top:16px"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Fluxograma · canvas tipo n8n. Portas à esquerda (entrada) e à direita (saída). Paralelos na mesma coluna.</div>`;
+  const sticky = `<div class="dsticky" style="left:16px;top:16px"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Scroll = zoom · arrastar o fundo = pan. Portas à esquerda (entrada) e à direita (saída).</div>`;
   return `<div class="diagram">${runbarHtml(s)}
     <div class="dtoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon("waypoints")} Fluxograma</span>
-      <div class="legend"><span>nó = etapa</span><span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div></div>
+      <div class="legend"><span>nó = etapa</span><span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div>
+      <div class="dz" role="group" aria-label="Zoom">
+        <button type="button" class="ib" data-act="dzoom-out" title="Zoom out" aria-label="Zoom out">${icon("minus")}</button>
+        <span class="pct" data-dz-pct>${Math.round(DVIEW.z * 100)}%</span>
+        <button type="button" class="ib" data-act="dzoom-in" title="Zoom in" aria-label="Zoom in">${icon("plus")}</button>
+        <button type="button" class="ib" data-act="dzoom-fit" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
+      </div></div>
     <div class="dcanvas"><div class="dworld" style="width:${W}px;height:${H}px">
       <svg width="${W}" height="${H}">${wires}</svg>${sticky}${nodes}
     </div></div></div>`;
@@ -1465,7 +1516,7 @@ const FLOWS = [
     desc: "Mesmo desenho de barras do Gantt, sem calendário nem dias: eixo por ordem (passo). Filhos com a mesma largura; sequencial e paralelo. Modo Estado (FOP) liga saídas a entradas e exporta código. Máquina se programa aqui.",
     steps: [["T-32", "Flow · ordem"], ["T-33", "Programar máquina"], ["T-34", "Estado (FOP)"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
-    desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. A mesma unidade do plano, sem calendário.",
+    desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. Zoom com scroll e pan arrastando o fundo.",
     steps: [["T-36", "Fluxograma"]] },
   { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
     desc: "A floresta de atividades fora do eixo do tempo: várias raízes, responsáveis em cada nó, criar filha, desaninhar e excluir subárvore. Nó de máquina abre o procedimento ali mesmo.",
@@ -1492,7 +1543,7 @@ const SCREENS = {
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15", fm: "ordem" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
   "T-34": { s: { v: "flow", fm: "fop" }, name: "Estado (FOP)", us: ["US-12", "US-19"], notes: "No Flow, o modo Estado liga saídas a entradas (IA → IA inclusive). Seleção, repetição e paralelo aparecem no roteiro. O painel valida: ciclo bloqueia, saída órfã avisa, contexto incompleto impede a execução. Camadas mostram o que é substituível." },
   "T-35": { s: { v: "flow", fm: "fop", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
-  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Fios em curva ligam a sequência; paralelos ficam na mesma coluna. Clique no nó abre o detalhe da mesma unidade." },
+  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com uma raiz por pasta, da esquerda para a direita. Cada nó mostra responsável, estado e quantos descendentes tem. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -1593,15 +1644,16 @@ function fit() {
   holder.dataset.scale = s;
 }
 function paint(keepScroll = true) {
-  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .dcanvas, .tree, .cat, .side-b").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
+  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
-  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .dcanvas, .tree, .cat, .side-b").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
   const t = tFor(cur); curT = t; const s = SCREENS[t];
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
-    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis</div>`;
+    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis${cur.v === "diagram" ? "<br><b>Scroll</b> zoom no Fluxograma · arrastar fundo = pan" : ""}</div>`;
   lucide.createIcons();
   fit();
+  applyDiagramView();
   const f = holder.querySelector(cur.focusQ ? "[data-q]" : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
   const fl = holder.querySelector(".flash, .node.sel"); if (fl && cur.flash) fl.scrollIntoView({ block: "nearest", inline: "nearest" });
   cur.flash = null;
@@ -1724,6 +1776,9 @@ const ACT = {
   unnest: t => { const u = $u(t.dataset.id), p = $u(u.parent); u.parent = p.parent; toast(`“${u.title}” saiu de “${p.title}”`, "corner-left-up"); },
   tproc: t => { cur.tnode = t.dataset.id; cur.sel = t.dataset.id; unset("drawer", "tnew"); },
   "close-proc": () => unset("tnode"),
+  "dzoom-in": () => { const c = holder.querySelector(".dcanvas"); if (c) diagramZoomAt(c, c.clientWidth / 2, c.clientHeight / 2, DVIEW.z * 1.15); return false; },
+  "dzoom-out": () => { const c = holder.querySelector(".dcanvas"); if (c) diagramZoomAt(c, c.clientWidth / 2, c.clientHeight / 2, DVIEW.z / 1.15); return false; },
+  "dzoom-fit": () => { diagramFit(); return false; },
 };
 function pasteInto(targetId) {
   if (!CLIP) return;
@@ -1749,6 +1804,45 @@ function runMachine(u) {
     if (i === lines.length - 1 && !l.includes("Contexto")) { u.st = "ok"; toast(`${u.title}: concluída`); }
   }, 250 + i * 380));
 }
+
+holder.addEventListener("wheel", e => {
+  const canvas = e.target.closest(".dcanvas");
+  if (!canvas || !player.classList.contains("open") || cur?.v !== "diagram") return;
+  e.preventDefault();
+  e.stopPropagation();
+  const { x, y } = diagramLocalPoint(canvas, e.clientX, e.clientY);
+  const step = e.ctrlKey || e.metaKey ? 1.08 : 1.12;
+  const factor = e.deltaY < 0 ? step : 1 / step;
+  diagramZoomAt(canvas, x, y, DVIEW.z * factor);
+}, { passive: false });
+holder.addEventListener("pointerdown", e => {
+  const canvas = e.target.closest(".dcanvas");
+  if (!canvas || cur?.v !== "diagram") return;
+  if (e.target.closest(".dnode, button, a, input, select, textarea, .dz")) return;
+  if (e.button !== 0 && e.button !== 1) return;
+  dPan = { id: e.pointerId, x: e.clientX, y: e.clientY, ox: DVIEW.x, oy: DVIEW.y };
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  canvas.classList.add("panning");
+  e.preventDefault();
+});
+holder.addEventListener("pointermove", e => {
+  if (!dPan || e.pointerId !== dPan.id) return;
+  const canvas = holder.querySelector(".dcanvas");
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const sx = rect.width ? canvas.clientWidth / rect.width : 1;
+  const sy = rect.height ? canvas.clientHeight / rect.height : 1;
+  DVIEW.x = dPan.ox + (e.clientX - dPan.x) * sx;
+  DVIEW.y = dPan.oy + (e.clientY - dPan.y) * sy;
+  applyDiagramView();
+});
+const endDPan = e => {
+  if (!dPan || (e.pointerId != null && e.pointerId !== dPan.id)) return;
+  dPan = null;
+  holder.querySelector(".dcanvas")?.classList.remove("panning");
+};
+holder.addEventListener("pointerup", endDPan);
+holder.addEventListener("pointercancel", endDPan);
 
 holder.addEventListener("click", e => {
   const t = e.target.closest("[data-act]");

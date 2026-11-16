@@ -26,3 +26,11 @@ Causa: `const FLOWS = [ … ];` fechado como `};` → `SyntaxError` e o script p
 **Antes → depois:** `};` após o último fluxo → `];`.
 
 **Voltar:** restaurar o `index.html` do commit anterior em `/opt/plans` (ou republicar o artefato antigo).
+
+## Fluxograma · zoom
+
+No canvas (T-36): **scroll** = zoom in/out no cursor; **arrastar o fundo** = pan; botões `−` / `%` / `+` e ajustar à tela. Estado em `DVIEW` (`plans/prototipo/index.html`).
+
+**Antes → depois:** `.dcanvas` só com `overflow:auto` (sem zoom) → transform em `.dworld` + wheel/pan.
+
+**Voltar:** remover `DVIEW` / listeners de wheel-pan e restaurar `overflow:auto` no `.dcanvas`.

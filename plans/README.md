@@ -19,7 +19,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, o plano usa **calendário** (início/fim por dia). No **Flow**, o mesmo desenho de barras trabalha só por **ordem** (passo): sem dia nem duração em datas; filhos com a mesma largura; sequencial e paralelo. O modo Estado (FOP) no Flow liga **dados** (entradas/saídas) e **funções** (procedimentos) — compiláveis via FOP-IR. Em cadeias sequenciais, a **saída** de uma etapa alimenta a **entrada** da seguinte — inclusive entre execuções de IA.
+No **Gantt**, o plano usa **calendário** (início/fim por dia). No **Flow**, o mesmo desenho de barras trabalha só por **ordem** (passo): sem dia nem duração em datas; filhos com a mesma largura; sequencial e paralelo. O **Fluxograma** é canvas tipo n8n com **zoom no scroll** e pan no fundo. O modo Estado (FOP) no Flow liga **dados** (entradas/saídas) e **funções** (procedimentos) — compiláveis via FOP-IR. Em cadeias sequenciais, a **saída** de uma etapa alimenta a **entrada** da seguinte — inclusive entre execuções de IA.
 
 ## Problema
 

@@ -29,8 +29,8 @@ await connectByLinkedInUrl({ page, url: "…" });
 | Opt AVD | Opt CDP | Default |
 |---------|---------|---------|
 | `serial` | `page` / `cdpId` / `cdpUrl` (`CDP_ID` / `CDP_URL`) | — |
-| `closeApp` | `closeBrowser` (mata Chrome) / `keepBrowser` | **mata** o Chrome no fim (`stopCdp`) se a sessão foi criada aqui; `page` passada (nested) não mata |
-| `closePage` | legado | ignorado no lifecycle; use `keepBrowser: true` ou `CDP_KEEP_BROWSER=1` p/ deixar aberto |
+| `closeApp` | `closeBrowser` / `keepBrowser` | **default: Chrome fica aberto**; fecha só a aba (`closeTab` + standby `about:blank`). Nested (`page`) não fecha. Matar: `closeBrowser: true` / `keepBrowser: false` / `CDP_CLOSE_BROWSER=1` / `CDP_KEEP_BROWSER=0` |
+| `closePage` | legado | lifecycle já fecha a aba; não precisa setar |
 | `notifyApi`, `agentId`, `dryRun`, `outDir` | iguais | iguais |
 
 Retornos (`ok`, `status`, `steps`, `notify`/`db`, …) iguais ao AVD.
@@ -63,7 +63,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
 ## Antes → depois
 
 - **Debug overlay:** workers e `human-cdp` **só** injetam overlay com `debug: true` explícito; omitido/`false` → sem script de UI (ToS LinkedIn: não alterar aparência). `connectCdp` não herda `meta.debug`. Rollback: herdar meta / `debug: opts.debug` em [`session.js`](session.js) + `registry.mjs`.
-- **Lifecycle Chrome:** `withLinkedInPage` só fechava o WebSocket → Chrome ficava logado na tela. Agora **provisiona** (`connectCdp`/`startCdp` se down) e **mata** (`stopCdp`) no `finally`. Escape: `keepBrowser: true` / `closeBrowser: false` / `CDP_KEEP_BROWSER=1`. Nested (`page` já aberta, ex. unread→chat) não mata. Rollback: `keepBrowser: true` ou reverta o `finally` com `stopCdp` em [`session.js`](session.js).
+- **Lifecycle Chrome:** antes **matava** o Chrome no `finally` (`stopCdp`) → cada job reabria e roubava foco. Agora **default = manter aberto**: `closeTab` (aba de trabalho) + standby `about:blank`; próximo job reusa a porta sem `startCdp`. Escape p/ matar: `closeBrowser: true` / `keepBrowser: false` / `CDP_CLOSE_BROWSER=1` / `CDP_KEEP_BROWSER=0`. Nested (`page`) não fecha aba. Rollback: `closeBrowser: true` ou recoloque `stopCdp` no `finally` de [`session.js`](session.js).
 - Só AVD (`serial` + uiautomator/OCR) → libs CDP com o mesmo contrato para workers web.
 - Scripts ad-hoc em `pocs/chrome-cdp/linkedin-*-cdp.mjs` (signup/setup) continuam; **ações de worker** passam por aqui.
 - **extract leads CDP:** abria cada `/in/` após o card → **só lista**: parse do HTML/texto do card (name, title, city, current/past, level, action, mutual, photoUrl/photoBase64, profileUrl); sem `goto` no perfil. **Paginação:** ~10/página (`page=1`, `page=2`, …) quando `n > 10`. Default `-n`/`EXTRACT_MAX_PROFILES` = **10** (1 página mapeada no CDP Matheus 2026-11-12). `POST /profiles` manda `agentId`+`profileUrl` de cara (API reserva conexão).

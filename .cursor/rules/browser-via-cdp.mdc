@@ -13,7 +13,7 @@ Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome co
 2. Registrar/consultar porta e perfil em [`screen-robot/pocs/android-studio/contas-facebook-chrome.csv`](screen-robot/pocs/android-studio/contas-facebook-chrome.csv)
 3. Controlar via `CDP_ID` / `CDP_URL=http://127.0.0.1:PORT` + preferir [`human-cdp`](screen-robot/pocs/chrome-cdp/human-cdp/README.md) (`click`/`type` com trajetória); senão scripts CDP / WebSocket em `/json/list`
 4. Se a porta já estiver em LISTEN, **reusar** — não abrir segundo Chrome no mesmo `user-data-dir`
-5. **Operações worker (`withLinkedInPage` / libs `src/lib/cdp/`):** provisionar no início e **matar o Chrome no fim** (`stopCdp`) — não deixar tela logada aberta. Escape: `keepBrowser: true` / `CDP_KEEP_BROWSER=1`. Sessão `page` já passada (nested) não mata
+5. **Operações worker (`withLinkedInPage` / libs `src/lib/cdp/`):** provisionar no início se down; no fim **fechar só a aba** (`closeTab` + standby `about:blank`) e **deixar o Chrome aberto** — evita reabrir/roubar foco. Escape p/ matar: `closeBrowser: true` / `CDP_CLOSE_BROWSER=1` / `CDP_KEEP_BROWSER=0`. Sessão `page` já passada (nested) não fecha aba nem mata
 6. Só usar outro browser se o usuário pedir **explicitamente** (ex.: Firefox Germano)
 
 ## Foco da tela (visível vs background)
@@ -33,9 +33,9 @@ Sempre que for abrir, navegar ou controlar um browser neste lab, use **Chrome co
 
 ```text
 ✅ connectCdp + click/type com Cursor na frente (sem activate)
-✅ withLinkedInPage → start se down + stopCdp no finally
+✅ withLinkedInPage → start se down + closeTab/standby (Chrome fica up)
 ✅ dump Tinder em background: setFocusEmulationEnabled
-❌ Deixar Chrome logado aberto após job CDP (sem keepBrowser)
+❌ stopCdp no finally do worker (reabre e rouba foco no próximo job)
 ❌ Page.bringToFront / Target.activateTarget / /json/new / osascript activate na lib
 ❌ cursor-ide-browser / browser_navigate MCP
 ❌ Chrome sem --remote-debugging-port

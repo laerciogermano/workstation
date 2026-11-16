@@ -9,7 +9,14 @@ export {
   moveAlong,
   pressRelease,
 } from './human.mjs';
-export { createCdpSession, pickPage, openPage, getJson } from './cdp.mjs';
+export {
+  createCdpSession,
+  pickPage,
+  openPage,
+  getJson,
+  ensureStandbyPage,
+  closePageTarget,
+} from './cdp.mjs';
 export {
   applyFingerprint,
   chromeArgsFromFingerprint,

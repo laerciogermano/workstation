@@ -145,3 +145,37 @@ export async function openPage(cdpBase, url) {
   }
   throw new Error(`aba ${targetId} não apareceu em /json/list`);
 }
+
+/**
+ * Garante ao menos uma aba além de `exceptTargetId` (standby about:blank).
+ * Evita o Chrome fechar ao matar a última aba do worker.
+ */
+export async function ensureStandbyPage(cdpBase, exceptTargetId = null) {
+  const list = await getJson(cdpBase, '/json/list');
+  const pages = (list || []).filter((t) => t.type === 'page');
+  const others = exceptTargetId
+    ? pages.filter(
+        (t) => t.id !== exceptTargetId && t.targetId !== exceptTargetId,
+      )
+    : pages;
+  if (others.length > 0) return others[0];
+  return openPage(cdpBase, 'about:blank');
+}
+
+/**
+ * Fecha uma aba via browser WS (`Target.closeTarget`) — sem elevar foco.
+ */
+export async function closePageTarget(cdpBase, targetId) {
+  if (!targetId) throw new Error('closePageTarget: targetId ausente');
+  const version = await getJson(cdpBase, '/json/version');
+  const browserWs = version?.webSocketDebuggerUrl;
+  if (!browserWs) throw new Error('sem browser WS em /json/version');
+
+  const browser = createCdpSession(browserWs);
+  await browser.ready;
+  try {
+    await browser.send('Target.closeTarget', { targetId });
+  } finally {
+    browser.close();
+  }
+}

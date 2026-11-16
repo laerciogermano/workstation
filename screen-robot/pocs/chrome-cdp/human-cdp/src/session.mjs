@@ -1,5 +1,7 @@
 import {
+  closePageTarget,
   createCdpSession,
+  ensureStandbyPage,
   getJson,
   openPage,
   pickPage,
@@ -65,6 +67,8 @@ export class HumanCdpSession {
     this.chromeApp = opts.chromeApp || 'Google Chrome';
     /** id do CDP (createCdp / connectCdp), ex. ometv-2 — usado no painel debug. */
     this._cdpId = opts.cdpId || null;
+    /** targetId da aba (/json/list id) — p/ closeTab. */
+    this._targetId = opts.targetId || null;
     const saved = cursorByCdp.get(cursorKey(opts.cdpUrl));
     this._cursor = saved ? { ...saved } : { x: 40, y: 40 };
     this._lastFocusAt = 0;
@@ -570,6 +574,33 @@ export class HumanCdpSession {
   close() {
     this._cdp.close();
   }
+
+  /**
+   * Fecha a aba atual (Target.closeTarget). Antes, garante standby about:blank
+   * para o Chrome não encerrar. Depois desconecta o WS da sessão.
+   * @param {{ ensureStandby?: boolean }} [opts]
+   */
+  async closeTab({ ensureStandby = true } = {}) {
+    let targetId = this._targetId || null;
+    if (!targetId) {
+      try {
+        const info = await this.send('Target.getTargetInfo');
+        targetId = info?.targetInfo?.targetId || null;
+      } catch {
+        /* WS já morto */
+      }
+    }
+    try {
+      if (ensureStandby && this.cdpUrl) {
+        await ensureStandbyPage(this.cdpUrl, targetId);
+      }
+      if (targetId && this.cdpUrl) {
+        await closePageTarget(this.cdpUrl, targetId);
+      }
+    } finally {
+      this.close();
+    }
+  }
 }
 
 /**
@@ -596,6 +627,7 @@ export async function connect(opts = {}) {
     chromeApp: opts.chromeApp,
     debug: opts.debug,
     cdpId: opts.cdpId,
+    targetId: page.id || page.targetId || null,
   });
   await session.enableFocusEmulation();
   if (opts.url && !opts.newTab) {

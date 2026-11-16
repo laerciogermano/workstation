@@ -109,11 +109,11 @@ listCdps(); // pastas em ~/chrome-profiles + porta se Chrome estiver no ar
 createCdp({ id: 'meu-perfil', name: 'Meu Perfil', port: 9240 });
 const page = await connectCdp('meu-perfil'); // sobe se down
 page.close();
-await stopCdp('meu-perfil'); // workers: withLinkedInPage mata no finally
+await stopCdp('meu-perfil'); // só se quiser matar o processo
 // removeCdp('meu-perfil') // default não apaga a pasta do perfil
 ```
 
-**Workers LinkedIn (`src/lib/cdp/session.js`):** cada operação sobe o Chrome e mata no fim (`stopCdp`) — sem tela logada ociosa. `getCdp` também casa `preferredPort` (porta na meta mesmo com status down). Escape: `CDP_KEEP_BROWSER=1`.
+**Workers LinkedIn (`src/lib/cdp/session.js`):** sobe o Chrome se down; no fim **fecha só a aba** (`page.closeTab` + standby) e **deixa o browser aberto** — evita reabrir/roubar foco. `getCdp` também casa `preferredPort`. Matar: `CDP_CLOSE_BROWSER=1` / `closeBrowser: true`.
 
 ### Fingerprint por CDP
 

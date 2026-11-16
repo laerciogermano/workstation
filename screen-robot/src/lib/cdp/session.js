@@ -9,9 +9,11 @@
  * Espelho AVD: `serial` → `page` | `cdpId` | `cdpUrl`.
  *
  * Lifecycle (default): sobe o Chrome se estiver down (`connectCdp`/`startCdp`)
- * e **mata o processo** no fim (`stopCdp`) — não deixa a tela logada aberta.
- * Escape: `keepBrowser: true` | `closeBrowser: false` | `CDP_KEEP_BROWSER=1`.
- * Sessão já passada (`page`) → não mata (nested, ex.: unread → profile chat).
+ * e no fim **só fecha a aba** (`closeTab` + standby about:blank) — **não** mata
+ * o processo. Chrome fica em standby atrás (sem reabrir/roubar foco no próximo job).
+ * Escape p/ matar: `closeBrowser: true` | `keepBrowser: false` |
+ * `CDP_CLOSE_BROWSER=1` | `CDP_KEEP_BROWSER=0`.
+ * Sessão já passada (`page`) → não fecha aba nem mata (nested).
  *
  * Debug overlay: **sempre off** nos workers (`debug: false` no connect) —
  * ignora `opts.debug` e grava `meta.debug=false` via connectCdp.
@@ -61,11 +63,15 @@ async function resolveCdpId(opts = {}) {
   return byPreferred?.id || null;
 }
 
+/** Default: manter Chrome aberto. Só mata com opt/env explícito. */
 function shouldKeepBrowser(opts = {}) {
-  if (opts.keepBrowser === true) return true;
-  if (opts.closeBrowser === false) return true;
-  const env = String(process.env.CDP_KEEP_BROWSER || "").trim();
-  return env === "1" || /^true$/i.test(env);
+  if (opts.closeBrowser === true) return false;
+  if (opts.keepBrowser === false) return false;
+  const closeEnv = String(process.env.CDP_CLOSE_BROWSER || "").trim();
+  if (closeEnv === "1" || /^true$/i.test(closeEnv)) return false;
+  const keepEnv = String(process.env.CDP_KEEP_BROWSER || "").trim();
+  if (keepEnv === "0" || /^false$/i.test(keepEnv)) return false;
+  return true;
 }
 
 /**
@@ -118,8 +124,8 @@ export async function resolveLinkedInPage(opts = {}) {
 }
 
 /**
- * Abre sessão (sobe Chrome se preciso), roda `fn(page)`, desconecta o WS e
- * **mata o Chrome** se a sessão foi criada aqui (default).
+ * Abre sessão (sobe Chrome se preciso), roda `fn(page)`, fecha a aba
+ * (standby) e desconecta o WS. Chrome permanece up por default.
  * @template T
  * @param {object} opts
  * @param {(page: object) => Promise<T>} fn
@@ -133,9 +139,17 @@ export async function withLinkedInPage(opts, fn) {
   } finally {
     if (owned) {
       try {
-        page.close();
+        if (typeof page.closeTab === "function") {
+          await page.closeTab({ ensureStandby: true });
+        } else {
+          page.close();
+        }
       } catch {
-        /* ignore */
+        try {
+          page.close();
+        } catch {
+          /* ignore */
+        }
       }
       if (!keepBrowser && cdpId) {
         try {

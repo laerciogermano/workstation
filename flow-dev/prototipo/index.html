@@ -569,7 +569,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
 .fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: var(--paper); border: 1.5px solid var(--t-ia); } /* abstrata = borda */
 .fav svg { width: 12px; height: 12px; }
-.fav.maquina { background: var(--t-maquina); border-color: var(--t-maquina); color: #fff; } /* concreta = cheia */
+.fav.maquina { background: var(--brand, var(--t-maquina)); border-color: var(--brand, var(--t-maquina)); color: #fff; } /* concreta = cheia · Node verde */
+.fav.ia { color: var(--brand, var(--t-ia)); border-color: var(--brand, var(--t-ia)); }
 .fav.pessoa { color: var(--t-pessoa); border-color: var(--t-pessoa); }
 .resp-pick { position: relative; display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
 .resp-pick select { position: absolute; inset: 0; opacity: 0; width: 100%; max-width: none; }
@@ -1138,10 +1139,10 @@ function ensureLayers() {
 }
 // Modelos = as IAs (Claude, GPT…). Agentes = “pessoas” de IA com nome, um modelo e um prompt pronto
 const MODELS = [
-  { id: "opus", name: "Claude Opus 5.5", api: "claude-opus-5-5", vendor: "Anthropic" },
-  { id: "sonnet", name: "Claude Sonnet 5.5", api: "claude-sonnet-5-5", vendor: "Anthropic" },
-  { id: "haiku", name: "Claude Haiku 5.5", api: "claude-haiku-5-5", vendor: "Anthropic" },
-  { id: "gpt", name: "GPT", api: "gpt", vendor: "OpenAI" },
+  { id: "opus", name: "Claude Opus 5.5", api: "claude-opus-5-5", vendor: "Anthropic", cor: "#D97757" },
+  { id: "sonnet", name: "Claude Sonnet 5.5", api: "claude-sonnet-5-5", vendor: "Anthropic", cor: "#D97757" },
+  { id: "haiku", name: "Claude Haiku 5.5", api: "claude-haiku-5-5", vendor: "Anthropic", cor: "#D97757" },
+  { id: "gpt", name: "GPT", api: "gpt", vendor: "OpenAI", cor: "#10A37F" },
 ];
 const modelOf = id => MODELS.find(m => m.id === id);
 const AGENT_CFG = {
@@ -1805,12 +1806,15 @@ function ring(p, c, st) {
 function respPick(u) {
   const r = agent(u.resp);
   const opts = Object.keys(TYPES).map(t => `<optgroup label="${TYPES[t].n}">${CAT.filter(c => c.type === t).map(c => `<option value="${c.id}"${u.resp === c.id ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</optgroup>`).join("");
-  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}">${icon(TYPES[r.type].ic)}</span>` : `<span class="fav none" title="Adicionar responsável">${icon("plus")}</span>`}${r ? `<span class="rp-n">${esc(r.name)}</span>` : ""}<select data-resp="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Selecionar responsável (agente, biblioteca ou pessoa)"><option value=""${r ? "" : " selected"}>Selecionar…</option>${opts}</select></span>`;
+  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}"${brandSt(r)}>${icon(TYPES[r.type].ic)}</span>` : `<span class="fav none" title="Adicionar responsável">${icon("plus")}</span>`}${r ? `<span class="rp-n">${esc(r.name)}</span>` : ""}<select data-resp="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Selecionar responsável (agente, biblioteca ou pessoa)"><option value=""${r ? "" : " selected"}>Selecionar…</option>${opts}</select></span>`;
 }
+// cor do responsável: Node = verde da marca; agente = cor do modelo (Claude laranja, GPT verde OpenAI); pessoa = azul
+const brandOf = a => !a ? "" : a.type === "maquina" ? "#5FA04E" : a.type === "ia" ? (modelOf(AGENT_CFG[a.id]?.model)?.cor || "") : "";
+const brandSt = a => { const c = brandOf(a); return c ? ` style="--brand:${c}"` : ""; };
 function avatar(id) {
   const a = agent(id);
   if (!a) return `<span class="fav none" title="Sem agente">${icon("plus")}</span><span class="fav-n" style="color:var(--muted)">sem agente</span>`;
-  return `<span class="fav ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}">${icon(TYPES[a.type].ic)}</span><span class="fav-n">${esc(a.name)}</span>`;
+  return `<span class="fav ${a.type}"${brandSt(a)} title="${TYPES[a.type].one}: ${esc(a.name)}">${icon(TYPES[a.type].ic)}</span><span class="fav-n">${esc(a.name)}</span>`;
 }
 function flowTags(u) {
   const t = [];

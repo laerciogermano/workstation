@@ -37,6 +37,14 @@ Card **CRM** no hub (`img/crm.jpg`, `url: null` = em breve). Visão local: [`../
 
 **Voltar:** remover o objeto CRM de `site/index.html` e `site/img/crm.jpg`; republicar.
 
+## Card Gestão de CDPs
+
+Card **Gestão de CDPs** no hub (`img/gestao-cdps.jpg`, `url: null` = em breve). Visão local: [`../../gestao-cdps/README.md`](../../gestao-cdps/README.md).
+
+**Antes → depois:** sem card → card Gestão de CDPs “em breve”.
+
+**Voltar:** remover o objeto Gestão de CDPs de `site/index.html` e `site/img/gestao-cdps.jpg`; republicar.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `centralizador`

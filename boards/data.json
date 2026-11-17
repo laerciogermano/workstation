@@ -1487,5 +1487,61 @@
         "status": "todo"
       }
     ]
+  },
+  "gestao-cdps": {
+    "name": "Gestão de CDPs",
+    "blurb": "Console gráfico de Human CDPs",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "gestao-cdps-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "gestao-cdps-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "Interface gráfica sobre human-cdp: criar/editar/remover CDPs, executar/parar e controlar por tela (mouse e teclado) com reprodução humana no Chrome.",
+    "context": "CRUD e operação de CDPs hoje passam por código/CLI da lib human-cdp. Falta um console gráfico para gerir perfis (formulário de criação), start/stop e dirigir a sessão pela tela — com cada movimento, clique e dígito reproduzidos no CDP como humano.",
+    "objective": "Ser o console gráfico padrão de CDPs humanos: CRUD com formulário, executar/parar, e controle remoto por tela em que mouse e teclado são espelhados via human-cdp (foco + trajetória + ritmo).",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo / UI",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
   }
 }

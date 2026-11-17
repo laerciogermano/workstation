@@ -26,7 +26,7 @@ import {
   ensureCaptureFile,
   stripFakeCameraArgs,
 } from './camera.mjs';
-import { restoreSelectedBeforeStart } from './backup.mjs';
+import { createSnapshot, restoreSelectedBeforeStart } from './snapshot.mjs';
 import {
   applyFingerprint,
   chromeArgsFromFingerprint,
@@ -330,6 +330,8 @@ export function createCdp(input) {
     createdAt: now,
     updatedAt: now,
   });
+  // Snapshot obrigatório da criação (ponto zero).
+  createSnapshot(id, { note: 'criação', select: true });
   return getCdp(id);
 }
 
@@ -410,10 +412,11 @@ export async function startCdp(id, { url, restore = true } = {}) {
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
   const port = row.port ?? row.preferredPort;
   if (port == null) throw new Error(`porta ausente na meta de ${row.id}`);
+
+  // Sempre parte do snapshot: se já estiver up, para antes de restaurar.
   const st = await statusCdp(row.id);
   if (st.status === 'up') {
-    ensureFingerprintKeeper(row.id);
-    return { ...st, already: true };
+    await stopCdp(row.id);
   }
 
   // Visão usa sessão CDP — para antes de mexer no perfil.

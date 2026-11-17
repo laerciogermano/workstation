@@ -98,11 +98,14 @@
         </div>
         <button type="button" class="secondary" id="gallery-close">Fechar</button>
       </div>
-      <div class="dlg-actions">
-        <input id="media-path" placeholder="/caminho/do/video.mp4" style="flex:2;min-width:200px" />
+      <div class="dlg-actions" style="align-items:center">
+        <label style="flex:2;min-width:200px">Arquivo
+          <input id="media-file" type="file" accept="video/*,.y4m,.mp4,.webm,.mov,.mkv,.mjpeg,.mjpg" />
+        </label>
         <input id="media-name" placeholder="nome (opcional)" style="flex:1;min-width:120px" />
         <button type="button" id="media-add">Adicionar</button>
       </div>
+      <p class="hint">Escolha o arquivo no seletor — a cópia vai para a pasta da galeria.</p>
       <div class="backup-list" id="media-list"></div>
     </div>
   </dialog>
@@ -143,11 +146,11 @@
       </div>
 
       <div class="block" id="backup-block" hidden>
-        <h3>Backups</h3>
-        <p class="hint" id="backup-paths">Pastas em disco — ao executar, o perfil atual é apagado e o backup selecionado é copiado.</p>
+        <h3>Snapshots</h3>
+        <p class="hint" id="backup-paths">Todo Executar apaga o perfil e restaura o snapshot selecionado (ponto fixo).</p>
         <div class="dlg-actions">
-          <input id="backup-note" placeholder="nota do backup" style="flex:1;min-width:160px" />
-          <button type="button" id="backup-create">Fazer backup</button>
+          <input id="backup-note" placeholder="nota do snapshot" style="flex:1;min-width:160px" />
+          <button type="button" id="backup-create">Criar snapshot</button>
         </div>
         <div class="backup-list" id="backup-list"></div>
       </div>
@@ -276,8 +279,8 @@
     function render() {
       const up = cdps.filter((c) => c.status === 'up').length;
       $('count').textContent = `${cdps.length} CDPs · ${up} up · ${cdps.length - up} down`;
-        if (defaults.backupsDir) {
-        $('paths').textContent = `mídia: ${defaults.mediaDir || ''} · backups: ${defaults.backupsDir} · view: ${defaults.viewRoot || ''}`;
+        if (defaults.snapshotsDir || defaults.mediaDir) {
+        $('paths').textContent = `mídia: ${defaults.mediaDir || ''} · snapshots: ${defaults.snapshotsDir || defaults.backupsDir || ''} · view: ${defaults.viewRoot || ''}`;
       }
       const root = $('list');
       if (!cdps.length) {
@@ -285,7 +288,7 @@
         return;
       }
       root.innerHTML = `
-        <div class="row head"><span>CDP</span><span>Status</span><span>Porta</span><span>Mídia / backup</span><span></span></div>
+        <div class="row head"><span>CDP</span><span>Status</span><span>Porta</span><span>Mídia / snapshot</span><span></span></div>
         ${cdps.map((c) => `
           <div class="row" data-id="${escapeHtml(c.id)}">
             <div>
@@ -294,7 +297,7 @@
             </div>
             <div><span class="badge ${c.status}">${c.status}</span></div>
             <div class="port">${c.displayPort ?? '—'}</div>
-            <div class="id">${escapeHtml(c.selectedMediaName || c.selectedMediaId || 'sem mídia')}${c.backupCount ? ` · ${c.backupCount} bk` : ''}</div>
+            <div class="id">${escapeHtml(c.selectedMediaName || c.selectedMediaId || 'sem mídia')}${c.snapshotCount ? ` · ${c.snapshotCount} snap` : ''}</div>
             <div class="row-actions">
               ${c.status === 'up'
                 ? `<button type="button" class="secondary" data-act="stop">Parar</button>
@@ -345,14 +348,15 @@
     }
 
     async function renderBackups(cdpId) {
-      const data = await api(`/api/cdps/${encodeURIComponent(cdpId)}/backups`);
-      $('backup-paths').textContent = `Pasta: ${data.backupsDir} — executar restaura o selecionado (apaga estado atual).`;
+      const data = await api(`/api/cdps/${encodeURIComponent(cdpId)}/snapshots`);
+      const snaps = data.snapshots || data.backups || [];
+      $('backup-paths').textContent = `Pasta: ${data.snapshotsDir || data.backupsDir} — Executar sempre restaura o selecionado.`;
       const box = $('backup-list');
-      if (!data.backups.length) {
-        box.innerHTML = '<div class="empty" style="padding:1rem">Nenhum backup. Faça o primeiro com o perfil já no estado desejado.</div>';
+      if (!snaps.length) {
+        box.innerHTML = '<div class="empty" style="padding:1rem">Nenhum snapshot (criação deveria ter gerado um).</div>';
         return;
       }
-      box.innerHTML = data.backups.map((b) => `
+      box.innerHTML = snaps.map((b) => `
         <div class="backup-item ${b.selected ? 'selected' : ''}" data-bid="${escapeHtml(b.id)}">
           <div>
             <p class="name" style="font-size:0.9rem">${escapeHtml((b.createdAt || b.id).replace('T',' ').slice(0,19))}${b.selected ? ' · selecionado' : ''}</p>
@@ -456,14 +460,14 @@
       try {
         setBusy(true);
         if (btn.dataset.bact === 'select') {
-          await api(`/api/cdps/${encodeURIComponent(id)}/backups/select`, {
-            method: 'POST', body: JSON.stringify({ backupId: bid }),
+          await api(`/api/cdps/${encodeURIComponent(id)}/snapshots/select`, {
+            method: 'POST', body: JSON.stringify({ snapshotId: bid }),
           });
-          flash(`backup selecionado: ${bid}`, 'ok');
+          flash(`snapshot selecionado: ${bid}`, 'ok');
         } else if (btn.dataset.bact === 'del') {
-          if (!confirm(`Apagar backup ${bid}?`)) return;
-          await api(`/api/cdps/${encodeURIComponent(id)}/backups/${encodeURIComponent(bid)}`, { method: 'DELETE' });
-          flash('backup removido', 'ok');
+          if (!confirm(`Apagar snapshot ${bid}?`)) return;
+          await api(`/api/cdps/${encodeURIComponent(id)}/snapshots/${encodeURIComponent(bid)}`, { method: 'DELETE' });
+          flash('snapshot removido', 'ok');
         }
         await renderBackups(id);
         await loadList({ quiet: true });
@@ -478,13 +482,13 @@
       const id = $('id').value.trim();
       try {
         setBusy(true);
-        flash('copiando pasta do CDP…');
-        await api(`/api/cdps/${encodeURIComponent(id)}/backups`, {
+        flash('criando snapshot (cópia da pasta)…');
+        await api(`/api/cdps/${encodeURIComponent(id)}/snapshots`, {
           method: 'POST',
-          body: JSON.stringify({ note: $('backup-note').value.trim() }),
+          body: JSON.stringify({ note: $('backup-note').value.trim(), select: true }),
         });
         $('backup-note').value = '';
-        flash('backup criado', 'ok');
+        flash('snapshot criado e selecionado', 'ok');
         await renderBackups(id);
         await loadList({ quiet: true });
       } catch (e) {
@@ -505,9 +509,9 @@
         if (act === 'control') return openControl(id);
         setBusy(true);
         if (act === 'start') {
-          flash(`executando ${id} (restaura backup selecionado)…`);
+          flash(`executando ${id} (restaura snapshot)…`);
           const out = await api(`/api/cdps/${encodeURIComponent(id)}/start`, { method: 'POST', body: '{}' });
-          flash(out.restored?.skipped ? `${id} up` : `${id} up · restaurado ${out.restored?.backupId || ''}`, 'ok');
+          flash(`${id} up · snapshot ${out.restored?.snapshotId || out.restored?.backupId || ''}`, 'ok');
         } else if (act === 'stop') {
           flash(`parando ${id}…`);
           await api(`/api/cdps/${encodeURIComponent(id)}/stop`, { method: 'POST', body: '{}' });
@@ -596,16 +600,27 @@
     });
     $('gallery-close').addEventListener('click', () => $('gallery').close());
     $('media-add').addEventListener('click', async () => {
+      const file = $('media-file').files?.[0];
+      if (!file) {
+        flash('escolha um arquivo no seletor', 'err');
+        return;
+      }
       try {
         setBusy(true);
-        await api('/api/media', {
+        flash('enviando arquivo…');
+        const name = $('media-name').value.trim();
+        const r = await fetch('/api/media/upload', {
           method: 'POST',
-          body: JSON.stringify({
-            path: $('media-path').value.trim(),
-            name: $('media-name').value.trim() || undefined,
-          }),
+          headers: {
+            'X-Filename': encodeURIComponent(file.name),
+            'X-Name': encodeURIComponent(name || ''),
+            'Content-Type': 'application/octet-stream',
+          },
+          body: file,
         });
-        $('media-path').value = '';
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || r.statusText);
+        $('media-file').value = '';
         $('media-name').value = '';
         flash('vídeo adicionado à galeria', 'ok');
         await renderGallery();

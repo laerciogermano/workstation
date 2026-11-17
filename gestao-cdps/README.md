@@ -160,7 +160,7 @@ cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
 - **Lista** de CDPs com status (**mais recente criado primeiro**)
 - **Criar / editar / remover** + fingerprint (opções da lib + Gerar)
 - **Galeria de mídias** em `~/chrome-cdp-media/` (mais recente primeiro); cada CDP escolhe qual vídeo executa
-- **Backups** em `~/chrome-cdp-backups/<id>/`; **Executar** restaura o backup selecionado
+- **Snapshots** em `~/chrome-cdp-snapshots/<id>/` (criação já gera um); **Executar** sempre restaura o selecionado (sem manter histórico da sessão)
 - **Controlar**: prints JPEG em `~/chrome-cdp-view/<id>/` + clique/type via human-cdp
 
 Código: [`../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/`](../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/).

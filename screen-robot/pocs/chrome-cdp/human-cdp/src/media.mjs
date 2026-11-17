@@ -19,6 +19,7 @@ import {
 } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, extname, join, resolve } from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 const MEDIA_DIR = join(homedir(), 'chrome-cdp-media');
 const PROFILES_DIR = join(homedir(), 'chrome-profiles');
@@ -124,6 +125,37 @@ export function addMedia(input = {}) {
   };
   writeJson(join(dir, 'meta.json'), meta);
   return { ...meta, exists: true, dir, bytes: statSync(dest).size };
+}
+
+/**
+ * Adiciona mídia a partir de buffer (upload do seletor de arquivo na UI).
+ * @param {{ buffer: Buffer, filename: string, name?: string, note?: string }} input
+ */
+export function addMediaFromUpload(input = {}) {
+  const filename = String(input.filename || 'video.bin').trim() || 'video.bin';
+  const ext = extname(filename).toLowerCase();
+  if (!VIDEO_EXTS.has(ext)) {
+    throw new Error(`extensão não suportada: ${ext || '(sem ext)'} — use ${[...VIDEO_EXTS].join(' ')}`);
+  }
+  const buf = input.buffer;
+  if (!Buffer.isBuffer(buf) || !buf.length) throw new Error('arquivo vazio');
+  const id = stampId();
+  const dir = join(MEDIA_DIR, id);
+  mkdirSync(dir, { recursive: true });
+  const safeBase = basename(filename).replace(/[^\w.\-()+ ]+/g, '_') || `video${ext}`;
+  const dest = join(dir, safeBase);
+  writeFileSync(dest, buf);
+  const meta = {
+    id,
+    name: String(input.name || safeBase).trim() || safeBase,
+    note: String(input.note || '').trim(),
+    originalPath: `upload:${safeBase}`,
+    path: dest,
+    createdAt: new Date().toISOString(),
+    uploadId: randomUUID(),
+  };
+  writeJson(join(dir, 'meta.json'), meta);
+  return { ...meta, exists: true, dir, bytes: buf.length };
 }
 
 export function removeMedia(mediaId) {

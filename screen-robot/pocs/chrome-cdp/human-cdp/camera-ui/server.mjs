@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Gestão de CDPs (UI local):
- * lista + status + CRUD + fingerprint + backups + galeria de mídias + visão + câmera
+ * lista + status + CRUD + fingerprint + snapshots + galeria (file picker) + visão + câmera
  *
  *   npm run camera-ui
  *   # → http://127.0.0.1:18770/
@@ -24,22 +24,23 @@ import {
   clearCamera,
   listFingerprintOptions,
   generateFingerprint,
-  listBackups,
-  getSelectedBackup,
-  createBackup,
-  selectBackup,
-  removeBackup,
+  listSnapshots,
+  getSelectedSnapshot,
+  createSnapshot,
+  selectSnapshot,
+  removeSnapshot,
+  snapshotsDir,
   getViewConfig,
   setViewConfig,
   startView,
   stopView,
   readLatestFrame,
   clearViewFrames,
-  backupsDir,
   viewRoot,
   mediaDir,
   listMedia,
   addMedia,
+  addMediaFromUpload,
   removeMedia,
   getSelectedMedia,
   selectMediaForCdp,
@@ -93,6 +94,15 @@ function readBody(req) {
   });
 }
 
+function readRaw(req) {
+  return new Promise((resolveBody, reject) => {
+    const chunks = [];
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', () => resolveBody(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
 function serializeCdp(c, { full = false } = {}) {
   const cam = c.fingerprint
     ? {
@@ -100,8 +110,8 @@ function serializeCdp(c, { full = false } = {}) {
         video: c.fingerprint.cameraVideo || null,
       }
     : { label: null, video: null };
-  const selected = getSelectedBackup(c.id);
-  const backups = listBackups(c.id);
+  const selected = getSelectedSnapshot(c.id);
+  const snapshots = listSnapshots(c.id);
   const selectedMedia = getSelectedMedia(c.id);
   const row = {
     id: c.id,
@@ -117,7 +127,10 @@ function serializeCdp(c, { full = false } = {}) {
     hasFingerprint: !!c.fingerprint,
     label: cam.label,
     video: cam.video,
-    backupCount: backups.length,
+    snapshotCount: snapshots.length,
+    backupCount: snapshots.length,
+    selectedSnapshotId: selected?.id || null,
+    selectedSnapshotAt: selected?.createdAt || null,
     selectedBackupId: selected?.id || null,
     selectedBackupAt: selected?.createdAt || null,
     selectedMediaId: c.selectedMediaId || selectedMedia?.id || null,
@@ -127,7 +140,9 @@ function serializeCdp(c, { full = false } = {}) {
   };
   if (full) {
     row.fingerprint = c.fingerprint || null;
-    row.backups = backups;
+    row.snapshots = snapshots;
+    row.backups = snapshots;
+    row.selectedSnapshot = selected;
     row.selectedBackup = selected;
     row.selectedMedia = selectedMedia;
     row.view = getViewConfig(c.id);
@@ -140,7 +155,8 @@ function defaultsPayload() {
     video: DEFAULT_VIDEO,
     label: DEFAULT_LABEL,
     videoExists: existsSync(DEFAULT_VIDEO),
-    backupsDir: backupsDir(),
+    snapshotsDir: snapshotsDir(),
+    backupsDir: snapshotsDir(),
     viewRoot: viewRoot(),
     mediaDir: mediaDir(),
   };
@@ -169,6 +185,14 @@ const server = createServer(async (req, res) => {
         note: body.note,
         id: body.id,
       });
+      return json(res, 201, { media: row, list: listMedia() });
+    }
+    if (req.method === 'POST' && path === '/api/media/upload') {
+      const filename = decodeURIComponent(String(req.headers['x-filename'] || 'video.bin'));
+      const name = decodeURIComponent(String(req.headers['x-name'] || ''));
+      const note = decodeURIComponent(String(req.headers['x-note'] || ''));
+      const buffer = await readRaw(req);
+      const row = addMediaFromUpload({ buffer, filename, name: name || undefined, note });
       return json(res, 201, { media: row, list: listMedia() });
     }
     if (req.method === 'DELETE' && path.startsWith('/api/media/')) {
@@ -236,7 +260,7 @@ const server = createServer(async (req, res) => {
     }
 
     const cdpExtra = path.match(
-      /^\/api\/cdps\/([^/]+)\/(start|stop|backups|view|input|media)(?:\/([^/]+))?$/,
+      /^\/api\/cdps\/([^/]+)\/(start|stop|backups|snapshots|view|input|media)(?:\/([^/]+))?$/,
     );
     if (cdpExtra) {
       const id = decodeURIComponent(cdpExtra[1]);
@@ -257,36 +281,46 @@ const server = createServer(async (req, res) => {
         return json(res, 200, serializeCdp(getCdp(id) || { id, name: id, status: 'down' }));
       }
 
-      if (section === 'backups') {
+      if (section === 'backups' || section === 'snapshots') {
         if (req.method === 'GET' && !sub) {
           return json(res, 200, {
             cdpId: id,
-            backupsDir: joinSafe(backupsDir(), id),
-            selected: getSelectedBackup(id),
-            backups: listBackups(id),
+            snapshotsDir: joinSafe(snapshotsDir(), id),
+            backupsDir: joinSafe(snapshotsDir(), id),
+            selected: getSelectedSnapshot(id),
+            snapshots: listSnapshots(id),
+            backups: listSnapshots(id),
           });
         }
         if (req.method === 'POST' && !sub) {
           const body = await readBody(req).catch(() => ({}));
-          const row = createBackup(id, { note: body.note });
+          const row = createSnapshot(id, { note: body.note, select: body.select !== false });
           return json(res, 201, {
+            snapshot: row,
             backup: row,
-            selected: getSelectedBackup(id),
-            backups: listBackups(id),
+            selected: getSelectedSnapshot(id),
+            snapshots: listSnapshots(id),
+            backups: listSnapshots(id),
           });
         }
         if (req.method === 'POST' && sub === 'select') {
           const body = await readBody(req);
-          if (!body.backupId) return json(res, 400, { error: 'backupId obrigatório' });
-          const selected = selectBackup(id, body.backupId);
-          return json(res, 200, { selected, backups: listBackups(id) });
+          const sid = body.snapshotId || body.backupId;
+          if (!sid) return json(res, 400, { error: 'snapshotId obrigatório' });
+          const selected = selectSnapshot(id, sid);
+          return json(res, 200, {
+            selected,
+            snapshots: listSnapshots(id),
+            backups: listSnapshots(id),
+          });
         }
         if (req.method === 'DELETE' && sub) {
-          removeBackup(id, sub);
+          removeSnapshot(id, sub);
           return json(res, 200, {
             ok: true,
-            selected: getSelectedBackup(id),
-            backups: listBackups(id),
+            selected: getSelectedSnapshot(id),
+            snapshots: listSnapshots(id),
+            backups: listSnapshots(id),
           });
         }
       }
@@ -419,6 +453,7 @@ function joinSafe(a, b) {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`gestão de CDPs → http://127.0.0.1:${PORT}/`);
-  console.log(`backups → ${backupsDir()}`);
-  console.log(`view    → ${viewRoot()}`);
+  console.log(`snapshots → ${snapshotsDir()}`);
+  console.log(`view      → ${viewRoot()}`);
+  console.log(`media     → ${mediaDir()}`);
 });

@@ -78,11 +78,20 @@ export {
   listMedia,
   getMedia,
   addMedia,
+  addMediaFromUpload,
   removeMedia,
   getSelectedMedia,
   selectMediaForCdp,
 } from './media.mjs';
 export {
+  snapshotsDir,
+  listSnapshots,
+  getSelectedSnapshot,
+  createSnapshot,
+  selectSnapshot,
+  removeSnapshot,
+  restoreSnapshot,
+  restoreSelectedBeforeStart,
   backupsDir,
   listBackups,
   getSelectedBackup,
@@ -90,8 +99,7 @@ export {
   selectBackup,
   removeBackup,
   restoreBackup,
-  restoreSelectedBeforeStart,
-} from './backup.mjs';
+} from './snapshot.mjs';
 export {
   viewRoot,
   getViewConfig,

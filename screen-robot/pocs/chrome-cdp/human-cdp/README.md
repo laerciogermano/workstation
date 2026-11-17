@@ -145,7 +145,7 @@ npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs
 npm run test:camera
 ```
 
-**UI (`http://127.0.0.1:18770/`):** lista de CDPs (**mais recente primeiro**); criar/editar/remover; **fingerprint** (Gerar); **galeria de mídias** (`~/chrome-cdp-media/`, mais recente primeiro) e seleção por CDP; **backups**; **executar** restaura backup selecionado; **controlar** = prints JPEG em loop. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+**UI (`http://127.0.0.1:18770/`):** lista de CDPs (**mais recente primeiro**); criar/editar/remover; **fingerprint** (Gerar); **galeria** com seletor de arquivo (`~/chrome-cdp-media/`); **snapshots** (`~/chrome-cdp-snapshots/` — criação já gera um; **Executar** sempre para → restaura snapshot → sobe); **controlar** = prints JPEG. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
 
 ### Galeria de mídias
 
@@ -173,24 +173,25 @@ generateFingerprint({ os: 'win10', locale: 'sp' });
 
 Catálogo em `src/fingerprint-catalog.mjs` (também usado por LinkedIn `createLinkedInCdp`).
 
-### Backups (só arquivos)
+### Snapshots (só arquivos)
 
 ```text
-~/chrome-cdp-backups/<cdpId>/
+~/chrome-cdp-snapshots/<cdpId>/
   selected.json
   <ISO-stamp>/
     meta.json
     profile/          ← cópia de ~/chrome-profiles/<cdpId>/
 ```
 
+`createCdp` já grava o snapshot **criação**. Todo `startCdp` **para** o Chrome se up, **apaga** o perfil e **copia** o snapshot selecionado (histórico/cache da sessão anterior não permanece).
+
 ```js
-import { createBackup, listBackups, selectBackup, startCdp } from './src/index.mjs';
-createBackup('meu-cdp', { note: 'após login' });
-selectBackup('meu-cdp', '2026-11-17T12-00-00Z');
-await startCdp('meu-cdp'); // apaga perfil atual → copia backup selecionado → sobe Chrome
+import { createSnapshot, selectSnapshot, startCdp } from './src/index.mjs';
+createSnapshot('meu-cdp', { note: 'após login', select: true });
+await startCdp('meu-cdp');
 ```
 
-Sem backups: start normal. Com backups e sem seleção: erro. Meta `.human-cdp.json` atual é preservada no restore.
+Meta `.human-cdp.json` atual é preservada no restore. Legado `~/chrome-cdp-backups/` ainda é lido.
 
 ### Visão / controle (prints)
 

@@ -12,7 +12,8 @@ import { spawnSync } from 'node:child_process';
 const __dir = dirname(fileURLToPath(import.meta.url));
 const CRED_PATH = resolve(__dir, '../../../../credenciais.md');
 const DEFAULT_DOMAIN = (process.env.MAIL_DOMAIN || 'brsupply.email').trim();
-const SSH_HOST = (process.env.MAIL_SSH_HOST || 'root@144.126.154.90').trim();
+// Contabo atual (Mailcow). Legado 144… offline — override: MAIL_SSH_HOST / MAIL_SSH_PASS.
+const SSH_HOST = (process.env.MAIL_SSH_HOST || 'root@185.250.37.82').trim();
 /** Teto do domínio em MiB — bem alto p/ não estourar mailbox_quota_left_exceeded. */
 const DOMAIN_MAX_QUOTA_MIB = String(
   process.env.MAIL_DOMAIN_MAX_QUOTA_MIB || '10485760',
@@ -31,9 +32,12 @@ function slugLocal(first, last) {
 function sshPass() {
   if (process.env.MAIL_SSH_PASS) return process.env.MAIL_SSH_PASS;
   if (!existsSync(CRED_PATH)) return '';
-  const m = readFileSync(CRED_PATH, 'utf8').match(
-    /`root@144\.126\.154\.90`\s*—\s*`([^`]+)`/,
-  );
+  const t = readFileSync(CRED_PATH, 'utf8');
+  const host = SSH_HOST.replace(/^root@/, '');
+  const m =
+    t.match(new RegExp('`root@' + host.replace(/\./g, '\\.') + '`\\s*—\\s*`([^`]+)`')) ||
+    t.match(/`root@185\.250\.37\.82`\s*—\s*`([^`]+)`/) ||
+    t.match(/`root@144\.126\.154\.90`\s*—\s*`([^`]+)`/);
   return m ? m[1] : '';
 }
 

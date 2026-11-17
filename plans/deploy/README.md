@@ -73,8 +73,8 @@ Flow no layout Gantt (`flowLayout` + `.funit`): **um** □ entrada e **um** □ 
 
 Mesmo padrão: `ZVIEWS[key]` + `.zcanvas` / `.zworld` + toolbar `zzoom-*`. Scroll = zoom no cursor; arrastar fundo = pan; − / % / + / ajustar.
 
-No Fluxograma, sticky do plano fica na faixa superior (`STICKY_*`); nós começam em `PY` abaixo — sem overlap.
+Fluxograma: sem sticky “Onboarding Acme”, sem select de plano e sem “Executar via IAs” na barra.
 
-**Antes → depois:** só Fluxograma com zoom → as quatro visões; sticky por cima dos nós → sticky + fluxo separados.
+**Antes → depois:** só Fluxograma com zoom → as quatro visões; sticky/plan/run na barra → removidos do diagram.
 
-**Voltar:** `DVIEW` só no diagram; sticky em `top:16px` sem reservar `PY`.
+**Voltar:** `DVIEW` só no diagram; restaurar sticky + acts de plan/run no `bar()`.

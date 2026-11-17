@@ -976,10 +976,7 @@ function bar(s) {
       <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>
       <button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
   }
-  if (s.v === "diagram") {
-    acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
-      <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>`;
-  }
+  if (s.v === "diagram") acts = "";
   if (s.v === "tree") acts = `<button class="btn pri" data-act="tnew-root">${icon("plus")}Atividade</button>`;
   if (s.v === "estados") acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
     <button class="btn" data-act="view" data-v="gantt">${icon("chart-gantt")}Ver no Gantt</button>`;
@@ -1355,9 +1352,7 @@ function diagram(s) {
   const rows = ganttRows(s.plan);
   const { layout } = flowLayout(s.plan);
   const leaves = rows.filter(({ u }) => !kidsPlan(u.id).some(k => !k.arch && !isFolder(k)));
-  const NW = 220, NH = 78, GX = 88, GY = 28, PX = 56;
-  const STICKY_TOP = 16, STICKY_H = 78, STICKY_GAP = 24;
-  const PY = STICKY_TOP + STICKY_H + STICKY_GAP;
+  const NW = 220, NH = 78, GX = 88, GY = 28, PX = 56, PY = 48;
   // agrupa por passo
   const byStep = {};
   leaves.forEach(({ u }) => {
@@ -1377,7 +1372,7 @@ function diagram(s) {
     });
   });
   const maxX = steps.length ? PX + (steps.length - 1) * (NW + GX) + NW + PX : 400;
-  const H = Math.max(maxY + 48, PY + 200, 420), W = Math.max(maxX, 720);
+  const H = Math.max(maxY + PY, 420), W = Math.max(maxX, 720);
   const center = id => {
     const p = pos[id];
     return p ? { x: p.x + p.w / 2, y: p.y + p.h / 2, l: p.x, r: p.x + p.w, t: p.y, b: p.y + p.h } : null;
@@ -1416,7 +1411,6 @@ function diagram(s) {
       <span class="port in" aria-hidden="true"></span><span class="port out" aria-hidden="true"></span>
     </div>`;
   }).join("");
-  const sticky = `<div class="dsticky" style="left:${PX}px;top:${STICKY_TOP}px;height:${STICKY_H}px;box-sizing:border-box"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Scroll = zoom · arrastar o fundo = pan. Portas à esquerda (entrada) e à direita (saída).</div>`;
   return `<div class="diagram zview">${runbarHtml(s)}
     <div class="ztoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon("waypoints")} Fluxograma</span>
       <div class="legend"><span>nó = etapa</span><span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div>
@@ -1427,7 +1421,7 @@ function diagram(s) {
         <button type="button" class="ib" data-act="zzoom-fit" data-zv="diagram" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
       </div></div>
     <div class="zcanvas" data-zcanvas="diagram"><div class="zworld dots" data-zworld="diagram" style="width:${W}px;height:${H}px">
-      ${sticky}<svg width="${W}" height="${H}">${wires}</svg>${nodes}
+      <svg width="${W}" height="${H}">${wires}</svg>${nodes}
     </div></div></div>`;
 }
 
@@ -1810,7 +1804,7 @@ const FLOWS = [
     desc: "Formato Gantt por passos (sem calendário). Cada etapa: um □ de entrada | função | um □ de saída. Zoom/pan como no Fluxograma. Máquina se programa aqui; exporta código.",
     steps: [["T-32", "Flow"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
-    desc: "Canvas de nós no espírito do n8n: sticky do plano acima, fluxo abaixo sem sobreposição. Portas, fios, zoom/pan.",
+    desc: "Canvas de nós no espírito do n8n: portas, fios, zoom/pan. Sem sticky de plano nem Executar via IAs na barra.",
     steps: [["T-36", "Fluxograma"]] },
   { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
     desc: "Floresta de atividades com zoom/pan (mesmo padrão do Fluxograma). Criar filha, desaninhar, excluir; nó de máquina abre o procedimento.",
@@ -1842,7 +1836,7 @@ const SCREENS = {
   "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Formato Gantt por passo (sem calendário). Um □ de entrada e um □ de saída por etapa. Zoom/pan no mesmo padrão do Fluxograma. Sem setas SVG." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
   "T-35": { s: { v: "flow", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
-  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Sticky do plano acima; nós do fluxo começam abaixo, sem sobreposição. Portas entrada/saída, fios, zoom/pan (scroll, −/+, ajustar, arrastar fundo). Clique no nó abre o detalhe." },
+  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas de nós com portas entrada/saída e fios. Zoom/pan (scroll, −/+, ajustar, arrastar fundo). Sem seletor de plano nem Executar via IAs na barra. Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
   "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["estado"], notes: "Visão Estados no dock: objeto { root } com árvore chave→valor (saídas do plano aninhadas pelo path da ref) e painel JSON. Expandir/recolher nós; troca de plano na barra." },

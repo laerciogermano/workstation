@@ -203,6 +203,16 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 }
 .player.open { display: grid; }
 .player.focus { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
+/* tela cheia: o app ocupa a janela inteira, sem moldura nem escala — como se estivesse navegando no sistema */
+.player.full { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
+.player.full .list, .player.full .notes { display: none; }
+.player.full .stage { align-items: stretch; justify-content: stretch; }
+.player.full .holder { width: 100% !important; height: 100% !important; }
+.player.full .holder > .win { width: 100%; height: 100%; transform: none !important; border-radius: 0; box-shadow: none; }
+.full-exit { display: none; position: fixed; right: 14px; bottom: 14px; z-index: 120; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: color-mix(in srgb, var(--paper) 92%, transparent); color: var(--body); font-size: 12px; font-weight: 600; box-shadow: var(--shadow); opacity: .55; }
+.full-exit:hover { opacity: 1; }
+.full-exit svg { width: 14px; height: 14px; }
+.player.full .full-exit { display: inline-flex; }
 .player.focus .list, .player.focus .notes { display: none; }
 .player .list { grid-area: list; background: var(--paper); border-right: 1px solid var(--line); overflow-y: auto; padding: 14px 10px 24px; min-width: 0; }
 .player .list .close { display: flex; align-items: center; gap: 8px; border: 0; background: var(--wash); border-radius: 8px; height: 38px; padding: 0 14px; font-weight: 600; font-size: 14px; margin: 0 4px 8px; }
@@ -853,7 +863,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .zview .ztoolbar .dz .pct { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:40px; text-align:center; }
 .zview .zcanvas { flex:1; overflow:hidden; position:relative; min-height:0; cursor:grab; touch-action:none; background-color: var(--panel); }
 .zview .zcanvas.panning { cursor:grabbing; }
-.zview .zworld { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform; }
+.zview .zworld { position:absolute; left:0; top:0; transform-origin:0 0; } /* sem will-change: SVG/texto ficam nítidos no zoom */
 .zview .zworld.dots {
   background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 35%, transparent) 1px, transparent 1px);
   background-size: 18px 18px;
@@ -1034,7 +1044,8 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 <div class="foot">Pessoas, clientes e datas são de exemplo. Protótipo desktop (janela 1440 × 900). Só Explorar + Flow; agentes = IA e bibliotecas Node.js.</div>
 
 <div class="player" id="player" role="dialog" aria-label="Protótipo navegável">
-  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button></aside>
+  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><button class="close" data-full title="Usar o sistema em tela cheia (T)"><i data-lucide="maximize"></i>Tela cheia</button></aside>
+  <button class="full-exit" data-full title="Sair da tela cheia (Esc)"><i data-lucide="minimize"></i>Sair</button>
   <div class="stage" id="stage"><div class="holder" id="holder"></div></div>
   <aside class="notes"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
 </div>
@@ -2754,8 +2765,15 @@ function tFor(s) {
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.rev) return "T-01"; return "T-32"; }
   return "T-32";
 }
+function toggleFull(on = !player.classList.contains("full")) {
+  player.classList.toggle("full", on);
+  try { if (on && !document.fullscreenElement) document.documentElement.requestFullscreen?.(); else if (!on && document.fullscreenElement) document.exitFullscreen?.(); } catch (e) {}
+  fit();
+}
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && player.classList.contains("full")) { player.classList.remove("full"); fit(); } });
 function fit() {
   if (!player.classList.contains("open")) return;
+  if (player.classList.contains("full")) { const w = holder.querySelector(".win"); if (w) w.style.transform = "none"; holder.dataset.scale = 1; return; }
   const w = holder.querySelector(".win"); if (!w) return;
   const st = document.getElementById("stage");
   const sw = Math.max(0, st.clientWidth - 40), sh = Math.max(0, st.clientHeight - 40);
@@ -2775,7 +2793,7 @@ function paint(keepScroll = true) {
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
   const zoomHint = ["diagram", "gantt", "flow", "tree"].includes(cur.v) ? "<br><b>Scroll</b> zoom · arrastar fundo = pan · − / + / ajustar" : "";
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
-    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis${zoomHint}</div>`;
+    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>T</b> tela cheia (navegar no sistema) · <b>F</b> só a janela · <b>H</b> áreas clicáveis${zoomHint}</div>`;
   lucide.createIcons();
   fit();
   applyZView();
@@ -2796,7 +2814,7 @@ function openT(t) {
   requestAnimationFrame(() => { fit(); requestAnimationFrame(fit); });
   setTimeout(fit, 80);
 }
-function closePlayer() { player.classList.remove("open", "focus"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
+function closePlayer() { if (player.classList.contains("full")) toggleFull(false); player.classList.remove("open", "focus"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
 function goBack() { const p = hist.pop(); if (p) { cur = p; paint(false); } }
 function step(d) { const i = ORDER.indexOf(tFor(cur)); show(specFor(ORDER[(i + d + ORDER.length) % ORDER.length]), true); }
 function toast(msg, ic = "circle-check") {
@@ -3180,6 +3198,7 @@ holder.addEventListener("drop", e => {
 document.addEventListener("click", e => {
   const tb = e.target.closest("button[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
   const o = e.target.closest("[data-open]"); if (o) { openT(o.dataset.open); return; }
+  if (e.target.closest("[data-full]")) { toggleFull(); return; }
   if (e.target.closest("[data-close]")) { closePlayer(); return; }
   const a = e.target.closest("#plist a[data-t]"); if (a) { show(specFor(a.dataset.t)); return; }
 });
@@ -3192,6 +3211,7 @@ document.addEventListener("keydown", e => {
     if (cur.exp) { unset("exp"); paint(); return; }
     if (cur.drawer || cur.cfg || cur.mach || cur.tnode || cur.newCard || cur.tnew) { unset("drawer", "cfg", "mach", "tnode", "newCard", "tnew", "console"); paint(); return; }
     if (typing) { document.activeElement.blur(); return; }
+    if (player.classList.contains("full")) { toggleFull(false); return; }
     closePlayer(); return;
   }
   if (typing) return;
@@ -3209,6 +3229,7 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Backspace") { e.preventDefault(); goBack(); }
   else if (e.key.toLowerCase() === "h") player.classList.toggle("hints");
   else if (e.key.toLowerCase() === "f") { player.classList.toggle("focus"); fit(); }
+  else if (e.key.toLowerCase() === "t") toggleFull();
 });
 addEventListener("resize", fit);
 

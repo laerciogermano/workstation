@@ -238,6 +238,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.agente { color: var(--t-ia); }
 .node.ag-d { cursor: default; height: 24px; }
 .node.proj .t b { font-weight: 600; }
+.node.proj .meta { gap: 2px; }
+.node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+.node.proj.cur .t b { color: var(--accent); }
+.node.proj .pj-b { width: 22px; height: 22px; opacity: .55; }
+.node.proj:hover .pj-b, .node.proj .pj-b:focus-visible { opacity: 1; }
+.node.proj .pj-b svg { width: 13px; height: 13px; }
 .node.ifn .t { color: var(--warn); font-weight: 600; font-size: 12px; }
 .node .fi.ifd-x { width: 16px; display: grid; place-items: center; }
 .node.ag-d .t { font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
@@ -1200,7 +1206,7 @@ function explorer(s) {
     if (q && !planRows.length && !est.length && !p.name.toLowerCase().includes(q)) return;
     const pid = "pjx:" + p.id, pOpen = q ? true : !OPEN.has(pid), eid = "pje:" + p.id, eOpen = q ? true : !OPEN.has(eid);
     const n = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
-    projRows.push(`<div class="node proj${pOpen ? " openf" : ""}" data-act="toggle" data-id="${pid}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}</span></div>`);
+    projRows.push(`<div class="node proj${pOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="proj-sel" data-plan="${p.id}" data-id="${pid}" title="Abrir ${esc(p.name)} no Flow" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}<button class="ib pj-b" data-act="proj-open" data-plan="${p.id}" title="Abrir todos">${icon("chevrons-up-down")}</button><button class="ib pj-b" data-act="proj-close" data-plan="${p.id}" title="Fechar todos">${icon("chevrons-down-up")}</button></span></div>`);
     if (!pOpen) return;
     projRows.push(...planRows);
     if (est.length) {
@@ -1249,6 +1255,19 @@ function explorer(s) {
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · ${CAT.length} no catálogo</small></span></button></div>
   </aside>`;
+}
+function projAll(plan, openAll) {
+  const us = U.filter(u => !u.arch && u.plan === plan);
+  const ids = new Set(us.map(u => u.id));
+  const ifKeys = STRUCTS.map(st => { const b = st.body.map($u).find(x => x && !isData(x) && ids.has(x.id)); return b ? "ifx:" + (b.parent || null) + ":" + st.test : null; }).filter(Boolean);
+  OPEN.delete("pjx:" + plan);
+  if (openAll) {
+    us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); OPEN.delete("esx:" + u.id); });
+    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan);
+  } else {
+    us.forEach(u => { OPEN.delete(u.id); OPEN.add("esx:" + u.id); });
+    ifKeys.forEach(k => OPEN.add(k)); OPEN.add("pje:" + plan);
+  }
 }
 function newRow(nn, lvl) {
   return `<div class="node sel" style="padding-left:${8 + Math.min(lvl, 14) * 14}px"><span class="car"></span><span class="fi${nn.kind === "folder" ? " folder" : ""}">${icon(nn.kind === "folder" ? "folder" : "file-text")}</span><input data-newn placeholder="${nn.kind === "folder" ? "Nome da pasta" : "Título do arquivo"}" aria-label="Título"></div>`;
@@ -2546,6 +2565,11 @@ const ACT = {
   "cat-tab": t => { cur.catTab = t.dataset.t; unset("catBlock"); },
   "cat-rm": t => { const c = t.dataset.c; if (inUse(c).length) { cur.catBlock = cur.catBlock === c ? null : c; return; } const i = CAT.findIndex(x => x.id === c); const n = CAT[i].name; CAT.splice(i, 1); toast(`${n} saiu do catálogo`); },
   toggle: t => { const id = t.dataset.id; OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
+  // abrir / fechar todos os accordeons de um plano (projeto): roteiros, ifs e Estados
+  // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
+  "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
+  "proj-open": t => { projAll(t.dataset.plan, true); },
+  "proj-close": t => { projAll(t.dataset.plan, false); },
   collapse: () => { OPEN.clear(); toast("Árvore recolhida", "chevrons-down-up"); },
   search: () => { if (cur.q != null) unset("q"); else { cur.q = ""; cur.focusQ = true; } },
   "new-file": t => { const base = t.dataset.id || cur.sel; const p = $u(base); cur.newn = { parent: p ? (isFolder(p) || kids(p.id).length ? p.id : p.parent) : null, kind: "file" }; unset("ctx", "q"); if (cur.newn.parent) OPEN.add(cur.newn.parent); },

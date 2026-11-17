@@ -3106,7 +3106,12 @@ const ACT = {
   toggle: t => { const id = t.dataset.id; OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   // abrir / fechar todos os accordeons de um plano (projeto): roteiros, ifs e Estados
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
-  "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
+  "proj-sel": t => {
+    const p = t.dataset.plan;
+    cur.plan = p; unset("drawer", "mach"); cur.sel = null;
+    OPEN.add("pjp:" + p); OPEN.add("pje:" + p); // abre Funções e Dados desse projeto
+    if (cur.v !== "flow") view("flow");
+  },
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
   "txt-in": () => { cur.txtIn = !cur.txtIn; },

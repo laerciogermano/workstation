@@ -25,8 +25,8 @@ Sem site próprio (só Plans `#T-32`) → protótipo Flow.dev em `/opt/flow-ide`
 
 ## Barras Flow · gantt-sample
 
-Flow usa barras arredondadas com progresso + deps (como [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png)); esquerda = responsável + descrição.
+Flow usa barras arredondadas com progresso (como [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png)), **sem setas**; esquerda = agente | descrição lado a lado.
 
-**Antes → depois:** linhas FOP (□ na divisória) → barras estilo sample.
+**Antes → depois:** linhas FOP → barras + deps SVG → barras sem setas; coluna esquerda = agente | descrição.
 
-**Voltar:** restaurar `.funit` / `faxis` no histórico git do `prototipo/index.html`.
+**Voltar:** restaurar SVG de deps / layout empilhado no histórico git do `prototipo/index.html`.

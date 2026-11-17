@@ -2823,7 +2823,9 @@ holder.addEventListener("click", e => {
     const u = $u(id);
     const now = Date.now(), dbl = lastNode.id === id && now - lastNode.t < 420; lastNode = { id, t: now };
     if (dbl && !isFolder(u)) { if (cur.v === "catalog") view("flow"); cur.from = "explorar"; cur.drawer = u.id; cur.sel = u.id; paint(); return; }
-    if (isFolder(u)) { OPEN.has(id) && cur.sel === id ? OPEN.delete(id) : OPEN.add(id); cur.sel = id; paint(); return; }
+    // sanfona: pasta ou composição abre/fecha a cada clique na linha (não só na setinha)
+    if (isFolder(u)) { OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); cur.sel = id; paint(); return; }
+    if (kids(id).some(k => !k.arch && !isData(k))) OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id);
     cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("flow", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow" || cur.v === "diagram" || cur.v === "estados" || cur.v === "metas") && u.plan) cur.plan = u.plan;
     paint(); return;
   }

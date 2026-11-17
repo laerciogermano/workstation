@@ -506,8 +506,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .ztoolbar .dz { margin-left: 4px; }
 /* FOP: estados e0…eN nas divisórias, dados ○ sobre a divisória, ◇ seleção, ↻ repetição */
 .fh-e { position: relative; height: 26px; }
-.fh-e span { position: absolute; bottom: 7px; transform: translateX(-50%); font: 600 11px var(--mono); color: var(--body); }
-.fh-e span::after { content: ""; position: absolute; left: 50%; top: calc(100% + 2px); width: 1px; height: 5px; background: var(--muted); }
+/* estado eN = quadrado com o nome + losango na divisória */
+.fh-e span { position: absolute; top: 2px; transform: translateX(-50%); min-width: 22px; height: 16px; padding: 0 4px; display: grid; place-items: center; font: 600 10px/1 var(--mono); color: var(--ink); background: var(--wash); border: 1.3px solid color-mix(in srgb, var(--muted) 70%, transparent); border-radius: 2px; }
+.fh-e span::after { content: ""; position: absolute; left: 50%; top: calc(100% + 2px); width: 6px; height: 6px; margin-left: -3px; background: var(--paper); border: 1.3px solid var(--muted); transform: rotate(45deg); z-index: 1; }
 .gantt.flow .gbg div { border-left-color: color-mix(in srgb, var(--muted) 38%, transparent); }
 .gantt.flow .gbg div.g0 { border-left: 0; }
 .fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }

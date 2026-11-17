@@ -11,7 +11,7 @@
 
 **Dieta · Comi:** botão selected = `--ft-ok` (laranja nos temas Pista/Giz); card `.meal.done` = cinza `--ft-line-2` (sem tint laranja). Voltar card: `color-mix(… ft-ok 7%, surface)`.
 
-**F-05 meta-card:** fundo `--ft-act` / `--ft-kc` (déficit) em vez de `--ft-ink` (branco sem vida no Pista). Manutenção = surface. Voltar: `background: var(--ft-ink); color: var(--ft-canvas)`.
+**F-05 meta-card:** fundo cinza `--ft-surface` + borda (todas as estratégias). Antes: `--ft-act` / `--ft-kc` no déficit (laranja gritante). Voltar colorido: `background: var(--ft-kc); color: #fff` em `.meta-card.deficit`.
 
 **Onboarding por seção (PRD v1.3):** `S.gates` {hoje,dieta,treino,corpo}; 1ª entrada em cada aba → F-02…06 / F-20 / F-07 / F-08. Antes: `onboarded` monolítico + `GATED`. Voltar: restaurar gate único em `nav()`.
 

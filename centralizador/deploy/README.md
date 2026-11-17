@@ -13,6 +13,14 @@
 SSHPASS='…' bash deploy/publicar.sh
 ```
 
+## Card Flow → Plans T-32
+
+Card **Flow** aponta para `https://plans.laerciogermano.com/#T-32` (visão Flow do protótipo).
+
+**Antes → depois:** `url: null` (“em breve”) → deep link `#T-32`.
+
+**Voltar:** no `site/index.html`, card Flow com `url: null`.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `centralizador`

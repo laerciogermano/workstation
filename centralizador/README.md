@@ -6,7 +6,7 @@ Hub público dos projetos (título, descrição, imagem, link).
 
 ## Conteúdo
 
-Estático em [`site/`](site/) — cards a partir dos banners em `boards/banners/projects/`. Projetos no ar abrem em nova aba; demais ficam “em breve”.
+Estático em [`site/`](site/) — cards a partir dos banners em `boards/banners/projects/`. Projetos no ar abrem em nova aba; demais ficam “em breve”. Card **Flow** → Plans `#T-32`.
 
 ## Republicar
 

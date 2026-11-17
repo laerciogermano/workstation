@@ -35,7 +35,7 @@
   --fn: #0b0b0b; --dado: #0b0b0b;
 }
 :root[data-tema="eternos"] .fbar { background: #fff; border: 1.5px solid #0b0b0b; }            /* função concreta = branca */
-:root[data-tema="eternos"] .fbar .fb-t { color: #0b0b0b; line-height: 15px; }
+:root[data-tema="eternos"] .fbar .fb-t { color: #0b0b0b; line-height: 19px; }
 :root[data-tema="eternos"] .fbar.abs { background: #0b0b0b; border-color: #0b0b0b; }          /* função abstrata = preta */
 :root[data-tema="eternos"] .fbar.abs .fb-t { color: #f6f6f6; }
 :root[data-tema="eternos"] .fbar.nag { background: transparent; border-style: dashed; }
@@ -545,7 +545,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gbg { top: 52px; }
 .gantt.flow .gbg div { border-left: 1px solid var(--line); }
 .gantt.flow .fsvg { top: 52px; z-index: 3; }
-.fbar { position:absolute; top: 8px; height: 18px; border-radius: 9px; /* função = arredondada (dado = quadrado reto) */ background: var(--c); cursor: pointer; z-index: 2; overflow: hidden; }
+.fbar { position:absolute; top: 6px; height: 22px; border-radius: 11px; /* função = arredondada (dado = quadrado reto) */ background: var(--c); cursor: pointer; z-index: 2; overflow: hidden; }
 .fbar .fill { position:absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 68%, #000); }
 .fbar:hover { filter: brightness(1.12); }
 .fbar.sel, .fsum.sel, .fdia.sel { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -608,8 +608,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
 /* texto dentro da barra (toggle no menu) */
-.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font-size: 10px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-.fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 15px; }
+.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font-size: 10px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 19px; }
 .vdock.fdock .fd-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: var(--line); }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .vdock.fdock .fd-l svg { color: var(--dado); }
@@ -1838,8 +1838,8 @@ function flow(s) {
   rows.forEach(({ u }) => {
     if (!u.loop || !isFn(u)) return;
     const g = geo(u), t = yTop(idx[u.id]);
-    svg += `<rect class="floop" x="${g.x1 - 4}" y="${t + 4}" width="${g.x2 - g.x1 + 8}" height="26" rx="4"><title>for (${esc(u.loop[0])} of ${esc(u.loop[1])})</title></rect>`;
-    svg += `<path class="farc" d="M${g.x2 - 6} ${t + 4} C${g.x2 - 6} ${t - 4} ${g.x1 + 6} ${t - 4} ${g.x1 + 6} ${t + 2}" marker-end="url(#fahl)"/>`;
+    svg += `<rect class="floop" x="${g.x1 - 4}" y="${t + 3}" width="${g.x2 - g.x1 + 8}" height="28" rx="6"><title>for (${esc(u.loop[0])} of ${esc(u.loop[1])})</title></rect>`;
+    svg += `<path class="farc" d="M${g.x2 - 8} ${t + 3} C${g.x2 - 8} ${t - 5} ${g.x1 + 8} ${t - 5} ${g.x1 + 8} ${t + 1}" marker-end="url(#fahl)"/>`;
   });
   if (!s.noDeps) {
     FD.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {

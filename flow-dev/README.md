@@ -16,7 +16,7 @@ Refs: artigo [`../aulas/README.md`](../aulas/README.md) · Plans [`../plans/READ
 
 O **Flow.dev** é o **IDE de programação orientada a fluxo**: o lugar onde se **explora** o projeto como arquivos e se **desenha** o roteiro na tela **Flow** (plano cartesiano FOP). Cada etapa tem um **agente tipado** — **IA** ou **biblioteca Node.js** — sem misturar o roteiro com o ator.
 
-É a mesma ideia do **Flow** do Plans, sem Board, Gantt, Fluxograma, Árvore, Estados/Metas nem Copiloto. Fundamento teórico: o artigo Flow (entrada → verbo → saída; sequência, paralelo, seleção, repetição).
+É a mesma ideia do **Flow** do Plans, sem Board, Gantt, Fluxograma, Árvore, Estados/Metas nem Copiloto. Barras no visual de [`inputs/gantt-sample.png`](inputs/gantt-sample.png); à esquerda **responsável** e **descrição**. Fundamento teórico: o artigo Flow (entrada → verbo → saída; sequência, paralelo, seleção, repetição).
 
 ## Problema
 

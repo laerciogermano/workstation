@@ -22,3 +22,11 @@ SSHPASS='…' bash deploy/publicar.sh
 ## Antes → depois
 
 Sem site próprio (só Plans `#T-32`) → protótipo Flow.dev em `/opt/flow-ide` + A `flow-ide`.
+
+## Barras Flow · gantt-sample
+
+Flow usa barras arredondadas com progresso + deps (como [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png)); esquerda = responsável + descrição.
+
+**Antes → depois:** linhas FOP (□ na divisória) → barras estilo sample.
+
+**Voltar:** restaurar `.funit` / `faxis` no histórico git do `prototipo/index.html`.

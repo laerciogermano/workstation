@@ -295,7 +295,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .btn[disabled] { opacity: .45; cursor: not-allowed; }
 .btn svg { width: 15px; height: 15px; }
 .sel-in { height: 30px; border: 1px solid var(--line-2); border-radius: 7px; background: var(--paper); padding: 0 8px; font-weight: 500; }
-.viewport { flex: 1; position: relative; overflow: hidden; min-height: 0; padding-bottom: 58px; }
+.viewport { flex: 1; position: relative; overflow: hidden; min-height: 0; }
 /* chips */
 .ag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--body); white-space: nowrap; min-width: 0; }
 .ag .ico { width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; color: #fff; font-size: 9px; font-weight: 700; }
@@ -1077,7 +1077,6 @@ function win(s) {
         <div class="viewport">${s.v === "catalog" ? catalog(s) : flow(s)}
           ${s.drawer ? drawer(s) : ""}
         </div>
-        ${viewDock(s)}
       </section>
     </div>
     ${s.ctx ? ctxMenu(s) : ""}${s.confirm ? confirmDlg(s) : ""}${s.exp ? exportDlg(s) : ""}

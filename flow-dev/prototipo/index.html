@@ -1126,17 +1126,27 @@ function explorer(s) {
     });
   })(null, 0);
 
-  const states = stateCatalog().filter(st => !q || st.name.toLowerCase().includes(q) || st.title.toLowerCase().includes(q) || String(st.ref).toLowerCase().includes(q));
-  if (q) hits += states.length;
-  const estadoRows = states.map(st => {
-    const sel = s.estado === st.name ? " sel" : "";
-    const t = markTitle(st.name, q);
-    return `<div class="node${sel}" data-estado="${esc(st.name)}" data-id="${st.id}" data-act="sel-estado" style="padding-left:22px">
-      <span class="car"></span><span class="fi dado" title="Dado (estado)">${icon("box")}</span>
-      <span class="t mono">${t}</span>
-      <span class="meta"><span class="mono">${esc(st.ref)}</span>${st.st ? `<span class="st ${ST[st.st][0]}" style="padding:0 3px">${icon(ST[st.st][1])}</span>` : ""}</span>
-    </div>`;
-  });
+  // Estados em árvore, igual ao Explorar das tasks (Planos): pasta → composição → etapa → dados que ela produz
+  const guidesOf = lvl => Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
+  const padOf = lvl => 8 + Math.min(lvl, 14) * 14;
+  const outMatch = (u, name, ref) => !q || name.toLowerCase().includes(q) || u.title.toLowerCase().includes(q) || String(ref).toLowerCase().includes(q);
+  let estHits = 0;
+  function estWalk(pid, lvl) {
+    const rows = [];
+    kids(pid).filter(u => !u.arch && !isData(u)).forEach(u => {
+      const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1);
+      if (!outs.length && !sub.length) return;
+      const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
+      const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia";
+      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${icon("chevron-right")}</span><span class="fi plan${fabs ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
+      if (!isOpen) return;
+      rows.push(...sub);
+      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado (estado)">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
+    });
+    return rows;
+  }
+  const estadoRows = estWalk(null, 0);
+  if (q) hits += estHits;
 
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;

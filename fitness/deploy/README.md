@@ -17,6 +17,8 @@
 
 **Corpo · menu + métrica:** sheet `corpo-menu` (avaliação / métrica / foto); `F-44` + `S.customMeasures` / `MEASURE_PRESETS`. Voltar: só `+` → F-40; sem custom.
 
+**F-03 `.opt.on`:** fundo `--ft-ok-soft` + texto `--ft-ok`/`--ft-ok-deep` (família Comi). Antes: só `border` `--ft-act`. Voltar: `border-color: var(--ft-act)` sem fill.
+
 ## Republicar
 
 ```bash

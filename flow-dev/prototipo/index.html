@@ -1118,7 +1118,7 @@ const CAT = [
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
 ];
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
-// Layers = arquivos: cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
+// Arquivos (antes Layers): cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
 const LAYERS = [
   { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"]] },
   { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
@@ -1446,7 +1446,7 @@ function explorer(s) {
     const html = list.map(m => `<div class="node${s.mdCfg === m.id ? " sel" : ""}" data-act="md-cfg" data-id="${m.id}" style="padding-left:8px" title="Configurar ${esc(m.name)}"><span class="car"></span><span class="fi modelo">${icon("bot")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span></span></div>`).join("");
     return { html, n: list.length };
   })();
-  // Layers: cada arquivo com o que ele contém (funções ○ e/ou dados cubo)
+  // Arquivos: cada um com o que contém (funções ○ e/ou dados cubo)
   ensureLayers();
   const layerRows = (() => {
     const list = LAYERS.filter(l => !q || l.file.toLowerCase().includes(q) || l.items.some(([k, v]) => (k === "fn" ? $u(v)?.title || "" : v).toLowerCase().includes(q)));
@@ -1918,9 +1918,9 @@ function flow(s) {
   const stBag = Array.from({ length: nSteps + 1 }, (_, i) => {
     const m = new Map();
     for (let j = 0; j <= i; j++) stNew[j].forEach(([n, ext]) => { if (!m.has(n)) m.set(n, ext); });
-    // naquele eN, se alguma função o pede como abstrato, o □ fica preto (ext)
+    // a partir do eN em que uma função pede o dado como abstrato (outra camada), □ preto — ex.: dados_cliente na Ativação
     fnRowsPre.forEach(u => {
-      const L = layout[u.id]; if (!L || L.s !== i) return;
+      const L = layout[u.id]; if (!L || L.s > i) return;
       (u.ins || []).filter(n => absData(u, n)).forEach(n => m.set(n, true));
     });
     return [...m.entries()];
@@ -1972,9 +1972,11 @@ function flow(s) {
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
-    const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
-    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(newIns(u)[0])}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(newIns(u).join(", "))} · entrada</title></rect>`; }
-    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
+    const inNames = idxIn[u.id] != null ? newIns(u) : (u.ins || []);
+    const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : (u.ins || []).some(n => absData(u, n));
+    const inTip = inAbs ? "entrada abstrata (context / outra camada)" : "entrada concreta (mesma camada)";
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${inAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(inNames[0] || "")}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(inNames.join(", "))} · ${inTip}</title></rect>`; }
+    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${inAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${inTip}</title></rect>`;
     if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(u.outs[0][0])}" x="${g.ox - 4}" y="${yo - 4}" width="8" height="8"><title>${esc(u.outs.map(o => o[0]).join(", "))} · saída</title></rect>`; }
     else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
   });

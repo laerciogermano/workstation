@@ -49,6 +49,7 @@ Hub público: [**Centralizador**](centralizador/README.md) — https://centraliz
 | 📱 | [**screen-robot**](screen-robot/README.md) | Robô de tela Android (Node/ADB) | [visão](screen-robot/README.md) · [tasks](screen-robot/tasks/README.md) · [src](screen-robot/src/README.md) |
 | 🤖 | [**ConnectMax**](connectmax/README.md) | Agente LinkedIn + vendas (consome screen-robot) | [visão](connectmax/README.md) · [linkedin-agent](connectmax/linkedin-agent/README.md) · [vendas](connectmax/vendas/README.md) · [config IA](connectmax/config/config-ia.md) |
 | 🛠️ | [**Connect Tech**](connect-tech/README.md) | Consultoria + desenvolvimento de software (nova oferta ConectMax) | [visão](connect-tech/README.md) · [docs](connect-tech/docs/README.md) · [config IA](connect-tech/config/config-ia.md) |
+| 📺 | [**OmTV**](omtv/README.md) | Robô de marketing OmeTV: vídeo, mensagens automáticas e conversas por IA | [visão](omtv/README.md) · [docs](omtv/docs/README.md) · [config IA](omtv/config/config-ia.md) |
 | 📖 | [**Eternos Mutáveis**](eternos-mutaveis/README.md) | Manuscrito / tese | [visão](eternos-mutaveis/README.md) · [docs](eternos-mutaveis/docs/README.md) · [config IA](eternos-mutaveis/config/config-ia.md) |
 | 🎬 | [**Filme Metafísico**](filme-metafisico/README.md) | Filme *O Metafísico* | [visão](filme-metafisico/README.md) · [docs](filme-metafisico/docs/README.md) · [config IA](filme-metafisico/config/config-ia.md) |
 | 🥋 | [**Jiu-jitsu**](jiu-jitsu/) | App de jiu-jitsu | [visão](jiu-jitsu/README.md) · [docs](jiu-jitsu/docs/) · [config IA](jiu-jitsu/config/config-ia.md) |

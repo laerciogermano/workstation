@@ -1375,5 +1375,61 @@
         "status": "todo"
       }
     ]
+  },
+  "omtv": {
+    "name": "OmTV",
+    "blurb": "Robô de marketing OmeTV",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "omtv-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "omtv-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "Robô de marketing no OmeTV: seleção de vídeo, mensagens automáticas e conversas pedidas por IA (CDP / human-cdp). Contas ficam no OV.",
+    "context": "Marketing no OmeTV hoje depende de presença humana por conta: escolher o que aparece na sessão, cumprimentar e manter conversa não escala. Já existem contas e Chrome/CDP no lab (OV); falta o produto que orquestra vídeo + mensagens + diálogo por IA.",
+    "objective": "Ser o robô padrão de marketing no OmeTV: selecionar o vídeo da sessão, enviar mensagens automáticas e conduzir conversas automáticas com IA, com start/pause, limites e handoff para humano.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo / operação",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
   }
 }

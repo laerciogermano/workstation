@@ -21,6 +21,14 @@ Card **Flow** aponta para `https://plans.laerciogermano.com/#T-32` (visão Flow 
 
 **Voltar:** no `site/index.html`, card Flow com `url: null`.
 
+## Card OmTV
+
+Card **OmTV** no hub (`img/omtv.jpg`, `url: null` = em breve). Visão local: [`../../omtv/README.md`](../../omtv/README.md).
+
+**Antes → depois:** sem card → card OmTV “em breve”.
+
+**Voltar:** remover o objeto OmTV de `site/index.html` e `site/img/omtv.jpg`; republicar.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `centralizador`

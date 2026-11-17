@@ -430,7 +430,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gmain .zcanvas { flex:1; min-width:0; background: var(--paper); }
 .gantt.flow .fhead { height: 52px; padding: 0; }
 .gantt.flow .gleft .fhead { display:grid; align-items:end; padding: 0 12px 8px 14px; }
-.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 64px 40px 46px 112px; gap: 6px; align-items:center; }
+.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 64px 40px 112px; gap: 6px; align-items:center; }
 .fhead .fl-cols span { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color: var(--muted); }
 .gantt.flow .grow, .gantt.flow .grows-r .rr { height: 34px; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
@@ -1472,7 +1472,6 @@ function flow(s) {
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="drawer" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}<b>${esc(u.title)}</b></span>
       <span class="c-start mono">${isData(u) ? `e${L.s + 1}` : `e${L.s}→e${L.e + 1}`}</span><span class="c-dur num">${dur}p</span>
-      <span class="c-pct">${ring(flowProg(u), colOf(u), u.st)}</span>
       <span class="c-ag">${has || isData(u) ? "" : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   }).join("");
   const bars = rows.map(({ u }) => {
@@ -1480,12 +1479,12 @@ function flow(s) {
     if (hasK(u)) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
-      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada"><span class="fill" style="width:${p * 100}%"></span>${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span>${esc(u.title)}</span>${flowTags(u)}</span></div>`;
+      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span>${esc(u.title)}</span>${flowTags(u)}</span></div>`;
     }
     if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div><span class="flbl" style="left:${g.x2 + 10}px">${esc(u.title)}<span class="ftag data">${esc((u.ins || []).join(", "))}</span></span></div>`;
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"><span class="fill" style="width:${p * 100}%"></span></div><span class="flbl" style="left:${g.ox + 10}px"><span>${esc(u.title)}</span>${flowTags(u)}</span></div>`;
+    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span>${esc(u.title)}</span>${flowTags(u)}</span></div>`;
   }).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
@@ -1559,7 +1558,7 @@ function flow(s) {
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
-        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Estados</span><span style="text-align:right">Passos</span><span style="text-align:center">% feito</span><span>Agente</span></div></div>${left}</div>
+        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Estados</span><span style="text-align:right">Passos</span><span>Agente</span></div></div>${left}</div>
         <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px;margin-left:${OX}px">${esc(pl)} <span class="lay" data-act="flow-ctx" title="Abrir Contexto · camadas">${tops.length} camada${tops.length === 1 ? "" : "s"} · ${nAbs} abstrato${nAbs === 1 ? "" : "s"} · ${nConc} concreto${nConc === 1 ? "" : "s"}</span><span class="${missing.length ? "bad" : "okc"}" data-act="flow-ctx" title="${missing.length ? "Falta no context: " + esc(missing.map(m => m[0]).join(", ")) : "Camada completa: o fluxo pode executar (item 19)"}">${missing.length ? "contexto incompleto" : "contexto completo · executável"}</span></div>
           <div class="fh-e">${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div></div>
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
@@ -2280,7 +2279,7 @@ const SCREENS = {
   "T-04": { s: { v: "flow", q: "propo" }, name: "Buscar na árvore", us: ["explorar"], notes: "Filtra planos e estados pelo título/nome e abre o caminho até cada resultado." },
   "T-20": { s: { v: "flow", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["unidade"], notes: "Título e contexto, UUID, responsável (IA ou biblioteca Node), entradas/saídas e atalhos para Flow e Explorar." },
   "T-21": { s: { v: "flow", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir IA ou lib", us: ["agente"], notes: "Escolha agrupada: IAs ou bibliotecas Node.js do catálogo. Trocar o ator não reescreve o roteiro." },
-  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada eN lista os dados daquele estado. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Abstrato × concreto (itens 6–9, 15): função IA = barra sólida (vem do context), lib Node = barra vazada (import); dado de entrada da mesma camada = □ vazado, de fora = ■ sólido; saídas sempre □ concretas; cada composição (camada) mostra à esquerda os ■ dados e ▬ funções abstratos que pede ao context. Cabeçalho: camadas · abstratos · concretos e “contexto completo · executável” (clique abre Contexto · camadas). Tabela Nome · Estados · Passos · % feito · Agente." },
+  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada eN lista os dados daquele estado. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Abstrato × concreto (itens 6–9, 15): função IA = barra sólida (vem do context), lib Node = barra vazada (import); dado de entrada da mesma camada = □ vazado, de fora = ■ sólido; saídas sempre □ concretas; cada composição (camada) mostra à esquerda os ■ dados e ▬ funções abstratos que pede ao context. Cabeçalho: camadas · abstratos · concretos e “contexto completo · executável” (clique abre Contexto · camadas). Tabela Nome · Estados · Passos · Agente." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
   "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(context), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },

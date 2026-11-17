@@ -52,15 +52,15 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** restaurar `gm`/`T-37`/`ganttFopStates` no histórico git.
 
-## Estados · explorar + dados + zoom
+## Estados · tasks + dados + zoom
 
-- Ícone dock: `dice-5` (dado).
-- `planStateObject` → `{ root: { explorar, dados }, sources }`. `explorar` = árvore do Explorar (`title` = título da unidade; editar no canvas atualiza o Explorar). `dados` = outs do plano.
-- Zoom/pan: `ZVIEWS.estados` + `.zcanvas` / `.zworld` (igual Gantt/Flow/Árvore/Fluxograma). T-70.
+- Ícone dock: `dice-5`. Mesmo padrão visual L→R (enode).
+- Sob `root`: um nó por item do Explorar (rótulo = título); outs da task viram folhas. Sem nós de campos JSON (`title`/`kind`/`ctx`).
+- Zoom/pan: `ZVIEWS.estados`. T-70.
 
-**Antes → depois:** só outs sob root → `explorar` + `dados`; sem zoom → com `ZVIEWS.estados`.
+**Antes → depois:** só outs → + nós de tasks; campos JSON de explorar → removidos.
 
-**Voltar:** `root` só com outs; `egraph` com `overflow:auto` sem zcanvas.
+**Voltar:** `planStateObject` só com outs por path.
 
 ## Flow · Gantt por passos
 

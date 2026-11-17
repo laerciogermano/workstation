@@ -647,30 +647,25 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
 
-/* Estados · grafo-árvore (root → explorar + dados) com zoom/pan */
+/* Estados · grafo-árvore L→R (mesmo padrão visual) + zoom/pan */
 .estados { height:100%; display:grid; grid-template-columns: minmax(0, 1fr) 300px; grid-template-rows: auto minmax(0, 1fr); min-height:0; }
 .estados .eh { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); }
 .estados .eh h2 { font-size:18px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
-.estados .eh p { font-size:12px; color:var(--muted); max-width:520px; line-height:1.4; }
+.estados .eh p { font-size:12px; color:var(--muted); max-width:480px; line-height:1.4; }
 .estados .egraph { min-height:0; position:relative; background:var(--panel); display:flex; flex-direction:column; overflow:hidden; }
 .estados .egraph.zview { height:100%; }
 .estados .egraph-c { position:relative; }
 .estados .egraph-c > svg { position:absolute; left:0; top:0; pointer-events:none; overflow:visible; }
 .estados .egraph-c > svg path { fill:none; stroke:var(--line-2); stroke-width:1.5; }
-.estados .enode { position:absolute; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0; cursor:default; }
+.estados .enode { position:absolute; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
 .estados .enode.root { border-style:dashed; background:var(--wash); }
 .estados .enode.branch { border-color:color-mix(in srgb, var(--muted) 35%, var(--line)); }
-.estados .enode.ex { border-color:color-mix(in srgb, var(--accent) 28%, var(--line)); }
-.estados .enode.dados { border-color:color-mix(in srgb, var(--ok) 35%, var(--line)); }
-.estados .enode.folder, .estados .enode.file { cursor:pointer; }
-.estados .enode.folder:hover, .estados .enode.file:hover { border-color:var(--accent); }
+.estados .enode.task { cursor:pointer; border-color:color-mix(in srgb, var(--accent) 28%, var(--line)); }
+.estados .enode.task:hover { border-color:var(--accent); }
 .estados .enode.leaf { border-color:color-mix(in srgb, var(--accent) 35%, var(--line)); }
-.estados .enode.leaf.edit { border-color:var(--accent); }
 .estados .enode .ek { font-family:var(--mono); font-weight:700; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .estados .enode .ek svg { width:14px; height:14px; color:var(--accent); flex:none; }
 .estados .enode .ev { font-family:var(--mono); font-size:11px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.estados .enode .ev-in { width:100%; border:0; outline:none; background:color-mix(in srgb, var(--accent) 8%, var(--paper)); border-radius:6px; padding:4px 6px; font-family:var(--mono); font-size:11px; font-weight:600; color:var(--accent); box-sizing:border-box; }
-.estados .enode .ev-in:focus { box-shadow:0 0 0 1px var(--accent); }
 .estados .enode .es { font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .estados .ejson { grid-row:2; border-left:1px solid var(--line); background:var(--panel); display:flex; flex-direction:column; min-height:0; }
 .estados .ejson h3 { font-size:12px; font-weight:600; color:var(--muted); padding:12px 14px 8px; flex:none; display:flex; align-items:center; gap:6px; }
@@ -1548,112 +1543,87 @@ function copilotPanel(s) {
     </div></aside>`;
 }
 
-// ----- Estados · estrutura de dados (árvore visual root → explorar + dados) -----
-/** Estado: { root: { explorar, dados } }. Explorar espelha a árvore do Explorar (title = título da unidade). Dados = outs do plano. */
-function explorerStateTree() {
-  function unitNode(u) {
-    const n = { title: u.title, kind: isFolder(u) ? "folder" : "file" };
-    if (!isFolder(u)) {
-      if (u.ctx) n.ctx = u.ctx;
-      if (u.st) n.st = (ST[u.st] && ST[u.st][2]) || u.st;
-      const a = agent(u.agent); if (a) n.agent = a.name;
-      if ((u.ins || []).length) n.ins = u.ins.join(", ");
-      if ((u.outs || []).length) n.outs = Object.fromEntries(u.outs);
-    }
-    kids(u.id).filter(c => !c.arch).forEach(c => { n[c.id] = unitNode(c); });
-    return n;
-  }
-  const explorar = {};
-  kids(null).filter(u => !u.arch).forEach(u => { explorar[u.id] = unitNode(u); });
-  return explorar;
-}
-function dadosStateTree(plan) {
-  const dados = {};
+// ----- Estados · árvore L→R: root → tasks (Explorar) → dados (outs) -----
+/** Cada item do Explorar vira um nó (rótulo = título). Filhos = subtasks; folhas = outs. Sem campos JSON. */
+function planStateObject(plan) {
   const sources = {};
-  ganttRows(plan).forEach(({ u }) => {
+  function taskNode(u) {
+    const n = {};
+    kids(u.id).filter(c => !c.arch).forEach(c => { n[c.id] = taskNode(c); });
     (u.outs || []).forEach(([name, ref]) => {
-      const parts = String(ref || name).split("/").filter(Boolean);
-      const dirs = parts.slice(0, -1);
-      let node = dados;
-      dirs.forEach(d => {
-        if (!node[d] || typeof node[d] !== "object" || Array.isArray(node[d])) node[d] = {};
-        node = node[d];
-      });
-      node[name] = ref;
+      n[name] = ref;
       sources[name] = { id: u.id, title: u.title, st: u.st || null };
     });
-  });
-  return { dados, sources };
+    return { __id: u.id, __title: u.title, __folder: !!isFolder(u), ...n };
+  }
+  const root = {};
+  kids(null).filter(u => !u.arch).forEach(u => { root[u.id] = taskNode(u); });
+  return { root, sources };
 }
-function planStateObject(plan) {
-  const { dados, sources } = dadosStateTree(plan);
-  const explorar = explorerStateTree();
-  return { root: { explorar, dados }, sources };
-}
-function branchLabel(path) {
-  if (path === "root") return "root";
-  const key = path.split(".").pop();
-  if (key === "explorar") return "explorar";
-  if (key === "dados") return "dados";
-  const u = $u(key);
-  return u ? u.title : key;
+function jsonStateTree(node) {
+  if (node == null || typeof node !== "object" || Array.isArray(node)) return node;
+  if (node.__id) {
+    const out = {};
+    Object.entries(node).forEach(([k, v]) => {
+      if (k.startsWith("__")) return;
+      if (v && typeof v === "object" && !Array.isArray(v) && v.__id) out[v.__title] = jsonStateTree(v);
+      else out[k] = v;
+    });
+    return out;
+  }
+  const out = {};
+  Object.entries(node).forEach(([k, v]) => { out[k] = jsonStateTree(v); });
+  return out;
 }
 function estados(s) {
   const { root, sources } = planStateObject(s.plan);
-  const tree = { root };
-  const json = JSON.stringify(tree, null, 2);
-  const nEx = U.filter(u => !u.arch).length;
+  const json = JSON.stringify({ root: jsonStateTree(root) }, null, 2);
+  const nTasks = U.filter(u => !u.arch).length;
   const nDados = Object.keys(sources).length;
 
-  const NW = 168, NH = 48, NL = 220, NHL = 56, NHLE = 64, GX = 52, GY = 12, PX = 24, PY = 24;
+  const NW = 168, NH = 48, NL = 200, NHL = 56, GX = 52, GY = 12, PX = 24, PY = 24;
   const nodes = [];
   const edges = [];
   let leafY = 0;
+  function childEntries(obj) {
+    return Object.entries(obj).filter(([k]) => !k.startsWith("__"));
+  }
   function place(obj, path, depth) {
-    const entries = Object.entries(obj);
+    const entries = childEntries(obj);
+    const isRoot = path === "root";
+    const isTask = !!(obj && obj.__id);
     if (!entries.length) {
       const y = PY + leafY;
       leafY += NH + GY;
-      nodes.push({ id: path, key: branchLabel(path), kind: path === "root" ? "root" : "branch", depth, x: PX + depth * (NW + GX), y, w: NW, h: NH });
+      const key = isRoot ? "root" : (obj.__title || path.split(".").pop());
+      nodes.push({ id: path, key, kind: isRoot ? "root" : (isTask ? "task" : "branch"), unitId: obj.__id || null, folder: !!obj.__folder, depth, x: PX + depth * (NW + GX), y, w: NW, h: NH });
       return { mid: y + NH / 2, top: y, bot: y + NH };
     }
-    const kids = [];
+    const ch = [];
     entries.forEach(([k, v]) => {
-      const childPath = depth === 0 ? "root." + k : path + "." + k;
+      const childPath = isRoot ? "root." + k : path + "." + k;
       const isObj = v && typeof v === "object" && !Array.isArray(v);
-      if (isObj) kids.push({ p: childPath, span: place(v, childPath, depth + 1) });
+      if (isObj) ch.push({ p: childPath, span: place(v, childPath, depth + 1) });
       else {
-        const parts = childPath.split(".");
-        const field = parts[parts.length - 1];
-        const parentKey = parts[parts.length - 2];
-        const unit = $u(parentKey);
-        const editable = field === "title" && !!unit;
-        const h = editable ? NHLE : NHL;
         const y = PY + leafY;
-        leafY += h + GY;
+        leafY += NHL + GY;
         const src = sources[k];
-        nodes.push({
-          id: childPath, key: k, kind: "leaf", value: String(v ?? ""),
-          from: src?.title || (unit && field !== "title" ? unit.title : null),
-          editable, unitId: editable ? unit.id : null,
-          depth: depth + 1, x: PX + (depth + 1) * (NW + GX), y, w: NL, h,
-        });
-        kids.push({ p: childPath, span: { mid: y + h / 2, top: y, bot: y + h } });
+        nodes.push({ id: childPath, key: k, kind: "leaf", value: String(v), from: src?.title || null, depth: depth + 1, x: PX + (depth + 1) * (NW + GX), y, w: NL, h: NHL });
+        ch.push({ p: childPath, span: { mid: y + NHL / 2, top: y, bot: y + NHL } });
       }
     });
-    const top = Math.min(...kids.map(c => c.span.top));
-    const bot = Math.max(...kids.map(c => c.span.bot));
+    const top = Math.min(...ch.map(c => c.span.top));
+    const bot = Math.max(...ch.map(c => c.span.bot));
     const mid = (top + bot) / 2;
     const y = mid - NH / 2;
-    const key = branchLabel(path);
-    const u = path === "root" ? null : $u(path.split(".").pop());
-    const kind = path === "root" ? "root" : (path.endsWith(".explorar") || path.split(".").pop() === "explorar" ? "ex" : path.split(".").pop() === "dados" ? "dados" : (u ? (isFolder(u) ? "folder" : "file") : "branch"));
-    nodes.push({ id: path, key, kind, unitId: u?.id || null, depth, x: PX + depth * (NW + GX), y, w: NW, h: NH, n: kids.length });
-    kids.forEach(c => edges.push([path, c.p]));
+    const key = isRoot ? "root" : (obj.__title || path.split(".").pop());
+    nodes.push({ id: path, key, kind: isRoot ? "root" : (isTask ? "task" : "branch"), unitId: obj.__id || null, folder: !!obj.__folder, depth, x: PX + depth * (NW + GX), y, w: NW, h: NH, n: ch.length });
+    ch.forEach(c => edges.push([path, c.p]));
     return { mid, top: Math.min(top, y), bot: Math.max(bot, y + NH) };
   }
-  let worldW = 480, worldH = 320, graphInner = `<p style="padding:20px;color:var(--muted);font-size:13px">Sem itens no Explorar nem dados neste plano.</p>`;
-  if (Object.keys(root.explorar || {}).length || Object.keys(root.dados || {}).length) {
+
+  let worldW = 480, worldH = 320, graphInner = `<p style="padding:20px;color:var(--muted);font-size:13px">Nenhum item no Explorar.</p>`;
+  if (Object.keys(root).length) {
     place(root, "root", 0);
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
     let paths = "";
@@ -1668,29 +1638,19 @@ function estados(s) {
     });
     worldW = Math.max(...nodes.map(n => n.x + n.w)) + PX;
     worldH = Math.max(...nodes.map(n => n.y + n.h)) + PY;
-    const icoFor = n => {
-      if (n.kind === "root") return "dice-5";
-      if (n.kind === "ex") return "folder-tree";
-      if (n.kind === "dados") return "database";
-      if (n.kind === "folder") return "folder";
-      if (n.kind === "file") return "file-text";
-      return "box";
-    };
     const nodeHtml = nodes.map(n => {
       if (n.kind === "leaf") {
-        const val = n.editable
-          ? `<input class="ev-in" data-estate-title="${n.unitId}" value="${esc(n.value)}" aria-label="Título (Explorar)">`
-          : `<span class="ev" title="${esc(n.value)}">${esc(n.value)}</span>`;
-        return `<div class="enode leaf${n.editable ? " edit" : ""}" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
-          <span class="ek">${icon(n.key === "title" ? "file-text" : "dice-5")}${esc(n.key)}</span>
-          ${val}
-          ${n.from ? `<span class="es">${esc(n.from)}</span>` : (n.editable ? `<span class="es">mesmo título do Explorar</span>` : "")}
+        return `<div class="enode leaf" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
+          <span class="ek">${icon("dice-5")}${esc(n.key)}</span>
+          <span class="ev" title="${esc(n.value)}">${esc(n.value)}</span>
+          ${n.from ? `<span class="es">${esc(n.from)}</span>` : ""}
         </div>`;
       }
       const act = n.unitId ? ` data-act="reveal" data-id="${n.unitId}"` : "";
-      return `<div class="enode ${n.kind === "root" ? "root" : n.kind === "folder" || n.kind === "file" || n.kind === "ex" || n.kind === "dados" ? n.kind : "branch"}"${act} style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
-        <span class="ek">${icon(icoFor(n))}${esc(n.key)}</span>
-        <span class="es">${n.n != null ? n.n + " chave" + (n.n === 1 ? "" : "s") : "∅"}</span>
+      const ic = n.kind === "root" ? "dice-5" : n.folder ? "folder" : n.kind === "task" ? "file-text" : "box";
+      return `<div class="enode ${n.kind}"${act} style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
+        <span class="ek">${icon(ic)}${esc(n.key)}</span>
+        <span class="es">${n.n != null ? n.n + " nó" + (n.n === 1 ? "" : "s") : "∅"}</span>
       </div>`;
     }).join("");
     graphInner = `<div class="egraph-c" style="width:${worldW}px;height:${worldH}px"><svg width="${worldW}" height="${worldH}">${paths}</svg>${nodeHtml}</div>`;
@@ -1699,9 +1659,9 @@ function estados(s) {
   return `<div class="estados">
     <div class="eh">
       <div><h2>${icon("dice-5")} Estados</h2>
-        <p><span class="mono">root</span> → <b>explorar</b> (${nEx} item${nEx === 1 ? "" : "s"}) + <b>dados</b> (${nDados} saída${nDados === 1 ? "" : "s"}). O <span class="mono">title</span> é o mesmo do Explorar.</p></div>
+        <p>Árvore: <span class="mono">root</span> → tasks do Explorar (${nTasks}) → dados (${nDados}). O título do nó é o do Explorar.</p></div>
     </div>
-    <div class="egraph zview">${zoomToolbar("estados", "Modelo de dados", "dice-5")}
+    <div class="egraph zview">${zoomToolbar("estados", "Estados", "dice-5")}
       <div class="zcanvas" data-zcanvas="estados"><div class="zworld" data-zworld="estados" style="width:${Math.max(worldW, 480)}px;height:${Math.max(worldH, 320)}px">${graphInner}</div></div>
     </div>
     <aside class="ejson" aria-label="JSON do estado">
@@ -1911,8 +1871,8 @@ const FLOWS = [
   { id: "copilot", n: "08", title: "Copiloto", us: "harness",
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
     steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
-  { id: "estados", n: "09", title: "Estados", us: "dados · explorar · zoom",
-    desc: "root → explorar (itens do Explorar, title sincronizado) + dados (outs do plano). Zoom/pan como Gantt/Flow/Árvore. JSON ao lado.",
+  { id: "estados", n: "09", title: "Estados", us: "tasks · dados · zoom",
+    desc: "Mesma árvore L→R de antes: root → nós das tasks (título do Explorar) → folhas de dados (outs). Zoom/pan. Painel state.json à direita.",
     steps: [["T-70", "Árvore de estado"]] },
   { id: "config", n: "10", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
@@ -1938,7 +1898,7 @@ const SCREENS = {
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas de nós com portas entrada/saída e fios. Zoom/pan (scroll, −/+, ajustar, arrastar fundo). Sem seletor de plano nem Executar via IAs na barra. Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
-  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado. root → explorar (toda a árvore do Explorar; title editável = título do arquivo) + dados (outs do plano). Zoom/pan (−/+/ajustar, scroll, arrastar). state.json à direita." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado. Mesmo padrão visual L→R: cada item do Explorar é um nó (rótulo = título); outs viram folhas. Zoom/pan. state.json à direita." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com zoom/pan (mesmo padrão do Fluxograma). Cada nó mostra responsável e estado. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },

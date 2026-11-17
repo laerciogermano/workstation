@@ -573,6 +573,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* filtro transversal flutuante (centro, acima da legenda) */
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
+.vdock.fdock .fd-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: var(--line); }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .vdock.fdock .fd-l svg { color: var(--dado); }
 .fh-e.bot span::after { top: -13px; }
@@ -1703,9 +1704,9 @@ function flow(s) {
   const disp = [];
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
-    if (leaf(r.u) && (r.u.ins || []).length) disp.push({ io: "in", u: r.u, d: r.d });
+    if (!s.compacto && leaf(r.u) && (r.u.ins || []).length) disp.push({ io: "in", u: r.u, d: r.d });
     disp.push(r);
-    if (leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
+    if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
   });
   const idx = {}, idxIn = {}, idxOut = {};
   disp.forEach((r, i) => { if (r.st) r.st.hi = i; else if (r.io === "in") idxIn[r.u.id] = i; else if (r.io === "out") idxOut[r.u.id] = i; else idx[r.u.id] = i; });
@@ -1806,9 +1807,9 @@ function flow(s) {
     const g = geo(u), y = yMid(idx[u.id]);
     const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
     if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(u.ins[0])}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(u.ins.join(", "))} · entrada</title></rect>`; }
-    else if (dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
+    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
     if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(u.outs[0][0])}" x="${g.ox - 4}" y="${yo - 4}" width="8" height="8"><title>${esc(u.outs.map(o => o[0]).join(", "))} · saída</title></rect>`; }
-    else if (srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
+    else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {
@@ -1852,7 +1853,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -2742,6 +2743,7 @@ const ACT = {
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
+  "io-modo": t => { cur.compacto = t.dataset.m === "compacto"; },
   "dados-modo": t => { cur.dadosTodos = t.dataset.m === "todos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
   "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },

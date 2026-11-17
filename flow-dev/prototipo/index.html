@@ -2022,7 +2022,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><span class="fd-stat" data-fstat title="Tempo de render e elementos"></span><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -2217,7 +2217,7 @@ function flowHit(e) {
   return null;
 }
 function renderFlowAlt(T0) {
-  const stat = holder.querySelector("[data-fstat]"); if (!stat) return;
+  if (!holder.querySelector(".gantt.flow")) return;
   const host = holder.querySelector(".fv-host"), mode = cur.render || "svg";
   let n = 0;
   if (!host) { const sv = holder.querySelector(".fview"); n = sv ? sv.querySelectorAll("*").length : 0; }
@@ -2227,7 +2227,7 @@ function renderFlowAlt(T0) {
     if (mode === "html") { sceneToHtml(FLOW_SCENE, host); n = host.querySelectorAll("*").length; }
     else { const cv = document.createElement("canvas"); cv.className = "fv-cv"; cv.style.width = FLOW_SCENE.W + "px"; cv.style.height = FLOW_SCENE.H + "px"; host.appendChild(cv); drawFlowCanvas(); n = 1; }
   }
-  stat.textContent = `${mode.toUpperCase()} · ${(performance.now() - T0).toFixed(1)} ms · ${n} ${n === 1 ? "elemento" : "elementos"}`;
+  holder.querySelector(".gantt.flow").title = `${mode.toUpperCase()} · ${(performance.now() - T0).toFixed(1)} ms · ${n} elementos`; // medição fica só no tooltip
 }
 function applyZView(key = zKey()) {
   if (!key || !ZVIEWS[key]) return;

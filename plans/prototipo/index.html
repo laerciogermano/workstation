@@ -1579,8 +1579,6 @@ function estados(s) {
     }
     const kids = [];
     entries.forEach(([k, v]) => {
-      const p = path === "root" && depth === 0 ? "root." + k : path + "." + k;
-      // children of root: path root + key → "root.out"; deeper: keep path.k
       const childPath = depth === 0 ? "root." + k : path + "." + k;
       const isObj = v && typeof v === "object" && !Array.isArray(v);
       if (isObj) kids.push({ p: childPath, span: place(v, childPath, depth + 1) });

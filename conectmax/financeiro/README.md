@@ -4,8 +4,9 @@ Contas, crédito, faturamento, indicadores e **provedores** de emissão fiscal /
 
 | Artefato | Papel |
 |----------|--------|
-| [`tecnospeed-sped-xml.md`](tecnospeed-sped-xml.md) | O que é o módulo SPED XML (TecnoSpeed / PlugDFe) — geração de SPED a partir de XMLs |
+| [`tecnospeed-plugnotas.md`](tecnospeed-plugnotas.md) | PlugNotas — API JSON que emite NF-e, NFC-e, NFS-e, NFCom, MDF-e |
+| [`tecnospeed-sped-xml.md`](tecnospeed-sped-xml.md) | SPED XML — gera SPED a partir dos XMLs (pós-emissão) |
 | [`../extratos/README.md`](../extratos/README.md) | Extratos bancários (Inter) |
 | [`../portal-api/README.md`](../portal-api/README.md) | Portal: faturas, NF, boletos |
 
-**Nota:** SPED XML ≠ geração de boleto. Boleto no portal hoje: Contas a receber → `ajax/boletos/*`. Na linha TecnoSpeed, cobrança bancária fica no **PlugBank** (produto separado do SPED).
+**Linha TecnoSpeed (resumo):** PlugNotas = emitir nota · SPED XML = escriturar · PlugBank = boleto. Portal hoje: NF + CR → `ajax/boletos/*`.

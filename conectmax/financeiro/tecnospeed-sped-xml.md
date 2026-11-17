@@ -37,7 +37,7 @@ Gerar SPED exige contabilidade + apuração (ICMS, IPI, PIS, Cofins) + milhares 
 
 - Complementos além dos XMLs ainda podem ser necessários (cadastros, inventário, parâmetros — ver FAQ 2 no site)
 - **Boleto / cobrança bancária** → produto TecnoSpeed **PlugBank**, não este módulo
-- Emissão de DF-e em si → outras peças PlugDFe / stack fiscal do ERP
+- Emissão de DF-e em si → [`tecnospeed-plugnotas.md`](tecnospeed-plugnotas.md) (PlugNotas) / stack fiscal do ERP
 
 ## Posição na ConectMax
 

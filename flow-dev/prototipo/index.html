@@ -700,6 +700,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* texto dentro da barra (toggle no menu) */
 .fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font-size: 10px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 .fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 19px; }
+.vdock.fdock .fd-stat { font: 500 10.5px var(--mono); color: var(--muted); padding: 0 8px 0 4px; white-space: nowrap; min-width: 118px; }
+.fv-host { position: relative; }
+.fv-src { position: absolute; inset: 0; visibility: hidden; pointer-events: none; }
+.fv-html { position: absolute; inset: 0; }
+.fv-html > * { position: absolute; left: 0; top: 0; transform-origin: 0 0; box-sizing: border-box; }
+.fv-html [data-act] { cursor: pointer; }
+.fv-cv { position: absolute; inset: 0; display: block; }
 .vdock.fdock .fd-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: var(--line); }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .vdock.fdock .fd-l svg { color: var(--dado); }
@@ -1294,7 +1301,6 @@ function win(s) {
     <header class="tb">
       <span class="dots"><i></i><i></i><i></i></span>
       <span class="logo"><svg class="mark" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="var(--accent)"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="var(--accent)"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/></svg>flow.dev</span>
-      <button class="proj">Lançamento 2027 ${icon("chevrons-up-down")}</button>
       <span class="sp"></span>
       <span class="cmdk">${icon("search")}Buscar ou executar comando<kbd>⌘K</kbd></span>
       <span class="sp"></span>
@@ -1997,16 +2003,19 @@ function flow(s) {
           const foot = `<line class="sv-hl" x1="0" y1="${yF}" x2="${CW}" y2="${yF}"/><line class="sv-ax" x1="${OX}" y1="${yF + 10}" x2="${OX + axW}" y2="${yF + 10}"/>`
             + Array.from({ length: nSteps + 1 }, (_, i) => `<rect class="sv-los" x="${xs(i) - 3}" y="${yF + 7}" width="6" height="6" transform="rotate(45 ${xs(i)} ${yF + 10})"/><g class="sv-chip"><rect x="${xs(i) - 11}" y="${yF + 19}" width="22" height="15" rx="2"/><text x="${xs(i)}" y="${yF + 30}">e${i}</text></g>`
               + stShow[i].map(([n, ext], j) => `<g class="sv-fd${ext ? " ext" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}"><rect x="${xs(i) - 4.2}" y="${yF + 44 + j * 14}" width="8.4" height="8.4"/><text x="${xs(i) + 8}" y="${yF + 51.5 + j * 14}">${esc(n)}</text><title>${esc(n)} · em e${i}${ext ? " · entrada externa" : ""} · abrir no Explorar</title></g>`).join("")).join("");
-          return `<svg class="fsvg fview" width="${CW}" height="${52 + Math.max(H, RH) + FOOT}" xmlns="http://www.w3.org/2000/svg"><defs>
+          const HH = 52 + Math.max(H, RH) + FOOT, mode = s.render || "svg";
+          const svgStr = `<svg class="fsvg fview" width="${CW}" height="${HH}" xmlns="http://www.w3.org/2000/svg"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
             <marker id="fahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--warn)"/></marker></defs>
             ${head}${divs}${foot}<g transform="translate(0 52)">${bands}${selRows}${lines}${svg}${disp.map(rowSvg).join("")}</g></svg>`;
+          // comparar renderizadores: SVG direto · HTML (div/span) · Canvas (2D) — os dois últimos são convertidos do mesmo desenho
+          return mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`;
         })()}</div>
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><span class="fd-stat" data-fstat title="Tempo de render e elementos"></span><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -2093,12 +2102,133 @@ function zoomToolbar(key, label, ic, extra = "") {
       <button type="button" class="ib" data-act="zzoom-fit" data-zv="${key}" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
     </div></div>`;
 }
+// ---------- Flow: comparar SVG · HTML · Canvas (mesmo desenho, três saídas) ----------
+let FLOW_SCENE = null, CV_TIMER = 0;
+function flowScene(svg) {
+  const items = [], W = +svg.getAttribute("width"), H = +svg.getAttribute("height");
+  const tipOf = el => { const own = el.querySelector(":scope > title"); if (own) return own.textContent; const g = el.closest("g"); const t = g && g !== svg ? g.querySelector(":scope > title") : null; return t ? t.textContent : ""; };
+  const actOf = el => { const a = el.closest("[data-act]"); return a && svg.contains(a) ? { act: a.dataset.act, id: a.dataset.id || "", n: a.dataset.n || "" } : null; };
+  const mk = id => { const m = svg.querySelector(id + " path"); return m ? getComputedStyle(m).fill : "#999"; };
+  svg.querySelectorAll("rect, line, path, text").forEach(el => {
+    if (el.closest("defs")) return;
+    const cs = getComputedStyle(el), M = el.getCTM();
+    const st = { fill: cs.fill, stroke: cs.stroke, sw: parseFloat(cs.strokeWidth) || 1, dash: cs.strokeDasharray && cs.strokeDasharray !== "none" ? cs.strokeDasharray.split(/[ ,]+/).map(parseFloat).filter(x => !isNaN(x)) : null };
+    const b = { st, m: [M.a, M.b, M.c, M.d, M.e, M.f], act: actOf(el), tip: tipOf(el) };
+    const n = k => +el.getAttribute(k) || 0;
+    if (el.tagName === "rect") items.push({ ...b, t: "rect", x: n("x"), y: n("y"), w: n("width"), h: n("height"), rx: n("rx") });
+    else if (el.tagName === "line") items.push({ ...b, t: "path", d: `M${n("x1")} ${n("y1")} L${n("x2")} ${n("y2")}` });
+    else if (el.tagName === "path") { const me = el.getAttribute("marker-end"); items.push({ ...b, t: "path", d: el.getAttribute("d"), arrow: me ? mk(me.slice(4, -1)) : null }); }
+    else {
+      const parts = [];
+      el.childNodes.forEach(c => { if (c.nodeType === 3) parts.push({ txt: c.textContent, fill: cs.fill }); else if (c.tagName === "tspan") parts.push({ txt: c.textContent, fill: getComputedStyle(c).fill, act: c.dataset.act ? { act: c.dataset.act, id: c.dataset.id || "", n: c.dataset.n || "" } : null }); });
+      items.push({ ...b, t: "text", x: n("x"), y: n("y"), anchor: cs.textAnchor, font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, size: parseFloat(cs.fontSize), parts: parts.filter(p => p.txt) });
+    }
+  });
+  return { W, H, items };
+}
+// pontos de um "d" (M L H V C l Z) em coordenadas absolutas; curvas viram segmentos
+function pathPts(d) {
+  const tk = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e-?\d+)?/g) || [], subs = []; let cur = null, x = 0, y = 0, i = 0, c = "";
+  const num = () => +tk[i++];
+  while (i < tk.length) {
+    if (/[a-zA-Z]/.test(tk[i])) c = tk[i++];
+    if (c === "M") { x = num(); y = num(); cur = [[x, y]]; subs.push(cur); c = "L"; }
+    else if (c === "L") { x = num(); y = num(); cur.push([x, y]); }
+    else if (c === "l") { x += num(); y += num(); cur.push([x, y]); }
+    else if (c === "H") { x = num(); cur.push([x, y]); }
+    else if (c === "V") { y = num(); cur.push([x, y]); }
+    else if (c === "C") { const x1 = num(), y1 = num(), x2 = num(), y2 = num(), x3 = num(), y3 = num(), x0 = x, y0 = y;
+      for (let k = 1; k <= 12; k++) { const t = k / 12, u = 1 - t; cur.push([u*u*u*x0 + 3*u*u*t*x1 + 3*u*t*t*x2 + t*t*t*x3, u*u*u*y0 + 3*u*u*t*y1 + 3*u*t*t*y2 + t*t*t*y3]); } x = x3; y = y3; }
+    else if (c === "Z" || c === "z") { cur.closed = true; cur.push(cur[0].slice()); c = ""; }
+    else i++;
+  }
+  return subs;
+}
+const MT = (m, x, y) => [m[0] * x + m[2] * y + m[4], m[1] * x + m[3] * y + m[5]];
+function sceneToHtml(sc, host) {
+  const box = document.createElement("div"); box.className = "fv-html";
+  const css = c => c && c !== "none" ? c : "transparent";
+  const seg = (a, b2, st, color) => { const dx = b2[0] - a[0], dy = b2[1] - a[1], L = Math.hypot(dx, dy); if (L < .01) return "";
+    const bg = st.dash ? `repeating-linear-gradient(90deg, ${color} 0 ${st.dash[0]}px, transparent ${st.dash[0]}px ${st.dash[0] + (st.dash[1] || st.dash[0])}px)` : color;
+    return `<i style="width:${L}px;height:${st.sw}px;background:${bg};transform:translate(${a[0]}px,${a[1] - st.sw / 2}px) rotate(${Math.atan2(dy, dx)}rad);transform-origin:0 ${st.sw / 2}px"></i>`; };
+  const at = o => o.act ? ` data-act="${o.act.act}"${o.act.id ? ` data-id="${esc(o.act.id)}"` : ""}${o.act.n ? ` data-n="${esc(o.act.n)}"` : ""}` : "";
+  let h = "";
+  sc.items.forEach(o => {
+    const tip = o.tip ? ` title="${esc(o.tip)}"` : "";
+    if (o.t === "rect") {
+      const sw = o.st.stroke !== "none" ? o.st.sw : 0;
+      h += `<div${at(o)}${tip} style="width:${o.w + sw}px;height:${o.h + sw}px;border-radius:${o.rx ? o.rx + sw / 2 : 0}px;background:${css(o.st.fill)};${sw ? `border:${sw}px ${o.st.dash ? "dashed" : "solid"} ${o.st.stroke};` : ""}transform:matrix(${o.m.join(",")}) translate(${o.x - sw / 2}px,${o.y - sw / 2}px)"></div>`;
+    } else if (o.t === "path") {
+      pathPts(o.d).forEach(sp => {
+        const P = sp.map(([x, y]) => MT(o.m, x, y));
+        if (sp.closed && o.st.fill !== "none") h += `<div${at(o)} style="width:${sc.W}px;height:${sc.H}px;background:${o.st.fill};clip-path:polygon(${P.map(p => `${p[0]}px ${p[1]}px`).join(",")})"></div>`;
+        if (o.st.stroke !== "none") for (let k = 1; k < P.length; k++) h += seg(P[k - 1], P[k], o.st, o.st.stroke);
+        if (o.arrow && P.length > 1) { const a = P[P.length - 2], z = P[P.length - 1], ang = Math.atan2(z[1] - a[1], z[0] - a[0]);
+          h += `<div style="width:7px;height:7px;background:${o.arrow};clip-path:polygon(0 0,100% 50%,0 100%);transform:translate(${z[0]}px,${z[1]}px) rotate(${ang}rad) translate(-6px,-3.5px)"></div>`; }
+      });
+    } else {
+      const [x, y] = MT(o.m, o.x, o.y), mid = o.anchor === "middle";
+      h += `<div${tip} style="font:${o.font};line-height:1;white-space:pre;transform:translate(${x}px,${y - o.size * .8}px)${mid ? " translateX(-50%)" : ""}">${o.parts.map(p => `<span${p.act ? at(p) : at(o)} style="color:${p.fill}">${esc(p.txt)}</span>`).join("")}</div>`;
+    }
+  });
+  box.innerHTML = h; host.appendChild(box);
+}
+function drawFlowCanvas() {
+  const cv = holder.querySelector(".fv-cv"); if (!cv || !FLOW_SCENE) return;
+  const sc = FLOW_SCENE, z = (ZVIEWS.flow || { z: 1 }).z, k = (window.devicePixelRatio || 1) * Math.max(1, z);
+  cv.width = Math.round(sc.W * k); cv.height = Math.round(sc.H * k);
+  const c = cv.getContext("2d"); c.clearRect(0, 0, cv.width, cv.height);
+  sc.hits = [];
+  sc.items.forEach(o => {
+    c.setTransform(k * o.m[0], k * o.m[1], k * o.m[2], k * o.m[3], k * o.m[4], k * o.m[5]);
+    c.setLineDash(o.st.dash || []); c.lineWidth = o.st.sw;
+    if (o.t === "rect") {
+      c.beginPath(); c.roundRect ? c.roundRect(o.x, o.y, o.w, o.h, o.rx || 0) : c.rect(o.x, o.y, o.w, o.h);
+      if (o.st.fill !== "none") { c.fillStyle = o.st.fill; c.fill(); }
+      if (o.st.stroke !== "none") { c.strokeStyle = o.st.stroke; c.stroke(); }
+      if (o.act) { const [x, y] = MT(o.m, o.x, o.y); sc.hits.push({ x, y, w: o.w, h: o.h, act: o.act, tip: o.tip }); }
+    } else if (o.t === "path") {
+      const p = new Path2D(o.d);
+      if (o.st.fill !== "none" && /z/i.test(o.d)) { c.fillStyle = o.st.fill; c.fill(p); }
+      if (o.st.stroke !== "none") { c.strokeStyle = o.st.stroke; c.stroke(p); }
+      if (o.arrow) { const sp = pathPts(o.d).pop(); if (sp && sp.length > 1) { const a = sp[sp.length - 2], zz = sp[sp.length - 1], ang = Math.atan2(zz[1] - a[1], zz[0] - a[0]);
+        c.save(); c.translate(zz[0], zz[1]); c.rotate(ang); c.setLineDash([]); c.fillStyle = o.arrow; c.beginPath(); c.moveTo(0, 0); c.lineTo(-6, -3.5); c.lineTo(-6, 3.5); c.closePath(); c.fill(); c.restore(); } }
+    } else {
+      c.font = o.font; c.textBaseline = "alphabetic";
+      const total = o.parts.reduce((t, p) => t + c.measureText(p.txt).width, 0);
+      let x = o.anchor === "middle" ? o.x - total / 2 : o.x;
+      o.parts.forEach(p => { c.fillStyle = p.fill; c.fillText(p.txt, x, o.y); const w = c.measureText(p.txt).width; const a = p.act || o.act;
+        if (a) { const [hx, hy] = MT(o.m, x, o.y - o.size * .85); sc.hits.push({ x: hx, y: hy, w, h: o.size * 1.15, act: a, tip: o.tip }); } x += w; });
+    }
+  });
+  c.setTransform(1, 0, 0, 1, 0, 0);
+}
+function flowHit(e) {
+  const cv = e.target.closest?.(".fv-cv"); if (!cv || !FLOW_SCENE?.hits) return null;
+  const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * FLOW_SCENE.W / r.width, y = (e.clientY - r.top) * FLOW_SCENE.H / r.height;
+  for (let i = FLOW_SCENE.hits.length - 1; i >= 0; i--) { const h = FLOW_SCENE.hits[i]; if (x >= h.x - 2 && x <= h.x + h.w + 2 && y >= h.y - 2 && y <= h.y + h.h + 2) return h; }
+  return null;
+}
+function renderFlowAlt(T0) {
+  const stat = holder.querySelector("[data-fstat]"); if (!stat) return;
+  const host = holder.querySelector(".fv-host"), mode = cur.render || "svg";
+  let n = 0;
+  if (!host) { const sv = holder.querySelector(".fview"); n = sv ? sv.querySelectorAll("*").length : 0; }
+  else {
+    const svg = host.querySelector(".fv-src svg"); FLOW_SCENE = flowScene(svg);
+    host.querySelector(".fv-src").remove();
+    if (mode === "html") { sceneToHtml(FLOW_SCENE, host); n = host.querySelectorAll("*").length; }
+    else { const cv = document.createElement("canvas"); cv.className = "fv-cv"; cv.style.width = FLOW_SCENE.W + "px"; cv.style.height = FLOW_SCENE.H + "px"; host.appendChild(cv); drawFlowCanvas(); n = 1; }
+  }
+  stat.textContent = `${mode.toUpperCase()} · ${(performance.now() - T0).toFixed(1)} ms · ${n} ${n === 1 ? "elemento" : "elementos"}`;
+}
 function applyZView(key = zKey()) {
   if (!key || !ZVIEWS[key]) return;
   const st = ZVIEWS[key];
   const world = holder.querySelector(`[data-zworld="${key}"]`);
   if (!world) return;
   world.style.transform = `translate(${st.x}px, ${st.y}px) scale(${st.z})`;
+  if (key === "flow" && holder.querySelector(".fv-cv")) { clearTimeout(CV_TIMER); CV_TIMER = setTimeout(drawFlowCanvas, 60); }
   const pct = holder.querySelector(`[data-z-pct="${key}"]`);
   if (pct) pct.textContent = Math.round(st.z * 100) + "%";
 }
@@ -2819,6 +2949,7 @@ function fit() {
   holder.dataset.scale = s;
 }
 function paint(keepScroll = true) {
+  const T0 = performance.now();
   const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
   if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
@@ -2832,6 +2963,7 @@ function paint(keepScroll = true) {
   lucide.createIcons();
   fit();
   applyZView();
+  renderFlowAlt(T0);
   const f = holder.querySelector(cur.focusQ ? "[data-q]" : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
   const fl = holder.querySelector(".flash, .node.sel"); if (fl && cur.flash) fl.scrollIntoView({ block: "nearest", inline: "nearest" });
   cur.flash = null;
@@ -2906,6 +3038,7 @@ const ACT = {
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
   "txt-in": () => { cur.txtIn = !cur.txtIn; },
+  render: t => { cur.render = t.dataset.m; },
   "io-modo": t => { cur.compacto = t.dataset.m === "compacto"; },
   "dados-modo": t => { cur.dadosTodos = t.dataset.m === "todos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
@@ -3062,7 +3195,15 @@ holder.addEventListener("wheel", e => {
   const factor = e.deltaY < 0 ? step : 1 / step;
   zZoomAt(key, canvas, x, y, ZVIEWS[key].z * factor);
 }, { passive: false });
+holder.addEventListener("click", e => {
+  const h = flowHit(e); if (!h) return;
+  e.stopImmediatePropagation();
+  const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
+  const r = ACT[h.act.act]?.(t, e); if (r !== false) paint();
+}, true);
+holder.addEventListener("mousemove", e => { const cv = e.target.closest?.(".fv-cv"); if (!cv) return; const h = flowHit(e); cv.style.cursor = h ? "pointer" : ""; cv.title = h?.tip || ""; });
 holder.addEventListener("pointerdown", e => {
+  if (flowHit(e)) return; // clique em barra/dado no canvas não vira pan
   const canvas = e.target.closest(".zcanvas");
   const key = canvas?.dataset?.zcanvas || zKey();
   if (!canvas || !key || !ZVIEWS[key] || cur?.v !== key) return;

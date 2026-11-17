@@ -13,3 +13,12 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 **Antes → depois:** produto só no Plans `#T-32` → IDE próprio Flow.dev.
 
 **Voltar:** apontar centralizador de volta para Plans `#T-32` e arquivar `flow-dev/`.
+
+### UI recente (`prototipo/index.html`)
+
+| Antes | Depois |
+|-------|--------|
+| Seção Explorar **Layers** | **Arquivos** |
+| Só **Exportar** na barra | **Executar** + **Exportar** |
+| Ícone Node preenchido com brand | Fundo branco; ícone/borda verde (`--ok` / brand) |
+| Dado abstrato só se nunca produzido no plano | Abstrato = fora da **camada** (ex.: `dados_cliente` na Ativação = ■ preto) |

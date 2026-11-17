@@ -145,6 +145,8 @@ npm run camera-ui   # http://127.0.0.1:18770/ — form CDP + vídeo + label
 npm run test:camera
 ```
 
+Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
+
 Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriva `--use-fake-*` de `cameraCaptureFile`. Infobar amarela das flags é esperada (lab). POC OmTV: [`omtv/pocs/fake-webcam-cdp/README.md`](../../../../omtv/pocs/fake-webcam-cdp/README.md).
 
 **Antes → depois:** só spoof OBS / chromeArgs manuais → `setCamera` + UI + campos no fingerprint. Rollback: `clearCamera(id)`; remover `src/camera.mjs` / `camera-ui/` / exports.

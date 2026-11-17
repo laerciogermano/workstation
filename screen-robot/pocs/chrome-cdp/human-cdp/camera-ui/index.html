@@ -83,7 +83,7 @@
       <label>
         Vídeo (caminho absoluto)
         <input id="video" type="text" placeholder="/Users/…/oferta.mp4" required />
-        <span class="hint">MP4 é convertido p/ Y4M; Y4M/MJPEG entram direto. Troca exige restart do Chrome.</span>
+        <span class="hint">Padrão: sample do lab (testsrc/sample.y4m). MP4→Y4M; troca exige restart do Chrome.</span>
       </label>
       <label>
         Nome da webcam
@@ -115,8 +115,17 @@
       return data;
     }
 
+    let defaults = { video: '', label: 'FaceTime HD Camera' };
+
+    function applyDefaults() {
+      if (!$('video').value.trim() && defaults.video) $('video').value = defaults.video;
+      if (!$('label').value.trim() && defaults.label) $('label').value = defaults.label;
+    }
+
     async function loadList() {
-      const { cdps } = await api('/api/cdps');
+      const data = await api('/api/cdps');
+      const { cdps } = data;
+      if (data.defaults) defaults = data.defaults;
       const sel = $('cdp');
       const prev = sel.value;
       sel.innerHTML = '';
@@ -127,6 +136,8 @@
         sel.appendChild(opt);
       }
       if (prev && [...sel.options].some((o) => o.value === prev)) sel.value = prev;
+      else if ([...sel.options].some((o) => o.value === 'omtv-fake-cam')) sel.value = 'omtv-fake-cam';
+      applyDefaults();
       await loadCurrent();
     }
 
@@ -135,11 +146,13 @@
       if (!id) return;
       const cam = await api('/api/camera?id=' + encodeURIComponent(id));
       if (cam.video) $('video').value = cam.video;
+      else if (defaults.video) $('video').value = defaults.video;
       if (cam.label) $('label').value = cam.label;
+      else if (defaults.label) $('label').value = defaults.label;
       status(
         cam.video
           ? `atual: ${cam.label || '—'} ← ${cam.video}`
-          : 'sem câmera fake neste CDP',
+          : `padrão do lab: ${defaults.video || '—'}`,
       );
     }
 

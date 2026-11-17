@@ -6,8 +6,8 @@
  *   # → http://127.0.0.1:18770/
  */
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   listCdps,
@@ -18,7 +18,27 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.HUMAN_CDP_CAMERA_UI_PORT || 18770);
-const HTML = readFileSync(join(__dirname, 'index.html'));
+const HTML = readFileSync(join(__dirname, 'index.html'), 'utf8');
+const WORKS = resolve(__dirname, '../../../../..');
+
+/** Vídeo padrão do lab (primeiro que existir). */
+function defaultVideoPath() {
+  const env = String(process.env.HUMAN_CDP_DEFAULT_VIDEO || '').trim();
+  if (env && existsSync(env)) return resolve(env);
+  const candidates = [
+    join(WORKS, 'omtv/pocs/fake-webcam-cdp/media/testsrc.y4m'),
+    join(WORKS, 'screen-robot/pocs/chrome-cdp/media/sample.y4m'),
+    join(WORKS, 'screen-robot/pocs/android-studio/media/loop-preview.mp4'),
+    join(WORKS, 'screen-robot/pocs/android-studio/media/sample.mp4'),
+  ];
+  for (const p of candidates) {
+    if (existsSync(p)) return p;
+  }
+  return candidates[0];
+}
+
+const DEFAULT_VIDEO = defaultVideoPath();
+const DEFAULT_LABEL = 'FaceTime HD Camera';
 
 function json(res, status, body) {
   const raw = JSON.stringify(body);
@@ -53,6 +73,14 @@ const server = createServer(async (req, res) => {
       res.end(HTML);
       return;
     }
+    if (req.method === 'GET' && url.pathname === '/api/defaults') {
+      json(res, 200, {
+        video: DEFAULT_VIDEO,
+        label: DEFAULT_LABEL,
+        videoExists: existsSync(DEFAULT_VIDEO),
+      });
+      return;
+    }
     if (req.method === 'GET' && url.pathname === '/api/cdps') {
       const cdps = listCdps().map((c) => {
         const cam = c.fingerprint
@@ -70,7 +98,14 @@ const server = createServer(async (req, res) => {
           video: cam.video,
         };
       });
-      json(res, 200, { cdps });
+      json(res, 200, {
+        cdps,
+        defaults: {
+          video: DEFAULT_VIDEO,
+          label: DEFAULT_LABEL,
+          videoExists: existsSync(DEFAULT_VIDEO),
+        },
+      });
       return;
     }
     if (req.method === 'GET' && url.pathname === '/api/camera') {

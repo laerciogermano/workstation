@@ -1130,7 +1130,7 @@ function win(s) {
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
         <div class="viewport">${s.v === "catalog" ? catalog(s) : flow(s)}
-          ${s.drawer ? drawer(s) : ""}
+          ${s.drawer ? drawer(s) : ""}${s.agCfg ? agentPanel(s) : ""}${s.mdCfg ? modelPanel(s) : ""}
         </div>
       </section>
     </div>
@@ -1245,13 +1245,8 @@ function explorer(s) {
     const list = CAT.filter(a => a.type === "ia" && (!q || a.name.toLowerCase().includes(q) || (AGENT_CFG[a.id]?.prompt || "").toLowerCase().includes(q)));
     if (q) hits += list.length;
     const html = list.map(a => {
-      const cfg = AGENT_CFG[a.id] || {}, id = "ag:" + a.id, isOpen = q ? true : OPEN.has(id);
-      const uses = U.filter(u => !u.arch && u.agent === a.id && !kids(u.id).length).length;
-      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi agente" title="Agente de IA">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
-      if (isOpen) h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("cpu")}</span><span class="t"><span class="k">modelo</span> <select class="md-sel" data-model="${a.id}" data-act="noop" aria-label="Modelo de ${esc(a.name)}">${MODELS.map(m => `<option value="${m.id}"${cfg.model === m.id ? " selected" : ""}>${esc(m.name)}</option>`).join("")}</select></span></div>
-        <div class="node ag-d ag-p" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("message-square-text")}</span><span class="t" title="${esc(cfg.prompt || "")}"><span class="k">prompt</span> ${esc(cfg.prompt || "—")}</span></div>
-        <div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("workflow")}</span><span class="t"><span class="k">usado em</span> ${uses} etapa${uses === 1 ? "" : "s"}</span></div>`;
-      return h;
+      const cfg = AGENT_CFG[a.id] || {};
+      return `<div class="node${s.agCfg === a.id ? " sel" : ""}" data-act="ag-cfg" data-id="${a.id}" style="padding-left:8px" title="Configurar ${esc(a.name)}"><span class="car"></span><span class="fi agente">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum agente configurado.</p>`, n: list.length };
   })();
@@ -1259,12 +1254,7 @@ function explorer(s) {
   const modelRows = (() => {
     const list = MODELS.filter(m => !q || m.name.toLowerCase().includes(q) || m.vendor.toLowerCase().includes(q) || m.api.includes(q));
     if (q) hits += list.length;
-    const html = list.map(m => {
-      const ags = CAT.filter(a => a.type === "ia" && AGENT_CFG[a.id]?.model === m.id), id = "md:" + m.id, isOpen = q ? true : OPEN.has(id);
-      let h = `<div class="node${isOpen ? " openf" : ""}" ${ags.length ? `data-act="toggle" data-id="${id}"` : ""} style="padding-left:8px" title="${esc(m.vendor)} · ${esc(m.api)}"><span class="car">${ags.length ? icon("chevron-right") : ""}</span><span class="fi modelo">${icon("sparkles")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span>${ags.length ? `<span class="mono">· ${ags.length}</span>` : ""}</span></div>`;
-      if (isOpen) ags.forEach(a => { h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi agente">${icon("bot")}</span><span class="t">${esc(a.name)} <span class="k">${esc(a.sub.replace("Agente · ", ""))}</span></span></div>`; });
-      return h;
-    }).join("");
+    const html = list.map(m => `<div class="node${s.mdCfg === m.id ? " sel" : ""}" data-act="md-cfg" data-id="${m.id}" style="padding-left:8px" title="Configurar ${esc(m.name)}"><span class="car"></span><span class="fi modelo">${icon("brain-circuit")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span></span></div>`).join("");
     return { html, n: list.length };
   })();
   // Pessoas: responsáveis humanos que podem assumir funções abstratas
@@ -1302,7 +1292,7 @@ function explorer(s) {
         ${agentRows.html}
       </div>
       <div class="ex-sec" data-sec="modelos">
-        <div class="ex-sec-h">${icon("sparkles")} Modelos<span class="n">${modelRows.n}</span></div>
+        <div class="ex-sec-h">${icon("brain-circuit")} Modelos<span class="n">${modelRows.n}</span></div>
         ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
@@ -1386,6 +1376,32 @@ function cfgPanel() {
 }
 
 // ----- Detalhe da unidade -----
+// janela de configuração do agente: nome, modelo (dos disponíveis) e prompt
+function agentPanel(s) {
+  const a = agent(s.agCfg); if (!a) return "";
+  const cfg = AGENT_CFG[a.id] = AGENT_CFG[a.id] || { model: MODELS[0].id, prompt: "" };
+  const uses = U.filter(u => !u.arch && (u.agent === a.id || u.resp === a.id) && !kids(u.id).length);
+  return `<aside class="side w360" aria-label="Configurar agente">
+    <div class="side-h"><span class="k">${icon("bot")}Agente · prompt + modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-b">
+      <input class="ttl" data-ag-name="${a.id}" value="${esc(a.name)}" aria-label="Nome do agente">
+      <div class="fld"><label>Modelo</label><select class="sel-in" data-model="${a.id}" data-act="noop">${MODELS.map(m => `<option value="${m.id}"${cfg.model === m.id ? " selected" : ""}>${esc(m.name)} · ${esc(m.vendor)}</option>`).join("")}</select></div>
+      <div class="fld"><label>Prompt</label><textarea data-ag-prompt="${a.id}" rows="6">${esc(cfg.prompt || "")}</textarea></div>
+      <div class="fld"><span class="l">Usado em</span>${uses.length ? `<div class="list-r">${uses.map(u => `<button data-act="drawer" data-id="${u.id}">${icon("circle")}${esc(u.title)}<span class="r">${esc(PLANS.find(p => p.id === u.plan)?.name || "")}</span></button>`).join("")}</div>` : `<p style="color:var(--muted);font-size:12px">Nenhuma etapa ainda.</p>`}</div>
+    </div></aside>`;
+}
+// janela de configuração do modelo
+function modelPanel(s) {
+  const m = modelOf(s.mdCfg); if (!m) return "";
+  return `<aside class="side w360" aria-label="Configurar modelo">
+    <div class="side-h"><span class="k">${icon("brain-circuit")}Modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-b">
+      <input class="ttl" data-md-name="${m.id}" value="${esc(m.name)}" aria-label="Nome do modelo">
+      <div class="fld"><label>Fornecedor</label><input type="text" data-md-vendor="${m.id}" value="${esc(m.vendor)}"></div>
+      <div class="fld"><label>ID na API</label><input type="text" class="mono" data-md-api="${m.id}" value="${esc(m.api)}"></div>
+      <div class="fld"><label>Chave de API</label><input type="text" value="definida no ambiente (FLOW_${esc(m.vendor.toUpperCase())}_KEY)" disabled></div>
+    </div></aside>`;
+}
 function drawer(s) {
   const u = $u(s.drawer); if (!u) return "";
   const from = s.from || s.v;
@@ -2626,6 +2642,9 @@ const ACT = {
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
+  "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
+  "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },
+  "cfg-close": () => { unset("agCfg", "mdCfg"); },
   "proj-open": t => { projAll(t.dataset.plan, true); },
   "proj-close": t => { projAll(t.dataset.plan, false); },
   collapse: () => { OPEN.clear(); toast("Árvore recolhida", "chevrons-down-up"); },
@@ -2690,7 +2709,7 @@ const ACT = {
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },
   "confirm-no": () => unset("confirm"),
   "confirm-yes": () => { const n = removeIds(cur.confirm); unset("confirm", "drawer", "multi"); cur.sel = null; toast(`${n} itens removidos de todas as visões`, "trash-2"); },
-  drawer: t => { const id = t.dataset.id; if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
+  drawer: t => { const id = t.dataset.id; unset("agCfg", "mdCfg"); if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
   tsel: t => { cur.sel = t.dataset.id; },
   "close-drawer": () => unset("drawer", "picker", "from"),
   picker: () => { cur.picker = !cur.picker; },
@@ -2837,6 +2856,12 @@ holder.addEventListener("contextmenu", e => {
   e.preventDefault(); const p = winPoint(e); cur.sel = node.dataset.node; cur.ctx = { id: node.dataset.node, x: p.x, y: p.y }; paint();
 });
 holder.addEventListener("input", e => {
+  const T = e.target;
+  if (T.dataset.agPrompt) { (AGENT_CFG[T.dataset.agPrompt] = AGENT_CFG[T.dataset.agPrompt] || {}).prompt = T.value; return; }
+  if (T.dataset.agName) { agent(T.dataset.agName).name = T.value; return; }
+  if (T.dataset.mdName) { modelOf(T.dataset.mdName).name = T.value; return; }
+  if (T.dataset.mdVendor) { modelOf(T.dataset.mdVendor).vendor = T.value; return; }
+  if (T.dataset.mdApi) { modelOf(T.dataset.mdApi).api = T.value; return; }
   if (e.target.matches("[data-q]")) { cur.q = e.target.value; const pos = e.target.selectionStart; paint(); const i = holder.querySelector("[data-q]"); i.focus(); i.setSelectionRange(pos, pos); return; }
   if (e.target.matches("[data-code]")) { const u = $u(e.target.dataset.code); u.code = e.target.value; e.target.rows = Math.max(u.code.split("\n").length, 10); const ln = e.target.previousElementSibling; ln.textContent = Array.from({ length: Math.max(u.code.split("\n").length, 12) }, (_, i) => i + 1).join("\n"); }
 });

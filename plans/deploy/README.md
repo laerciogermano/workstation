@@ -52,14 +52,15 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** restaurar `gm`/`T-37`/`ganttFopStates` no histórico git.
 
-## Estados · árvore de dados
+## Estados · explorar + dados + zoom
 
 - Ícone dock: `dice-5` (dado).
-- `planStateObject(plan)` → `{ root, sources }`; UI = canvas em árvore L→R (nós + edges) + `state.json`. T-70.
+- `planStateObject` → `{ root: { explorar, dados }, sources }`. `explorar` = árvore do Explorar (`title` = título da unidade; editar no canvas atualiza o Explorar). `dados` = outs do plano.
+- Zoom/pan: `ZVIEWS.estados` + `.zcanvas` / `.zworld` (igual Gantt/Flow/Árvore/Fluxograma). T-70.
 
-**Antes → depois:** lista indentada / e0…eN → árvore visual de dados com ícone dado.
+**Antes → depois:** só outs sob root → `explorar` + `dados`; sem zoom → com `ZVIEWS.estados`.
 
-**Voltar:** `database` + rows `erow` / `ganttFopStates`.
+**Voltar:** `root` só com outs; `egraph` com `overflow:auto` sem zcanvas.
 
 ## Flow · Gantt por passos
 
@@ -69,12 +70,12 @@ Flow no layout Gantt (`flowLayout` + `.funit`): **um** □ entrada e **um** □ 
 
 **Voltar:** multi-sq + `.gsvg` deps no `flow()`.
 
-## Zoom/pan · Gantt · Flow · Árvore · Fluxograma
+## Zoom/pan · Gantt · Flow · Árvore · Estados · Fluxograma
 
 Mesmo padrão: `ZVIEWS[key]` + `.zcanvas` / `.zworld` + toolbar `zzoom-*`. Scroll = zoom no cursor; arrastar fundo = pan; − / % / + / ajustar.
 
 Fluxograma: sem sticky “Onboarding Acme”, sem select de plano e sem “Executar via IAs” na barra.
 
-**Antes → depois:** só Fluxograma com zoom → as quatro visões; sticky/plan/run na barra → removidos do diagram.
+**Antes → depois:** só Fluxograma → cinco visões com zoom (incl. Estados); sticky/plan/run na barra → removidos do diagram.
 
 **Voltar:** `DVIEW` só no diagram; restaurar sticky + acts de plan/run no `bar()`.

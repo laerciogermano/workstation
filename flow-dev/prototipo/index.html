@@ -305,8 +305,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-tree .inner { min-width: max-content; }
 .ex-sec { padding: 6px 0 10px; }
 .ex-sec + .ex-sec { border-top: 1px solid var(--line); }
-.ex-sec-h { display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px 0 14px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.ex-sec-h { display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 8px 0 14px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .ex-sec-h svg { width: 13px; height: 13px; color: var(--accent); }
+.ex-sec-h .n { margin-left: auto; }
+.ex-sec-h .ib { width: 22px; height: 22px; color: var(--muted); }
+.ex-sec-h .ib:hover { color: var(--accent); }
+.node .dado-val { font-size: 10px; color: var(--ok); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+.node .dado-val.empty { color: var(--muted); font-style: italic; }
 /* src = Planos + Estados (subseções); Agentes = modelos de IA com prompt pronto */
 .ex-sub { position: relative; }
 .ex-sub .node { margin-left: 12px; }
@@ -1310,8 +1315,13 @@ function faceOf(a, { lg = false } = {}) {
   return `<span class="face ${a.type}${lg ? " lg" : ""}" title="${TYPES[a.type]?.one || ""}: ${esc(a.name)}">${body}${mark}</span>`;
 }
 function topOf(u) { let x = u; while (x?.parent && !isFolder($u(x.parent))) x = $u(x.parent); return x; }
-/** Dado abstrato = usado numa camada que não o produz (ex.: dados_cliente na Ativação). */
+/** Valores definidos no state: com valor, o dado deixa de ser abstrato (fica concreto / sólido). */
+const DATA_VAL = {};
+function dadoHasValue(name) { return DATA_VAL[name] != null && String(DATA_VAL[name]).length > 0; }
+function planRoot(plan) { return U.find(u => !u.arch && isFolder(u) && u.plan === plan && !u.parent) || null; }
+/** Dado abstrato = sem valor definido e usado numa camada que não o produz. */
 function dadoIsAbs(name) {
+  if (dadoHasValue(name)) return false; // valor no state → concreto (sólido)
   const producers = U.filter(u => !u.arch && (u.outs || []).some(o => o[0] === name));
   if (!producers.length) return true;
   const prodTops = new Set(producers.map(p => topOf(p)?.id).filter(Boolean));
@@ -1351,7 +1361,7 @@ function win(s) {
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
         <div class="viewport">${s.v === "catalog" ? catalog(s) : flow(s)}
-          ${s.drawer ? drawer(s) : ""}${s.agCfg ? agentPanel(s) : ""}${s.mdCfg ? modelPanel(s) : ""}
+          ${s.drawer ? drawer(s) : ""}${s.agCfg ? agentPanel(s) : ""}${s.mdCfg ? modelPanel(s) : ""}${s.dadoEdit ? dadoPanel(s) : ""}
         </div>
       </section>
     </div>
@@ -1438,8 +1448,8 @@ function explorer(s) {
       rows.push(...sub);
       outs.forEach(([name, ref]) => {
         estHits++;
-        const abs = dadoIsAbs(name);
-        rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato (outra camada / state)" : "concreto"}">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`);
+        const abs = dadoIsAbs(name), has = dadoHasValue(name);
+        rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="dado-edit" data-n="${esc(name)}" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}${has ? " · " + DATA_VAL[name] : ""}">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[name]) : "sem valor"}</span></span></div>`);
       });
     });
     return rows;
@@ -1533,11 +1543,11 @@ function explorer(s) {
         ${projRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum projeto.</p>`}
       </div>
       <div class="ex-sec" data-sec="funcoes">
-        <div class="ex-sec-h">${icon("circle")} Funções<span class="n">${nFuncoes}</span></div>
-        ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função.</p>`}
+        <div class="ex-sec-h">${icon("circle")} Funções<span class="n">${nFuncoes}</span><button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
+        ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função. <button class="btn" data-act="new-flow" style="margin-left:6px;height:24px;font-size:11px">${icon("plus")}Fluxo</button></p>`}
       </div>
       <div class="ex-sec" data-sec="dados">
-        <div class="ex-sec-h">${icon("box")} Dados<span class="n">${stateCatalog().length}</span></div>
+        <div class="ex-sec-h">${icon("box")} Dados<span class="n">${stateCatalog().length}</span><button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
         ${dadoSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum dado.</p>`}
       </div>
       <div class="ex-sec" data-sec="arquivos">

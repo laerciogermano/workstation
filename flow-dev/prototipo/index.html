@@ -237,6 +237,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-sub-h .n { margin-left: auto; font-variant-numeric: tabular-nums; }
 .node .fi.agente { color: var(--t-ia); }
 .node .fi.pessoa { color: var(--t-pessoa); }
+.node .fi.modelo { color: var(--accent); }
+.md-sel { border: 1px solid var(--line-2); border-radius: 5px; background: var(--paper); font-size: 11px; height: 20px; padding: 0 4px; color: var(--ink); }
+.node.ag-d .t:has(.md-sel) { overflow: visible; }
 .node.ag-d { cursor: default; height: 24px; }
 .node.proj .t b { font-weight: 600; }
 .node.proj .meta { gap: 2px; }
@@ -933,10 +936,10 @@ const NDAYS = 19;
 const WD = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
 const CAT = [
-  { id: "a1", type: "ia", name: "Claude", sub: "Anthropic · redação e revisão" },
-  { id: "a2", type: "ia", name: "GPT", sub: "OpenAI · tradução" },
-  { id: "a3", type: "ia", name: "Agente de pesquisa", sub: "Busca e comparação" },
-  { id: "a4", type: "ia", name: "Revisor", sub: "Checkpoint de qualidade via IA" },
+  { id: "a1", type: "ia", name: "Lia", sub: "Agente · redação de propostas" },
+  { id: "a2", type: "ia", name: "Teo", sub: "Agente · tradução" },
+  { id: "a3", type: "ia", name: "Nina", sub: "Agente · pesquisa e comparação" },
+  { id: "a4", type: "ia", name: "Davi", sub: "Agente · revisão e aprovação" },
   { id: "h1", type: "pessoa", name: "Ana Souza", sub: "Comercial · aprova propostas" },
   { id: "h2", type: "pessoa", name: "Bruno Lima", sub: "Jurídico · revisa contratos" },
   { id: "h3", type: "pessoa", name: "Carla Dias", sub: "Sucesso do cliente · kickoff" },
@@ -947,13 +950,21 @@ const CAT = [
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
 ];
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
+// Modelos = as IAs (Claude, GPT…). Agentes = “pessoas” de IA com nome, um modelo e um prompt pronto
+const MODELS = [
+  { id: "opus", name: "Claude Opus 5.5", api: "claude-opus-5-5", vendor: "Anthropic" },
+  { id: "sonnet", name: "Claude Sonnet 5.5", api: "claude-sonnet-5-5", vendor: "Anthropic" },
+  { id: "haiku", name: "Claude Haiku 5.5", api: "claude-haiku-5-5", vendor: "Anthropic" },
+  { id: "gpt", name: "GPT", api: "gpt", vendor: "OpenAI" },
+];
+const modelOf = id => MODELS.find(m => m.id === id);
 const AGENT_CFG = {
-  a1: { model: "claude-opus-5-5", prompt: "Você redige propostas comerciais. Tom direto, preço anual em destaque, sem jargão." },
-  a2: { model: "gpt · OpenAI", prompt: "Traduza para inglês e espanhol mantendo os termos do contrato e a formatação." },
-  a3: { model: "claude-haiku-5-5", prompt: "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking." },
-  a4: { model: "claude-sonnet-5-5", prompt: "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo." },
+  a1: { model: "opus", prompt: "Você redige propostas comerciais. Tom direto, preço anual em destaque, sem jargão." },
+  a2: { model: "gpt", prompt: "Traduza para inglês e espanhol mantendo os termos do contrato e a formatação." },
+  a3: { model: "haiku", prompt: "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking." },
+  a4: { model: "sonnet", prompt: "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo." },
 };
-const TYPES = { ia: { n: "IAs", one: "IA", ic: "bot" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
+const TYPES = { ia: { n: "Agentes", one: "Agente", ic: "bot" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
 
 let COLS = [
   { id: "c1", name: "Backlog", exec: false },
@@ -1032,7 +1043,7 @@ const STRUCTS = [
   { k: "if", test: "comparativo.length > 0", body: ["u5", "u6"] },
   { k: "if", test: "pagina", body: ["u22"] },
 ];
-const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16", "ag:a1"]);
+const OPEN = new Set(); // Explorar começa recolhido: cada clique abre só os filhos diretos
 /** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
 const GOALS = {
   orcamento: "≤ R$ 3.000",
@@ -1164,7 +1175,7 @@ function explorer(s) {
       const box = inIf.get(u.id);
       if (box && !done.has(box)) {
         done.add(box);
-        const iid = "ifx:" + pid + ":" + box.st.test, iOpen = show ? true : !OPEN.has(iid);
+        const iid = "ifx:" + pid + ":" + box.st.test, iOpen = show ? true : OPEN.has(iid); // recolhido por padrão: abre só os filhos ao clicar
         const g0 = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
         planRows.push(`<div class="node ifn${iOpen ? " openf" : ""}" data-act="toggle" data-id="${iid}" style="padding-left:${8 + Math.min(lvl, 14) * 14}px" title="Seleção (documento FOP, item 12)">${g0}<span class="car">${icon("chevron-right")}</span><span class="fi ifd-x"><i class="ifd"></i></span><span class="t mono">if (${esc(box.st.test)})</span></div>`);
         if (iOpen) box.body.filter(b => !show || show.has(b.id)).forEach(b => one(b, lvl + 1));
@@ -1199,7 +1210,7 @@ function explorer(s) {
       // mesma árvore das tarefas (Planos), nó a nó — só que com quadrados e os dados como folhas, tipo árvore JSON
       const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1, plan);
       if (q && !outs.length && !sub.length && !u.title.toLowerCase().includes(q)) return;
-      const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
+      const id = "esx:" + u.id, isOpen = q ? true : OPEN.has(id); // recolhido por padrão
       const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
       rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi dado" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("box")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
       if (!isOpen) return;
@@ -1215,7 +1226,7 @@ function explorer(s) {
     planRows = []; walk(null, 1, p.id);
     const est = estWalk(null, 2, p.id);
     if (q && !planRows.length && !est.length && !p.name.toLowerCase().includes(q)) return;
-    const pid = "pjx:" + p.id, pOpen = q ? true : !OPEN.has(pid), eid = "pje:" + p.id, eOpen = q ? true : !OPEN.has(eid);
+    const pid = "pjx:" + p.id, pOpen = q ? true : !OPEN.has(pid), eid = "pje:" + p.id, eOpen = q ? true : OPEN.has(eid);
     const n = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
     projRows.push(`<div class="node proj${pOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="proj-sel" data-plan="${p.id}" data-id="${pid}" title="Abrir ${esc(p.name)} no Flow" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}<button class="ib pj-b" data-act="proj-open" data-plan="${p.id}" title="Abrir todos">${icon("chevrons-up-down")}</button><button class="ib pj-b" data-act="proj-close" data-plan="${p.id}" title="Fechar todos">${icon("chevrons-down-up")}</button></span></div>`);
     if (!pOpen) return;
@@ -1236,13 +1247,25 @@ function explorer(s) {
     const html = list.map(a => {
       const cfg = AGENT_CFG[a.id] || {}, id = "ag:" + a.id, isOpen = q ? true : OPEN.has(id);
       const uses = U.filter(u => !u.arch && u.agent === a.id && !kids(u.id).length).length;
-      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi agente" title="Agente de IA">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span class="mono">${esc(cfg.model || "")}</span></span></div>`;
-      if (isOpen) h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("cpu")}</span><span class="t"><span class="k">modelo</span> <span class="mono">${esc(cfg.model || "—")}</span></span></div>
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi agente" title="Agente de IA">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
+      if (isOpen) h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("cpu")}</span><span class="t"><span class="k">modelo</span> <select class="md-sel" data-model="${a.id}" data-act="noop" aria-label="Modelo de ${esc(a.name)}">${MODELS.map(m => `<option value="${m.id}"${cfg.model === m.id ? " selected" : ""}>${esc(m.name)}</option>`).join("")}</select></span></div>
         <div class="node ag-d ag-p" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("message-square-text")}</span><span class="t" title="${esc(cfg.prompt || "")}"><span class="k">prompt</span> ${esc(cfg.prompt || "—")}</span></div>
         <div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("workflow")}</span><span class="t"><span class="k">usado em</span> ${uses} etapa${uses === 1 ? "" : "s"}</span></div>`;
       return h;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum agente configurado.</p>`, n: list.length };
+  })();
+  // Modelos: as IAs de base; abrir mostra os agentes que usam cada uma
+  const modelRows = (() => {
+    const list = MODELS.filter(m => !q || m.name.toLowerCase().includes(q) || m.vendor.toLowerCase().includes(q) || m.api.includes(q));
+    if (q) hits += list.length;
+    const html = list.map(m => {
+      const ags = CAT.filter(a => a.type === "ia" && AGENT_CFG[a.id]?.model === m.id), id = "md:" + m.id, isOpen = q ? true : OPEN.has(id);
+      let h = `<div class="node${isOpen ? " openf" : ""}" ${ags.length ? `data-act="toggle" data-id="${id}"` : ""} style="padding-left:8px" title="${esc(m.vendor)} · ${esc(m.api)}"><span class="car">${ags.length ? icon("chevron-right") : ""}</span><span class="fi modelo">${icon("sparkles")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span>${ags.length ? `<span class="mono">· ${ags.length}</span>` : ""}</span></div>`;
+      if (isOpen) ags.forEach(a => { h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi agente">${icon("bot")}</span><span class="t">${esc(a.name)} <span class="k">${esc(a.sub.replace("Agente · ", ""))}</span></span></div>`; });
+      return h;
+    }).join("");
+    return { html, n: list.length };
   })();
   // Pessoas: responsáveis humanos que podem assumir funções abstratas
   const pessoaRows = (() => {
@@ -1256,7 +1279,7 @@ function explorer(s) {
   })();
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;
-  const empty = !planRows.length && !estadoRows.length && !agentRows.n && !pessoaRows.n;
+  const empty = !planRows.length && !estadoRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
       <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
@@ -1264,7 +1287,7 @@ function explorer(s) {
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="collapse" title="Recolher tudo">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, estados e agentes" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, pessoas, agentes e modelos" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
       <div class="ex-sec" data-sec="planos">
         <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${PLANS.length}</span></div>
@@ -1277,6 +1300,10 @@ function explorer(s) {
       <div class="ex-sec" data-sec="agentes">
         <div class="ex-sec-h">${icon("bot")} Agentes<span class="n">${agentRows.n}</span></div>
         ${agentRows.html}
+      </div>
+      <div class="ex-sec" data-sec="modelos">
+        <div class="ex-sec-h">${icon("sparkles")} Modelos<span class="n">${modelRows.n}</span></div>
+        ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
   </aside>`;
@@ -1287,11 +1314,11 @@ function projAll(plan, openAll) {
   const ifKeys = STRUCTS.map(st => { const b = st.body.map($u).find(x => x && !isData(x) && ids.has(x.id)); return b ? "ifx:" + (b.parent || null) + ":" + st.test : null; }).filter(Boolean);
   OPEN.delete("pjx:" + plan);
   if (openAll) {
-    us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); OPEN.delete("esx:" + u.id); });
-    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan);
-  } else {
-    us.forEach(u => { OPEN.delete(u.id); OPEN.add("esx:" + u.id); });
+    us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); OPEN.add("esx:" + u.id); });
     ifKeys.forEach(k => OPEN.add(k)); OPEN.add("pje:" + plan);
+  } else {
+    us.forEach(u => { OPEN.delete(u.id); OPEN.delete("esx:" + u.id); });
+    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan);
   }
 }
 function newRow(nn, lvl) {
@@ -2814,6 +2841,7 @@ holder.addEventListener("input", e => {
 holder.addEventListener("change", e => {
   const t = e.target;
   if (t.matches("[data-plan]")) { cur.plan = t.value; unset("mach", "drawer"); paint(); return; }
+  if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
   if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }
   if (t.dataset.estateTitle) {
     const u = $u(t.dataset.estateTitle); if (!u) return;

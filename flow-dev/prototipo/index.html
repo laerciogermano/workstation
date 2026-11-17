@@ -592,6 +592,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fbar.nag { background: transparent; border: 1.5px dashed color-mix(in srgb, var(--c) 70%, transparent); }
 .fbar.nag .fill { background: color-mix(in srgb, var(--c) 18%, transparent); }
 .fsvg .fdot.a { fill: var(--dado); }
+.fsvg .fdot[data-n]:not([data-n=""]) { pointer-events: auto; cursor: pointer; }
+.fsvg .fdot[data-n]:not([data-n=""]):hover { stroke-width: 2.2; }
 .fsvg .ffn { fill: var(--paper); stroke: var(--fn); stroke-width: 1.3; }
 .fsvg .ffn.a { fill: var(--paper); }
 .mk { display: inline-block; flex: none; width: 7px; height: 7px; border: 1.3px solid var(--dado); background: var(--paper); margin-right: 4px; }
@@ -1782,8 +1784,8 @@ function flow(s) {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
-    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
-    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
+    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
+    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {

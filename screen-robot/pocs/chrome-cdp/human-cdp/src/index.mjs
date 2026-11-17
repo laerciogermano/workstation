@@ -28,6 +28,14 @@ export {
   DEFAULT_LABEL as CAMERA_SPOOF_LABEL,
 } from './camera-spoof.mjs';
 export {
+  cameraFromFingerprint,
+  convertToY4m,
+  DEFAULT_CAMERA_LABEL,
+  ensureCaptureFile,
+  fakeCameraChromeArgs,
+  stripFakeCameraArgs,
+} from './camera.mjs';
+export {
   captureScreenshot,
   ocrFromSession,
   ocrImage,
@@ -43,6 +51,9 @@ export {
   startCdp,
   stopCdp,
   connectCdp,
+  getCamera,
+  setCamera,
+  clearCamera,
   ensureFingerprintKeeper,
   scriptsDir,
   profilesDir,

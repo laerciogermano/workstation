@@ -2,7 +2,7 @@
 
 **Por quê:** provar o caminho OmTV de **selecionar um arquivo de vídeo** e ele aparecer no `getUserMedia` do site, com **label escolhido** (spoof JS) — sem OBS Virtual Camera.
 
-**Stack:** Chrome flags + [`human-cdp`](../../../screen-robot/pocs/chrome-cdp/human-cdp/README.md) + spoof em [`camera-spoof.mjs`](../../../screen-robot/pocs/chrome-cdp/human-cdp/src/camera-spoof.mjs).
+**Stack:** [`setCamera`](../../../screen-robot/pocs/chrome-cdp/human-cdp/README.md) da human-cdp (flags Chrome + spoof de label). UI da lib: `cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui`.
 
 ## Como funciona
 
@@ -30,19 +30,22 @@ spoof label  →  "FaceTime HD Camera" (ou --label)
 ## Uso
 
 ```bash
+# UI na lib (escolher CDP + vídeo + nome)
+cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
+# → http://127.0.0.1:18770/
+
+# POC OmTV (smoke + página de teste)
 cd omtv/pocs/fake-webcam-cdp
-
-# demo com testsrc (gera media/testsrc.y4m) + página local
 node run.mjs
-
-# MP4 próprio + nome da câmera
 node run.mjs --video /caminho/oferta.mp4 --label "FaceTime HD Camera"
-
-# já em Y4M + site externo
-node run.mjs --video /caminho/oferta.y4m --url https://webcamtests.com/
-
-# fechar o Chrome da POC
 node run.mjs --stop
+```
+
+API:
+
+```js
+import { setCamera, getCamera } from '…/human-cdp/src/index.mjs';
+await setCamera('omtv-fake-cam', { video: '/caminho/v.mp4', label: 'FaceTime HD Camera' });
 ```
 
 Converter só o arquivo:

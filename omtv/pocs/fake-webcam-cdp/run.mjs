@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 /**
- * POC OmTV — vídeo local como webcam via flags Chrome (sem OBS) + spoof de label.
+ * POC OmTV — usa setCamera da human-cdp (vídeo local + label, sem OBS).
  *
- * Uso:
  *   node run.mjs
  *   node run.mjs --video /caminho/video.mp4 --label "FaceTime HD Camera"
- *   node run.mjs --video /caminho/video.y4m --url https://webcamtests.com/
  *   node run.mjs --stop
  *
- * Trocar o vídeo exige restart do Chrome (flag só vale no start).
+ * UI da lib: cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
  */
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, extname, join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
@@ -47,42 +45,17 @@ function parseArgs(argv) {
   return out;
 }
 
-function ensureY4m(videoPath) {
+function defaultVideo() {
   mkdirSync(MEDIA, { recursive: true });
-  if (!videoPath) {
-    const generated = join(MEDIA, 'testsrc.y4m');
-    if (!existsSync(generated)) {
-      execFileSync(
-        'ffmpeg',
-        [
-          '-y',
-          '-f', 'lavfi',
-          '-i', 'testsrc=size=320x240:rate=10',
-          '-t', '1',
-          '-pix_fmt', 'yuv420p',
-          generated,
-        ],
-        { stdio: 'inherit' },
-      );
-    }
-    return generated;
+  const generated = join(MEDIA, 'testsrc.y4m');
+  if (!existsSync(generated)) {
+    execFileSync(
+      'ffmpeg',
+      ['-y', '-f', 'lavfi', '-i', 'testsrc=size=320x240:rate=10', '-t', '1', '-pix_fmt', 'yuv420p', generated],
+      { stdio: 'inherit' },
+    );
   }
-  const abs = resolve(videoPath);
-  if (!existsSync(abs)) throw new Error(`vídeo não encontrado: ${abs}`);
-  const ext = extname(abs).toLowerCase();
-  if (ext === '.y4m' || ext === '.mjpeg' || ext === '.mjpg') return abs;
-  const out = join(MEDIA, `${basenameNoExt(abs)}.y4m`);
-  execFileSync(
-    join(ROOT, 'to-y4m.sh'),
-    [abs, out, '640x360'],
-    { stdio: 'inherit' },
-  );
-  return out;
-}
-
-function basenameNoExt(p) {
-  const base = p.split('/').pop() || 'video';
-  return base.replace(/\.[^.]+$/, '') || 'video';
+  return generated;
 }
 
 function startFixtureServer() {
@@ -97,22 +70,14 @@ function startFixtureServer() {
   return new Promise((resolvePromise, reject) => {
     server.once('error', (err) => {
       if (err && err.code === 'EADDRINUSE') {
-        resolvePromise({
-          server: null,
-          url: `http://127.0.0.1:${FIXTURE_PORT}/`,
-          reused: true,
-        });
+        resolvePromise({ server: null, url: `http://127.0.0.1:${FIXTURE_PORT}/`, reused: true });
         return;
       }
       reject(err);
     });
     server.listen(FIXTURE_PORT, '127.0.0.1', () => {
-      // Chrome fica aberto; server unref para o script poder sair (re-run se F5).
       server.unref();
-      resolvePromise({
-        server,
-        url: `http://127.0.0.1:${FIXTURE_PORT}/`,
-      });
+      resolvePromise({ server, url: `http://127.0.0.1:${FIXTURE_PORT}/` });
     });
   });
 }
@@ -120,13 +85,10 @@ function startFixtureServer() {
 async function main() {
   const args = parseArgs(process.argv);
   if (args.help) {
-    console.log(`POC fake webcam CDP (OmTV)
+    console.log(`POC fake webcam via human-cdp setCamera
 
   node run.mjs [--video path] [--label "Nome"] [--url URL] [--id omtv-fake-cam] [--port 9270]
   node run.mjs --stop
-
-Sem --video: gera media/testsrc.y4m (padrão de teste).
-Sem --url: serve fixtures/webcam-test.html em localhost.
 `);
     return;
   }
@@ -139,7 +101,8 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
     stopCdp,
     statusCdp,
     connectCdp,
-    applyCameraSpoof,
+    setCamera,
+    getCamera,
   } = await import(HUMAN_CDP);
 
   if (args.stop) {
@@ -152,31 +115,10 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
     return;
   }
 
-  const y4m = ensureY4m(args.video);
+  const video = args.video ? resolve(args.video) : defaultVideo();
   const fixture = args.url ? null : await startFixtureServer();
   const pageUrl = args.url || fixture.url;
   const origin = new URL(pageUrl).origin;
-
-  const chromeArgs = [
-    '--use-fake-device-for-media-stream',
-    '--use-fake-ui-for-media-stream',
-    `--use-file-for-fake-video-capture=${y4m}`,
-  ];
-
-  const fingerprint = {
-    lang: 'pt-BR',
-    acceptLanguage: 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-    timezone: 'America/Sao_Paulo',
-    locale: 'pt-BR',
-    cameraLabel: args.label,
-    chromeArgs,
-    permissions: [
-      { origin, permission: 'video_capture', setting: 'granted' },
-      { origin, permission: 'audio_capture', setting: 'granted' },
-      { origin, permission: 'camera', setting: 'granted' },
-      { origin, permission: 'microphone', setting: 'granted' },
-    ],
-  };
 
   if (!getCdp(args.id)) {
     createCdp({
@@ -184,8 +126,19 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
       name: 'OmTV fake webcam POC',
       port: args.port,
       defaultUrl: pageUrl,
-      obs: 'POC OmTV: Chrome fake video capture (sem OBS)',
-      fingerprint,
+      obs: 'POC OmTV: setCamera human-cdp',
+      fingerprint: {
+        lang: 'pt-BR',
+        acceptLanguage: 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        timezone: 'America/Sao_Paulo',
+        locale: 'pt-BR',
+        permissions: [
+          { origin, permission: 'video_capture', setting: 'granted' },
+          { origin, permission: 'audio_capture', setting: 'granted' },
+          { origin, permission: 'camera', setting: 'granted' },
+          { origin, permission: 'microphone', setting: 'granted' },
+        ],
+      },
     });
   } else {
     const prev = getCdp(args.id);
@@ -193,19 +146,25 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
       defaultUrl: pageUrl,
       fingerprint: {
         ...(prev?.fingerprint || {}),
-        ...fingerprint,
-        chromeArgs,
-        cameraLabel: args.label,
-        permissions: fingerprint.permissions,
+        permissions: [
+          { origin, permission: 'video_capture', setting: 'granted' },
+          { origin, permission: 'audio_capture', setting: 'granted' },
+          { origin, permission: 'camera', setting: 'granted' },
+          { origin, permission: 'microphone', setting: 'granted' },
+        ],
       },
     });
   }
 
+  // apply:false aqui — startCdp em seguida já lê cameraCaptureFile
+  const cam = await setCamera(args.id, {
+    video,
+    label: args.label,
+    apply: false,
+  });
+
   const st0 = await statusCdp(args.id);
-  if (st0.status === 'up') {
-    // chromeArgs só entram no spawn — precisa restart
-    await stopCdp(args.id);
-  }
+  if (st0.status === 'up') await stopCdp(args.id);
   const st = await startCdp(args.id, { url: pageUrl });
   const page = await connectCdp(args.id, { url: pageUrl });
 
@@ -214,14 +173,7 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
       origin,
       permissions: ['videoCapture', 'audioCapture'],
     });
-  } catch {
-    /* ignore */
-  }
-
-  await applyCameraSpoof(page, {
-    label: args.label,
-    match: ['fake', 'fake_device', 'y4m', 'mjpeg', 'obs', 'virtual'],
-  });
+  } catch { /* ignore */ }
 
   await new Promise((r) => setTimeout(r, 1500));
 
@@ -229,9 +181,7 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
     `(async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const cams = devices.filter((d) => d.kind === 'videoinput').map((d) => d.label);
-    let trackLabel = null;
-    let err = null;
-    let w = 0, h = 0;
+    let trackLabel = null, err = null, w = 0, h = 0;
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       const t = s.getVideoTracks()[0];
@@ -240,9 +190,7 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
       w = settings.width || 0;
       h = settings.height || 0;
       s.getTracks().forEach((x) => x.stop());
-    } catch (e) {
-      err = String(e && e.message || e);
-    }
+    } catch (e) { err = String(e && e.message || e); }
     return { href: location.href, cams, trackLabel, w, h, err };
   })()`,
     { awaitPromise: true },
@@ -250,22 +198,18 @@ Sem --url: serve fixtures/webcam-test.html em localhost.
 
   page.close();
 
-  const result = {
+  console.log(JSON.stringify({
     id: args.id,
     port: st.port,
     cdpUrl: st.cdpUrl,
-    y4m,
-    label: args.label,
+    camera: getCamera(args.id),
+    setCamera: cam,
     pageUrl,
     verify,
-    note: 'Chrome fica aberto. Infobar amarela das flags --use-fake-* é esperada (lab only). node run.mjs --stop para fechar.',
-  };
-  console.log(JSON.stringify(result, null, 2));
+    note: 'UI: human-cdp → npm run camera-ui. --stop para fechar o Chrome.',
+  }, null, 2));
 
-  if (fixture) {
-    // ref no server evita GC imediato; unref já foi chamado → processo Node pode sair
-    globalThis.__omtvFakeCamServer = fixture.server;
-  }
+  if (fixture) globalThis.__omtvFakeCamServer = fixture.server;
 }
 
 main().catch((err) => {

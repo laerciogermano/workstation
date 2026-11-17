@@ -26,7 +26,7 @@ export function enableDebugOverlayExpression(fingerprint, opts = {}) {
     const FP = ${fpJson};
     const CDP_ID = ${idJson};
 
-    const UI_VER = 'en-diag-fp-flat-dot-4';
+    const UI_VER = 'en-diag-fp-cam-5';
 
     // Same shortHash as bot-lab (8 hex chars, e.g. f94864e9).
     const shortHash = (str) => {
@@ -111,6 +111,9 @@ export function enableDebugOverlayExpression(fingerprint, opts = {}) {
       userAgentMetadata: ['uam', 'userAgentMetadata'],
       permissions: ['perm', 'permissions'],
       chromeArgs: ['args', 'chromeArgs'],
+      cameraLabel: ['cam', 'cameraLabel'],
+      cameraVideo: ['vid', 'cameraVideo'],
+      cameraCaptureFile: ['ycap', 'cameraCaptureFile'],
       width: ['w', 'width'],
       height: ['h', 'height'],
       deviceScaleFactor: ['dpr', 'deviceScaleFactor'],

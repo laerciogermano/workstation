@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>human-cdp — câmera</title>
+  <style>
+    :root {
+      --ink: #141414;
+      --muted: #5a5a5a;
+      --line: #d8d8d8;
+      --paper: #f7f4ef;
+      --accent: #e0402b;
+      --ok: #1b7f4a;
+      font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #efe8dc 0%, var(--paper) 45%, #e7ecef 100%);
+      color: var(--ink);
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px 64px;
+    }
+    h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 600;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+    .sub { color: var(--muted); margin: 0 0 28px; font-size: 0.95rem; }
+    form {
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+    label { display: grid; gap: 6px; font-size: 0.85rem; font-weight: 600; }
+    input, select, button {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+    button {
+      cursor: pointer;
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+      font-weight: 600;
+    }
+    button.secondary { background: #fff; color: var(--ink); }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 140px; }
+    #status {
+      min-height: 1.2em;
+      font-size: 0.9rem;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+    #status.ok { color: var(--ok); }
+    #status.err { color: var(--accent); }
+    .hint { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>human-cdp · câmera</h1>
+    <p class="sub">Escolha o CDP, o vídeo local e o nome que o site vê na webcam (sem OBS).</p>
+    <form id="form">
+      <label>
+        CDP
+        <select id="cdp" required></select>
+      </label>
+      <label>
+        Vídeo (caminho absoluto)
+        <input id="video" type="text" placeholder="/Users/…/oferta.mp4" required />
+        <span class="hint">MP4 é convertido p/ Y4M; Y4M/MJPEG entram direto. Troca exige restart do Chrome.</span>
+      </label>
+      <label>
+        Nome da webcam
+        <input id="label" type="text" value="FaceTime HD Camera" required />
+      </label>
+      <div class="row">
+        <button type="submit" id="apply">Aplicar</button>
+        <button type="button" class="secondary" id="clear">Limpar câmera</button>
+        <button type="button" class="secondary" id="refresh">Atualizar lista</button>
+      </div>
+      <div id="status" aria-live="polite"></div>
+    </form>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const status = (msg, cls = '') => {
+      const el = $('status');
+      el.className = cls;
+      el.textContent = msg;
+    };
+
+    async function api(path, opts) {
+      const r = await fetch(path, {
+        headers: { 'Content-Type': 'application/json', ...(opts?.headers || {}) },
+        ...opts,
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText || 'erro');
+      return data;
+    }
+
+    async function loadList() {
+      const { cdps } = await api('/api/cdps');
+      const sel = $('cdp');
+      const prev = sel.value;
+      sel.innerHTML = '';
+      for (const c of cdps) {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.id} · ${c.status}${c.label ? ' · ' + c.label : ''}`;
+        sel.appendChild(opt);
+      }
+      if (prev && [...sel.options].some((o) => o.value === prev)) sel.value = prev;
+      await loadCurrent();
+    }
+
+    async function loadCurrent() {
+      const id = $('cdp').value;
+      if (!id) return;
+      const cam = await api('/api/camera?id=' + encodeURIComponent(id));
+      if (cam.video) $('video').value = cam.video;
+      if (cam.label) $('label').value = cam.label;
+      status(
+        cam.video
+          ? `atual: ${cam.label || '—'} ← ${cam.video}`
+          : 'sem câmera fake neste CDP',
+      );
+    }
+
+    $('cdp').addEventListener('change', () => loadCurrent().catch((e) => status(String(e.message || e), 'err')));
+    $('refresh').addEventListener('click', () => loadList().catch((e) => status(String(e.message || e), 'err')));
+    $('clear').addEventListener('click', async () => {
+      try {
+        status('limpando…');
+        $('clear').disabled = true;
+        const out = await api('/api/camera/clear', {
+          method: 'POST',
+          body: JSON.stringify({ id: $('cdp').value }),
+        });
+        status(JSON.stringify(out, null, 2), 'ok');
+        await loadList();
+      } catch (e) {
+        status(String(e.message || e), 'err');
+      } finally {
+        $('clear').disabled = false;
+      }
+    });
+
+    $('form').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      try {
+        status('aplicando (pode reiniciar o Chrome)…');
+        $('apply').disabled = true;
+        const out = await api('/api/camera', {
+          method: 'POST',
+          body: JSON.stringify({
+            id: $('cdp').value,
+            video: $('video').value.trim(),
+            label: $('label').value.trim(),
+          }),
+        });
+        status(JSON.stringify(out, null, 2), 'ok');
+        await loadList();
+      } catch (e) {
+        status(String(e.message || e), 'err');
+      } finally {
+        $('apply').disabled = false;
+      }
+    });
+
+    loadList().catch((e) => status(String(e.message || e), 'err'));
+  </script>
+</body>
+</html>

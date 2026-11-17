@@ -21,6 +21,12 @@ import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  cameraFromFingerprint,
+  DEFAULT_CAMERA_LABEL,
+  ensureCaptureFile,
+  stripFakeCameraArgs,
+} from './camera.mjs';
+import {
   applyFingerprint,
   chromeArgsFromFingerprint,
   normalizeFingerprint,
@@ -448,6 +454,113 @@ export async function startCdp(id, { url } = {}) {
     }
   }
   return { ...next, already: false };
+}
+
+function cameraCacheDir(id) {
+  return join(profilePath(id), 'camera');
+}
+
+/**
+ * Lê vídeo/label atuais do fingerprint do CDP.
+ * @param {string} id
+ */
+export function getCamera(id) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const cam = cameraFromFingerprint(row.fingerprint || readMeta(row.id)?.fingerprint);
+  return {
+    id: row.id,
+    video: cam.video,
+    captureFile: cam.captureFile,
+    label: cam.label,
+  };
+}
+
+/**
+ * Define vídeo local + nome da webcam (spoof).
+ * Atualiza fingerprint (cameraVideo/cameraCaptureFile/cameraLabel + chromeArgs fake).
+ * Com apply=true (default) e Chrome up → stop+start para as flags entrarem.
+ *
+ * @param {string} id
+ * @param {{ video: string, label?: string, apply?: boolean, size?: string }} opts
+ */
+export async function setCamera(id, opts = {}) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const video = String(opts.video || '').trim();
+  if (!video) throw new Error('video obrigatório (caminho local)');
+  const label = String(opts.label || DEFAULT_CAMERA_LABEL).trim() || DEFAULT_CAMERA_LABEL;
+  const apply = opts.apply !== false;
+  const size = opts.size || '640x360';
+
+  const cacheDir = cameraCacheDir(row.id);
+  const captureFile = ensureCaptureFile(video, cacheDir, { size });
+
+  const prev = normalizeFingerprint(readMeta(row.id)?.fingerprint) || {};
+  const chromeArgs = stripFakeCameraArgs(prev.chromeArgs);
+  const fingerprint = {
+    ...prev,
+    cameraVideo: resolve(video),
+    cameraCaptureFile: captureFile,
+    cameraLabel: label,
+    ...(chromeArgs.length ? { chromeArgs } : {}),
+  };
+  if (!chromeArgs.length) delete fingerprint.chromeArgs;
+
+  updateCdp(row.id, { fingerprint });
+
+  let restarted = false;
+  if (apply) {
+    const st = await statusCdp(row.id);
+    if (st.status === 'up') {
+      await stopCdp(row.id);
+      await startCdp(row.id);
+      restarted = true;
+    }
+  }
+
+  return {
+    id: row.id,
+    video: resolve(video),
+    captureFile,
+    label,
+    restarted,
+    chromeArgs: chromeArgsFromFingerprint(fingerprint),
+  };
+}
+
+/**
+ * Remove vídeo fake + flags; mantém cameraLabel opcionalmente.
+ * @param {string} id
+ * @param {{ apply?: boolean, keepLabel?: boolean }} [opts]
+ */
+export async function clearCamera(id, opts = {}) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const apply = opts.apply !== false;
+  const prev = normalizeFingerprint(readMeta(row.id)?.fingerprint) || {};
+  const chromeArgs = stripFakeCameraArgs(prev.chromeArgs);
+  const fingerprint = { ...prev };
+  delete fingerprint.cameraVideo;
+  delete fingerprint.cameraCaptureFile;
+  if (!opts.keepLabel) delete fingerprint.cameraLabel;
+  if (chromeArgs.length) fingerprint.chromeArgs = chromeArgs;
+  else delete fingerprint.chromeArgs;
+
+  updateCdp(row.id, {
+    fingerprint: Object.keys(fingerprint).length ? fingerprint : null,
+  });
+
+  let restarted = false;
+  if (apply) {
+    const st = await statusCdp(row.id);
+    if (st.status === 'up') {
+      await stopCdp(row.id);
+      await startCdp(row.id);
+      restarted = true;
+    }
+  }
+  return { id: row.id, cleared: true, restarted };
 }
 
 export async function stopCdp(id) {

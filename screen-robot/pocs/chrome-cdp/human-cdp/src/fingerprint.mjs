@@ -4,6 +4,7 @@
  * Não altera canvas/WebGL/áudio reais nem IP de egress.
  */
 import { applyCameraSpoof } from './camera-spoof.mjs';
+import { fakeCameraChromeArgs, stripFakeCameraArgs } from './camera.mjs';
 
 /**
  * @typedef {object} ViewportConfig
@@ -58,6 +59,8 @@ import { applyCameraSpoof } from './camera-spoof.mjs';
  * @property {'disable_non_proxied_udp'|'default_public_interface_only'|'default_public_and_private_interfaces'} [webrtcIpHandling]
  * @property {string[]} [chromeArgs] flags extras no startCdp
  * @property {string} [cameraLabel] label fictício p/ spoof de câmera (OBS / fake device)
+ * @property {string} [cameraVideo] caminho do vídeo escolhido (fonte; mp4/y4m…)
+ * @property {string} [cameraCaptureFile] y4m/mjpeg efetivo p/ --use-file-for-fake-video-capture
  * @property {Array<{origin: string, permission: string, setting?: 'granted'|'denied'|'prompt'}>} [permissions]
  */
 
@@ -164,6 +167,10 @@ export function normalizeFingerprint(raw) {
 
   const cameraLabel = str(o.cameraLabel);
   if (cameraLabel) out.cameraLabel = cameraLabel;
+  const cameraVideo = str(o.cameraVideo);
+  if (cameraVideo) out.cameraVideo = cameraVideo;
+  const cameraCaptureFile = str(o.cameraCaptureFile);
+  if (cameraCaptureFile) out.cameraCaptureFile = cameraCaptureFile;
 
   if (Array.isArray(o.permissions)) {
     const permissions = [];
@@ -198,10 +205,24 @@ export function chromeArgsFromFingerprint(fp) {
   if (n.lang) args.push(`--lang=${n.lang}`);
   const blocked =
     /force-webrtc-ip-handling-policy|disable-blink-features\s*=\s*AutomationControlled|disable-web-security|no-sandbox|single-process/i;
-  if (n.chromeArgs?.length) {
-    for (const a of n.chromeArgs) {
-      if (blocked.test(a)) continue;
-      args.push(a);
+  const rawArgs = Array.isArray(n.chromeArgs) ? n.chromeArgs : [];
+  const extra = stripFakeCameraArgs(rawArgs);
+  for (const a of extra) {
+    if (blocked.test(a)) continue;
+    args.push(a);
+  }
+  // Preferir cameraCaptureFile (setCamera). Legacy: flags fake ainda em chromeArgs.
+  if (n.cameraCaptureFile) {
+    for (const a of fakeCameraChromeArgs(n.cameraCaptureFile)) args.push(a);
+  } else {
+    for (const a of rawArgs) {
+      if (
+        a === '--use-fake-device-for-media-stream' ||
+        a === '--use-fake-ui-for-media-stream' ||
+        /^--use-file-for-fake-video-capture=/.test(String(a))
+      ) {
+        args.push(a);
+      }
     }
   }
   return args;

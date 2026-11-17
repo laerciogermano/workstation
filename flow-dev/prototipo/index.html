@@ -576,6 +576,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* filtro transversal flutuante (centro, acima da legenda) */
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
+/* texto dentro da barra (toggle no menu) */
+.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 8px; font-size: 11px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 15px; }
 .vdock.fdock .fd-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: var(--line); }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .vdock.fdock .fd-l svg { color: var(--dado); }
@@ -1693,7 +1696,7 @@ function flow(s) {
   });
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 380, RH = 34, TAIL = 440, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if); TAIL = espaço p/ bag do estado à direita da barra
-  const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
+  const W = Math.max(s.txtIn ? 210 : 118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1))); // texto dentro: passos mais largos para caber o nome
   const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
   const colOf = u => "var(--fn)"; // função azul · dado vermelho
@@ -1786,7 +1789,7 @@ function flow(s) {
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${s.compacto && (u.outs || []).length ? `<span class="io-l c-out" title="${esc(u.outs.map(o => o[0]).join(", "))}">${u.outs.map(o => `<b data-act="reveal-dado" data-n="${esc(o[0])}">${esc(o[0])}</b>`).join(", ")}</span>` : ""}${flowTags(u)}</span></div>`;
+    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}">${s.txtIn ? `<span class="fb-t">${esc(u.title)}</span>` : ""}</div><span class="flbl" style="left:${g.ox + 10}px">${s.txtIn ? "" : `<span class="fnm">${esc(u.title)}</span>`}${s.compacto && (u.outs || []).length ? `<span class="io-l c-out" title="${esc(u.outs.map(o => o[0]).join(", "))}">${u.outs.map(o => `<b data-act="reveal-dado" data-n="${esc(o[0])}">${esc(o[0])}</b>`).join(", ")}</span>` : ""}${flowTags(u)}</span></div>`;
   };
   const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px"><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span></div>`; };
   const bars = disp.map(r => r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
@@ -1863,7 +1866,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -2753,6 +2756,7 @@ const ACT = {
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
+  "txt-in": () => { cur.txtIn = !cur.txtIn; },
   "io-modo": t => { cur.compacto = t.dataset.m === "compacto"; },
   "dados-modo": t => { cur.dadosTodos = t.dataset.m === "todos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },

@@ -459,6 +459,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow, .gantt.flow .grows-r .rr { height: 34px; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
 .gantt.flow .grows-r .rr { border-bottom: 1px solid var(--line); }
+/* seleção pega a linha inteira: tabela + área das barras */
+.gantt.flow .grows-r .rr.sel { background: color-mix(in srgb, #c98a2b 26%, transparent); box-shadow: inset 0 -1px 0 color-mix(in srgb, #c98a2b 70%, transparent), inset 0 1px 0 color-mix(in srgb, #c98a2b 70%, transparent); }
 .gantt.flow .grow.sel { background: color-mix(in srgb, #c98a2b 34%, var(--paper)); box-shadow: inset 0 -1px 0 color-mix(in srgb, #c98a2b 70%, transparent), inset 0 1px 0 color-mix(in srgb, #c98a2b 70%, transparent); }
 .gantt.flow .grow .nm { gap: 8px; font-size: 13px; }
 .gantt.flow .grow .nm b { font-weight: 400; color: var(--ink); }
@@ -1678,13 +1680,13 @@ function flow(s) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
       const ei = (layout[u.id] || { e: 0 }).e + 1;
-      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
+      return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
     }
-    if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
+    if (isData(u)) return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
+    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
   };
   const bars = disp.map(r => r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada

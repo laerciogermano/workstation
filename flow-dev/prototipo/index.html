@@ -1521,7 +1521,8 @@ function explorer(s) {
       <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
       <button class="ib" data-act="new-folder" title="Nova pasta de planos">${icon("folder-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
-      <button class="ib" data-act="collapse" title="Recolher tudo">${icon("chevrons-down-up")}</button>
+      <button class="ib" data-act="expand-all" title="Abrir todas as sanfonas">${icon("chevrons-up-down")}</button>
+      <button class="ib" data-act="collapse" title="Fechar todas as sanfonas">${icon("chevrons-down-up")}</button>
     </div>
     ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, pessoas, agentes e modelos" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
@@ -3108,7 +3109,20 @@ const ACT = {
   "ag-photo-clear": t => { const cfg = AGENT_CFG[t.dataset.id] = AGENT_CFG[t.dataset.id] || {}; delete cfg.photo; const a = agent(t.dataset.id); if (a) delete a.photo; toast(`${a?.name || "Agente"}: só iniciais`, "user-round"); },
   "proj-open": t => { projAll(t.dataset.plan, true); },
   "proj-close": t => { projAll(t.dataset.plan, false); },
-  collapse: () => { OPEN.clear(); toast("Árvore recolhida", "chevrons-down-up"); },
+  "expand-all": () => {
+    OPEN.clear(); // pjx ausente = projeto aberto
+    ensureLayers();
+    U.filter(u => !u.arch && (isFolder(u) || kids(u.id).some(k => !k.arch))).forEach(u => { OPEN.add(u.id); OPEN.add("esx:" + u.id); });
+    PLANS.forEach(p => { OPEN.add("pjp:" + p.id); OPEN.add("pje:" + p.id); });
+    LAYERS.forEach(l => OPEN.add("ly:" + l.id));
+    STRUCTS.forEach(st => { const p = st.body.map($u).find(x => x && !x.arch); if (p) OPEN.add("ifx:" + (p.parent || null) + ":" + st.test); });
+    toast("Sanfonas abertas", "chevrons-up-down");
+  },
+  collapse: () => {
+    OPEN.clear();
+    PLANS.forEach(p => OPEN.add("pjx:" + p.id)); // pjx presente = projeto fechado
+    toast("Sanfonas fechadas", "chevrons-down-up");
+  },
   search: () => { if (cur.q != null) unset("q"); else { cur.q = ""; cur.focusQ = true; } },
   "new-file": t => { const base = t.dataset.id || cur.sel; const p = $u(base); cur.newn = { parent: p ? (isFolder(p) || kids(p.id).length ? p.id : p.parent) : null, kind: "file" }; unset("ctx", "q"); if (cur.newn.parent) OPEN.add(cur.newn.parent); },
   "new-folder": t => { const base = t.dataset.id || cur.sel; const p = $u(base); cur.newn = { parent: p ? (isFolder(p) ? p.id : p.parent) : null, kind: "folder" }; unset("ctx", "q"); if (cur.newn.parent) OPEN.add(cur.newn.parent); },

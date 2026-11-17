@@ -4,7 +4,12 @@
  * Não altera canvas/WebGL/áudio reais nem IP de egress.
  */
 import { applyCameraSpoof } from './camera-spoof.mjs';
-import { fakeCameraChromeArgs, stripFakeCameraArgs } from './camera.mjs';
+import {
+  fakeCameraChromeArgs,
+  GRANT_MEDIA_PERMISSIONS,
+  originFromUrl,
+  stripFakeCameraArgs,
+} from './camera.mjs';
 
 /**
  * @typedef {object} ViewportConfig
@@ -447,6 +452,35 @@ export async function applyFingerprint(session, fp, opts = {}) {
         applied.permissions = applied.permissions || [];
         applied.permissions.push(p);
       }
+    }
+  }
+
+  // Igual POC OmTV: Browser.grantPermissions (videoCapture/audioCapture).
+  // Cobre origins do fingerprint + página atual quando há câmera fake.
+  if (n.cameraCaptureFile) {
+    const grantOrigins = new Set();
+    for (const p of n.permissions || []) {
+      if (p?.origin) grantOrigins.add(p.origin);
+    }
+    try {
+      const href = await session.send('Runtime.evaluate', {
+        expression: 'location.href',
+        returnByValue: true,
+      });
+      const cur = originFromUrl(href?.result?.value);
+      if (cur && cur !== 'null' && cur !== 'about:blank') grantOrigins.add(cur);
+    } catch {
+      /* ignore */
+    }
+    applied.grantedMedia = [];
+    for (const origin of grantOrigins) {
+      const ok = await softFail(`Browser.grantPermissions:${origin}`, () =>
+        session.send('Browser.grantPermissions', {
+          origin,
+          permissions: GRANT_MEDIA_PERMISSIONS,
+        }),
+      );
+      if (ok) applied.grantedMedia.push(origin);
     }
   }
 

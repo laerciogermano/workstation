@@ -36,6 +36,7 @@ createCdp({
   id: SMOKE_ID,
   name: 'Smoke Camera',
   port: SMOKE_PORT,
+  defaultUrl: 'https://ome.tv/',
   fingerprint: { lang: 'pt-BR' },
 });
 
@@ -58,6 +59,10 @@ if (!args.some((a) => a.startsWith('--use-file-for-fake-video-capture='))) {
 }
 if (!args.includes('--use-fake-device-for-media-stream')) {
   throw new Error('chromeArgs sem fake device');
+}
+const perms = row.fingerprint?.permissions || [];
+if (!perms.some((p) => p.origin === 'https://ome.tv' && p.permission === 'video_capture' && p.setting === 'granted')) {
+  throw new Error('setCamera sem permissions video_capture (POC)');
 }
 
 await clearCamera(SMOKE_ID, { apply: false });

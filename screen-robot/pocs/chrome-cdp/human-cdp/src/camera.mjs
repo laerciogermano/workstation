@@ -12,6 +12,59 @@ const FAKE_DEVICE = '--use-fake-device-for-media-stream';
 const FAKE_UI = '--use-fake-ui-for-media-stream';
 const FAKE_FILE_RE = /^--use-file-for-fake-video-capture=/;
 
+/** Nomes CDP Browser.grantPermissions (camelCase). */
+export const GRANT_MEDIA_PERMISSIONS = ['videoCapture', 'audioCapture'];
+
+/**
+ * @param {string} urlOrOrigin
+ * @returns {string|null}
+ */
+export function originFromUrl(urlOrOrigin) {
+  const raw = String(urlOrOrigin || '').trim();
+  if (!raw) return null;
+  try {
+    if (/^https?:\/\//i.test(raw)) return new URL(raw).origin;
+    if (raw.includes('://')) return new URL(raw).origin;
+    return new URL(`https://${raw}`).origin;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Entradas fingerprint.permissions (igual POC OmTV).
+ * @param {string} origin
+ */
+export function mediaPermissionEntries(origin) {
+  const o = String(origin || '').trim();
+  if (!o) return [];
+  return [
+    { origin: o, permission: 'video_capture', setting: 'granted' },
+    { origin: o, permission: 'audio_capture', setting: 'granted' },
+    { origin: o, permission: 'camera', setting: 'granted' },
+    { origin: o, permission: 'microphone', setting: 'granted' },
+  ];
+}
+
+/**
+ * Une permissions existentes com grant de câmera/mic por origem.
+ * @param {Array<{origin: string, permission: string, setting?: string}>|undefined|null} existing
+ * @param {string[]} origins
+ */
+export function mergeMediaPermissions(existing, origins) {
+  const map = new Map();
+  const key = (p) => `${p.origin}|${p.permission}`;
+  for (const p of Array.isArray(existing) ? existing : []) {
+    if (p?.origin && p?.permission) map.set(key(p), p);
+  }
+  for (const origin of origins || []) {
+    const o = originFromUrl(origin) || String(origin || '').trim();
+    if (!o) continue;
+    for (const p of mediaPermissionEntries(o)) map.set(key(p), p);
+  }
+  return [...map.values()];
+}
+
 /**
  * @param {string} videoPath mp4/y4m/mjpeg…
  * @param {string} outY4m

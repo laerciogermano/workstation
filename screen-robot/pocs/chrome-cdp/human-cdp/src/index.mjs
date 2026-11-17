@@ -44,6 +44,10 @@ export {
   DEFAULT_CAMERA_LABEL,
   ensureCaptureFile,
   fakeCameraChromeArgs,
+  GRANT_MEDIA_PERMISSIONS,
+  mediaPermissionEntries,
+  mergeMediaPermissions,
+  originFromUrl,
   stripFakeCameraArgs,
 } from './camera.mjs';
 export {

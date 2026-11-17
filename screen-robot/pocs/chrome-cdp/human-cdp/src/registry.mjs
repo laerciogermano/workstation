@@ -24,6 +24,8 @@ import {
   cameraFromFingerprint,
   DEFAULT_CAMERA_LABEL,
   ensureCaptureFile,
+  mergeMediaPermissions,
+  originFromUrl,
   stripFakeCameraArgs,
 } from './camera.mjs';
 import { createSnapshot, restoreSelectedBeforeStart } from './snapshot.mjs';
@@ -440,7 +442,7 @@ export async function startCdp(id, { url, restore = true } = {}) {
   }
   mkdirSync(profilePath(row.id), { recursive: true });
   const meta = readMeta(row.id);
-  const fp = normalizeFingerprint(meta?.fingerprint);
+  let fp = normalizeFingerprint(meta?.fingerprint);
   const userDataDir = profilePath(row.id);
   const args = [
     `--user-data-dir=${userDataDir}`,
@@ -479,6 +481,18 @@ export async function startCdp(id, { url, restore = true } = {}) {
         chromeApp: 'Google Chrome',
       });
       session._fingerprint = fp;
+      // Se abriu URL e há câmera, garante permissions dessa origem (POC).
+      if (fp.cameraCaptureFile && openUrl) {
+        const origin = originFromUrl(openUrl);
+        if (origin) {
+          fp = {
+            ...fp,
+            permissions: mergeMediaPermissions(fp.permissions, [origin]),
+          };
+          session._fingerprint = fp;
+          updateCdp(row.id, { fingerprint: fp });
+        }
+      }
       await applyFingerprint(session, fp);
       session.close();
     } catch {
@@ -551,16 +565,32 @@ export async function setCamera(id, opts = {}) {
   const cacheDir = cameraCacheDir(row.id);
   const captureFile = ensureCaptureFile(video, cacheDir, { size });
 
-  const prev = normalizeFingerprint(readMeta(row.id)?.fingerprint) || {};
+  const meta = readMeta(row.id);
+  const prev = normalizeFingerprint(meta?.fingerprint) || {};
   const chromeArgs = stripFakeCameraArgs(prev.chromeArgs);
+  // Igual POC OmTV: grava permissions granted p/ origem (defaultUrl / opts).
+  const origins = [];
+  const fromOpt = originFromUrl(opts.origin);
+  const fromDefault = originFromUrl(opts.defaultUrl || row.defaultUrl || meta?.defaultUrl);
+  if (fromOpt) origins.push(fromOpt);
+  if (fromDefault) origins.push(fromDefault);
+  if (Array.isArray(opts.origins)) {
+    for (const o of opts.origins) {
+      const x = originFromUrl(o) || String(o || '').trim();
+      if (x) origins.push(x);
+    }
+  }
+  const permissions = mergeMediaPermissions(prev.permissions, origins);
   const fingerprint = {
     ...prev,
     cameraVideo: resolve(video),
     cameraCaptureFile: captureFile,
     cameraLabel: label,
+    ...(permissions.length ? { permissions } : {}),
     ...(chromeArgs.length ? { chromeArgs } : {}),
   };
   if (!chromeArgs.length) delete fingerprint.chromeArgs;
+  if (!permissions.length) delete fingerprint.permissions;
 
   updateCdp(row.id, { fingerprint });
 

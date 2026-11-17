@@ -220,6 +220,8 @@ Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriv
 
 **Editar → Salvar:** grava também a mídia do select (`media/select` + `setCamera`). Antes só “Aplicar no CDP” persistia o vídeo — Salvar sozinho deixava a câmera sem face. O PATCH da UI ainda preserva `camera*` se houver `selectedMediaId`. Rollback: remover o sync no submit de `camera-ui/index.html` e o merge no PATCH de `camera-ui/server.mjs`.
 
+**Permissão câmera (POC OmTV):** `setCamera` grava `fingerprint.permissions` (video/audio granted) para `defaultUrl`; `applyFingerprint` chama `Browser.grantPermissions` na origem atual + listadas — evita “você negou o acesso aos seus dispositivos”. Antes: só flags fake, sem grant. Rollback: remover merge em `setCamera` e o bloco grant em `fingerprint.mjs`.
+
 **Antes → depois:** só spoof OBS / chromeArgs manuais → `setCamera` + UI + campos no fingerprint. Rollback: `clearCamera(id)`; remover `src/camera.mjs` / `camera-ui/` / exports.
 
 **Antes → depois:** keeper numa única aba (`pickPage`) → multi-target no browser WS.

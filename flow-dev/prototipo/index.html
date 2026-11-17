@@ -631,6 +631,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fband { position: absolute; left: 0; right: 0; background: color-mix(in srgb, var(--warn) 7%, transparent); border-left: 2px solid var(--warn); border-top: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); }
 .gantt.flow .grow.ifrow { cursor: default; background: color-mix(in srgb, var(--warn) 7%, transparent); }
 .gantt.flow .grow.ifrow .nm b { color: var(--warn); font-weight: 600; font-size: 12px; }
+.gantt.flow .grow.forrow { background: color-mix(in srgb, var(--ok) 7%, transparent); }
+.gantt.flow .grow.forrow .nm b { color: var(--ok); }
+.lpd { width: 12px; flex: none; color: var(--ok); font-weight: 700; text-align: center; margin-right: 2px; }
+.fband.lp { background: color-mix(in srgb, var(--ok) 5%, transparent); border-left-color: var(--ok); border-top-color: color-mix(in srgb, var(--ok) 45%, transparent); border-bottom-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+:root[data-tema="eternos"] .fband.lp, :root[data-tema="eternos"] .gantt.flow .grow.forrow { background: rgba(0,0,0,.035); }
 .ifd { width: 8px; height: 8px; flex: none; border: 1.5px solid var(--warn); transform: rotate(45deg); margin: 0 4px 0 1px; }
 .fspill { position: absolute; left: 8px; top: 9px; font: 600 10px var(--mono); line-height: 1; color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--paper)); padding: 3px 5px; border-radius: 3px; }
 .lg-dot { width: 8px; height: 8px; border: 1.3px solid var(--dado); }
@@ -1710,7 +1715,6 @@ function avatar(id) {
 function flowTags(u) {
   const t = [];
   // seleção já aparece como linha if + ◇ + “senão ↺”; sem tag repetida na barra
-  if (u.loop) t.push(["loop", `↻ for ${u.loop[0]} of ${u.loop[1]}`]);
   if (u.st === "fail") t.push(["fail", "falhou"]); else if (u.st === "exec") t.push(["exec", "executando"]); else if (u.st === "cancel") t.push(["cancel", "cancelada"]);
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
@@ -1747,9 +1751,10 @@ function flow(s) {
   const disp = [];
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
+    if (leaf(r.u) && r.u.loop) disp.push({ lp: r.u, d: r.d }); // repetição ganha linha própria, como o if
     if (!s.compacto && leaf(r.u) && newIns(r.u).length) {
       // saída de A = entrada de B (mesmos dados, linhas vizinhas): uma linha só para os dois
-      let k = disp.length - 1; while (k >= 0 && disp[k].st) k--; // pula a linha do if: a saída antes do ◇ serve de entrada depois dele
+      let k = disp.length - 1; while (k >= 0 && (disp[k].st || disp[k].lp)) k--; // pula a linha do if: a saída antes do ◇ serve de entrada depois dele
       const prev = disp[k], same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
       if (prev && prev.io === "out" && !prev.to && same((prev.u.outs || []).map(o => o[0]), newIns(r.u))) prev.to = r.u;
       else disp.push({ io: "in", u: r.u, d: r.d });
@@ -1757,8 +1762,8 @@ function flow(s) {
     disp.push(r);
     if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
   });
-  const idx = {}, idxIn = {}, idxOut = {};
-  disp.forEach((r, i) => { if (r.st) r.st.hi = i; else if (r.io === "in") idxIn[r.u.id] = i; else if (r.io === "out") { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } else idx[r.u.id] = i; });
+  const idx = {}, idxIn = {}, idxOut = {}, idxLoop = {};
+  disp.forEach((r, i) => { if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i; else if (r.io === "in") idxIn[r.u.id] = i; else if (r.io === "out") { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } else idx[r.u.id] = i; });
   const hasK = u => flowKids(u).length > 0;
   // camada = composição de topo (endereços que se conhecem). Dado de entrada produzido na mesma camada = concreto (□);
   // vindo de fora (context / outra camada) = abstrato (■). Função IA = abstrata (chega pelo context); lib Node = concreta (import).
@@ -1793,7 +1798,8 @@ function flow(s) {
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
   const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
-  const left = disp.map(r => r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
+  const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
@@ -1828,7 +1834,7 @@ function flow(s) {
     return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}">${s.txtIn ? `<span class="fb-t">${esc(u.title)}</span>` : ""}</div><span class="flbl" style="left:${g.ox + 10}px">${s.txtIn ? "" : `<span class="fnm">${esc(u.title)}</span>`}${s.compacto && (u.outs || []).length ? `<span class="io-l c-out" title="${esc(u.outs.map(o => o[0]).join(", "))}">${u.outs.map(o => `<b data-act="reveal-dado" data-n="${esc(o[0])}">${esc(o[0])}</b>`).join(", ")}</span>` : ""}${flowTags(u)}</span></div>`;
   };
   const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px"><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span></div>`; };
-  const bars = disp.map(r => r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
+  const bars = disp.map(r => r.lp ? `<div class="rr"><span class="flbl" style="left:${geo(r.lp).ix + 12}px"><span class="ftag loop">↻ ${esc(lpTxt(r.lp))}</span></span></div>` : r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
   const isFn = u => !isData(u) && !hasK(u);
@@ -1866,7 +1872,7 @@ function flow(s) {
     st.x = x;
     svg += `<path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
     return `<div class="fband" style="top:${yTop(st.hi)}px;height:${(i1 - st.hi + 1) * RH}px"></div>`;
-  }).join("");
+  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<div class="fband lp" style="top:${yTop(a)}px;height:${(b - a + 1) * RH}px"></div>`; }).join("");
   if (!s.noDeps) rows.forEach(({ u }) => {
     if (!u.cond || idx[u.cond[1]] == null) return;
     const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === (idxOut[u.id] ?? idx[u.id]) + 1), ybk = yTop(idx[u.cond[1]]) + 27;

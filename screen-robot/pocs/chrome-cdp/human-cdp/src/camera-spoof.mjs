@@ -5,6 +5,7 @@
  */
 
 const DEFAULT_LABEL = 'FaceTime HD Camera';
+const DEFAULT_AUDIO_LABEL = 'MacBook Pro Microphone';
 const DEFAULT_MATCH = [
   'obs',
   'virtual camera',
@@ -16,15 +17,19 @@ const DEFAULT_MATCH = [
   'fake_device',
   'y4m',
   'mjpeg',
+  // caminho absoluto do arquivo de captura
+  '/users/',
+  'chrome-cdp-media',
 ];
-const SPOOF_VER = 2;
+const SPOOF_VER = 3;
 
 /**
- * @param {{ label?: string, match?: string[] }} [opts]
+ * @param {{ label?: string, audioLabel?: string, match?: string[] }} [opts]
  * @returns {string} IIFE para injetar na página
  */
 export function cameraSpoofExpression(opts = {}) {
   const label = opts.label || DEFAULT_LABEL;
+  const audioLabel = opts.audioLabel || DEFAULT_AUDIO_LABEL;
   const match = Array.isArray(opts.match) && opts.match.length
     ? opts.match
     : DEFAULT_MATCH;
@@ -34,6 +39,7 @@ export function cameraSpoofExpression(opts = {}) {
     window.__srCamSpoofVer = VER;
     window.__srCamSpoofInstalled = true;
     const LABEL = ${JSON.stringify(label)};
+    const AUDIO_LABEL = ${JSON.stringify(audioLabel)};
     const MATCH = ${JSON.stringify(match)}.map((s) => String(s).toLowerCase());
     const hit = (v) => {
       const l = String(v || '').toLowerCase();
@@ -41,13 +47,14 @@ export function cameraSpoofExpression(opts = {}) {
     };
 
     const cloakDevice = (d) => {
-      if (!d || d.kind !== 'videoinput') return d;
+      if (!d || (d.kind !== 'videoinput' && d.kind !== 'audioinput')) return d;
       let rawLabel = '';
       try { rawLabel = d.label; } catch { return d; }
       if (!hit(rawLabel)) return d;
+      const nextLabel = d.kind === 'audioinput' ? AUDIO_LABEL : LABEL;
       return new Proxy(d, {
         get(t, p) {
-          if (p === 'label') return LABEL;
+          if (p === 'label') return nextLabel;
           if (p === Symbol.toStringTag) return 'MediaDeviceInfo';
           const v = Reflect.get(t, p, t);
           return typeof v === 'function' ? v.bind(t) : v;
@@ -56,24 +63,25 @@ export function cameraSpoofExpression(opts = {}) {
     };
 
     const cloakTrack = (track) => {
-      if (!track || track.kind !== 'video') return track;
+      if (!track || (track.kind !== 'video' && track.kind !== 'audio')) return track;
       let raw = '';
       try { raw = track.label; } catch { return track; }
       if (!hit(raw)) return track;
+      const nextLabel = track.kind === 'audio' ? AUDIO_LABEL : LABEL;
       try {
         Object.defineProperty(track, 'label', {
           configurable: true,
           enumerable: true,
-          get: () => LABEL,
+          get: () => nextLabel,
         });
       } catch { /* ignore */ }
       return track;
     };
 
     const cloakStream = (stream) => {
-      if (!stream || typeof stream.getVideoTracks !== 'function') return stream;
+      if (!stream || typeof stream.getTracks !== 'function') return stream;
       try {
-        for (const t of stream.getVideoTracks()) cloakTrack(t);
+        for (const t of stream.getTracks()) cloakTrack(t);
       } catch { /* ignore */ }
       return stream;
     };
@@ -149,4 +157,4 @@ export async function applyCameraSpoof(session, opts = {}) {
   return out;
 }
 
-export { DEFAULT_LABEL, DEFAULT_MATCH, SPOOF_VER };
+export { DEFAULT_LABEL, DEFAULT_AUDIO_LABEL, DEFAULT_MATCH, SPOOF_VER };

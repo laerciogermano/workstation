@@ -454,7 +454,11 @@ export async function startCdp(id, { url, restore = true } = {}) {
     ...chromeArgsFromFingerprint(fp),
   ];
   const openUrl = url || row.defaultUrl || meta?.defaultUrl;
-  if (openUrl) args.push(openUrl);
+  // Com câmera fake: NÃO abrir o site no spawn — a página pediria mídia antes do grant
+  // (OmeTV: "Você negou o acesso…"). Grant primeiro (about:blank), depois navega.
+  const deferNav = !!(fp?.cameraCaptureFile && openUrl);
+  if (openUrl && !deferNav) args.push(openUrl);
+  else args.push('about:blank');
 
   const child = spawn(CHROME_BIN, args, {
     detached: true,
@@ -474,30 +478,31 @@ export async function startCdp(id, { url, restore = true } = {}) {
   }
   ensureFingerprintKeeper(row.id);
   // aplica uma vez já na página inicial (keeper também sobe)
-  if (fp) {
-    try {
-      const session = await connect({
-        cdpUrl: next.cdpUrl,
-        chromeApp: 'Google Chrome',
-      });
-      session._fingerprint = fp;
-      // Se abriu URL e há câmera, garante permissions dessa origem (POC).
-      if (fp.cameraCaptureFile && openUrl) {
-        const origin = originFromUrl(openUrl);
-        if (origin) {
-          fp = {
-            ...fp,
-            permissions: mergeMediaPermissions(fp.permissions, [origin]),
-          };
-          session._fingerprint = fp;
-          updateCdp(row.id, { fingerprint: fp });
-        }
+  try {
+    const session = await connect({
+      cdpUrl: next.cdpUrl,
+      chromeApp: 'Google Chrome',
+    });
+    if (fp?.cameraCaptureFile && openUrl) {
+      const origin = originFromUrl(openUrl);
+      if (origin) {
+        fp = {
+          ...fp,
+          permissions: mergeMediaPermissions(fp.permissions, [origin]),
+        };
+        updateCdp(row.id, { fingerprint: fp });
       }
-      await applyFingerprint(session, fp);
-      session.close();
-    } catch {
-      /* keeper cobre o retry */
     }
+    if (fp) session._fingerprint = fp;
+    // Grant na origem alvo ainda em about:blank (igual POC, antes do site rodar).
+    await applyFingerprint(session, fp || null);
+    if (deferNav) {
+      await session.goto(openUrl, { waitUntil: 'complete', timeoutMs: 30000 });
+      await applyFingerprint(session, fp || null);
+    }
+    session.close();
+  } catch {
+    /* keeper cobre o retry */
   }
   return { ...next, already: false, restored, mediaApplied };
 }

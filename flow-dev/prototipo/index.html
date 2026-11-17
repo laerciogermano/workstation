@@ -1668,7 +1668,7 @@ function flow(s) {
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
         <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Responsável</span></div></div>${left}</div>
-        <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px;margin-left:${OX}px">${esc(pl)} <span class="lay" data-act="flow-ctx" title="Abrir Contexto · camadas">${tops.length} camada${tops.length === 1 ? "" : "s"} · ${nAbs} abstrato${nAbs === 1 ? "" : "s"} · ${nConc} concreto${nConc === 1 ? "" : "s"}</span><span class="${missing.length ? "bad" : "okc"}" data-act="flow-ctx" title="${missing.length ? "Falta no context: " + esc(missing.map(m => m[0]).join(", ")) : "Camada completa: o fluxo pode executar (item 19)"}">${missing.length ? "contexto incompleto" : "contexto completo · executável"}</span></div>
+        <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px;margin-left:${OX}px">${esc(pl)}</div>
           <div class="fh-e">${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div></div>
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>

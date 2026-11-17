@@ -261,6 +261,8 @@ significado.
 8. **Separação entre modelo e projeção** — a linha do tempo é uma forma de
    ver o fluxo; o modelo de dados e funções continua sendo a fonte de
    significado.
+9. **IDR** — cada elemento (dado, função, arquivo, agente, pessoa) tem
+   identificador único; o nome é rótulo e pode repetir.
 
 ## Escopo inicial
 
@@ -318,3 +320,4 @@ visão.
 | **Seleção** | Composição condicionada por uma decisão |
 | **Repetição** | Composição que executa novamente uma função ou trecho |
 | **Exportação** | Geração de código JavaScript ou Python a partir do fluxo desenhado |
+| **IDR** | Identificador único do elemento; identidade ≠ nome (rótulos podem colidir) |

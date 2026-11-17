@@ -68,6 +68,21 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 3. **Node na v1** — bibliotecas = módulos Node (`node:fs`, `node:http`, …).
 4. **FOP visível** — entrada, verbo, saída no plano cartesiano.
 5. **Mesma unidade** — arquivo no Explorar = etapa no Flow.
+6. **IDR** — todo elemento tem **ID único**; o nome é só rótulo e pode repetir.
+
+## IDR (identificador)
+
+Cada elemento do modelo tem um **identificador único (IDR)**. O nome exibido pode ser igual ao de outro elemento; a identidade é só o ID.
+
+| Elemento | Tem IDR |
+|----------|---------|
+| Função | sim |
+| Dado | sim |
+| Arquivo | sim |
+| Agente (IA / lib) | sim |
+| Pessoa | sim |
+
+Referências (ligações, agentes, pais/filhos, export FOP-IR) usam o **ID**, nunca o nome como chave.
 
 ## Escopo v1
 

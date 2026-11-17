@@ -10,6 +10,7 @@
 3. Bibliotecas = módulos Node (`node:fs`, `node:http`, …) — não inventar runtime Python/Go na v1.
 4. Tema Gantt alinhado a [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png).
 5. Docs do caminho inverso: atualizar README/deploy no mesmo commit da mudança.
+6. **IDR:** função, dado, arquivo, agente e pessoa têm ID único; nome pode repetir; referências usam ID ([`../docs/prd.md`](../docs/prd.md)).
 
 ## Fontes
 

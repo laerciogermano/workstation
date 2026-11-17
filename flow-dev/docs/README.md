@@ -4,7 +4,8 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 
 | Artefato | Papel |
 |----------|--------|
-| [`../README.md`](../README.md) | Visão |
+| [`../README.md`](../README.md) | Visão · **IDR** (ID único ≠ nome) |
+| [`prd.md`](prd.md) | PRD · requisito IDR |
 | [`../prototipo/`](../prototipo/) | Protótipo alta fidelidade (Flow IDE) |
 | [`../deploy/README.md`](../deploy/README.md) | Publicação `flow-ide.laerciogermano.com` |
 | [`../config/config-ia.md`](../config/config-ia.md) | Regras para a IA |

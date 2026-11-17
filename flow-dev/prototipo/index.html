@@ -239,6 +239,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node.ag-d { cursor: default; height: 24px; }
 .node.proj .t b { font-weight: 600; }
 .node.proj .meta { gap: 2px; }
+.flbl .fnm { color: var(--body); }
 .node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 .node.proj.cur .t b { color: var(--accent); }
 .node.proj .pj-b { width: 22px; height: 22px; opacity: .55; }
@@ -1512,14 +1513,13 @@ function avatar(id) {
 }
 function flowTags(u) {
   const t = [];
-  if (PARS.some(p => p.includes(u.id))) t.push(["par", "∥ paralelo"]);
   // seleção já aparece como linha if + ◇ + “senão ↺”; sem tag repetida na barra
   if (u.loop) t.push(["loop", `↻ for ${u.loop[0]} of ${u.loop[1]}`]);
   if (u.st === "fail") t.push(["fail", "falhou"]); else if (u.st === "exec") t.push(["exec", "executando"]); else if (u.st === "cancel") t.push(["cancel", "cancelada"]);
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias eN
@@ -1603,13 +1603,13 @@ function flow(s) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
       const ei = (layout[u.id] || { e: 0 }).e + 1;
-      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
+      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
     }
     if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
+    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
   };
   const bars = disp.map(r => r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada

@@ -251,6 +251,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; }
 .gantt.flow .grow.iorow .io-d, .flbl.fio-n b { font: 500 10.5px var(--mono); color: var(--body); cursor: pointer; }
 .flbl.fio-n { gap: 0; pointer-events: auto; }
+.flbl .c-out { pointer-events: auto; }
+.flbl .c-out b { font-weight: 500; cursor: pointer; }
+.flbl .c-out b:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 .io-l { font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .flbl.fio-n b:hover, .gantt.flow .grow.iorow .io-d:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 .node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
@@ -1783,7 +1786,7 @@ function flow(s) {
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
+    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${s.compacto && (u.outs || []).length ? `<span class="io-l c-out" title="${esc(u.outs.map(o => o[0]).join(", "))}">${u.outs.map(o => `<b data-act="reveal-dado" data-n="${esc(o[0])}">${esc(o[0])}</b>`).join(", ")}</span>` : ""}${flowTags(u)}</span></div>`;
   };
   const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px"><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span></div>`; };
   const bars = disp.map(r => r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");

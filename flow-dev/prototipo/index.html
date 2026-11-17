@@ -547,8 +547,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
 .gantt.flow .grows-r .rr { border-bottom: 1px solid var(--line); }
 /* seleção pega a linha inteira: tabela + área das barras */
-.gantt.flow .grows-r .rr.sel { background: color-mix(in srgb, #c98a2b 26%, transparent); box-shadow: inset 0 -1px 0 color-mix(in srgb, #c98a2b 70%, transparent), inset 0 1px 0 color-mix(in srgb, #c98a2b 70%, transparent); }
-.gantt.flow .grow.sel { background: color-mix(in srgb, #c98a2b 34%, var(--paper)); box-shadow: inset 0 -1px 0 color-mix(in srgb, #c98a2b 70%, transparent), inset 0 1px 0 color-mix(in srgb, #c98a2b 70%, transparent); }
+.gantt.flow .grows-r .rr.sel { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.gantt.flow .grow.sel { background: color-mix(in srgb, var(--ink) 7%, var(--paper)); box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--ink) 18%, transparent), inset 0 1px 0 color-mix(in srgb, var(--ink) 18%, transparent); } /* seleção neutra (sem amarelo) */
 .gantt.flow .grow .nm { gap: 8px; font-size: 13px; }
 .gantt.flow .grow .nm b { font-weight: 400; color: var(--ink); }
 .gantt.flow .grow.grp .nm b { font-weight: 500; }
@@ -658,7 +658,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fview .sv-chip text { font: 600 10px var(--mono); fill: var(--ink); text-anchor: middle; }
 .fview .sv-los { fill: var(--paper); stroke: var(--muted); stroke-width: 1.3; }
 .fview .sv-ax { stroke: var(--muted); stroke-width: 1.3; }
-.fview .sv-selr { fill: color-mix(in srgb, #c98a2b 26%, transparent); }
+.fview .sv-selr { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
 .fview .sv-band { fill: color-mix(in srgb, var(--warn) 7%, transparent); stroke: color-mix(in srgb, var(--warn) 45%, transparent); stroke-dasharray: 3 3; }
 .fview .sv-band.lp { fill: color-mix(in srgb, var(--ok) 5%, transparent); stroke: color-mix(in srgb, var(--ok) 45%, transparent); }
 .fview .sv-bandl { stroke: var(--warn); stroke-width: 2; }
@@ -670,7 +670,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fview g[data-act]:hover .sv-fn, .fview g[data-act]:hover .sv-sum { filter: brightness(1.12); }
 .fview .sv-fsel { fill: none; stroke: var(--ink); stroke-width: 2; }
 /* seleção = uma borda só: a própria barra ganha o contorno de seleção */
-.fview .sv-fn.sel, .fview .sv-sum.sel, :root[data-tema] .fview .sv-fn.sel { stroke: #c98a2b; stroke-width: 2.5; }
+.fview .sv-fn.sel, .fview .sv-sum.sel, :root[data-tema] .fview .sv-fn.sel { stroke: var(--ink); stroke-width: 2.5; }
+:root[data-tema="eternos"] .fview .sv-fn.abs.sel, :root[data-tema="eternos-black"] .fview .sv-fn.sel:not(.abs) { stroke: #8a8a8a; } /* contorno visível sobre barra da mesma cor */
 .fview .sv-sum { fill: var(--fn); }
 .fview .sv-fbt { fill: #fff; pointer-events: none; }
 .fview .sv-fbt.abs, .fview .sv-fbt.nag { fill: var(--ink); }

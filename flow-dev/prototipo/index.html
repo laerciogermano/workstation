@@ -1883,7 +1883,7 @@ function flow(s) {
     DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
   });
   const { layout, nSteps } = flowLayout(s.plan);
-  const LW = 380, RH = 34, TAIL = 440, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if); TAIL = espaço p/ bag do estado à direita da barra
+  const LW = 380, RH = 34, TAIL = 440, OX = 28; // OX = margem mínima à esquerda do e0 (□ de entrada); TAIL = bag à direita
   // texto dentro: passo só um pouco maior que o maior nome (≈5,6 px por letra a 10 px + respiro)
   const maxT = Math.max(0, ...rows.filter(r => !isData(r.u) && !flowKids(r.u).length).map(r => r.u.title.length));
   const INS = s.txtIn ? 22 : 28; // recuo da barra até a divisória (longe dos □ de dados)

@@ -29,6 +29,14 @@ Card **OmTV** no hub (`img/omtv.jpg`, `url: null` = em breve). Visão local: [`.
 
 **Voltar:** remover o objeto OmTV de `site/index.html` e `site/img/omtv.jpg`; republicar.
 
+## Card CRM
+
+Card **CRM** no hub (`img/crm.jpg`, `url: null` = em breve). Visão local: [`../../crm/README.md`](../../crm/README.md).
+
+**Antes → depois:** sem card → card CRM “em breve”.
+
+**Voltar:** remover o objeto CRM de `site/index.html` e `site/img/crm.jpg`; republicar.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `centralizador`

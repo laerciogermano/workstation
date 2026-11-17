@@ -1431,5 +1431,61 @@
         "status": "todo"
       }
     ]
+  },
+  "crm": {
+    "name": "CRM",
+    "blurb": "Pessoa única multi-canal",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "crm-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "crm-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "CRM multi-canal: ID por pessoa, conexões WhatsApp/Tinder/Instagram/apps, perfil (foto, nome, infos) e automação de mensagens.",
+    "context": "Contatos ficam espalhados em WhatsApp, Tinder, Instagram e outros apps, sem identificador único nem perfil unificado. Automações por canal existem no lab, mas falta o hub que une pessoa + canais + mensagem.",
+    "objective": "Ser o CRM padrão da workstation: um ID por pessoa, canais conectados (WhatsApp, Tinder, Instagram e extensível), perfil com foto/nome/informações e automação de mensagens sobre esses canais.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo / operação",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
   }
 }

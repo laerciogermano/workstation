@@ -1422,7 +1422,7 @@ function avatar(id) {
 function flowTags(u) {
   const t = [];
   if (PARS.some(p => p.includes(u.id))) t.push(["par", "∥ paralelo"]);
-  if (u.cond) t.push(["if", `if !${u.cond[0]} ↺ ${$u(u.cond[1])?.title || "volta"}`]);
+  // seleção já aparece como linha if + ◇ + “senão ↺”; sem tag repetida na barra
   if (u.loop) t.push(["loop", `↻ for ${u.loop[0]} of ${u.loop[1]}`]);
   if (u.st === "fail") t.push(["fail", "falhou"]); else if (u.st === "exec") t.push(["exec", "executando"]); else if (u.st === "cancel") t.push(["cancel", "cancelada"]);
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");

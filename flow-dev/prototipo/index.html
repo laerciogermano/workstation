@@ -244,7 +244,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node.ag-d { cursor: default; height: 24px; }
 .node.proj .t b { font-weight: 600; }
 .node.proj .meta { gap: 2px; }
-.flbl .fnm { color: var(--body); }
+.flbl .fnm { color: var(--body); font-size: 10px; }
 /* linhas de entrada e saída de cada função */
 .gantt.flow .grow.iorow .nm { gap: 6px; font-size: 11px; }
 .gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; white-space: nowrap; flex: none; }
@@ -514,7 +514,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gbg { top: 52px; }
 .gantt.flow .gbg div { border-left: 1px solid var(--line); }
 .gantt.flow .fsvg { top: 52px; z-index: 3; }
-.fbar { position:absolute; top: 8px; height: 18px; border-radius: 6px; /* função = levemente arredondada (dado = quadrado reto) */ background: var(--c); cursor: pointer; z-index: 2; overflow: hidden; }
+.fbar { position:absolute; top: 8px; height: 18px; border-radius: 9px; /* função = arredondada (dado = quadrado reto) */ background: var(--c); cursor: pointer; z-index: 2; overflow: hidden; }
 .fbar .fill { position:absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 68%, #000); }
 .fbar:hover { filter: brightness(1.12); }
 .fbar.sel, .fsum.sel, .fdia.sel { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -577,7 +577,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
 /* texto dentro da barra (toggle no menu) */
-.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 8px; font-size: 11px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font-size: 10px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 .fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 15px; }
 .vdock.fdock .fd-sep { width: 1px; align-self: stretch; margin: 6px 4px; background: var(--line); }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }

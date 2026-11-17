@@ -1117,7 +1117,6 @@ function explorer(s) {
   (function walk(pid, lvl) {
     if (s.newn && (s.newn.parent || null) === pid) planRows.push(newRow(s.newn, lvl));
     kids(pid).forEach(u => {
-      if (isData(u)) return; // estado nomeado (◆) não aparece no Flow IDE
       if (show && !show.has(u.id)) return;
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
@@ -1428,18 +1427,12 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
-  // sem representação de estado nomeado (◆): só funções e composições; estados = divisórias eN
-  const rows = ganttRows(s.plan).filter(r => !isData(r.u));
-  // sequência atravessando o ◆ removido: a → ◆ → b vira a → b
-  const FD = [];
-  DEPS.forEach(([a, b]) => {
-    if (isData($u(a))) return;
-    if (!isData($u(b))) { FD.push([a, b]); return; }
-    DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
-  });
+  // estado nomeado (◆) volta a aparecer como linha; dados ficam só embaixo, por eN
+  const rows = ganttRows(s.plan);
+  const FD = DEPS;
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 380, RH = 34, TAIL = 440, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if); TAIL = espaço p/ bag do estado à direita da barra
   const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
@@ -1512,13 +1505,13 @@ function flow(s) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
       const ei = (layout[u.id] || { e: 0 }).e + 1;
-      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${bagLbl(ei)}${flowTags(u)}</span></div>`;
+      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
     }
-    if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div><span class="flbl" style="left:${g.x2 + 10}px">${esc(u.title)}<span class="ftag data">${esc((u.ins || []).join(", "))}</span></span></div>`;
+    if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px">${bagLbl(ei)}${flowTags(u)}</span></div>`;
+    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
   };
   const bars = disp.map(r => r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada

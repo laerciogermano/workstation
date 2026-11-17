@@ -23,9 +23,11 @@ import { fileURLToPath } from 'node:url';
 import {
   cameraFromFingerprint,
   DEFAULT_CAMERA_LABEL,
+  DEFAULT_SEEK_STEP_SEC,
   ensureCaptureFile,
   mergeMediaPermissions,
   originFromUrl,
+  probeMediaDuration,
   stripFakeCameraArgs,
 } from './camera.mjs';
 import { createSnapshot, restoreSelectedBeforeStart } from './snapshot.mjs';
@@ -281,6 +283,7 @@ export function listCdps() {
       obs: meta?.obs || '',
       debug: !!meta?.debug,
       selectedMediaId: meta?.selectedMediaId || null,
+      cameraPlayback: normalizeCameraPlayback(meta?.cameraPlayback),
       fingerprint: normalizeFingerprint(meta?.fingerprint),
       createdAt: meta?.createdAt || null,
       updatedAt: meta?.updatedAt || null,
@@ -538,15 +541,50 @@ export async function applySelectedMedia(id, opts = {}) {
  * Lê vídeo/label atuais do fingerprint do CDP.
  * @param {string} id
  */
+function normalizeCameraPlayback(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const positionSec = Math.max(0, Number(raw.positionSec) || 0);
+  const paused = raw.paused === true;
+  const sourceDurationSec =
+    raw.sourceDurationSec != null && Number.isFinite(Number(raw.sourceDurationSec))
+      ? Number(raw.sourceDurationSec)
+      : null;
+  const startedAt = typeof raw.startedAt === 'string' ? raw.startedAt : null;
+  return { positionSec, paused, sourceDurationSec, startedAt };
+}
+
+/** Posição efetiva (avança com o relógio se estiver playing). */
+export function effectiveCameraPosition(playback) {
+  const pb = normalizeCameraPlayback(playback);
+  if (!pb) return 0;
+  if (pb.paused || !pb.startedAt) return pb.positionSec;
+  const elapsed = (Date.now() - Date.parse(pb.startedAt)) / 1000;
+  if (!Number.isFinite(elapsed) || elapsed < 0) return pb.positionSec;
+  let pos = pb.positionSec + elapsed;
+  if (pb.sourceDurationSec != null) {
+    pos = Math.min(pos, Math.max(0, pb.sourceDurationSec - 0.05));
+  }
+  return pos;
+}
+
 export function getCamera(id) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
-  const cam = cameraFromFingerprint(row.fingerprint || readMeta(row.id)?.fingerprint);
+  const meta = readMeta(row.id);
+  const cam = cameraFromFingerprint(row.fingerprint || meta?.fingerprint);
+  const playback = normalizeCameraPlayback(meta?.cameraPlayback);
   return {
     id: row.id,
     video: cam.video,
     captureFile: cam.captureFile,
     label: cam.label,
+    playback: playback
+      ? {
+          ...playback,
+          positionSec: effectiveCameraPosition(playback),
+          basePositionSec: playback.positionSec,
+        }
+      : null,
   };
 }
 
@@ -599,7 +637,14 @@ export async function setCamera(id, opts = {}) {
   if (!chromeArgs.length) delete fingerprint.chromeArgs;
   if (!permissions.length) delete fingerprint.permissions;
 
-  updateCdp(row.id, { fingerprint });
+  const duration = probeMediaDuration(resolve(video));
+  const cameraPlayback = {
+    positionSec: 0,
+    paused: false,
+    sourceDurationSec: duration,
+    startedAt: new Date().toISOString(),
+  };
+  updateCdp(row.id, { fingerprint, cameraPlayback });
 
   let restarted = false;
   if (apply) {
@@ -616,8 +661,117 @@ export async function setCamera(id, opts = {}) {
     video: resolve(video),
     captureFile,
     label,
+    playback: cameraPlayback,
     restarted,
     chromeArgs: chromeArgsFromFingerprint(fingerprint),
+  };
+}
+
+/**
+ * Controle da webcam fake: pause / play / seek.
+ * Chrome não seeka o arquivo aberto — regenera Y4M e reinicia se estiver up.
+ *
+ * @param {string} id
+ * @param {{
+ *   action?: 'pause'|'play'|'seek'|'seekBy'|'status',
+ *   positionSec?: number,
+ *   deltaSec?: number,
+ *   apply?: boolean,
+ * }} [opts]
+ */
+export async function controlCameraPlayback(id, opts = {}) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const action = String(opts.action || 'status');
+  const apply = opts.apply !== false;
+  const meta = readMeta(row.id);
+  const cam = cameraFromFingerprint(meta?.fingerprint);
+  if (!cam.video) throw new Error('sem vídeo de câmera — aplique uma mídia antes');
+
+  let playback = normalizeCameraPlayback(meta?.cameraPlayback) || {
+    positionSec: 0,
+    paused: false,
+    sourceDurationSec: probeMediaDuration(cam.video),
+    startedAt: new Date().toISOString(),
+  };
+  if (playback.sourceDurationSec == null) {
+    playback.sourceDurationSec = probeMediaDuration(cam.video);
+  }
+
+  if (action === 'status') {
+    return {
+      id: row.id,
+      video: cam.video,
+      captureFile: cam.captureFile,
+      label: cam.label,
+      playback: {
+        ...playback,
+        positionSec: effectiveCameraPosition(playback),
+        basePositionSec: playback.positionSec,
+      },
+    };
+  }
+
+  let positionSec = effectiveCameraPosition(playback);
+  let paused = playback.paused;
+
+  if (action === 'pause') {
+    paused = true;
+  } else if (action === 'play') {
+    paused = false;
+  } else if (action === 'seek') {
+    positionSec = Math.max(0, Number(opts.positionSec) || 0);
+  } else if (action === 'seekBy') {
+    const delta = Number(opts.deltaSec);
+    positionSec = Math.max(0, positionSec + (Number.isFinite(delta) ? delta : DEFAULT_SEEK_STEP_SEC));
+  } else {
+    throw new Error(`action inválida: ${action} (pause|play|seek|seekBy|status)`);
+  }
+
+  if (playback.sourceDurationSec != null) {
+    positionSec = Math.min(positionSec, Math.max(0, playback.sourceDurationSec - 0.05));
+  }
+
+  const cacheDir = cameraCacheDir(row.id);
+  const captureFile = ensureCaptureFile(cam.video, cacheDir, {
+    startSec: positionSec,
+    paused,
+    force: true,
+  });
+
+  const prev = normalizeFingerprint(meta?.fingerprint) || {};
+  const fingerprint = {
+    ...prev,
+    cameraVideo: cam.video,
+    cameraCaptureFile: captureFile,
+    cameraLabel: cam.label || prev.cameraLabel || DEFAULT_CAMERA_LABEL,
+  };
+  const nextPlayback = {
+    positionSec,
+    paused,
+    sourceDurationSec: playback.sourceDurationSec,
+    startedAt: paused ? null : new Date().toISOString(),
+  };
+  updateCdp(row.id, { fingerprint, cameraPlayback: nextPlayback });
+
+  let restarted = false;
+  if (apply) {
+    const st = await statusCdp(row.id);
+    if (st.status === 'up') {
+      await stopCdp(row.id);
+      await startCdp(row.id);
+      restarted = true;
+    }
+  }
+
+  return {
+    id: row.id,
+    video: cam.video,
+    captureFile,
+    label: fingerprint.cameraLabel,
+    playback: nextPlayback,
+    restarted,
+    action,
   };
 }
 
@@ -641,6 +795,7 @@ export async function clearCamera(id, opts = {}) {
 
   updateCdp(row.id, {
     fingerprint: Object.keys(fingerprint).length ? fingerprint : null,
+    cameraPlayback: null,
   });
 
   let restarted = false;

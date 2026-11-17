@@ -22,6 +22,7 @@ import {
   getCamera,
   setCamera,
   clearCamera,
+  controlCameraPlayback,
   listFingerprintOptions,
   generateFingerprint,
   listSnapshots,
@@ -137,6 +138,7 @@ function serializeCdp(c, { full = false } = {}) {
     selectedBackupAt: selected?.createdAt || null,
     selectedMediaId: c.selectedMediaId || selectedMedia?.id || null,
     selectedMediaName: selectedMedia?.name || null,
+    cameraPlayback: c.cameraPlayback || null,
     createdAt: c.createdAt,
     updatedAt: c.updatedAt,
   };
@@ -502,6 +504,16 @@ const server = createServer(async (req, res) => {
       const body = await readBody(req);
       if (!body.id) return json(res, 400, { error: 'id obrigatório' });
       return json(res, 200, await clearCamera(body.id, { apply: body.apply !== false }));
+    }
+    if (req.method === 'POST' && path === '/api/camera/playback') {
+      const body = await readBody(req);
+      if (!body.id) return json(res, 400, { error: 'id obrigatório' });
+      return json(res, 200, await controlCameraPlayback(body.id, {
+        action: body.action || 'status',
+        positionSec: body.positionSec,
+        deltaSec: body.deltaSec,
+        apply: body.apply !== false,
+      }));
     }
 
     json(res, 404, { error: 'not found' });

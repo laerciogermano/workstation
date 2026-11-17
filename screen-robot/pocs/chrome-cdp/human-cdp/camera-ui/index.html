@@ -168,6 +168,21 @@
           <button type="button" class="secondary" id="apply-media">Aplicar agora</button>
           <button type="button" class="ghost" id="clear-media">Limpar seleção</button>
         </div>
+        <h3>Controle da webcam</h3>
+        <p class="hint">Pause / play / ≪ ≫ regeneram o Y4M e reiniciam o Chrome se estiver up (limitação do fake cam).</p>
+        <p class="meta" id="playback-status">—</p>
+        <div class="dlg-actions">
+          <button type="button" class="ghost" id="cam-seek-back" title="-5s">≪ -5s</button>
+          <button type="button" class="secondary" id="cam-pause">Pause</button>
+          <button type="button" id="cam-play">Play</button>
+          <button type="button" class="ghost" id="cam-seek-fwd" title="+5s">+5s ≫</button>
+        </div>
+        <label>Ir para (segundos)
+          <div class="dlg-actions" style="margin-top:0.35rem">
+            <input id="cam-seek-pos" type="number" min="0" step="0.5" value="0" style="flex:1" />
+            <button type="button" class="secondary" id="cam-seek-go">Ir</button>
+          </div>
+        </label>
       </div>
 
       <div class="dlg-actions">
@@ -390,11 +405,42 @@
       try {
         const cam = await api('/api/camera?id=' + encodeURIComponent(id));
         $('label').value = cam.label || defaults.label || 'FaceTime HD Camera';
+        paintPlayback(cam.playback);
       } catch {
         $('label').value = defaults.label || 'FaceTime HD Camera';
+        paintPlayback(null);
       }
       await renderBackups(id);
       $('editor').showModal();
+    }
+
+    function paintPlayback(pb) {
+      const el = $('playback-status');
+      if (!pb) {
+        el.textContent = 'sem playback — aplique uma mídia';
+        return;
+      }
+      const pos = Number(pb.positionSec) || 0;
+      const dur = pb.sourceDurationSec != null ? Number(pb.sourceDurationSec) : null;
+      const mmss = (s) => {
+        const t = Math.max(0, Math.floor(s));
+        const m = Math.floor(t / 60);
+        const sec = String(t % 60).padStart(2, '0');
+        return `${m}:${sec}`;
+      };
+      el.textContent = `${pb.paused ? 'pausado' : 'tocando'} · ${mmss(pos)}${dur != null ? ' / ' + mmss(dur) : ''}`;
+      $('cam-seek-pos').value = String(Math.round(pos * 10) / 10);
+    }
+
+    async function cameraPlayback(action, extra = {}) {
+      const id = $('id').value.trim();
+      if (!id) throw new Error('id ausente');
+      const out = await api('/api/camera/playback', {
+        method: 'POST',
+        body: JSON.stringify({ id, action, apply: true, ...extra }),
+      });
+      paintPlayback(out.playback);
+      return out;
     }
 
     async function fillMediaSelect(selectedId) {
@@ -664,10 +710,34 @@
         setBusy(true);
         await syncEditorMedia(id, { restart: true });
         await refreshFingerprintField(id);
+        paintPlayback(null);
         flash('mídia limpa', 'ok');
         await loadList({ quiet: true });
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
+    });
+
+    async function runPlayback(action, extra = {}) {
+      try {
+        setBusy(true);
+        flash(`${action}…`);
+        const out = await cameraPlayback(action, extra);
+        flash(
+          `${action} · ${out.playback?.paused ? 'pausado' : 'play'} @ ${(out.playback?.positionSec || 0).toFixed(1)}s`
+            + (out.restarted ? ' · Chrome reiniciado' : ''),
+          'ok',
+        );
+        await loadList({ quiet: true });
+      } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
+    }
+    $('cam-pause').addEventListener('click', () => runPlayback('pause'));
+    $('cam-play').addEventListener('click', () => runPlayback('play'));
+    $('cam-seek-back').addEventListener('click', () => runPlayback('seekBy', { deltaSec: -5 }));
+    $('cam-seek-fwd').addEventListener('click', () => runPlayback('seekBy', { deltaSec: 5 }));
+    $('cam-seek-go').addEventListener('click', () => {
+      const positionSec = Number($('cam-seek-pos').value) || 0;
+      return runPlayback('seek', { positionSec });
     });
 
     $('open-gallery').addEventListener('click', () => {

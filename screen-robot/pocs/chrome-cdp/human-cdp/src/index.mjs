@@ -45,12 +45,14 @@ export {
   DEFAULT_CAPTURE_FPS,
   DEFAULT_CAPTURE_MAX_SECONDS,
   DEFAULT_CAPTURE_SIZE,
+  DEFAULT_SEEK_STEP_SEC,
   ensureCaptureFile,
   fakeCameraChromeArgs,
   GRANT_MEDIA_PERMISSIONS,
   mediaPermissionEntries,
   mergeMediaPermissions,
   originFromUrl,
+  probeMediaDuration,
   stripFakeCameraArgs,
 } from './camera.mjs';
 export {
@@ -72,6 +74,8 @@ export {
   getCamera,
   setCamera,
   clearCamera,
+  controlCameraPlayback,
+  effectiveCameraPosition,
   applySelectedMedia,
   ensureFingerprintKeeper,
   scriptsDir,

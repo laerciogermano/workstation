@@ -70,11 +70,39 @@ export const DEFAULT_CAPTURE_SIZE = '640x360';
 export const DEFAULT_CAPTURE_FPS = 12;
 /** Segundos máximos no loop (Chrome repete o arquivo). */
 export const DEFAULT_CAPTURE_MAX_SECONDS = 30;
+/** Passo padrão dos botões ≪ / ≫ na UI. */
+export const DEFAULT_SEEK_STEP_SEC = 5;
+
+/**
+ * @param {string} videoPath
+ * @returns {number|null} duração em segundos
+ */
+export function probeMediaDuration(videoPath) {
+  const abs = resolve(videoPath);
+  if (!existsSync(abs)) return null;
+  if (!commandExists('ffprobe')) return null;
+  try {
+    const out = execFileSync(
+      'ffprobe',
+      [
+        '-v', 'error',
+        '-show_entries', 'format=duration',
+        '-of', 'default=noprint_wrappers=1:nokey=1',
+        abs,
+      ],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    ).trim();
+    const n = Number(out);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * @param {string} videoPath mp4/y4m/mjpeg…
  * @param {string} outY4m
- * @param {string | { size?: string, fps?: number, maxSeconds?: number }} [sizeOrOpts]
+ * @param {string | { size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean }} [sizeOrOpts]
  */
 export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZE) {
   const absIn = resolve(videoPath);
@@ -90,13 +118,41 @@ export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZ
     1,
     Number(opts.maxSeconds != null ? opts.maxSeconds : DEFAULT_CAPTURE_MAX_SECONDS) || DEFAULT_CAPTURE_MAX_SECONDS,
   );
-  // scale com aspect ratio; fps baixo; corta duração — Y4M uncompressed não escala bem.
+  const startSec = Math.max(0, Number(opts.startSec) || 0);
+  const paused = opts.paused === true;
   const vf = `scale=${size}:force_original_aspect_ratio=decrease,fps=${fps}`;
   mkdirSync(dirname(outY4m), { recursive: true });
+
+  if (paused) {
+    // Congela o frame em startSec (loop curto de still) — Chrome não pausa o arquivo sozinho.
+    const framePng = join(dirname(outY4m), `pause-frame-${Math.round(startSec * 10)}.png`);
+    execFileSync(
+      'ffmpeg',
+      ['-y', '-ss', String(startSec), '-i', absIn, '-frames:v', '1', '-q:v', '2', framePng],
+      { stdio: 'pipe' },
+    );
+    execFileSync(
+      'ffmpeg',
+      [
+        '-y',
+        '-loop', '1',
+        '-i', framePng,
+        '-t', '2',
+        '-an',
+        '-pix_fmt', 'yuv420p',
+        '-vf', vf,
+        outY4m,
+      ],
+      { stdio: 'pipe' },
+    );
+    return outY4m;
+  }
+
   execFileSync(
     'ffmpeg',
     [
       '-y',
+      ...(startSec > 0 ? ['-ss', String(startSec)] : []),
       '-i', absIn,
       '-t', String(maxSeconds),
       '-an',
@@ -122,7 +178,7 @@ function commandExists(bin) {
  * Garante Y4M leve no cache (sempre normaliza — y4m/mjpeg grande também).
  * @param {string} videoPath
  * @param {string} cacheDir pasta p/ Y4M gerado
- * @param {{ size?: string, fps?: number, maxSeconds?: number }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean }} [opts]
  */
 export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const abs = resolve(videoPath);
@@ -130,20 +186,28 @@ export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const size = String(opts.size || DEFAULT_CAPTURE_SIZE);
   const fps = Number(opts.fps) || DEFAULT_CAPTURE_FPS;
   const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : DEFAULT_CAPTURE_MAX_SECONDS;
+  const startSec = Math.max(0, Number(opts.startSec) || 0);
+  const paused = opts.paused === true;
   mkdirSync(cacheDir, { recursive: true });
   const base = basename(abs, extname(abs)) || 'capture';
+  const tag = paused
+    ? `p${startSec.toFixed(1)}`
+    : startSec > 0
+      ? `s${startSec.toFixed(1)}`
+      : 's0';
   const out = join(
     cacheDir,
-    `${base}.${size.replace('x', 'x')}.${fps}fps.${maxSeconds}s.y4m`,
+    `${base}.${size}.${fps}fps.${maxSeconds}s.${tag}.y4m`,
   );
-  if (existsSync(out)) {
+  const transport = startSec > 0 || paused || opts.force;
+  if (!transport && existsSync(out)) {
     try {
       if (statSync(out).mtimeMs >= statSync(abs).mtimeMs) return out;
     } catch {
       return out;
     }
   }
-  return convertToY4m(abs, out, { size, fps, maxSeconds });
+  return convertToY4m(abs, out, { size, fps, maxSeconds, startSec, paused });
 }
 
 /**

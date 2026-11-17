@@ -141,15 +141,59 @@ await clearCamera('ometv-2');
 ```
 
 ```bash
-npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs (lista + status + CRUD + start/stop + câmera)
+npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs
 npm run test:camera
 ```
 
-**UI:** ao abrir, lista todos os CDPs com **status up/down**; criar / editar / remover; executar / parar; câmera no formulário de edição. Projeto de visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+**UI (`http://127.0.0.1:18770/`):** lista + status; criar/editar/remover; **fingerprint** (opções do catálogo + Gerar); **backups** (cópia de pasta + seleção por data); **executar** restaura o backup selecionado (apaga estado atual); **controlar** = prints JPEG low-quality em loop + clique/type via human-cdp. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+
+### Fingerprint (gerar)
+
+```js
+import { listFingerprintOptions, generateFingerprint } from './src/index.mjs';
+listFingerprintOptions(); // os, chrome, locale, hw, mem, lang…
+generateFingerprint({ os: 'win10', locale: 'sp' });
+```
+
+Catálogo em `src/fingerprint-catalog.mjs` (também usado por LinkedIn `createLinkedInCdp`).
+
+### Backups (só arquivos)
+
+```text
+~/chrome-cdp-backups/<cdpId>/
+  selected.json
+  <ISO-stamp>/
+    meta.json
+    profile/          ← cópia de ~/chrome-profiles/<cdpId>/
+```
+
+```js
+import { createBackup, listBackups, selectBackup, startCdp } from './src/index.mjs';
+createBackup('meu-cdp', { note: 'após login' });
+selectBackup('meu-cdp', '2026-11-17T12-00-00Z');
+await startCdp('meu-cdp'); // apaga perfil atual → copia backup selecionado → sobe Chrome
+```
+
+Sem backups: start normal. Com backups e sem seleção: erro. Meta `.human-cdp.json` atual é preservada no restore.
+
+### Visão / controle (prints)
+
+```text
+~/chrome-cdp-view/<cdpId>/
+  config.json     # quality (default 15), intervalMs (1000), maxKeep
+  latest.jpg
+  frames/*.jpg
+```
+
+```js
+import { startView, stopView, setViewConfig } from './src/index.mjs';
+setViewConfig('meu-cdp', { quality: 12, intervalMs: 1000 });
+await startView('meu-cdp'); // CDP precisa estar up
+```
 
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
 
-**Antes → depois (UI):** só form de câmera (select) → lista completa com status e CRUD. Rollback: restaurar `camera-ui/index.html` + `server.mjs` anteriores.
+**Antes → depois (UI):** form só câmera → gestão completa (lista, fingerprint, backups, visão). Rollback: restaurar `camera-ui/` + remover `src/backup.mjs` / `src/view.mjs` / `src/fingerprint-catalog.mjs`.
 
 Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriva `--use-fake-*` de `cameraCaptureFile`. Infobar amarela das flags é esperada (lab). POC OmTV: [`omtv/pocs/fake-webcam-cdp/README.md`](../../../../omtv/pocs/fake-webcam-cdp/README.md).
 

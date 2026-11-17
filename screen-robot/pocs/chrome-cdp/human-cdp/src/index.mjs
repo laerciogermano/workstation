@@ -23,6 +23,17 @@ export {
   normalizeFingerprint,
 } from './fingerprint.mjs';
 export {
+  listFingerprintOptions,
+  generateFingerprint,
+  OS_PROFILES,
+  CHROME_BUILDS,
+  BR_LOCALES,
+  HW_OPTS,
+  MEM_OPTS,
+  LANG_OPTS,
+  FINGERPRINT_FIELDS,
+} from './fingerprint-catalog.mjs';
+export {
   applyCameraSpoof,
   cameraSpoofExpression,
   DEFAULT_LABEL as CAMERA_SPOOF_LABEL,
@@ -61,3 +72,22 @@ export {
   resolveStartScript,
   isPortListening,
 } from './registry.mjs';
+export {
+  backupsDir,
+  listBackups,
+  getSelectedBackup,
+  createBackup,
+  selectBackup,
+  removeBackup,
+  restoreBackup,
+  restoreSelectedBeforeStart,
+} from './backup.mjs';
+export {
+  viewRoot,
+  getViewConfig,
+  setViewConfig,
+  startView,
+  stopView,
+  readLatestFrame,
+  clearViewFrames,
+} from './view.mjs';

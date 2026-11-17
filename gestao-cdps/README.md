@@ -157,7 +157,12 @@ cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
 # → http://127.0.0.1:18770/
 ```
 
-Abre na **lista com status** (up/down); criar / editar / remover; executar / parar; câmera no editar. Código: [`../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/`](../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/).
+- **Lista** com status up/down
+- **Criar / editar / remover** + fingerprint (opções da lib + Gerar)
+- **Backups** em `~/chrome-cdp-backups/<id>/` (datas + seleção); **Executar** apaga o perfil e restaura o backup selecionado
+- **Controlar**: prints JPEG low-quality em `~/chrome-cdp-view/<id>/` (loop) + clique/type via human-cdp
+
+Código: [`../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/`](../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/).
 
 ## Próximos passos
 

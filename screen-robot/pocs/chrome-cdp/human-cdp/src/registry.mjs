@@ -26,12 +26,22 @@ import {
   ensureCaptureFile,
   stripFakeCameraArgs,
 } from './camera.mjs';
+import { restoreSelectedBeforeStart } from './backup.mjs';
 import {
   applyFingerprint,
   chromeArgsFromFingerprint,
   normalizeFingerprint,
 } from './fingerprint.mjs';
 import { connect } from './session.mjs';
+
+async function safeStopView(id) {
+  try {
+    const { stopView } = await import('./view.mjs');
+    stopView(id);
+  } catch {
+    /* ignore */
+  }
+}
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = resolve(__dir, '..');
@@ -393,7 +403,7 @@ export async function statusCdp(id) {
   };
 }
 
-export async function startCdp(id, { url } = {}) {
+export async function startCdp(id, { url, restore = true } = {}) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
   const port = row.port ?? row.preferredPort;
@@ -404,14 +414,23 @@ export async function startCdp(id, { url } = {}) {
     return { ...st, already: true };
   }
 
+  // Visão usa sessão CDP — para antes de mexer no perfil.
+  await safeStopView(row.id);
+
+  let restored = null;
+  if (restore !== false) {
+    restored = restoreSelectedBeforeStart(row.id);
+  }
+
   if (!existsSync(CHROME_BIN)) {
     throw new Error(`Chrome não encontrado: ${CHROME_BIN}`);
   }
-  mkdirSync(row.userDataDirExpanded, { recursive: true });
+  mkdirSync(profilePath(row.id), { recursive: true });
   const meta = readMeta(row.id);
   const fp = normalizeFingerprint(meta?.fingerprint);
+  const userDataDir = profilePath(row.id);
   const args = [
-    `--user-data-dir=${row.userDataDirExpanded}`,
+    `--user-data-dir=${userDataDir}`,
     '--remote-debugging-address=127.0.0.1',
     `--remote-debugging-port=${port}`,
     '--remote-allow-origins=*',
@@ -419,7 +438,7 @@ export async function startCdp(id, { url } = {}) {
     '--no-default-browser-check',
     ...chromeArgsFromFingerprint(fp),
   ];
-  const openUrl = url || row.defaultUrl;
+  const openUrl = url || row.defaultUrl || meta?.defaultUrl;
   if (openUrl) args.push(openUrl);
 
   const child = spawn(CHROME_BIN, args, {
@@ -453,7 +472,7 @@ export async function startCdp(id, { url } = {}) {
       /* keeper cobre o retry */
     }
   }
-  return { ...next, already: false };
+  return { ...next, already: false, restored };
 }
 
 function cameraCacheDir(id) {
@@ -566,6 +585,7 @@ export async function clearCamera(id, opts = {}) {
 export async function stopCdp(id) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  await safeStopView(row.id);
   stopFingerprintKeeper(row.id);
   const child = children.get(row.id);
   if (child && !child.killed) {

@@ -238,6 +238,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.agente { color: var(--t-ia); }
 .node.ag-d { cursor: default; height: 24px; }
 .node.proj .t b { font-weight: 600; }
+.node.ifn .t { color: var(--warn); font-weight: 600; font-size: 12px; }
+.node .fi.ifd-x { width: 16px; display: grid; place-items: center; }
 .node.ag-d .t { font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 .node.ag-d .k { color: var(--muted); font-size: 11px; margin-right: 4px; }
 .ex-sec-h .n { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0; text-transform: none; }
@@ -1134,10 +1136,27 @@ function explorer(s) {
   let planRows = [];
   function walk(pid, lvl, plan) {
     if (s.newn && (s.newn.parent || null) === pid && (pid || plan === PLANS[0].id)) planRows.push(newRow(s.newn, lvl));
+    // seleção (if) como no Flow: nó ◇ if (condição) com as etapas do corpo dentro, no lugar da primeira delas
+    const ifs = STRUCTS.map(st => ({ st, body: st.body.map($u).filter(x => x && !x.arch && !isData(x) && (x.parent || null) === pid) })).filter(x => x.body.length);
+    const inIf = new Map(); ifs.forEach(x => x.body.forEach(b => inIf.set(b.id, x)));
+    const done = new Set();
     kids(pid).forEach(u => {
       if (isData(u)) return;
-      if (!pid && u.plan !== plan) return; // raiz: só os roteiros deste plano (projeto) // estado nomeado (◆) não aparece no Flow IDE
+      if (!pid && u.plan !== plan) return; // raiz: só os roteiros deste plano (projeto)
       if (show && !show.has(u.id)) return;
+      const box = inIf.get(u.id);
+      if (box && !done.has(box)) {
+        done.add(box);
+        const iid = "ifx:" + pid + ":" + box.st.test, iOpen = show ? true : !OPEN.has(iid);
+        const g0 = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
+        planRows.push(`<div class="node ifn${iOpen ? " openf" : ""}" data-act="toggle" data-id="${iid}" style="padding-left:${8 + Math.min(lvl, 14) * 14}px" title="Seleção (documento FOP, item 12)">${g0}<span class="car">${icon("chevron-right")}</span><span class="fi ifd-x"><i class="ifd"></i></span><span class="t mono">if (${esc(box.st.test)})</span></div>`);
+        if (iOpen) box.body.filter(b => !show || show.has(b.id)).forEach(b => one(b, lvl + 1));
+        return;
+      }
+      if (box) return;
+      one(u, lvl);
+    });
+    function one(u, lvl) {
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
@@ -1149,7 +1168,7 @@ function explorer(s) {
       const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
       planRows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}</div>`);
       if (has && isOpen) walk(u.id, lvl + 1, plan);
-    });
+    }
   }
 
   // Estados em árvore, igual ao Explorar das tasks (Planos): pasta → composição → etapa → dados que ela produz

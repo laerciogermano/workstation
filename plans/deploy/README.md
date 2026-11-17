@@ -62,13 +62,13 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** coluna `.ejson` + `jsonStateTree` no histórico git.
 
-## Flow · Gantt por passos
+## Flow · plano cartesiano (FOP)
 
-Flow no layout Gantt (`flowLayout` + `.funit`): **um** □ entrada e **um** □ saída por etapa. Sem setas SVG de dependência.
+Flow: eixo/divisória por etapa; **□ entrada e □ saída em cima da linha**; nome da task **abaixo** da linha. Esquerda = atividade + responsável. Grade de passos no eixo x. Sem setas SVG.
 
-**Antes → depois:** vários quadrados por I/O + deps → 1+1 quadrados, sem setas.
+**Antes → depois:** barra Gantt com □ laterais → □ na divisória + label abaixo (cartesiano).
 
-**Voltar:** multi-sq + `.gsvg` deps no `flow()`.
+**Voltar:** `.funit` em grid `auto 1fr auto` com `.fmid` colorido.
 
 ## Zoom/pan · Gantt · Flow · Árvore · Estados · Fluxograma
 

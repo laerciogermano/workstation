@@ -19,7 +19,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 **Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
 
-No **Gantt**, só calendário (barras + deps). A visão **Estados** (ícone **dado**) é só a árvore L→R: `root` → **unidades** (título = Explorar) → **dados** (outs) — sem painel JSON. No **Flow**, formato Gantt por passos: **um □ de entrada** | função | **um □ de saída**. **Gantt**, **Flow**, **Árvore**, **Estados** e **Fluxograma** compartilham zoom/pan (scroll, −/+, ajustar, arrastar fundo). O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**.
+No **Gantt**, só calendário (barras + deps). A visão **Estados** (ícone **dado**) é só a árvore L→R: `root` → **unidades** (título = Explorar) → **dados** (outs) — sem painel JSON. No **Flow**, plano cartesiano FOP: **□ em cima da divisória**; task **abaixo** da linha; esquerda = atividade + responsável; passos no eixo x. **Gantt**, **Flow**, **Árvore**, **Estados** e **Fluxograma** compartilham zoom/pan (scroll, −/+, ajustar, arrastar fundo). O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**.
 
 ## Problema
 

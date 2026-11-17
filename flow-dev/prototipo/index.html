@@ -317,6 +317,19 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.pessoa { color: var(--t-pessoa); }
 .node .fi.modelo { color: var(--accent); }
 .node .fi.lyr { color: var(--muted); }
+.node .fi.dado svg { fill: var(--paper); } /* concreto = vazado */
+.node .fi.dado.abs svg { fill: currentColor; } /* abstrato = sólido (preto no tema Eternos) */
+.node .face { width: 18px; height: 18px; border-radius: 50%; flex: none; display: inline-grid; place-items: center; font-size: 8px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); background: #fff; border: 1.3px solid var(--t-pessoa); position: relative; overflow: hidden; }
+.node .face.ia { border-color: var(--t-ia); }
+.node .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.node .face .ia-mark { position: absolute; right: -3px; bottom: -3px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 1px solid var(--t-ia); color: var(--t-ia); display: grid; place-items: center; }
+.node .face .ia-mark svg { width: 7px; height: 7px; stroke-width: 2.4; }
+.face-edit { display: flex; align-items: center; gap: 12px; }
+.face-edit .face.lg { width: 48px; height: 48px; font-size: 16px; border-width: 1.5px; }
+.face-edit .face.lg .ia-mark { width: 16px; height: 16px; right: -2px; bottom: -2px; }
+.face-edit .face.lg .ia-mark svg { width: 10px; height: 10px; }
+.face-edit .face-acts { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.face-edit .face-acts .btn { height: 28px; font-size: 12px; }
 .md-sel { border: 1px solid var(--line-2); border-radius: 5px; background: var(--paper); font-size: 11px; height: 20px; padding: 0 4px; color: var(--ink); }
 .node.ag-d .t:has(.md-sel) { overflow: visible; }
 .node.ag-d { cursor: default; height: 24px; }
@@ -1283,12 +1296,29 @@ function rollup(u) {
 }
 const ST = { pendente: ["pendente", "circle-dashed", "pendente"], exec: ["exec", "loader-circle", "em execução"], ok: ["ok", "check", "concluída"], fail: ["fail", "circle-x", "falhou"], cancel: ["cancel", "ban", "cancelada"] };
 const stBadge = st => st ? `<span class="st ${ST[st][0]}">${icon(ST[st][1])}${ST[st][2]}</span>` : "";
+function initials(name) {
+  return String(name || "?").trim().split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase() || "?";
+}
+/** Avatar: foto se houver, senão iniciais. Agente (IA) leva selo bot. */
+function faceOf(a, { lg = false } = {}) {
+  if (!a) return `<span class="face none" title="Sem responsável">${icon("plus")}</span>`;
+  const photo = a.photo || AGENT_CFG[a.id]?.photo || "";
+  const body = photo ? `<img src="${esc(photo)}" alt="">` : esc(initials(a.name));
+  const mark = a.type === "ia" ? `<span class="ia-mark" title="Agente de IA">${icon("bot")}</span>` : "";
+  return `<span class="face ${a.type}${lg ? " lg" : ""}" title="${TYPES[a.type]?.one || ""}: ${esc(a.name)}">${body}${mark}</span>`;
+}
+function topOf(u) { let x = u; while (x?.parent && !isFolder($u(x.parent))) x = $u(x.parent); return x; }
+/** Dado abstrato = usado numa camada que não o produz (ex.: dados_cliente na Ativação). */
+function dadoIsAbs(name) {
+  const producers = U.filter(u => !u.arch && (u.outs || []).some(o => o[0] === name));
+  if (!producers.length) return true;
+  const prodTops = new Set(producers.map(p => topOf(p)?.id).filter(Boolean));
+  return U.some(u => !u.arch && (u.ins || []).includes(name) && !prodTops.has(topOf(u)?.id));
+}
 function agChip(id, short) {
   const a = agent(id);
   if (!a) return `<span class="ag none"><span class="ico">${icon("plus")}</span>${short ? "" : "Sem responsável"}</span>`;
-  const ini = a.name.split(" ").map(w => w[0]).slice(0, 2).join("");
-  const inner = icon((TYPES[a.type] || { ic: "bot" }).ic);
-  return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}"><span class="ico">${inner}</span>${short ? "" : esc(a.name)}</span>`;
+  return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}">${faceOf(a)}${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
 const VOCAB = { flow: "Etapa", explorar: "Arquivo", catalog: "Agente" };
@@ -1404,7 +1434,11 @@ function explorer(s) {
       rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi dado" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("box")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
       if (!isOpen) return;
       rows.push(...sub);
-      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
+      outs.forEach(([name, ref]) => {
+        estHits++;
+        const abs = dadoIsAbs(name);
+        rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato (outra camada / state)" : "concreto"}">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`);
+      });
     });
     return rows;
   }
@@ -1437,7 +1471,7 @@ function explorer(s) {
     if (q) hits += list.length;
     const html = list.map(a => {
       const cfg = AGENT_CFG[a.id] || {};
-      return `<div class="node${s.agCfg === a.id ? " sel" : ""}" data-act="ag-cfg" data-id="${a.id}" style="padding-left:8px" title="Configurar ${esc(a.name)}"><span class="car"></span><span class="fi agente">${icon("user-round-cog")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
+      return `<div class="node${s.agCfg === a.id ? " sel" : ""}" data-act="ag-cfg" data-id="${a.id}" style="padding-left:8px" title="Configurar ${esc(a.name)}"><span class="car"></span>${faceOf(a)}<span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum agente configurado.</p>`, n: list.length };
   })();
@@ -1461,7 +1495,7 @@ function explorer(s) {
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
         if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : fa?.type === "ia" ? " ia" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }
-        else h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="reveal-dado" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado">${icon("box")}</span><span class="t mono">${esc(v)}</span></div>`;
+        else { const abs = dadoIsAbs(v); h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="reveal-dado" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato (outra camada / state)" : "concreto"}">${icon("box")}</span><span class="t mono">${esc(v)}</span></div>`; }
       });
       return h;
     }).join("");
@@ -1473,7 +1507,7 @@ function explorer(s) {
     if (q) hits += list.length;
     const html = list.map(a => {
       const uses = U.filter(u => !u.arch && u.resp === a.id).length;
-      return `<div class="node" style="padding-left:8px" title="${esc(a.sub)}"><span class="car"></span><span class="fi pessoa">${icon("user-round")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(a.sub.split(" · ")[0])}</span>${uses ? `<span class="mono">· ${uses}</span>` : ""}</span></div>`;
+      return `<div class="node" style="padding-left:8px" title="${esc(a.sub)}"><span class="car"></span>${faceOf(a)}<span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(a.sub.split(" · ")[0])}</span>${uses ? `<span class="mono">· ${uses}</span>` : ""}</span></div>`;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma pessoa.</p>`, n: list.length };
   })();
@@ -1614,8 +1648,15 @@ function agentPanel(s) {
   const cfg = AGENT_CFG[a.id] = AGENT_CFG[a.id] || { model: MODELS[0].id, prompt: "" };
   const uses = U.filter(u => !u.arch && (u.agent === a.id || u.resp === a.id) && !kids(u.id).length);
   return `<aside class="side w360" aria-label="Configurar agente">
-    <div class="side-h"><span class="k">${icon("user-round-cog")}Agente · prompt + modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-h"><span class="k">${icon("bot")}Agente · prompt + modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
     <div class="side-b">
+      <div class="fld face-edit">
+        ${faceOf(a, { lg: true })}
+        <div class="face-acts">
+          <label class="btn" style="cursor:pointer">${icon("image")}Foto<input type="file" accept="image/*" data-ag-photo="${a.id}" hidden></label>
+          ${cfg.photo || a.photo ? `<button type="button" class="btn ghost" data-act="ag-photo-clear" data-id="${a.id}">${icon("user-round")}Só iniciais (${esc(initials(a.name))})</button>` : `<span style="font-size:12px;color:var(--muted)">Sem foto · iniciais <b>${esc(initials(a.name))}</b> · selo IA</span>`}
+        </div>
+      </div>
       <input class="ttl" data-ag-name="${a.id}" value="${esc(a.name)}" aria-label="Nome do agente">
       <div class="fld"><label>Modelo</label><select class="sel-in" data-model="${a.id}" data-act="noop">${MODELS.map(m => `<option value="${m.id}"${cfg.model === m.id ? " selected" : ""}>${esc(m.name)} · ${esc(m.vendor)}</option>`).join("")}</select></div>
       <div class="fld"><label>Prompt</label><textarea data-ag-prompt="${a.id}" rows="6">${esc(cfg.prompt || "")}</textarea></div>

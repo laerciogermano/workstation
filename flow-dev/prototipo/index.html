@@ -502,8 +502,10 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .chipb { display:inline-flex; align-items:center; gap: 5px; font: 500 11px var(--font); color: var(--muted); background: none; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; }
 .chipb svg { width: 13px; height: 13px; }
 .chipb.on { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 60%, var(--line-2)); background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.gantt.flow .ztoolbar .chipb:first-of-type { margin-left: auto; }
-.gantt.flow .ztoolbar .dz { margin-left: 4px; }
+/* legenda embaixo do Flow */
+.flfoot { flex: none; display: flex; align-items: center; padding: 8px 16px; border-top: 1px solid var(--line); }
+.flfoot .flegend { margin-left: 0; }
+.gantt.flow .ztoolbar .dz { margin-left: auto; }
 /* FOP: estados e0…eN nas divisórias, dados ○ sobre a divisória, ◇ seleção, ↻ repetição */
 .fh-e { position: relative; height: 26px; }
 /* estado eN = quadrado com o nome + losango na divisória */
@@ -1137,9 +1139,7 @@ function newRow(nn, lvl) {
 function bar(s) {
   const sel = s.sel && $u(s.sel);
   const crumb = sel ? path(sel.id).map((p, i, a) => i === a.length - 1 ? `<b>${esc(p)}</b>` : `<span>${esc(p)}</span>${icon("chevron-right")}`).join("") : `<b>Flow IDE</b>`;
-  const acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
-      <button class="btn" data-act="run-plan">${icon("play")}Executar via IAs</button>
-      <button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
+  const acts = `<button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div><div class="acts">${acts}</div></div>`;
 }
 function catBar() {
@@ -1465,9 +1465,7 @@ function flow(s) {
   const pl = PLANS.find(p => p.id === s.plan).name;
   const { missing } = fopCheck(s.plan);
   const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + 40;
-  const toolbar = zoomToolbar("flow", "Flow", "workflow", `${flowLegend()}
-    <button class="chipb${s.noDeps ? "" : " on"}" data-act="flow-deps" aria-pressed="${!s.noDeps}">${icon("git-commit-horizontal")}Sequência</button>
-    <button class="chipb${s.ctxPanel ? " on" : ""}" data-act="flow-ctx" aria-pressed="${!!s.ctxPanel}">${icon("layers")}Contexto · camadas</button>`);
+  const toolbar = zoomToolbar("flow", "Flow", "workflow");
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
@@ -1484,6 +1482,7 @@ function flow(s) {
             <marker id="fahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--warn)"/></marker></defs>${svg}</svg></div>
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
+    <div class="flfoot">${flowLegend()}</div>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {

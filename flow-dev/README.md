@@ -56,7 +56,8 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 | Paralelo | tag `∥ paralelo` · `Promise.all` no export |
 | Seleção | ◇ no conector + faixa `if (…)` sobre o corpo · “senão ↺” volta (recursão) |
 | Repetição | moldura tracejada + arco ↻ `for (var of lista)` · `for`/`map` ou recursão no export |
-| Endereço concreto × abstrato | Node.js = `import` · IA = vem do `context` |
+| Endereço concreto × abstrato | **vazado = concreto, sólido = abstrato** (itens 6–9): função Node.js = barra vazada (`import`) · IA = barra sólida (vem do `context`) · dado de entrada da mesma camada = □, de outra camada / context = ■ · saídas sempre □ |
+| Camada recebe abstratos (itens 15, 19) | cada composição mostra à esquerda os ■ dados e ▬ funções que pede ao `context`; cabeçalho conta camadas · abstratos · concretos e diz se o contexto está completo (executável) |
 | Camada substituível · contexto completo | painel **Contexto · camadas** e selo no cabeçalho |
 | Exportar JS/Python | Exportar → **JavaScript** (estilo do documento), TypeScript, Python |
 

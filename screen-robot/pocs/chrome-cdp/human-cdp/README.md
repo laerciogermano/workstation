@@ -222,6 +222,8 @@ Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriv
 
 **Permissão câmera (POC OmTV):** `setCamera` grava `fingerprint.permissions` (video/audio granted) para `defaultUrl`; `applyFingerprint` chama `Browser.grantPermissions` na origem atual + listadas. Com `cameraCaptureFile`, `startCdp` sobe em `about:blank`, faz grant e só então navega — senão o site (OmeTV) pede mídia antes do grant e fica em “Você negou o acesso…”. Spoof v3 também renomeia mic fake (`Fake Default Audio Input` → `MacBook Pro Microphone`). Antes: só flags fake / URL no spawn / spoof só de vídeo. Rollback: voltar URL no spawn, spoof v2 e remover grant/deferNav.
 
+**Vídeo grande:** `ensureCaptureFile` sempre gera Y4M leve no cache (`640x360`, `12fps`, máx. `30s`) — inclusive se a fonte já for `.y4m`. Antes devolvia y4m/mjpeg cru (arquivo enorme → Chrome lento). Override: `setCamera(id, { size, fps, maxSeconds })`. Rollback: voltar early-return de `.y4m`/`.mjpeg` em `camera.mjs`.
+
 **Antes → depois:** só spoof OBS / chromeArgs manuais → `setCamera` + UI + campos no fingerprint. Rollback: `clearCamera(id)`; remover `src/camera.mjs` / `camera-ui/` / exports.
 
 **Antes → depois:** keeper numa única aba (`pickPage`) → multi-target no browser WS.

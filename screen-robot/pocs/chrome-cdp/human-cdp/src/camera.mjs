@@ -3,7 +3,7 @@
  * Sem OBS. Trocar vídeo exige restart do Chrome (só vale no spawn).
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, statSync } from 'node:fs';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 
 export const DEFAULT_CAMERA_LABEL = 'FaceTime HD Camera';
@@ -65,19 +65,45 @@ export function mergeMediaPermissions(existing, origins) {
   return [...map.values()];
 }
 
+/** Webcam fake leve — Y4M raw grande trava o Chrome. */
+export const DEFAULT_CAPTURE_SIZE = '640x360';
+export const DEFAULT_CAPTURE_FPS = 12;
+/** Segundos máximos no loop (Chrome repete o arquivo). */
+export const DEFAULT_CAPTURE_MAX_SECONDS = 30;
+
 /**
  * @param {string} videoPath mp4/y4m/mjpeg…
  * @param {string} outY4m
- * @param {string} [size] ex. 640x360
+ * @param {string | { size?: string, fps?: number, maxSeconds?: number }} [sizeOrOpts]
  */
-export function convertToY4m(videoPath, outY4m, size = '640x360') {
+export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZE) {
   const absIn = resolve(videoPath);
   if (!existsSync(absIn)) throw new Error(`vídeo não encontrado: ${absIn}`);
   if (!commandExists('ffmpeg')) throw new Error('ffmpeg não encontrado no PATH');
+  const opts =
+    typeof sizeOrOpts === 'string' || sizeOrOpts == null
+      ? { size: sizeOrOpts || DEFAULT_CAPTURE_SIZE }
+      : sizeOrOpts;
+  const size = String(opts.size || DEFAULT_CAPTURE_SIZE).replace(/[^0-9x]/gi, '') || DEFAULT_CAPTURE_SIZE;
+  const fps = Math.max(1, Math.min(30, Number(opts.fps) || DEFAULT_CAPTURE_FPS));
+  const maxSeconds = Math.max(
+    1,
+    Number(opts.maxSeconds != null ? opts.maxSeconds : DEFAULT_CAPTURE_MAX_SECONDS) || DEFAULT_CAPTURE_MAX_SECONDS,
+  );
+  // scale com aspect ratio; fps baixo; corta duração — Y4M uncompressed não escala bem.
+  const vf = `scale=${size}:force_original_aspect_ratio=decrease,fps=${fps}`;
   mkdirSync(dirname(outY4m), { recursive: true });
   execFileSync(
     'ffmpeg',
-    ['-y', '-i', absIn, '-an', '-pix_fmt', 'yuv420p', '-vf', `scale=${size}`, outY4m],
+    [
+      '-y',
+      '-i', absIn,
+      '-t', String(maxSeconds),
+      '-an',
+      '-pix_fmt', 'yuv420p',
+      '-vf', vf,
+      outY4m,
+    ],
     { stdio: 'pipe' },
   );
   return outY4m;
@@ -93,19 +119,31 @@ function commandExists(bin) {
 }
 
 /**
- * Garante arquivo consumível pelo Chrome (y4m/mjpeg).
+ * Garante Y4M leve no cache (sempre normaliza — y4m/mjpeg grande também).
  * @param {string} videoPath
  * @param {string} cacheDir pasta p/ Y4M gerado
- * @param {{ size?: string }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number }} [opts]
  */
 export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const abs = resolve(videoPath);
   if (!existsSync(abs)) throw new Error(`vídeo não encontrado: ${abs}`);
-  const ext = extname(abs).toLowerCase();
-  if (ext === '.y4m' || ext === '.mjpeg' || ext === '.mjpg') return abs;
+  const size = String(opts.size || DEFAULT_CAPTURE_SIZE);
+  const fps = Number(opts.fps) || DEFAULT_CAPTURE_FPS;
+  const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : DEFAULT_CAPTURE_MAX_SECONDS;
   mkdirSync(cacheDir, { recursive: true });
-  const out = join(cacheDir, `${basename(abs, extname(abs)) || 'capture'}.y4m`);
-  return convertToY4m(abs, out, opts.size || '640x360');
+  const base = basename(abs, extname(abs)) || 'capture';
+  const out = join(
+    cacheDir,
+    `${base}.${size.replace('x', 'x')}.${fps}fps.${maxSeconds}s.y4m`,
+  );
+  if (existsSync(out)) {
+    try {
+      if (statSync(out).mtimeMs >= statSync(abs).mtimeMs) return out;
+    } catch {
+      return out;
+    }
+  }
+  return convertToY4m(abs, out, { size, fps, maxSeconds });
 }
 
 /**

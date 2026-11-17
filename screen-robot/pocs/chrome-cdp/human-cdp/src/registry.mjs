@@ -556,7 +556,7 @@ export function getCamera(id) {
  * Com apply=true (default) e Chrome up → stop+start para as flags entrarem.
  *
  * @param {string} id
- * @param {{ video: string, label?: string, apply?: boolean, size?: string }} opts
+ * @param {{ video: string, label?: string, apply?: boolean, size?: string, fps?: number, maxSeconds?: number }} opts
  */
 export async function setCamera(id, opts = {}) {
   const row = getCdp(id);
@@ -565,10 +565,12 @@ export async function setCamera(id, opts = {}) {
   if (!video) throw new Error('video obrigatório (caminho local)');
   const label = String(opts.label || DEFAULT_CAMERA_LABEL).trim() || DEFAULT_CAMERA_LABEL;
   const apply = opts.apply !== false;
-  const size = opts.size || '640x360';
+  const size = opts.size || undefined;
+  const fps = opts.fps != null ? Number(opts.fps) : undefined;
+  const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : undefined;
 
   const cacheDir = cameraCacheDir(row.id);
-  const captureFile = ensureCaptureFile(video, cacheDir, { size });
+  const captureFile = ensureCaptureFile(video, cacheDir, { size, fps, maxSeconds });
 
   const meta = readMeta(row.id);
   const prev = normalizeFingerprint(meta?.fingerprint) || {};

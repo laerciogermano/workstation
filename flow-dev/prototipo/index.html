@@ -1756,7 +1756,7 @@ function flow(s) {
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "saída · entrada" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const left = disp.map(r => r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));

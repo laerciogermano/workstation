@@ -500,11 +500,16 @@ html:is([data-theme="lima"], [data-theme="volt"], [data-theme="next"], [data-the
 .kpis.four .st b { font-size: 17px; }
 .st.mp b { color: var(--ft-p); } .st.mc b { color: var(--ft-c); } .st.mg b { color: var(--ft-g); }
 .kpis.plain .st { background: none; border: 0; padding: 0; }
-.meta-card { padding: 18px; border-radius: 20px; background: var(--ft-ink); color: var(--ft-canvas); display: flex; flex-direction: column; gap: 2px; }
-.meta-card p { display: flex; gap: 8px; align-items: center; font-size: 13px; opacity: .85; }
+.meta-card { padding: 18px; border-radius: 20px; background: var(--ft-act); color: var(--ft-on-act); display: flex; flex-direction: column; gap: 2px; box-shadow: 0 10px 28px color-mix(in srgb, var(--ft-act) 35%, transparent); }
+.meta-card.deficit { background: var(--ft-kc); color: #fff; box-shadow: 0 10px 28px color-mix(in srgb, var(--ft-kc) 35%, transparent); }
+.meta-card.superavit { background: var(--ft-act); color: var(--ft-on-act); }
+.meta-card.manutencao { background: var(--ft-surface); color: var(--ft-ink); box-shadow: var(--ft-lift); border: 1px solid var(--ft-line-strong); }
+.meta-card p { display: flex; gap: 8px; align-items: center; font-size: 13px; opacity: .9; }
+.meta-card .chip { background: color-mix(in srgb, currentColor 16%, transparent); color: inherit; }
+.meta-card.manutencao .chip { background: var(--ft-line-2); color: var(--ft-ink-2); }
 .meta-card > b { font-size: 46px; font-weight: 800; letter-spacing: -.045em; line-height: 1.05; }
-.meta-card > b i { font-size: 15px; font-style: normal; font-weight: 600; opacity: .7; margin-left: 6px; letter-spacing: 0; }
-.meta-card > span { font-size: 13px; opacity: .7; }
+.meta-card > b i { font-size: 15px; font-style: normal; font-weight: 600; opacity: .75; margin-left: 6px; letter-spacing: 0; }
+.meta-card > span { font-size: 13px; opacity: .75; }
 .rng { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--ft-act) var(--p), var(--ft-line) var(--p)); outline: none; margin: 8px 0 2px; }
 .rng.bad { background: linear-gradient(to right, var(--ft-err) var(--p), var(--ft-line) var(--p)); }
 .rng::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid var(--ft-ink); box-shadow: 0 2px 6px rgba(0,0,0,.2); cursor: grab; }

@@ -11,6 +11,8 @@
 
 **Dieta · Comi:** botão selected = `--ft-ok` (laranja nos temas Pista/Giz); card `.meal.done` = cinza `--ft-line-2` (sem tint laranja). Voltar card: `color-mix(… ft-ok 7%, surface)`.
 
+**F-05 meta-card:** fundo `--ft-act` / `--ft-kc` (déficit) em vez de `--ft-ink` (branco sem vida no Pista). Manutenção = surface. Voltar: `background: var(--ft-ink); color: var(--ft-canvas)`.
+
 ## Republicar
 
 ```bash

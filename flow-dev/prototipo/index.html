@@ -229,6 +229,16 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-sec + .ex-sec { border-top: 1px solid var(--line); }
 .ex-sec-h { display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px 0 14px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .ex-sec-h svg { width: 13px; height: 13px; color: var(--accent); }
+/* src = Planos + Estados (subseções); Agentes = modelos de IA com prompt pronto */
+.ex-sub { position: relative; }
+.ex-sub .node { margin-left: 12px; }
+.ex-sub-h { display: flex; align-items: center; gap: 7px; height: 26px; padding: 0 12px 0 26px; font-size: 11px; font-weight: 600; color: var(--muted); }
+.ex-sub-h svg { width: 12px; height: 12px; color: var(--accent); }
+.ex-sub-h .n { margin-left: auto; font-variant-numeric: tabular-nums; }
+.node .fi.agente { color: var(--t-ia); }
+.node.ag-d { cursor: default; height: 24px; }
+.node.ag-d .t { font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.node.ag-d .k { color: var(--muted); font-size: 11px; margin-right: 4px; }
 .ex-sec-h .n { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0; text-transform: none; }
 .node { height: 26px; display: flex; align-items: center; gap: 4px; padding-right: 12px; cursor: pointer; white-space: nowrap; position: relative; border: 1px solid transparent; user-select: none; }
 .node:hover { background: var(--wash); }
@@ -916,6 +926,13 @@ const CAT = [
   { id: "m4", type: "maquina", name: "node:crypto", sub: "Node.js · crypto" },
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
 ];
+// Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
+const AGENT_CFG = {
+  a1: { model: "claude-opus-5-5", prompt: "Você redige propostas comerciais. Tom direto, preço anual em destaque, sem jargão." },
+  a2: { model: "gpt · OpenAI", prompt: "Traduza para inglês e espanhol mantendo os termos do contrato e a formatação." },
+  a3: { model: "claude-haiku-5-5", prompt: "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking." },
+  a4: { model: "claude-sonnet-5-5", prompt: "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo." },
+};
 const TYPES = { ia: { n: "IAs", one: "IA", ic: "bot" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
 
 let COLS = [
@@ -995,7 +1012,7 @@ const STRUCTS = [
   { k: "if", test: "comparativo.length > 0", body: ["u5", "u6"] },
   { k: "if", test: "pagina", body: ["u22"] },
 ];
-const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16"]);
+const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16", "ag:a1"]);
 /** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
 const GOALS = {
   orcamento: "≤ R$ 3.000",
@@ -1146,19 +1163,34 @@ function explorer(s) {
       if (q && !outs.length && !sub.length && !u.title.toLowerCase().includes(q)) return;
       const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
       const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
-      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi plan${ffull ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("square")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
+      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi plan${ffull ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("box")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
       if (!isOpen) return;
       rows.push(...sub);
-      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado">${icon("square")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
+      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
     });
     return rows;
   }
   const estadoRows = estWalk(null, 0);
   if (q) hits += estHits;
 
+  // Agentes: modelos de IA treinados com prompt pronto · abrir mostra modelo, prompt e onde é usado
+  const agentRows = (() => {
+    const list = CAT.filter(a => a.type === "ia" && (!q || a.name.toLowerCase().includes(q) || (AGENT_CFG[a.id]?.prompt || "").toLowerCase().includes(q)));
+    if (q) hits += list.length;
+    const html = list.map(a => {
+      const cfg = AGENT_CFG[a.id] || {}, id = "ag:" + a.id, isOpen = q ? true : OPEN.has(id);
+      const uses = U.filter(u => !u.arch && u.agent === a.id && !kids(u.id).length).length;
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi agente" title="Agente de IA">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span class="mono">${esc(cfg.model || "")}</span></span></div>`;
+      if (isOpen) h += `<div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("cpu")}</span><span class="t"><span class="k">modelo</span> <span class="mono">${esc(cfg.model || "—")}</span></span></div>
+        <div class="node ag-d ag-p" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("message-square-text")}</span><span class="t" title="${esc(cfg.prompt || "")}"><span class="k">prompt</span> ${esc(cfg.prompt || "—")}</span></div>
+        <div class="node ag-d" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car"></span><span class="fi">${icon("workflow")}</span><span class="t"><span class="k">usado em</span> ${uses} etapa${uses === 1 ? "" : "s"}</span></div>`;
+      return h;
+    }).join("");
+    return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum agente configurado.</p>`, n: list.length };
+  })();
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;
-  const empty = !planRows.length && !estadoRows.length;
+  const empty = !planRows.length && !estadoRows.length && !agentRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
       <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
@@ -1166,15 +1198,22 @@ function explorer(s) {
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="collapse" title="Recolher tudo">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos e estados" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, estados e agentes" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
-      <div class="ex-sec" data-sec="planos">
-        <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${nPlans}</span></div>
-        ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
+      <div class="ex-sec ex-src" data-sec="src">
+        <div class="ex-sec-h">${icon("folder-code")} src</div>
+        <div class="ex-sub" data-sec="planos">
+          <div class="ex-sub-h">${icon("circle")} Planos<span class="n">${nPlans}</span></div>
+          ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
+        </div>
+        <div class="ex-sub" data-sec="estados">
+          <div class="ex-sub-h">${icon("box")} Estados<span class="n">${nEstados}</span></div>
+          ${estadoRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum estado (saída) ainda.</p>`}
+        </div>
       </div>
-      <div class="ex-sec" data-sec="estados">
-        <div class="ex-sec-h">${icon("square")} Estados<span class="n">${nEstados}</span></div>
-        ${estadoRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum estado (saída) ainda.</p>`}
+      <div class="ex-sec" data-sec="agentes">
+        <div class="ex-sec-h">${icon("bot")} Agentes<span class="n">${agentRows.n}</span></div>
+        ${agentRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · ${CAT.length} no catálogo</small></span></button></div>
   </aside>`;

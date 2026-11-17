@@ -509,7 +509,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* estado eN = quadrado com o nome + losango na divisória */
 .fh-e span { position: absolute; top: 2px; transform: translateX(-50%); min-width: 22px; height: 16px; padding: 0 4px; display: grid; place-items: center; font: 600 10px/1 var(--mono); color: var(--ink); background: var(--wash); border: 1.3px solid color-mix(in srgb, var(--muted) 70%, transparent); border-radius: 2px; }
 .fh-e span::after { content: ""; position: absolute; left: 50%; top: calc(100% + 2px); width: 6px; height: 6px; margin-left: -3px; background: var(--paper); border: 1.3px solid var(--muted); transform: rotate(45deg); z-index: 1; }
-.gantt.flow .gbg div { border-left-color: color-mix(in srgb, var(--muted) 38%, transparent); }
+.gantt.flow .gbg div { border-left-color: color-mix(in srgb, var(--muted) 55%, transparent); }
+/* eixo de baixo, como no documento FOP: linha horizontal t, losango em cada divisória e o quadrado eN embaixo */
+.fh-e.bot { height: 40px; border-top: 1px solid var(--line); }
+.fh-e.bot .ax { position: absolute; top: 10px; height: 1.3px; background: var(--muted); }
+.fh-e.bot span { top: 19px; }
+.fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }
 .fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
 .flbl .fo { font: 500 10.5px var(--mono); color: var(--muted); margin-right: 4px; }
@@ -1459,7 +1464,7 @@ function flow(s) {
   const H = rows.length * RH;
   const pl = PLANS.find(p => p.id === s.plan).name;
   const { missing } = fopCheck(s.plan);
-  const worldW = LW + CW, worldH = 52 + Math.max(H, RH);
+  const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + 40;
   const toolbar = zoomToolbar("flow", "Flow", "workflow", `${flowLegend()}
     <button class="chipb${s.noDeps ? "" : " on"}" data-act="flow-deps" aria-pressed="${!s.noDeps}">${icon("git-commit-horizontal")}Sequência</button>
     <button class="chipb${s.ctxPanel ? " on" : ""}" data-act="flow-ctx" aria-pressed="${!!s.ctxPanel}">${icon("layers")}Contexto · camadas</button>`);
@@ -1472,6 +1477,7 @@ function flow(s) {
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
+          <div class="fh-e bot"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div>
           <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>

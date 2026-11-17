@@ -23,10 +23,10 @@ SSHPASS='…' bash deploy/publicar.sh
 
 Sem site próprio (só Plans `#T-32`) → protótipo Flow.dev em `/opt/flow-ide` + A `flow-ide`.
 
-## Barras Flow · gantt-sample
+## Flow · gantt-sample + Programação Orientada a Fluxo
 
-Flow usa barras arredondadas com progresso (como [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png)), **sem setas**; esquerda = agente | descrição lado a lado.
+Flow segue [`../inputs/gantt-sample.png`](../inputs/gantt-sample.png): colunas Nome · Início · Passos · % feito (anel) · Agente, cabeçalho em dois níveis, barras por composição (azul / verde) com progresso, ◆ dados, barra-resumo com marcos, conectores de sequência e tags (∥ paralelo, if seleção, ↻ repetição). Painel **Contexto · camadas** (T-36) e export **JavaScript** no estilo do documento FOP (T-35).
 
-**Antes → depois:** linhas FOP → barras + deps SVG → barras sem setas; coluna esquerda = agente | descrição.
+**Antes → depois:** barras sem setas, esquerda agente | descrição → tabela do sample + conectores (desligáveis no botão **Sequência**), dados, seleção/repetição, camadas e contexto.
 
-**Voltar:** restaurar SVG de deps / layout empilhado no histórico git do `prototipo/index.html`.
+**Voltar:** `git log -- flow-dev/prototipo/index.html` e restaurar o commit `1751ce82` (barras sem setas).

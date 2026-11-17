@@ -16,7 +16,7 @@ Refs: artigo [`../aulas/README.md`](../aulas/README.md) · Plans [`../plans/READ
 
 O **Flow.dev** é o **IDE de programação orientada a fluxo**: o lugar onde se **explora** o projeto como arquivos e se **desenha** o roteiro na tela **Flow** (plano cartesiano FOP). Cada etapa tem um **agente tipado** — **IA** ou **biblioteca Node.js** — sem misturar o roteiro com o ator.
 
-É a mesma ideia do **Flow** do Plans, sem Board, Gantt, Fluxograma, Árvore, Estados/Metas nem Copiloto. Barras no visual de [`inputs/gantt-sample.png`](inputs/gantt-sample.png); à esquerda **responsável** e **descrição**. Fundamento teórico: o artigo Flow (entrada → verbo → saída; sequência, paralelo, seleção, repetição).
+É a mesma ideia do **Flow** do Plans, sem Board, Gantt, Fluxograma, Árvore, Estados/Metas nem Copiloto. Tela Flow no visual de [`inputs/gantt-sample.png`](inputs/gantt-sample.png): tabela **Nome · Início · Passos · % feito · Agente**, barras com progresso por composição, conectores e marcos. Fundamento teórico: o documento [`../flow/input/Programação Orientada a Fluxo.docx`](../flow/input/) e o artigo Flow.
 
 ## Problema
 
@@ -43,6 +43,21 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 | Escolher quem executa | Catálogo IA · Node.js |
 | Programar etapa máquina | Editor com módulos `node:*` |
 | Reusar em código | Export TypeScript / Python |
+
+## Recursos FOP na tela Flow
+
+| Conceito (documento FOP) | No Flow |
+|---|---|
+| Função (mudança de estado) | barra com passos e % feito |
+| Dado (unidade de informação) | ◆ marco, 0 passos |
+| n entradas / n saídas | detalhe da etapa + assinatura `function f(context)` |
+| Sequência | conector (botão **Sequência** liga/desliga) |
+| Paralelo | tag `∥ paralelo` · `Promise.all` no export |
+| Seleção | tag `if …` + tracejado de volta |
+| Repetição | tag `↻ var` · `for`/`map` ou recursão no export |
+| Endereço concreto × abstrato | Node.js = `import` · IA = vem do `context` |
+| Camada substituível · contexto completo | painel **Contexto · camadas** e selo no cabeçalho |
+| Exportar JS/Python | Exportar → **JavaScript** (estilo do documento), TypeScript, Python |
 
 ## Princípios
 

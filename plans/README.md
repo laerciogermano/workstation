@@ -19,7 +19,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 **Toda atividade também é um arquivo** no **Explorar**, painel transversal no estilo de explorador de IDE. O Explorar tem duas seções: **Planos** (círculo) e **Estados** (cubo) — planos = trabalho; estados = dados atuais (outs).
 
-No **Gantt**, só calendário (barras + deps). **Estados** = o que já existe (`root` → planos → dados/outs). **Metas** = o que se deseja (mesma árvore; folha = alvo + “hoje”). No **Flow**, plano cartesiano FOP: **□ em cima da divisória**; task **abaixo** da linha. **Gantt**, **Flow**, **Árvore**, **Estados**, **Metas** e **Fluxograma** compartilham zoom/pan. O **Copiloto** é painel fixo à **direita**. Menu de visões **fixo no centro inferior**.
+No **Gantt**, só calendário (barras + deps). **Estados** = o que já existe (`root` → planos → dados/outs). **Metas** = o que se deseja (mesma árvore; folha = alvo + “hoje”). No **Flow**, mesmo visual do Flow IDE (`flow-dev/`, ref. gantt-sample): tabela **Nome · Início · Passos · % feito · Agente** + barras por passo com progresso; **função** = barra, **dado** = ◆ (0 passos), **composição** = barra-resumo, **sequência** = conector, tags **∥ paralelo**, **if** (seleção, tracejado volta) e **↻** repetição; painel **Contexto · camadas** (IA e pessoa = endereço abstrato; máquina = import concreto) e export **JavaScript** no estilo do documento FOP. Dados ◆ só aparecem no Flow e no Explorar. **Gantt**, **Flow**, **Árvore**, **Estados**, **Metas** e **Fluxograma** compartilham zoom/pan. O **Copiloto** é painel fixo à **direita**. Menu de visões **fixo no centro inferior**.
 
 ## Problema
 

@@ -145,7 +145,7 @@ npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs
 npm run test:camera
 ```
 
-**UI (`http://127.0.0.1:18770/`):** lista de CDPs (**mais recente primeiro**); criar/editar/remover; **fingerprint** (Gerar); **galeria** com seletor de arquivo (`~/chrome-cdp-media/`); **snapshots** (`~/chrome-cdp-snapshots/` — criação já gera um; **Executar** sempre para → restaura snapshot → sobe); **controlar** = prints JPEG. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+**UI (`http://127.0.0.1:18770/`):** lista de CDPs (**mais recente primeiro**); criar/editar/remover; **fingerprint** (Gerar); **galeria** com seletor de arquivo (`~/chrome-cdp-media/`); **snapshots** (`~/chrome-cdp-snapshots/` — criação já gera um; **Baixar** `.tar.gz` / **Importar**; **Executar** sempre para → restaura snapshot → sobe); **controlar** = prints JPEG. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
 
 ### Galeria de mídias
 
@@ -186,12 +186,16 @@ Catálogo em `src/fingerprint-catalog.mjs` (também usado por LinkedIn `createLi
 `createCdp` já grava o snapshot **criação**. Todo `startCdp` **para** o Chrome se up, **apaga** o perfil e **copia** o snapshot selecionado (histórico/cache da sessão anterior não permanece).
 
 ```js
-import { createSnapshot, selectSnapshot, startCdp } from './src/index.mjs';
+import { createSnapshot, selectSnapshot, startCdp, packSnapshotStream, importSnapshot } from './src/index.mjs';
 createSnapshot('meu-cdp', { note: 'após login', select: true });
 await startCdp('meu-cdp');
+// Baixar: GET /api/cdps/:id/snapshots/:sid/download → .tar.gz (tar -cz)
+// Importar: POST /api/cdps/:id/snapshots/import (body binário + X-Filename) → novo stamp
 ```
 
 Meta `.human-cdp.json` atual é preservada no restore. Legado `~/chrome-cdp-backups/` ainda é lido.
+
+**Antes → depois (export/import):** só criar/usar/apagar na UI → **Baixar** `.tar.gz` + **Importar** (novo snapshotId; seleciona). Rollback: não usar os botões; remover `packSnapshotStream` / `importSnapshot` e rotas `/download` `/import`.
 
 ### Visão / controle (prints)
 

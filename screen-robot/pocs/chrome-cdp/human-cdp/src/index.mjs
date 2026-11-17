@@ -92,6 +92,8 @@ export {
   removeSnapshot,
   restoreSnapshot,
   restoreSelectedBeforeStart,
+  packSnapshotStream,
+  importSnapshot,
   backupsDir,
   listBackups,
   getSelectedBackup,

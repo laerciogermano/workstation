@@ -9,18 +9,20 @@
  * Todo start: apaga o perfil atual e restaura o snapshot selecionado.
  * Compat: também lê ~/chrome-cdp-backups/ (nome antigo).
  */
+import { spawn, spawnSync } from 'node:child_process';
 import {
   cpSync,
   existsSync,
   mkdirSync,
+  mkdtempSync,
   readdirSync,
   readFileSync,
   rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { homedir, tmpdir } from 'node:os';
+import { basename, join } from 'node:path';
 
 const PROFILES_DIR = join(homedir(), 'chrome-profiles');
 const SNAPSHOTS_DIR = join(homedir(), 'chrome-cdp-snapshots');
@@ -253,6 +255,95 @@ export function restoreSelectedBeforeStart(cdpId) {
     selected = getSelectedSnapshot(cdpId);
   }
   return restoreSnapshot(cdpId, selected.id);
+}
+
+/**
+ * Empacota snapshot em tar.gz (stdout do `tar`).
+ * @returns {{ filename: string, child: import('node:child_process').ChildProcessWithoutNullStreams, stream: import('node:stream').Readable }}
+ */
+export function packSnapshotStream(cdpId, snapshotId) {
+  const dir = findSnapshotDir(cdpId, snapshotId);
+  if (!existsSync(dir)) throw new Error(`snapshot não encontrado: ${snapshotId}`);
+  if (!existsSync(join(dir, 'profile'))) {
+    throw new Error(`profile do snapshot ausente: ${snapshotId}`);
+  }
+  const safeCdp = String(cdpId).replace(/[^a-zA-Z0-9._-]+/g, '_');
+  const safeSid = String(snapshotId).replace(/[^a-zA-Z0-9._-]+/g, '_');
+  const filename = `${safeCdp}-${safeSid}.tar.gz`;
+  const child = spawn('tar', ['-czf', '-', '-C', dir, '.'], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  return { filename, child, stream: child.stdout };
+}
+
+function findImportedRoot(extractDir) {
+  if (existsSync(join(extractDir, 'profile'))) return extractDir;
+  const kids = readdirSync(extractDir).filter((n) => {
+    try {
+      return statSync(join(extractDir, n)).isDirectory();
+    } catch {
+      return false;
+    }
+  });
+  for (const name of kids) {
+    const p = join(extractDir, name);
+    if (existsSync(join(p, 'profile'))) return p;
+  }
+  throw new Error('arquivo inválido: falta pasta profile/ no .tar.gz');
+}
+
+/**
+ * Importa .tar.gz (ou .tgz) gerado por pack/Baixar.
+ * Cria novo snapshotId (stamp) no CDP destino.
+ */
+export function importSnapshot(
+  cdpId,
+  { buffer, filename = 'snapshot.tar.gz', note = '', select = true } = {},
+) {
+  if (!buffer?.length) throw new Error('arquivo vazio');
+  const name = String(filename || 'snapshot.tar.gz').toLowerCase();
+  if (!/\.(tar\.gz|tgz)$/.test(name)) {
+    throw new Error('use .tar.gz (Baixar na UI); .zip não suportado');
+  }
+
+  const tmp = mkdtempSync(join(tmpdir(), 'cdp-snap-import-'));
+  try {
+    const archive = join(tmp, basename(filename) || 'snapshot.tar.gz');
+    writeFileSync(archive, buffer);
+    const extractDir = join(tmp, 'extract');
+    mkdirSync(extractDir, { recursive: true });
+    const r = spawnSync('tar', ['-xzf', archive, '-C', extractDir], {
+      encoding: 'utf8',
+    });
+    if (r.status !== 0) {
+      throw new Error(`falha ao extrair: ${(r.stderr || r.stdout || '').slice(0, 300)}`);
+    }
+    const src = findImportedRoot(extractDir);
+    const id = stampId();
+    const root = join(SNAPSHOTS_DIR, cdpId);
+    mkdirSync(root, { recursive: true });
+    const dest = join(root, id);
+    mkdirSync(dest, { recursive: true });
+    cpSync(src, dest, { recursive: true, dereference: true });
+
+    const prev = readJson(join(dest, 'meta.json'), {});
+    const meta = {
+      id,
+      cdpId,
+      createdAt: new Date().toISOString(),
+      note: String(note || prev.note || 'importado').trim(),
+      path: dest,
+      profilePath: join(dest, 'profile'),
+      importedFrom: basename(filename),
+      importedAt: new Date().toISOString(),
+      sourceSnapshotId: prev.id || null,
+    };
+    writeJson(join(dest, 'meta.json'), meta);
+    if (select) selectSnapshot(cdpId, id);
+    return { ...meta, selected: getSelectedSnapshot(cdpId)?.id === id };
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 }
 
 // --- aliases (compat backup → snapshot) ---

@@ -29,6 +29,8 @@ import {
   createSnapshot,
   selectSnapshot,
   removeSnapshot,
+  packSnapshotStream,
+  importSnapshot,
   snapshotsDir,
   getViewConfig,
   setViewConfig,
@@ -257,6 +259,54 @@ const server = createServer(async (req, res) => {
       });
       res.end(frame.buffer);
       return;
+    }
+
+    const snapDownload = path.match(
+      /^\/api\/cdps\/([^/]+)\/(?:snapshots|backups)\/([^/]+)\/download$/,
+    );
+    if (req.method === 'GET' && snapDownload) {
+      const id = decodeURIComponent(snapDownload[1]);
+      const sid = decodeURIComponent(snapDownload[2]);
+      if (!getCdp(id)) return json(res, 404, { error: `CDP não encontrado: ${id}` });
+      const { filename, child, stream } = packSnapshotStream(id, sid);
+      res.writeHead(200, {
+        'Content-Type': 'application/gzip',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-store',
+      });
+      stream.pipe(res);
+      child.stderr?.on('data', () => {});
+      child.on('error', (err) => {
+        if (!res.headersSent) json(res, 500, { error: String(err.message || err) });
+        else res.destroy(err);
+      });
+      child.on('close', (code) => {
+        if (code && code !== 0 && !res.writableEnded) res.destroy();
+      });
+      return;
+    }
+
+    const snapImport = path.match(/^\/api\/cdps\/([^/]+)\/(?:snapshots|backups)\/import$/);
+    if (req.method === 'POST' && snapImport) {
+      const id = decodeURIComponent(snapImport[1]);
+      if (!getCdp(id)) return json(res, 404, { error: `CDP não encontrado: ${id}` });
+      const filename = decodeURIComponent(String(req.headers['x-filename'] || 'snapshot.tar.gz'));
+      const note = decodeURIComponent(String(req.headers['x-note'] || ''));
+      const selectHdr = String(req.headers['x-select'] || '1');
+      const buffer = await readRaw(req);
+      const row = importSnapshot(id, {
+        buffer,
+        filename,
+        note,
+        select: selectHdr !== '0' && selectHdr !== 'false',
+      });
+      return json(res, 201, {
+        snapshot: row,
+        backup: row,
+        selected: getSelectedSnapshot(id),
+        snapshots: listSnapshots(id),
+        backups: listSnapshots(id),
+      });
     }
 
     const cdpExtra = path.match(

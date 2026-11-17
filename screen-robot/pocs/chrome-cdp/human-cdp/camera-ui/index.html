@@ -151,6 +151,8 @@
         <div class="dlg-actions">
           <input id="backup-note" placeholder="nota do snapshot" style="flex:1;min-width:160px" />
           <button type="button" id="backup-create">Criar snapshot</button>
+          <button type="button" class="secondary" id="backup-import">Importar…</button>
+          <input type="file" id="backup-import-file" accept=".tar.gz,.tgz,application/gzip" hidden />
         </div>
         <div class="backup-list" id="backup-list"></div>
       </div>
@@ -364,6 +366,7 @@
           </div>
           <div class="row-actions">
             ${b.selected ? '' : `<button type="button" data-bact="select">Usar</button>`}
+            <button type="button" class="secondary" data-bact="download">Baixar</button>
             <button type="button" class="danger" data-bact="del">Apagar</button>
           </div>
         </div>`).join('');
@@ -464,6 +467,16 @@
             method: 'POST', body: JSON.stringify({ snapshotId: bid }),
           });
           flash(`snapshot selecionado: ${bid}`, 'ok');
+        } else if (btn.dataset.bact === 'download') {
+          flash('baixando snapshot…');
+          const a = document.createElement('a');
+          a.href = `/api/cdps/${encodeURIComponent(id)}/snapshots/${encodeURIComponent(bid)}/download`;
+          a.download = '';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          flash('download iniciado', 'ok');
+          return;
         } else if (btn.dataset.bact === 'del') {
           if (!confirm(`Apagar snapshot ${bid}?`)) return;
           await api(`/api/cdps/${encodeURIComponent(id)}/snapshots/${encodeURIComponent(bid)}`, { method: 'DELETE' });
@@ -489,6 +502,39 @@
         });
         $('backup-note').value = '';
         flash('snapshot criado e selecionado', 'ok');
+        await renderBackups(id);
+        await loadList({ quiet: true });
+      } catch (e) {
+        flash(String(e.message || e), 'err');
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    $('backup-import').addEventListener('click', () => $('backup-import-file').click());
+    $('backup-import-file').addEventListener('change', async () => {
+      const id = $('id').value.trim();
+      const file = $('backup-import-file').files?.[0];
+      $('backup-import-file').value = '';
+      if (!id || !file) return;
+      try {
+        setBusy(true);
+        flash(`importando ${file.name}…`);
+        const buf = await file.arrayBuffer();
+        const r = await fetch(`/api/cdps/${encodeURIComponent(id)}/snapshots/import`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'X-Filename': encodeURIComponent(file.name),
+            'X-Note': encodeURIComponent($('backup-note').value.trim() || `import ${file.name}`),
+            'X-Select': '1',
+          },
+          body: buf,
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+        $('backup-note').value = '';
+        flash(`snapshot importado: ${data.snapshot?.id || ''}`, 'ok');
         await renderBackups(id);
         await loadList({ quiet: true });
       } catch (e) {

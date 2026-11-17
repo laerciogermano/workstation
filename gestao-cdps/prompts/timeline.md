@@ -8,3 +8,4 @@
 | 004 | 2026-11-17 | Fingerprint + backups + visão | [004-2026-11-17-fingerprint-backup-visao.md](004-2026-11-17-fingerprint-backup-visao.md) | Gerar fingerprint; backups por pasta; start restaura; controlar via prints. |
 | 005 | 2026-11-17 | Galeria + ordem por criação | [005-2026-11-17-galeria-midias-ordem.md](005-2026-11-17-galeria-midias-ordem.md) | Galeria de vídeos; select por CDP; listas mais recente primeiro. |
 | 006 | 2026-11-17 | Snapshot + file picker | [006-2026-11-17-snapshot-file-picker.md](006-2026-11-17-snapshot-file-picker.md) | Snapshot na criação/start; galeria com seletor de arquivo. |
+| 007 | 2026-11-17 | Snapshot baixar/importar | [007-2026-11-17-snapshot-baixar-importar.md](007-2026-11-17-snapshot-baixar-importar.md) | Baixar `.tar.gz` e Importar na UI de snapshots. |

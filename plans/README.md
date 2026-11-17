@@ -13,13 +13,13 @@ Fundamentos de fluxo: [`inputs/`](inputs/README.md) (quando houver).
 
 ## Visão
 
-O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board, **Gantt**, **Flow**, **Fluxograma**, Árvore, **Estados** (objeto `root` + árvore chave/valor), **Copiloto** (painel direito) e Explorar. Planos são modelados como **linguagem visual de fluxo** exportável para código.
+O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board, **Gantt**, **Flow**, **Fluxograma**, Árvore, **Estados** (o que existe), **Metas** (o que se deseja), **Copiloto** (painel direito) e Explorar. Planos são modelados como **linguagem visual de fluxo** exportável para código.
 
 Sistemas também são fluxos de execução: o próprio Plans serve para **codificar sistemas**, não só listas de tarefas. O **agente** de cada atividade é quem (ou o quê) executa — pessoa, modelo de IA (GPT, Claude, etc.) ou biblioteca/máquina — sem misturar o roteiro com o ator.
 
-**Toda atividade também é um arquivo** na seção **Explorar**, um painel transversal no **estilo de explorador de IDE** (como o do VS Code): a hierarquia de trabalho é navegável como árvore de arquivos, sem duplicar a entidade.
+**Toda atividade também é um arquivo** no **Explorar**, painel transversal no estilo de explorador de IDE. O Explorar tem duas seções: **Planos** (círculo) e **Estados** (cubo) — planos = trabalho; estados = dados atuais (outs).
 
-No **Gantt**, só calendário (barras + deps). A visão **Estados** (ícone **dado**) é só a árvore L→R: `root` → **unidades** (título = Explorar) → **dados** (outs) — sem painel JSON. No **Flow**, plano cartesiano FOP: **□ em cima da divisória**; task **abaixo** da linha; esquerda = atividade + responsável; passos no eixo x. **Gantt**, **Flow**, **Árvore**, **Estados** e **Fluxograma** compartilham zoom/pan (scroll, −/+, ajustar, arrastar fundo). O **Copiloto** é painel fixo à **direita** (ícone no topo, abas). Menu de visões **fixo no centro inferior**.
+No **Gantt**, só calendário (barras + deps). **Estados** = o que já existe (`root` → planos → dados/outs). **Metas** = o que se deseja (mesma árvore; folha = alvo + “hoje”). No **Flow**, plano cartesiano FOP: **□ em cima da divisória**; task **abaixo** da linha. **Gantt**, **Flow**, **Árvore**, **Estados**, **Metas** e **Fluxograma** compartilham zoom/pan. O **Copiloto** é painel fixo à **direita**. Menu de visões **fixo no centro inferior**.
 
 ## Problema
 
@@ -41,7 +41,7 @@ Orquestrações misturam humano, IA e máquina em silos distintos: não há um l
 
 ## Objetivo
 
-Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Flow**, **Fluxograma**, **Árvore**, **Estados**, **Copiloto** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
+Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Flow**, **Fluxograma**, **Árvore**, **Estados**, **Metas**, **Copiloto** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
 
 ## Proposta de valor
 

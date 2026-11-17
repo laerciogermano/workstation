@@ -31,7 +31,8 @@ Plans
 
 - **Visões** — componente transversal **ao lado do conteúdo das telas** (nunca no painel Explorar): menu **fixo na parte superior**, **centralizado**, para navegar entre Board, Gantt e Árvore; a tela ativa preenche a área abaixo. Não é uma tela em si — US-01.
 - **Detalhe da unidade** (drawer/painel) — acessível a partir de Board, Gantt e Árvore; mesma entidade (UUID), vocabulário por visão — US-01, US-02.
-- **Explorar** — painel transversal (como o explorador de arquivos de uma IDE): a **lista em árvore não é uma tela**; é um **componente** já visível dentro do Explorar, com drill-down infinito. Persistência como arquivos; **sem** detalhe de arquivo. Painel **fixo**, com **altura da viewport** e **overflow vertical e horizontal**.
+- **Explorar** — painel transversal (estilo explorador de IDE) com duas seções: **Planos** (círculo) e **Estados** (cubo). A lista não é uma tela; drill-down infinito; **sem** detalhe de arquivo. Painel **fixo**, altura da viewport, overflow nos dois eixos.
+- **Estados / Metas** — visões do dock: Estados = o que existe; Metas = o que se deseja.
 - **Configurações** — faixa **fixa embaixo** do Explorar; em v1 o catálogo de responsáveis.
 
 ---
@@ -214,7 +215,7 @@ Componente transversal de **navegação entre tipos de visão**, na **área de c
 
 Painel/drawer compartilhado (TELA-02) a partir de Board, Gantt e Árvore — US-01, US-02. O Explorar **não** tem detalhe de arquivo.
 
-### Explorar (painel transversal)
+### Explorar (painel transversal · Planos + Estados)
 
 Painel sempre presente na navegação, no padrão de um **explorador de IDE** — US-17, US-18.
 

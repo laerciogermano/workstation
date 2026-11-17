@@ -57,7 +57,9 @@
 ### Painel Explorar
 
 - Manter o painel Explorar visível como explorador de arquivos de IDE.
-- Materializar toda atividade como um arquivo na árvore.
+- Separar o painel em **Planos** (círculo) e **Estados** (cubo).
+- Materializar toda atividade como um plano na seção Planos.
+- Listar saídas/dados atuais como estados na seção Estados.
 - Exibir arquivos ativos e permitir acesso aos arquivados.
 - Usar uma lista em árvore embutida no painel, sem transformá-la em uma tela independente.
 - Expandir e recolher níveis sem limite de profundidade.
@@ -65,7 +67,8 @@
 - Manter o painel fixo com altura da viewport.
 - Permitir overflow vertical e horizontal na área da árvore.
 - Manter o título legível mesmo em hierarquias muito profundas.
-- Destacar e revelar uma unidade conhecida na árvore.
+- Destacar e revelar uma unidade conhecida na árvore de Planos.
+- Abrir um estado do Explorar na visão Estados.
 - Abrir a unidade no Board, Gantt ou Árvore.
 - Não exibir detalhe de arquivo dentro do painel Explorar.
 
@@ -148,7 +151,26 @@
 - Exibir entradas, saídas e artefatos vinculados quando existirem.
 - Arquivar e desarquivar a unidade.
 - Excluir a unidade globalmente.
-- Abrir a unidade em Board, Gantt, Árvore ou Explorar.
+- Abrir a unidade em Board, Gantt, Árvore, Estados, Metas ou Explorar.
+
+---
+
+## Página Estados
+
+- Exibir o que já existe: árvore L→R `root` → planos (círculo) → dados atuais (cubo).
+- Usar as saídas (outs) como folhas de estado.
+- Permitir zoom/pan na árvore.
+- Destacar um estado selecionado a partir do Explorar.
+- Navegar para Metas e para o Gantt a partir da barra.
+
+---
+
+## Página Metas
+
+- Exibir o que se deseja: mesma árvore dos Estados, com folhas de alvo.
+- Mostrar o estado atual (“hoje”) junto de cada meta quando houver dado correspondente.
+- Permitir zoom/pan na árvore.
+- Navegar para Estados e para o Gantt a partir da barra.
 
 ---
 

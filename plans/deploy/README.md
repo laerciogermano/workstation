@@ -37,11 +37,11 @@ No canvas (T-36): **scroll** = zoom in/out no cursor; **arrastar o fundo** = pan
 
 ## Copiloto · painel direito
 
-Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `copilotPanel()` à direita (abas `COPILOT.tabs`). T-60/T-61. Visão **Estados** = `v: "estados"` (T-70) no dock.
+Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `copilotPanel()` à direita (abas `COPILOT.tabs`). T-60/T-61. Visões **Estados** (`v: "estados"`, T-70) e **Metas** (`v: "metas"`, T-80) no dock.
 
-**Antes → depois:** Chat como item do menu → copiloto lateral + Estados no transversal.
+**Antes → depois:** Chat como item do menu → copiloto lateral + Estados/Metas no transversal.
 
-**Voltar:** devolver `chat` em `VIEWS`; remover `estados`/`copilotPanel`/`.body.copilot-on`.
+**Voltar:** devolver `chat` em `VIEWS`; remover `estados`/`metas`/`copilotPanel`/`.body.copilot-on`.
 
 ## Gantt · só calendário + dock
 
@@ -52,15 +52,33 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** restaurar `gm`/`T-37`/`ganttFopStates` no histórico git.
 
-## Estados · só árvore (unidades + dados)
+## Explorar · Planos + Estados
 
-- Ícone dock: `dice-5`. Árvore L→R em tela cheia; **sem** painel `state.json`.
-- Sob `root`: nó por unidade do Explorar (rótulo = título); outs viram folhas.
+- Seção **Planos**: ícone `circle`; árvore de atividades/arquivos.
+- Seção **Estados**: ícone `box` (cubo); lista de outs (nome + ref); clique → visão Estados (T-06).
+
+**Antes → depois:** uma árvore de arquivos → duas seções (Planos / Estados) com formas distintas.
+
+**Voltar:** árvore única com ícones folder/file-text.
+
+## Estados · o que existe
+
+- Ícone dock: `box`. Árvore L→R; **sem** painel `state.json`.
+- Sob `root`: planos (círculo); outs viram folhas (cubo).
 - Zoom/pan: `ZVIEWS.estados`. T-70.
 
-**Antes → depois:** grid árvore + JSON → só árvore.
+**Antes → depois:** grid árvore + JSON → só árvore; ícone `dice-5` → `box`.
 
-**Voltar:** coluna `.ejson` + `jsonStateTree` no histórico git.
+**Voltar:** coluna `.ejson` + `jsonStateTree` / ícone `dice-5` no histórico git.
+
+## Metas · o que se deseja
+
+- Ícone dock: `target`. Mesma árvore dos Estados; folhas = alvo (`GOALS`) + “hoje” = ref atual.
+- Zoom/pan: `ZVIEWS.metas`. T-80.
+
+**Antes → depois:** só Estados → Estados (atual) + Metas (desejado).
+
+**Voltar:** remover `metas` de `VIEWS` / `ZVIEWS` / `FLOWS` / `GOALS`.
 
 ## Flow · plano cartesiano (FOP)
 
@@ -70,12 +88,12 @@ Flow: eixo/divisória por etapa; **□ entrada e □ saída em cima da linha**; 
 
 **Voltar:** `.funit` em grid `auto 1fr auto` com `.fmid` colorido.
 
-## Zoom/pan · Gantt · Flow · Árvore · Estados · Fluxograma
+## Zoom/pan · Gantt · Flow · Árvore · Estados · Metas · Fluxograma
 
 Mesmo padrão: `ZVIEWS[key]` + `.zcanvas` / `.zworld` + toolbar `zzoom-*`. Scroll = zoom no cursor; arrastar fundo = pan; − / % / + / ajustar.
 
 Fluxograma: sem sticky “Onboarding Acme”, sem select de plano e sem “Executar via IAs” na barra.
 
-**Antes → depois:** só Fluxograma → cinco visões com zoom (incl. Estados); sticky/plan/run na barra → removidos do diagram.
+**Antes → depois:** só Fluxograma → seis visões com zoom (incl. Estados e Metas); sticky/plan/run na barra → removidos do diagram.
 
 **Voltar:** `DVIEW` só no diagram; restaurar sticky + acts de plan/run no `bar()`.

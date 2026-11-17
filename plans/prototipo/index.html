@@ -224,6 +224,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-q small { display: block; color: var(--muted); font-size: 11px; padding: 4px 2px 0; }
 .ex-tree { flex: 1; overflow: auto; padding: 2px 0 12px; scrollbar-width: thin; }
 .ex-tree .inner { min-width: max-content; }
+.ex-sec { padding: 6px 0 10px; }
+.ex-sec + .ex-sec { border-top: 1px solid var(--line); }
+.ex-sec-h { display: flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px 0 14px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.ex-sec-h svg { width: 13px; height: 13px; color: var(--accent); }
+.ex-sec-h .n { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0; text-transform: none; }
 .node { height: 26px; display: flex; align-items: center; gap: 4px; padding-right: 12px; cursor: pointer; white-space: nowrap; position: relative; border: 1px solid transparent; user-select: none; }
 .node:hover { background: var(--wash); }
 .node.sel { background: color-mix(in srgb, var(--accent) 13%, var(--panel)); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
@@ -235,7 +240,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .car svg { width: 14px; height: 14px; transition: transform .15s; }
 .node.openf .car svg { transform: rotate(90deg); }
 .node .fi { color: var(--muted); }
-.node .fi.folder { color: var(--accent); }
+.node .fi.plan { color: var(--accent); }
+.node .fi.estado { color: var(--run); }
 .node .t { font-size: 13px; }
 .node .t mark { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit; border-radius: 2px; }
 .node .meta { margin-left: 10px; display: flex; gap: 6px; align-items: center; color: var(--muted); }
@@ -666,26 +672,30 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
 
-/* Estados · só árvore L→R (+ zoom/pan); sem painel JSON */
-.estados { height:100%; display:flex; flex-direction:column; min-height:0; }
-.estados .eh { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); flex:none; }
-.estados .eh h2 { font-size:18px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
-.estados .eh p { font-size:12px; color:var(--muted); max-width:480px; line-height:1.4; }
-.estados .egraph { flex:1; min-height:0; position:relative; background:var(--panel); display:flex; flex-direction:column; overflow:hidden; }
-.estados .egraph.zview { height:auto; }
-.estados .egraph-c { position:relative; }
-.estados .egraph-c > svg { position:absolute; left:0; top:0; pointer-events:none; overflow:visible; }
-.estados .egraph-c > svg path { fill:none; stroke:var(--line-2); stroke-width:1.5; }
-.estados .enode { position:absolute; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
-.estados .enode.root { border-style:dashed; background:var(--wash); }
-.estados .enode.branch { border-color:color-mix(in srgb, var(--muted) 35%, var(--line)); }
-.estados .enode.task { cursor:pointer; border-color:color-mix(in srgb, var(--accent) 28%, var(--line)); }
-.estados .enode.task:hover { border-color:var(--accent); }
-.estados .enode.leaf { border-color:color-mix(in srgb, var(--accent) 35%, var(--line)); }
-.estados .enode .ek { font-family:var(--mono); font-weight:700; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.estados .enode .ek svg { width:14px; height:14px; color:var(--accent); flex:none; }
-.estados .enode .ev { font-family:var(--mono); font-size:11px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.estados .enode .es { font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Estados / Metas · árvore L→R (+ zoom/pan); sem painel JSON */
+.estados, .metas { height:100%; display:flex; flex-direction:column; min-height:0; }
+.estados .eh, .metas .eh { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); flex:none; }
+.estados .eh h2, .metas .eh h2 { font-size:18px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+.estados .eh p, .metas .eh p { font-size:12px; color:var(--muted); max-width:520px; line-height:1.4; }
+.estados .egraph, .metas .egraph { flex:1; min-height:0; position:relative; background:var(--panel); display:flex; flex-direction:column; overflow:hidden; }
+.estados .egraph.zview, .metas .egraph.zview { height:auto; }
+.estados .egraph-c, .metas .egraph-c { position:relative; }
+.estados .egraph-c > svg, .metas .egraph-c > svg { position:absolute; left:0; top:0; pointer-events:none; overflow:visible; }
+.estados .egraph-c > svg path, .metas .egraph-c > svg path { fill:none; stroke:var(--line-2); stroke-width:1.5; }
+.estados .enode, .metas .enode { position:absolute; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
+.estados .enode.root, .metas .enode.root { border-style:dashed; background:var(--wash); }
+.estados .enode.branch, .metas .enode.branch { border-color:color-mix(in srgb, var(--muted) 35%, var(--line)); }
+.estados .enode.task, .metas .enode.task { cursor:pointer; border-color:color-mix(in srgb, var(--accent) 28%, var(--line)); }
+.estados .enode.task:hover, .metas .enode.task:hover { border-color:var(--accent); }
+.estados .enode.leaf { border-color:color-mix(in srgb, var(--run) 40%, var(--line)); border-radius:8px; }
+.metas .enode.leaf { border-color:color-mix(in srgb, var(--accent) 40%, var(--line)); border-radius:999px; }
+.estados .enode.leaf.sel, .metas .enode.leaf.sel { box-shadow:0 0 0 2px var(--accent); }
+.estados .enode .ek, .metas .enode .ek { font-family:var(--mono); font-weight:700; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.estados .enode .ek svg, .metas .enode .ek svg { width:14px; height:14px; color:var(--accent); flex:none; }
+.estados .enode.leaf .ek svg { color:var(--run); }
+.metas .enode.leaf .ek svg { color:var(--accent); }
+.estados .enode .ev, .metas .enode .ev { font-family:var(--mono); font-size:11px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.estados .enode .es, .metas .enode .es { font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
@@ -747,7 +757,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
       <h1>Uma atividade, vários jeitos de ver</h1>
-      <p>Explorar, Board, Gantt, Flow, Fluxograma, Árvore e Estados (explorar + dados, com zoom) no dock inferior. Copiloto = painel à direita. Clique numa tela para navegar.</p>
+      <p>Explorar em Planos (círculo) e Estados (cubo). Board, Gantt, Flow, Fluxograma, Árvore, Estados e Metas no dock. Copiloto à direita. Clique numa tela para navegar.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -855,6 +865,22 @@ U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "f
 const DEPS = [["u3", "u4"], ["u4", "u5"], ["u5", "u6"], ["u10", "u11"], ["u11", "u12"], ["u12", "u13"], ["u12", "u14"], ["u13", "u15"], ["u14", "u15"], ["u20", "u22"]];
 const PARS = [["u13", "u14"]];
 const OPEN = new Set(["f1", "f2", "f3", "u2", "u9"]);
+/** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
+const GOALS = {
+  orcamento: "≤ R$ 3.000",
+  comparativo: "3 modelos ranqueados",
+  loja: "frete < R$ 40",
+  dados_cliente: "CRM Acme completo",
+  rascunho: "proposta PT aprovável",
+  proposta_aprovada: "ok comercial",
+  proposta_en: "EN publicado",
+  proposta_es: "ES publicado",
+  contrato: "PDF assinado",
+  resumo_juridico: "checklist jurídico ok",
+  envio_id: "enviado ao cliente",
+  pagina: "home no ar",
+  publicado: "build live",
+};
 let CLIP = null;
 let seq = 100;
 
@@ -895,8 +921,8 @@ function agChip(id, short) {
   return `<span class="ag ${a.type}" title="${TYPES[a.type].one}: ${esc(a.name)}"><span class="ico">${inner}</span>${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
-const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", estados: "Estado", explorar: "Arquivo" };
-const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["estados", "dice-5", "Estados"]];
+const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", estados: "Estado", metas: "Meta", explorar: "Arquivo" };
+const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["estados", "box", "Estados"], ["metas", "target", "Metas"]];
 const CHAT = {};
 const COPILOT = { open: false, tabs: [], active: null, seq: 0 };
 
@@ -924,7 +950,7 @@ function win(s) {
       ${explorer(s)}
       <section class="content">
         ${s.v === "catalog" ? catBar(s) : bar(s)}
-        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : s.v === "estados" ? estados(s) : catalog(s)}
+        <div class="viewport">${s.v === "board" ? board(s) : s.v === "gantt" ? gantt(s) : s.v === "flow" ? flow(s) : s.v === "diagram" ? diagram(s) : s.v === "tree" ? tree(s) : s.v === "estados" ? estados(s) : s.v === "metas" ? metas(s) : catalog(s)}
           ${s.drawer ? drawer(s) : ""}${s.cfg && s.v === "board" ? cfgPanel(s) : ""}${s.tnode && s.v === "tree" ? procPanel(s) : ""}
         </div>
         ${viewDock(s)}
@@ -936,7 +962,20 @@ function win(s) {
   </div>`;
 }
 
-// ----- Explorar -----
+// ----- Explorar · Planos (círculo) + Estados (cubo) -----
+function stateCatalog() {
+  const list = [];
+  U.filter(u => !u.arch && (u.outs || []).length).forEach(u => {
+    (u.outs || []).forEach(([name, ref]) => list.push({ name, ref, id: u.id, title: u.title, st: u.st || null }));
+  });
+  return list.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+}
+function markTitle(title, q) {
+  if (!q) return esc(title);
+  const i = title.toLowerCase().indexOf(q);
+  if (i < 0) return esc(title);
+  return esc(title.slice(0, i)) + "<mark>" + esc(title.slice(i, i + q.length)) + "</mark>" + esc(title.slice(i + q.length));
+}
 function explorer(s) {
   const q = (s.q || "").trim().toLowerCase();
   let show = null, hits = 0;
@@ -945,35 +984,56 @@ function explorer(s) {
     U.filter(u => !u.arch && u.title.toLowerCase().includes(q)).forEach(u => { hits++; show.add(u.id); let p = u.parent; while (p) { show.add(p); p = $u(p).parent; } });
   }
   const open = new Set([...OPEN, ...(s.openx || [])]);
-  const rows = [];
+  const planRows = [];
   (function walk(pid, lvl) {
-    if (s.newn && (s.newn.parent || null) === pid) rows.push(newRow(s.newn, lvl));
+    if (s.newn && (s.newn.parent || null) === pid) planRows.push(newRow(s.newn, lvl));
     kids(pid).forEach(u => {
       if (show && !show.has(u.id)) return;
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
-      let t = esc(u.title);
-      if (q) { const i = u.title.toLowerCase().indexOf(q); if (i >= 0) t = esc(u.title.slice(0, i)) + "<mark>" + esc(u.title.slice(i, i + q.length)) + "</mark>" + esc(u.title.slice(i + q.length)); }
       const sel = (s.sel === u.id || (s.multi || []).includes(u.id)) ? " sel" : "";
-      const fi = isFolder(u) ? `<span class="fi folder">${icon(isOpen && has ? "folder-open" : "folder")}</span>` : `<span class="fi">${icon(has ? "file-stack" : "file-text")}</span>`;
+      const fi = `<span class="fi plan" title="Plano">${icon("circle")}</span>`;
       const a = agent(u.agent);
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
-      const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${t}</span>${meta}`;
-      rows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}</div>`);
+      const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
+      planRows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}</div>`);
       if (has && isOpen) walk(u.id, lvl + 1);
     });
   })(null, 0);
-  const n = U.filter(u => !u.arch && !isFolder(u)).length;
+
+  const states = stateCatalog().filter(st => !q || st.name.toLowerCase().includes(q) || st.title.toLowerCase().includes(q) || String(st.ref).toLowerCase().includes(q));
+  if (q) hits += states.length;
+  const estadoRows = states.map(st => {
+    const sel = s.estado === st.name ? " sel" : "";
+    const t = markTitle(st.name, q);
+    return `<div class="node${sel}" data-estado="${esc(st.name)}" data-id="${st.id}" data-act="sel-estado" style="padding-left:22px">
+      <span class="car"></span><span class="fi estado" title="Estado">${icon("box")}</span>
+      <span class="t mono">${t}</span>
+      <span class="meta"><span class="mono">${esc(st.ref)}</span>${st.st ? `<span class="st ${ST[st.st][0]}" style="padding:0 3px">${icon(ST[st.st][1])}</span>` : ""}</span>
+    </div>`;
+  });
+
+  const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
+  const nEstados = stateCatalog().length;
+  const empty = !planRows.length && !estadoRows.length;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
-      <button class="ib" data-act="new-file" title="Novo arquivo">${icon("file-plus")}</button>
-      <button class="ib" data-act="new-folder" title="Nova pasta">${icon("folder-plus")}</button>
+      <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
+      <button class="ib" data-act="new-folder" title="Nova pasta de planos">${icon("folder-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="collapse" title="Recolher tudo">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar pelo título" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
-    <div class="ex-tree" data-tree><div class="inner">${rows.join("") || `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>`}</div></div>
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos e estados" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
+      <div class="ex-sec" data-sec="planos">
+        <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${nPlans}</span></div>
+        ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
+      </div>
+      <div class="ex-sec" data-sec="estados">
+        <div class="ex-sec-h">${icon("box")} Estados<span class="n">${nEstados}</span></div>
+        ${estadoRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum estado (saída) ainda.</p>`}
+      </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>Responsáveis · ${CAT.length} no catálogo</small></span></button></div>
   </aside>`;
 }
@@ -999,6 +1059,10 @@ function bar(s) {
   if (s.v === "diagram") acts = "";
   if (s.v === "tree") acts = `<button class="btn pri" data-act="tnew-root">${icon("plus")}Atividade</button>`;
   if (s.v === "estados") acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+    <button class="btn" data-act="view" data-v="metas">${icon("target")}Metas</button>
+    <button class="btn" data-act="view" data-v="gantt">${icon("chart-gantt")}Ver no Gantt</button>`;
+  if (s.v === "metas") acts = `<select class="sel-in" data-plan aria-label="Plano">${PLANS.map(p => `<option value="${p.id}"${p.id === s.plan ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+    <button class="btn" data-act="view" data-v="estados">${icon("box")}Estados</button>
     <button class="btn" data-act="view" data-v="gantt">${icon("chart-gantt")}Ver no Gantt</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div><div class="acts">${acts}</div></div>`;
 }
@@ -1087,6 +1151,8 @@ function drawer(s) {
         <button class="btn" data-act="open-in" data-v="flow" data-id="${u.id}">${icon("workflow")}Flow</button>
         <button class="btn" data-act="open-in" data-v="diagram" data-id="${u.id}">${icon("waypoints")}Fluxograma</button>
         <button class="btn" data-act="open-in" data-v="tree" data-id="${u.id}">${icon("network")}Árvore</button>
+        <button class="btn" data-act="open-in" data-v="estados" data-id="${u.id}">${icon("box")}Estados</button>
+        <button class="btn" data-act="open-in" data-v="metas" data-id="${u.id}">${icon("target")}Metas</button>
         <button class="btn" data-act="copilot-open" data-id="${u.id}">${icon("message-square")}Copiloto</button>
         <button class="btn" data-act="reveal" data-id="${u.id}">${icon("folder-tree")}Explorar</button></div></div>
     </div>
@@ -1315,12 +1381,13 @@ const ZVIEWS = {
   flow: { z: 1, x: 16, y: 16 },
   tree: { z: 1, x: 16, y: 16 },
   estados: { z: 1, x: 16, y: 16 },
+  metas: { z: 1, x: 16, y: 16 },
 };
 const Z_MIN = 0.25, Z_MAX = 2.5;
 let zPan = null;
 function zKey() {
   const v = cur?.v;
-  return v === "diagram" || v === "gantt" || v === "flow" || v === "tree" || v === "estados" ? v : null;
+  return v === "diagram" || v === "gantt" || v === "flow" || v === "tree" || v === "estados" || v === "metas" ? v : null;
 }
 function zoomToolbar(key, label, ic) {
   const st = ZVIEWS[key];
@@ -1563,8 +1630,8 @@ function copilotPanel(s) {
     </div></aside>`;
 }
 
-// ----- Estados · árvore L→R: root → tasks (Explorar) → dados (outs) -----
-/** Cada item do Explorar vira um nó (rótulo = título). Filhos = subtasks; folhas = outs. Sem campos JSON. */
+// ----- Estados / Metas · árvore L→R: root → planos (círculo) → dados -----
+/** Planos = círculos; folhas de estado = cubo (valor atual); folhas de meta = alvo (desejado). */
 function planStateObject(plan) {
   const sources = {};
   function taskNode(u) {
@@ -1572,7 +1639,7 @@ function planStateObject(plan) {
     kids(u.id).filter(c => !c.arch).forEach(c => { n[c.id] = taskNode(c); });
     (u.outs || []).forEach(([name, ref]) => {
       n[name] = ref;
-      sources[name] = { id: u.id, title: u.title, st: u.st || null };
+      sources[name] = { id: u.id, title: u.title, st: u.st || null, ref };
     });
     return { __id: u.id, __title: u.title, __folder: !!isFolder(u), ...n };
   }
@@ -1580,10 +1647,12 @@ function planStateObject(plan) {
   kids(null).filter(u => !u.arch).forEach(u => { root[u.id] = taskNode(u); });
   return { root, sources };
 }
-function estados(s) {
+function stateTreeView(s, mode) {
+  const isMeta = mode === "metas";
   const { root, sources } = planStateObject(s.plan);
   const nTasks = U.filter(u => !u.arch).length;
   const nDados = Object.keys(sources).length;
+  const nMetas = Object.keys(sources).filter(k => GOALS[k]).length;
 
   const NW = 168, NH = 48, NL = 200, NHL = 56, GX = 52, GY = 12, PX = 24, PY = 24;
   const nodes = [];
@@ -1612,7 +1681,9 @@ function estados(s) {
         const y = PY + leafY;
         leafY += NHL + GY;
         const src = sources[k];
-        nodes.push({ id: childPath, key: k, kind: "leaf", value: String(v), from: src?.title || null, depth: depth + 1, x: PX + (depth + 1) * (NW + GX), y, w: NL, h: NHL });
+        const value = isMeta ? (GOALS[k] || "—") : String(v);
+        const now = isMeta && src ? src.ref : null;
+        nodes.push({ id: childPath, key: k, kind: "leaf", value, now, from: src?.title || null, depth: depth + 1, x: PX + (depth + 1) * (NW + GX), y, w: NL, h: NHL, hi: s.estado === k });
         ch.push({ p: childPath, span: { mid: y + NHL / 2, top: y, bot: y + NHL } });
       }
     });
@@ -1626,7 +1697,7 @@ function estados(s) {
     return { mid, top: Math.min(top, y), bot: Math.max(bot, y + NH) };
   }
 
-  let worldW = 480, worldH = 320, graphInner = `<p style="padding:20px;color:var(--muted);font-size:13px">Nenhum item no Explorar.</p>`;
+  let worldW = 480, worldH = 320, graphInner = `<p style="padding:20px;color:var(--muted);font-size:13px">Nenhum plano no Explorar.</p>`;
   if (Object.keys(root).length) {
     place(root, "root", 0);
     const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
@@ -1642,16 +1713,17 @@ function estados(s) {
     });
     worldW = Math.max(...nodes.map(n => n.x + n.w)) + PX;
     worldH = Math.max(...nodes.map(n => n.y + n.h)) + PY;
+    const leafIc = isMeta ? "target" : "box";
     const nodeHtml = nodes.map(n => {
       if (n.kind === "leaf") {
-        return `<div class="enode leaf" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
-          <span class="ek">${icon("dice-5")}${esc(n.key)}</span>
+        return `<div class="enode leaf${n.hi ? " sel" : ""}" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
+          <span class="ek">${icon(leafIc)}${esc(n.key)}</span>
           <span class="ev" title="${esc(n.value)}">${esc(n.value)}</span>
-          ${n.from ? `<span class="es">${esc(n.from)}</span>` : ""}
+          ${n.now ? `<span class="es">hoje: ${esc(n.now)}</span>` : (n.from ? `<span class="es">${esc(n.from)}</span>` : "")}
         </div>`;
       }
       const act = n.unitId ? ` data-act="reveal" data-id="${n.unitId}"` : "";
-      const ic = n.kind === "root" ? "dice-5" : n.folder ? "folder" : n.kind === "task" ? "file-text" : "box";
+      const ic = n.kind === "root" ? (isMeta ? "target" : "box") : "circle";
       return `<div class="enode ${n.kind}"${act} style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
         <span class="ek">${icon(ic)}${esc(n.key)}</span>
         <span class="es">${n.n != null ? n.n + " nó" + (n.n === 1 ? "" : "s") : "∅"}</span>
@@ -1660,16 +1732,23 @@ function estados(s) {
     graphInner = `<div class="egraph-c" style="width:${worldW}px;height:${worldH}px"><svg width="${worldW}" height="${worldH}">${paths}</svg>${nodeHtml}</div>`;
   }
 
-  return `<div class="estados">
+  const title = isMeta ? "Metas" : "Estados";
+  const ic = isMeta ? "target" : "box";
+  const blurb = isMeta
+    ? `O que se deseja. Planos (${nTasks}) → metas (${nMetas}/${nDados}). Folha = alvo; “hoje” = estado atual.`
+    : `O que já existe. Planos (${nTasks}) → estados (${nDados}). Círculo = plano; cubo = dado atual.`;
+  return `<div class="${mode}">
     <div class="eh">
-      <div><h2>${icon("dice-5")} Estados</h2>
-        <p><span class="mono">root</span> → unidades (${nTasks}) → dados (${nDados}). Título do nó = Explorar.</p></div>
+      <div><h2>${icon(ic)} ${title}</h2>
+        <p>${blurb}</p></div>
     </div>
-    <div class="egraph zview">${zoomToolbar("estados", "Estados", "dice-5")}
-      <div class="zcanvas" data-zcanvas="estados"><div class="zworld" data-zworld="estados" style="width:${Math.max(worldW, 480)}px;height:${Math.max(worldH, 320)}px">${graphInner}</div></div>
+    <div class="egraph zview">${zoomToolbar(mode, title, ic)}
+      <div class="zcanvas" data-zcanvas="${mode}"><div class="zworld" data-zworld="${mode}" style="width:${Math.max(worldW, 480)}px;height:${Math.max(worldH, 320)}px">${graphInner}</div></div>
     </div>
   </div>`;
 }
+function estados(s) { return stateTreeView(s, "estados"); }
+function metas(s) { return stateTreeView(s, "metas"); }
 
 // ----- Árvore de execução -----
 function tree(s) {
@@ -1848,8 +1927,8 @@ function exportDlg(s) {
 // ================= fluxos e telas =================
 const FLOWS = [
   { id: "explorar", n: "01", title: "Explorar", us: "US-17 · US-18 · US-20 a US-33",
-    desc: "Painel fixo à esquerda, no padrão do explorador de uma IDE. Toda atividade é um arquivo; pastas agrupam. A árvore não é uma tela: está sempre visível, com drill-down infinito, ordem por título e títulos legíveis em qualquer profundidade.",
-    steps: [["T-01", "Revelar no Explorar"], ["T-02", "Novo arquivo"], ["T-03", "Menu de contexto"], ["T-04", "Buscar na árvore"], ["T-05", "Remover com filhos"]] },
+    desc: "Painel fixo à esquerda. Duas seções: Planos (círculo) e Estados (cubo). Planos = atividades/arquivos; Estados = saídas/dados atuais. A árvore não é uma tela: está sempre visível.",
+    steps: [["T-01", "Revelar no Explorar"], ["T-02", "Novo arquivo"], ["T-03", "Menu de contexto"], ["T-04", "Buscar na árvore"], ["T-05", "Remover com filhos"], ["T-06", "Seção Estados"]] },
   { id: "board", n: "02", title: "Board", us: "US-04 a US-07",
     desc: "Kanban de colunas × raias. Cards nascem com título e contexto opcional, mudam de coluna arrastando e mostram o responsável tipado. Coluna de execução dispara a IA do card; falha e cancelamento pedem retry explícito.",
     steps: [["T-10", "Board"], ["T-11", "Novo card"], ["T-12", "Colunas e raias"]] },
@@ -1871,24 +1950,28 @@ const FLOWS = [
   { id: "copilot", n: "08", title: "Copiloto", us: "harness",
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
     steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
-  { id: "estados", n: "09", title: "Estados", us: "tasks · dados · zoom",
-    desc: "Só a árvore L→R: root → unidades (título do Explorar) → dados (outs). Zoom/pan. Sem painel JSON.",
+  { id: "estados", n: "09", title: "Estados", us: "o que existe",
+    desc: "O que já existe. Árvore L→R: root → planos (círculo) → dados (cubo = outs). Zoom/pan. Sem painel JSON.",
     steps: [["T-70", "Árvore de estado"]] },
-  { id: "config", n: "10", title: "Configurações", us: "US-03",
+  { id: "metas", n: "10", title: "Metas", us: "o que se deseja",
+    desc: "O que se deseja no futuro. Mesma árvore dos Estados; folhas mostram o alvo (e o estado atual em “hoje”).",
+    steps: [["T-80", "Árvore de metas"]] },
+  { id: "config", n: "11", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
     steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
 ];
 
 const SCREENS = {
-  "T-01": { s: { v: "tree", sel: "u13", flash: "u13", rev: true }, name: "Revelar no Explorar", us: ["US-17", "US-22", "US-32"], notes: "“Abrir no Explorar” destaca o arquivo na árvore e abre o caminho até ele. Clique num arquivo seleciona e revela a unidade na visão aberta; duplo clique abre o detalhe. O Explorar não tem detalhe de arquivo próprio. Painel com a altura da janela e rolagem nos dois eixos." },
-  "T-02": { s: { v: "board", sel: "f2", newn: { parent: "f2", kind: "file" } }, name: "Novo arquivo", us: ["US-20", "US-24"], notes: "Novo arquivo ou nova pasta entram como filho do item selecionado (ou na raiz). O título é digitado na própria linha, como em uma IDE: Enter cria, Esc cancela. O arquivo novo já aparece como card no Board, na raia e coluna iniciais." },
-  "T-03": { s: { v: "board", sel: "u12", ctx: { id: "u12", x: 170, y: 290 } }, name: "Menu de contexto", us: ["US-21", "US-23", "US-26", "US-27", "US-30", "US-32"], notes: "Botão direito em qualquer nó: novo, renomear (F2), duplicar (novos UUIDs), recortar, copiar, colar, copiar caminho, abrir em outra visão e remover. Os atalhos valem com a árvore em foco. Arrastar e soltar muda o pai; movimento que criaria ciclo é bloqueado." },
-  "T-04": { s: { v: "board", q: "propo" }, name: "Buscar na árvore", us: ["US-28", "US-29"], notes: "Filtra pelo título enquanto digita e abre automaticamente o caminho até cada resultado, com o trecho encontrado marcado. “Recolher tudo” fecha todas as pastas." },
-  "T-05": { s: { v: "board", sel: "u9", confirm: ["u9"] }, name: "Remover com filhos", us: ["US-21", "US-01"], notes: "Remover um nó com filhos pede confirmação e diz quantos saem junto. A exclusão é global: some de Board, Gantt, Flow, Fluxograma, Árvore e Explorar. Para guardar, a saída é arquivar." },
+  "T-01": { s: { v: "tree", sel: "u13", flash: "u13", rev: true }, name: "Revelar no Explorar", us: ["US-17", "US-22", "US-32"], notes: "“Abrir no Explorar” destaca o plano (círculo) na seção Planos e abre o caminho até ele. Clique seleciona; duplo clique abre o detalhe. Seção Estados lista os dados (cubo) à parte." },
+  "T-02": { s: { v: "board", sel: "f2", newn: { parent: "f2", kind: "file" } }, name: "Novo arquivo", us: ["US-20", "US-24"], notes: "Novo plano ou pasta entram como filho do item selecionado (ou na raiz), na seção Planos, com ícone de círculo. Enter cria, Esc cancela. O plano novo já aparece como card no Board." },
+  "T-03": { s: { v: "board", sel: "u12", ctx: { id: "u12", x: 170, y: 290 } }, name: "Menu de contexto", us: ["US-21", "US-23", "US-26", "US-27", "US-30", "US-32"], notes: "Botão direito em qualquer nó de Planos: novo, renomear (F2), duplicar, recortar, copiar, colar, copiar caminho, abrir em outra visão e remover. Arrastar e soltar muda o pai." },
+  "T-04": { s: { v: "board", q: "propo" }, name: "Buscar na árvore", us: ["US-28", "US-29"], notes: "Filtra planos e estados pelo título/nome. Abre o caminho até cada resultado em Planos; na seção Estados também marca outs." },
+  "T-05": { s: { v: "board", sel: "u9", confirm: ["u9"] }, name: "Remover com filhos", us: ["US-21", "US-01"], notes: "Remover um plano com filhos pede confirmação. A exclusão é global: some de Board, Gantt, Flow, Fluxograma, Árvore, Estados, Metas e Explorar." },
+  "T-06": { s: { v: "estados", plan: "onb", estado: "proposta_en", sel: "u13" }, name: "Seção Estados", us: ["dados"], notes: "No Explorar, seção Estados lista cada saída como cubo (nome + ref). Clique abre a visão Estados com a folha destacada. Planos ficam na seção de cima, com círculo." },
   "T-10": { s: { v: "board" }, name: "Board", us: ["US-05", "US-06", "US-07"], notes: "Cinco colunas × três raias, sem limite de WIP. Arraste cards entre células. Card filho mostra o pai; mover o pai leva a subárvore. Em “Execução IA”, card com responsável IA roda (pendente → em execução → concluída). Falhou e cancelada mostram “Tentar de novo”." },
   "T-11": { s: { v: "board", newCard: { col: "c1", lane: "l2" } }, name: "Novo card", us: ["US-05"], notes: "Criar card no próprio board, direto na célula: título obrigatório e contexto opcional (orçamento, preferências, restrições). O card vira arquivo no Explorar, dentro da pasta da raia." },
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
-  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Copiloto ou Explorar. Arquivar e excluir no rodapé." },
+  "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis, UUID, responsável, execução, datas, entradas/saídas, hierarquia e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Estados, Metas, Copiloto ou Explorar." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
   "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Barras por início e fim (hoje marcado), setas fim→início e paralelo. Zoom/pan como no Fluxograma (scroll, −/+, ajustar, arrastar fundo). Pai = roll-up; sem data na faixa de baixo." },
   "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
@@ -1898,7 +1981,8 @@ const SCREENS = {
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas de nós com portas entrada/saída e fios. Zoom/pan (scroll, −/+, ajustar, arrastar fundo). Sem seletor de plano nem Executar via IAs na barra. Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
-  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado. Só a árvore L→R: cada unidade do Explorar é um nó; outs viram folhas. Zoom/pan. Sem state.json." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "O que já existe. Círculo = plano; cubo = dado atual (outs). Zoom/pan. Sem state.json." },
+  "T-80": { s: { v: "metas", plan: "onb" }, name: "Árvore de metas", us: ["desejado"], notes: "O que se deseja. Mesma árvore dos Estados; folhas com alvo (ícone target) e “hoje” com o estado atual." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com zoom/pan (mesmo padrão do Fluxograma). Cada nó mostra responsável e estado. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -1986,7 +2070,8 @@ function tFor(s) {
   }
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.exp) return "T-35"; return "T-32"; }
   if (s.v === "diagram") return "T-36";
-  if (s.v === "estados") return "T-70";
+  if (s.v === "estados") return s.estado ? "T-06" : "T-70";
+  if (s.v === "metas") return "T-80";
   if (s.copilot) return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
   if (s.v === "tree") return s.tnode ? "T-42" : s.tnew ? "T-41" : s.rev ? "T-01" : "T-40";
   return "T-10";
@@ -2074,7 +2159,7 @@ function cloneTree(id, parent) {
   const c = { ...JSON.parse(JSON.stringify(src)), id: "n" + (++seq), uuid: uuidFor(seq), parent, title, st: src.st ? "pendente" : undefined };
   U.push(c); kidsPlan(id).forEach(k => cloneTree(k.id, c.id)); return c;
 }
-function revealIn(id, v) { const u = $u(id); let p = u?.parent; while (p) { OPEN.add(p); p = $u(p).parent; } view(v, { sel: id, flash: id }); if ((v === "gantt" || v === "flow" || v === "diagram") && u && u.plan) cur.plan = u.plan; }
+function revealIn(id, v) { const u = $u(id); let p = u?.parent; while (p) { OPEN.add(p); p = $u(p).parent; } view(v, { sel: id, flash: id }); if ((v === "gantt" || v === "flow" || v === "diagram" || v === "estados" || v === "metas") && u && u.plan) cur.plan = u.plan; }
 function winPoint(e) { const r = holder.querySelector(".win").getBoundingClientRect(), s = +holder.dataset.scale || 1; return { x: Math.min((e.clientX - r.left) / s, 1440 - 246), y: Math.min((e.clientY - r.top) / s, 900 - 440) }; }
 
 // ----- ações (cliques) -----
@@ -2134,7 +2219,14 @@ const ACT = {
     if (!COPILOT.tabs.length) { COPILOT.open = false; unset("copilot", "chatSeed"); }
     return true;
   },
-  reveal: t => { const id = t.dataset.id; if (cur.v === "tree") cur.rev = true; let p = $u(id).parent; while (p) { OPEN.add(p); p = $u(p).parent; } unset("drawer", "picker"); cur.sel = id; cur.flash = id; setTimeout(() => { const n = holder.querySelector(`.node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30); },
+  reveal: t => { const id = t.dataset.id; if (cur.v === "tree") cur.rev = true; let p = $u(id).parent; while (p) { OPEN.add(p); p = $u(p).parent; } unset("drawer", "picker", "estado"); cur.sel = id; cur.flash = id; setTimeout(() => { const n = holder.querySelector(`.node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30); },
+  "sel-estado": t => {
+    const name = t.dataset.estado, id = t.dataset.id, u = $u(id);
+    cur.estado = name; cur.sel = id;
+    if (u?.plan) cur.plan = u.plan;
+    view("estados", { estado: name, sel: id, plan: u?.plan || cur.plan });
+    toast(`Estado “${name}”`, "box");
+  },
   "ask-rm": t => { const id = t.dataset.id; unset("ctx"); const ids = (cur.multi || []).includes(id) ? cur.multi : [id]; const hasKids = ids.some(i => desc(i).length); if (hasKids) cur.confirm = ids; else { removeIds(ids); unset("drawer", "multi"); cur.sel = null; toast(ids.length > 1 ? `${ids.length} itens removidos` : "Removido de todas as visões", "trash-2"); } },
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },
   "confirm-no": () => unset("confirm"),
@@ -2266,12 +2358,12 @@ holder.addEventListener("click", e => {
   if (node) {
     const id = node.dataset.node;
     if (e.metaKey || e.ctrlKey) { const m = new Set(cur.multi || (cur.sel ? [cur.sel] : [])); m.has(id) ? m.delete(id) : m.add(id); cur.multi = [...m]; cur.sel = id; paint(); return; }
-    unset("multi", "ren");
+    unset("multi", "ren", "estado");
     const u = $u(id);
     const now = Date.now(), dbl = lastNode.id === id && now - lastNode.t < 420; lastNode = { id, t: now };
     if (dbl && !isFolder(u)) { if (cur.v === "catalog") view("board"); cur.from = "explorar"; cur.drawer = u.id; cur.sel = u.id; paint(); return; }
     if (isFolder(u)) { OPEN.has(id) && cur.sel === id ? OPEN.delete(id) : OPEN.add(id); cur.sel = id; paint(); return; }
-    cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("board", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow" || cur.v === "diagram") && u.plan) cur.plan = u.plan;
+    cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("board", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow" || cur.v === "diagram" || cur.v === "estados" || cur.v === "metas") && u.plan) cur.plan = u.plan;
     paint(); return;
   }
   if (cardEl) { const id = cardEl.dataset.card; unset("cfg", "newCard", "from"); cur.drawer = id; cur.sel = id; paint(); return; }

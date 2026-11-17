@@ -1223,14 +1223,16 @@ function explorer(s) {
   const projRows = [];
   PLANS.forEach(p => {
     const before = projRows.length;
-    planRows = []; walk(null, 1, p.id);
+    planRows = []; walk(null, 2, p.id); // dentro do plano: grupo Planos (roteiros) e grupo Estados
     const est = estWalk(null, 2, p.id);
     if (q && !planRows.length && !est.length && !p.name.toLowerCase().includes(q)) return;
     const pid = "pjx:" + p.id, pOpen = q ? true : !OPEN.has(pid), eid = "pje:" + p.id, eOpen = q ? true : OPEN.has(eid);
     const n = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
     projRows.push(`<div class="node proj${pOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="proj-sel" data-plan="${p.id}" data-id="${pid}" title="Abrir ${esc(p.name)} no Flow" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}<button class="ib pj-b" data-act="proj-open" data-plan="${p.id}" title="Abrir todos">${icon("chevrons-up-down")}</button><button class="ib pj-b" data-act="proj-close" data-plan="${p.id}" title="Fechar todos">${icon("chevrons-down-up")}</button></span></div>`);
     if (!pOpen) return;
-    projRows.push(...planRows);
+    const rid = "pjp:" + p.id, rOpen = q ? true : OPEN.has(rid);
+    projRows.push(`<div class="node${rOpen ? " openf" : ""}" data-act="toggle" data-id="${rid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Planos (roteiros) do projeto">${icon("circle")}</span><span class="t">Planos</span></div>`);
+    if (rOpen) projRows.push(...planRows);
     if (est.length) {
       projRows.push(`<div class="node${eOpen ? " openf" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi dado" title="Estados do projeto">${icon("box")}</span><span class="t">Estados</span></div>`);
       if (eOpen) projRows.push(...est);
@@ -1305,10 +1307,10 @@ function projAll(plan, openAll) {
   OPEN.delete("pjx:" + plan);
   if (openAll) {
     us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); OPEN.add("esx:" + u.id); });
-    ifKeys.forEach(k => OPEN.add(k)); OPEN.add("pje:" + plan);
+    ifKeys.forEach(k => OPEN.add(k)); OPEN.add("pje:" + plan); OPEN.add("pjp:" + plan);
   } else {
     us.forEach(u => { OPEN.delete(u.id); OPEN.delete("esx:" + u.id); });
-    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan);
+    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan); OPEN.delete("pjp:" + plan);
   }
 }
 function newRow(nn, lvl) {

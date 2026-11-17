@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-tema="gantt">
+<html lang="pt-BR" data-tema="cobalto">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1280">
@@ -23,6 +23,7 @@
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   --ease: cubic-bezier(.16, 1, .3, 1);
   color-scheme: light;
+  --fn: #2563eb; --dado: #dc2626; /* FOP: função = azul (cobalto), dado = vermelho */
 }
 :root[data-tema="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; --stage: #e4e9ea; --bezel: #c9d1d2; }
 :root[data-tema="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --stage: #e5e7f0; --bezel: #c9cddd; --t-ia: #a2458e; }
@@ -241,7 +242,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node.openf .car svg { transform: rotate(90deg); }
 .node .fi { color: var(--muted); }
 .node .fi.plan { color: var(--accent); }
-.node .fi.estado { color: var(--run); }
+.node .fi.estado { color: var(--muted); }
+.node .fi.dado { color: var(--dado); }
+.node .fi.plan { color: var(--fn); }
 .node .t { font-size: 13px; }
 .node .t mark { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit; border-radius: 2px; }
 .node .meta { margin-left: 10px; display: flex; gap: 6px; align-items: center; color: var(--muted); }
@@ -486,7 +489,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ftag.fail { color: var(--fail); background: color-mix(in srgb, var(--fail) 18%, transparent); font-family: var(--font); }
 .ftag.exec { color: var(--run); font-family: var(--font); }
 .ftag.cancel { color: var(--muted); background: color-mix(in srgb, var(--muted) 18%, transparent); font-family: var(--font); }
-.ftag.data { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); font-weight: 500; }
+.ftag.data { color: var(--dado); background: color-mix(in srgb, var(--dado) 12%, transparent); font-weight: 500; }
 .fsvg .fdep { fill:none; stroke: #9a9a9a; stroke-width: 1.2; }
 .fsvg .fdep.dash { stroke-dasharray: 3 3; }
 .fsvg .fback { fill:none; stroke: var(--warn); stroke-width: 1.2; stroke-dasharray: 3 3; }
@@ -495,8 +498,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flegend .ftag { margin-left: -6px; }
 .flegend .ftag:first-of-type { margin-left: 0; }
 .flegend i { display:inline-block; }
-.lg-bar { width: 18px; height: 8px; border-radius: 2px; background: var(--run); }
-.lg-dia { width: 8px; height: 8px; background: var(--run); transform: rotate(45deg); }
+.lg-bar { width: 18px; height: 8px; border-radius: 2px; background: var(--fn); }
+.lg-dia { width: 8px; height: 8px; background: var(--dado); transform: rotate(45deg); }
 .lg-sum { width: 18px; height: 4px; background: var(--ok); }
 .lg-seq { width: 14px; height: 8px; border-top: 1.2px solid #9a9a9a; border-right: 1.2px solid #9a9a9a; }
 .chipb { display:inline-flex; align-items:center; gap: 5px; font: 500 11px var(--font); color: var(--muted); background: none; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; }
@@ -518,15 +521,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fh-e.bot span { top: 19px; }
 /* dados de cada estado, empilhados embaixo do eN (documento FOP, item 3) */
 .fe-d { position: absolute; top: 42px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
-.fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
-.fe-d b::before { content: ""; flex: none; width: 6px; height: 6px; border: 1.2px solid #9a9a9a; background: var(--paper); }
-.fe-d b.ext { color: var(--muted); }
+.fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--dado); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
+.fe-d b::before { content: ""; flex: none; width: 6px; height: 6px; border: 1.2px solid var(--dado); background: color-mix(in srgb, var(--dado) 15%, var(--paper)); }
+.fe-d b.ext { color: color-mix(in srgb, var(--dado) 60%, var(--muted)); }
 .fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }
-.fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
-.flbl .fo { font: 500 10.5px var(--mono); color: var(--muted); margin-right: 4px; }
+.fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--dado); white-space: nowrap; pointer-events: none; z-index: 2; }
+.flbl .fo { font: 500 10.5px var(--mono); color: var(--dado); margin-right: 4px; }
 .fsvg .fstub { stroke: #9a9a9a; stroke-width: 1.2; }
-.fsvg .fdot { fill: var(--paper); stroke: #9a9a9a; stroke-width: 1.3; }
+.fsvg .fdot { fill: color-mix(in srgb, var(--dado) 15%, var(--paper)); stroke: var(--dado); stroke-width: 1.3; }
 .fsvg .fif { fill: var(--paper); stroke: var(--warn); stroke-width: 1.5; }
 .fsvg .floop { fill: none; stroke: var(--ok); stroke-width: 1.1; stroke-dasharray: 3 3; }
 .fsvg .farc { fill: none; stroke: var(--ok); stroke-width: 1.3; }
@@ -534,7 +537,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fstr { position: absolute; left: 0; top: 52px; pointer-events: none; z-index: 1; }
 .fband { position: absolute; left: 0; right: 0; background: color-mix(in srgb, var(--warn) 7%, transparent); border-left: 2px solid var(--warn); border-top: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); }
 .fspill { position: absolute; left: 8px; top: 9px; font: 600 10px var(--mono); line-height: 1; color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--paper)); padding: 3px 5px; border-radius: 3px; }
-.lg-dot { width: 8px; height: 8px; border: 1.3px solid #9a9a9a; }
+.lg-dot { width: 8px; height: 8px; border: 1.3px solid var(--dado); }
 .lg-if { width: 8px; height: 8px; border: 1.5px solid var(--warn); transform: rotate(45deg); }
 .sig { margin: 0; padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font: 11.5px/1.6 var(--mono); color: var(--ink); overflow-x: auto; white-space: pre; }
 /* Gantt */
@@ -1092,7 +1095,7 @@ function explorer(s) {
       const ind = 8 + Math.min(lvl, 14) * 14;
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
       const sel = (s.sel === u.id || (s.multi || []).includes(u.id)) ? " sel" : "";
-      const fi = isData(u) ? `<span class="fi plan" title="Dado">${icon("diamond")}</span>` : `<span class="fi plan" title="${kids(u.id).length ? "Composição" : "Função"}">${icon("circle")}</span>`;
+      const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : `<span class="fi plan" title="${kids(u.id).length ? "Composição" : "Função"}">${icon("circle")}</span>`;
       const a = agent(u.agent);
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
       const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
@@ -1126,7 +1129,7 @@ function explorer(s) {
     Object.keys(by).map(Number).sort((a, b) => a - b).forEach(e => {
       const id = `es:${pid}:e${e}`, isOpen = q ? true : open.has(id), list = by[e];
       out.push(eRow(id, lvl, true, isOpen, `<span class="fi estado" title="Estado e${e}">${icon("square")}</span><span class="t mono">e${e}</span><span class="meta">${list.length}</span>`));
-      if (isOpen) list.forEach(({ name, ref, u }) => out.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${8 + Math.min(lvl + 1, 14) * 14}px">${Array.from({ length: Math.min(lvl + 1, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("")}<span class="car"></span><span class="fi estado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span>${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span></div>`));
+      if (isOpen) list.forEach(({ name, ref, u }) => out.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${8 + Math.min(lvl + 1, 14) * 14}px">${Array.from({ length: Math.min(lvl + 1, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("")}<span class="car"></span><span class="fi dado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span>${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span></div>`));
       out.n = (out.n || 0) + list.length;
     });
     return { rows: out, n: out.n || 0 };
@@ -1417,7 +1420,7 @@ function flow(s) {
   const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
   const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
-  const colOf = u => PHASE[tops.indexOf(flowTop(u).id) % PHASE.length];
+  const colOf = u => isData(u) ? "var(--dado)" : "var(--fn)"; // função azul · dado vermelho
   const idx = {}; rows.forEach((r, i) => idx[r.u.id] = i);
   const hasK = u => flowKids(u).length > 0;
   const geo = u => {
@@ -2272,7 +2275,7 @@ function buildGallery() {
 // ================= temas =================
 function setTema(id) {
   document.documentElement.dataset.tema = id;
-  try { localStorage.setItem("tema-flow-dev", id); } catch (e) {}
+  try { localStorage.setItem("tema-flow-dev-v2", id); } catch (e) {}
   document.querySelectorAll("[data-temas] button, #temas-grid .tcard").forEach(b => {
     const tid = b.dataset.tema;
     b.setAttribute("aria-pressed", tid === id ? "true" : "false");
@@ -2747,8 +2750,8 @@ addEventListener("resize", fit);
 
 // ================= início =================
 document.getElementById("flownav").innerHTML = FLOWS.map(f => `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`).join("");
-let saved = "gantt"; try { saved = localStorage.getItem("tema-flow-dev") || "gantt"; } catch (e) {}
-setTema(TEMAS.some(t => t.id === saved) ? saved : "gantt");
+let saved = "cobalto"; try { saved = localStorage.getItem("tema-flow-dev-v2") || "cobalto"; } catch (e) {}
+setTema(TEMAS.some(t => t.id === saved) ? saved : "cobalto");
 buildGallery();
 const h0 = location.hash.slice(1); if (SCREENS[h0]) openT(h0);
 </script>

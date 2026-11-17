@@ -237,6 +237,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-sub-h .n { margin-left: auto; font-variant-numeric: tabular-nums; }
 .node .fi.agente { color: var(--t-ia); }
 .node.ag-d { cursor: default; height: 24px; }
+.node.proj .t b { font-weight: 600; }
 .node.ag-d .t { font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 .node.ag-d .k { color: var(--muted); font-size: 11px; margin-right: 4px; }
 .ex-sec-h .n { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0; text-transform: none; }
@@ -1130,11 +1131,12 @@ function explorer(s) {
     U.filter(u => !u.arch && u.title.toLowerCase().includes(q)).forEach(u => { hits++; show.add(u.id); let p = u.parent; while (p) { show.add(p); p = $u(p).parent; } });
   }
   const open = new Set([...OPEN, ...(s.openx || [])]);
-  const planRows = [];
-  (function walk(pid, lvl) {
-    if (s.newn && (s.newn.parent || null) === pid) planRows.push(newRow(s.newn, lvl));
+  let planRows = [];
+  function walk(pid, lvl, plan) {
+    if (s.newn && (s.newn.parent || null) === pid && (pid || plan === PLANS[0].id)) planRows.push(newRow(s.newn, lvl));
     kids(pid).forEach(u => {
-      if (isData(u)) return; // estado nomeado (◆) não aparece no Flow IDE
+      if (isData(u)) return;
+      if (!pid && u.plan !== plan) return; // raiz: só os roteiros deste plano (projeto) // estado nomeado (◆) não aparece no Flow IDE
       if (show && !show.has(u.id)) return;
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
@@ -1146,20 +1148,20 @@ function explorer(s) {
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
       const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
       planRows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}</div>`);
-      if (has && isOpen) walk(u.id, lvl + 1);
+      if (has && isOpen) walk(u.id, lvl + 1, plan);
     });
-  })(null, 0);
+  }
 
   // Estados em árvore, igual ao Explorar das tasks (Planos): pasta → composição → etapa → dados que ela produz
   const guidesOf = lvl => Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
   const padOf = lvl => 8 + Math.min(lvl, 14) * 14;
   const outMatch = (u, name, ref) => !q || name.toLowerCase().includes(q) || u.title.toLowerCase().includes(q) || String(ref).toLowerCase().includes(q);
   let estHits = 0;
-  function estWalk(pid, lvl) {
+  function estWalk(pid, lvl, plan) {
     const rows = [];
-    kids(pid).filter(u => !u.arch && !isData(u)).forEach(u => {
+    kids(pid).filter(u => !u.arch && !isData(u) && (pid || u.plan === plan)).forEach(u => {
       // mesma árvore das tarefas (Planos), nó a nó — só que com quadrados e os dados como folhas, tipo árvore JSON
-      const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1);
+      const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1, plan);
       if (q && !outs.length && !sub.length && !u.title.toLowerCase().includes(q)) return;
       const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
       const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
@@ -1170,7 +1172,25 @@ function explorer(s) {
     });
     return rows;
   }
-  const estadoRows = estWalk(null, 0);
+  // Planos = projetos; dentro de cada um, os roteiros (círculos, com os nomes) e os Estados (cubo nos dados)
+  const projRows = [];
+  PLANS.forEach(p => {
+    const before = projRows.length;
+    planRows = []; walk(null, 1, p.id);
+    const est = estWalk(null, 2, p.id);
+    if (q && !planRows.length && !est.length && !p.name.toLowerCase().includes(q)) return;
+    const pid = "pjx:" + p.id, pOpen = q ? true : !OPEN.has(pid), eid = "pje:" + p.id, eOpen = q ? true : !OPEN.has(eid);
+    const n = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
+    projRows.push(`<div class="node proj${pOpen ? " openf" : ""}" data-act="toggle" data-id="${pid}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}</span></div>`);
+    if (!pOpen) return;
+    projRows.push(...planRows);
+    if (est.length) {
+      projRows.push(`<div class="node${eOpen ? " openf" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi dado" title="Estados do projeto">${icon("box")}</span><span class="t">Estados</span></div>`);
+      if (eOpen) projRows.push(...est);
+    }
+  });
+  planRows = projRows;
+  const estadoRows = [];
   if (q) hits += estHits;
 
   // Agentes: modelos de IA treinados com prompt pronto · abrir mostra modelo, prompt e onde é usado
@@ -1200,16 +1220,9 @@ function explorer(s) {
     </div>
     ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, estados e agentes" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
-      <div class="ex-sec ex-src" data-sec="src">
-        <div class="ex-sec-h">${icon("folder-code")} src</div>
-        <div class="ex-sub" data-sec="planos">
-          <div class="ex-sub-h">${icon("circle")} Planos<span class="n">${nPlans}</span></div>
-          ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
-        </div>
-        <div class="ex-sub" data-sec="estados">
-          <div class="ex-sub-h">${icon("box")} Estados<span class="n">${nEstados}</span></div>
-          ${estadoRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum estado (saída) ainda.</p>`}
-        </div>
+      <div class="ex-sec" data-sec="planos">
+        <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${PLANS.length}</span></div>
+        ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
       </div>
       <div class="ex-sec" data-sec="agentes">
         <div class="ex-sec-h">${icon("bot")} Agentes<span class="n">${agentRows.n}</span></div>

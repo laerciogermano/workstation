@@ -61,10 +61,10 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** reintroduzir `ganttFopStates` + cards e0…eN.
 
-## Flow · I/O nas tasks
+## Flow · lista indentada
 
-Flow só ordem: `.funit` = quadrados entrada | função | saída. Sem toggle Ordem/Estado e sem legenda.
+Flow = `.flow-list` no estilo Explorar: indentação por profundidade; **um** □ entrada e **um** □ saída por linha (tracejado se vazio). Sem setas SVG, sem eixo de passos / `.funit` no Gantt.
 
-**Antes → depois:** `fm` + painel FOP + T-34 → removidos; I/O nas próprias tasks.
+**Antes → depois:** timeline com deps + vários quadrados por I/O → lista indentada + 1+1 quadrados.
 
-**Voltar:** restaurar `fm`/`fopPanel`/T-34 no `flow()`.
+**Voltar:** restaurar `flow()` com `flowLayout` + `.gsvg` deps + `.funit` multi-sq.

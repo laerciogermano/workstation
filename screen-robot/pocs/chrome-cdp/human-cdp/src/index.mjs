@@ -51,6 +51,8 @@ export {
   GRANT_MEDIA_PERMISSIONS,
   LIVE_CAPTURE_NAME,
   liveCapturePath,
+  publishLiveCapture,
+  writeLiveCapture,
   mediaPermissionEntries,
   mergeMediaPermissions,
   originFromUrl,

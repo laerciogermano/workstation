@@ -610,12 +610,12 @@ export async function setCamera(id, opts = {}) {
   const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : undefined;
 
   const cacheDir = cameraCacheDir(row.id);
-  // Sempre live.y4m — pause/seek sobrescrevem o mesmo path sem reiniciar o Chrome.
+  // Sempre live.y4m — pause/seek publicam no mesmo inode (sem ffmpeg -y em cima do arquivo aberto).
   const captureFile = ensureCaptureFile(video, cacheDir, {
     size,
     fps,
     maxSeconds,
-    outPath: liveCapturePath(cacheDir),
+    live: true,
     force: true,
   });
 
@@ -744,12 +744,12 @@ export async function controlCameraPlayback(id, opts = {}) {
   const cacheDir = cameraCacheDir(row.id);
   const live = liveCapturePath(cacheDir);
   const alreadyLive = !!(cam.captureFile && resolve(cam.captureFile) === resolve(live));
-  // Segmento curto: no EOF o Chrome volta ao início e pega o Y4M novo (sem fechar janela).
+  // Segmento curto + publish sem truncar a zero (ffmpeg -y no live.y4m deixava a tela preta).
   const captureFile = ensureCaptureFile(cam.video, cacheDir, {
     startSec: positionSec,
     paused,
     maxSeconds: paused ? 2 : TRANSPORT_CAPTURE_SECONDS,
-    outPath: live,
+    live: true,
     force: true,
   });
 

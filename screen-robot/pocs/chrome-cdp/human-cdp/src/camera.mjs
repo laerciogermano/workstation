@@ -3,7 +3,18 @@
  * Sem OBS. Trocar vídeo exige restart do Chrome (só vale no spawn).
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, statSync } from 'node:fs';
+import {
+  closeSync,
+  copyFileSync,
+  existsSync,
+  fsyncSync,
+  ftruncateSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  statSync,
+  writeSync,
+} from 'node:fs';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 
 export const DEFAULT_CAMERA_LABEL = 'FaceTime HD Camera';
@@ -187,20 +198,78 @@ export function liveCapturePath(cacheDir) {
 }
 
 /**
+ * Publica Y4M no path que o Chrome já tem aberto.
+ * Nunca abre com O_TRUNC (ffmpeg -y zera o arquivo → fake cam fica preto).
+ * @param {string} livePath
+ * @param {string} nextPath
+ */
+export function publishLiveCapture(livePath, nextPath) {
+  const live = resolve(livePath);
+  const next = resolve(nextPath);
+  if (!existsSync(next)) throw new Error(`captura ausente: ${next}`);
+  const data = readFileSync(next);
+  if (data.length < 128 || !data.subarray(0, 9).toString().startsWith('YUV4MPEG2')) {
+    throw new Error(`Y4M inválido após encode (${data.length} B)`);
+  }
+  mkdirSync(dirname(live), { recursive: true });
+  if (!existsSync(live)) {
+    copyFileSync(next, live);
+    return live;
+  }
+  const fd = openSync(live, 'r+');
+  try {
+    writeSync(fd, data, 0, data.length, 0);
+    ftruncateSync(fd, data.length);
+    fsyncSync(fd);
+  } finally {
+    closeSync(fd);
+  }
+  return live;
+}
+
+/**
+ * Encode → live.next.y4m → publica em live.y4m sem janela de 0 bytes.
+ * @param {string} videoPath
+ * @param {string} cacheDir
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean }} [opts]
+ */
+export function writeLiveCapture(videoPath, cacheDir, opts = {}) {
+  mkdirSync(cacheDir, { recursive: true });
+  const live = liveCapturePath(cacheDir);
+  const next = join(cacheDir, 'live.next.y4m');
+  convertToY4m(videoPath, next, opts);
+  return publishLiveCapture(live, next);
+}
+
+/**
  * Garante Y4M leve no cache (sempre normaliza — y4m/mjpeg grande também).
  * @param {string} videoPath
  * @param {string} cacheDir pasta p/ Y4M gerado
- * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean, outPath?: string }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean, outPath?: string, live?: boolean }} [opts]
  */
 export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const abs = resolve(videoPath);
   if (!existsSync(abs)) throw new Error(`vídeo não encontrado: ${abs}`);
   const size = String(opts.size || DEFAULT_CAPTURE_SIZE);
   const fps = Number(opts.fps) || DEFAULT_CAPTURE_FPS;
-  const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : DEFAULT_CAPTURE_MAX_SECONDS;
-  const startSec = Math.max(0, Number(opts.startSec) || 0);
+  let maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : DEFAULT_CAPTURE_MAX_SECONDS;
+  let startSec = Math.max(0, Number(opts.startSec) || 0);
   const paused = opts.paused === true;
+  const duration = probeMediaDuration(abs);
+  if (duration != null) {
+    // deixa pelo menos ~1s de conteúdo (evita Y4M vazio → preto)
+    const maxStart = Math.max(0, duration - 1);
+    startSec = Math.min(startSec, maxStart);
+    if (!paused) {
+      maxSeconds = Math.min(maxSeconds, Math.max(1, duration - startSec));
+    }
+  }
   mkdirSync(cacheDir, { recursive: true });
+
+  if (opts.live || (opts.outPath && resolve(opts.outPath) === resolve(liveCapturePath(cacheDir)))) {
+    return writeLiveCapture(abs, cacheDir, { size, fps, maxSeconds, startSec, paused });
+  }
+
   const base = basename(abs, extname(abs)) || 'capture';
   const tag = paused
     ? `p${startSec.toFixed(1)}`

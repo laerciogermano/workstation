@@ -1893,11 +1893,13 @@ function flow(s) {
     DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
   });
   const { layout, nSteps } = flowLayout(s.plan);
-  const LW = 380, RH = 34, TAIL = 440, OX = 28; // OX = margem mínima à esquerda do e0 (□ de entrada); TAIL = bag à direita
+  const LW = 380, RH = 34, TAIL = 440;
   // texto dentro: passo só um pouco maior que o maior nome (≈5,6 px por letra a 10 px + respiro)
   const maxT = Math.max(0, ...rows.filter(r => !isData(r.u) && !flowKids(r.u).length).map(r => r.u.title.length));
   const INS = s.txtIn ? 22 : 28; // recuo da barra até a divisória (longe dos □ de dados)
-  const W = Math.max(s.txtIn ? Math.ceil(maxT * 5.6 + 20 + INS * 2) : 118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
+  // W = largura de uma coluna (eN→eN+1); OX = 1 coluna à esquerda do e0
+  const W = Math.max(s.txtIn ? Math.ceil(maxT * 5.6 + 20 + INS * 2) : 118, Math.floor((1152 - LW - 60) / Math.max(nSteps + 1, 1)));
+  const OX = W;
   const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
   const colOf = u => "var(--fn)"; // função azul · dado vermelho

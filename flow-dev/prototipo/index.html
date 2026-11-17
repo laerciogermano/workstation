@@ -1117,6 +1117,7 @@ function explorer(s) {
   (function walk(pid, lvl) {
     if (s.newn && (s.newn.parent || null) === pid) planRows.push(newRow(s.newn, lvl));
     kids(pid).forEach(u => {
+      if (isData(u)) return; // estado nomeado (◆) não aparece no Flow IDE
       if (show && !show.has(u.id)) return;
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
@@ -1427,12 +1428,18 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
-  // estado nomeado (◆) volta a aparecer como linha; dados ficam só embaixo, por eN
-  const rows = ganttRows(s.plan);
-  const FD = DEPS;
+  // sem estado nomeado (◆): só funções e composições; estados = divisórias eN
+  const rows = ganttRows(s.plan).filter(r => !isData(r.u));
+  // sequência atravessando o ◆: a → ◆ → b vira a → b
+  const FD = [];
+  DEPS.forEach(([a, b]) => {
+    if (isData($u(a))) return;
+    if (!isData($u(b))) { FD.push([a, b]); return; }
+    DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
+  });
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 380, RH = 34, TAIL = 440, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if); TAIL = espaço p/ bag do estado à direita da barra
   const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));

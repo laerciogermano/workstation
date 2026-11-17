@@ -52,15 +52,15 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** restaurar `gm`/`T-37`/`ganttFopStates` no histórico git.
 
-## Estados · tasks + dados + zoom
+## Estados · só árvore (unidades + dados)
 
-- Ícone dock: `dice-5`. Mesmo padrão visual L→R (enode).
-- Sob `root`: um nó por item do Explorar (rótulo = título); outs da task viram folhas. Sem nós de campos JSON (`title`/`kind`/`ctx`).
+- Ícone dock: `dice-5`. Árvore L→R em tela cheia; **sem** painel `state.json`.
+- Sob `root`: nó por unidade do Explorar (rótulo = título); outs viram folhas.
 - Zoom/pan: `ZVIEWS.estados`. T-70.
 
-**Antes → depois:** só outs → + nós de tasks; campos JSON de explorar → removidos.
+**Antes → depois:** grid árvore + JSON → só árvore.
 
-**Voltar:** `planStateObject` só com outs por path.
+**Voltar:** coluna `.ejson` + `jsonStateTree` no histórico git.
 
 ## Flow · Gantt por passos
 

@@ -647,13 +647,13 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
 
-/* Estados · grafo-árvore L→R (mesmo padrão visual) + zoom/pan */
-.estados { height:100%; display:grid; grid-template-columns: minmax(0, 1fr) 300px; grid-template-rows: auto minmax(0, 1fr); min-height:0; }
-.estados .eh { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); }
+/* Estados · só árvore L→R (+ zoom/pan); sem painel JSON */
+.estados { height:100%; display:flex; flex-direction:column; min-height:0; }
+.estados .eh { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); flex:none; }
 .estados .eh h2 { font-size:18px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
 .estados .eh p { font-size:12px; color:var(--muted); max-width:480px; line-height:1.4; }
-.estados .egraph { min-height:0; position:relative; background:var(--panel); display:flex; flex-direction:column; overflow:hidden; }
-.estados .egraph.zview { height:100%; }
+.estados .egraph { flex:1; min-height:0; position:relative; background:var(--panel); display:flex; flex-direction:column; overflow:hidden; }
+.estados .egraph.zview { height:auto; }
 .estados .egraph-c { position:relative; }
 .estados .egraph-c > svg { position:absolute; left:0; top:0; pointer-events:none; overflow:visible; }
 .estados .egraph-c > svg path { fill:none; stroke:var(--line-2); stroke-width:1.5; }
@@ -667,9 +667,6 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .estados .enode .ek svg { width:14px; height:14px; color:var(--accent); flex:none; }
 .estados .enode .ev { font-family:var(--mono); font-size:11px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .estados .enode .es { font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.estados .ejson { grid-row:2; border-left:1px solid var(--line); background:var(--panel); display:flex; flex-direction:column; min-height:0; }
-.estados .ejson h3 { font-size:12px; font-weight:600; color:var(--muted); padding:12px 14px 8px; flex:none; display:flex; align-items:center; gap:6px; }
-.estados .ejson pre { margin:0; flex:1; overflow:auto; padding:0 14px 72px; font-family:var(--mono); font-size:12px; line-height:1.55; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
 
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
@@ -1560,24 +1557,8 @@ function planStateObject(plan) {
   kids(null).filter(u => !u.arch).forEach(u => { root[u.id] = taskNode(u); });
   return { root, sources };
 }
-function jsonStateTree(node) {
-  if (node == null || typeof node !== "object" || Array.isArray(node)) return node;
-  if (node.__id) {
-    const out = {};
-    Object.entries(node).forEach(([k, v]) => {
-      if (k.startsWith("__")) return;
-      if (v && typeof v === "object" && !Array.isArray(v) && v.__id) out[v.__title] = jsonStateTree(v);
-      else out[k] = v;
-    });
-    return out;
-  }
-  const out = {};
-  Object.entries(node).forEach(([k, v]) => { out[k] = jsonStateTree(v); });
-  return out;
-}
 function estados(s) {
   const { root, sources } = planStateObject(s.plan);
-  const json = JSON.stringify({ root: jsonStateTree(root) }, null, 2);
   const nTasks = U.filter(u => !u.arch).length;
   const nDados = Object.keys(sources).length;
 
@@ -1659,15 +1640,11 @@ function estados(s) {
   return `<div class="estados">
     <div class="eh">
       <div><h2>${icon("dice-5")} Estados</h2>
-        <p>Árvore: <span class="mono">root</span> → tasks do Explorar (${nTasks}) → dados (${nDados}). O título do nó é o do Explorar.</p></div>
+        <p><span class="mono">root</span> → unidades (${nTasks}) → dados (${nDados}). Título do nó = Explorar.</p></div>
     </div>
     <div class="egraph zview">${zoomToolbar("estados", "Estados", "dice-5")}
       <div class="zcanvas" data-zcanvas="estados"><div class="zworld" data-zworld="estados" style="width:${Math.max(worldW, 480)}px;height:${Math.max(worldH, 320)}px">${graphInner}</div></div>
     </div>
-    <aside class="ejson" aria-label="JSON do estado">
-      <h3>${icon("braces")} state.json</h3>
-      <pre>${esc(json)}</pre>
-    </aside>
   </div>`;
 }
 
@@ -1872,7 +1849,7 @@ const FLOWS = [
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
     steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
   { id: "estados", n: "09", title: "Estados", us: "tasks · dados · zoom",
-    desc: "Mesma árvore L→R de antes: root → nós das tasks (título do Explorar) → folhas de dados (outs). Zoom/pan. Painel state.json à direita.",
+    desc: "Só a árvore L→R: root → unidades (título do Explorar) → dados (outs). Zoom/pan. Sem painel JSON.",
     steps: [["T-70", "Árvore de estado"]] },
   { id: "config", n: "10", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
@@ -1898,7 +1875,7 @@ const SCREENS = {
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas de nós com portas entrada/saída e fios. Zoom/pan (scroll, −/+, ajustar, arrastar fundo). Sem seletor de plano nem Executar via IAs na barra. Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
-  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado. Mesmo padrão visual L→R: cada item do Explorar é um nó (rótulo = título); outs viram folhas. Zoom/pan. state.json à direita." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado. Só a árvore L→R: cada unidade do Explorar é um nó; outs viram folhas. Zoom/pan. Sem state.json." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com zoom/pan (mesmo padrão do Fluxograma). Cada nó mostra responsável e estado. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },

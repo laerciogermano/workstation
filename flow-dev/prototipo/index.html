@@ -27,17 +27,17 @@
 }
 :root[data-tema="eternos"] {
   /* Eternos Mutáveis: mundo material (estado, concreto) = branco · mundo abstrato = preto · dourado do livro nas estruturas */
-  --accent: #0b0b0b; --accent-2: #2a2a2a; --on-accent: #f4f2ec;
-  --ink: #0b0b0b; --body: #4a4843; --muted: #8f8b82; --line: #d9d5cb; --line-2: #c9c5bb;
-  --paper: #f4f2ec; --panel: #ece9e1; --wash: #e4e0d6; --stage: #d9d5cb; --bezel: #a9a59b;
-  --ok: #8a6a1f; --run: #0b0b0b; --warn: #a8802a; --fail: #8a2a1f; --idle: #8f8b82;
+  --accent: #0b0b0b; --accent-2: #2a2a2a; --on-accent: #f6f6f6;
+  --ink: #0b0b0b; --body: #444444; --muted: #8a8a8a; --line: #dddddd; --line-2: #c8c8c8;
+  --paper: #f6f6f6; --panel: #eeeeee; --wash: #e6e6e6; --stage: #d6d6d6; --bezel: #a6a6a6; /* cinza neutro (sem amarelado) */
+  --ok: #8a6a1f; --run: #0b0b0b; --warn: #a8802a; --fail: #8a2a1f; --idle: #8a8a8a;
   --t-pessoa: #0b0b0b; --t-ia: #0b0b0b; --t-maquina: #0b0b0b;
   --fn: #0b0b0b; --dado: #0b0b0b;
 }
 :root[data-tema="eternos"] .fbar { background: #fff; border: 1.5px solid #0b0b0b; }            /* função concreta = branca */
 :root[data-tema="eternos"] .fbar .fb-t { color: #0b0b0b; line-height: 15px; }
 :root[data-tema="eternos"] .fbar.abs { background: #0b0b0b; border-color: #0b0b0b; }          /* função abstrata = preta */
-:root[data-tema="eternos"] .fbar.abs .fb-t { color: #f4f2ec; }
+:root[data-tema="eternos"] .fbar.abs .fb-t { color: #f6f6f6; }
 :root[data-tema="eternos"] .fbar.nag { background: transparent; border-style: dashed; }
 :root[data-tema="eternos"] .fsvg .fdot { fill: #fff; stroke: #0b0b0b; }                      /* dado concreto = branco */
 :root[data-tema="eternos"] .fsvg .fdot.a { fill: #0b0b0b; }                                   /* dado abstrato = preto */
@@ -47,14 +47,15 @@
 :root[data-tema="eternos"] .lg-fa { background: #0b0b0b; border-color: #0b0b0b; }
 :root[data-tema="eternos"] .lg-dot { background: #fff; border-color: #0b0b0b; }
 :root[data-tema="eternos"] .lg-da { background: #0b0b0b; }
-:root[data-tema="eternos"] .fav { background: #0b0b0b; border-color: #0b0b0b; color: #f4f2ec; }   /* agente (abstrato) = preto */
+:root[data-tema="eternos"] .fav { background: #0b0b0b; border-color: #0b0b0b; color: #f6f6f6; }   /* agente (abstrato) = preto */
 :root[data-tema="eternos"] .fav.maquina { background: #fff; border-color: #0b0b0b; color: #0b0b0b; } /* lib (concreta) = branca */
 :root[data-tema="eternos"] .fav.pessoa { background: #fff; border-color: #0b0b0b; color: #0b0b0b; }
 :root[data-tema="eternos"] .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
 :root[data-tema="eternos"] .node .fi.plan.abs svg { fill: #fff; }
 :root[data-tema="eternos"] .node .fi.plan.ia svg { fill: #0b0b0b; }
 :root[data-tema="eternos"] .node .fi.dado svg { fill: #fff; }
-:root[data-tema="eternos"] .gantt.flow .grow.sel, :root[data-tema="eternos"] .gantt.flow .grows-r .rr.sel { background: color-mix(in srgb, #a8802a 18%, var(--paper)); }
+:root[data-tema="eternos"] .gantt.flow .grow.sel, :root[data-tema="eternos"] .gantt.flow .grows-r .rr.sel { background: rgba(0,0,0,.07); box-shadow: inset 0 -1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(0,0,0,.25); }
+:root[data-tema="eternos"] .fband, :root[data-tema="eternos"] .gantt.flow .grow.ifrow { background: rgba(0,0,0,.035); }
 :root[data-tema="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; --stage: #e4e9ea; --bezel: #c9d1d2; }
 :root[data-tema="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --stage: #e5e7f0; --bezel: #c9cddd; --t-ia: #a2458e; }
 :root[data-tema="cobalto"] { --accent: #2563eb; --accent-2: #1d4ed8; --line: #dbe4f3; --line-2: #c9d6ea; --panel: #f3f6fc; --wash: #eaf0fa; --stage: #e2e9f4; --bezel: #b8c7de; --run: #2563eb; --t-pessoa: #2563eb; }
@@ -2618,7 +2619,7 @@ const SCREENS = {
 };
 const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
 const TEMAS = [
-  { id: "eternos", name: "Eternos Mutáveis", a: "#0b0b0b", b: "#f4f2ec", desc: "Do livro: o mundo material (estado, concreto) é branco e o abstrato é preto. Sólido = branco preenchido · abstrato = preto preenchido." },
+  { id: "eternos", name: "Eternos Mutáveis", a: "#0b0b0b", b: "#f6f6f6", desc: "Do livro: o mundo material (estado, concreto) é branco e o abstrato é preto. Sólido = branco preenchido · abstrato = preto preenchido." },
   { id: "papel", name: "Papel", a: "#d4432a", b: "#f8f6f2", desc: "Claro editorial — accent terracota no papel quente." },
   { id: "teal", name: "Teal", a: "#0f766e", b: "#f6f8f8", desc: "Verde-água sóbrio para leitura longa." },
   { id: "indigo", name: "Índigo", a: "#3d4fb8", b: "#f6f7fb", desc: "Azul produto / SaaS clássico." },

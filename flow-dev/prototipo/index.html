@@ -559,6 +559,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fe-d b.ext { color: var(--muted); }
 /* filtro transversal flutuante (centro, acima da legenda) */
 .vdock.fdock { bottom: 50px; align-items: center; }
+.vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
 .vdock.fdock .fd-l { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .vdock.fdock .fd-l svg { color: var(--dado); }
 .fh-e.bot span::after { top: -13px; }
@@ -1764,7 +1765,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><span class="fd-l">${icon("box")}Dados</span><button data-act="dados-modo" data-m="todos" aria-current="${!s.dadosNovos}">Todos</button><button data-act="dados-modo" data-m="novos" aria-current="${!!s.dadosNovos}">Novos</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="dados-modo" data-m="todos" aria-current="${!s.dadosNovos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!!s.dadosNovos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {

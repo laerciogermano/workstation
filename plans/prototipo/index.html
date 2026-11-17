@@ -414,7 +414,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gdays.gsteps div span { font-size:10px; text-transform:none; letter-spacing:0; }
 .gantt.flow .gtoday { display:none; }
 /* Gantt */
-.gantt { height: 100%; display: flex; flex-direction: column; }
+.gantt { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.gantt > .gmain { flex: 1; display: flex; min-height: 0; }
 .gmain { flex: 1; display: flex; min-height: 0; }
 .gscroll { flex: 1; overflow: auto; position: relative; min-width: 0; scrollbar-width: thin; }
 .gtable { display: grid; position: relative; }
@@ -562,26 +563,25 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .ctx .danger { color: var(--fail); }
 
 
-/* Fluxograma (estilo n8n) — zoom scroll + pan no canvas */
-.diagram { height: 100%; display: flex; flex-direction: column; min-height: 0; }
-.diagram .dtoolbar { display:flex; align-items:center; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); flex:none; }
-.diagram .dtoolbar .dz { display:inline-flex; align-items:center; gap:2px; margin-left:auto; }
-.diagram .dtoolbar .dz .pct { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:40px; text-align:center; }
-.diagram .dcanvas { flex:1; overflow:hidden; position:relative; min-height:0; cursor:grab; touch-action:none;
-  background-color: var(--panel);
-}
-.diagram .dcanvas.panning { cursor:grabbing; }
-.diagram .dworld { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform;
+/* Zoom/pan canvas (Fluxograma, Gantt, Flow, Árvore) */
+.zview { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.zview .ztoolbar { display:flex; align-items:center; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); flex:none; }
+.zview .ztoolbar .dz { display:inline-flex; align-items:center; gap:2px; margin-left:auto; }
+.zview .ztoolbar .dz .pct { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:40px; text-align:center; }
+.zview .zcanvas { flex:1; overflow:hidden; position:relative; min-height:0; cursor:grab; touch-action:none; background-color: var(--panel); }
+.zview .zcanvas.panning { cursor:grabbing; }
+.zview .zworld { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform; }
+.zview .zworld.dots {
   background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 35%, transparent) 1px, transparent 1px);
   background-size: 18px 18px;
-  background-color: transparent;
 }
-.diagram .dworld > svg { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
-.diagram .dworld > svg path.wire { fill:none; stroke:var(--line-2); stroke-width:2; }
-.diagram .dworld > svg path.wire.on { stroke:var(--ok); }
-.diagram .dworld > svg path.wire.run { stroke:var(--run); }
-.diagram .dworld > svg path.wire.fail { stroke:var(--fail); }
-.diagram .dworld > svg path.wire.par { stroke-dasharray:5 4; stroke:var(--run); }
+.diagram { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.diagram .zworld > svg { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
+.diagram .zworld > svg path.wire { fill:none; stroke:var(--line-2); stroke-width:2; }
+.diagram .zworld > svg path.wire.on { stroke:var(--ok); }
+.diagram .zworld > svg path.wire.run { stroke:var(--run); }
+.diagram .zworld > svg path.wire.fail { stroke:var(--fail); }
+.diagram .zworld > svg path.wire.par { stroke-dasharray:5 4; stroke:var(--run); }
 .dnode { position:absolute; width:220px; min-height:72px; background:var(--paper); border:1px solid var(--line-2); border-radius:10px; box-shadow:0 2px 8px rgba(20,24,30,.08); display:grid; grid-template-columns:44px 1fr; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
 .dnode:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line-2)); box-shadow:0 6px 18px rgba(20,24,30,.12); }
 .dnode.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 8px 22px rgba(20,24,30,.14); }
@@ -597,8 +597,14 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .dnode.exec .port.out { border-color:var(--run); background:color-mix(in srgb, var(--run) 25%, var(--paper)); }
 .dnode.ok .port.out { border-color:var(--ok); background:color-mix(in srgb, var(--ok) 25%, var(--paper)); }
 .dnode.fail .port.out { border-color:var(--fail); background:color-mix(in srgb, var(--fail) 25%, var(--paper)); }
-.dsticky { position:absolute; width:180px; min-height:70px; background:color-mix(in srgb, var(--warn) 18%, var(--paper)); border:1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius:4px; padding:10px 12px; font-size:12px; color:var(--body); box-shadow:1px 2px 0 rgba(20,24,30,.06); pointer-events:none; }
+.dsticky { position:absolute; z-index:3; width:260px; min-height:70px; background:color-mix(in srgb, var(--warn) 18%, var(--paper)); border:1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius:4px; padding:10px 12px; font-size:12px; color:var(--body); box-shadow:1px 2px 0 rgba(20,24,30,.06); pointer-events:none; }
 .dsticky b { display:block; font-weight:700; color:var(--ink); margin-bottom:4px; font-size:13px; }
+
+/* Gantt/Flow/Árvore dentro do zoom world */
+.zview .gantt, .zview .tree { height: auto; min-height: 0; }
+.zview .gscroll { overflow: visible; }
+.zview .tree { overflow: visible; height: auto; }
+.zview .tree-c { position: relative; }
 
 /* Copiloto · painel fixo à direita (abas estilo Cursor) */
 .copilot { background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
@@ -662,6 +668,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 
 /* Árvore de execução */
 .tree { height: 100%; overflow: auto; position: relative; }
+.tree.zview { overflow: hidden; display: flex; flex-direction: column; }
 .tree-c { position: relative; }
 .tree-c > svg { position: absolute; left: 0; top: 0; pointer-events: none; }
 .tree-c > svg path { fill: none; stroke: var(--line-2); stroke-width: 1.4; }
@@ -1173,14 +1180,18 @@ function gantt(s) {
   DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => svg += `<path class="dep" d="${route(a, b)}" marker-end="url(#ah)"/>`);
   PARS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => { const [x1, y1] = anchor(a, false), [, y2] = anchor(b, false); svg += `<path class="dep par" d="M${x1 - 6} ${y1} H${x1 - 12} V${y2} H${x1 - 6}"/>`; });
   const svgEl = `<svg class="gsvg" width="${NDAYS * W}" height="${H}"><defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--muted)"/></marker></defs>${svg}</svg>`;
-  return `<div class="gantt">${runbarHtml(s)}
-    <div class="gmain"><div class="gscroll"><div class="gtable" style="grid-template-columns:${LW}px ${NDAYS * W}px">
-      <div class="gleft"><div class="ghead"><div class="gl-cols"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : "Tarefas · Plano padrão"}</span><span>Responsável</span><span style="text-align:right">Dur.</span></div></div>${left}</div>
-      <div class="gright"><div class="ghead"><div class="gdays">${days.map((d, i) => `<div class="${d.wk ? "wk" : ""}${i === TODAY ? " today" : ""}" style="width:${W}px">${W >= 34 ? d.wd : d.wd[0]}<b class="num">${d.dn}</b></div>`).join("")}</div></div>
-        <div class="gbg">${days.map(d => `<div class="${d.wk ? "wk" : ""}" style="width:${W}px"></div>`).join("")}</div>
-        <div class="gtoday" style="left:${TODAY * W + W / 2}px"></div>
-        <div class="grows-r">${bars}</div>${svgEl}</div>
-    </div></div></div>
+  const worldW = LW + NDAYS * W;
+  const worldH = 48 + Math.max(H, RH);
+  return `<div class="gantt zview">${runbarHtml(s)}${zoomToolbar("gantt", "Gantt", "chart-gantt")}
+    <div class="zcanvas" data-zcanvas="gantt"><div class="zworld" data-zworld="gantt" style="width:${worldW}px;height:${worldH}px">
+      <div class="gtable" style="grid-template-columns:${LW}px ${NDAYS * W}px;width:${worldW}px">
+        <div class="gleft"><div class="ghead"><div class="gl-cols"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : "Tarefas · Plano padrão"}</span><span>Responsável</span><span style="text-align:right">Dur.</span></div></div>${left}</div>
+        <div class="gright"><div class="ghead"><div class="gdays">${days.map((d, i) => `<div class="${d.wk ? "wk" : ""}${i === TODAY ? " today" : ""}" style="width:${W}px">${W >= 34 ? d.wd : d.wd[0]}<b class="num">${d.dn}</b></div>`).join("")}</div></div>
+          <div class="gbg">${days.map(d => `<div class="${d.wk ? "wk" : ""}" style="width:${W}px"></div>`).join("")}</div>
+          <div class="gtoday" style="left:${TODAY * W + W / 2}px"></div>
+          <div class="grows-r">${bars}</div>${svgEl}</div>
+      </div>
+    </div></div>
     ${nod.length ? `<div class="nodate">${icon("calendar-x-2")}Sem datas, fora do eixo:${nod.map(r => `<button class="lk" data-act="drawer" data-id="${r.u.id}">${agChip(r.u.agent, true)}${esc(r.u.title)}</button>`).join("")}</div>` : ""}
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
@@ -1219,13 +1230,17 @@ function flow(s) {
     </div></div>`;
   }).join("");
   const stepsHead = Array.from({ length: nSteps }, (_, i) => `<div style="width:${W}px"><span>passo</span><b class="num">${i + 1}</b></div>`).join("");
-  return `<div class="gantt flow">${runbarHtml(s)}
-    <div class="gmain"><div class="gscroll"><div class="gtable" style="grid-template-columns:${LW}px ${nSteps * W}px">
-      <div class="gleft"><div class="ghead"><div class="gl-cols" style="grid-template-columns:1fr 112px"><span>${s.plan === "onb" ? "Etapas · Onboarding Acme" : "Etapas · Plano padrão"}</span><span>Responsável</span></div></div>${left}</div>
-      <div class="gright"><div class="ghead"><div class="gdays gsteps">${stepsHead}</div></div>
-        <div class="gbg">${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}</div>
-        <div class="grows-r">${bars}</div></div>
-    </div></div></div>
+  const worldW = LW + nSteps * W;
+  const worldH = 48 + Math.max(rows.length * RH, RH);
+  return `<div class="gantt flow zview">${runbarHtml(s)}${zoomToolbar("flow", "Flow", "workflow")}
+    <div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
+      <div class="gtable" style="grid-template-columns:${LW}px ${nSteps * W}px;width:${worldW}px">
+        <div class="gleft"><div class="ghead"><div class="gl-cols" style="grid-template-columns:1fr 112px"><span>${s.plan === "onb" ? "Etapas · Onboarding Acme" : "Etapas · Plano padrão"}</span><span>Responsável</span></div></div>${left}</div>
+        <div class="gright"><div class="ghead"><div class="gdays gsteps">${stepsHead}</div></div>
+          <div class="gbg">${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}</div>
+          <div class="grows-r">${bars}</div></div>
+      </div>
+    </div></div>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -1272,52 +1287,77 @@ function machPanel(s) {
 }
 
 
-// ----- Fluxograma (canvas tipo n8n) — zoom/pan -----
-const DVIEW = { z: 1, x: 24, y: 16 };
-const DZ_MIN = 0.25, DZ_MAX = 2.5;
-let dPan = null;
-function applyDiagramView() {
-  const world = holder.querySelector(".dworld");
-  if (!world) return;
-  world.style.transform = `translate(${DVIEW.x}px, ${DVIEW.y}px) scale(${DVIEW.z})`;
-  const pct = holder.querySelector("[data-dz-pct]");
-  if (pct) pct.textContent = Math.round(DVIEW.z * 100) + "%";
+// ----- Zoom/pan (Fluxograma, Gantt, Flow, Árvore) -----
+const ZVIEWS = {
+  diagram: { z: 1, x: 24, y: 16 },
+  gantt: { z: 1, x: 16, y: 16 },
+  flow: { z: 1, x: 16, y: 16 },
+  tree: { z: 1, x: 16, y: 16 },
+};
+const Z_MIN = 0.25, Z_MAX = 2.5;
+let zPan = null;
+function zKey() {
+  const v = cur?.v;
+  return v === "diagram" || v === "gantt" || v === "flow" || v === "tree" ? v : null;
 }
-function diagramLocalPoint(canvas, clientX, clientY) {
+function zoomToolbar(key, label, ic) {
+  const st = ZVIEWS[key];
+  return `<div class="ztoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon(ic)} ${esc(label)}</span>
+    <div class="dz" role="group" aria-label="Zoom">
+      <button type="button" class="ib" data-act="zzoom-out" data-zv="${key}" title="Zoom out" aria-label="Zoom out">${icon("minus")}</button>
+      <span class="pct" data-z-pct="${key}">${Math.round(st.z * 100)}%</span>
+      <button type="button" class="ib" data-act="zzoom-in" data-zv="${key}" title="Zoom in" aria-label="Zoom in">${icon("plus")}</button>
+      <button type="button" class="ib" data-act="zzoom-fit" data-zv="${key}" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
+    </div></div>`;
+}
+function applyZView(key = zKey()) {
+  if (!key || !ZVIEWS[key]) return;
+  const st = ZVIEWS[key];
+  const world = holder.querySelector(`[data-zworld="${key}"]`);
+  if (!world) return;
+  world.style.transform = `translate(${st.x}px, ${st.y}px) scale(${st.z})`;
+  const pct = holder.querySelector(`[data-z-pct="${key}"]`);
+  if (pct) pct.textContent = Math.round(st.z * 100) + "%";
+}
+function zLocalPoint(canvas, clientX, clientY) {
   const rect = canvas.getBoundingClientRect();
   const sx = rect.width ? canvas.clientWidth / rect.width : 1;
   const sy = rect.height ? canvas.clientHeight / rect.height : 1;
   return { x: (clientX - rect.left) * sx, y: (clientY - rect.top) * sy };
 }
-function diagramZoomAt(canvas, lx, ly, nextZ) {
-  const z0 = DVIEW.z;
-  const z = Math.min(DZ_MAX, Math.max(DZ_MIN, nextZ));
+function zZoomAt(key, canvas, lx, ly, nextZ) {
+  const st = ZVIEWS[key]; if (!st || !canvas) return;
+  const z0 = st.z;
+  const z = Math.min(Z_MAX, Math.max(Z_MIN, nextZ));
   if (Math.abs(z - z0) < 1e-6) return;
-  const wx = (lx - DVIEW.x) / z0;
-  const wy = (ly - DVIEW.y) / z0;
-  DVIEW.z = z;
-  DVIEW.x = lx - wx * z;
-  DVIEW.y = ly - wy * z;
-  applyDiagramView();
+  const wx = (lx - st.x) / z0;
+  const wy = (ly - st.y) / z0;
+  st.z = z;
+  st.x = lx - wx * z;
+  st.y = ly - wy * z;
+  applyZView(key);
 }
-function diagramFit() {
-  const canvas = holder.querySelector(".dcanvas");
-  const world = holder.querySelector(".dworld");
-  if (!canvas || !world) return;
+function zFit(key) {
+  const canvas = holder.querySelector(`[data-zcanvas="${key}"]`);
+  const world = holder.querySelector(`[data-zworld="${key}"]`);
+  const st = ZVIEWS[key];
+  if (!canvas || !world || !st) return;
   const W = parseFloat(world.style.width) || world.offsetWidth || 720;
   const H = parseFloat(world.style.height) || world.offsetHeight || 420;
   const pad = 56;
   const z = Math.min(1.15, (canvas.clientWidth - pad) / W, (canvas.clientHeight - pad) / H);
-  DVIEW.z = Math.max(DZ_MIN, Math.min(DZ_MAX, z));
-  DVIEW.x = (canvas.clientWidth - W * DVIEW.z) / 2;
-  DVIEW.y = Math.max(12, (canvas.clientHeight - H * DVIEW.z) / 2);
-  applyDiagramView();
+  st.z = Math.max(Z_MIN, Math.min(Z_MAX, z));
+  st.x = (canvas.clientWidth - W * st.z) / 2;
+  st.y = Math.max(12, (canvas.clientHeight - H * st.z) / 2);
+  applyZView(key);
 }
 function diagram(s) {
   const rows = ganttRows(s.plan);
   const { layout } = flowLayout(s.plan);
   const leaves = rows.filter(({ u }) => !kidsPlan(u.id).some(k => !k.arch && !isFolder(k)));
-  const NW = 220, NH = 78, GX = 88, GY = 28, PX = 56, PY = 48;
+  const NW = 220, NH = 78, GX = 88, GY = 28, PX = 56;
+  const STICKY_TOP = 16, STICKY_H = 78, STICKY_GAP = 24;
+  const PY = STICKY_TOP + STICKY_H + STICKY_GAP;
   // agrupa por passo
   const byStep = {};
   leaves.forEach(({ u }) => {
@@ -1329,7 +1369,6 @@ function diagram(s) {
   let maxY = 0;
   steps.forEach((step, si) => {
     const list = byStep[step];
-    const colH = list.length * NH + (list.length - 1) * GY;
     list.forEach((u, i) => {
       const x = PX + si * (NW + GX);
       const y = PY + i * (NH + GY);
@@ -1338,7 +1377,7 @@ function diagram(s) {
     });
   });
   const maxX = steps.length ? PX + (steps.length - 1) * (NW + GX) + NW + PX : 400;
-  const H = Math.max(maxY + PY, 420), W = Math.max(maxX, 720);
+  const H = Math.max(maxY + 48, PY + 200, 420), W = Math.max(maxX, 720);
   const center = id => {
     const p = pos[id];
     return p ? { x: p.x + p.w / 2, y: p.y + p.h / 2, l: p.x, r: p.x + p.w, t: p.y, b: p.y + p.h } : null;
@@ -1377,18 +1416,18 @@ function diagram(s) {
       <span class="port in" aria-hidden="true"></span><span class="port out" aria-hidden="true"></span>
     </div>`;
   }).join("");
-  const sticky = `<div class="dsticky" style="left:16px;top:16px"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Scroll = zoom · arrastar o fundo = pan. Portas à esquerda (entrada) e à direita (saída).</div>`;
-  return `<div class="diagram">${runbarHtml(s)}
-    <div class="dtoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon("waypoints")} Fluxograma</span>
+  const sticky = `<div class="dsticky" style="left:${PX}px;top:${STICKY_TOP}px;height:${STICKY_H}px;box-sizing:border-box"><b>${s.plan === "onb" ? "Onboarding Acme" : "Plano padrão"}</b>Scroll = zoom · arrastar o fundo = pan. Portas à esquerda (entrada) e à direita (saída).</div>`;
+  return `<div class="diagram zview">${runbarHtml(s)}
+    <div class="ztoolbar"><span style="font-size:12px;font-weight:600;color:var(--muted)">${icon("waypoints")} Fluxograma</span>
       <div class="legend"><span>nó = etapa</span><span><i></i>sequencial</span><span><i class="p"></i>paralelo</span><span>${agChip("p1", true)} pessoa</span><span>${agChip("a1", true)} IA</span><span>${agChip("m1", true)} máquina</span></div>
       <div class="dz" role="group" aria-label="Zoom">
-        <button type="button" class="ib" data-act="dzoom-out" title="Zoom out" aria-label="Zoom out">${icon("minus")}</button>
-        <span class="pct" data-dz-pct>${Math.round(DVIEW.z * 100)}%</span>
-        <button type="button" class="ib" data-act="dzoom-in" title="Zoom in" aria-label="Zoom in">${icon("plus")}</button>
-        <button type="button" class="ib" data-act="dzoom-fit" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
+        <button type="button" class="ib" data-act="zzoom-out" data-zv="diagram" title="Zoom out" aria-label="Zoom out">${icon("minus")}</button>
+        <span class="pct" data-z-pct="diagram">${Math.round(ZVIEWS.diagram.z * 100)}%</span>
+        <button type="button" class="ib" data-act="zzoom-in" data-zv="diagram" title="Zoom in" aria-label="Zoom in">${icon("plus")}</button>
+        <button type="button" class="ib" data-act="zzoom-fit" data-zv="diagram" title="Ajustar à tela" aria-label="Ajustar à tela">${icon("maximize-2")}</button>
       </div></div>
-    <div class="dcanvas"><div class="dworld" style="width:${W}px;height:${H}px">
-      <svg width="${W}" height="${H}">${wires}</svg>${sticky}${nodes}
+    <div class="zcanvas" data-zcanvas="diagram"><div class="zworld dots" data-zworld="diagram" style="width:${W}px;height:${H}px">
+      ${sticky}<svg width="${W}" height="${H}">${wires}</svg>${nodes}
     </div></div></div>`;
 }
 
@@ -1615,7 +1654,11 @@ function tree(s) {
     nodes += `<form class="tnew" data-form="tnew" style="left:${p.x}px;top:${p.y}px"><input name="t" placeholder="Título da atividade" aria-label="Título"><small>Enter cria · Esc cancela</small></form>`;
   }
   const w = Math.max(0, ...Object.values(pos).map(p => p.x)) + NW + PX, h = y + PY * 2;
-  return `<div class="tree"><div class="tree-c" style="width:${w}px;height:${h}px"><svg width="${w}" height="${h}">${paths}</svg>${nodes}</div>${!all.length ? `<div class="tree-empty">Nenhuma atividade ainda. Crie a primeira pelo botão Atividade.</div>` : ""}</div>`;
+  return `<div class="tree zview">${zoomToolbar("tree", "Árvore", "network")}
+    <div class="zcanvas" data-zcanvas="tree"><div class="zworld" data-zworld="tree" style="width:${Math.max(w, 480)}px;height:${Math.max(h, 320)}px">
+      <div class="tree-c" style="width:${w}px;height:${h}px"><svg width="${w}" height="${h}">${paths}</svg>${nodes}</div>
+      ${!all.length ? `<div class="tree-empty">Nenhuma atividade ainda. Crie a primeira pelo botão Atividade.</div>` : ""}
+    </div></div></div>`;
 }
 function procPanel(s) {
   const u = $u(s.tnode); if (!u) return "";
@@ -1761,16 +1804,16 @@ const FLOWS = [
     desc: "Painel lateral comum às visões. Mesmo UUID, vocabulário da visão de origem (card, tarefa, etapa, atividade, arquivo), responsável escolhido do catálogo, estado, hierarquia e atalhos para abrir em outra visão.",
     steps: [["T-20", "Detalhe"], ["T-21", "Atribuir responsável"]] },
   { id: "gantt", n: "04", title: "Gantt", us: "US-08 a US-11",
-    desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas. Roll-up no pai; tarefas sem data à parte.",
+    desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas. Zoom/pan no mesmo padrão do Fluxograma. Roll-up no pai; tarefas sem data à parte.",
     steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"]] },
   { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
-    desc: "Formato Gantt por passos (sem calendário). Cada etapa: um □ de entrada | função | um □ de saída. Sem setas de dependência. Máquina se programa aqui; exporta código.",
+    desc: "Formato Gantt por passos (sem calendário). Cada etapa: um □ de entrada | função | um □ de saída. Zoom/pan como no Fluxograma. Máquina se programa aqui; exporta código.",
     steps: [["T-32", "Flow"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
-    desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. Zoom com scroll e pan arrastando o fundo.",
+    desc: "Canvas de nós no espírito do n8n: sticky do plano acima, fluxo abaixo sem sobreposição. Portas, fios, zoom/pan.",
     steps: [["T-36", "Fluxograma"]] },
   { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
-    desc: "A floresta de atividades fora do eixo do tempo: várias raízes, responsáveis em cada nó, criar filha, desaninhar e excluir subárvore. Nó de máquina abre o procedimento ali mesmo.",
+    desc: "Floresta de atividades com zoom/pan (mesmo padrão do Fluxograma). Criar filha, desaninhar, excluir; nó de máquina abre o procedimento.",
     steps: [["T-40", "Árvore"], ["T-41", "Nova atividade filha"], ["T-42", "Procedimento da máquina"]] },
   { id: "copilot", n: "08", title: "Copiloto", us: "harness",
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
@@ -1794,16 +1837,16 @@ const SCREENS = {
   "T-12": { s: { v: "board", cfg: true }, name: "Colunas e raias", us: ["US-04", "US-07"], notes: "Configuração no próprio board: renomear, reordenar, adicionar e marcar coluna de execução. Remover só com a coluna ou raia vazia; com cards, o botão fica desativado e diz por quê." },
   "T-20": { s: { v: "board", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["US-01", "US-02"], notes: "Título e contexto editáveis (o título muda em todas as visões), UUID copiável, vocabulário da visão de origem, responsável, estado de execução com o erro, datas, entradas e saídas, pai e filhos, e “Abrir em” Board, Gantt, Flow, Fluxograma, Árvore, Copiloto ou Explorar. Arquivar e excluir no rodapé." },
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
-  "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Barras por início e fim (hoje marcado), setas fim→início e paralelo. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
+  "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Barras por início e fim (hoje marcado), setas fim→início e paralelo. Zoom/pan como no Fluxograma (scroll, −/+, ajustar, arrastar fundo). Pai = roll-up; sem data na faixa de baixo." },
   "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
-  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Formato Gantt por passo (sem calendário). Em cada barra: um □ de entrada à esquerda e um □ de saída à direita (tracejado se vazio; nomes no title). Sem setas SVG." },
+  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Formato Gantt por passo (sem calendário). Um □ de entrada e um □ de saída por etapa. Zoom/pan no mesmo padrão do Fluxograma. Sem setas SVG." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
   "T-35": { s: { v: "flow", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
-  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
+  "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Sticky do plano acima; nós do fluxo começam abaixo, sem sobreposição. Portas entrada/saída, fios, zoom/pan (scroll, −/+, ajustar, arrastar fundo). Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
   "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["estado"], notes: "Visão Estados no dock: objeto { root } com árvore chave→valor (saídas do plano aninhadas pelo path da ref) e painel JSON. Expandir/recolher nós; troca de plano na barra." },
-  "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com uma raiz por pasta, da esquerda para a direita. Cada nó mostra responsável, estado e quantos descendentes tem. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
+  "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com zoom/pan (mesmo padrão do Fluxograma). Cada nó mostra responsável e estado. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
   "T-50": { s: { v: "catalog", catTab: "ia" }, name: "Responsáveis", us: ["US-03"], notes: "Catálogo por tipo: pessoas, IAs e máquinas, com quantas unidades usam cada um. Incluir na linha de cima. Item livre sai na hora." },
@@ -1914,11 +1957,12 @@ function paint(keepScroll = true) {
   if (chatThread && cur.v === "chat") chatThread.scrollTop = chatThread.scrollHeight;
   const t = tFor(cur); curT = t; const s = SCREENS[t];
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
+  const zoomHint = ["diagram", "gantt", "flow", "tree"].includes(cur.v) ? "<br><b>Scroll</b> zoom · arrastar fundo = pan · − / + / ajustar" : "";
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
-    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis${cur.v === "diagram" ? "<br><b>Scroll</b> zoom no Fluxograma · arrastar fundo = pan" : ""}</div>`;
+    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis${zoomHint}</div>`;
   lucide.createIcons();
   fit();
-  applyDiagramView();
+  applyZView();
   const f = holder.querySelector(cur.focusQ ? "[data-q]" : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
   const fl = holder.querySelector(".flash, .node.sel"); if (fl && cur.flash) fl.scrollIntoView({ block: "nearest", inline: "nearest" });
   cur.flash = null;
@@ -2080,9 +2124,19 @@ const ACT = {
   unnest: t => { const u = $u(t.dataset.id), p = $u(u.parent); u.parent = p.parent; toast(`“${u.title}” saiu de “${p.title}”`, "corner-left-up"); },
   tproc: t => { cur.tnode = t.dataset.id; cur.sel = t.dataset.id; unset("drawer", "tnew"); },
   "close-proc": () => unset("tnode"),
-  "dzoom-in": () => { const c = holder.querySelector(".dcanvas"); if (c) diagramZoomAt(c, c.clientWidth / 2, c.clientHeight / 2, DVIEW.z * 1.15); return false; },
-  "dzoom-out": () => { const c = holder.querySelector(".dcanvas"); if (c) diagramZoomAt(c, c.clientWidth / 2, c.clientHeight / 2, DVIEW.z / 1.15); return false; },
-  "dzoom-fit": () => { diagramFit(); return false; },
+  "zzoom-in": t => {
+    const key = t.dataset.zv || zKey();
+    const c = holder.querySelector(`[data-zcanvas="${key}"]`);
+    if (c && ZVIEWS[key]) zZoomAt(key, c, c.clientWidth / 2, c.clientHeight / 2, ZVIEWS[key].z * 1.15);
+    return false;
+  },
+  "zzoom-out": t => {
+    const key = t.dataset.zv || zKey();
+    const c = holder.querySelector(`[data-zcanvas="${key}"]`);
+    if (c && ZVIEWS[key]) zZoomAt(key, c, c.clientWidth / 2, c.clientHeight / 2, ZVIEWS[key].z / 1.15);
+    return false;
+  },
+  "zzoom-fit": t => { zFit(t.dataset.zv || zKey()); return false; },
 };
 function pasteInto(targetId) {
   if (!CLIP) return;
@@ -2110,43 +2164,49 @@ function runMachine(u) {
 }
 
 holder.addEventListener("wheel", e => {
-  const canvas = e.target.closest(".dcanvas");
-  if (!canvas || !player.classList.contains("open") || cur?.v !== "diagram") return;
+  const canvas = e.target.closest(".zcanvas");
+  const key = canvas?.dataset?.zcanvas || zKey();
+  if (!canvas || !key || !ZVIEWS[key] || !player.classList.contains("open")) return;
+  if (cur?.v !== key) return;
   e.preventDefault();
   e.stopPropagation();
-  const { x, y } = diagramLocalPoint(canvas, e.clientX, e.clientY);
+  const { x, y } = zLocalPoint(canvas, e.clientX, e.clientY);
   const step = e.ctrlKey || e.metaKey ? 1.08 : 1.12;
   const factor = e.deltaY < 0 ? step : 1 / step;
-  diagramZoomAt(canvas, x, y, DVIEW.z * factor);
+  zZoomAt(key, canvas, x, y, ZVIEWS[key].z * factor);
 }, { passive: false });
 holder.addEventListener("pointerdown", e => {
-  const canvas = e.target.closest(".dcanvas");
-  if (!canvas || cur?.v !== "diagram") return;
-  if (e.target.closest(".dnode, button, a, input, select, textarea, .dz")) return;
+  const canvas = e.target.closest(".zcanvas");
+  const key = canvas?.dataset?.zcanvas || zKey();
+  if (!canvas || !key || !ZVIEWS[key] || cur?.v !== key) return;
+  if (e.target.closest(".dnode, .tnode, .gbar, .funit, .grow, button, a, input, select, textarea, .dz, .tnew")) return;
   if (e.button !== 0 && e.button !== 1) return;
-  dPan = { id: e.pointerId, x: e.clientX, y: e.clientY, ox: DVIEW.x, oy: DVIEW.y };
+  const st = ZVIEWS[key];
+  zPan = { key, id: e.pointerId, x: e.clientX, y: e.clientY, ox: st.x, oy: st.y };
   try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   canvas.classList.add("panning");
   e.preventDefault();
 });
 holder.addEventListener("pointermove", e => {
-  if (!dPan || e.pointerId !== dPan.id) return;
-  const canvas = holder.querySelector(".dcanvas");
-  if (!canvas) return;
+  if (!zPan || e.pointerId !== zPan.id) return;
+  const canvas = holder.querySelector(`[data-zcanvas="${zPan.key}"]`);
+  const st = ZVIEWS[zPan.key];
+  if (!canvas || !st) return;
   const rect = canvas.getBoundingClientRect();
   const sx = rect.width ? canvas.clientWidth / rect.width : 1;
   const sy = rect.height ? canvas.clientHeight / rect.height : 1;
-  DVIEW.x = dPan.ox + (e.clientX - dPan.x) * sx;
-  DVIEW.y = dPan.oy + (e.clientY - dPan.y) * sy;
-  applyDiagramView();
+  st.x = zPan.ox + (e.clientX - zPan.x) * sx;
+  st.y = zPan.oy + (e.clientY - zPan.y) * sy;
+  applyZView(zPan.key);
 });
-const endDPan = e => {
-  if (!dPan || (e.pointerId != null && e.pointerId !== dPan.id)) return;
-  dPan = null;
-  holder.querySelector(".dcanvas")?.classList.remove("panning");
+const endZPan = e => {
+  if (!zPan || (e.pointerId != null && e.pointerId !== zPan.id)) return;
+  const key = zPan.key;
+  zPan = null;
+  holder.querySelector(`[data-zcanvas="${key}"]`)?.classList.remove("panning");
 };
-holder.addEventListener("pointerup", endDPan);
-holder.addEventListener("pointercancel", endDPan);
+holder.addEventListener("pointerup", endZPan);
+holder.addEventListener("pointercancel", endZPan);
 
 holder.addEventListener("click", e => {
   const t = e.target.closest("[data-act]");

@@ -68,3 +68,13 @@ Flow no layout Gantt (`flowLayout` + `.funit`): **um** □ entrada e **um** □ 
 **Antes → depois:** vários quadrados por I/O + deps → 1+1 quadrados, sem setas.
 
 **Voltar:** multi-sq + `.gsvg` deps no `flow()`.
+
+## Zoom/pan · Gantt · Flow · Árvore · Fluxograma
+
+Mesmo padrão: `ZVIEWS[key]` + `.zcanvas` / `.zworld` + toolbar `zzoom-*`. Scroll = zoom no cursor; arrastar fundo = pan; − / % / + / ajustar.
+
+No Fluxograma, sticky do plano fica na faixa superior (`STICKY_*`); nós começam em `PY` abaixo — sem overlap.
+
+**Antes → depois:** só Fluxograma com zoom → as quatro visões; sticky por cima dos nós → sticky + fluxo separados.
+
+**Voltar:** `DVIEW` só no diagram; sticky em `top:16px` sem reservar `PY`.

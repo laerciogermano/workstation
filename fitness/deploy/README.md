@@ -7,6 +7,8 @@
 
 **Temas (v1):** 13 — padrão **Pista** (`data-theme="pista"` / `localStorage` `ft-theme` fallback). Também: Cobalto, Preto, Lima, Zona, Volt, Next, Esmeralda, Forja, Giz, Sálvia, Musgo, Neon. Voltar ao Cobalto: `getTheme`/`html` → `cobalto` + `publicar.sh`.
 
+**UI (2026-11-16):** cartões/botões secundários sem contorno (`--ft-edge: transparent`); separação só por tom (`--ft-line-2` / `--ft-raise`), no padrão Clozzy. Rollback: restaurar `border: … var(--ft-line)` nos seletores `.card`/`.btn.s`/`.opt`/etc. e republicar; cache-bust em `index.html` (`?v=`).
+
 ## Republicar
 
 ```bash

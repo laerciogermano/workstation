@@ -1444,7 +1444,7 @@ function explorer(s) {
     });
     return rows;
   }
-  // Planos = projetos; dentro de cada um, os roteiros (círculos, com os nomes) e os Estados (cubo nos dados)
+  // Projetos; dentro: Funções (círculos) e Estados (cubo nos dados)
   const projRows = [];
   PLANS.forEach(p => {
     const before = projRows.length;
@@ -1456,7 +1456,7 @@ function explorer(s) {
     projRows.push(`<div class="node proj${pOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="proj-sel" data-plan="${p.id}" data-id="${pid}" title="Abrir ${esc(p.name)} no Flow" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}<button class="ib pj-b" data-act="proj-open" data-plan="${p.id}" title="Abrir todos">${icon("chevrons-up-down")}</button><button class="ib pj-b" data-act="proj-close" data-plan="${p.id}" title="Fechar todos">${icon("chevrons-down-up")}</button></span></div>`);
     if (!pOpen) return;
     const rid = "pjp:" + p.id, rOpen = q ? true : OPEN.has(rid);
-    projRows.push(`<div class="node${rOpen ? " openf" : ""}" data-act="toggle" data-id="${rid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Planos (roteiros) do projeto">${icon("circle")}</span><span class="t">Planos</span></div>`);
+    projRows.push(`<div class="node${rOpen ? " openf" : ""}" data-act="toggle" data-id="${rid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Funções do projeto">${icon("circle")}</span><span class="t">Funções</span></div>`);
     if (rOpen) projRows.push(...planRows);
     if (est.length) {
       projRows.push(`<div class="node${eOpen ? " openf" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi dado" title="Estados do projeto">${icon("box")}</span><span class="t">Estados</span></div>`);
@@ -1518,17 +1518,17 @@ function explorer(s) {
   const empty = !planRows.length && !estadoRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
-      <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
-      <button class="ib" data-act="new-folder" title="Nova pasta de planos">${icon("folder-plus")}</button>
+      <button class="ib" data-act="new-file" title="Novo projeto">${icon("circle-plus")}</button>
+      <button class="ib" data-act="new-folder" title="Nova pasta de projetos">${icon("folder-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="expand-all" title="Abrir todas as sanfonas">${icon("chevrons-up-down")}</button>
       <button class="ib" data-act="collapse" title="Fechar todas as sanfonas">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar planos, pessoas, agentes e modelos" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar projetos, pessoas, agentes e modelos" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
-      <div class="ex-sec" data-sec="planos">
-        <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${PLANS.length}</span></div>
-        ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
+      <div class="ex-sec" data-sec="projetos">
+        <div class="ex-sec-h">${icon("folder-kanban")} Projetos<span class="n">${PLANS.length}</span></div>
+        ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum projeto.</p>`}
       </div>
       <div class="ex-sec" data-sec="arquivos">
         <div class="ex-sec-h">${icon("files")} Arquivos<span class="n">${layerRows.n}</span></div>

@@ -42,6 +42,7 @@ Hub público: [**Centralizador**](centralizador/README.md) — https://centraliz
 |:--:|:--------|:----------|:------|
 | 🔤 | [**Flow Language**](flow-language/) | Linguagem ↔ visualização de fluxo (IR, sync) | [visão](flow-language/README.md) · [docs](flow-language/docs/) · [config IA](flow-language/config/config-ia.md) |
 | 🌊 | [**Flow**](flow/) | Fundamentos de fluxo — pré-requisito do Plans | [visão](flow/README.md) · [épicos](flow/epics/) · [tasks](flow/tasks/) |
+| 💻 | [**Flow.dev**](flow-dev/) | Flow IDE — Explorar + Flow (IA · Node.js) | [visão](flow-dev/README.md) · [protótipo](flow-dev/prototipo/) · [deploy](flow-dev/deploy/README.md) |
 | 📅 | [**Plans**](plans/) | Planejamento sobre o Flow | [visão](plans/README.md) · [docs](plans/docs/) · [config IA](plans/config/config-ia.md) |
 | 🌐 | [**Chines**](chines/) | Aprendizado de chinês | [docs](chines/docs/) · [config IA](chines/config/config-ia.md) |
 | 🚗 | [**Caronas**](caronas/) | Caronas compartilhadas | [visão](caronas/README.md) · [docs](caronas/docs/) · [config IA](caronas/config/config-ia.md) |

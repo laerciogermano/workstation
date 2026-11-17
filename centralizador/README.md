@@ -6,7 +6,7 @@ Hub público dos projetos (título, descrição, imagem, link).
 
 ## Conteúdo
 
-Estático em [`site/`](site/) — cards a partir dos banners em `boards/banners/projects/`. Projetos no ar abrem em nova aba; demais ficam “em breve”. Card **Flow** → Plans `#T-32`. Card **OmTV** → em breve (visão em [`../omtv/README.md`](../omtv/README.md)). Card **CRM** → em breve (visão em [`../crm/README.md`](../crm/README.md)). Card **Gestão de CDPs** → em breve (visão em [`../gestao-cdps/README.md`](../gestao-cdps/README.md)).
+Estático em [`site/`](site/) — cards a partir dos banners em `boards/banners/projects/`. Projetos no ar abrem em nova aba; demais ficam “em breve”. Card **Flow.dev** → https://flow-ide.laerciogermano.com/ (visão em [`../flow-dev/README.md`](../flow-dev/README.md)). Card **OmTV** → em breve (visão em [`../omtv/README.md`](../omtv/README.md)). Card **CRM** → em breve (visão em [`../crm/README.md`](../crm/README.md)). Card **Gestão de CDPs** → em breve (visão em [`../gestao-cdps/README.md`](../gestao-cdps/README.md)).
 
 ## Republicar
 

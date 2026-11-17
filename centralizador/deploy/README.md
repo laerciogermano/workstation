@@ -13,13 +13,13 @@
 SSHPASS='…' bash deploy/publicar.sh
 ```
 
-## Card Flow → Plans T-32
+## Card Flow.dev → Flow IDE
 
-Card **Flow** aponta para `https://plans.laerciogermano.com/#T-32` (visão Flow do protótipo).
+Card **Flow.dev** aponta para `https://flow-ide.laerciogermano.com/` (protótipo [`../../flow-dev/`](../../flow-dev/README.md)).
 
-**Antes → depois:** `url: null` (“em breve”) → deep link `#T-32`.
+**Antes → depois:** deep link Plans `#T-32` → Flow IDE próprio.
 
-**Voltar:** no `site/index.html`, card Flow com `url: null`.
+**Voltar:** no `site/index.html`, card com `url: "https://plans.laerciogermano.com/#T-32"` (ou `null`).
 
 ## Card OmTV
 

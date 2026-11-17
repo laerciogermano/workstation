@@ -1141,14 +1141,15 @@ function explorer(s) {
   function estWalk(pid, lvl) {
     const rows = [];
     kids(pid).filter(u => !u.arch && !isData(u)).forEach(u => {
+      // mesma árvore das tarefas (Planos), nó a nó — só que com quadrados e os dados como folhas, tipo árvore JSON
       const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1);
-      if (!outs.length && !sub.length) return;
+      if (q && !outs.length && !sub.length && !u.title.toLowerCase().includes(q)) return;
       const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
       const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
-      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${icon("chevron-right")}</span><span class="fi plan${ffull ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
+      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi plan${ffull ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("square")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
       if (!isOpen) return;
       rows.push(...sub);
-      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado (estado)">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
+      outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado">${icon("square")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
     });
     return rows;
   }
@@ -1172,7 +1173,7 @@ function explorer(s) {
         ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
       </div>
       <div class="ex-sec" data-sec="estados">
-        <div class="ex-sec-h">${icon("box")} Estados<span class="n">${nEstados}</span></div>
+        <div class="ex-sec-h">${icon("square")} Estados<span class="n">${nEstados}</span></div>
         ${estadoRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum estado (saída) ainda.</p>`}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · ${CAT.length} no catálogo</small></span></button></div>

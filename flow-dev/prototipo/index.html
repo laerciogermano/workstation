@@ -506,7 +506,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flfoot { flex: none; display: flex; align-items: center; padding: 8px 16px; border-top: 1px solid var(--line); }
 .flfoot .flegend { margin-left: 0; }
 .gantt.flow .ztoolbar .dz { margin-left: auto; }
-/* FOP: estados e0…eN nas divisórias, dados ○ sobre a divisória, ◇ seleção, ↻ repetição */
+/* FOP: estados e0…eN nas divisórias, dados □ sobre a divisória, ◇ seleção, ↻ repetição */
 .fh-e { position: relative; height: 26px; }
 /* estado eN = quadrado com o nome + losango na divisória */
 .fh-e span { position: absolute; top: 2px; transform: translateX(-50%); min-width: 22px; height: 16px; padding: 0 4px; display: grid; place-items: center; font: 600 10px/1 var(--mono); color: var(--ink); background: var(--wash); border: 1.3px solid color-mix(in srgb, var(--muted) 70%, transparent); border-radius: 2px; }
@@ -516,6 +516,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fh-e.bot { height: 40px; border-top: 1px solid var(--line); }
 .fh-e.bot .ax { position: absolute; top: 10px; height: 1.3px; background: var(--muted); }
 .fh-e.bot span { top: 19px; }
+/* dados de cada estado, empilhados embaixo do eN (documento FOP, item 3) */
+.fe-d { position: absolute; top: 42px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
+.fe-d b::before { content: ""; flex: none; width: 6px; height: 6px; border: 1.2px solid #9a9a9a; background: var(--paper); }
+.fe-d b.ext { color: var(--muted); }
 .fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }
 .fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
@@ -529,7 +534,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fstr { position: absolute; left: 0; top: 52px; pointer-events: none; z-index: 1; }
 .fband { position: absolute; left: 0; right: 0; background: color-mix(in srgb, var(--warn) 7%, transparent); border-left: 2px solid var(--warn); border-top: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); }
 .fspill { position: absolute; left: 8px; top: 9px; font: 600 10px var(--mono); line-height: 1; color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--paper)); padding: 3px 5px; border-radius: 3px; }
-.lg-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.3px solid #9a9a9a; }
+.lg-dot { width: 8px; height: 8px; border: 1.3px solid #9a9a9a; }
 .lg-if { width: 8px; height: 8px; border: 1.5px solid var(--warn); transform: rotate(45deg); }
 .sig { margin: 0; padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font: 11.5px/1.6 var(--mono); color: var(--ink); overflow-x: auto; white-space: pre; }
 /* Gantt */
@@ -959,7 +964,7 @@ const STRUCTS = [
   { k: "if", test: "comparativo.length > 0", body: ["u5", "u6"] },
   { k: "if", test: "pagina", body: ["u22"] },
 ];
-const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16"]);
+const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16", "es:f1", "es:f2", "es:f3", "es:u2", "es:u9", "es:u16", "es:u9:e3", "es:u9:e4"]);
 /** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
 const GOALS = {
   orcamento: "≤ R$ 3.000",
@@ -1096,17 +1101,39 @@ function explorer(s) {
     });
   })(null, 0);
 
-  const states = stateCatalog().filter(st => !q || st.name.toLowerCase().includes(q) || st.title.toLowerCase().includes(q) || String(st.ref).toLowerCase().includes(q));
-  if (q) hits += states.length;
-  const estadoRows = states.map(st => {
-    const sel = s.estado === st.name ? " sel" : "";
-    const t = markTitle(st.name, q);
-    return `<div class="node${sel}" data-estado="${esc(st.name)}" data-id="${st.id}" data-act="sel-estado" style="padding-left:22px">
-      <span class="car"></span><span class="fi estado" title="Estado">${icon("box")}</span>
-      <span class="t mono">${t}</span>
-      <span class="meta"><span class="mono">${esc(st.ref)}</span>${st.st ? `<span class="st ${ST[st.st][0]}" style="padding:0 3px">${icon(ST[st.st][1])}</span>` : ""}</span>
-    </div>`;
-  });
+  // Estados hierárquicos como Planos: pasta → composição → eN (divisória do Flow) → dados
+  const lay = {}; PLANS.forEach(p => Object.assign(lay, flowLayout(p.id).layout));
+  const live = id => kids(id).filter(k => !k.arch);
+  const isComp = u => !isFolder(u) && live(u.id).some(k => !isData(k));
+  const eRow = (id, lvl, has, isOpen, inner, extra = "") => {
+    const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
+    return `<div class="node${has && isOpen ? " openf" : ""}${extra}" ${has ? `data-act="toggle" data-id="${id}"` : ""} style="padding-left:${8 + Math.min(lvl, 14) * 14}px">${guides}<span class="car">${has ? icon("chevron-right") : ""}</span>${inner}</div>`;
+  };
+  function estWalk(pid, lvl) {
+    const out = [];
+    live(pid).filter(u => isFolder(u) || isComp(u)).forEach(u => {
+      const id = "es:" + u.id, isOpen = q ? true : open.has(id), sub = estWalk(u.id, lvl + 1);
+      if (!sub.n) return;
+      out.push(eRow(id, lvl, true, isOpen, `<span class="fi plan" title="${isFolder(u) ? "Pasta" : "Composição"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span><span class="meta">${sub.n}</span>`));
+      if (isOpen) out.push(...sub.rows);
+      out.n = (out.n || 0) + sub.n;
+    });
+    const by = {};
+    live(pid).filter(u => !isFolder(u) && !isData(u) && !isComp(u)).forEach(u => (u.outs || []).forEach(([name, ref]) => {
+      if (q && !name.toLowerCase().includes(q) && !u.title.toLowerCase().includes(q) && !String(ref).toLowerCase().includes(q)) return;
+      const e = lay[u.id] ? lay[u.id].e + 1 : 0; (by[e] = by[e] || []).push({ name, ref, u });
+    }));
+    Object.keys(by).map(Number).sort((a, b) => a - b).forEach(e => {
+      const id = `es:${pid}:e${e}`, isOpen = q ? true : open.has(id), list = by[e];
+      out.push(eRow(id, lvl, true, isOpen, `<span class="fi estado" title="Estado e${e}">${icon("square")}</span><span class="t mono">e${e}</span><span class="meta">${list.length}</span>`));
+      if (isOpen) list.forEach(({ name, ref, u }) => out.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${8 + Math.min(lvl + 1, 14) * 14}px">${Array.from({ length: Math.min(lvl + 1, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("")}<span class="car"></span><span class="fi estado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span>${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span></div>`));
+      out.n = (out.n || 0) + list.length;
+    });
+    return { rows: out, n: out.n || 0 };
+  }
+  const est = estWalk(null, 0);
+  if (q) hits += est.n;
+  const estadoRows = est.rows;
 
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;
@@ -1381,13 +1408,13 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-bar"></i>função</span><span><i class="lg-dot"></i>dado · eN</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-bar"></i>função</span><span><i class="lg-dot"></i>dado (entrada/saída)</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   const rows = ganttRows(s.plan);
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 474, RH = 34, TAIL = 380, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if)
-  const W = Math.max(72, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
+  const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
   const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
   const colOf = u => PHASE[tops.indexOf(flowTop(u).id) % PHASE.length];
@@ -1419,7 +1446,7 @@ function flow(s) {
     const ins = (u.ins || []).join(", "), outs = (u.outs || []).map(o => o[0]).join(", ");
     return `<div class="rr">${ins ? `<span class="fio" style="right:${CW - g.ix + 8}px" title="entrada em e${layout[u.id].s}">${esc(ins)}</span>` : ""}<div class="fbar${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)}"><span class="fill" style="width:${p * 100}%"></span></div><span class="flbl" style="left:${g.ox + 8}px">${outs ? `<span class="fo" title="saída em e${layout[u.id].e + 1}">${esc(outs)}</span>` : ""}${esc(u.title)}${flowTags(u)}</span></div>`;
   }).join("");
-  // conectores (sequência) como no documento FOP: saem do dado de saída ○ na divisória eN e descem até o ○ de entrada
+  // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
   const isFn = u => !isData(u) && !hasK(u);
   const srcOf = new Set(DEPS.map(d => d[0])), dstOf = new Set(DEPS.map(d => d[1]));
@@ -1440,12 +1467,12 @@ function flow(s) {
       svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}"/>`;
     });
   }
-  // dados ○ sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
+  // dados □ sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
-    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 3.5}" y1="${y}" x2="${g.x1}" y2="${y}"/><circle class="fdot" cx="${g.ix}" cy="${y}" r="3.5"/>`;
-    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 3.5}" y2="${y}"/><circle class="fdot" cx="${g.ox}" cy="${y}" r="3.5"/>`;
+    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"/>`;
+    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"/>`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const structs = STRUCTS.map(st => ({ ...st, body: st.body.filter(id => idx[id] != null) })).filter(st => st.body.length);
@@ -1464,7 +1491,16 @@ function flow(s) {
   const H = rows.length * RH;
   const pl = PLANS.find(p => p.id === s.plan).name;
   const { missing } = fopCheck(s.plan);
-  const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + 40;
+  // dados por estado: e0 = entradas externas; eN = saídas das funções que terminam em eN
+  const fnRows = rows.map(r => r.u).filter(isFn), prodSet = new Set(fnRows.flatMap(u => (u.outs || []).map(o => o[0])));
+  const stData = Array.from({ length: nSteps + 1 }, () => []);
+  fnRows.forEach(u => {
+    const L = layout[u.id]; if (!L) return;
+    (u.ins || []).filter(n => !prodSet.has(n)).forEach(n => { if (!stData[L.s].some(d => d[0] === n)) stData[L.s].push([n, true]); });
+    (u.outs || []).forEach(([n]) => { const i = Math.min(L.e + 1, nSteps); if (!stData[i].some(d => d[0] === n)) stData[i].push([n, false]); });
+  });
+  const FOOT = 48 + Math.max(0, ...stData.map(d => d.length)) * 14;
+  const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + FOOT;
   const toolbar = zoomToolbar("flow", "Flow", "workflow");
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
@@ -1475,7 +1511,7 @@ function flow(s) {
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
-          <div class="fh-e bot"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div>
+          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stData[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stData[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
           <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
@@ -2190,7 +2226,7 @@ const SCREENS = {
   "T-04": { s: { v: "flow", q: "propo" }, name: "Buscar na árvore", us: ["explorar"], notes: "Filtra planos e estados pelo título/nome e abre o caminho até cada resultado." },
   "T-20": { s: { v: "flow", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["unidade"], notes: "Título e contexto, UUID, responsável (IA ou biblioteca Node), entradas/saídas e atalhos para Flow e Explorar." },
   "T-21": { s: { v: "flow", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir IA ou lib", us: ["agente"], notes: "Escolha agrupada: IAs ou bibliotecas Node.js do catálogo. Trocar o ator não reescreve o roteiro." },
-  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada ○ antes da barra e os de saída ○ depois, sobre a divisória. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Tabela Nome · Estados · Passos · % feito · Agente." },
+  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada eN lista os dados daquele estado. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Tabela Nome · Estados · Passos · % feito · Agente." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
   "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(context), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },

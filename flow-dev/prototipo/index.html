@@ -1013,7 +1013,7 @@ const AGENT_CFG = {
   a3: { model: "haiku", prompt: "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking." },
   a4: { model: "sonnet", prompt: "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo." },
 };
-const TYPES = { ia: { n: "Agentes", one: "Agente", ic: "bot" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
+const TYPES = { ia: { n: "Agentes", one: "Agente", ic: "wand-sparkles" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
 
 let COLS = [
   { id: "c1", name: "Backlog", exec: false },
@@ -1297,7 +1297,7 @@ function explorer(s) {
     if (q) hits += list.length;
     const html = list.map(a => {
       const cfg = AGENT_CFG[a.id] || {};
-      return `<div class="node${s.agCfg === a.id ? " sel" : ""}" data-act="ag-cfg" data-id="${a.id}" style="padding-left:8px" title="Configurar ${esc(a.name)}"><span class="car"></span><span class="fi agente">${icon("bot")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
+      return `<div class="node${s.agCfg === a.id ? " sel" : ""}" data-act="ag-cfg" data-id="${a.id}" style="padding-left:8px" title="Configurar ${esc(a.name)}"><span class="car"></span><span class="fi agente">${icon("wand-sparkles")}</span><span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(modelOf(cfg.model)?.name || "")}</span></span></div>`;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum agente configurado.</p>`, n: list.length };
   })();
@@ -1305,7 +1305,7 @@ function explorer(s) {
   const modelRows = (() => {
     const list = MODELS.filter(m => !q || m.name.toLowerCase().includes(q) || m.vendor.toLowerCase().includes(q) || m.api.includes(q));
     if (q) hits += list.length;
-    const html = list.map(m => `<div class="node${s.mdCfg === m.id ? " sel" : ""}" data-act="md-cfg" data-id="${m.id}" style="padding-left:8px" title="Configurar ${esc(m.name)}"><span class="car"></span><span class="fi modelo">${icon("brain-circuit")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span></span></div>`).join("");
+    const html = list.map(m => `<div class="node${s.mdCfg === m.id ? " sel" : ""}" data-act="md-cfg" data-id="${m.id}" style="padding-left:8px" title="Configurar ${esc(m.name)}"><span class="car"></span><span class="fi modelo">${icon("bot")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span></span></div>`).join("");
     return { html, n: list.length };
   })();
   // Layers: cada arquivo com o que ele contém (funções ○ e/ou dados cubo)
@@ -1362,11 +1362,11 @@ function explorer(s) {
         ${pessoaRows.html}
       </div>
       <div class="ex-sec" data-sec="agentes">
-        <div class="ex-sec-h">${icon("bot")} Agentes<span class="n">${agentRows.n}</span></div>
+        <div class="ex-sec-h">${icon("wand-sparkles")} Agentes<span class="n">${agentRows.n}</span></div>
         ${agentRows.html}
       </div>
       <div class="ex-sec" data-sec="modelos">
-        <div class="ex-sec-h">${icon("brain-circuit")} Modelos<span class="n">${modelRows.n}</span></div>
+        <div class="ex-sec-h">${icon("bot")} Modelos<span class="n">${modelRows.n}</span></div>
         ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
@@ -1474,7 +1474,7 @@ function agentPanel(s) {
   const cfg = AGENT_CFG[a.id] = AGENT_CFG[a.id] || { model: MODELS[0].id, prompt: "" };
   const uses = U.filter(u => !u.arch && (u.agent === a.id || u.resp === a.id) && !kids(u.id).length);
   return `<aside class="side w360" aria-label="Configurar agente">
-    <div class="side-h"><span class="k">${icon("bot")}Agente · prompt + modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-h"><span class="k">${icon("wand-sparkles")}Agente · prompt + modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
     <div class="side-b">
       <input class="ttl" data-ag-name="${a.id}" value="${esc(a.name)}" aria-label="Nome do agente">
       <div class="fld"><label>Modelo</label><select class="sel-in" data-model="${a.id}" data-act="noop">${MODELS.map(m => `<option value="${m.id}"${cfg.model === m.id ? " selected" : ""}>${esc(m.name)} · ${esc(m.vendor)}</option>`).join("")}</select></div>
@@ -1486,7 +1486,7 @@ function agentPanel(s) {
 function modelPanel(s) {
   const m = modelOf(s.mdCfg); if (!m) return "";
   return `<aside class="side w360" aria-label="Configurar modelo">
-    <div class="side-h"><span class="k">${icon("brain-circuit")}Modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-h"><span class="k">${icon("bot")}Modelo</span><span class="sp"></span><button class="ib" data-act="cfg-close" title="Fechar">${icon("x")}</button></div>
     <div class="side-b">
       <input class="ttl" data-md-name="${m.id}" value="${esc(m.name)}" aria-label="Nome do modelo">
       <div class="fld"><label>Fornecedor</label><input type="text" data-md-vendor="${m.id}" value="${esc(m.vendor)}"></div>

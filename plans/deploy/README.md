@@ -54,12 +54,12 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 ## Estados · árvore de dados
 
-- `planStateObject(plan)` → `{ root, sources }`; UI = árvore chave/valor + `state.json`.
-- Expand/collapse: `EST_OPEN` + `est-tog`. T-70.
+- Ícone dock: `dice-5` (dado).
+- `planStateObject(plan)` → `{ root, sources }`; UI = canvas em árvore L→R (nós + edges) + `state.json`. T-70.
 
-**Antes → depois:** cards e0…eN / Gantt FOP → objeto `root` aninhado pelas pastas das refs de saída.
+**Antes → depois:** lista indentada / e0…eN → árvore visual de dados com ícone dado.
 
-**Voltar:** reintroduzir `ganttFopStates` + cards e0…eN.
+**Voltar:** `database` + rows `erow` / `ganttFopStates`.
 
 ## Flow · Gantt por passos
 

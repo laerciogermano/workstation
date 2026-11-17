@@ -647,23 +647,25 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 .chat-compose textarea:focus { border-color:var(--accent); }
 .chat-compose textarea:disabled { opacity:.55; }
 
-/* Estados · árvore de dados (root + chave/valor) */
-.estados { height:100%; display:grid; grid-template-columns: minmax(0, 1fr) 320px; min-height:0; }
-.estados .eh { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:16px 20px 12px; border-bottom:1px solid var(--line); }
-.estados .eh h2 { font-size:20px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
-.estados .eh p { font-size:13px; color:var(--muted); max-width:480px; line-height:1.45; }
-.estados .etree { overflow:auto; padding:12px 16px 72px; min-height:0; }
-.estados .erow { display:grid; grid-template-columns:16px 1fr auto; gap:6px; align-items:center; min-height:28px; padding:2px 6px; border-radius:6px; font-size:13px; }
-.estados .erow:hover { background:var(--wash); }
-.estados .erow .car { color:var(--muted); display:grid; place-items:center; cursor:pointer; border:0; background:none; padding:0; width:16px; height:16px; }
-.estados .erow .car svg { width:14px; height:14px; transition:transform .15s; }
-.estados .erow.open > .car svg { transform:rotate(90deg); }
-.estados .erow .k { font-family:var(--mono); font-weight:600; color:var(--ink); }
-.estados .erow .k .badge { font-size:10px; font-weight:600; color:var(--muted); margin-left:6px; font-family:var(--sans, inherit); }
-.estados .erow .v { font-family:var(--mono); font-size:12px; color:var(--accent); max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.estados .erow .src { font-size:11px; color:var(--muted); }
+/* Estados · grafo-árvore de dados (root → chave/valor) */
+.estados { height:100%; display:grid; grid-template-columns: minmax(0, 1fr) 300px; min-height:0; }
+.estados .eh { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:12px 16px; border-bottom:1px solid var(--line); }
+.estados .eh h2 { font-size:18px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+.estados .eh p { font-size:12px; color:var(--muted); max-width:420px; line-height:1.4; }
+.estados .egraph { overflow:auto; min-height:0; position:relative; background:var(--panel); }
+.estados .egraph-c { position:relative; }
+.estados .egraph-c > svg { position:absolute; left:0; top:0; pointer-events:none; overflow:visible; }
+.estados .egraph-c > svg path { fill:none; stroke:var(--line-2); stroke-width:1.5; }
+.estados .enode { position:absolute; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
+.estados .enode.root { border-style:dashed; background:var(--wash); }
+.estados .enode.branch { border-color:color-mix(in srgb, var(--muted) 35%, var(--line)); }
+.estados .enode.leaf { border-color:color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.estados .enode .ek { font-family:var(--mono); font-weight:700; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.estados .enode .ek svg { width:14px; height:14px; color:var(--accent); flex:none; }
+.estados .enode .ev { font-family:var(--mono); font-size:11px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.estados .enode .es { font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .estados .ejson { border-left:1px solid var(--line); background:var(--panel); display:flex; flex-direction:column; min-height:0; }
-.estados .ejson h3 { font-size:12px; font-weight:600; color:var(--muted); padding:12px 14px 8px; flex:none; }
+.estados .ejson h3 { font-size:12px; font-weight:600; color:var(--muted); padding:12px 14px 8px; flex:none; display:flex; align-items:center; gap:6px; }
 .estados .ejson pre { margin:0; flex:1; overflow:auto; padding:0 14px 72px; font-family:var(--mono); font-size:12px; line-height:1.55; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
 
 /* Árvore de execução */
@@ -834,7 +836,6 @@ U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "f
 const DEPS = [["u3", "u4"], ["u4", "u5"], ["u5", "u6"], ["u10", "u11"], ["u11", "u12"], ["u12", "u13"], ["u12", "u14"], ["u13", "u15"], ["u14", "u15"], ["u20", "u22"]];
 const PARS = [["u13", "u14"]];
 const OPEN = new Set(["f1", "f2", "f3", "u2", "u9"]);
-const EST_OPEN = new Set(["root"]);
 let CLIP = null;
 let seq = 100;
 
@@ -876,7 +877,7 @@ function agChip(id, short) {
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
 const VOCAB = { board: "Card", gantt: "Tarefa", flow: "Etapa", diagram: "Nó", tree: "Atividade", estados: "Estado", explorar: "Arquivo" };
-const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["estados", "database", "Estados"]];
+const VIEWS = [["board", "kanban", "Board"], ["gantt", "chart-gantt", "Gantt"], ["flow", "workflow", "Flow"], ["diagram", "waypoints", "Fluxograma"], ["tree", "network", "Árvore"], ["estados", "dice-5", "Estados"]];
 const CHAT = {};
 const COPILOT = { open: false, tabs: [], active: null, seq: 0 };
 
@@ -1538,7 +1539,7 @@ function copilotPanel(s) {
     </div></aside>`;
 }
 
-// ----- Estados · estrutura de dados (root + árvore chave/valor) -----
+// ----- Estados · estrutura de dados (árvore visual root → chave/valor) -----
 /** Estado do plano: objeto { root } com árvore aninhada pelas pastas das refs de saída. */
 function planStateObject(plan) {
   const root = {};
@@ -1558,53 +1559,86 @@ function planStateObject(plan) {
   });
   return { root, sources };
 }
-function seedEstOpen(obj, path) {
-  EST_OPEN.add(path);
-  if (obj && typeof obj === "object" && !Array.isArray(obj)) {
-    Object.entries(obj).forEach(([k, v]) => {
-      if (v && typeof v === "object" && !Array.isArray(v)) seedEstOpen(v, path ? path + "." + k : k);
-    });
-  }
-}
-function renderStateRows(obj, path, depth, sources) {
-  return Object.entries(obj).map(([k, v]) => {
-    const p = path ? path + "." + k : k;
-    const isObj = v && typeof v === "object" && !Array.isArray(v);
-    if (isObj) {
-      const opened = EST_OPEN.has(p);
-      const n = Object.keys(v).length;
-      return `<div class="erow${opened ? " open" : ""}" style="padding-left:${8 + depth * 14}px">
-        <button type="button" class="car" data-act="est-tog" data-p="${esc(p)}" aria-label="${opened ? "Recolher" : "Expandir"}">${icon("chevron-right")}</button>
-        <span class="k">${esc(k)}<span class="badge">${n}</span></span>
-        <span class="v">{${n}}</span>
-      </div>${opened ? renderStateRows(v, p, depth + 1, sources) : ""}`;
-    }
-    const src = sources[k];
-    return `<div class="erow" style="padding-left:${8 + depth * 14}px">
-      <span class="car"></span>
-      <span class="k">${esc(k)}${src ? `<span class="badge">${esc(src.title)}</span>` : ""}</span>
-      <span class="v" title="${esc(String(v))}">${esc(String(v))}</span>
-    </div>`;
-  }).join("");
-}
 function estados(s) {
   const { root, sources } = planStateObject(s.plan);
   const tree = { root };
-  if (!EST_OPEN.has("__seeded__")) {
-    seedEstOpen(tree, "");
-    EST_OPEN.add("__seeded__");
-  }
-  EST_OPEN.add("root");
   const json = JSON.stringify(tree, null, 2);
   const keys = Object.keys(sources).length;
+
+  const NW = 160, NH = 48, NL = 200, NHL = 56, GX = 52, GY = 12, PX = 24, PY = 24;
+  const nodes = [];
+  const edges = [];
+  let leafY = 0;
+  function place(obj, path, depth) {
+    const entries = Object.entries(obj);
+    if (!entries.length) {
+      const y = PY + leafY;
+      leafY += NH + GY;
+      nodes.push({ id: path, key: path === "root" ? "root" : path.split(".").pop(), kind: path === "root" ? "root" : "branch", depth, x: PX + depth * (NW + GX), y, w: NW, h: NH });
+      return { mid: y + NH / 2, top: y, bot: y + NH };
+    }
+    const kids = [];
+    entries.forEach(([k, v]) => {
+      const p = path === "root" && depth === 0 ? "root." + k : path + "." + k;
+      // children of root: path root + key → "root.out"; deeper: keep path.k
+      const childPath = depth === 0 ? "root." + k : path + "." + k;
+      const isObj = v && typeof v === "object" && !Array.isArray(v);
+      if (isObj) kids.push({ p: childPath, span: place(v, childPath, depth + 1) });
+      else {
+        const y = PY + leafY;
+        leafY += NHL + GY;
+        const src = sources[k];
+        nodes.push({ id: childPath, key: k, kind: "leaf", value: String(v), from: src?.title || null, depth: depth + 1, x: PX + (depth + 1) * (NW + GX), y, w: NL, h: NHL });
+        kids.push({ p: childPath, span: { mid: y + NHL / 2, top: y, bot: y + NHL } });
+      }
+    });
+    const top = Math.min(...kids.map(c => c.span.top));
+    const bot = Math.max(...kids.map(c => c.span.bot));
+    const mid = (top + bot) / 2;
+    const y = mid - NH / 2;
+    const key = path === "root" ? "root" : path.split(".").pop();
+    nodes.push({ id: path, key, kind: path === "root" ? "root" : "branch", depth, x: PX + depth * (NW + GX), y, w: NW, h: NH, n: kids.length });
+    kids.forEach(c => edges.push([path, c.p]));
+    return { mid, top: Math.min(top, y), bot: Math.max(bot, y + NH) };
+  }
+  let graphHtml = `<p style="padding:20px;color:var(--muted);font-size:13px">Nenhuma saída neste plano.</p>`;
+  if (Object.keys(root).length) {
+    place(root, "root", 0);
+    const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+    let paths = "";
+    edges.forEach(([a, b]) => {
+      const A = byId[a], B = byId[b]; if (!A || !B) return;
+      const x1 = A.x + A.w, y1 = A.y + A.h / 2, x2 = B.x, y2 = B.y + B.h / 2, mx = x1 + GX / 2;
+      const sy = Math.sign(y2 - y1) || 1;
+      const bend = Math.abs(y2 - y1) < 1 ? 0 : 6;
+      paths += bend
+        ? `<path d="M${x1} ${y1} H${mx - 6} Q${mx} ${y1} ${mx} ${y1 + sy * bend} V${y2 - sy * bend} Q${mx} ${y2} ${mx + 6} ${y2} H${x2}"/>`
+        : `<path d="M${x1} ${y1} H${x2}"/>`;
+    });
+    const w = Math.max(...nodes.map(n => n.x + n.w)) + PX;
+    const h = Math.max(...nodes.map(n => n.y + n.h)) + PY;
+    const nodeHtml = nodes.map(n => {
+      if (n.kind === "leaf") {
+        return `<div class="enode leaf" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
+          <span class="ek">${icon("dice-5")}${esc(n.key)}</span>
+          <span class="ev" title="${esc(n.value)}">${esc(n.value)}</span>
+          ${n.from ? `<span class="es">${esc(n.from)}</span>` : ""}
+        </div>`;
+      }
+      return `<div class="enode ${n.kind}" style="left:${n.x}px;top:${n.y}px;width:${n.w}px;height:${n.h}px">
+        <span class="ek">${icon(n.kind === "root" ? "dice-5" : "box")}${esc(n.key)}</span>
+        <span class="es">${n.n != null ? n.n + " chave" + (n.n === 1 ? "" : "s") : "∅"}</span>
+      </div>`;
+    }).join("");
+    graphHtml = `<div class="egraph-c" style="width:${w}px;height:${h}px"><svg width="${w}" height="${h}">${paths}</svg>${nodeHtml}</div>`;
+  }
+
   return `<div class="estados">
     <div class="eh">
-      <div><h2>${icon("database")} Estados</h2>
-        <p>Objeto do plano: <span class="mono">root</span> e árvore chave → valor (${keys} artefato${keys === 1 ? "" : "s"}).</p></div>
+      <div><h2>${icon("dice-5")} Estados</h2>
+        <p>Árvore de dados: <span class="mono">root</span> → chaves → valores (${keys} dado${keys === 1 ? "" : "s"}).</p></div>
     </div>
-    <div class="etree">
-      ${Object.keys(root).length ? renderStateRows(tree, "", 0, sources) : `<p style="color:var(--muted);font-size:13px;padding:8px">Nenhuma saída neste plano.</p>`}
-    </div>
+    <div class="egraph">${graphHtml}</div>
     <aside class="ejson" aria-label="JSON do estado">
       <h3>${icon("braces")} state.json</h3>
       <pre>${esc(json)}</pre>
@@ -1812,8 +1846,8 @@ const FLOWS = [
   { id: "copilot", n: "08", title: "Copiloto", us: "harness",
     desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
     steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
-  { id: "estados", n: "09", title: "Estados", us: "estrutura de dados",
-    desc: "Estado do plano como objeto: root e árvore chave → valor (saídas aninhadas pelo path da ref), com JSON ao lado.",
+  { id: "estados", n: "09", title: "Estados", us: "dados · árvore",
+    desc: "Estado do plano como árvore de dados (ícone dado): root → ramos → folhas chave/valor, com JSON ao lado.",
     steps: [["T-70", "Árvore de estado"]] },
   { id: "config", n: "10", title: "Configurações", us: "US-03",
     desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
@@ -1839,7 +1873,7 @@ const SCREENS = {
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas de nós com portas entrada/saída e fios. Zoom/pan (scroll, −/+, ajustar, arrastar fundo). Sem seletor de plano nem Executar via IAs na barra. Clique no nó abre o detalhe." },
   "T-60": { s: { v: "board", sel: "u13", copilot: true }, name: "Painel à direita", us: ["harness"], notes: "Copiloto não é item do menu transversal: ícone de chat no canto superior abre/fecha o painel fixo à direita. Abas (estilo Cursor) — aqui “Traduzir proposta”. + cria nova aba a partir do arquivo selecionado no Explorar." },
   "T-61": { s: { v: "board", sel: "u13", copilot: true, chatSeed: { q: "Corrige a falha desta tradução e decompõe o que ainda falta antes de enviar ao cliente." } }, name: "Aba com resposta", us: ["harness"], notes: "Na aba ativa, o harness responde com o contexto do arquivo. Dá para ter várias abas abertas; fechar a última também fecha o painel." },
-  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["estado"], notes: "Visão Estados no dock: objeto { root } com árvore chave→valor (saídas do plano aninhadas pelo path da ref) e painel JSON. Expandir/recolher nós; troca de plano na barra." },
+  "T-70": { s: { v: "estados", plan: "onb" }, name: "Árvore de estado", us: ["dados"], notes: "Ícone dado (dice). Canvas em árvore L→R: root → pastas das refs → folhas (chave, valor, origem). Painel state.json à direita. Troca de plano na barra." },
   "T-40": { s: { v: "tree" }, name: "Árvore", us: ["US-15", "US-16"], notes: "Floresta com zoom/pan (mesmo padrão do Fluxograma). Cada nó mostra responsável e estado. Passe o mouse para criar filha, desaninhar ou excluir. Clique abre o detalhe." },
   "T-41": { s: { v: "tree", sel: "u2", tnew: { parent: "u2" } }, name: "Nova atividade filha", us: ["US-16"], notes: "Criar filha direto no nó, sem limite de profundidade. Dividir em partes deixa validar cada etapa (mesmo feita por IA) e passar o resultado adiante, em vez de um único lote." },
   "T-42": { s: { v: "tree", tnode: "u22", sel: "u22" }, name: "Procedimento da máquina", us: ["US-15"], notes: "Nó com responsável máquina edita o procedimento na própria Árvore. Na v1 a paridade é parcial: entradas, saídas, console e execução ficam no editor do Flow." },
@@ -2099,10 +2133,6 @@ const ACT = {
   "up-col": t => { const i = COLS.findIndex(c => c.id === t.dataset.id); if (i > 0) [COLS[i - 1], COLS[i]] = [COLS[i], COLS[i - 1]]; },
   "up-lane": t => { const i = LANES.findIndex(c => c.id === t.dataset.id); if (i > 0) [LANES[i - 1], LANES[i]] = [LANES[i], LANES[i - 1]]; },
   fm: t => { cur.fm = t.dataset.m; unset("mach"); },
-  "est-tog": t => {
-    const p = t.dataset.p;
-    if (EST_OPEN.has(p)) EST_OPEN.delete(p); else EST_OPEN.add(p);
-  },
   "run-plan": () => { const ids = U.filter(u => u.plan === cur.plan && agent(u.agent)?.type === "ia" && u.st === "pendente").map(u => u.id); if (!ids.length) { toast("Nenhuma tarefa de IA pendente. Falhas só voltam com “Tentar de novo”.", "info"); return; } startRun(ids); return false; },
   "cancel-run": () => { U.filter(u => u.plan === cur.plan && u.st === "exec").forEach(u => u.st = "cancel"); toast("Execução cancelada", "ban"); },
   export: () => { cur.exp = true; cur.expTab = cur.expTab || "ir"; },

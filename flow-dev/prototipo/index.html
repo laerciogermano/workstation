@@ -521,9 +521,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fh-e.bot .ax { position: absolute; top: 10px; height: 1.3px; background: var(--muted); }
 .fh-e.bot span { top: 19px; }
 /* dados de cada estado, empilhados embaixo do eN (documento FOP, item 3) */
-.fe-d { position: absolute; top: 42px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.fe-d { position: absolute; top: 42px; transform: translateX(-4.2px); /* □ centrado sobre a linha eN, nome à direita */ display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
 .fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--dado); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
-.fe-d b::before { content: ""; flex: none; width: 6px; height: 6px; border: 1.2px solid var(--dado); background: color-mix(in srgb, var(--dado) 15%, var(--paper)); }
+.fe-d b::before { content: ""; flex: none; box-sizing: border-box; width: 8.4px; height: 8.4px; border: 1.2px solid var(--dado); background: color-mix(in srgb, var(--dado) 15%, var(--paper)); }
 .fe-d b.ext { color: color-mix(in srgb, var(--dado) 60%, var(--muted)); }
 .fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }

@@ -557,6 +557,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
 .fe-d b::before { content: ""; flex: none; box-sizing: border-box; width: 8.4px; height: 8.4px; border: 1.2px solid var(--dado); background: var(--paper); }
 .fe-d b.ext { color: var(--muted); }
+.fe-d b { cursor: pointer; pointer-events: auto; }
+.fe-d b:hover, .fe-d b.on { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 /* filtro transversal flutuante (centro, acima da legenda) */
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
@@ -1307,6 +1309,22 @@ function explorer(s) {
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
   </aside>`;
 }
+// clicar numa função ou num dado no Flow revela no Explorar (abre o caminho e rola até o item)
+function revealFn(id) {
+  const u = $u(id); if (!u) return;
+  OPEN.delete("pjx:" + u.plan); OPEN.add("pjp:" + u.plan);
+  let p = u.parent; while (p) { OPEN.add(p); p = $u(p).parent; }
+  STRUCTS.forEach(st => { if (st.body.includes(id)) OPEN.add("ifx:" + (u.parent || null) + ":" + st.test); });
+  unset("estado");
+  setTimeout(() => { const n = holder.querySelector(`.ex .node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
+}
+function revealDado(name) {
+  const u = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === name)); if (!u) return;
+  OPEN.delete("pjx:" + u.plan); OPEN.add("pje:" + u.plan);
+  let x = u; while (x) { OPEN.add("esx:" + x.id); x = x.parent ? $u(x.parent) : null; }
+  cur.estado = name; cur.sel = u.id;
+  setTimeout(() => { const n = holder.querySelector(`.ex .node[data-estado="${name}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
+}
 function projAll(plan, openAll) {
   const us = U.filter(u => !u.arch && u.plan === plan);
   const ids = new Set(us.map(u => u.id));
@@ -1757,7 +1775,7 @@ function flow(s) {
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
-          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stShow[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stShow[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
+          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stShow[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stShow[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""} · abrir no Explorar">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
           <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
@@ -2654,6 +2672,7 @@ const ACT = {
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
+  "reveal-dado": t => { revealDado(t.dataset.n); },
   "dados-modo": t => { cur.dadosNovos = t.dataset.m === "novos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
   "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },
@@ -2722,7 +2741,7 @@ const ACT = {
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },
   "confirm-no": () => unset("confirm"),
   "confirm-yes": () => { const n = removeIds(cur.confirm); unset("confirm", "drawer", "multi"); cur.sel = null; toast(`${n} itens removidos de todas as visões`, "trash-2"); },
-  drawer: t => { const id = t.dataset.id; unset("agCfg", "mdCfg"); if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
+  drawer: t => { const id = t.dataset.id; unset("agCfg", "mdCfg"); if (t.closest(".gantt.flow")) revealFn(id); if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
   tsel: t => { cur.sel = t.dataset.id; },
   "close-drawer": () => unset("drawer", "picker", "from"),
   picker: () => { cur.picker = !cur.picker; },

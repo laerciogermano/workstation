@@ -454,9 +454,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ring .val { stroke-linecap: round; }
 .ring b { position: relative; font-size: 7.5px; letter-spacing: -.02em; font-weight: 600; color: var(--ink); }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
-.fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: #fff; background: var(--t-ia); box-shadow: 0 0 0 2px var(--paper); }
+.fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: var(--paper); border: 1.5px solid var(--t-ia); } /* abstrata = borda */
 .fav svg { width: 12px; height: 12px; }
-.fav.maquina { background: var(--paper); border: 1.5px solid var(--t-maquina); color: var(--t-maquina); box-shadow: none; } /* concreto = vazado */
+.fav.maquina { background: var(--t-maquina); border-color: var(--t-maquina); color: #fff; } /* concreta = cheia */
 .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); box-shadow: none; }
 .fav-n { font-size: 11px; color: var(--body); overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fh-top { height: 26px; display:flex; align-items:center; justify-content:center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--body); border-bottom: 1px solid var(--line); }
@@ -528,7 +528,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }
 .fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
-.flbl .fo { font: 500 10.5px var(--mono); color: var(--muted); margin-right: 4px; }
+.flbl .fo { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 3px 6px; max-width: 340px; margin-right: 6px; font: 500 9.5px/1.1 var(--mono); color: var(--body); }
+.flbl .fo b.fd { display: inline-flex; align-items: center; gap: 4px; color: var(--body); white-space: nowrap; }
+.flbl .fo b.fd::before { content: ""; flex: none; box-sizing: border-box; width: 7px; height: 7px; border: 1.1px solid var(--dado); background: var(--paper); }
+.flbl .fo b.fd.ext { color: var(--muted); }
+.flbl .fo b.fd.ext::before { background: var(--dado); }
 .fsvg .fstub { stroke: #9a9a9a; stroke-width: 1.2; }
 .fsvg .fdot { fill: var(--paper); stroke: var(--dado); stroke-width: 1.3; }
 .fsvg .fif { fill: var(--paper); stroke: var(--warn); stroke-width: 1.5; }
@@ -543,24 +547,24 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fspill { position: absolute; left: 8px; top: 9px; font: 600 10px var(--mono); line-height: 1; color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--paper)); padding: 3px 5px; border-radius: 3px; }
 .lg-dot { width: 8px; height: 8px; border: 1.3px solid var(--dado); }
 /* FOP itens 6–9 e 15: concreto = vazado (import / mesma camada) · abstrato = sólido (vem do context, outra camada) */
-.fbar.conc { background: color-mix(in srgb, var(--c) 8%, var(--paper)); border: 1.5px solid var(--c); }
-.fbar.conc .fill { background: color-mix(in srgb, var(--c) 28%, var(--paper)); }
+.fbar.abs { background: color-mix(in srgb, var(--c) 8%, var(--paper)); border: 1.5px solid var(--c); } /* abstrata = só borda */
+.fbar.abs .fill { background: color-mix(in srgb, var(--c) 28%, var(--paper)); }
 .fbar.nag { background: transparent; border: 1.5px dashed color-mix(in srgb, var(--c) 70%, transparent); }
 .fbar.nag .fill { background: color-mix(in srgb, var(--c) 18%, transparent); }
 .fsvg .fdot.a { fill: var(--dado); }
 .fsvg .ffn { fill: var(--paper); stroke: var(--fn); stroke-width: 1.3; }
-.fsvg .ffn.a { fill: var(--fn); }
+.fsvg .ffn.a { fill: var(--paper); }
 .mk { display: inline-block; flex: none; width: 7px; height: 7px; border: 1.3px solid var(--dado); background: var(--paper); margin-right: 4px; }
 .mk.a { background: var(--dado); }
 .mk.f { width: 12px; height: 6px; border-radius: 1.5px; border-color: var(--fn); }
-.mk.f.a { background: var(--fn); }
+.mk.f.a { background: var(--paper); }
 .fio .it, .flbl .it { display: inline-flex; align-items: center; margin-left: 7px; }
 .fio .it.fn, .flbl .it.fn { color: var(--fn); }
 .fe-d b.ext::before { background: var(--dado); }
 .fh-top .lay { color: var(--body); background: var(--wash); font-weight: 500; }
 .fh-top [data-act] { cursor: pointer; }
-.lg-fa { width: 16px; height: 8px; border-radius: 2px; background: var(--fn); }
-.lg-fc { width: 16px; height: 8px; border-radius: 2px; border: 1.5px solid var(--fn); }
+.lg-fa { width: 16px; height: 8px; border-radius: 2px; border: 1.5px solid var(--fn); }
+.lg-fc { width: 16px; height: 8px; border-radius: 2px; background: var(--fn); }
 .lg-da { width: 8px; height: 8px; background: var(--dado); }
 .lg-if { width: 8px; height: 8px; border: 1.5px solid var(--warn); transform: rotate(45deg); }
 .sig { margin: 0; padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font: 11.5px/1.6 var(--mono); color: var(--ink); overflow-x: auto; white-space: pre; }
@@ -1119,8 +1123,8 @@ function explorer(s) {
       const ind = 8 + Math.min(lvl, 14) * 14;
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
       const sel = (s.sel === u.id || (s.multi || []).includes(u.id)) ? " sel" : "";
-      const fa = agent(u.agent), fabs = !isFolder(u) && !kids(u.id).length && fa?.type === "ia";
-      const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : `<span class="fi plan${fabs ? " abs" : ""}" title="${kids(u.id).length ? "Composição" : fabs ? "Função abstrata (IA no context)" : fa ? "Função concreta (import)" : "Função"}">${icon("circle")}</span>`;
+      const fa = agent(u.agent), fabs = !isFolder(u) && !kids(u.id).length && fa?.type === "ia", ffull = !isFolder(u) && !kids(u.id).length && fa?.type === "maquina";
+      const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : `<span class="fi plan${ffull ? " abs" : ""}" title="${kids(u.id).length ? "Composição" : fabs ? "Função abstrata (IA no context)" : fa ? "Função concreta (import)" : "Função"}">${icon("circle")}</span>`;
       const a = agent(u.agent);
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
       const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
@@ -1140,8 +1144,8 @@ function explorer(s) {
       const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1);
       if (!outs.length && !sub.length) return;
       const id = "esx:" + u.id, isOpen = q ? true : !OPEN.has(id); // aberto por padrão; esx: = recolhido
-      const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia";
-      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${icon("chevron-right")}</span><span class="fi plan${fabs ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
+      const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
+      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${icon("chevron-right")}</span><span class="fi plan${ffull ? " abs" : ""}" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
       if (!isOpen) return;
       rows.push(...sub);
       outs.forEach(([name, ref]) => { estHits++; rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado" title="Dado (estado)">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span></span></div>`); });
@@ -1424,7 +1428,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem representação de estado nomeado (◆): só funções e composições; estados = divisórias eN
@@ -1483,17 +1487,38 @@ function flow(s) {
       <span class="c-ag">${has || isData(u) ? "" : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const left = disp.map(r => r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
-  const barRow = ({ u }) => {
+  // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
+  const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
+  const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
+  const stNew = Array.from({ length: nSteps + 1 }, () => []);
+  fnRowsPre.forEach(u => {
+    const L = layout[u.id]; if (!L) return;
+    (u.ins || []).filter(n => !prodSetPre.has(n)).forEach(n => { if (!stNew[L.s].some(d => d[0] === n)) stNew[L.s].push([n, true]); });
+    (u.outs || []).forEach(([n]) => { const i = Math.min(L.e + 1, nSteps); if (!stNew[i].some(d => d[0] === n)) stNew[i].push([n, false]); });
+  });
+  const stBag = Array.from({ length: nSteps + 1 }, (_, i) => {
+    const m = new Map();
+    for (let j = 0; j <= i; j++) stNew[j].forEach(([n, ext]) => { if (!m.has(n)) m.set(n, ext); });
+    return [...m.entries()];
+  });
+  const bagLbl = (ei) => {
+    const bag = stBag[Math.min(ei, nSteps)] || [];
+    if (!bag.length) return "";
+    return `<span class="fo" title="dados em e${ei}: ${esc(bag.map(([n]) => n).join(", "))}">${bag.map(([n, ext]) => `<b class="fd${ext ? " ext" : ""}">${esc(n)}</b>`).join("")}</span>`;
+  };
+    const barRow = ({ u }) => {
     const c = colOf(u), g = geo(u), p = flowProg(u), sel = s.sel === u.id ? " sel" : "";
     if (hasK(u)) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
-      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
+      const ei = (layout[u.id] || { e: 0 }).e + 1;
+      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${bagLbl(ei)}${flowTags(u)}</span></div>`;
     }
     if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div><span class="flbl" style="left:${g.x2 + 10}px">${esc(u.title)}<span class="ftag data">${esc((u.ins || []).join(", "))}</span></span></div>`;
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px">${(u.outs || []).length ? `<span class="fo" title="dados em e${layout[u.id].e + 1}">${esc(u.outs.map(o => o[0]).join(", "))}</span>` : ""}${flowTags(u)}</span></div>`;
+    const ei = (layout[u.id] || { e: 0 }).e + 1;
+    return `<div class="rr"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px">${bagLbl(ei)}${flowTags(u)}</span></div>`;
   };
   const bars = disp.map(r => r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
@@ -1551,18 +1576,10 @@ function flow(s) {
   const H = disp.length * RH;
   const pl = PLANS.find(p => p.id === s.plan).name;
   const { missing } = fopCheck(s.plan);
-  // dados por estado: e0 = entradas externas; eN = saídas das funções que terminam em eN
-  const fnRows = rows.map(r => r.u).filter(isFn), prodSet = new Set(fnRows.flatMap(u => (u.outs || []).map(o => o[0])));
-  const stData = Array.from({ length: nSteps + 1 }, () => []);
-  fnRows.forEach(u => {
-    const L = layout[u.id]; if (!L) return;
-    (u.ins || []).filter(n => !prodSet.has(n)).forEach(n => { if (!stData[L.s].some(d => d[0] === n)) stData[L.s].push([n, true]); });
-    (u.outs || []).forEach(([n]) => { const i = Math.min(L.e + 1, nSteps); if (!stData[i].some(d => d[0] === n)) stData[i].push([n, false]); });
-  });
   const fnAll = rows.map(r => r.u).filter(isFn);
   const nAbs = new Set(fnAll.filter(u => fnKind(u) === "abs").map(u => u.agent)).size + new Set(fnAll.flatMap(u => (u.ins || []).filter(n => absData(u, n)))).size;
-  const nConc = new Set(fnAll.filter(u => fnKind(u) === "conc").map(u => u.agent)).size + prodSet.size;
-  const FOOT = 48 + Math.max(0, ...stData.map(d => d.length)) * 14;
+  const nConc = new Set(fnAll.filter(u => fnKind(u) === "conc").map(u => u.agent)).size + prodSetPre.size;
+  const FOOT = 48 + Math.max(0, ...stBag.map(d => d.length)) * 14;
   const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + FOOT;
   const toolbar = zoomToolbar("flow", "Flow", "workflow");
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
@@ -1574,7 +1591,7 @@ function flow(s) {
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
-          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stData[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stData[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
+          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stBag[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stBag[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
           <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
@@ -2289,7 +2306,7 @@ const SCREENS = {
   "T-04": { s: { v: "flow", q: "propo" }, name: "Buscar na árvore", us: ["explorar"], notes: "Filtra planos e estados pelo título/nome e abre o caminho até cada resultado." },
   "T-20": { s: { v: "flow", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["unidade"], notes: "Título e contexto, UUID, responsável (IA ou biblioteca Node), entradas/saídas e atalhos para Flow e Explorar." },
   "T-21": { s: { v: "flow", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir IA ou lib", us: ["agente"], notes: "Escolha agrupada: IAs ou bibliotecas Node.js do catálogo. Trocar o ator não reescreve o roteiro." },
-  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada eN lista os dados daquele estado. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Abstrato × concreto (itens 6–9, 15): função IA = barra sólida (vem do context), lib Node = barra vazada (import); dado de entrada da mesma camada = □ vazado, de fora = ■ sólido; saídas sempre □ concretas; cada composição (camada) mostra à esquerda os ■ dados e ▬ funções abstratos que pede ao context. Cabeçalho: camadas · abstratos · concretos e “contexto completo · executável” (clique abre Contexto · camadas). Tabela Nome · Estados · Passos · Agente." },
+  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada eN lista os dados daquele estado. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Abstrato × concreto (itens 6–9, 15): função IA = barra só com borda (abstrata, vem do context), lib Node = barra preenchida (concreta, import); dado de entrada da mesma camada = □ vazado, de fora = ■ sólido; saídas sempre □ concretas; cada composição (camada) mostra à esquerda os ■ dados e ▬ funções abstratos que pede ao context. Cabeçalho: camadas · abstratos · concretos e “contexto completo · executável” (clique abre Contexto · camadas). Tabela Nome · Agente; cada if tem linha própria com ◇ e condição." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
   "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(context), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },

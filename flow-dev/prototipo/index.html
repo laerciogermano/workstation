@@ -425,13 +425,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .viewport { flex: 1; position: relative; overflow: hidden; min-height: 0; }
 /* chips */
 .ag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--body); white-space: nowrap; min-width: 0; }
+.ag .face { width: 20px; height: 20px; font-size: 8.5px; }
 .ag .ico { width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; color: #fff; font-size: 9px; font-weight: 700; }
 .ag .ico svg { width: 12px; height: 12px; stroke-width: 2; }
 .ag.pessoa .ico { background: var(--t-pessoa); }
 .ag.ia .ico { background: var(--t-ia); }
 .ag.maquina .ico { background: var(--t-maquina); border-radius: 5px; }
+.ag.maquina .face { border-radius: 5px; border-color: var(--ok); color: var(--ok); }
 .ag.none { color: var(--muted); }
-.ag.none .ico { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
+.ag.none .ico, .ag.none .face { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
 .st { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; border-radius: 5px; padding: 1px 6px 1px 4px; white-space: nowrap; }
 .st svg { width: 12px; height: 12px; stroke-width: 2.2; }
 .st.pendente { color: var(--idle); background: color-mix(in srgb, var(--idle) 14%, transparent); }
@@ -3103,6 +3105,7 @@ const ACT = {
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
   "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },
   "cfg-close": () => { unset("agCfg", "mdCfg"); },
+  "ag-photo-clear": t => { const cfg = AGENT_CFG[t.dataset.id] = AGENT_CFG[t.dataset.id] || {}; delete cfg.photo; const a = agent(t.dataset.id); if (a) delete a.photo; toast(`${a?.name || "Agente"}: só iniciais`, "user-round"); },
   "proj-open": t => { projAll(t.dataset.plan, true); },
   "proj-close": t => { projAll(t.dataset.plan, false); },
   collapse: () => { OPEN.clear(); toast("Árvore recolhida", "chevrons-down-up"); },
@@ -3333,6 +3336,12 @@ holder.addEventListener("input", e => {
 });
 holder.addEventListener("change", e => {
   const t = e.target;
+  if (t.matches("[data-ag-photo]")) {
+    const file = t.files && t.files[0]; if (!file) return;
+    const id = t.dataset.agPhoto, reader = new FileReader();
+    reader.onload = () => { const cfg = AGENT_CFG[id] = AGENT_CFG[id] || {}; cfg.photo = reader.result; toast(`${agent(id).name}: foto atualizada`, "image"); paint(); };
+    reader.readAsDataURL(file); return;
+  }
   if (t.matches("[data-plan]")) { cur.plan = t.value; unset("mach", "drawer"); paint(); return; }
   if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
   if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }

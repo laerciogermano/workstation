@@ -23,3 +23,5 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 | Ícone Node preenchido com brand | Fundo branco; ícone/borda verde (`--ok` / brand) |
 | Dado abstrato só se nunca produzido no plano | Abstrato = fora da **camada** (ex.: `dados_cliente` na Ativação = ■ preto) |
 | Parâmetro FOP `context` | `state` (`function f(state)`, export JS) |
+| Cubos em Arquivos/Estados | Abstrato = ■ preto · concreto = □ branco |
+| Pessoas / Agentes no Explorar | Avatar com iniciais (ou foto); agente IA leva selo bot |

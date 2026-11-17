@@ -1905,18 +1905,24 @@ function flow(s) {
   const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
-  // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
+  // dados por estado: e0 = entradas abstratas (outra camada/context); eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
   const stNew = Array.from({ length: nSteps + 1 }, () => []);
   fnRowsPre.forEach(u => {
     const L = layout[u.id]; if (!L) return;
-    (u.ins || []).filter(n => !prodSetPre.has(n)).forEach(n => { if (!stNew[L.s].some(d => d[0] === n)) stNew[L.s].push([n, true]); });
+    // abstrato = vem de fora da camada (ex.: dados_cliente em Ativação), mesmo se produzido noutro topo do plano
+    (u.ins || []).filter(n => absData(u, n)).forEach(n => { if (!stNew[L.s].some(d => d[0] === n)) stNew[L.s].push([n, true]); });
     (u.outs || []).forEach(([n]) => { const i = Math.min(L.e + 1, nSteps); if (!stNew[i].some(d => d[0] === n)) stNew[i].push([n, false]); });
   });
   const stBag = Array.from({ length: nSteps + 1 }, (_, i) => {
     const m = new Map();
     for (let j = 0; j <= i; j++) stNew[j].forEach(([n, ext]) => { if (!m.has(n)) m.set(n, ext); });
+    // naquele eN, se alguma função o pede como abstrato, o □ fica preto (ext)
+    fnRowsPre.forEach(u => {
+      const L = layout[u.id]; if (!L || L.s !== i) return;
+      (u.ins || []).filter(n => absData(u, n)).forEach(n => m.set(n, true));
+    });
     return [...m.entries()];
   });
   const bagLbl = (ei) => {

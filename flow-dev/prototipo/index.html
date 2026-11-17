@@ -1701,9 +1701,7 @@ function flow(s) {
   structs.forEach(st => { st.i0 = Math.min(...st.body.map(id => rIdx[id])); (headAt[st.i0] = headAt[st.i0] || []).push(st); });
   // cada função ocupa 3 linhas: entrada (dados que recebe) · task (barra) · saída (dados que produz)
   const leaf = u => !isData(u) && !flowKids(u).length;
-  // entrada sem repetição: só dados que vêm de fora do plano; o resto já aparece na linha de saída de quem produz
-  const planOuts = new Set(rows.flatMap(r => (r.u.outs || []).map(o => o[0])));
-  const newIns = u => (u.ins || []).filter(n => !planOuts.has(n)); // dado já produzido no plano aparece só na saída de quem o produz
+  const newIns = u => u.ins || []; // cada função mostra toda a sua entrada e toda a sua saída (repetir entre funções é esperado)
   const disp = [];
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));

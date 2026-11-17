@@ -1378,6 +1378,7 @@ function revealFn(id) {
   OPEN.delete("pjx:" + u.plan); OPEN.add("pjp:" + u.plan);
   let p = u.parent; while (p) { OPEN.add(p); p = $u(p).parent; }
   STRUCTS.forEach(st => { if (st.body.includes(id)) OPEN.add("ifx:" + (u.parent || null) + ":" + st.test); });
+  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "fn" && v === id)).forEach(l => OPEN.add("ly:" + l.id)); // e a layer da função
   unset("estado");
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
@@ -1386,6 +1387,7 @@ function revealDado(name) {
   OPEN.delete("pjx:" + u.plan); OPEN.add("pje:" + u.plan);
   let x = u; while (x) { OPEN.add("esx:" + x.id); x = x.parent ? $u(x.parent) : null; }
   cur.estado = name; cur.sel = u.id;
+  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "dado" && v === name)).forEach(l => OPEN.add("ly:" + l.id)); // abre também a layer do dado
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-estado="${name}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
 function projAll(plan, openAll) {

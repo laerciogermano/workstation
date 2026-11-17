@@ -50,7 +50,7 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 |---|---|
 | Estado (e0, e1, e2…) | divisórias do eixo, rotuladas no cabeçalho |
 | Função (mudança de estado) | barra de eN a eN+1, com passos e % feito |
-| Dado (unidade de informação) | ○ sobre a divisória: entradas antes da barra, saídas depois · ◆ = estado agregado |
+| Dado (unidade de informação) | □ sobre a divisória (entrada/saída) · ao final de cada função, chips com o **bag acumulado** do estado de saída (eN) · sob cada eN no rodapé, a mesma lista acumulada |
 | n entradas / n saídas | detalhe da etapa + assinatura `function f(context)` |
 | Sequência | conector (botão **Sequência** liga/desliga) |
 | Paralelo | tag `∥ paralelo` · `Promise.all` no export |

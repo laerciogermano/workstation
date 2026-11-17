@@ -25,6 +25,12 @@ explícito:
 O Flow deve permitir que esse mesmo processo seja compreendido tanto como
 uma composição visual quanto como uma estrutura executável.
 
+Descartes criou o plano cartesiano e mudou a matemática: uniu a geometria e
+a álgebra — duas áreas que antes não conversavam. O **Flow** pretende algo
+parecido: unir dois planos que ainda não se conversam — o desenho visual do
+processo e o código executável — e tornar fácil aquilo que nunca antes foi
+visto: o mesmo fluxo legível, editável e executável nos dois lados.
+
 ### Grande objetivo
 
 O grande objetivo do **Flow** é permitir que um código desenhado

@@ -49,11 +49,14 @@ export {
   ensureCaptureFile,
   fakeCameraChromeArgs,
   GRANT_MEDIA_PERMISSIONS,
+  LIVE_CAPTURE_NAME,
+  liveCapturePath,
   mediaPermissionEntries,
   mergeMediaPermissions,
   originFromUrl,
   probeMediaDuration,
   stripFakeCameraArgs,
+  TRANSPORT_CAPTURE_SECONDS,
 } from './camera.mjs';
 export {
   captureScreenshot,

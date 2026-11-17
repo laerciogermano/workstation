@@ -169,7 +169,7 @@
           <button type="button" class="ghost" id="clear-media">Limpar seleção</button>
         </div>
         <h3>Controle da webcam</h3>
-        <p class="hint">Pause / play / ≪ ≫ regeneram o Y4M e reiniciam o Chrome se estiver up (limitação do fake cam).</p>
+        <p class="hint">Pause / play / ≪ ≫ só reescrevem o live.y4m — sem fechar o Chrome (pode levar ~2–3s no loop).</p>
         <p class="meta" id="playback-status">—</p>
         <div class="dlg-actions">
           <button type="button" class="ghost" id="cam-seek-back" title="-5s">≪ -5s</button>
@@ -437,7 +437,7 @@
       if (!id) throw new Error('id ausente');
       const out = await api('/api/camera/playback', {
         method: 'POST',
-        body: JSON.stringify({ id, action, apply: true, ...extra }),
+        body: JSON.stringify({ id, action, restart: false, ...extra }),
       });
       paintPlayback(out.playback);
       return out;
@@ -724,7 +724,7 @@
         const out = await cameraPlayback(action, extra);
         flash(
           `${action} · ${out.playback?.paused ? 'pausado' : 'play'} @ ${(out.playback?.positionSec || 0).toFixed(1)}s`
-            + (out.restarted ? ' · Chrome reiniciado' : ''),
+            + (out.restarted ? ' · Chrome reiniciado (bind live.y4m)' : ' · sem fechar browser'),
           'ok',
         );
         await loadList({ quiet: true });

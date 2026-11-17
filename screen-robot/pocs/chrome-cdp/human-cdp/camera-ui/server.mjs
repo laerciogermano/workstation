@@ -512,7 +512,7 @@ const server = createServer(async (req, res) => {
         action: body.action || 'status',
         positionSec: body.positionSec,
         deltaSec: body.deltaSec,
-        apply: body.apply !== false,
+        restart: body.restart === true,
       }));
     }
 

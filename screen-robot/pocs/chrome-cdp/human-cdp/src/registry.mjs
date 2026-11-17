@@ -25,10 +25,12 @@ import {
   DEFAULT_CAMERA_LABEL,
   DEFAULT_SEEK_STEP_SEC,
   ensureCaptureFile,
+  liveCapturePath,
   mergeMediaPermissions,
   originFromUrl,
   probeMediaDuration,
   stripFakeCameraArgs,
+  TRANSPORT_CAPTURE_SECONDS,
 } from './camera.mjs';
 import { createSnapshot, restoreSelectedBeforeStart } from './snapshot.mjs';
 import {
@@ -608,7 +610,14 @@ export async function setCamera(id, opts = {}) {
   const maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : undefined;
 
   const cacheDir = cameraCacheDir(row.id);
-  const captureFile = ensureCaptureFile(video, cacheDir, { size, fps, maxSeconds });
+  // Sempre live.y4m — pause/seek sobrescrevem o mesmo path sem reiniciar o Chrome.
+  const captureFile = ensureCaptureFile(video, cacheDir, {
+    size,
+    fps,
+    maxSeconds,
+    outPath: liveCapturePath(cacheDir),
+    force: true,
+  });
 
   const meta = readMeta(row.id);
   const prev = normalizeFingerprint(meta?.fingerprint) || {};
@@ -669,21 +678,21 @@ export async function setCamera(id, opts = {}) {
 
 /**
  * Controle da webcam fake: pause / play / seek.
- * Chrome não seeka o arquivo aberto — regenera Y4M e reinicia se estiver up.
+ * Sobrescreve `camera/live.y4m` (mesmo path do spawn). Sem reiniciar o Chrome,
+ * salvo se ainda não estiver bound ao live.y4m (uma vez) ou `restart: true`.
  *
  * @param {string} id
  * @param {{
  *   action?: 'pause'|'play'|'seek'|'seekBy'|'status',
  *   positionSec?: number,
  *   deltaSec?: number,
- *   apply?: boolean,
+ *   restart?: boolean,
  * }} [opts]
  */
 export async function controlCameraPlayback(id, opts = {}) {
   const row = getCdp(id);
   if (!row) throw new Error(`cdp não encontrado: ${id}`);
   const action = String(opts.action || 'status');
-  const apply = opts.apply !== false;
   const meta = readMeta(row.id);
   const cam = cameraFromFingerprint(meta?.fingerprint);
   if (!cam.video) throw new Error('sem vídeo de câmera — aplique uma mídia antes');
@@ -733,9 +742,14 @@ export async function controlCameraPlayback(id, opts = {}) {
   }
 
   const cacheDir = cameraCacheDir(row.id);
+  const live = liveCapturePath(cacheDir);
+  const alreadyLive = !!(cam.captureFile && resolve(cam.captureFile) === resolve(live));
+  // Segmento curto: no EOF o Chrome volta ao início e pega o Y4M novo (sem fechar janela).
   const captureFile = ensureCaptureFile(cam.video, cacheDir, {
     startSec: positionSec,
     paused,
+    maxSeconds: paused ? 2 : TRANSPORT_CAPTURE_SECONDS,
+    outPath: live,
     force: true,
   });
 
@@ -755,13 +769,12 @@ export async function controlCameraPlayback(id, opts = {}) {
   updateCdp(row.id, { fingerprint, cameraPlayback: nextPlayback });
 
   let restarted = false;
-  if (apply) {
-    const st = await statusCdp(row.id);
-    if (st.status === 'up') {
-      await stopCdp(row.id);
-      await startCdp(row.id);
-      restarted = true;
-    }
+  const st = await statusCdp(row.id);
+  const mustBindLive = st.status === 'up' && !alreadyLive;
+  if (opts.restart === true || mustBindLive) {
+    await stopCdp(row.id);
+    await startCdp(row.id);
+    restarted = true;
   }
 
   return {
@@ -772,6 +785,7 @@ export async function controlCameraPlayback(id, opts = {}) {
     playback: nextPlayback,
     restarted,
     action,
+    soft: !restarted,
   };
 }
 

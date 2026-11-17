@@ -72,6 +72,10 @@ export const DEFAULT_CAPTURE_FPS = 12;
 export const DEFAULT_CAPTURE_MAX_SECONDS = 30;
 /** Passo padrão dos botões ≪ / ≫ na UI. */
 export const DEFAULT_SEEK_STEP_SEC = 5;
+/** Arquivo estável que o Chrome mantém aberto — seek/pause só sobrescreve, sem restart. */
+export const LIVE_CAPTURE_NAME = 'live.y4m';
+/** Segmento curto no transporte: EOF rápido → Chrome relê o Y4M novo. */
+export const TRANSPORT_CAPTURE_SECONDS = 3;
 
 /**
  * @param {string} videoPath
@@ -175,10 +179,18 @@ function commandExists(bin) {
 }
 
 /**
+ * Caminho estável da captura ao vivo (seek sem fechar o Chrome).
+ * @param {string} cacheDir
+ */
+export function liveCapturePath(cacheDir) {
+  return join(cacheDir, LIVE_CAPTURE_NAME);
+}
+
+/**
  * Garante Y4M leve no cache (sempre normaliza — y4m/mjpeg grande também).
  * @param {string} videoPath
  * @param {string} cacheDir pasta p/ Y4M gerado
- * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean, outPath?: string }} [opts]
  */
 export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const abs = resolve(videoPath);
@@ -195,11 +207,10 @@ export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
     : startSec > 0
       ? `s${startSec.toFixed(1)}`
       : 's0';
-  const out = join(
-    cacheDir,
-    `${base}.${size}.${fps}fps.${maxSeconds}s.${tag}.y4m`,
-  );
-  const transport = startSec > 0 || paused || opts.force;
+  const out = opts.outPath
+    ? resolve(opts.outPath)
+    : join(cacheDir, `${base}.${size}.${fps}fps.${maxSeconds}s.${tag}.y4m`);
+  const transport = startSec > 0 || paused || opts.force || !!opts.outPath;
   if (!transport && existsSync(out)) {
     try {
       if (statSync(out).mtimeMs >= statSync(abs).mtimeMs) return out;

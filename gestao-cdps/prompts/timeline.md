@@ -7,3 +7,4 @@
 | 003 | 2026-11-17 | UI lista + status + CRUD (:18770) | [003-2026-11-17-ui-lista-status-crud.md](003-2026-11-17-ui-lista-status-crud.md) | camera-ui abre na lista com status; criar/editar/remover/start/stop. |
 | 004 | 2026-11-17 | Fingerprint + backups + visão | [004-2026-11-17-fingerprint-backup-visao.md](004-2026-11-17-fingerprint-backup-visao.md) | Gerar fingerprint; backups por pasta; start restaura; controlar via prints. |
 | 005 | 2026-11-17 | Galeria + ordem por criação | [005-2026-11-17-galeria-midias-ordem.md](005-2026-11-17-galeria-midias-ordem.md) | Galeria de vídeos; select por CDP; listas mais recente primeiro. |
+| 006 | 2026-11-17 | Snapshot + file picker | [006-2026-11-17-snapshot-file-picker.md](006-2026-11-17-snapshot-file-picker.md) | Snapshot na criação/start; galeria com seletor de arquivo. |

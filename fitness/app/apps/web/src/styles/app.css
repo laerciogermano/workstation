@@ -204,11 +204,17 @@ html[data-theme="lima"] .goal > .i { color: var(--ft-ink); }
 .kpis.four .st b { font-size: 17px; }
 .st.mp b { color: var(--ft-p); } .st.mc b { color: var(--ft-c); } .st.mg b { color: var(--ft-g); }
 .kpis.plain .st { background: none; border: 0; padding: 0; }
-.meta-card { padding: 18px; border-radius: 20px; background: var(--ft-surface); color: var(--ft-ink); display: flex; flex-direction: column; gap: 2px; box-shadow: var(--ft-lift); border: 1px solid var(--ft-line); }
-.meta-card p { display: flex; gap: 8px; align-items: center; font-size: 13px; opacity: .9; }
+.meta-card { padding: 18px; border-radius: 20px; background: var(--ft-surface); color: var(--ft-ink); display: flex; flex-direction: column; gap: 2px; box-shadow: var(--ft-lift); border: 0; }
+.meta-card p { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; }
 .meta-card > b { font-size: 46px; font-weight: 800; letter-spacing: -.045em; line-height: 1.05; }
-.meta-card > b i { font-size: 15px; font-style: normal; font-weight: 600; opacity: .75; margin-left: 6px; letter-spacing: 0; }
-.meta-card > span { font-size: 13px; opacity: .75; color: var(--ft-muted); }
+.meta-card > b i { font-size: 15px; font-style: normal; font-weight: 600; color: var(--ft-muted); margin-left: 6px; letter-spacing: 0; }
+.meta-card > span { font-size: 13px; font-weight: 700; color: var(--ft-muted); }
+.meta-card.deficit > b { color: var(--ft-kc); }
+.meta-card.deficit > b i { color: color-mix(in srgb, var(--ft-kc) 70%, var(--ft-ink)); }
+.meta-card.deficit > span { color: var(--ft-kc); }
+.meta-card.superavit > b { color: var(--ft-act); }
+.meta-card.superavit > b i { color: color-mix(in srgb, var(--ft-act) 70%, var(--ft-ink)); }
+.meta-card.superavit > span { color: var(--ft-act-deep); }
 .rng { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--ft-act) var(--p), var(--ft-line) var(--p)); outline: none; margin: 8px 0 2px; }
 .rng.bad { background: linear-gradient(to right, var(--ft-err) var(--p), var(--ft-line) var(--p)); }
 .rng::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid var(--ft-ink); box-shadow: 0 2px 6px rgba(0,0,0,.2); cursor: grab; }

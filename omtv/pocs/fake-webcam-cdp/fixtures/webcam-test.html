@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OmTV POC — webcam fake</title>
+  <style>
+    :root { color-scheme: light; font-family: ui-sans-serif, system-ui, sans-serif; }
+    body { margin: 24px; max-width: 960px; }
+    h1 { font-size: 1.25rem; margin: 0 0 8px; }
+    p { color: #444; margin: 0 0 16px; }
+    video {
+      width: min(100%, 640px);
+      aspect-ratio: 4 / 3;
+      background: #111;
+      border-radius: 8px;
+      display: block;
+    }
+    #meta { margin-top: 16px; white-space: pre-wrap; font: 13px/1.4 ui-monospace, monospace; }
+    .err { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>OmTV POC — vídeo local como webcam</h1>
+  <p>Preview de <code>getUserMedia</code> + labels de <code>enumerateDevices</code>.</p>
+  <video id="preview" autoplay playsinline muted></video>
+  <pre id="meta">abrindo câmera…</pre>
+  <script>
+    (async () => {
+      const meta = document.getElementById('meta');
+      const preview = document.getElementById('preview');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        preview.srcObject = stream;
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cams = devices.filter((d) => d.kind === 'videoinput');
+        const track = stream.getVideoTracks()[0];
+        meta.textContent = JSON.stringify({
+          trackLabel: track?.label || null,
+          settings: track?.getSettings?.() || null,
+          videoinputs: cams.map((d) => ({ label: d.label, deviceId: d.deviceId?.slice(0, 12) })),
+        }, null, 2);
+      } catch (e) {
+        meta.className = 'err';
+        meta.textContent = String(e && e.message || e);
+      }
+    })();
+  </script>
+</body>
+</html>

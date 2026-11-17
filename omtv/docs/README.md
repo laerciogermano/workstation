@@ -6,6 +6,7 @@
 | Artefato | Status |
 |----------|--------|
 | Visão | [`../README.md`](../README.md) |
+| POC vídeo→webcam (CDP, sem OBS) | [`../pocs/fake-webcam-cdp/README.md`](../pocs/fake-webcam-cdp/README.md) |
 | PRD / funcionalidades / US / BDD | A produzir |
 
 ## Próximos passos

@@ -5,7 +5,18 @@
  */
 
 const DEFAULT_LABEL = 'FaceTime HD Camera';
-const DEFAULT_MATCH = ['obs', 'virtual camera', 'virtualcam', 'obs-camera', 'obs studio'];
+const DEFAULT_MATCH = [
+  'obs',
+  'virtual camera',
+  'virtualcam',
+  'obs-camera',
+  'obs studio',
+  // Chrome --use-fake-device-for-media-stream / --use-file-for-fake-video-capture
+  'fake',
+  'fake_device',
+  'y4m',
+  'mjpeg',
+];
 const SPOOF_VER = 2;
 
 /**

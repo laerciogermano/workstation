@@ -136,6 +136,12 @@ Uma conta + um vídeo + políticas de mensagem/conversa rodando até pause/fim.
 | [`human-cdp`](../screen-robot/pocs/chrome-cdp/human-cdp/README.md) | Clique/type com foco + trajetória |
 | Connect / ConnectMax | Prospecção LinkedIn — outro canal |
 
+## POCs
+
+| POC | O quê |
+|-----|--------|
+| [`pocs/fake-webcam-cdp/`](pocs/fake-webcam-cdp/README.md) | Vídeo local → webcam no Chrome via CDP (flags `--use-file-for-fake-video-capture` + spoof de label; sem OBS) |
+
 ## Próximos passos
 
 1. Validar e refinar **este** documento de visão com o operador.

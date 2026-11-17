@@ -57,6 +57,7 @@ import { applyCameraSpoof } from './camera-spoof.mjs';
  * @property {UserAgentMetadata} [userAgentMetadata]
  * @property {'disable_non_proxied_udp'|'default_public_interface_only'|'default_public_and_private_interfaces'} [webrtcIpHandling]
  * @property {string[]} [chromeArgs] flags extras no startCdp
+ * @property {string} [cameraLabel] label fictício p/ spoof de câmera (OBS / fake device)
  * @property {Array<{origin: string, permission: string, setting?: 'granted'|'denied'|'prompt'}>} [permissions]
  */
 
@@ -160,6 +161,9 @@ export function normalizeFingerprint(raw) {
     const args = o.chromeArgs.map((a) => str(a)).filter(Boolean);
     if (args.length) out.chromeArgs = /** @type {string[]} */ (args);
   }
+
+  const cameraLabel = str(o.cameraLabel);
+  if (cameraLabel) out.cameraLabel = cameraLabel;
 
   if (Array.isArray(o.permissions)) {
     const permissions = [];

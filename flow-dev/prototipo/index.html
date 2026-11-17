@@ -1512,7 +1512,7 @@ function flow(s) {
       const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
       const ei = (layout[u.id] || { e: 0 }).e + 1;
-      return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
+      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${flowTags(u)}</span></div>`;
     }
     if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
     const k = fnKind(u), a = agent(u.agent);
@@ -1549,15 +1549,6 @@ function flow(s) {
     const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
     if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
     if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
-  });
-  // composição (camada): à esquerda, os abstratos que chegam pelo context — ■ dado e ▬ função (documento, itens 15 e 19)
-  rows.forEach(({ u }) => {
-    if (!hasK(u)) return;
-    const io = compIO(u), g = geo(u), y = yTop(idx[u.id]) + 15.5;
-    if (!io.ext.length && !io.ias.length) return;
-    svg += `<line class="fstub" x1="${g.ix}" y1="${y}" x2="${g.x1}" y2="${y}"/>`;
-    if (io.ext.length) svg += `<rect class="fdot a" x="${g.ix - 4}" y="${y - 10}" width="8" height="8"><title>dados abstratos: ${esc(io.ext.join(", "))}</title></rect>`;
-    if (io.ias.length) svg += `<rect class="ffn a" x="${g.ix - 6}" y="${y + 2}" width="12" height="6" rx="1.5"><title>funções abstratas: ${esc(io.ias.join(", "))}</title></rect>`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {

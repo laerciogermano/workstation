@@ -174,6 +174,16 @@ const MEASURES = [
   { id: 'braco', nome: 'Braço', un: 'cm', dir: 1, onde: 'Meio do braço, contraído' },
   { id: 'coxa', nome: 'Coxa', un: 'cm', dir: 0, onde: 'Meio da coxa, em pé' },
 ];
+/* sugestões além do padrão — a pessoa também cria a própria */
+const MEASURE_PRESETS = [
+  { id: 'panturrilha', nome: 'Panturrilha', un: 'cm', dir: 1, onde: 'Parte mais larga, em pé' },
+  { id: 'pescoco', nome: 'Pescoço', un: 'cm', dir: -1, onde: 'Abaixo do pomo de Adão' },
+  { id: 'ombro', nome: 'Ombro', un: 'cm', dir: 1, onde: 'Ponta a ponta dos ombros' },
+  { id: 'antebraco', nome: 'Antebraço', un: 'cm', dir: 1, onde: 'Parte mais larga' },
+  { id: 'gordura', nome: '% gordura', un: '%', dir: -1, onde: 'Balança ou adipômetro' },
+  { id: 'passos', nome: 'Passos', un: 'mil', dir: 1, onde: 'Média diária da semana' },
+];
+const allMeasures = () => [...MEASURES, ...(typeof S !== 'undefined' && S.customMeasures ? S.customMeasures : [])];
 const HIST0 = [
   { d: '2026-08-23', peso: 76.0, cintura: 86.0, quadril: 104.0, peito: 96.0, braco: 29.5, coxa: 60.0 },
   { d: '2026-09-06', peso: 75.1, cintura: 85.0, quadril: 103.2, peito: 95.5, braco: 29.6, coxa: 59.6 },
@@ -272,8 +282,8 @@ const chalOf = (id) => CHAL_CAT.find((c) => c.id === id);
 /* Ordem: onboarding → medições → progresso → treino → dieta → gamificação → vitrine → academias → perfil.
    Antes (até 2026-11-16): progresso/dieta/treino antes da avaliação; sem épico dedicado de gamificação Strava. */
 const FLOWS = [
-  { id: 'e01', n: 'E01', title: 'Primeiro uso', desc: 'Sem conta: o fingerprint vincula os dados em silêncio. O onboarding é o cadastro metabólico: dados, rotina e objetivo viram TMB, gasto, estratégia, macros e projeção.', steps: ['F-01', 'F-02', 'F-03', 'F-04', 'F-05', 'F-06'] },
-  { id: 'e02', n: 'E02', title: 'Avaliação física', desc: 'Fita métrica, peso e fotos datadas numa timeline. Compare dois pontos lado a lado. Medições vêm antes do dashboard: sem corpo medido, o progresso não tem base.', steps: ['F-40', 'F-41', 'F-42', 'F-43'] },
+  { id: 'e01', n: 'E01', title: 'Primeiro uso', desc: 'Sem conta: fingerprint em silêncio. Onboarding é por seção: Hoje pede base metabólica; Dieta pede estoque (e meta se faltar); Treino pede peso; Corpo explica medidas e métricas próprias. Não trava o app inteiro de uma vez.', steps: ['F-01', 'F-02', 'F-03', 'F-04', 'F-05', 'F-06', 'F-07', 'F-08'] },
+  { id: 'e02', n: 'E02', title: 'Avaliação física', desc: 'Fita + peso + fotos na timeline. Menu em Corpo: nova avaliação, nova métrica (além do padrão) ou foto. Compare dois pontos lado a lado.', steps: ['F-40', 'F-41', 'F-42', 'F-43', 'F-44'] },
   { id: 'e03', n: 'E03', title: 'Hoje e progresso', desc: 'A home do dia fecha o balanço: meta, consumido, treino e atalhos. O dashboard mostra a projeção com premissas e os insights só usam o que foi registrado.', steps: ['F-10', 'F-11', 'F-12'] },
   { id: 'e04', n: 'E04', title: 'Treino do dia', desc: 'Musculação e calistenia no mesmo modelo. Cada exercício tem detalhe, visualização do movimento e estimativa de calorias que entra no balanço.', steps: ['F-30', 'F-31', 'F-32'] },
   { id: 'e05', n: 'E05', title: 'Dieta pelo estoque', desc: 'Informe o que tem em casa; o plano usa só isso e respeita a meta. Marque cada refeição e veja se cumpriu, ficou abaixo ou estourou.', steps: ['F-20', 'F-21', 'F-22', 'F-23', 'F-24'] },

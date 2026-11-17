@@ -13,6 +13,10 @@
 
 **F-05 meta-card:** fundo `--ft-act` / `--ft-kc` (déficit) em vez de `--ft-ink` (branco sem vida no Pista). Manutenção = surface. Voltar: `background: var(--ft-ink); color: var(--ft-canvas)`.
 
+**Onboarding por seção (PRD v1.3):** `S.gates` {hoje,dieta,treino,corpo}; 1ª entrada em cada aba → F-02…06 / F-20 / F-07 / F-08. Antes: `onboarded` monolítico + `GATED`. Voltar: restaurar gate único em `nav()`.
+
+**Corpo · menu + métrica:** sheet `corpo-menu` (avaliação / métrica / foto); `F-44` + `S.customMeasures` / `MEASURE_PRESETS`. Voltar: só `+` → F-40; sem custom.
+
 ## Republicar
 
 ```bash

@@ -4,7 +4,7 @@
 |---|---|
 | Produto | **Fitness** — hub de treino, dieta e métricas com base metabólica |
 | Código / pasta | `works/fitness` |
-| Versão do documento | 1.2 (2026-11-16) |
+| Versão do documento | 1.3 (2026-11-16) |
 | Release alvo | **PRD + visão alinhada** (esteira de docs / protótipo depois) |
 | Fontes | [Visão](../README.md) · [Índice docs](README.md) · Prompts [`001`](../prompts/001-2026-09-04-criar-projeto.md), [`002`](../prompts/002-2026-09-07-marcar-dieta-cumprimento.md), [`003`](../prompts/003-2026-11-08-prd-funcionalidades.md), [`004`](../prompts/004-2026-11-08-vitrine-gamificacao-academias.md), [`007`](../prompts/007-2026-11-16-gamificacao-strava.md) |
 
@@ -14,7 +14,7 @@
 
 O **Fitness** é o app diário de **treino + dieta + avaliação física**, sem conta tradicional: a identidade privada é um **fingerprint do dispositivo**. Para a camada social, o usuário pode criar um **personagem público** (apelido) opcional — ainda sem e-mail/senha.
 
-Na **primeira abertura**, o onboarding **é o cadastro metabólico e de objetivos** (idade, altura, gênero, peso e demais inputs). Com isso o app calcula **TMB**, **gasto calórico diário** e, conforme o objetivo (hipertrofia → **superávit**; perda de gordura → **déficit**; manutenção → **manutenção**), define **macros**, **projeções** e monta **dieta a partir dos ingredientes disponíveis** e **treino diário**. O usuário marca refeições e exercícios feitos, registra **medidas com fita métrica** e **fotos** numa timeline, e recebe **insights** a partir do acompanhamento.
+O onboarding é **por seção**, não um bloco único: a primeira entrada em **Hoje** coleta base metabólica e objetivo (TMB, gasto, meta, macros); **Dieta** pede o estoque (e a meta se ainda não existir); **Treino** pede o peso para kcal; **Corpo** apresenta medidas padrão e métricas próprias. O usuário marca refeições e exercícios, registra **fita + fotos + métricas custom** e recebe **insights**.
 
 Há ainda a **gamificação estilo Strava** (domínio da academia, coroa do exercício, ranking semanal, desafios e títulos) e a **vitrine** (feed de atividades/resultados, busca de personagens), além da descoberta de **academias próximas**.
 
@@ -29,7 +29,7 @@ Rotina fragmentada (treino num app, dieta em outro, medidas no papel, fotos no �
 | # | Objetivo | Como sabemos |
 |---|---|---|
 | O1 | Identidade sem conta | Dados persistem vinculados ao fingerprint; sem login/senha no MVP |
-| O2 | Onboarding = perfil metabólico + objetivo | Sem concluir onboarding, não há meta calórica nem macros |
+| O2 | Onboarding por seção (Hoje/Dieta/Treino/Corpo) | Cada aba pede o mínimo na 1ª entrada; meta/macros vêm com Hoje |
 | O3 | Estratégia energética correta | Objetivo define déficit / manutenção / superávit e meta diária |
 | O4 | Macros + projeção | Dashboard mostra macros e trajetória estimada até o objetivo |
 | O5 | Dieta executável | Plano só com ingredientes disponíveis; refeições marcáveis |
@@ -88,11 +88,11 @@ Abrir app → fingerprint (vínculo silencioso)
 
 | ID | Requisito |
 |---|---|
-| RF-05 | Na **primeira entrada**, bloquear o restante do app até concluir o onboarding |
-| RF-06 | Coletar no mínimo: **idade**, **altura**, **gênero**, **peso** |
-| RF-07 | Coletar demais inputs necessários ao gasto (ex.: nível de atividade) e questões de contexto que o produto definir como obrigatórias no fluxo |
-| RF-08 | Coletar **objetivo** (ex.: hipertrofia / aumento de músculo, perda de gordura / definição, manutenção, e demais PDPs/objetivos suportados) |
-| RF-09 | Ao concluir, calcular e persistir: TMB, gasto calórico diário estimado, estratégia energética, meta kcal/dia e macros-alvo |
+| RF-05 | Na **primeira entrada de cada seção** (Hoje, Dieta, Treino, Corpo), pedir só os dados daquela seção; não bloquear o app inteiro por um onboarding monolítico. Vitrine pode abrir em leitura |
+| RF-06 | Coletar no mínimo: **idade**, **altura**, **gênero**, **peso** (quando a seção exigir base metabólica — tipicamente Hoje; Treino pode pedir só peso) |
+| RF-07 | Coletar demais inputs necessários ao gasto (ex.: nível de atividade) e questões de contexto que o produto definir como obrigatórias no fluxo da seção |
+| RF-08 | Coletar **objetivo** (ex.: hipertrofia / aumento de músculo, perda de gordura / definição, manutenção, e demais PDPs/objetivos suportados) na liberação de Hoje / meta |
+| RF-09 | Ao concluir a base de Hoje, calcular e persistir: TMB, gasto calórico diário estimado, estratégia energética, meta kcal/dia e macros-alvo |
 | RF-10 | Permitir editar depois (perfil / re-onboarding parcial) e **recalcular** estratégia, macros e projeções |
 
 ### 6.3 Energia, objetivos e macros — *must*
@@ -133,6 +133,7 @@ Abrir app → fingerprint (vínculo silencioso)
 | ID | Requisito |
 |---|---|
 | RF-29 | Avaliação física com **fita métrica**: registrar circunferências e demais medidas suportadas (ex.: cintura, quadril, peito, braço, coxa) + peso |
+| RF-29b | Permitir **nova métrica** além do padrão (presets ou nome/unidade/direção definidos pelo usuário), com menu de opções em Corpo (nova avaliação / nova métrica / foto) |
 | RF-30 | Histórico de medidas em ordem cronológica (timeline / gráficos) |
 | RF-31 | Tirar ou anexar **fotos de progresso** datadas (frente / lado / costas opcional) numa **timeline** visual |
 | RF-32 | Comparar pontos da timeline (antes/depois) |
@@ -195,7 +196,7 @@ Analogias de academia ao que o Strava faz na rua: Local Legend → domínio da a
 |---|---|
 | RN-01 | **Sem conta clássica:** e-mail/senha/OAuth não existem no v1; o fingerprint é o vínculo dos dados privados |
 | RN-01b | **Personagem ≠ conta:** apelido público é opcional e não recupera dados entre aparelhos no v1 |
-| RN-02 | **Onboarding gate:** sem perfil metabólico + objetivo concluídos, o app não libera dashboard, dieta, treino nem avaliação (vitrine/busca podem ser só leitura limitada, mas publicar exige onboarding) |
+| RN-02 | **Onboarding por seção:** cada aba (Hoje, Dieta, Treino, Corpo) só libera após o mínimo daquela seção; seções irmãs podem permanecer bloqueadas. Vitrine/busca em leitura limitada; publicar exige personagem + opt-in (e base quando a ação depender de meta) |
 | RN-03 | Dados mínimos (idade, altura, gênero, peso) são obrigatórios para calcular TMB/gasto |
 | RN-04 | Objetivo de **hipertrofia / ganho muscular** → estratégia de **superávit** calórico |
 | RN-05 | Objetivo de **perda de gordura / definição** → estratégia de **déficit** calórico |
@@ -247,7 +248,7 @@ Analogias de academia ao que o Strava faz na rua: Local Legend → domínio da a
 
 ## 9. Jornadas principais
 
-1. **Primeiro uso:** abrir → fingerprint → onboarding (dados + objetivo) → ver TMB/gasto/estratégia/macros → dashboard de projeções.
+1. **Primeiro uso:** abrir → fingerprint → entrar numa aba → onboarding só daquela seção (Hoje = dados+objetivo+TMB/macros; Dieta = estoque; Treino = peso; Corpo = medidas/métricas) → usar a seção.
 2. **Montar dieta:** informar/atualizar ingredientes → gerar plano → ver refeições do dia.
 3. **Dia alimentar:** marcar refeições feitas → ver status vs meta.
 4. **Dia de treino:** abrir sessão → ver exercício (detalhe + movimento) → marcar feitos.
@@ -274,7 +275,7 @@ Analogias de academia ao que o Strava faz na rua: Local Legend → domínio da a
 
 ## 11. Critérios de sucesso (MVP)
 
-1. Usuário conclui onboarding sem criar conta e vê meta kcal + macros no mesmo fluxo.
+1. Usuário entra em Hoje sem conta, conclui só a base metabólica e vê meta kcal + macros; Dieta/Treino/Corpo pedem o restante na 1ª entrada de cada uma.
 2. Objetivo de hipertrofia gera superávit; de perda de gordura gera déficit — verificável na UI.
 3. Plano alimentar usa só ingredientes do estoque e permite marcar cumprimento.
 4. Treino do dia lista exercícios com detalhe/visualização e check de feitos.

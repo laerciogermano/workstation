@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fitness · Protótipo v1</title>
-<meta name="description" content="Protótipo navegável v1 do Fitness: onboarding metabólico, avaliação física, progresso, treino, dieta, gamificação Strava (domínio/coroas), vitrine e academias. Rastreável ao PRD v1.2.">
+<meta name="description" content="Protótipo navegável v1 do Fitness: onboarding por seção, avaliação com métricas custom, progresso, treino, dieta, gamificação Strava. Rastreável ao PRD v1.3.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261116m">
+<link rel="stylesheet" href="styles.css?v=20261116n">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
   <div>
     <span class="wm"><svg class="sym" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="var(--ft-line)" stroke-width="5"/><path d="M16 5a11 11 0 1 1-10.4 14.6" fill="none" stroke="var(--ft-act)" stroke-width="5" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--ft-ink)"/></svg><b>fitness</b></span>
     <h1>Protótipo <span>v1</span></h1>
-    <p class="lede-xl">O PRD v1.2 inteiro num app em HTML puro, <b>com estado de verdade</b>: onboarding calcula TMB pela Mifflin–St Jeor, avaliação e progresso vêm em seguida, dieta sai do estoque, treino fecha o balanço — e a gamificação estilo Strava disputa domínio da academia, coroas de exercício e desafios.</p>
+    <p class="lede-xl">O PRD v1.3 inteiro num app em HTML puro, <b>com estado de verdade</b>: onboarding por aba (Hoje/Dieta/Treino/Corpo), TMB Mifflin–St Jeor, métricas além da fita, dieta pelo estoque, treino no balanço — e gamificação estilo Strava.</p>
     <div class="actions">
       <button class="sbtn p" data-start="F-10">Navegar no protótipo</button>
       <button class="sbtn s" data-start="F-01">Começar pelo primeiro uso</button>
@@ -47,8 +47,13 @@
 
 <section class="doc" id="decisoes"><div class="wrap">
   <h2>Decisões do protótipo</h2>
-  <p class="d">Tudo vem do <code>docs/prd.md</code> v1.2. Onde o PRD deixa em aberto (“fórmula documentada na implementação”, “faixas seguras”), o protótipo fixa um valor para dar o que testar.</p>
+  <p class="d">Tudo vem do <code>docs/prd.md</code> v1.3. Onde o PRD deixa em aberto (“fórmula documentada na implementação”, “faixas seguras”), o protótipo fixa um valor para dar o que testar.</p>
   <div class="cols">
+    <div><h3>Onboarding e corpo</h3><ul>
+      <li>Gate por aba: Hoje = base; Dieta = estoque (+ meta se faltar); Treino = peso; Corpo = intro + métricas</li>
+      <li>Medidas padrão (peso/fita) fixas; menu ⋯ em Corpo: nova avaliação, nova métrica, foto</li>
+      <li>Nova métrica: presets ou nome + unidade + direção (RF-29b)</li>
+    </ul></div>
     <div><h3>Energia e macros</h3><ul>
       <li>TMB pela Mifflin–St Jeor; gasto = TMB × fator de atividade (1,2 a 1,9)</li>
       <li>Déficit padrão 20% (10–30%, seguro até 25%); superávit 10% (5–20%, seguro até 15%); recomposição 10%</li>
@@ -91,7 +96,7 @@
   <div class="tablewrap"><table class="mt" id="trace"><thead><tr><th>Tela</th><th>Nome</th><th>Fluxo</th><th>Requisitos</th><th>Regras</th></tr></thead><tbody></tbody></table></div>
 </div></section>
 
-<footer class="wrap site">Fitness · protótipo v1 · 2026-11-16 · base: <code>docs/prd.md</code> v1.2 · referência de arquitetura: notinhas.shop protótipo v2.0 · pessoas, academias e fotos são ilustrativos</footer>
+<footer class="wrap site">Fitness · protótipo v1 · 2026-11-16 · base: <code>docs/prd.md</code> v1.3 · referência de arquitetura: notinhas.shop protótipo v2.0 · pessoas, academias e fotos são ilustrativos</footer>
 
 <div id="player" role="dialog" aria-modal="true" aria-label="Protótipo navegável">
   <nav id="plist" aria-label="Telas"><span class="wm"><svg class="sym" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="var(--ft-line)" stroke-width="5"/><path d="M16 5a11 11 0 1 1-10.4 14.6" fill="none" stroke="var(--ft-act)" stroke-width="5" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--ft-ink)"/></svg><b>fitness</b></span></nav>
@@ -118,9 +123,9 @@
   </aside>
 </div>
 
-<script src="js/data.js?v=20261116m"></script>
-<script src="js/ui.js?v=20261116m"></script>
-<script src="js/screens.js?v=20261116m"></script>
-<script src="js/app.js?v=20261116m"></script>
+<script src="js/data.js?v=20261116n"></script>
+<script src="js/ui.js?v=20261116n"></script>
+<script src="js/screens.js?v=20261116n"></script>
+<script src="js/app.js?v=20261116n"></script>
 </body>
 </html>

@@ -3,13 +3,15 @@
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const PROF0 = { idade: 31, altura: 168, genero: 'f', peso: 72, ativ: 'moderado', obj: 'definicao', mag: 20, ok: false };
+const GATES0 = () => ({ hoje: true, dieta: true, treino: true, corpo: true });
 const S0 = () => ({
-  onboarded: true, newDevice: false, fp: 'fp_7c3b·e41d·a91e', online: true, gps: true, reduced: false, paused: false,
+  onboarded: true, gates: GATES0(), unlockAfter: null, newDevice: false, fp: 'fp_7c3b·e41d·a91e', online: true, gps: true, reduced: false, paused: false,
   prof: clone(PROF0), base: clone(PROF0),
   stock: [...STOCK_FULL], pref: {}, fq: '',
   meals: { cafe: 'feito', almoco: 'feito', lanche: null, jantar: null }, extras: [],
   day: 0, done: ['agachamento', 'supino'], sets: { agachamento: 4, supino: 4 }, sessDone: false, pub: true,
   hist: clone(HIST0), photos: clone(PHOTOS0), metric: 'peso', pose: 'frente', cmpA: 0, cmpB: 3, wipe: 50,
+  customMeasures: [], metricIn: { nome: '', un: 'cm', dir: 0 },
   mIn: Object.fromEntries(MEASURES.map((m) => [m.id, HIST0[HIST0.length - 1][m.id]])),
   char: { nick: 'carla.no.ferro', cor: 0, gym: 'forja' }, optIn: true, hideOld: false,
   share: { objetivo: true, streak: true, treinos: true, prs: true, dieta: true, evolucao: false, peso: false, medidas: false, fotos: false },
@@ -22,8 +24,22 @@ let S = S0();
 
 const ORDER = FLOWS.flatMap((f) => f.steps);
 const flowOf = (id) => FLOWS.find((f) => f.steps.includes(id));
-const GATED = ORDER.filter((id) => /^F-(1|2|3|4)\d$|^F-60$/.test(id));
+const SECTION_OF = {
+  'F-10': 'hoje', 'F-11': 'hoje', 'F-12': 'hoje',
+  'F-20': 'dieta', 'F-21': 'dieta', 'F-22': 'dieta', 'F-23': 'dieta', 'F-24': 'dieta',
+  'F-30': 'treino', 'F-31': 'treino', 'F-32': 'treino',
+  'F-40': 'corpo', 'F-41': 'corpo', 'F-42': 'corpo', 'F-43': 'corpo',
+};
 const NEEDS_NET = ['F-51', 'F-52', 'F-53', 'F-55', 'F-56', 'F-70', 'F-71', 'F-72', 'F-73', 'F-74', 'F-75'];
+const lockGates = () => { S.gates = { hoje: false, dieta: false, treino: false, corpo: false }; S.onboarded = false; };
+const unlock = (sec) => { S.gates[sec] = true; if (sec === 'hoje') S.onboarded = true; };
+function gateEntry(sec) {
+  if (sec === 'hoje') return 'F-02';
+  if (sec === 'dieta') return S.gates.hoje ? 'F-20' : 'F-02';
+  if (sec === 'treino') return 'F-07';
+  if (sec === 'corpo') return 'F-08';
+  return 'F-01';
+}
 let SHEET_ANIM = false, TOAST_ANIM = false;
 
 /* ---------- render ---------- */
@@ -54,13 +70,25 @@ function nav(id, p, opt = {}) {
   if (id === 'back') { id = hist.pop() || 'F-10'; dir = 'back'; }
   else {
     if (id === 'F-01' && S.newDevice) id = 'F-62';
-    if (!S.onboarded && GATED.includes(id)) { id = S.newDevice ? 'F-62' : 'F-01'; flash('Conclua o cadastro para liberar o app'); }
+    const sec = SECTION_OF[id];
+    if (sec && !S.gates[sec] && !opt.raw) {
+      S.unlockAfter = sec === 'dieta' && !S.gates.hoje ? 'dieta' : null;
+      const entry = gateEntry(sec);
+      if (id !== entry) {
+        flash({ hoje: 'Antes: sua base metabólica', dieta: S.gates.hoje ? 'Antes: o que tem em casa' : 'Antes: meta e o que tem em casa', treino: 'Antes: peso para o treino', corpo: 'Antes: como medir o corpo' }[sec]);
+        id = entry;
+      }
+    }
     if (NEEDS_NET.includes(id) && !S.online) id = 'F-61';
     if (cur && cur !== id && !opt.replace) hist.push(cur);
   }
   if (p) Object.assign(S.sel, p);
   if (id === 'F-50' && !S.nickIn && !S.char) S.nickIn = '';
-  if (id === 'F-40') S.mIn = Object.fromEntries(MEASURES.map((m) => [m.id, S.prof.peso && m.id === 'peso' ? S.prof.peso : lastM()[m.id]]));
+  if (id === 'F-40') {
+    const last = lastM();
+    S.mIn = Object.fromEntries(allMeasures().map((m) => [m.id, m.id === 'peso' && S.prof.peso ? S.prof.peso : (last[m.id] != null ? last[m.id] : (m.un === 'kg' ? S.prof.peso : 0))]));
+  }
+  if (id === 'F-44') S.metricIn = { nome: '', un: 'cm', dir: 0 };
   S.sheet = null;
   swap(() => { cur = id; paint(); }, dir);
 }
@@ -115,17 +143,30 @@ function closePlayer() { player.classList.remove('open'); document.body.style.ov
 const LIM = { idade: [14, 90], altura: [130, 220], peso: [35, 250] };
 function post(p) { if (!S.char || !S.optIn) return false; const item = { id: 'm' + Date.now(), nick: S.char.nick, mine: true, gym: S.char.gym, quando: 'agora', kudos: 0, ...p }; if (!S.online) { S.queue++; return 'fila'; } S.posts.unshift(item); return true; }
 const ACTS = {
-  gen: (a) => { S.pref = {}; const pl = PLAN(); if (!pl.viable) nav('F-24', null, { replace: cur === 'F-24' }); else { flash(`Plano gerado · ${n0(pl.tot.kcal)} kcal com ${S.stock.length} ingredientes`); nav('F-21', null, { replace: cur === 'F-24' }); } },
+  gen: (a) => {
+    S.pref = {}; const pl = PLAN();
+    const goDieta = () => { unlock('dieta'); if (!pl.viable) nav('F-24', null, { replace: true }); else { flash(`Plano gerado · ${n0(pl.tot.kcal)} kcal com ${S.stock.length} ingredientes`); nav('F-21', null, { replace: true }); } };
+    goDieta();
+  },
   num: (a) => {
     const [k, d] = a.split(':'); const step = +d;
-    if (k.startsWith('m.')) { const id = k.slice(2); S.mIn[id] = +(S.mIn[id] + step).toFixed(1); }
+    if (k.startsWith('m.')) { const id = k.slice(2); S.mIn[id] = +((S.mIn[id] || 0) + step).toFixed(1); }
     else { const [lo, hi] = LIM[k]; S.prof[k] = Math.min(hi, Math.max(lo, +(S.prof[k] + step).toFixed(1))); S.prof.ok = false; }
     paint();
   },
   sexo: (a) => { S.prof.genero = a; S.prof.ok = false; paint(); },
   ativ: (a) => { S.prof.ativ = a; paint(); },
   obj: (a) => { S.prof.obj = a; const g = goalOf(a); S.prof.mag = g.def; S.prof.ok = false; paint(); },
-  finish: (a) => { S.onboarded = true; S.prof.ok = S.prof.ok || !E().extreme; S.base = clone(S.prof); flash('Pronto · meta e macros calculadas'); hist.length = 0; nav(a, null, { replace: true }); },
+  finish: (a) => {
+    unlock('hoje'); S.prof.ok = S.prof.ok || !E().extreme; S.base = clone(S.prof);
+    flash('Pronto · meta e macros calculadas'); hist.length = 0;
+    if (S.unlockAfter === 'dieta') { S.unlockAfter = null; nav('F-20', null, { replace: true }); return; }
+    if (S.unlockAfter === 'treino') { S.unlockAfter = null; nav('F-07', null, { replace: true }); return; }
+    nav(a || 'F-10', null, { replace: true });
+  },
+  unlockDieta: () => { unlock('dieta'); flash('Dieta liberada · plano com o seu estoque'); hist.length = 0; nav('F-21', null, { replace: true }); },
+  unlockTreino: () => { unlock('treino'); S.base = clone(S.prof); flash('Treino liberado'); hist.length = 0; nav('F-30', null, { replace: true }); },
+  unlockCorpo: () => { unlock('corpo'); flash('Corpo liberado · medidas padrão + as suas'); hist.length = 0; nav('F-42', null, { replace: true }); },
   safe: () => { S.prof.mag = E().g.safe; S.sheet = null; paint(); },
   confirm: () => { S.prof.ok = true; S.sheet = null; nav('F-06'); },
   stock: (a) => { S.stock = S.stock.includes(a) ? S.stock.filter((x) => x !== a) : [...S.stock, a]; paint(); },
@@ -151,13 +192,33 @@ const ACTS = {
   },
   savem: () => {
     const rec = { d: TODAY, ...S.mIn }; const i = S.hist.findIndex((x) => x.d === TODAY); if (i >= 0) S.hist[i] = rec; else S.hist.push(rec);
-    const old = E().meta; S.prof.peso = S.mIn.peso; S.base = clone(S.prof); const nw = E().meta;
-    if (S.share.evolucao || S.share.medidas) post({ tipo: 'medida', tit: 'Avaliação registrada', vals: [['Cintura', sgn(S.mIn.cintura - S.hist[0].cintura) + ' cm'], ['Registros', S.hist.length + '']] });
-    flash(old !== nw ? `Avaliação salva · meta recalculada ${n0(old)} → ${n0(nw)} kcal` : 'Avaliação salva'); S.metric = 'cintura'; nav('F-42', null, { replace: true });
+    const old = E().meta; if (S.mIn.peso != null) { S.prof.peso = S.mIn.peso; S.base = clone(S.prof); }
+    const nw = E().meta;
+    if (S.share.evolucao || S.share.medidas) post({ tipo: 'medida', tit: 'Avaliação registrada', vals: [['Cintura', sgn((S.mIn.cintura || 0) - (S.hist[0].cintura || 0)) + ' cm'], ['Registros', S.hist.length + '']] });
+    unlock('corpo');
+    flash(old !== nw ? `Avaliação salva · meta recalculada ${n0(old)} → ${n0(nw)} kcal` : 'Avaliação salva'); S.metric = S.mIn.cintura != null ? 'cintura' : (allMeasures()[0] || MEASURES[0]).id; nav('F-42', null, { replace: true });
   },
-  shot: () => { const w = +(S.photos[S.photos.length - 1].w - 0.01).toFixed(2); const i = S.photos.findIndex((p) => p.d === TODAY); if (i < 0) S.photos.push({ d: TODAY, w }); S.cmpB = S.photos.length - 1; const vf = $('.vf', live); if (vf) vf.classList.add('hit'); setTimeout(() => { flash('Foto salva na timeline · só neste aparelho'); nav('F-42', null, { replace: true }); }, reducedMotion() ? 0 : 380); },
+  shot: () => { const w = +(S.photos[S.photos.length - 1].w - 0.01).toFixed(2); const i = S.photos.findIndex((p) => p.d === TODAY); if (i < 0) S.photos.push({ d: TODAY, w }); S.cmpB = S.photos.length - 1; unlock('corpo'); const vf = $('.vf', live); if (vf) vf.classList.add('hit'); setTimeout(() => { flash('Foto salva na timeline · só neste aparelho'); nav('F-42', null, { replace: true }); }, reducedMotion() ? 0 : 380); },
   pose: (a) => { S.pose = a; paint(); },
   metric: (a) => { S.metric = a; paint(); },
+  metricUn: (a) => { S.metricIn.un = a; paint(); },
+  metricDir: (a) => { S.metricIn.dir = +a; paint(); },
+  metricPreset: (a) => {
+    const p = MEASURE_PRESETS.find((x) => x.id === a); if (!p) return;
+    if (allMeasures().some((m) => m.id === p.id)) { flash('Essa métrica já está na lista'); return; }
+    S.customMeasures.push({ ...p, custom: true });
+    S.hist.forEach((h) => { if (h[p.id] == null) h[p.id] = p.un === '%' ? 20 : p.un === 'mil' ? 8 : 30; });
+    S.metric = p.id; S.sheet = null; unlock('corpo'); flash(`${p.nome} adicionada`); nav('F-40', null, { replace: true });
+  },
+  addMetric: () => {
+    const nome = (S.metricIn.nome || '').trim(); if (nome.length < 2) { flash('Dê um nome à métrica'); return; }
+    const id = 'c_' + nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24);
+    if (!id || allMeasures().some((m) => m.id === id || m.nome.toLowerCase() === nome.toLowerCase())) { flash('Já existe uma métrica com esse nome'); return; }
+    const m = { id, nome, un: S.metricIn.un || 'cm', dir: S.metricIn.dir || 0, custom: true, onde: 'Sua métrica' };
+    S.customMeasures.push(m);
+    S.hist.forEach((h) => { if (h[id] == null) h[id] = 0; });
+    S.metric = id; unlock('corpo'); flash(`${nome} adicionada · registre o valor`); nav('F-40', null, { replace: true });
+  },
   cmpA: (a) => { S.cmpA = +a; paint(); },
   cmpB: (a) => { S.cmpB = +a; if (cur === 'F-42') nav('F-43'); else paint(); },
   cor: (a) => { S.corIn = +a; paint(); },
@@ -176,9 +237,9 @@ const ACTS = {
   gq: (a) => { S.gq = S.gq === a ? '' : a; paint(); },
   gymlink: (a) => { if (!S.char) return; S.char.gym = S.char.gym === a ? null : a; flash(S.char.gym ? `Vinculado a ${gymOf(a).nome}` : 'Vínculo removido'); paint(); },
   apply: () => { if (E().extreme && !S.prof.ok) { S.sheet = 'extreme'; SHEET_ANIM = true; paint(); return; } S.base = clone(S.prof); S.pref = {}; flash(`Recalculado · meta ${n0(E().meta)} kcal e plano novo`, { go: 'F-21', label: 'Ver dieta' }); paint(); },
-  reonb: () => { S.onboarded = false; nav('F-02'); },
-  fresh: () => { const keep = { online: S.online, gps: S.gps, reduced: S.reduced }; S = Object.assign(S0(), keep, { onboarded: false, newDevice: false, fp: 'fp_0d92·77ab·c310', char: null, posts: [], meals: { cafe: null, almoco: null, lanche: null, jantar: null }, done: [], sets: {} }); hist.length = 0; nav('F-02', null, { replace: true }); },
-  wipe: () => { const keep = { online: S.online, gps: S.gps, reduced: S.reduced }; S = Object.assign(S0(), keep, { onboarded: false, char: null, posts: [], meals: { cafe: null, almoco: null, lanche: null, jantar: null }, done: [], sets: {} }); hist.length = 0; flash('Dados apagados deste aparelho'); nav('F-01', null, { replace: true }); },
+  reonb: () => { lockGates(); nav('F-02'); },
+  fresh: () => { const keep = { online: S.online, gps: S.gps, reduced: S.reduced }; S = Object.assign(S0(), keep, { onboarded: false, gates: { hoje: false, dieta: false, treino: false, corpo: false }, newDevice: false, fp: 'fp_0d92·77ab·c310', char: null, posts: [], meals: { cafe: null, almoco: null, lanche: null, jantar: null }, done: [], sets: {}, customMeasures: [] }); hist.length = 0; nav('F-02', null, { replace: true }); },
+  wipe: () => { const keep = { online: S.online, gps: S.gps, reduced: S.reduced }; S = Object.assign(S0(), keep, { onboarded: false, gates: { hoje: false, dieta: false, treino: false, corpo: false }, char: null, posts: [], meals: { cafe: null, almoco: null, lanche: null, jantar: null }, done: [], sets: {}, customMeasures: [] }); hist.length = 0; flash('Dados apagados deste aparelho'); nav('F-01', null, { replace: true }); },
   retry: () => { if (S.online) { if (S.queue) { flash(`${S.queue} publicação enviada`); S.queue = 0; } nav('F-51', null, { replace: true }); } else flash('Ainda sem internet'); },
   gps: () => { S.gps = true; paint(); },
   sheet: (a) => { S.sheet = a; SHEET_ANIM = true; paint(); },
@@ -199,6 +260,7 @@ live.addEventListener('click', (e) => {
 });
 live.addEventListener('input', (e) => {
   const el = e.target, k = el.dataset.input; if (!k) return;
+  if (k === 'metricNome') { S.metricIn.nome = el.value; return; }
   if (k === 'mag') {
     S.prof.mag = +el.value; S.prof.ok = false; const en = E();
     el.style.setProperty('--p', ((en.mag - en.g.min) / (en.g.max - en.g.min)) * 100 + '%'); el.classList.toggle('bad', en.extreme);
@@ -223,7 +285,7 @@ live.addEventListener('input', (e) => {
 
 /* ---------- cenários ---------- */
 function scenVal(k) {
-  if (k === 'first') return String(!S.onboarded);
+  if (k === 'first') return String(!S.gates.hoje);
   if (k === 'stock') return S.stock.length <= STOCK_POOR.length ? 'pobre' : 'cheio';
   if (k === 'char') return S.char ? 'com' : 'sem';
   if (k === 'goal') return S.prof.obj;
@@ -231,8 +293,11 @@ function scenVal(k) {
 }
 document.querySelectorAll('[data-scen]').forEach((b) => b.addEventListener('click', () => {
   const [k, v] = b.dataset.scen.split(':');
-  if (k === 'first') { S.onboarded = v !== 'true'; if (v === 'true') { S.newDevice = false; nav('F-01', null, { replace: true }); return; } }
-  else if (k === 'newDevice') { S.newDevice = v === 'true'; if (S.newDevice) { S.onboarded = false; S.fp = 'fp_0d92·77ab·c310'; nav('F-62', null, { replace: true }); return; } S.fp = 'fp_7c3b·e41d·a91e'; }
+  if (k === 'first') {
+    if (v === 'true') { lockGates(); S.newDevice = false; nav('F-01', null, { replace: true }); return; }
+    S.gates = GATES0(); S.onboarded = true;
+  }
+  else if (k === 'newDevice') { S.newDevice = v === 'true'; if (S.newDevice) { lockGates(); S.fp = 'fp_0d92·77ab·c310'; nav('F-62', null, { replace: true }); return; } S.fp = 'fp_7c3b·e41d·a91e'; }
   else if (k === 'stock') { S.stock = v === 'pobre' ? [...STOCK_POOR] : [...STOCK_FULL]; S.pref = {}; }
   else if (k === 'char') { S.char = v === 'com' ? { nick: 'carla.no.ferro', cor: 0, gym: 'forja' } : null; if (!S.char) S.posts = []; }
   else if (k === 'goal') { S.prof.obj = v; S.prof.mag = goalOf(v).def; if (v === 'hipertrofia') Object.assign(S.prof, { genero: 'm', idade: 28, altura: 178, peso: 80 }); else Object.assign(S.prof, { genero: PROF0.genero, idade: PROF0.idade, altura: PROF0.altura, peso: PROF0.peso }); S.base = clone(S.prof); }
@@ -335,5 +400,5 @@ THEMES.forEach((t) => {
 [stbar, themebar, scenTheme].forEach((el) => el.addEventListener('click', (e) => { const b = e.target.closest('[data-theme-pick]'); if (b) applyTheme(b.dataset.themePick, true); }));
 renderThemes();
 
-document.querySelectorAll('[data-start]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.start === 'F-01') { S.onboarded = false; } openPlayer(b.dataset.start); }));
+document.querySelectorAll('[data-start]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.start === 'F-01') lockGates(); openPlayer(b.dataset.start); }));
 const h = location.hash.slice(1); if (SCREENS[h]) openPlayer(h);

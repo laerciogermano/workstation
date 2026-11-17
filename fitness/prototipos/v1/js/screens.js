@@ -68,16 +68,16 @@ const itemTxt = (i) => { const f = food(i.id); return f.un ? `${i.gr / f.un} ${f
 const SCREENS = {
 /* =================== E01 primeiro uso =================== */
 'F-01': { name: 'Boas-vindas sem conta', rf: ['RF-01', 'RF-02', 'RF-05'], rn: ['RN-01', 'RN-02', 'RN-15'],
-  notes: 'Primeira abertura: o fingerprint é gerado em silêncio e vira a chave de todos os dados. Não existe login. O app fica bloqueado até o onboarding (RN-02); só a vitrine abre em modo leitura.',
+  notes: 'Fingerprint em silêncio, sem login. Onboarding é por aba: Hoje, Dieta, Treino e Corpo pedem só o que falta na primeira entrada (RN-02). Vitrine abre em leitura.',
   render() {
     return `<div class="body ob hero">
       <div class="herotop">${wm('lg')}</div>
       <h1 class="h-xl">Treino, dieta e corpo no mesmo lugar.</h1>
-      <p class="lede">Uma meta calórica feita para você amarra o que você come, o que treina e como o corpo responde.</p>
-      <ul class="pillars"><li>${ico('flame')}<span><b>Base metabólica</b>TMB, gasto e déficit ou superávit</span></li><li>${ico('bowl')}<span><b>Dieta com o que tem em casa</b>e checagem do dia</span></li><li>${ico('dumbbell')}<span><b>Treino com movimento</b>e calorias por exercício</span></li></ul>
+      <p class="lede">Cada aba pede só o que precisa na primeira vez — sem cadastro único de tudo.</p>
+      <ul class="pillars"><li>${ico('flame')}<span><b>Hoje</b>base metabólica e meta do dia</span></li><li>${ico('bowl')}<span><b>Dieta</b>estoque em casa e plano</span></li><li>${ico('dumbbell')}<span><b>Treino</b>peso e kcal por exercício</span></li><li>${ico('ruler')}<span><b>Corpo</b>medidas padrão + as suas</span></li></ul>
       <div class="fpcard">${ico('finger')}<div><b>Sem conta e sem senha</b><p>Este aparelho é a sua identidade: <span class="mono">${S.fp}</span>. Trocar de aparelho ou limpar os dados começa do zero.</p></div></div>
       <p class="fine">Valores são estimativas de apoio e não substituem médico ou nutricionista.</p>
-      <div class="cta-col"><button class="btn p" ${go('F-02')}>Começar · leva 1 minuto</button><button class="btn g" ${go('F-51')}>Só olhar a vitrine</button></div>
+      <div class="cta-col"><button class="btn p" ${go('F-10')}>Entrar no Hoje</button><button class="btn g" ${go('F-51')}>Só olhar a vitrine</button></div>
     </div>`;
   } },
 'F-02': { name: 'Sobre você', rf: ['RF-06', 'RF-11'], rn: ['RN-03'],
@@ -132,10 +132,11 @@ const SCREENS = {
     </div>`;
   } },
 'F-06': { name: 'Macros e projeção', rf: ['RF-09', 'RF-15', 'RF-16'], rn: ['RN-08', 'RN-09'],
-  notes: 'Macros derivados da meta e do objetivo: proteína por kg, gordura mínima, carbo no restante. A projeção recalcula a TMB a cada semana e mostra as premissas. Concluir libera o app (RF-05).',
+  notes: 'Macros derivados da meta e do objetivo. Concluir libera a aba Hoje (RF-05); Dieta/Treino/Corpo pedem o restante só na primeira entrada de cada uma.',
   render() {
     const e = E(), pr = projection(S.prof); const k = [e.prot * 4, e.carb * 4, e.fat * 9]; const tot = k[0] + k[1] + k[2];
     const end = pr[pr.length - 1].kg;
+    const toDieta = S.unlockAfter === 'dieta';
     return `<div class="body ob ft">${topbar('', { right: obDots(5) })}
       <h1 class="h-lg">Seu dia em números</h1><p class="lede">${n0(e.meta)} kcal divididas assim:</p>
       <div class="mstack"><i class="mp" style="flex:${k[0]}"></i><i class="mc" style="flex:${k[1]}"></i><i class="mg" style="flex:${k[2]}"></i></div>
@@ -145,7 +146,28 @@ const SCREENS = {
         <p class="proj-sum"><b class="tnum">${n1(S.prof.peso)} → ${n1(end)} kg</b> em ${dfmt(new Date(Date.parse(TODAY) + 84 * 864e5).toISOString().slice(0, 10))}</p>
         <ul class="prem"><li>85% de adesão à meta</li><li>Gasto recalculado a cada semana com o peso novo</li>${e.strat === 'superavit' ? '<li>Ganho limitado a 0,35 kg/semana</li>' : ''}<li>Atualiza quando você registra peso</li></ul>
       </section>
-      <div class="footcta two"><button class="btn p" ${act('finish', 'F-20')}>Montar dieta com o que tenho</button><button class="btn g" ${act('finish', 'F-10')}>Ir para o dia de hoje</button></div>
+      <div class="footcta ${toDieta ? '' : 'two'}"><button class="btn p" ${act('finish', toDieta ? 'F-20' : 'F-10')}>${toDieta ? 'Seguir para o estoque' : 'Ir para o dia de hoje'}</button>${toDieta ? '' : `<button class="btn g" ${act('finish', 'F-20')}>Montar dieta</button>`}</div>
+    </div>`;
+  } },
+'F-07': { name: 'Onboarding · Treino', rf: ['RF-05', 'RF-06', 'RF-23'], rn: ['RN-02', 'RN-03', 'RN-12'],
+  notes: 'Primeira entrada em Treino: só o peso (kcal = MET × peso × tempo). Sem exigir dieta nem base completa — se a meta já existir, reusa o peso do perfil.',
+  render() {
+    return `<div class="body ob ft">${topbar('Treino', { back: false })}
+      <h1 class="h-lg">Antes do primeiro treino</h1>
+      <p class="lede">O gasto de cada exercício usa o seu peso. Dá para mudar depois no perfil.</p>
+      <div class="fld"><label>Peso de hoje</label>${numstep('peso', S.prof.peso, 'kg', 0.5, 1)}</div>
+      ${note('Séries e reps viram minutos; kcal entram no balanço do Hoje quando a meta existir.', 'zap')}
+      <div class="footcta"><button class="btn p" ${act('unlockTreino')}>Ver treino do dia</button></div>
+    </div>`;
+  } },
+'F-08': { name: 'Onboarding · Corpo', rf: ['RF-05', 'RF-29', 'RF-29b'], rn: ['RN-02', 'RN-13'],
+  notes: 'Primeira entrada em Corpo: explica medidas padrão (peso + fita) e que dá para criar métricas próprias no menu. Não exige onboarding de dieta/treino.',
+  render() {
+    return `<div class="body ob ft">${topbar('Corpo', { back: false })}
+      <h1 class="h-lg">Como acompanhar o corpo</h1>
+      <p class="lede">Padrão: peso, cintura, quadril, peito, braço e coxa. Se quiser outra métrica, adiciona no menu.</p>
+      <ul class="pillars"><li>${ico('ruler')}<span><b>Nova avaliação</b>fita + peso datados</span></li><li>${ico('plus')}<span><b>Nova métrica</b>panturrilha, % gordura, a sua…</span></li><li>${ico('camera')}<span><b>Fotos</b>só neste aparelho</span></li></ul>
+      <div class="footcta two"><button class="btn p" ${act('unlockCorpo')}>Abrir Corpo</button><button class="btn g" ${go('F-44')}>Nova métrica</button></div>
     </div>`;
   } },
 
@@ -202,15 +224,17 @@ const SCREENS = {
   } },
 
 /* =================== E05 dieta =================== */
-'F-20': { name: 'Estoque de ingredientes', rf: ['RF-17', 'RF-22'], rn: ['RN-10'],
-  notes: 'O estoque é a fronteira do plano: nada fora daqui entra (RN-10). Ligue/desligue itens e gere de novo; com estoque pobre o gerador avisa (F-24).',
+'F-20': { name: 'Estoque de ingredientes', rf: ['RF-17', 'RF-22', 'RF-05'], rn: ['RN-10', 'RN-02'],
+  notes: 'Estoque = fronteira do plano (RN-10). Na primeira entrada em Dieta esta tela também libera a aba ao gerar o plano.',
   render() {
     const q = S.fq.trim().toLowerCase(), list = FOODS.filter((f) => !q || f.nome.toLowerCase().includes(q));
-    return `<div class="body ft">${topbar('O que tem em casa', { sub: `${S.stock.length} ingredientes no estoque` })}
+    const first = !S.gates.dieta;
+    return `<div class="body ft">${topbar(first ? 'Dieta · o que tem em casa' : 'O que tem em casa', { sub: `${S.stock.length} ingredientes no estoque`, back: !first })}
+      ${first ? '<p class="lede">Marque o que tem agora. O plano usa só isso — e libera a aba Dieta.</p>' : ''}
       <label class="search">${ico('search')}<input data-input="fq" value="${esc(S.fq)}" placeholder="Buscar alimento" autocomplete="off"></label>
       <div id="stk">${stockList(list)}</div>
       ${note('O plano usa só o que está marcado aqui. Faltou algo? Marque e gere de novo.', 'box')}
-      <div class="footcta"><button class="btn p" ${act('gen')}>${ico('refresh')}Gerar plano do dia</button></div>
+      <div class="footcta"><button class="btn p" ${act('gen')}>${ico('refresh')}${first ? 'Gerar plano e abrir Dieta' : 'Gerar plano do dia'}</button></div>
     </div>`;
   } },
 'F-21': { name: 'Plano alimentar do dia', rf: ['RF-18', 'RF-19', 'RF-20', 'RF-21'], rn: ['RN-10', 'RN-11'],
@@ -329,14 +353,14 @@ const SCREENS = {
   } },
 
 /* =================== E02 avaliação física =================== */
-'F-40': { name: 'Nova avaliação com fita', rf: ['RF-29', 'RF-30'], rn: ['RN-13', 'RN-07'],
-  notes: 'Fita métrica + peso, datados. Cada campo mostra o último valor e a diferença ao vivo. Salvar com peso novo recalcula TMB, meta e macros (RN-07).',
+'F-40': { name: 'Nova avaliação com fita', rf: ['RF-29', 'RF-29b', 'RF-30'], rn: ['RN-13', 'RN-07'],
+  notes: 'Fita + peso + métricas custom (RF-29b), datados. Δ ao vivo vs última. Peso novo recalcula TMB/meta (RN-07). Menu em Corpo: nova avaliação / nova métrica / foto.',
   render() {
-    const l = lastM();
-    return `<div class="body ft">${topbar('Nova avaliação', { sub: `Hoje · última em ${dfmt(l.d)} (há ${daysBetween(l.d, TODAY)} dias)` })}
-      <div class="mgrid">${MEASURES.map((m) => { const v = S.mIn[m.id], dv = v - l[m.id]; const good = m.dir ? Math.sign(dv) === m.dir : null;
-        return `<div class="mfld"><label>${m.nome}${m.onde ? `<span>${m.onde}</span>` : ''}</label>${numstep('m.' + m.id, v, m.un, m.id === 'peso' ? 0.1 : 0.5, 1)}<p class="tnum dv ${dv && good !== null ? (good ? 'ok' : 'bad') : ''}" id="dv-${m.id}">${dv ? sgn(dv) + ' ' + m.un : 'igual'} · antes ${n1(l[m.id])}</p></div>`; }).join('')}</div>
-      ${note('Meça sempre no mesmo horário, de manhã e antes de comer.', 'clock')}
+    const l = lastM(), ms = allMeasures();
+    return `<div class="body ft">${topbar('Nova avaliação', { sub: `Hoje · última em ${dfmt(l.d)} (há ${daysBetween(l.d, TODAY)} dias)`, right: `<button class="ib" ${act('sheet', 'corpo-menu')} aria-label="Opções">${ico('more')}</button>` })}
+      <div class="mgrid">${ms.map((m) => { const v = S.mIn[m.id] ?? 0, prev = l[m.id], dv = prev != null ? v - prev : 0; const good = m.dir ? Math.sign(dv) === m.dir : null;
+        return `<div class="mfld"><label>${m.nome}${m.custom ? ' · sua' : ''}${m.onde ? `<span>${m.onde}</span>` : ''}</label>${numstep('m.' + m.id, v, m.un, m.id === 'peso' || m.un === '%' ? 0.1 : 0.5, 1)}<p class="tnum dv ${dv && good !== null ? (good ? 'ok' : 'bad') : ''}" id="dv-${m.id}">${prev == null ? 'primeiro valor' : (dv ? sgn(dv) + ' ' + m.un : 'igual') + (prev != null ? ` · antes ${n1(prev)}` : '')}</p></div>`; }).join('')}</div>
+      ${note('Meça sempre no mesmo horário, de manhã e antes de comer. Faltou uma métrica? Menu → Nova métrica.', 'clock')}
       <div class="footcta two"><button class="btn p" ${act('savem')}>Salvar avaliação</button><button class="btn g" ${go('F-41')}>${ico('camera')}Adicionar fotos</button></div>
     </div>`;
   } },
@@ -349,16 +373,19 @@ const SCREENS = {
       <div class="shut"><button class="ib glass" ${go('F-42')} aria-label="Galeria">${ico('image')}</button><button class="shutter" ${act('shot')} aria-label="Tirar foto"><i></i></button><span class="ib ghost"></span></div>
     </div>`;
   } },
-'F-42': { name: 'Corpo · timeline', rf: ['RF-30', 'RF-31', 'RF-32'], rn: ['RN-13'],
-  notes: 'Gráfico por medida (escolha no seletor) e timeline cronológica de avaliações e fotos. As fotos são ilustrações de silhueta neste protótipo.',
+'F-42': { name: 'Corpo · timeline', rf: ['RF-30', 'RF-31', 'RF-32', 'RF-29b'], rn: ['RN-13'],
+  notes: 'Gráfico por medida (padrão + custom). Menu ⋯: nova avaliação, nova métrica, foto. Timeline com avaliações e fotos.',
   render() {
-    const m = MEASURES.find((x) => x.id === S.metric), h = S.hist, t0 = h[0].d, a = h[0][m.id], b = h[h.length - 1][m.id];
+    const ms = allMeasures();
+    const m = ms.find((x) => x.id === S.metric) || ms[0];
+    const h = S.hist, t0 = h[0].d, a = h[0][m.id], b = h[h.length - 1][m.id];
+    const pts = h.filter((x) => x[m.id] != null).map((x) => ({ x: daysBetween(t0, x.d), y: x[m.id], d: x.d }));
     const tl = [...h.map((x, i) => ({ d: x.d, k: 'm', i })), ...S.photos.map((p, i) => ({ d: p.d, k: 'p', i }))].sort((x, y) => (x.d < y.d ? 1 : x.d > y.d ? -1 : x.k === 'p' ? -1 : 1));
-    return `<div class="body tb">${topbar('Corpo', { back: false, sub: `${h.length} avaliações · ${S.photos.length} fotos`, right: `<button class="ib" ${go('F-40')} aria-label="Nova medida">${ico('plus')}</button>` })}
-      <div class="chips scroll">${MEASURES.map((x) => `<button class="fchip${x.id === S.metric ? ' on' : ''}" ${act('metric', x.id)}>${x.nome}</button>`).join('')}</div>
-      <section class="card flush-b"><div class="ch-h"><h2 class="h-sm">${m.nome}</h2><b class="tnum dv ${m.dir && Math.sign(b - a) === m.dir ? 'ok' : ''}">${sgn(b - a)} ${m.un}</b></div>
-        ${lineChart({ pts: h.map((x) => ({ x: daysBetween(t0, x.d), y: x[m.id], d: x.d })), unit: m.un, h: 160, hi: h.length - 1 })}
-        <p class="hint tnum">${n1(a)} ${m.un} em ${dfmt(h[0].d)} → ${n1(b)} ${m.un} em ${dfmt(h[h.length - 1].d)}</p></section>
+    return `<div class="body tb">${topbar('Corpo', { back: false, sub: `${h.length} avaliações · ${S.photos.length} fotos${S.customMeasures.length ? ` · ${S.customMeasures.length} suas` : ''}`, right: `<button class="ib" ${act('sheet', 'corpo-menu')} aria-label="Opções">${ico('more')}</button>` })}
+      <div class="chips scroll">${ms.map((x) => `<button class="fchip${x.id === m.id ? ' on' : ''}" ${act('metric', x.id)}>${x.nome}</button>`).join('')}<button class="fchip add" ${go('F-44')}>${ico('plus')}Métrica</button></div>
+      <section class="card flush-b"><div class="ch-h"><h2 class="h-sm">${m.nome}</h2><b class="tnum dv ${m.dir && a != null && b != null && Math.sign(b - a) === m.dir ? 'ok' : ''}">${a != null && b != null ? sgn(b - a) + ' ' + m.un : '—'}</b></div>
+        ${lineChart({ pts, unit: m.un, h: 160, hi: pts.length - 1 })}
+        <p class="hint tnum">${a != null && b != null ? `${n1(a)} ${m.un} em ${dfmt(h[0].d)} → ${n1(b)} ${m.un} em ${dfmt(h[h.length - 1].d)}` : 'Sem série ainda · registre uma avaliação'}</p></section>
       <div class="sec-h"><h2>Timeline</h2><button ${go('F-43')}>Comparar fotos</button></div>
       <ol class="tl">${tl.map((x) => x.k === 'p'
         ? `<li class="tp" ${act('cmpB', x.i)}><span class="tld">${dfmt(x.d)}</span><div class="thumbs">${['frente', 'lado'].map((ps) => `<div class="thumb">${silhouette(S.photos[x.i].w, ps)}</div>`).join('')}</div><span class="tlt">Fotos · frente e lado</span></li>`
@@ -377,8 +404,23 @@ const SCREENS = {
         <input type="range" min="5" max="95" value="${S.wipe}" data-input="wipe" aria-label="Divisória antes e depois"></div>
       <div class="fld"><label>Antes</label><div class="chips">${P.map((p, i) => `<button class="fchip${p === A ? ' on' : ''}" ${act('cmpA', i)}>${dfmt(p.d)}</button>`).join('')}</div></div>
       <div class="fld"><label>Depois</label><div class="chips">${P.map((p, i) => `<button class="fchip${p === B ? ' on' : ''}" ${act('cmpB', i)}>${dfmt(p.d)}</button>`).join('')}</div></div>
-      <section class="card"><ul class="mstat">${MEASURES.map((m) => { const dv = mb[m.id] - ma[m.id]; return `<li><span>${m.nome}</span><b class="tnum">${n1(ma[m.id])} → ${n1(mb[m.id])}</b><b class="tnum dv ${m.dir && dv && Math.sign(dv) === m.dir ? 'ok' : ''}">${sgn(dv)}</b></li>`; }).join('')}</ul></section>
+      <section class="card"><ul class="mstat">${allMeasures().map((m) => { const va = ma[m.id], vb = mb[m.id]; if (va == null || vb == null) return `<li><span>${m.nome}</span><b class="tnum">—</b><b class="tnum dv"></b></li>`; const dv = vb - va; return `<li><span>${m.nome}</span><b class="tnum">${n1(va)} → ${n1(vb)}</b><b class="tnum dv ${m.dir && dv && Math.sign(dv) === m.dir ? 'ok' : ''}">${sgn(dv)}</b></li>`; }).join('')}</ul></section>
       <p class="fine">Fotos ilustrativas neste protótipo. No app, são as suas, guardadas só no aparelho.</p>
+    </div>`;
+  } },
+'F-44': { name: 'Nova métrica', rf: ['RF-29b'], rn: ['RN-13'],
+  notes: 'Métricas além do padrão (peso/fita). Presets comuns ou nome + unidade + direção. Entram na avaliação e no gráfico de Corpo.',
+  render() {
+    const used = new Set(allMeasures().map((m) => m.id));
+    const free = MEASURE_PRESETS.filter((p) => !used.has(p.id));
+    const mi = S.metricIn;
+    return `<div class="body ft">${topbar('Nova métrica', { sub: 'Além de peso e fita' })}
+      <p class="lede">O padrão fica: peso, cintura, quadril, peito, braço e coxa. Aqui você soma o que a rotina geral não traz.</p>
+      ${free.length ? `<div class="fld"><label>Sugestões</label><div class="chips">${free.map((p) => `<button class="fchip" ${act('metricPreset', p.id)}>${ico('plus')}${p.nome}</button>`).join('')}</div></div>` : note('Todas as sugestões já estão na sua lista.', 'check')}
+      <div class="fld"><label>Ou crie a sua</label><input class="in" data-input="metricNome" value="${esc(mi.nome)}" placeholder="Ex.: circunferência do punho" autocomplete="off"></div>
+      <div class="fld"><label>Unidade</label>${seg([['cm', 'cm'], ['kg', 'kg'], ['%', '%'], ['mil', 'mil']], mi.un, 'metricUn')}</div>
+      <div class="fld"><label>Melhor quando</label>${seg([['0', 'Neutro'], ['-1', 'Diminui'], ['1', 'Aumenta']], String(mi.dir), 'metricDir')}</div>
+      <div class="footcta"><button class="btn p" ${act('addMetric')}>Adicionar e medir</button></div>
     </div>`;
   } },
 
@@ -697,6 +739,11 @@ function sheetHTML() {
   if (!S.sheet) return '';
   let h = '';
   if (S.sheet === 'extra') h = `<h2>Fora do plano</h2><p class="hint">Entra no total do dia.</p><ul class="xlist">${EXTRAS.map((x, i) => `<li><button ${act('extra', i)}><span>${x.nome}</span><b class="tnum">${x.kcal} kcal</b>${ico('plus')}</button></li>`).join('')}</ul>`;
+  if (S.sheet === 'corpo-menu') h = `<h2>Corpo</h2><p class="hint">Padrão: peso e fita. Some métricas se a sua rotina pedir.</p><ul class="xlist menu">
+    <li><button ${go('F-40')}>${ico('ruler')}<span><b>Nova avaliação</b><i>Peso e circunferências de hoje</i></span>${ico('next')}</button></li>
+    <li><button ${go('F-44')}>${ico('plus')}<span><b>Nova métrica</b><i>Além do padrão · a sua medida</i></span>${ico('next')}</button></li>
+    <li><button ${go('F-41')}>${ico('camera')}<span><b>Foto de progresso</b><i>Só neste aparelho</i></span>${ico('next')}</button></li>
+  </ul>`;
   if (S.sheet === 'extreme') { const e = E(); h = `<h2>${e.meta < e.tmb ? 'Meta abaixo da TMB' : 'Acima da faixa segura'}</h2><p>${n0(e.meta)} kcal/dia é ${e.strat === 'deficit' ? 'um déficit' : 'um superávit'} de ${e.mag}%. Pode funcionar por pouco tempo, mas aumenta perda de massa magra, fome e risco de abandono. Converse com um profissional antes.</p><div class="cta-col"><button class="btn s" ${act('safe')}>Voltar para ${e.g.safe}%</button><button class="btn danger" ${act('confirm')}>Entendo, seguir com ${e.mag}%</button></div>`; }
   if (S.sheet === 'wipe') h = `<h2>Apagar dados deste aparelho?</h2><p>Perfil, dieta, treinos, medidas, fotos e personagem somem. Sem conta, não há como recuperar.</p><div class="cta-col"><button class="btn danger" ${act('wipe')}>Apagar tudo</button><button class="btn g" ${act('sheet-close')}>Cancelar</button></div>`;
   return `<div class="scrim" ${act('sheet-close')}></div><div class="sheet" role="dialog"><i class="grab"></i>${h}</div>`;

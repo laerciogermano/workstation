@@ -709,6 +709,15 @@ html:is([data-theme="lima"], [data-theme="volt"], [data-theme="next"], [data-the
 .preview { position: relative; } .preview::before { content: "Prévia do card"; display: block; font-size: 11px; font-weight: 700; color: var(--ft-muted); margin-bottom: 6px; }
 
 /* avaliação */
+.fchip.add { border-style: dashed; color: var(--ft-act); }
+.xlist.menu button { align-items: flex-start; text-align: left; padding: 14px 2px; gap: 12px; }
+.xlist.menu button > .i:first-child { color: var(--ft-act); margin-top: 2px; flex: none; }
+.xlist.menu button span { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.xlist.menu button b { font-size: 15px; font-weight: 800; }
+.xlist.menu button i { font-style: normal; font-size: 12.5px; color: var(--ft-muted); font-weight: 500; }
+.xlist.menu button > .i:last-child { color: var(--ft-muted); margin-top: 4px; }
+input.in { width: 100%; height: 50px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ft-edge); background: var(--ft-raise); color: var(--ft-ink); font-size: 15px; font-weight: 600; outline: 0; box-sizing: border-box; }
+input.in:focus { border-color: var(--ft-act); }
 .mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; }
 .mfld { display: flex; flex-direction: column; gap: 5px; }
 .mfld label { font-size: 13px; font-weight: 700; display: flex; flex-direction: column; line-height: 1.25; min-height: 32px; }

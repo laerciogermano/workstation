@@ -1701,10 +1701,13 @@ function flow(s) {
   structs.forEach(st => { st.i0 = Math.min(...st.body.map(id => rIdx[id])); (headAt[st.i0] = headAt[st.i0] || []).push(st); });
   // cada função ocupa 3 linhas: entrada (dados que recebe) · task (barra) · saída (dados que produz)
   const leaf = u => !isData(u) && !flowKids(u).length;
+  // entrada sem repetição: só os dados que não chegam da saída de uma função anterior (essa já aparece na linha de saída)
+  const predOuts = id => new Set(FD.filter(([, b]) => b === id).flatMap(([a]) => ($u(a)?.outs || []).map(o => o[0])));
+  const newIns = u => { const po = predOuts(u.id); return (u.ins || []).filter(n => !po.has(n)); };
   const disp = [];
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
-    if (!s.compacto && leaf(r.u) && (r.u.ins || []).length) disp.push({ io: "in", u: r.u, d: r.d });
+    if (!s.compacto && leaf(r.u) && newIns(r.u).length) disp.push({ io: "in", u: r.u, d: r.d });
     disp.push(r);
     if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
   });
@@ -1742,7 +1745,7 @@ function flow(s) {
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}<b>${esc(u.title)}</b></span>
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
-  const ioNames = (r) => r.io === "in" ? (r.u.ins || []) : (r.u.outs || []).map(o => o[0]);
+  const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
   const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const left = disp.map(r => r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
@@ -1806,7 +1809,7 @@ function flow(s) {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
-    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(u.ins[0])}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(u.ins.join(", "))} · entrada</title></rect>`; }
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(newIns(u)[0])}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(newIns(u).join(", "))} · entrada</title></rect>`; }
     else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
     if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(u.outs[0][0])}" x="${g.ox - 4}" y="${yo - 4}" width="8" height="8"><title>${esc(u.outs.map(o => o[0]).join(", "))} · saída</title></rect>`; }
     else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;

@@ -988,7 +988,7 @@ const STRUCTS = [
   { k: "if", test: "comparativo.length > 0", body: ["u5", "u6"] },
   { k: "if", test: "pagina", body: ["u22"] },
 ];
-const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16", "es:f1", "es:f2", "es:f3", "es:u2", "es:u9", "es:u16", "es:u9:e3", "es:u9:e4"]);
+const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16"]);
 /** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
 const GOALS = {
   orcamento: "≤ R$ 3.000",
@@ -1126,39 +1126,17 @@ function explorer(s) {
     });
   })(null, 0);
 
-  // Estados hierárquicos como Planos: pasta → composição → eN (divisória do Flow) → dados
-  const lay = {}; PLANS.forEach(p => Object.assign(lay, flowLayout(p.id).layout));
-  const live = id => kids(id).filter(k => !k.arch);
-  const isComp = u => !isFolder(u) && live(u.id).some(k => !isData(k));
-  const eRow = (id, lvl, has, isOpen, inner, extra = "") => {
-    const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
-    return `<div class="node${has && isOpen ? " openf" : ""}${extra}" ${has ? `data-act="toggle" data-id="${id}"` : ""} style="padding-left:${8 + Math.min(lvl, 14) * 14}px">${guides}<span class="car">${has ? icon("chevron-right") : ""}</span>${inner}</div>`;
-  };
-  function estWalk(pid, lvl) {
-    const out = [];
-    live(pid).filter(u => isFolder(u) || isComp(u)).forEach(u => {
-      const id = "es:" + u.id, isOpen = q ? true : open.has(id), sub = estWalk(u.id, lvl + 1);
-      if (!sub.n) return;
-      out.push(eRow(id, lvl, true, isOpen, `<span class="fi plan" title="${isFolder(u) ? "Pasta" : "Composição"}">${icon("circle")}</span><span class="t">${markTitle(u.title, q)}</span><span class="meta">${sub.n}</span>`));
-      if (isOpen) out.push(...sub.rows);
-      out.n = (out.n || 0) + sub.n;
-    });
-    const by = {};
-    live(pid).filter(u => !isFolder(u) && !isData(u) && !isComp(u)).forEach(u => (u.outs || []).forEach(([name, ref]) => {
-      if (q && !name.toLowerCase().includes(q) && !u.title.toLowerCase().includes(q) && !String(ref).toLowerCase().includes(q)) return;
-      const e = lay[u.id] ? lay[u.id].e + 1 : 0; (by[e] = by[e] || []).push({ name, ref, u });
-    }));
-    Object.keys(by).map(Number).sort((a, b) => a - b).forEach(e => {
-      const id = `es:${pid}:e${e}`, isOpen = q ? true : open.has(id), list = by[e];
-      out.push(eRow(id, lvl, true, isOpen, `<span class="fi estado" title="Estado e${e}">${icon("square")}</span><span class="t mono">e${e}</span><span class="meta">${list.length}</span>`));
-      if (isOpen) list.forEach(({ name, ref, u }) => out.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="sel-estado" style="padding-left:${8 + Math.min(lvl + 1, 14) * 14}px">${Array.from({ length: Math.min(lvl + 1, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("")}<span class="car"></span><span class="fi dado" title="Dado">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="mono">${esc(ref)}</span>${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span></div>`));
-      out.n = (out.n || 0) + list.length;
-    });
-    return { rows: out, n: out.n || 0 };
-  }
-  const est = estWalk(null, 0);
-  if (q) hits += est.n;
-  const estadoRows = est.rows;
+  const states = stateCatalog().filter(st => !q || st.name.toLowerCase().includes(q) || st.title.toLowerCase().includes(q) || String(st.ref).toLowerCase().includes(q));
+  if (q) hits += states.length;
+  const estadoRows = states.map(st => {
+    const sel = s.estado === st.name ? " sel" : "";
+    const t = markTitle(st.name, q);
+    return `<div class="node${sel}" data-estado="${esc(st.name)}" data-id="${st.id}" data-act="sel-estado" style="padding-left:22px">
+      <span class="car"></span><span class="fi dado" title="Dado (estado)">${icon("box")}</span>
+      <span class="t mono">${t}</span>
+      <span class="meta"><span class="mono">${esc(st.ref)}</span>${st.st ? `<span class="st ${ST[st.st][0]}" style="padding:0 3px">${icon(ST[st.st][1])}</span>` : ""}</span>
+    </div>`;
+  });
 
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;

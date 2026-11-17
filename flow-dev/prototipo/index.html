@@ -1444,7 +1444,7 @@ function explorer(s) {
     });
     return rows;
   }
-  // Projetos; dentro: Funções (círculos) e Estados (cubo nos dados)
+  // Projetos; dentro: Funções (círculos) e Dados (cubo)
   const projRows = [];
   PLANS.forEach(p => {
     const before = projRows.length;
@@ -1459,7 +1459,7 @@ function explorer(s) {
     projRows.push(`<div class="node${rOpen ? " openf" : ""}" data-act="toggle" data-id="${rid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Funções do projeto">${icon("circle")}</span><span class="t">Funções</span></div>`);
     if (rOpen) projRows.push(...planRows);
     if (est.length) {
-      projRows.push(`<div class="node${eOpen ? " openf" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi dado" title="Estados do projeto">${icon("box")}</span><span class="t">Estados</span></div>`);
+      projRows.push(`<div class="node${eOpen ? " openf" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:22px"><span class="guide" style="left:16px"></span><span class="car">${icon("chevron-right")}</span><span class="fi dado" title="Dados do projeto">${icon("box")}</span><span class="t">Dados</span></div>`);
       if (eOpen) projRows.push(...est);
     }
   });

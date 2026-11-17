@@ -247,7 +247,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flbl .fnm { color: var(--body); }
 /* linhas de entrada e saída de cada função */
 .gantt.flow .grow.iorow .nm { gap: 6px; font-size: 11px; }
-.gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; white-space: nowrap; }
+.gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; white-space: nowrap; flex: none; }
 .gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; }
 .gantt.flow .grow.iorow .io-d, .flbl.fio-n b { font: 500 10.5px var(--mono); color: var(--body); cursor: pointer; }
 .flbl.fio-n { gap: 0; pointer-events: auto; }
@@ -1707,7 +1707,8 @@ function flow(s) {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
     if (!s.compacto && leaf(r.u) && newIns(r.u).length) {
       // saída de A = entrada de B (mesmos dados, linhas vizinhas): uma linha só para os dois
-      const prev = disp[disp.length - 1], same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+      let k = disp.length - 1; while (k >= 0 && disp[k].st) k--; // pula a linha do if: a saída antes do ◇ serve de entrada depois dele
+      const prev = disp[k], same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
       if (prev && prev.io === "out" && !prev.to && same((prev.u.outs || []).map(o => o[0]), newIns(r.u))) prev.to = r.u;
       else disp.push({ io: "in", u: r.u, d: r.d });
     }

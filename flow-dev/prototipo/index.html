@@ -1511,7 +1511,7 @@ function explorer(s) {
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
         if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : fa?.type === "ia" ? " ia" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }
-        else { const abs = dadoIsAbs(v); h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="reveal-dado" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato (outra camada / state)" : "concreto"}">${icon("box")}</span><span class="t mono">${esc(v)}</span></div>`; }
+        else { const abs = dadoIsAbs(v), has = dadoHasValue(v); h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="dado-edit" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}">${icon("box")}</span><span class="t mono">${esc(v)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[v]) : "sem valor"}</span></span></div>`; }
       });
       return h;
     }).join("");
@@ -1666,6 +1666,28 @@ function cfgPanel() {
 
 // ----- Detalhe da unidade -----
 // janela de configuração do agente: nome, modelo (dos disponíveis) e prompt
+function dadoPanel(s) {
+  const name = s.dadoEdit; if (!name) return "";
+  const prod = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === name));
+  const cons = U.filter(x => !x.arch && (x.ins || []).includes(name));
+  const has = dadoHasValue(name), abs = dadoIsAbs(name);
+  return `<aside class="side w360" aria-label="Definir valor do dado">
+    <div class="side-h"><span class="k">${icon("box")}Dado · valor no state</span><span class="sp"></span><button class="ib" data-act="dado-close" title="Fechar">${icon("x")}</button></div>
+    <div class="side-b">
+      <div class="fld" style="display:flex;align-items:center;gap:10px">
+        <span class="fi dado${abs ? " abs" : ""}" style="width:22px;height:22px;display:grid;place-items:center;color:var(--dado)">${icon("box")}</span>
+        <div><b class="mono" style="font-size:16px">${esc(name)}</b><div style="font-size:12px;color:var(--muted)">${abs ? "Abstrato (preto) · sem valor no state" : "Concreto (sólido) · valor definido"}</div></div>
+      </div>
+      <div class="fld"><label>Valor</label><textarea data-dado-val="${esc(name)}" rows="4" placeholder="Defina o valor — o dado deixa de ser abstrato">${esc(DATA_VAL[name] || "")}</textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn pri" data-act="dado-save" data-n="${esc(name)}">${icon("check")}Salvar valor</button>
+          ${has ? `<button class="btn" data-act="dado-clear" data-n="${esc(name)}">${icon("eraser")}Limpar</button>` : ""}
+        </div>
+      </div>
+      <div class="fld"><span class="l">Origem</span>${prod ? `<button data-act="drawer" data-id="${prod.id}">${icon("circle")}${esc(prod.title)}</button>` : `<p style="font-size:12px;color:var(--muted)">Entrada externa / state</p>`}</div>
+      <div class="fld"><span class="l">Usado em</span>${cons.length ? `<div class="list-r">${cons.map(u => `<button data-act="drawer" data-id="${u.id}">${icon("circle")}${esc(u.title)}</button>`).join("")}</div>` : `<p style="font-size:12px;color:var(--muted)">Ninguém consome ainda.</p>`}</div>
+    </div></aside>`;
+}
 function agentPanel(s) {
   const a = agent(s.agCfg); if (!a) return "";
   const cfg = AGENT_CFG[a.id] = AGENT_CFG[a.id] || { model: MODELS[0].id, prompt: "" };
@@ -1943,7 +1965,7 @@ function flow(s) {
   const leafFns = id => desc(id).filter(x => !x.arch && !isFolder(x) && !isData(x) && !flowKids(x).length);
   const prodIn = id => new Set(leafFns(id).flatMap(x => (x.outs || []).map(o => o[0])));
   const layerProd = {}; tops.forEach(t => layerProd[t] = prodIn(t));
-  const absData = (u, n) => !(layerProd[flowTop(u).id] || new Set()).has(n);
+  const absData = (u, n) => !dadoHasValue(n) && !(layerProd[flowTop(u).id] || new Set()).has(n);
   const fnKind = u => { const a = agent(u.agent); return !a ? "nag" : a.type === "ia" ? "abs" : "conc"; };
   const itD = (n, a, t) => `<span class="it" title="${esc(n)} · dado ${a ? "abstrato (state)" : "concreto"}${t ? " · " + t : ""}"><i class="mk${a ? " a" : ""}"></i>${esc(n)}</span>`;
   const itF = (n, a) => `<span class="it fn" title="${esc(n)} · função ${a ? "abstrata (state)" : "concreta (import)"}"><i class="mk f${a ? " a" : ""}"></i>${esc(n)}</span>`;
@@ -1980,17 +2002,20 @@ function flow(s) {
   fnRowsPre.forEach(u => {
     const L = layout[u.id]; if (!L) return;
     // abstrato = vem de fora da camada (ex.: dados_cliente em Ativação), mesmo se produzido noutro topo do plano
-    (u.ins || []).filter(n => absData(u, n)).forEach(n => { if (!stNew[L.s].some(d => d[0] === n)) stNew[L.s].push([n, true]); });
+    (u.ins || []).filter(n => absData(u, n) && !dadoHasValue(n)).forEach(n => { if (!stNew[L.s].some(d => d[0] === n)) stNew[L.s].push([n, true]); });
     (u.outs || []).forEach(([n]) => { const i = Math.min(L.e + 1, nSteps); if (!stNew[i].some(d => d[0] === n)) stNew[i].push([n, false]); });
   });
+  // valores definidos no state entram como concretos em e0
+  Object.keys(DATA_VAL).filter(dadoHasValue).forEach(n => { if (!stNew[0].some(d => d[0] === n)) stNew[0].push([n, false]); });
   const stBag = Array.from({ length: nSteps + 1 }, (_, i) => {
     const m = new Map();
     for (let j = 0; j <= i; j++) stNew[j].forEach(([n, ext]) => { if (!m.has(n)) m.set(n, ext); });
     // a partir do eN em que uma função pede o dado como abstrato (outra camada), □ preto — ex.: dados_cliente na Ativação
     fnRowsPre.forEach(u => {
       const L = layout[u.id]; if (!L || L.s > i) return;
-      (u.ins || []).filter(n => absData(u, n)).forEach(n => m.set(n, true));
+      (u.ins || []).filter(n => absData(u, n) && !dadoHasValue(n)).forEach(n => m.set(n, true));
     });
+    Object.keys(DATA_VAL).filter(dadoHasValue).forEach(n => { if (m.has(n)) m.set(n, false); });
     return [...m.entries()];
   });
   const bagLbl = (ei) => {
@@ -2731,6 +2756,7 @@ function ctxMenu(s) {
   const u = $u(s.ctx.id);
   const it = (act, ic, n, k = "", cls = "") => `<button data-act="${act}" data-id="${u ? u.id : ""}" class="${cls}">${icon(ic)}${n}${k ? `<kbd>${k}</kbd>` : ""}</button>`;
   return `<div class="ctx" style="left:${s.ctx.x}px;top:${s.ctx.y}px" role="menu">
+    ${it("new-flow", "workflow", "Novo fluxo")}${it("new-dado", "box", "Novo dado")}<hr>
     ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
     ${u && !isFolder(u) ? it("open-in-flow", "workflow", "Abrir no Flow") + "<hr>" : ""}
@@ -3077,7 +3103,7 @@ function toast(msg, ic = "circle-check") {
 }
 const unset = (...k) => k.forEach(x => delete cur[x]);
 function closeOverlays() { unset("ctx", "picker"); }
-function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from"); cur.v = v; Object.assign(cur, extra); }
+function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from", "dadoEdit", "agCfg", "mdCfg"); cur.v = v; Object.assign(cur, extra); }
 
 // execução de IA (US-07, US-11)
 function startRun(ids) {
@@ -3126,6 +3152,36 @@ const ACT = {
   },
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
+  "dado-edit": t => { const n = t.dataset.n; revealDado(n); unset("drawer", "agCfg", "mdCfg"); cur.dadoEdit = n; cur.estado = n; },
+  "dado-close": () => { unset("dadoEdit"); },
+  "dado-save": t => {
+    const n = t.dataset.n;
+    const ta = holder.querySelector(`textarea[data-dado-val="${n}"]`);
+    const v = (ta?.value || "").trim();
+    if (!v) { delete DATA_VAL[n]; toast(`${n}: valor limpo · voltou a abstrato`, "box"); }
+    else { DATA_VAL[n] = v; toast(`${n}: concreto (sólido)`, "box"); }
+  },
+  "dado-clear": t => { delete DATA_VAL[t.dataset.n]; toast(`${t.dataset.n}: sem valor · abstrato`, "eraser"); },
+  "new-flow": () => {
+    const plan = cur.plan || PLANS[0].id;
+    const root = planRoot(plan);
+    const lane = root?.lane || LANES[0].id;
+    const u = create(root?.id || null, "file", "Novo fluxo", { plan, lane, col: COLS[0].id, ctx: "Fluxo adicionado no Explorar" });
+    OPEN.add("pjp:" + plan); if (root) OPEN.add(root.id);
+    cur.sel = u.id; cur.drawer = u.id; cur.plan = plan;
+    toast(`Fluxo “${u.title}” em ${PLANS.find(p => p.id === plan)?.name || plan}`, "workflow");
+  },
+  "new-dado": () => {
+    const plan = cur.plan || PLANS[0].id;
+    const name = "novo_dado_" + (seq + 1);
+    const root = planRoot(plan);
+    const host = U.find(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === plan && !kids(u.id).some(k => !k.arch)) || create(root?.id || null, "file", "Definir " + name, { plan, lane: root?.lane || LANES[0].id, col: COLS[0].id });
+    host.outs = host.outs || [];
+    if (!host.outs.some(o => o[0] === name)) host.outs.push([name, "out/" + name + ".json"]);
+    OPEN.add("pje:" + plan); OPEN.add("esx:" + host.id);
+    cur.dadoEdit = name; cur.estado = name; cur.sel = host.id; cur.plan = plan;
+    toast(`Dado “${name}” — defina o valor para ficar concreto`, "box");
+  },
   "txt-in": () => { cur.txtIn = !cur.txtIn; },
   render: t => { cur.render = t.dataset.m; },
   "io-modo": t => { cur.compacto = t.dataset.m === "compacto"; },
@@ -3211,9 +3267,9 @@ const ACT = {
   scrim: (t, e) => { if (e.target.closest(".modal")) return false; unset("confirm", "exp"); },
   "confirm-no": () => unset("confirm"),
   "confirm-yes": () => { const n = removeIds(cur.confirm); unset("confirm", "drawer", "multi"); cur.sel = null; toast(`${n} itens removidos de todas as visões`, "trash-2"); },
-  drawer: t => { const id = t.dataset.id; unset("agCfg", "mdCfg"); if (t.closest(".gantt.flow")) revealFn(id); if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
+  drawer: t => { const id = t.dataset.id; unset("agCfg", "mdCfg", "dadoEdit"); if (t.closest(".gantt.flow")) revealFn(id); if (t.dataset.from) cur.from = t.dataset.from; else unset("from"); if (cur.v === "catalog") { view("flow"); } unset("picker", "cfg", "tnode"); cur.drawer = id; cur.sel = id; },
   tsel: t => { cur.sel = t.dataset.id; },
-  "close-drawer": () => unset("drawer", "picker", "from"),
+  "close-drawer": () => unset("drawer", "picker", "from", "dadoEdit"),
   picker: () => { cur.picker = !cur.picker; },
   assign: t => { const u = $u(t.dataset.id); u.agent = t.dataset.c || undefined; const a = agent(u.agent); if (!a || a.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; unset("picker"); toast(u.agent ? `Responsável: ${agent(u.agent).name}` : "Sem responsável"); },
   archive: t => { const u = $u(t.dataset.id); u.arch = !u.arch; toast(u.arch ? "Arquivada. Fica fora das visões até desarquivar." : "Desarquivada", "archive"); if (u.arch) { unset("drawer"); cur.sel = null; } },

@@ -625,7 +625,7 @@ html:is([data-theme="lima"], [data-theme="volt"], [data-theme="next"], [data-the
 .mk button { height: 40px; border-radius: 12px; border: 1.5px solid var(--ft-edge); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--ft-muted); transition: transform var(--dur-micro) var(--spring), background var(--dur-micro); background: var(--ft-surface); }
 .mk button .i { width: 15px; height: 15px; stroke-width: 2.4; }
 .mk button:active { transform: scale(.95); }
-.mk button.on.feito { background: var(--ft-ink); border-color: var(--ft-ink); color: var(--ft-canvas); }
+.mk button.on.feito { background: var(--ft-ok); border-color: var(--ft-ok); color: var(--ft-on-ok); }
 .mk button.on.parcial { background: var(--ft-line-2); border-color: var(--ft-line-strong); color: var(--ft-ink); }
 .mk button.on.nao { background: transparent; border-color: var(--ft-line-strong); color: var(--ft-muted); }
 .extras { display: flex; flex-direction: column; gap: 4px; }

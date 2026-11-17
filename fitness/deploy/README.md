@@ -9,7 +9,7 @@
 
 **UI (2026-11-16):** cartões/botões secundários sem contorno (`--ft-edge: transparent`); separação só por tom (`--ft-line-2` / `--ft-raise`), no padrão Clozzy. Rollback: restaurar `border: … var(--ft-line)` nos seletores `.card`/`.btn.s`/`.opt`/etc. e republicar; cache-bust em `index.html` (`?v=`).
 
-**Dieta · Comi:** selected usa tinta/cinza (`--ft-ink` / `--ft-line-2`), não laranja do `--ft-ok` nos temas Pista/Giz. Card `.meal.done` = `--ft-line-2`. Voltar: `.mk button.on.feito` → `var(--ft-ok)`.
+**Dieta · Comi:** botão selected = `--ft-ok` (laranja nos temas Pista/Giz); card `.meal.done` = cinza `--ft-line-2` (sem tint laranja). Voltar card: `color-mix(… ft-ok 7%, surface)`.
 
 ## Republicar
 

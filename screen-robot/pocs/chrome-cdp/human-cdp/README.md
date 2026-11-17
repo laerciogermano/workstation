@@ -141,11 +141,15 @@ await clearCamera('ometv-2');
 ```
 
 ```bash
-npm run camera-ui   # http://127.0.0.1:18770/ — form CDP + vídeo + label
+npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs (lista + status + CRUD + start/stop + câmera)
 npm run test:camera
 ```
 
+**UI:** ao abrir, lista todos os CDPs com **status up/down**; criar / editar / remover; executar / parar; câmera no formulário de edição. Projeto de visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
+
+**Antes → depois (UI):** só form de câmera (select) → lista completa com status e CRUD. Rollback: restaurar `camera-ui/index.html` + `server.mjs` anteriores.
 
 Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriva `--use-fake-*` de `cameraCaptureFile`. Infobar amarela das flags é esperada (lab). POC OmTV: [`omtv/pocs/fake-webcam-cdp/README.md`](../../../../omtv/pocs/fake-webcam-cdp/README.md).
 

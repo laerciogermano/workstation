@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * UI local: selecionar CDP + vídeo + nome da webcam (setCamera).
+ * Gestão de CDPs (UI local): lista + status + criar/editar/remover + start/stop + câmera.
  *
  *   npm run camera-ui
  *   # → http://127.0.0.1:18770/
@@ -11,6 +11,12 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   listCdps,
+  getCdp,
+  createCdp,
+  updateCdp,
+  removeCdp,
+  startCdp,
+  stopCdp,
   getCamera,
   setCamera,
   clearCamera,
@@ -50,13 +56,13 @@ function json(res, status, body) {
 }
 
 function readBody(req) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolveBody, reject) => {
     const chunks = [];
     req.on('data', (c) => chunks.push(c));
     req.on('end', () => {
       try {
         const raw = Buffer.concat(chunks).toString('utf8');
-        resolve(raw ? JSON.parse(raw) : {});
+        resolveBody(raw ? JSON.parse(raw) : {});
       } catch (e) {
         reject(e);
       }
@@ -65,56 +71,121 @@ function readBody(req) {
   });
 }
 
+function serializeCdp(c) {
+  const cam = c.fingerprint
+    ? {
+        label: c.fingerprint.cameraLabel || null,
+        video: c.fingerprint.cameraVideo || null,
+      }
+    : { label: null, video: null };
+  return {
+    id: c.id,
+    name: c.name,
+    status: c.status,
+    port: c.port ?? null,
+    preferredPort: c.preferredPort ?? null,
+    displayPort: c.port ?? c.preferredPort ?? null,
+    cdpUrl: c.cdpUrl,
+    defaultUrl: c.defaultUrl || '',
+    obs: c.obs || '',
+    hasMeta: !!c.hasMeta,
+    label: cam.label,
+    video: cam.video,
+    createdAt: c.createdAt,
+    updatedAt: c.updatedAt,
+  };
+}
+
+function defaultsPayload() {
+  return {
+    video: DEFAULT_VIDEO,
+    label: DEFAULT_LABEL,
+    videoExists: existsSync(DEFAULT_VIDEO),
+  };
+}
+
 const server = createServer(async (req, res) => {
   const url = new URL(req.url || '/', `http://127.0.0.1:${PORT}`);
+  const path = url.pathname;
   try {
-    if (req.method === 'GET' && url.pathname === '/') {
+    if (req.method === 'GET' && path === '/') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(HTML);
       return;
     }
-    if (req.method === 'GET' && url.pathname === '/api/defaults') {
+    if (req.method === 'GET' && path === '/api/defaults') {
+      json(res, 200, defaultsPayload());
+      return;
+    }
+    if (req.method === 'GET' && path === '/api/cdps') {
       json(res, 200, {
-        video: DEFAULT_VIDEO,
-        label: DEFAULT_LABEL,
-        videoExists: existsSync(DEFAULT_VIDEO),
+        cdps: listCdps().map(serializeCdp),
+        defaults: defaultsPayload(),
       });
       return;
     }
-    if (req.method === 'GET' && url.pathname === '/api/cdps') {
-      const cdps = listCdps().map((c) => {
-        const cam = c.fingerprint
-          ? {
-              label: c.fingerprint.cameraLabel || null,
-              video: c.fingerprint.cameraVideo || null,
-            }
-          : { label: null, video: null };
-        return {
-          id: c.id,
-          name: c.name,
-          status: c.status,
-          port: c.port ?? c.preferredPort,
-          label: cam.label,
-          video: cam.video,
-        };
+    if (req.method === 'POST' && path === '/api/cdps') {
+      const body = await readBody(req);
+      const row = createCdp({
+        id: body.id,
+        name: body.name,
+        port: body.port,
+        defaultUrl: body.defaultUrl,
+        obs: body.obs,
+        fingerprint: body.fingerprint,
       });
-      json(res, 200, {
-        cdps,
-        defaults: {
-          video: DEFAULT_VIDEO,
-          label: DEFAULT_LABEL,
-          videoExists: existsSync(DEFAULT_VIDEO),
-        },
-      });
+      json(res, 201, serializeCdp(row));
       return;
     }
-    if (req.method === 'GET' && url.pathname === '/api/camera') {
+
+    const cdpMatch = path.match(/^\/api\/cdps\/([^/]+)(?:\/(start|stop))?$/);
+    if (cdpMatch) {
+      const id = decodeURIComponent(cdpMatch[1]);
+      const action = cdpMatch[2] || null;
+
+      if (req.method === 'GET' && !action) {
+        const row = getCdp(id);
+        if (!row) return json(res, 404, { error: `cdp não encontrado: ${id}` });
+        json(res, 200, serializeCdp(row));
+        return;
+      }
+      if (req.method === 'PATCH' && !action) {
+        const body = await readBody(req);
+        const patch = {};
+        for (const key of ['name', 'port', 'defaultUrl', 'obs', 'fingerprint', 'debug']) {
+          if (key in body) patch[key] = body[key];
+        }
+        const row = updateCdp(id, patch);
+        json(res, 200, serializeCdp(row));
+        return;
+      }
+      if (req.method === 'DELETE' && !action) {
+        const body = await readBody(req).catch(() => ({}));
+        const ok = removeCdp(id, { deleteProfile: body.deleteProfile === true });
+        if (!ok) return json(res, 404, { error: `cdp não encontrado: ${id}` });
+        json(res, 200, { ok: true, id });
+        return;
+      }
+      if (req.method === 'POST' && action === 'start') {
+        const body = await readBody(req).catch(() => ({}));
+        const out = await startCdp(id, { url: body.url });
+        json(res, 200, { ...serializeCdp(getCdp(id)), already: !!out.already });
+        return;
+      }
+      if (req.method === 'POST' && action === 'stop') {
+        await stopCdp(id);
+        json(res, 200, serializeCdp(getCdp(id) || { id, name: id, status: 'down' }));
+        return;
+      }
+    }
+
+    if (req.method === 'GET' && path === '/api/camera') {
       const id = url.searchParams.get('id');
       if (!id) return json(res, 400, { error: 'id obrigatório' });
       json(res, 200, getCamera(id));
       return;
     }
-    if (req.method === 'POST' && url.pathname === '/api/camera') {
+    if (req.method === 'POST' && path === '/api/camera') {
       const body = await readBody(req);
       if (!body.id || !body.video) {
         return json(res, 400, { error: 'id e video obrigatórios' });
@@ -127,7 +198,7 @@ const server = createServer(async (req, res) => {
       json(res, 200, out);
       return;
     }
-    if (req.method === 'POST' && url.pathname === '/api/camera/clear') {
+    if (req.method === 'POST' && path === '/api/camera/clear') {
       const body = await readBody(req);
       if (!body.id) return json(res, 400, { error: 'id obrigatório' });
       const out = await clearCamera(body.id, { apply: body.apply !== false });
@@ -141,5 +212,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`human-cdp camera-ui → http://127.0.0.1:${PORT}/`);
+  console.log(`gestão de CDPs → http://127.0.0.1:${PORT}/`);
 });

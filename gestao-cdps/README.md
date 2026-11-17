@@ -148,8 +148,19 @@ Move, down/up (clique) ou tecla capturados na UI e reproduzidos no CDP.
 | [`screen-robot`](../screen-robot/README.md) / chrome-cdp | Runtime Chrome com remote debugging |
 | OmTV, OV, Connect, CRM… | Consumidores de CDPs — não são este console |
 
+## Console v1 (lab)
+
+UI local da lib human-cdp:
+
+```bash
+cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
+# → http://127.0.0.1:18770/
+```
+
+Abre na **lista com status** (up/down); criar / editar / remover; executar / parar; câmera no editar. Código: [`../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/`](../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/).
+
 ## Próximos passos
 
 1. Validar e refinar **este** documento de visão.
 2. [`docs/`](docs/README.md) → PRD / funcionalidades (lista + status, formulário, lifecycle, superfície de controle).
-3. Discovery (épicos / stories) só depois da visão estável.
+3. Discovery (épicos / stories) só depois da visão estável — controle por tela (espelho) ainda fora do console v1.

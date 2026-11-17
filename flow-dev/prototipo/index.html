@@ -238,7 +238,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.agente { color: var(--t-ia); }
 .node .fi.pessoa { color: var(--t-pessoa); }
 .node .fi.modelo { color: var(--accent); }
-.node .fi.layer { color: var(--muted); }
+.node .fi.lyr { color: var(--muted); }
 .md-sel { border: 1px solid var(--line-2); border-radius: 5px; background: var(--paper); font-size: 11px; height: 20px; padding: 0 4px; color: var(--ink); }
 .node.ag-d .t:has(.md-sel) { overflow: visible; }
 .node.ag-d { cursor: default; height: 24px; }
@@ -966,8 +966,20 @@ const LAYERS = [
   { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
   { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"]] },
   { id: "l4", file: "contrato.data.js", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
-  { id: "l5", file: "ativacao.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
+  { id: "l5", file: "credenciais.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
 ];
+function ensureLayers() {
+  const fnIn = new Set(LAYERS.flatMap(l => l.items.filter(i => i[0] === "fn").map(i => i[1])));
+  const dIn = new Set(LAYERS.flatMap(l => l.items.filter(i => i[0] === "dado").map(i => i[1])));
+  const nome = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  U.filter(u => !u.arch && !isFolder(u) && !isData(u) && !kids(u.id).some(k => !k.arch)).forEach(u => {
+    const home = u.parent ? $u(u.parent) : u, file = nome(home.title) + ".layer.js";
+    let L = LAYERS.find(l => l.file === file);
+    const add = it => { if (!L) { L = { id: "lx" + LAYERS.length, file, items: [] }; LAYERS.push(L); } L.items.push(it); };
+    if (!fnIn.has(u.id)) { add(["fn", u.id]); fnIn.add(u.id); }
+    (u.outs || []).forEach(([n]) => { if (!dIn.has(n)) { add(["dado", n]); dIn.add(n); } });
+  });
+}
 // Modelos = as IAs (Claude, GPT…). Agentes = “pessoas” de IA com nome, um modelo e um prompt pronto
 const MODELS = [
   { id: "opus", name: "Claude Opus 5.5", api: "claude-opus-5-5", vendor: "Anthropic" },
@@ -1278,6 +1290,7 @@ function explorer(s) {
     return { html, n: list.length };
   })();
   // Layers: cada arquivo com o que ele contém (funções ○ e/ou dados cubo)
+  ensureLayers();
   const layerRows = (() => {
     const list = LAYERS.filter(l => !q || l.file.toLowerCase().includes(q) || l.items.some(([k, v]) => (k === "fn" ? $u(v)?.title || "" : v).toLowerCase().includes(q)));
     if (q) hits += list.length;
@@ -1285,7 +1298,7 @@ function explorer(s) {
       const id = "ly:" + l.id, isOpen = q ? true : OPEN.has(id);
       const nf = l.items.filter(i => i[0] === "fn").length, nd = l.items.length - nf;
       const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
-      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi layer">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
         if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }
@@ -2863,7 +2876,7 @@ holder.addEventListener("pointerdown", e => {
   const canvas = e.target.closest(".zcanvas");
   const key = canvas?.dataset?.zcanvas || zKey();
   if (!canvas || !key || !ZVIEWS[key] || cur?.v !== key) return;
-  if (e.target.closest(".dnode, .tnode, .enode, .gbar, .funit, .grow, button, a, input, select, textarea, .dz, .tnew")) return;
+  if (e.target.closest(".dnode, .tnode, .enode, .gbar, .funit, .grow, .fbar, .fsum, .fdia, .fe-d b, [data-act], button, a, input, select, textarea, .dz, .tnew")) return; // clique em função/dado não vira pan
   if (e.button !== 0 && e.button !== 1) return;
   const st = ZVIEWS[key];
   zPan = { key, id: e.pointerId, x: e.clientX, y: e.clientY, ox: st.x, oy: st.y };

@@ -56,6 +56,40 @@
 :root[data-tema="eternos"] .node .fi.dado svg { fill: #fff; }
 :root[data-tema="eternos"] .gantt.flow .grow.sel, :root[data-tema="eternos"] .gantt.flow .grows-r .rr.sel { background: rgba(0,0,0,.07); box-shadow: inset 0 -1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(0,0,0,.25); }
 :root[data-tema="eternos"] .fband, :root[data-tema="eternos"] .gantt.flow .grow.ifrow { background: rgba(0,0,0,.035); }
+:root[data-tema="eternos-black"] {
+  /* Eternos Mutáveis Black: mesmo sentido (material/concreto = branco · abstrato = preto) sobre fundo preto */
+  --accent: #f2f2f2; --accent-2: #d8d8d8; --on-accent: #0b0b0b;
+  --ink: #f2f2f2; --body: #c4c4c4; --muted: #8a8a8a; --line: #262626; --line-2: #3a3a3a;
+  --paper: #0b0b0b; --panel: #121212; --wash: #1c1c1c; --stage: #050505; --bezel: #3a3a3a;
+  --ok: #c9a24a; --run: #f2f2f2; --warn: #c9a24a; --fail: #e2735f; --idle: #8a8a8a;
+  --t-pessoa: #f2f2f2; --t-ia: #f2f2f2; --t-maquina: #f2f2f2;
+  --fn: #f2f2f2; --dado: #f2f2f2;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-tema="eternos-black"] .fview .sv-fn { fill: #ffffff; stroke: #ffffff; stroke-width: 1.5; }                 /* concreta = branca */
+:root[data-tema="eternos-black"] .fview .sv-fn.abs { fill: #000000; stroke: #f2f2f2; }                                  /* abstrata = preta (contorno p/ aparecer no fundo preto) */
+:root[data-tema="eternos-black"] .fview .sv-fn.nag { fill: transparent; }
+:root[data-tema="eternos-black"] .fview .sv-fbt { fill: #0b0b0b; }
+:root[data-tema="eternos-black"] .fview .sv-fbt.abs { fill: #f2f2f2; }
+:root[data-tema="eternos-black"] .fview .sv-selr { fill: rgba(255,255,255,.08); }
+:root[data-tema="eternos-black"] .fview .sv-band, :root[data-tema="eternos-black"] .fview .sv-band.lp { fill: rgba(255,255,255,.04); }
+:root[data-tema="eternos-black"] .fsvg .fdot { fill: #ffffff; stroke: #ffffff; }
+:root[data-tema="eternos-black"] .fsvg .fdot.a { fill: #000000; stroke: #f2f2f2; }
+:root[data-tema="eternos-black"] .fview .sv-fd rect { fill: #ffffff; stroke: #ffffff; }
+:root[data-tema="eternos-black"] .fview .sv-fd.ext rect { fill: #000000; stroke: #f2f2f2; }
+:root[data-tema="eternos-black"] .lg-fc { background: #fff; border: 1.5px solid #fff; }
+:root[data-tema="eternos-black"] .lg-fa { background: #000; border: 1.5px solid #f2f2f2; }
+:root[data-tema="eternos-black"] .lg-dot { background: #fff; border-color: #fff; }
+:root[data-tema="eternos-black"] .lg-da { background: #000; border: 1.3px solid #f2f2f2; }
+:root[data-tema="eternos-black"] .fav { background: #000; border-color: #f2f2f2; color: #f2f2f2; }
+:root[data-tema="eternos-black"] .fav.maquina, :root[data-tema="eternos-black"] .fav.pessoa { background: #fff; border-color: #fff; color: #0b0b0b; }
+:root[data-tema="eternos-black"] .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
+:root[data-tema="eternos-black"] .node .fi.plan.abs svg { fill: #fff; }
+:root[data-tema="eternos-black"] .node .fi.plan.ia svg { fill: #000; }
+:root[data-tema="eternos-black"] .node .fi.dado svg { fill: #fff; }
+:root[data-tema="eternos-black"] .gantt.flow .grow.sel { background: rgba(255,255,255,.08); }
+:root[data-tema="eternos-black"] .gantt.flow .grow.ifrow, :root[data-tema="eternos-black"] .gantt.flow .grow.forrow { background: rgba(255,255,255,.04); }
 :root[data-tema="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; --stage: #e4e9ea; --bezel: #c9d1d2; }
 :root[data-tema="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --stage: #e5e7f0; --bezel: #c9cddd; --t-ia: #a2458e; }
 :root[data-tema="cobalto"] { --accent: #2563eb; --accent-2: #1d4ed8; --line: #dbe4f3; --line-2: #c9d6ea; --panel: #f3f6fc; --wash: #eaf0fa; --stage: #e2e9f4; --bezel: #b8c7de; --run: #2563eb; --t-pessoa: #2563eb; }
@@ -1792,7 +1826,7 @@ function flow(s) {
   const LW = 380, RH = 34, TAIL = 440, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if); TAIL = espaço p/ bag do estado à direita da barra
   // texto dentro: passo só um pouco maior que o maior nome (≈5,6 px por letra a 10 px + respiro)
   const maxT = Math.max(0, ...rows.filter(r => !isData(r.u) && !flowKids(r.u).length).map(r => r.u.title.length));
-  const INS = s.txtIn ? 10 : 18; // recuo da barra até a divisória
+  const INS = s.txtIn ? 22 : 28; // recuo da barra até a divisória (longe dos □ de dados)
   const W = Math.max(s.txtIn ? Math.ceil(maxT * 5.6 + 20 + INS * 2) : 118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
   const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
@@ -1891,7 +1925,7 @@ function flow(s) {
     if (hasK(u)) return `<g data-act="drawer" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>${sel ? `<rect class="sv-fsel" x="${g.x1 - 3}" y="${y0 + 9}" width="${g.x2 - g.x1 + 6}" height="19" rx="3"/>` : ""}` + after(g.ox + 10, ym, u);
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    return `${sel ? `<rect class="sv-fsel" x="${g.x1 - 3}" y="${y0 + 3}" width="${g.x2 - g.x1 + 6}" height="28" rx="14"/>` : ""}<g data-act="drawer" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${g.x1 + 9}" y="${ym + 3.5}">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
+    return `${sel ? `<rect class="sv-fsel" x="${g.x1 - 3}" y="${y0 + 3}" width="${g.x2 - g.x1 + 6}" height="28" rx="14"/>` : ""}<g data-act="drawer" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
   };
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
@@ -2690,6 +2724,7 @@ const SCREENS = {
 const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
 const TEMAS = [
   { id: "eternos", name: "Eternos Mutáveis", a: "#0b0b0b", b: "#ffffff", desc: "Do livro: o mundo material (estado, concreto) é branco e o abstrato é preto. Sólido = branco preenchido · abstrato = preto preenchido." },
+  { id: "eternos-black", name: "Eternos Mutáveis Black", a: "#f2f2f2", b: "#0b0b0b", desc: "Eternos Mutáveis no escuro: fundo preto; material (concreto) segue branco e o abstrato segue preto, com contorno claro." },
   { id: "papel", name: "Papel", a: "#d4432a", b: "#f8f6f2", desc: "Claro editorial — accent terracota no papel quente." },
   { id: "teal", name: "Teal", a: "#0f766e", b: "#f6f8f8", desc: "Verde-água sóbrio para leitura longa." },
   { id: "indigo", name: "Índigo", a: "#3d4fb8", b: "#f6f7fb", desc: "Azul produto / SaaS clássico." },

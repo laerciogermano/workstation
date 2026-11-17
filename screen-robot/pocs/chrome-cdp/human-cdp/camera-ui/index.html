@@ -159,13 +159,13 @@
 
       <div class="block" id="cam-block" hidden>
         <h3>Vídeo da galeria</h3>
-        <p class="hint">Escolha qual mídia este CDP executa (aplica na câmera fake).</p>
+        <p class="hint">Escolha a mídia da câmera fake (FaceTime). O Salvar aplica; “Aplicar agora” força sem fechar.</p>
         <label>Mídia
           <select id="media-select"></select>
         </label>
         <label>Nome webcam <input id="label" type="text" value="FaceTime HD Camera" /></label>
         <div class="dlg-actions">
-          <button type="button" class="secondary" id="apply-media">Aplicar no CDP</button>
+          <button type="button" class="secondary" id="apply-media">Aplicar agora</button>
           <button type="button" class="ghost" id="clear-media">Limpar seleção</button>
         </div>
       </div>
@@ -575,6 +575,37 @@
       }
     });
 
+    async function refreshFingerprintField(id) {
+      try {
+        const c = await api(`/api/cdps/${encodeURIComponent(id)}`);
+        $('fingerprint').value = c.fingerprint ? JSON.stringify(c.fingerprint, null, 2) : '';
+      } catch {
+        /* mantém textarea */
+      }
+    }
+
+    /** Persiste mídia do editor no CDP (selectedMediaId + setCamera / clear). */
+    async function syncEditorMedia(id, { restart = true } = {}) {
+      const mediaId = $('media-select').value || null;
+      const label = $('label').value.trim();
+      if (!mediaId) {
+        await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
+          method: 'POST',
+          body: JSON.stringify({ mediaId: null, apply: false }),
+        });
+        await api('/api/camera/clear', {
+          method: 'POST',
+          body: JSON.stringify({ id, apply: restart }),
+        });
+        return { mediaId: null };
+      }
+      await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
+        method: 'POST',
+        body: JSON.stringify({ mediaId, label, apply: true, restart }),
+      });
+      return { mediaId };
+    }
+
     $('form').addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const mode = $('mode').value;
@@ -599,7 +630,11 @@
           const id = $('id').value.trim();
           flash('salvando…');
           await api(`/api/cdps/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(payload) });
-          flash('CDP atualizado', 'ok');
+          // Salvar também aplica a mídia — senão o vídeo/Face nunca entra no fingerprint.
+          flash('aplicando mídia da câmera…');
+          const media = await syncEditorMedia(id, { restart: true });
+          await refreshFingerprintField(id);
+          flash(media.mediaId ? 'CDP atualizado · câmera aplicada' : 'CDP atualizado · câmera limpa', 'ok');
         }
         $('editor').close();
         await loadList({ quiet: true });
@@ -612,15 +647,12 @@
 
     $('apply-media').addEventListener('click', async () => {
       const id = $('id').value.trim();
-      const mediaId = $('media-select').value || null;
       try {
         setBusy(true);
         flash('aplicando mídia…');
-        await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
-          method: 'POST',
-          body: JSON.stringify({ mediaId, label: $('label').value.trim(), apply: true }),
-        });
-        flash(mediaId ? 'mídia aplicada no CDP' : 'seleção limpa', 'ok');
+        const media = await syncEditorMedia(id, { restart: true });
+        await refreshFingerprintField(id);
+        flash(media.mediaId ? 'mídia aplicada no CDP' : 'seleção limpa', 'ok');
         await loadList({ quiet: true });
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
@@ -630,11 +662,8 @@
       const id = $('id').value.trim();
       try {
         setBusy(true);
-        await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
-          method: 'POST',
-          body: JSON.stringify({ mediaId: null, apply: false }),
-        });
-        await api('/api/camera/clear', { method: 'POST', body: JSON.stringify({ id }) });
+        await syncEditorMedia(id, { restart: true });
+        await refreshFingerprintField(id);
         flash('mídia limpa', 'ok');
         await loadList({ quiet: true });
       } catch (e) { flash(String(e.message || e), 'err'); }

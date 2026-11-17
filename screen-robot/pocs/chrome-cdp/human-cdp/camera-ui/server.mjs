@@ -461,6 +461,19 @@ const server = createServer(async (req, res) => {
         for (const key of ['name', 'port', 'defaultUrl', 'obs', 'fingerprint', 'debug']) {
           if (key in body) patch[key] = body[key];
         }
+        // Textarea do Editar costuma vir sem camera* — não apagar vídeo já aplicado
+        // se a mídia ainda estiver selecionada (Salvar em seguida re-aplica de qualquer forma).
+        if ('fingerprint' in patch && patch.fingerprint && typeof patch.fingerprint === 'object') {
+          const cur = getCdp(id);
+          const prevFp = cur?.fingerprint || {};
+          if (cur?.selectedMediaId) {
+            for (const key of ['cameraVideo', 'cameraCaptureFile', 'cameraLabel']) {
+              if (!patch.fingerprint[key] && prevFp[key]) {
+                patch.fingerprint[key] = prevFp[key];
+              }
+            }
+          }
+        }
         return json(res, 200, serializeCdp(updateCdp(id, patch), { full: true }));
       }
       if (req.method === 'DELETE') {

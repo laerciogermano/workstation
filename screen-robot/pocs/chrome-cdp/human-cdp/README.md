@@ -218,6 +218,8 @@ Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/tests
 
 Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriva `--use-fake-*` de `cameraCaptureFile`. Infobar amarela das flags é esperada (lab). POC OmTV: [`omtv/pocs/fake-webcam-cdp/README.md`](../../../../omtv/pocs/fake-webcam-cdp/README.md).
 
+**Editar → Salvar:** grava também a mídia do select (`media/select` + `setCamera`). Antes só “Aplicar no CDP” persistia o vídeo — Salvar sozinho deixava a câmera sem face. O PATCH da UI ainda preserva `camera*` se houver `selectedMediaId`. Rollback: remover o sync no submit de `camera-ui/index.html` e o merge no PATCH de `camera-ui/server.mjs`.
+
 **Antes → depois:** só spoof OBS / chromeArgs manuais → `setCamera` + UI + campos no fingerprint. Rollback: `clearCamera(id)`; remover `src/camera.mjs` / `camera-ui/` / exports.
 
 **Antes → depois:** keeper numa única aba (`pickPage`) → multi-target no browser WS.

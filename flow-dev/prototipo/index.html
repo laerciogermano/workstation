@@ -978,18 +978,18 @@ const CAT = [
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
 // Layers = arquivos: cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
 const LAYERS = [
-  { id: "l1", file: "proposta.layer", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"]] },
-  { id: "l2", file: "envio.layer", items: [["fn", "u15"]] },
-  { id: "l3", file: "cliente.data", items: [["dado", "dados_cliente"]] },
-  { id: "l4", file: "contrato.data", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
-  { id: "l5", file: "credenciais.layer", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
+  { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"]] },
+  { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
+  { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"]] },
+  { id: "l4", file: "contrato.data.js", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
+  { id: "l5", file: "credenciais.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
 ];
 function ensureLayers() {
   const fnIn = new Set(LAYERS.flatMap(l => l.items.filter(i => i[0] === "fn").map(i => i[1])));
   const dIn = new Set(LAYERS.flatMap(l => l.items.filter(i => i[0] === "dado").map(i => i[1])));
   const nome = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   U.filter(u => !u.arch && !isFolder(u) && !isData(u) && !kids(u.id).some(k => !k.arch)).forEach(u => {
-    const home = u.parent ? $u(u.parent) : u, file = nome(home.title) + ".layer";
+    const home = u.parent ? $u(u.parent) : u, file = nome(home.title) + ".layer.js";
     let L = LAYERS.find(l => l.file === file);
     const add = it => { if (!L) { L = { id: "lx" + LAYERS.length, file, items: [] }; LAYERS.push(L); } L.items.push(it); };
     if (!fnIn.has(u.id)) { add(["fn", u.id]); fnIn.add(u.id); }
@@ -1314,7 +1314,7 @@ function explorer(s) {
       const id = "ly:" + l.id, isOpen = q ? true : OPEN.has(id);
       const nf = l.items.filter(i => i[0] === "fn").length, nd = l.items.length - nf;
       const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
-      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
         if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }

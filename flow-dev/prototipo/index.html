@@ -2121,7 +2121,7 @@ function flowScene(svg) {
     else {
       const parts = [];
       el.childNodes.forEach(c => { if (c.nodeType === 3) parts.push({ txt: c.textContent, fill: cs.fill }); else if (c.tagName === "tspan") parts.push({ txt: c.textContent, fill: getComputedStyle(c).fill, act: c.dataset.act ? { act: c.dataset.act, id: c.dataset.id || "", n: c.dataset.n || "" } : null }); });
-      items.push({ ...b, t: "text", x: n("x"), y: n("y"), anchor: cs.textAnchor, font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, size: parseFloat(cs.fontSize), parts: parts.filter(p => p.txt) });
+      items.push({ ...b, t: "text", x: n("x"), y: n("y"), anchor: cs.textAnchor, font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily.replace(/"/g, "'")}`, size: parseFloat(cs.fontSize), parts: parts.filter(p => p.txt) });
     }
   });
   return { W, H, items };

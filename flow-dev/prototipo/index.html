@@ -238,6 +238,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.agente { color: var(--t-ia); }
 .node .fi.pessoa { color: var(--t-pessoa); }
 .node .fi.modelo { color: var(--accent); }
+.node .fi.layer { color: var(--muted); }
 .md-sel { border: 1px solid var(--line-2); border-radius: 5px; background: var(--paper); font-size: 11px; height: 20px; padding: 0 4px; color: var(--ink); }
 .node.ag-d .t:has(.md-sel) { overflow: visible; }
 .node.ag-d { cursor: default; height: 24px; }
@@ -959,6 +960,14 @@ const CAT = [
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
 ];
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
+// Layers = arquivos: cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
+const LAYERS = [
+  { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"]] },
+  { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
+  { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"]] },
+  { id: "l4", file: "contrato.data.js", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
+  { id: "l5", file: "ativacao.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
+];
 // Modelos = as IAs (Claude, GPT…). Agentes = “pessoas” de IA com nome, um modelo e um prompt pronto
 const MODELS = [
   { id: "opus", name: "Claude Opus 5.5", api: "claude-opus-5-5", vendor: "Anthropic" },
@@ -1268,6 +1277,24 @@ function explorer(s) {
     const html = list.map(m => `<div class="node${s.mdCfg === m.id ? " sel" : ""}" data-act="md-cfg" data-id="${m.id}" style="padding-left:8px" title="Configurar ${esc(m.name)}"><span class="car"></span><span class="fi modelo">${icon("brain-circuit")}</span><span class="t">${markTitle(m.name, q)}</span><span class="meta"><span>${esc(m.vendor)}</span></span></div>`).join("");
     return { html, n: list.length };
   })();
+  // Layers: cada arquivo com o que ele contém (funções ○ e/ou dados cubo)
+  const layerRows = (() => {
+    const list = LAYERS.filter(l => !q || l.file.toLowerCase().includes(q) || l.items.some(([k, v]) => (k === "fn" ? $u(v)?.title || "" : v).toLowerCase().includes(q)));
+    if (q) hits += list.length;
+    const html = list.map(l => {
+      const id = "ly:" + l.id, isOpen = q ? true : OPEN.has(id);
+      const nf = l.items.filter(i => i[0] === "fn").length, nd = l.items.length - nf;
+      const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi layer">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
+      if (isOpen) l.items.forEach(([k, v]) => {
+        const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
+        if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }
+        else h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="reveal-dado" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado">${icon("box")}</span><span class="t mono">${esc(v)}</span></div>`;
+      });
+      return h;
+    }).join("");
+    return { html, n: list.length };
+  })();
   // Pessoas: responsáveis humanos que podem assumir funções abstratas
   const pessoaRows = (() => {
     const list = CAT.filter(a => a.type === "pessoa" && (!q || a.name.toLowerCase().includes(q) || a.sub.toLowerCase().includes(q)));
@@ -1280,7 +1307,7 @@ function explorer(s) {
   })();
   const nPlans = U.filter(u => !u.arch && !isFolder(u)).length;
   const nEstados = stateCatalog().length;
-  const empty = !planRows.length && !estadoRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n;
+  const empty = !planRows.length && !estadoRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
       <button class="ib" data-act="new-file" title="Novo plano">${icon("circle-plus")}</button>
@@ -1293,6 +1320,10 @@ function explorer(s) {
       <div class="ex-sec" data-sec="planos">
         <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${PLANS.length}</span></div>
         ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
+      </div>
+      <div class="ex-sec" data-sec="layers">
+        <div class="ex-sec-h">${icon("layers")} Layers<span class="n">${layerRows.n}</span></div>
+        ${layerRows.html}
       </div>
       <div class="ex-sec" data-sec="pessoas">
         <div class="ex-sec-h">${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span></div>

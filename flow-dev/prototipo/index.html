@@ -557,6 +557,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
 .fe-d b::before { content: ""; flex: none; box-sizing: border-box; width: 8.4px; height: 8.4px; border: 1.2px solid var(--dado); background: var(--paper); }
 .fe-d b.ext { color: var(--muted); }
+.fh-e.bot .fe-mode { position: absolute; left: 12px; top: 14px; }
 .fh-e.bot span::after { top: -13px; }
 .gantt.flow .gbg div.g0 { border-left: 0; }
 .fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
@@ -1738,7 +1739,9 @@ function flow(s) {
   const fnAll = rows.map(r => r.u).filter(isFn);
   const nAbs = new Set(fnAll.filter(u => fnKind(u) === "abs").map(u => u.agent)).size + new Set(fnAll.flatMap(u => (u.ins || []).filter(n => absData(u, n)))).size;
   const nConc = new Set(fnAll.filter(u => fnKind(u) === "conc").map(u => u.agent)).size + prodSetPre.size;
-  const FOOT = 48 + Math.max(0, ...stBag.map(d => d.length)) * 14;
+  // embaixo: todos os dados de cada estado (acumulado) ou só os novos daquele eN
+  const stShow = s.dadosNovos ? stNew : stBag;
+  const FOOT = 48 + Math.max(0, ...stShow.map(d => d.length)) * 14;
   const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + FOOT;
   const toolbar = zoomToolbar("flow", "Flow", "workflow");
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
@@ -1750,7 +1753,7 @@ function flow(s) {
           <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
           <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
-          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stBag[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stBag[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
+          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i><div class="seg sm fe-mode" role="group" aria-label="Dados por estado"><button data-act="dados-modo" data-m="todos" aria-current="${!s.dadosNovos}">Todos</button><button data-act="dados-modo" data-m="novos" aria-current="${!!s.dadosNovos}">Novos</button></div>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stShow[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stShow[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""}">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
           <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
@@ -2646,6 +2649,7 @@ const ACT = {
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
+  "dados-modo": t => { cur.dadosNovos = t.dataset.m === "novos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
   "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },
   "cfg-close": () => { unset("agCfg", "mdCfg"); },

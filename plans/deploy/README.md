@@ -61,10 +61,10 @@ Não é visão do dock: ícone `message-square` no `.tb` → `COPILOT.open` + `c
 
 **Voltar:** reintroduzir `ganttFopStates` + cards e0…eN.
 
-## Flow · lista indentada
+## Flow · Gantt por passos
 
-Flow = `.flow-list` no estilo Explorar: indentação por profundidade; **um** □ entrada e **um** □ saída por linha (tracejado se vazio). Sem setas SVG, sem eixo de passos / `.funit` no Gantt.
+Flow no layout Gantt (`flowLayout` + `.funit`): **um** □ entrada e **um** □ saída por etapa. Sem setas SVG de dependência.
 
-**Antes → depois:** timeline com deps + vários quadrados por I/O → lista indentada + 1+1 quadrados.
+**Antes → depois:** vários quadrados por I/O + deps → 1+1 quadrados, sem setas.
 
-**Voltar:** restaurar `flow()` com `flowLayout` + `.gsvg` deps + `.funit` multi-sq.
+**Voltar:** multi-sq + `.gsvg` deps no `flow()`.

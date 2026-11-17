@@ -453,26 +453,20 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gbar.parent::before { left: 0; border-left-color: var(--ink); } .gbar.parent::after { right: 0; border-right-color: var(--ink); }
 .gbar.parent.fail { background: var(--fail); } .gbar.parent.fail::before { border-top-color: var(--fail); border-left-color: var(--fail); } .gbar.parent.fail::after { border-top-color: var(--fail); border-right-color: var(--fail); }
 .gbar .lbl-out { position: absolute; left: calc(100% + 13px); color: var(--muted); font-weight: 500; }
-/* Flow · lista indentada (estilo Explorar): □ entrada · função · □ saída */
-.flow-list { height: 100%; display: flex; flex-direction: column; min-height: 0; }
-.flow-list .flow-h { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
-.flow-list .flow-h b { color: var(--ink); font-weight: 600; font-size: 13px; }
-.flow-list .flow-rows { flex: 1; overflow: auto; padding: 6px 0 72px; min-height: 0; }
-.flow-list .frow { height: 30px; display: flex; align-items: center; gap: 6px; padding-right: 16px; cursor: pointer; white-space: nowrap; border: 1px solid transparent; user-select: none; }
-.flow-list .frow:hover { background: var(--wash); }
-.flow-list .frow.sel { background: color-mix(in srgb, var(--accent) 13%, var(--paper)); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
-.flow-list .frow .car { width: 16px; display: grid; place-items: center; color: var(--muted); flex: none; }
-.flow-list .frow .car svg { width: 14px; height: 14px; }
-.flow-list .frow .sq { display: block; width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid var(--line-2); background: var(--paper); flex: none; box-sizing: border-box; }
-.flow-list .frow .sq.in { border-color: color-mix(in srgb, var(--muted) 70%, transparent); }
-.flow-list .frow .sq.out { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--paper)); }
-.flow-list .frow .sq.empty { border-style: dashed; opacity: .45; }
-.flow-list .frow .ft { font-size: 13px; font-weight: 500; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.flow-list .frow.parent .ft { font-weight: 600; }
-.flow-list .frow .meta { margin-left: auto; display: flex; align-items: center; gap: 8px; flex: none; }
-.flow-list .frow .code-b { width: 24px; height: 24px; border: 0; background: none; border-radius: 5px; display: inline-grid; place-items: center; color: var(--muted); padding: 0; }
-.flow-list .frow .code-b:hover { background: var(--wash); color: var(--accent); }
-.flow-list .frow .code-b svg { width: 14px; height: 14px; }
+/* Flow · formato Gantt: □ entrada | função | □ saída (um de cada) */
+.funit { position: absolute; top: 4px; height: 30px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 3px; align-items: center; z-index: 2; min-width: 72px; }
+.funit .fio { display: flex; align-items: center; justify-content: center; }
+.funit .sq { display: block; width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid var(--line-2); background: var(--paper); flex: none; box-sizing: border-box; }
+.funit .sq.in { border-color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.funit .sq.out { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--paper)); }
+.funit .sq.empty { border-style: dashed; opacity: .45; }
+.funit .fmid { height: 26px; border-radius: 5px; background: color-mix(in srgb, var(--c) 22%, var(--paper)); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); color: var(--ink); font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0 6px; white-space: nowrap; overflow: hidden; cursor: pointer; min-width: 0; position: relative; }
+.funit .fmid:hover { border-color: var(--c); }
+.funit .fmid.sel { box-shadow: 0 0 0 2px var(--accent); }
+.funit .fmid .fill { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 40%, transparent); border-radius: 4px 0 0 4px; z-index: -1; }
+.funit.parent-wrap { top: 12px; height: 14px; }
+.funit.parent-wrap .fmid { height: 10px; border-radius: 2px; background: var(--ink); border: 0; padding: 0; }
+.funit.parent-wrap .fmid.fail { background: var(--fail); }
 .gsvg { position: absolute; left: 0; top: 48px; pointer-events: none; z-index: 1; overflow: visible; }
 .gsvg .dep { fill: none; stroke: var(--muted); stroke-width: 1.3; }
 .gsvg .dep.par { stroke-dasharray: 2 3; stroke: var(--run); }
@@ -1192,26 +1186,46 @@ function gantt(s) {
 }
 function flow(s) {
   const rows = ganttRows(s.plan);
-  const planName = s.plan === "onb" ? "Onboarding Acme" : "Plano padrão";
-  const list = rows.map(({ u, d }) => {
+  const { layout, nSteps } = flowLayout(s.plan);
+  const LW = 320;
+  const avail = 1152 - LW - 2;
+  const W = Math.max(96, Math.floor(avail / Math.max(nSteps, 1)));
+  const RH = 38;
+  const left = rows.map(({ u, d }) => {
+    const has = kidsPlan(u.id).some(k => !k.arch && !isFolder(k)), a = agent(u.agent);
+    return `<div class="grow gl-cols${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="grid-template-columns:1fr 112px">
+      <span class="nm${has ? " par" : ""}" style="padding-left:${d * 16}px"><span class="car">${has ? icon("chevron-down") : ""}</span><b>${esc(u.title)}</b>${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>
+      ${agChip(u.agent)}</div>`;
+  }).join("");
+  const bars = rows.map(({ u }) => {
+    const L = layout[u.id] || { s: 0, e: 0 };
     const has = kidsPlan(u.id).some(k => !k.arch && !isFolder(k));
-    const a = agent(u.agent);
+    const x = L.s * W + 3, w = Math.max(72, (L.e - L.s + 1) * W - 6);
+    if (has) {
+      const st = kidsPlan(u.id).some(k => k.st === "fail") ? "fail" : null;
+      return `<div class="rr"><div class="funit parent-wrap" style="left:${x}px;width:${w}px"><div class="fio"></div><div class="fmid${st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" title="${esc(u.title)}"></div><div class="fio"></div></div></div>`;
+    }
+    const a = agent(u.agent), c = a ? `var(--t-${a.type})` : "var(--idle)";
+    const prog = u.st === "ok" || u.col === COLS[COLS.length - 1].id ? 1 : u.st === "exec" ? .55 : u.id === "u12" ? .6 : 0;
     const ins = u.ins || [], outs = (u.outs || []).map(o => o[0]);
     const inTitle = ins.length ? `entrada: ${ins.join(", ")}` : "sem entrada";
     const outTitle = outs.length ? `saída: ${outs.join(", ")}` : "sem saída";
-    const inSq = `<i class="sq in${ins.length ? "" : " empty"}" title="${esc(inTitle)}" aria-label="${esc(inTitle)}"></i>`;
-    const outSq = `<i class="sq out${outs.length ? "" : " empty"}" title="${esc(outTitle)}" aria-label="${esc(outTitle)}"></i>`;
-    return `<div class="frow${has ? " parent" : ""}${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:${10 + d * 16}px">
-      <span class="car">${has ? icon("chevron-down") : ""}</span>
-      ${inSq}
-      <span class="ft">${esc(u.title)}</span>
-      ${outSq}
-      <span class="meta">${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}${agChip(u.agent)}${u.st ? stBadge(u.st) : ""}</span>
-    </div>`;
+    const inHtml = `<i class="sq in${ins.length ? "" : " empty"}" title="${esc(inTitle)}" aria-label="${esc(inTitle)}"></i>`;
+    const outHtml = `<i class="sq out${outs.length ? "" : " empty"}" title="${esc(outTitle)}" aria-label="${esc(outTitle)}"></i>`;
+    return `<div class="rr"><div class="funit" style="left:${x}px;width:${w}px;--c:${c}">
+      <div class="fio" title="entrada">${inHtml}</div>
+      <div class="fmid${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}">${prog ? `<span class="fill" style="width:${prog * 100}%"></span>` : ""}${u.st ? icon(ST[u.st][1]) : ""}<span style="overflow:hidden;text-overflow:ellipsis">${esc(u.title)}</span></div>
+      <div class="fio" title="saída">${outHtml}</div>
+    </div></div>`;
   }).join("");
-  return `<div class="flow-list">${runbarHtml(s)}
-    <div class="flow-h"><b>${esc(planName)}</b><span>□ entrada · função · □ saída</span></div>
-    <div class="flow-rows" data-flow>${list || `<p style="padding:14px;color:var(--muted)">Nenhuma etapa neste plano.</p>`}</div>
+  const stepsHead = Array.from({ length: nSteps }, (_, i) => `<div style="width:${W}px"><span>passo</span><b class="num">${i + 1}</b></div>`).join("");
+  return `<div class="gantt flow">${runbarHtml(s)}
+    <div class="gmain"><div class="gscroll"><div class="gtable" style="grid-template-columns:${LW}px ${nSteps * W}px">
+      <div class="gleft"><div class="ghead"><div class="gl-cols" style="grid-template-columns:1fr 112px"><span>${s.plan === "onb" ? "Etapas · Onboarding Acme" : "Etapas · Plano padrão"}</span><span>Responsável</span></div></div>${left}</div>
+      <div class="gright"><div class="ghead"><div class="gdays gsteps">${stepsHead}</div></div>
+        <div class="gbg">${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}</div>
+        <div class="grows-r">${bars}</div></div>
+    </div></div></div>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -1750,7 +1764,7 @@ const FLOWS = [
     desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas. Roll-up no pai; tarefas sem data à parte.",
     steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"]] },
   { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
-    desc: "Lista indentada no estilo do Explorar: um □ de entrada, a função e um □ de saída. Sem setas nem eixo de passos. Máquina se programa aqui; exporta código.",
+    desc: "Formato Gantt por passos (sem calendário). Cada etapa: um □ de entrada | função | um □ de saída. Sem setas de dependência. Máquina se programa aqui; exporta código.",
     steps: [["T-32", "Flow"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
   { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
     desc: "Canvas de nós no espírito do n8n: portas de entrada e saída, fios em curva, paralelos na mesma coluna. Zoom com scroll e pan arrastando o fundo.",
@@ -1782,7 +1796,7 @@ const SCREENS = {
   "T-21": { s: { v: "gantt", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir responsável", us: ["US-02"], notes: "Escolha agrupada por tipo, só com itens do catálogo. Dá para trocar ou deixar sem responsável. O filho não herda o responsável do pai: o roteiro fica igual e só o ator muda." },
   "T-30": { s: { v: "gantt" }, name: "Gantt", us: ["US-08", "US-09", "US-10"], notes: "Visão temporal. Barras por início e fim (hoje marcado), setas fim→início e paralelo. Pai = roll-up; sem data na faixa de baixo. Menu de visões fixo no centro inferior." },
   "T-31": { s: { v: "gantt", sel: "u14", runDemo: true }, name: "Execução via IAs", us: ["US-11", "US-07"], notes: "“Executar via IAs” roda só as tarefas com responsável IA que estão pendentes. A faixa azul mostra o que está rodando e permite cancelar. Tarefa que falhou ou foi cancelada só volta a rodar com “Tentar de novo”." },
-  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Lista indentada (como o Explorar): hierarquia por padding. Em cada linha, um único □ de entrada e um único □ de saída (tracejado se vazio); nomes no title. Sem setas nem eixo de passos." },
+  "T-32": { s: { v: "flow" }, name: "Flow", us: ["US-12", "US-19"], notes: "Formato Gantt por passo (sem calendário). Em cada barra: um □ de entrada à esquerda e um □ de saída à direita (tracejado se vazio; nomes no title). Sem setas SVG." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar máquina", us: ["US-13"], notes: "Etapa com responsável máquina abre o editor embaixo do Flow: bibliotecas da v1 (stdio, fs, http), for e while, entradas e saídas do estado. Executar roda só esta etapa e mostra o resultado no console." },
   "T-35": { s: { v: "flow", exp: true, expTab: "ts" }, name: "Exportar código", us: ["US-14"], notes: "Compila o plano em FOP-IR e exporta para TypeScript ou Python. Checagem antes: ciclo ou contexto incompleto bloqueia; saída órfã exporta com aviso. Destino fora da v1 (Go) aparece desativado. Copiar ou baixar o arquivo." },
   "T-36": { s: { v: "diagram" }, name: "Fluxograma", us: ["US-12", "US-19"], notes: "Canvas tipo n8n: cada etapa é um nó com ícone do responsável, porta de entrada à esquerda e de saída à direita. Scroll (ou trackpad) faz zoom in/out no ponto do cursor; arrastar o fundo faz pan. Botões − / % / + e ajustar à tela na barra. Clique no nó abre o detalhe da mesma unidade." },
@@ -1893,9 +1907,9 @@ function fit() {
   holder.dataset.scale = s;
 }
 function paint(keepScroll = true) {
-  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], [data-flow], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
+  const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
-  if (keepScroll) holder.querySelectorAll("[data-tree], [data-flow], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
   const chatThread = holder.querySelector("[data-chat-thread]");
   if (chatThread && cur.v === "chat") chatThread.scrollTop = chatThread.scrollHeight;
   const t = tFor(cur); curT = t; const s = SCREENS[t];

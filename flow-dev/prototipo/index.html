@@ -47,9 +47,9 @@
 :root[data-tema="eternos"] .lg-fa { background: #0b0b0b; border-color: #0b0b0b; }
 :root[data-tema="eternos"] .lg-dot { background: #fff; border-color: #0b0b0b; }
 :root[data-tema="eternos"] .lg-da { background: #0b0b0b; }
-:root[data-tema="eternos"] .fav { background: #0b0b0b; border-color: #0b0b0b; color: #f6f6f6; }   /* agente (abstrato) = preto */
-:root[data-tema="eternos"] .fav.maquina { background: #fff; border-color: #0b0b0b; color: #0b0b0b; } /* lib (concreta) = branca */
-:root[data-tema="eternos"] .fav.pessoa { background: #fff; border-color: #0b0b0b; color: #0b0b0b; }
+:root[data-tema="eternos"] .fav { background: #fff; border-color: #0b0b0b; color: #0b0b0b; } /* preenchido = fundo branco */
+:root[data-tema="eternos"] .fav.maquina { background: #fff; border-color: #1f7a4d; color: #1f7a4d; } /* Node = verde done */
+:root[data-tema="eternos"] .fav.ia, :root[data-tema="eternos"] .fav.pessoa { background: #fff; border-color: #0b0b0b; color: #0b0b0b; }
 :root[data-tema="eternos"] .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
 :root[data-tema="eternos"] .node .fi.plan.abs svg { fill: #fff; }
 :root[data-tema="eternos"] .node .fi.plan.ia svg { fill: #0b0b0b; }
@@ -82,8 +82,9 @@
 :root[data-tema="eternos-black"] .lg-fa { background: #000; border: 1.5px solid #f2f2f2; }
 :root[data-tema="eternos-black"] .lg-dot { background: #fff; border-color: #fff; }
 :root[data-tema="eternos-black"] .lg-da { background: #000; border: 1.3px solid #f2f2f2; }
-:root[data-tema="eternos-black"] .fav { background: #000; border-color: #f2f2f2; color: #f2f2f2; }
-:root[data-tema="eternos-black"] .fav.maquina, :root[data-tema="eternos-black"] .fav.pessoa { background: #fff; border-color: #fff; color: #0b0b0b; }
+:root[data-tema="eternos-black"] .fav { background: #fff; border-color: #f2f2f2; color: #0b0b0b; }
+:root[data-tema="eternos-black"] .fav.maquina { background: #fff; border-color: #52a943; color: #52a943; }
+:root[data-tema="eternos-black"] .fav.ia, :root[data-tema="eternos-black"] .fav.pessoa { background: #fff; border-color: #f2f2f2; color: #0b0b0b; }
 :root[data-tema="eternos-black"] .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
 :root[data-tema="eternos-black"] .node .fi.plan.abs svg { fill: #fff; }
 :root[data-tema="eternos-black"] .node .fi.plan.ia svg { fill: #000; }
@@ -567,11 +568,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ring .val { stroke-linecap: round; }
 .ring b { position: relative; font-size: 7.5px; letter-spacing: -.02em; font-weight: 600; color: var(--ink); }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
-.fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: var(--paper); border: 1.5px solid var(--t-ia); } /* abstrata = borda */
+.fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: #fff; border: 1.5px solid var(--t-ia); } /* preenchido = fundo branco */
 .fav svg { width: 12px; height: 12px; }
-.fav.maquina { background: var(--brand, var(--t-maquina)); border-color: var(--brand, var(--t-maquina)); color: #fff; } /* concreta = cheia · Node verde */
-.fav.ia { color: var(--brand, var(--t-ia)); border-color: var(--brand, var(--t-ia)); }
-.fav.pessoa { color: var(--t-pessoa); border-color: var(--t-pessoa); }
+.fav.maquina { background: #fff; border-color: var(--brand, var(--ok)); color: var(--brand, var(--ok)); } /* Node = verde done */
+.fav.ia { background: #fff; color: var(--brand, var(--t-ia)); border-color: var(--brand, var(--t-ia)); }
+.fav.pessoa { background: #fff; color: var(--t-pessoa); border-color: var(--t-pessoa); }
 .resp-pick { position: relative; display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
 .resp-pick select { position: absolute; inset: 0; opacity: 0; width: 100%; max-width: none; }
 .resp-pick .rp-n { font-size: 11px; color: var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1490,8 +1491,8 @@ function explorer(s) {
         <div class="ex-sec-h">${icon("circle")} Planos<span class="n">${PLANS.length}</span></div>
         ${planRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum plano.</p>`}
       </div>
-      <div class="ex-sec" data-sec="layers">
-        <div class="ex-sec-h">${icon("layers")} Layers<span class="n">${layerRows.n}</span></div>
+      <div class="ex-sec" data-sec="arquivos">
+        <div class="ex-sec-h">${icon("files")} Arquivos<span class="n">${layerRows.n}</span></div>
         ${layerRows.html}
       </div>
       <div class="ex-sec" data-sec="pessoas">
@@ -1548,7 +1549,7 @@ function newRow(nn, lvl) {
 function bar(s) {
   const sel = s.sel && $u(s.sel);
   const crumb = sel ? path(sel.id).map((p, i, a) => i === a.length - 1 ? `<b>${esc(p)}</b>` : `<span>${esc(p)}</span>${icon("chevron-right")}`).join("") : `<b>Flow IDE</b>`;
-  const acts = `<button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
+  const acts = `<button class="btn" data-act="run-plan">${icon("play")}Executar</button><button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
   return `<div class="bar"><div class="crumb">${crumb}</div><div class="acts">${acts}</div></div>`;
 }
 function catBar() {

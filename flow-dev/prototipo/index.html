@@ -426,7 +426,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gmain .zcanvas { flex:1; min-width:0; background: var(--paper); }
 .gantt.flow .fhead { height: 52px; padding: 0; }
 .gantt.flow .gleft .fhead { display:grid; align-items:end; padding: 0 12px 8px 14px; }
-.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 52px 40px 46px 112px; gap: 6px; align-items:center; }
+.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 64px 40px 46px 112px; gap: 6px; align-items:center; }
 .fhead .fl-cols span { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color: var(--muted); }
 .gantt.flow .grow, .gantt.flow .grows-r .rr { height: 34px; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
@@ -504,6 +504,25 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .chipb.on { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 60%, var(--line-2)); background: color-mix(in srgb, var(--accent) 12%, transparent); }
 .gantt.flow .ztoolbar .chipb:first-of-type { margin-left: auto; }
 .gantt.flow .ztoolbar .dz { margin-left: 4px; }
+/* FOP: estados e0…eN nas divisórias, dados ○ sobre a divisória, ◇ seleção, ↻ repetição */
+.fh-e { position: relative; height: 26px; }
+.fh-e span { position: absolute; bottom: 7px; transform: translateX(-50%); font: 600 11px var(--mono); color: var(--body); }
+.fh-e span::after { content: ""; position: absolute; left: 50%; top: calc(100% + 2px); width: 1px; height: 5px; background: var(--muted); }
+.gantt.flow .gbg div { border-left-color: color-mix(in srgb, var(--muted) 38%, transparent); }
+.gantt.flow .gbg div.g0 { border-left: 0; }
+.fio { position: absolute; top: 0; height: 100%; display: flex; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; z-index: 2; }
+.flbl .fo { font: 500 10.5px var(--mono); color: var(--muted); margin-right: 4px; }
+.fsvg .fstub { stroke: #9a9a9a; stroke-width: 1.2; }
+.fsvg .fdot { fill: var(--paper); stroke: #9a9a9a; stroke-width: 1.3; }
+.fsvg .fif { fill: var(--paper); stroke: var(--warn); stroke-width: 1.5; }
+.fsvg .floop { fill: none; stroke: var(--ok); stroke-width: 1.1; stroke-dasharray: 3 3; }
+.fsvg .farc { fill: none; stroke: var(--ok); stroke-width: 1.3; }
+.fsvg .ftxt { font: 600 9.5px var(--mono); fill: var(--warn); }
+.fstr { position: absolute; left: 0; top: 52px; pointer-events: none; z-index: 1; }
+.fband { position: absolute; left: 0; right: 0; background: color-mix(in srgb, var(--warn) 7%, transparent); border-left: 2px solid var(--warn); border-top: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); }
+.fspill { position: absolute; left: 8px; top: 9px; font: 600 10px var(--mono); line-height: 1; color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--paper)); padding: 3px 5px; border-radius: 3px; }
+.lg-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.3px solid #9a9a9a; }
+.lg-if { width: 8px; height: 8px; border: 1.5px solid var(--warn); transform: rotate(45deg); }
 .sig { margin: 0; padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font: 11.5px/1.6 var(--mono); color: var(--ink); overflow-x: auto; white-space: pre; }
 /* Gantt */
 .gantt { height: 100%; display: flex; flex-direction: column; min-height: 0; }
@@ -926,6 +945,12 @@ U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "f
 // DEPS = sequência (a → b); PARS = paralelo; u.cond = seleção [dado testado, volta para]; u.loop = repetição [var, lista]; kind "data" = dado (◆, 0 passos)
 const DEPS = [["u3", "u4"], ["u4", "u5"], ["u5", "u6"], ["u10", "u11"], ["u11", "u12"], ["u12", "d1"], ["d1", "u13"], ["d1", "u14"], ["u13", "d2"], ["u14", "d2"], ["d2", "u15"], ["u15", "u16"], ["u18", "u19"], ["u19", "u23"], ["u23", "d3"], ["u17", "d3"], ["u20", "u22"]];
 const PARS = [["u13", "u14"], ["u17", "u18"]];
+// Estruturas FOP (documento, itens 12–13): seleção = if (◇ no conector) com corpo; repetição = u.loop (for/map) ou recursão (u.cond volta)
+const STRUCTS = [
+  { k: "if", test: "proposta_aprovada", body: ["d1", "u13", "u14", "d2", "u15"] },
+  { k: "if", test: "comparativo.length > 0", body: ["u5", "u6"] },
+  { k: "if", test: "pagina", body: ["u22"] },
+];
 const OPEN = new Set(["f1", "f2", "f3", "u2", "u9", "u16"]);
 /** Metas = o que se deseja (futuro). Estados = o que já existe (outs atuais). */
 const GOALS = {
@@ -1344,27 +1369,29 @@ function avatar(id) {
 function flowTags(u) {
   const t = [];
   if (PARS.some(p => p.includes(u.id))) t.push(["par", "∥ paralelo"]);
-  if (u.cond) t.push(["if", `if ${u.cond[0]}`]);
-  if (u.loop) t.push(["loop", `↻ ${u.loop[0]}`]);
+  if (u.cond) t.push(["if", `if !${u.cond[0]} ↺ ${$u(u.cond[1])?.title || "volta"}`]);
+  if (u.loop) t.push(["loop", `↻ for ${u.loop[0]} of ${u.loop[1]}`]);
   if (u.st === "fail") t.push(["fail", "falhou"]); else if (u.st === "exec") t.push(["exec", "executando"]); else if (u.st === "cancel") t.push(["cancel", "cancelada"]);
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-bar"></i>função</span><span><i class="lg-dia"></i>dado</span><span><i class="lg-sum"></i>composição</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span class="ftag if">if</span><span class="ftag loop">↻</span></span>`;
+  return `<span class="flegend"><span><i class="lg-bar"></i>função</span><span><i class="lg-dot"></i>dado · eN</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   const rows = ganttRows(s.plan);
   const { layout, nSteps } = flowLayout(s.plan);
-  const LW = 462, RH = 34, TAIL = 260;
-  const W = Math.max(64, Math.floor((1152 - LW - 150) / Math.max(nSteps, 1)));
+  const LW = 474, RH = 34, TAIL = 380, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if)
+  const W = Math.max(72, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
+  const CW = OX + nSteps * W + TAIL;
   const tops = [...new Set(rows.map(r => flowTop(r.u).id))];
   const colOf = u => PHASE[tops.indexOf(flowTop(u).id) % PHASE.length];
   const idx = {}; rows.forEach((r, i) => idx[r.u.id] = i);
   const hasK = u => flowKids(u).length > 0;
   const geo = u => {
     const L = layout[u.id] || { s: 0, e: 0 };
-    if (isData(u)) { const cx = (L.s + 1) * W; return { x1: cx - 7, x2: cx + 7, cx, data: true }; }
-    return { x1: L.s * W + 6, x2: (L.e + 1) * W - 6 };
+    // estados eN = divisórias: a função vai de e(s) a e(e+1); dados de entrada/saída ficam sobre essas divisórias
+    if (isData(u)) { const cx = OX + (L.s + 1) * W; return { x1: cx - 7, x2: cx + 7, cx, ix: cx, ox: cx, data: true }; }
+    return { x1: OX + L.s * W + 9, x2: OX + (L.e + 1) * W - 9, ix: OX + L.s * W, ox: OX + (L.e + 1) * W };
   };
   const left = rows.map(({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
@@ -1372,7 +1399,7 @@ function flow(s) {
     const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="drawer" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}<b>${esc(u.title)}</b></span>
-      <span class="c-start num">passo ${L.s}</span><span class="c-dur num">${dur}p</span>
+      <span class="c-start mono">${isData(u) ? `e${L.s + 1}` : `e${L.s}→e${L.e + 1}`}</span><span class="c-dur num">${dur}p</span>
       <span class="c-pct">${ring(flowProg(u), colOf(u), u.st)}</span>
       <span class="c-ag">${has || isData(u) ? "" : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   }).join("");
@@ -1380,46 +1407,72 @@ function flow(s) {
     const c = colOf(u), g = geo(u), p = flowProg(u), sel = s.sel === u.id ? " sel" : "";
     if (hasK(u)) {
       const marks = flowKids(u).filter(isData).map(k => `<i class="gm" style="left:${geo(k).cx - g.x1}px"></i>`).join("");
-      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição"><span class="fill" style="width:${p * 100}%"></span>${marks}</div><span class="flbl" style="left:${g.x2 + 16}px">${esc(u.title)}${flowTags(u)}</span></div>`;
+      return `<div class="rr"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição"><span class="fill" style="width:${p * 100}%"></span>${marks}</div><span class="flbl" style="left:${g.ox + 10}px">${esc(u.title)}${flowTags(u)}</span></div>`;
     }
     if (isData(u)) return `<div class="rr"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div><span class="flbl" style="left:${g.x2 + 10}px">${esc(u.title)}<span class="ftag data">${esc((u.ins || []).join(", "))}</span></span></div>`;
-    return `<div class="rr"><div class="fbar${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)}"><span class="fill" style="width:${p * 100}%"></span></div><span class="flbl" style="left:${g.x2 + 10}px">${esc(u.title)}${flowTags(u)}</span></div>`;
+    const ins = (u.ins || []).join(", "), outs = (u.outs || []).map(o => o[0]).join(", ");
+    return `<div class="rr">${ins ? `<span class="fio" style="right:${CW - g.ix + 8}px" title="entrada em e${layout[u.id].s}">${esc(ins)}</span>` : ""}<div class="fbar${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)}"><span class="fill" style="width:${p * 100}%"></span></div><span class="flbl" style="left:${g.ox + 8}px">${outs ? `<span class="fo" title="saída em e${layout[u.id].e + 1}">${esc(outs)}</span>` : ""}${esc(u.title)}${flowTags(u)}</span></div>`;
   }).join("");
-  // conectores (sequência) como no sample: sai do fim da barra, desce e entra no topo da próxima
-  const yMid = i => i * RH + RH / 2;
+  // conectores (sequência) como no documento FOP: saem do dado de saída ○ na divisória eN e descem até o ○ de entrada
+  const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
+  const isFn = u => !isData(u) && !hasK(u);
+  const srcOf = new Set(DEPS.map(d => d[0])), dstOf = new Set(DEPS.map(d => d[1]));
   let svg = "";
+  // repetição (for / map): moldura tracejada + arco ↻ sobre a barra
+  rows.forEach(({ u }) => {
+    if (!u.loop || !isFn(u)) return;
+    const g = geo(u), t = yTop(idx[u.id]);
+    svg += `<rect class="floop" x="${g.x1 - 4}" y="${t + 4}" width="${g.x2 - g.x1 + 8}" height="26" rx="4"><title>for (${esc(u.loop[0])} of ${esc(u.loop[1])})</title></rect>`;
+    svg += `<path class="farc" d="M${g.x2 - 6} ${t + 4} C${g.x2 - 6} ${t - 4} ${g.x1 + 6} ${t - 4} ${g.x1 + 6} ${t + 2}" marker-end="url(#fahl)"/>`;
+  });
   if (!s.noDeps) {
     DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
       const A = $u(a), B = $u(b), ga = geo(A), gb = geo(B), y1 = yMid(idx[a]), y2 = yMid(idx[b]);
-      const sx = ga.x2, tx = gb.data ? gb.cx : gb.x1 + 8;
-      const half = gb.data ? 8 : hasK(B) ? 5 : 9;
-      const ty = y2 > y1 ? y2 - half - 1 : y2 + half + 1;
-      const d = tx >= sx + 6 ? `M${sx} ${y1} H${tx} V${ty}` : `M${sx} ${y1} H${sx + 6} V${y1 + (y2 > y1 ? RH / 2 : -RH / 2)} H${tx} V${ty}`;
-      svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}" marker-end="url(#fah)"/>`;
-    });
-    // seleção: senão volta (repetição por recursão, como no documento FOP)
-    rows.forEach(({ u }) => {
-      if (!u.cond || idx[u.cond[1]] == null) return;
-      const g = geo(u), back = geo($u(u.cond[1])), y = yMid(idx[u.id]), yb = yMid(idx[u.cond[1]]);
-      svg += `<path class="fback" d="M${g.x1 + 10} ${y + 9} V${y + 14} H${back.x2 - 10} V${yb + 10}" marker-end="url(#fahb)"><title>if !${u.cond[0]} → volta</title></path>`;
+      const dir = y2 > y1 ? 1 : -1, r1 = ga.data ? 8 : hasK(A) ? 5 : 4, r2 = gb.data ? 8 : hasK(B) ? 5 : 4;
+      const yB = dir > 0 ? yTop(idx[b]) : yTop(idx[b]) + RH;
+      const d = ga.ox === gb.ix ? `M${ga.ox} ${y1 + dir * r1} V${y2 - dir * r2}` : `M${ga.ox} ${y1 + dir * r1} V${yB} H${gb.ix} V${y2 - dir * r2}`;
+      svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}"/>`;
     });
   }
+  // dados ○ sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
+  rows.forEach(({ u }) => {
+    if (!isFn(u)) return;
+    const g = geo(u), y = yMid(idx[u.id]);
+    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 3.5}" y1="${y}" x2="${g.x1}" y2="${y}"/><circle class="fdot" cx="${g.ix}" cy="${y}" r="3.5"/>`;
+    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 3.5}" y2="${y}"/><circle class="fdot" cx="${g.ox}" cy="${y}" r="3.5"/>`;
+  });
+  // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
+  const structs = STRUCTS.map(st => ({ ...st, body: st.body.filter(id => idx[id] != null) })).filter(st => st.body.length);
+  const bands = structs.map(st => {
+    const ii = st.body.map(id => idx[id]), i0 = Math.min(...ii), i1 = Math.max(...ii), first = rows[i0].u;
+    const x = geo(first).ix, y = yTop(i0);
+    svg += `<path class="fif" d="M${x} ${y - 5} L${x + 5} ${y} L${x} ${y + 5} L${x - 5} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
+    return `<div class="fband" style="top:${y}px;height:${(i1 - i0 + 1) * RH}px"><span class="fspill">if (${esc(st.test)})</span></div>`;
+  }).join("");
+  if (!s.noDeps) rows.forEach(({ u }) => {
+    if (!u.cond || idx[u.cond[1]] == null) return;
+    const g = geo(u), back = geo($u(u.cond[1])), yb = yTop(idx[u.id]) + RH, ybk = yTop(idx[u.cond[1]]) + 27;
+    svg += `<path class="fback" d="M${g.ox - 5} ${yb} H${back.ox - 7} V${ybk + 2}" marker-end="url(#fahb)"><title>senão (!${esc(u.cond[0])}) → volta a ${esc($u(u.cond[1]).title)}</title></path>`;
+    svg += `<text class="ftxt" x="${back.ox - 3}" y="${yb + 12}">senão ↺</text>`;
+  });
   const H = rows.length * RH;
   const pl = PLANS.find(p => p.id === s.plan).name;
   const { missing } = fopCheck(s.plan);
-  const worldW = LW + nSteps * W + TAIL, worldH = 52 + Math.max(H, RH);
+  const worldW = LW + CW, worldH = 52 + Math.max(H, RH);
   const toolbar = zoomToolbar("flow", "Flow", "workflow", `${flowLegend()}
     <button class="chipb${s.noDeps ? "" : " on"}" data-act="flow-deps" aria-pressed="${!s.noDeps}">${icon("git-commit-horizontal")}Sequência</button>
     <button class="chipb${s.ctxPanel ? " on" : ""}" data-act="flow-ctx" aria-pressed="${!!s.ctxPanel}">${icon("layers")}Contexto · camadas</button>`);
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
-      <div class="gtable" style="grid-template-columns:${LW}px ${nSteps * W + TAIL}px;width:${worldW}px">
-        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Início</span><span style="text-align:right">Passos</span><span style="text-align:center">% feito</span><span>Agente</span></div></div>${left}</div>
-        <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px">${esc(pl)} <span class="${missing.length ? "bad" : "okc"}">${missing.length ? "contexto incompleto" : "contexto completo"}</span></div>
-          <div class="fh-steps">${Array.from({ length: nSteps }, (_, i) => `<div style="width:${W}px">Passo ${i}</div>`).join("")}</div></div>
-          <div class="gbg">${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}</div>
+      <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
+        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Estados</span><span style="text-align:right">Passos</span><span style="text-align:center">% feito</span><span>Agente</span></div></div>${left}</div>
+        <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px;margin-left:${OX}px">${esc(pl)} <span class="${missing.length ? "bad" : "okc"}">${missing.length ? "contexto incompleto" : "contexto completo"}</span></div>
+          <div class="fh-e">${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div></div>
+          <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
+          <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
           <div class="grows-r">${bars}</div>
-          <svg class="gsvg fsvg" width="${nSteps * W + TAIL}" height="${H}"><defs>
+          <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
+            <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
             <marker id="fahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--warn)"/></marker></defs>${svg}</svg></div>
       </div>
@@ -2131,7 +2184,7 @@ const SCREENS = {
   "T-04": { s: { v: "flow", q: "propo" }, name: "Buscar na árvore", us: ["explorar"], notes: "Filtra planos e estados pelo título/nome e abre o caminho até cada resultado." },
   "T-20": { s: { v: "flow", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["unidade"], notes: "Título e contexto, UUID, responsável (IA ou biblioteca Node), entradas/saídas e atalhos para Flow e Explorar." },
   "T-21": { s: { v: "flow", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir IA ou lib", us: ["agente"], notes: "Escolha agrupada: IAs ou bibliotecas Node.js do catálogo. Trocar o ator não reescreve o roteiro." },
-  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png: tabela Nome · Início · Passos · % feito (anel) · Agente; cabeçalho em dois níveis; barras com progresso, cor por composição (azul / verde). FOP: função = barra, dado = ◆ (0 passos), composição = barra-resumo com marcos, sequência = conector, ∥ paralelo, if seleção (tracejado volta), ↻ repetição. Contexto completo no cabeçalho." },
+  "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados e0, e1, e2… nas divisórias; cada função vai de eN a eN+1 com os dados de entrada ○ antes da barra e os de saída ○ depois, sobre a divisória. Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Tabela Nome · Estados · Passos · % feito · Agente." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
   "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(context), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },

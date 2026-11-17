@@ -48,13 +48,14 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 
 | Conceito (documento FOP) | No Flow |
 |---|---|
-| Função (mudança de estado) | barra com passos e % feito |
-| Dado (unidade de informação) | ◆ marco, 0 passos |
+| Estado (e0, e1, e2…) | divisórias do eixo, rotuladas no cabeçalho |
+| Função (mudança de estado) | barra de eN a eN+1, com passos e % feito |
+| Dado (unidade de informação) | ○ sobre a divisória: entradas antes da barra, saídas depois · ◆ = estado agregado |
 | n entradas / n saídas | detalhe da etapa + assinatura `function f(context)` |
 | Sequência | conector (botão **Sequência** liga/desliga) |
 | Paralelo | tag `∥ paralelo` · `Promise.all` no export |
-| Seleção | tag `if …` + tracejado de volta |
-| Repetição | tag `↻ var` · `for`/`map` ou recursão no export |
+| Seleção | ◇ no conector + faixa `if (…)` sobre o corpo · “senão ↺” volta (recursão) |
+| Repetição | moldura tracejada + arco ↻ `for (var of lista)` · `for`/`map` ou recursão no export |
 | Endereço concreto × abstrato | Node.js = `import` · IA = vem do `context` |
 | Camada substituível · contexto completo | painel **Contexto · camadas** e selo no cabeçalho |
 | Exportar JS/Python | Exportar → **JavaScript** (estilo do documento), TypeScript, Python |

@@ -145,7 +145,23 @@ npm run camera-ui   # http://127.0.0.1:18770/ — Gestão de CDPs
 npm run test:camera
 ```
 
-**UI (`http://127.0.0.1:18770/`):** lista + status; criar/editar/remover; **fingerprint** (opções do catálogo + Gerar); **backups** (cópia de pasta + seleção por data); **executar** restaura o backup selecionado (apaga estado atual); **controlar** = prints JPEG low-quality em loop + clique/type via human-cdp. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+**UI (`http://127.0.0.1:18770/`):** lista de CDPs (**mais recente primeiro**); criar/editar/remover; **fingerprint** (Gerar); **galeria de mídias** (`~/chrome-cdp-media/`, mais recente primeiro) e seleção por CDP; **backups**; **executar** restaura backup selecionado; **controlar** = prints JPEG em loop. Visão: [`../../../../gestao-cdps/README.md`](../../../../gestao-cdps/README.md).
+
+### Galeria de mídias
+
+```text
+~/chrome-cdp-media/<mediaId>/
+  meta.json
+  <arquivo.mp4|y4m|…>
+```
+
+```js
+import { addMedia, listMedia, selectMediaForCdp, applySelectedMedia, startCdp } from './src/index.mjs';
+addMedia({ path: '/Users/…/oferta.mp4', name: 'Oferta' });
+selectMediaForCdp('ometv-2', '<mediaId>');
+await applySelectedMedia('ometv-2'); // setCamera
+await startCdp('ometv-2');           // reaplica mídia selecionada antes do spawn
+```
 
 ### Fingerprint (gerar)
 

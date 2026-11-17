@@ -80,12 +80,32 @@
       </div>
       <div class="actions">
         <button type="button" class="secondary" id="refresh">Atualizar</button>
+        <button type="button" class="secondary" id="open-gallery">Galeria</button>
         <button type="button" id="create">Criar CDP</button>
       </div>
     </header>
     <div id="flash" aria-live="polite"></div>
     <div class="list" id="list"></div>
   </div>
+
+  <dialog id="gallery" class="wide">
+    <div class="dlg">
+      <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <h2>Galeria de mídias</h2>
+          <p class="meta">Mais recente primeiro · pasta em disco</p>
+          <p class="paths" id="gallery-path"></p>
+        </div>
+        <button type="button" class="secondary" id="gallery-close">Fechar</button>
+      </div>
+      <div class="dlg-actions">
+        <input id="media-path" placeholder="/caminho/do/video.mp4" style="flex:2;min-width:200px" />
+        <input id="media-name" placeholder="nome (opcional)" style="flex:1;min-width:120px" />
+        <button type="button" id="media-add">Adicionar</button>
+      </div>
+      <div class="backup-list" id="media-list"></div>
+    </div>
+  </dialog>
 
   <dialog id="editor">
     <form class="dlg" id="form" method="dialog">
@@ -133,12 +153,15 @@
       </div>
 
       <div class="block" id="cam-block" hidden>
-        <h3>Câmera</h3>
-        <label>Vídeo <input id="video" type="text" /></label>
+        <h3>Vídeo da galeria</h3>
+        <p class="hint">Escolha qual mídia este CDP executa (aplica na câmera fake).</p>
+        <label>Mídia
+          <select id="media-select"></select>
+        </label>
         <label>Nome webcam <input id="label" type="text" value="FaceTime HD Camera" /></label>
         <div class="dlg-actions">
-          <button type="button" class="secondary" id="apply-cam">Aplicar câmera</button>
-          <button type="button" class="ghost" id="clear-cam">Limpar câmera</button>
+          <button type="button" class="secondary" id="apply-media">Aplicar no CDP</button>
+          <button type="button" class="ghost" id="clear-media">Limpar seleção</button>
         </div>
       </div>
 
@@ -253,8 +276,8 @@
     function render() {
       const up = cdps.filter((c) => c.status === 'up').length;
       $('count').textContent = `${cdps.length} CDPs · ${up} up · ${cdps.length - up} down`;
-      if (defaults.backupsDir) {
-        $('paths').textContent = `backups: ${defaults.backupsDir} · view: ${defaults.viewRoot || ''}`;
+        if (defaults.backupsDir) {
+        $('paths').textContent = `mídia: ${defaults.mediaDir || ''} · backups: ${defaults.backupsDir} · view: ${defaults.viewRoot || ''}`;
       }
       const root = $('list');
       if (!cdps.length) {
@@ -262,16 +285,16 @@
         return;
       }
       root.innerHTML = `
-        <div class="row head"><span>CDP</span><span>Status</span><span>Porta</span><span>Backup</span><span></span></div>
+        <div class="row head"><span>CDP</span><span>Status</span><span>Porta</span><span>Mídia / backup</span><span></span></div>
         ${cdps.map((c) => `
           <div class="row" data-id="${escapeHtml(c.id)}">
             <div>
               <p class="name">${escapeHtml(c.name || c.id)}</p>
-              <p class="id">${escapeHtml(c.id)}</p>
+              <p class="id">${escapeHtml(c.id)}${c.createdAt ? ' · ' + escapeHtml(c.createdAt.slice(0,10)) : ''}</p>
             </div>
             <div><span class="badge ${c.status}">${c.status}</span></div>
             <div class="port">${c.displayPort ?? '—'}</div>
-            <div class="id">${c.backupCount ? `${c.backupCount} · sel ${c.selectedBackupId ? c.selectedBackupAt?.slice(0,19).replace('T',' ') || c.selectedBackupId : '—'}` : 'sem backup'}</div>
+            <div class="id">${escapeHtml(c.selectedMediaName || c.selectedMediaId || 'sem mídia')}${c.backupCount ? ` · ${c.backupCount} bk` : ''}</div>
             <div class="row-actions">
               ${c.status === 'up'
                 ? `<button type="button" class="secondary" data-act="stop">Parar</button>
@@ -356,16 +379,48 @@
       $('fingerprint').value = c.fingerprint ? JSON.stringify(c.fingerprint, null, 2) : '';
       $('backup-block').hidden = false;
       $('cam-block').hidden = false;
+      await fillMediaSelect(c.selectedMediaId);
       try {
         const cam = await api('/api/camera?id=' + encodeURIComponent(id));
-        $('video').value = cam.video || defaults.video || '';
         $('label').value = cam.label || defaults.label || 'FaceTime HD Camera';
       } catch {
-        $('video').value = defaults.video || '';
         $('label').value = defaults.label || 'FaceTime HD Camera';
       }
       await renderBackups(id);
       $('editor').showModal();
+    }
+
+    async function fillMediaSelect(selectedId) {
+      const data = await api('/api/media');
+      const sel = $('media-select');
+      sel.innerHTML = '<option value="">— nenhuma —</option>';
+      for (const m of data.media || []) {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = `${m.name} · ${(m.createdAt || '').slice(0, 19).replace('T', ' ')}`;
+        if (selectedId && m.id === selectedId) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    }
+
+    async function renderGallery() {
+      const data = await api('/api/media');
+      $('gallery-path').textContent = data.mediaDir || '';
+      const box = $('media-list');
+      if (!data.media?.length) {
+        box.innerHTML = '<div class="empty" style="padding:1rem">Nenhum vídeo. Adicione um caminho absoluto.</div>';
+        return;
+      }
+      box.innerHTML = data.media.map((m) => `
+        <div class="backup-item" data-mid="${escapeHtml(m.id)}">
+          <div>
+            <p class="name" style="font-size:0.9rem">${escapeHtml(m.name)}</p>
+            <p class="id">${escapeHtml((m.createdAt || '').replace('T', ' ').slice(0, 19))} · ${escapeHtml(m.path || '')}</p>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="danger" data-mact="del">Apagar</button>
+          </div>
+        </div>`).join('');
     }
 
     $('fp-generate').addEventListener('click', async () => {
@@ -505,22 +560,69 @@
       }
     });
 
-    $('apply-cam').addEventListener('click', async () => {
+    $('apply-media').addEventListener('click', async () => {
+      const id = $('id').value.trim();
+      const mediaId = $('media-select').value || null;
       try {
         setBusy(true);
-        await api('/api/camera', {
+        flash('aplicando mídia…');
+        await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
           method: 'POST',
-          body: JSON.stringify({ id: $('id').value.trim(), video: $('video').value.trim(), label: $('label').value.trim() }),
+          body: JSON.stringify({ mediaId, label: $('label').value.trim(), apply: true }),
         });
-        flash('câmera aplicada', 'ok');
+        flash(mediaId ? 'mídia aplicada no CDP' : 'seleção limpa', 'ok');
+        await loadList({ quiet: true });
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
     });
-    $('clear-cam').addEventListener('click', async () => {
+    $('clear-media').addEventListener('click', async () => {
+      $('media-select').value = '';
+      const id = $('id').value.trim();
       try {
         setBusy(true);
-        await api('/api/camera/clear', { method: 'POST', body: JSON.stringify({ id: $('id').value.trim() }) });
-        flash('câmera limpa', 'ok');
+        await api(`/api/cdps/${encodeURIComponent(id)}/media/select`, {
+          method: 'POST',
+          body: JSON.stringify({ mediaId: null, apply: false }),
+        });
+        await api('/api/camera/clear', { method: 'POST', body: JSON.stringify({ id }) });
+        flash('mídia limpa', 'ok');
+        await loadList({ quiet: true });
+      } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
+    });
+
+    $('open-gallery').addEventListener('click', () => {
+      renderGallery().then(() => $('gallery').showModal()).catch((e) => flash(String(e.message || e), 'err'));
+    });
+    $('gallery-close').addEventListener('click', () => $('gallery').close());
+    $('media-add').addEventListener('click', async () => {
+      try {
+        setBusy(true);
+        await api('/api/media', {
+          method: 'POST',
+          body: JSON.stringify({
+            path: $('media-path').value.trim(),
+            name: $('media-name').value.trim() || undefined,
+          }),
+        });
+        $('media-path').value = '';
+        $('media-name').value = '';
+        flash('vídeo adicionado à galeria', 'ok');
+        await renderGallery();
+      } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
+    });
+    $('media-list').addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('button[data-mact]');
+      if (!btn) return;
+      const mid = btn.closest('[data-mid]')?.dataset.mid;
+      if (!mid || btn.dataset.mact !== 'del') return;
+      if (!confirm(`Apagar mídia ${mid}?`)) return;
+      try {
+        setBusy(true);
+        await api(`/api/media/${encodeURIComponent(mid)}`, { method: 'DELETE' });
+        flash('mídia removida', 'ok');
+        await renderGallery();
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
     });

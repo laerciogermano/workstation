@@ -32,6 +32,7 @@ import {
   chromeArgsFromFingerprint,
   normalizeFingerprint,
 } from './fingerprint.mjs';
+import { getMedia, getSelectedMedia } from './media.mjs';
 import { connect } from './session.mjs';
 
 async function safeStopView(id) {
@@ -277,16 +278,17 @@ export function listCdps() {
       defaultUrl: meta?.defaultUrl || '',
       obs: meta?.obs || '',
       debug: !!meta?.debug,
+      selectedMediaId: meta?.selectedMediaId || null,
       fingerprint: normalizeFingerprint(meta?.fingerprint),
       createdAt: meta?.createdAt || null,
       updatedAt: meta?.updatedAt || null,
     });
   }
+  // Mais recentemente criado primeiro (sem createdAt cai pro fim).
   return rows.sort((a, b) => {
-    if (a.status !== b.status) return a.status === 'up' ? -1 : 1;
-    const pa = a.port ?? a.preferredPort ?? 9e9;
-    const pb = b.port ?? b.preferredPort ?? 9e9;
-    if (pa !== pb) return pa - pb;
+    const ca = a.createdAt || '';
+    const cb = b.createdAt || '';
+    if (ca !== cb) return cb.localeCompare(ca);
     return a.id.localeCompare(b.id);
   });
 }
@@ -422,6 +424,14 @@ export async function startCdp(id, { url, restore = true } = {}) {
     restored = restoreSelectedBeforeStart(row.id);
   }
 
+  // Galeria: aplica vídeo selecionado no fingerprint antes do spawn (flags fake).
+  let mediaApplied = null;
+  try {
+    mediaApplied = await applySelectedMedia(row.id, { apply: false });
+  } catch {
+    mediaApplied = null;
+  }
+
   if (!existsSync(CHROME_BIN)) {
     throw new Error(`Chrome não encontrado: ${CHROME_BIN}`);
   }
@@ -472,11 +482,34 @@ export async function startCdp(id, { url, restore = true } = {}) {
       /* keeper cobre o retry */
     }
   }
-  return { ...next, already: false, restored };
+  return { ...next, already: false, restored, mediaApplied };
 }
 
 function cameraCacheDir(id) {
   return join(profilePath(id), 'camera');
+}
+
+/**
+ * Aplica a mídia selecionada da galeria no CDP (setCamera).
+ * @param {string} id
+ * @param {{ apply?: boolean, label?: string }} [opts]
+ */
+export async function applySelectedMedia(id, opts = {}) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const selected = getSelectedMedia(row.id);
+  if (!selected || selected.missing) {
+    return { id: row.id, skipped: true, reason: 'sem mídia selecionada' };
+  }
+  if (!selected.path || !selected.exists) {
+    throw new Error(`arquivo da mídia ausente: ${selected.id}`);
+  }
+  const out = await setCamera(row.id, {
+    video: selected.path,
+    label: opts.label,
+    apply: opts.apply !== false,
+  });
+  return { id: row.id, mediaId: selected.id, ...out };
 }
 
 /**

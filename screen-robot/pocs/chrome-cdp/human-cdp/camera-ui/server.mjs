@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Gestão de CDPs (UI local):
- * lista + status + CRUD + fingerprint + backups + start/stop + visão (prints) + câmera
+ * lista + status + CRUD + fingerprint + backups + galeria de mídias + visão + câmera
  *
  *   npm run camera-ui
  *   # → http://127.0.0.1:18770/
@@ -37,6 +37,13 @@ import {
   clearViewFrames,
   backupsDir,
   viewRoot,
+  mediaDir,
+  listMedia,
+  addMedia,
+  removeMedia,
+  getSelectedMedia,
+  selectMediaForCdp,
+  applySelectedMedia,
 } from '../src/index.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -95,6 +102,7 @@ function serializeCdp(c, { full = false } = {}) {
     : { label: null, video: null };
   const selected = getSelectedBackup(c.id);
   const backups = listBackups(c.id);
+  const selectedMedia = getSelectedMedia(c.id);
   const row = {
     id: c.id,
     name: c.name,
@@ -112,6 +120,8 @@ function serializeCdp(c, { full = false } = {}) {
     backupCount: backups.length,
     selectedBackupId: selected?.id || null,
     selectedBackupAt: selected?.createdAt || null,
+    selectedMediaId: c.selectedMediaId || selectedMedia?.id || null,
+    selectedMediaName: selectedMedia?.name || null,
     createdAt: c.createdAt,
     updatedAt: c.updatedAt,
   };
@@ -119,6 +129,7 @@ function serializeCdp(c, { full = false } = {}) {
     row.fingerprint = c.fingerprint || null;
     row.backups = backups;
     row.selectedBackup = selected;
+    row.selectedMedia = selectedMedia;
     row.view = getViewConfig(c.id);
   }
   return row;
@@ -131,6 +142,7 @@ function defaultsPayload() {
     videoExists: existsSync(DEFAULT_VIDEO),
     backupsDir: backupsDir(),
     viewRoot: viewRoot(),
+    mediaDir: mediaDir(),
   };
 }
 
@@ -145,6 +157,26 @@ const server = createServer(async (req, res) => {
     }
     if (req.method === 'GET' && path === '/api/defaults') {
       return json(res, 200, defaultsPayload());
+    }
+    if (req.method === 'GET' && path === '/api/media') {
+      return json(res, 200, { media: listMedia(), mediaDir: mediaDir() });
+    }
+    if (req.method === 'POST' && path === '/api/media') {
+      const body = await readBody(req);
+      const row = addMedia({
+        path: body.path,
+        name: body.name,
+        note: body.note,
+        id: body.id,
+      });
+      return json(res, 201, { media: row, list: listMedia() });
+    }
+    if (req.method === 'DELETE' && path.startsWith('/api/media/')) {
+      const mediaId = decodeURIComponent(path.slice('/api/media/'.length));
+      if (!mediaId) return json(res, 400, { error: 'id obrigatório' });
+      const ok = removeMedia(mediaId);
+      if (!ok) return json(res, 404, { error: `mídia não encontrada: ${mediaId}` });
+      return json(res, 200, { ok: true, list: listMedia() });
     }
     if (req.method === 'GET' && path === '/api/fingerprint/options') {
       return json(res, 200, listFingerprintOptions());
@@ -204,7 +236,7 @@ const server = createServer(async (req, res) => {
     }
 
     const cdpExtra = path.match(
-      /^\/api\/cdps\/([^/]+)\/(start|stop|backups|view|input)(?:\/([^/]+))?$/,
+      /^\/api\/cdps\/([^/]+)\/(start|stop|backups|view|input|media)(?:\/([^/]+))?$/,
     );
     if (cdpExtra) {
       const id = decodeURIComponent(cdpExtra[1]);
@@ -255,6 +287,33 @@ const server = createServer(async (req, res) => {
             ok: true,
             selected: getSelectedBackup(id),
             backups: listBackups(id),
+          });
+        }
+      }
+
+      if (section === 'media') {
+        if (req.method === 'GET' && !sub) {
+          return json(res, 200, {
+            cdpId: id,
+            selected: getSelectedMedia(id),
+            media: listMedia(),
+            mediaDir: mediaDir(),
+          });
+        }
+        if (req.method === 'POST' && sub === 'select') {
+          const body = await readBody(req);
+          const sel = selectMediaForCdp(id, body.mediaId ?? null);
+          let applied = null;
+          if (sel.selectedMediaId && body.apply !== false) {
+            applied = await applySelectedMedia(id, {
+              apply: body.restart !== false,
+              label: body.label,
+            });
+          }
+          return json(res, 200, {
+            ...sel,
+            applied,
+            cdp: serializeCdp(getCdp(id), { full: true }),
           });
         }
       }

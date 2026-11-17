@@ -65,6 +65,7 @@ export {
   getCamera,
   setCamera,
   clearCamera,
+  applySelectedMedia,
   ensureFingerprintKeeper,
   scriptsDir,
   profilesDir,
@@ -72,6 +73,15 @@ export {
   resolveStartScript,
   isPortListening,
 } from './registry.mjs';
+export {
+  mediaDir,
+  listMedia,
+  getMedia,
+  addMedia,
+  removeMedia,
+  getSelectedMedia,
+  selectMediaForCdp,
+} from './media.mjs';
 export {
   backupsDir,
   listBackups,

@@ -1111,6 +1111,7 @@ function explorer(s) {
   (function walk(pid, lvl) {
     if (s.newn && (s.newn.parent || null) === pid) planRows.push(newRow(s.newn, lvl));
     kids(pid).forEach(u => {
+      if (isData(u)) return; // estado nomeado (◆) não aparece no Flow IDE
       if (show && !show.has(u.id)) return;
       const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
       const ind = 8 + Math.min(lvl, 14) * 14;
@@ -1421,10 +1422,18 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="flegend"><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-dia"></i>estado</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fa"></i>função abstrata (IA · context)</span><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-da"></i>dado abstrato (context)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span class="ftag par">∥</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
-  const rows = ganttRows(s.plan);
+  // sem representação de estado nomeado (◆): só funções e composições; estados = divisórias eN
+  const rows = ganttRows(s.plan).filter(r => !isData(r.u));
+  // sequência atravessando o ◆ removido: a → ◆ → b vira a → b
+  const FD = [];
+  DEPS.forEach(([a, b]) => {
+    if (isData($u(a))) return;
+    if (!isData($u(b))) { FD.push([a, b]); return; }
+    DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
+  });
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 474, RH = 34, TAIL = 380, OX = 170; // OX = calha à esquerda do e0 (dados de entrada e rótulo if)
   const W = Math.max(118, Math.floor((1152 - LW - OX - 60) / Math.max(nSteps, 1)));
@@ -1469,7 +1478,7 @@ function flow(s) {
   const bars = rows.map(({ u }) => {
     const c = colOf(u), g = geo(u), p = flowProg(u), sel = s.sel === u.id ? " sel" : "";
     if (hasK(u)) {
-      const marks = flowKids(u).filter(isData).map(k => `<i class="gm" style="left:${geo(k).cx - g.x1}px"></i>`).join("");
+      const marks = "";
       const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
       return `<div class="rr">${left ? `<span class="fio" style="right:${CW - g.ix + 12}px">${left}</span>` : ""}<div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada"><span class="fill" style="width:${p * 100}%"></span>${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span>${esc(u.title)}</span>${flowTags(u)}</span></div>`;
     }
@@ -1481,7 +1490,7 @@ function flow(s) {
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
   const isFn = u => !isData(u) && !hasK(u);
-  const srcOf = new Set(DEPS.map(d => d[0])), dstOf = new Set(DEPS.map(d => d[1]));
+  const srcOf = new Set(FD.map(d => d[0])), dstOf = new Set(FD.map(d => d[1]));
   let svg = "";
   // repetição (for / map): moldura tracejada + arco ↻ sobre a barra
   rows.forEach(({ u }) => {
@@ -1491,7 +1500,7 @@ function flow(s) {
     svg += `<path class="farc" d="M${g.x2 - 6} ${t + 4} C${g.x2 - 6} ${t - 4} ${g.x1 + 6} ${t - 4} ${g.x1 + 6} ${t + 2}" marker-end="url(#fahl)"/>`;
   });
   if (!s.noDeps) {
-    DEPS.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
+    FD.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
       const A = $u(a), B = $u(b), ga = geo(A), gb = geo(B), y1 = yMid(idx[a]), y2 = yMid(idx[b]);
       const dir = y2 > y1 ? 1 : -1, r1 = ga.data ? 8 : hasK(A) ? 5 : 4, r2 = gb.data ? 8 : hasK(B) ? 5 : 4;
       const yB = dir > 0 ? yTop(idx[b]) : yTop(idx[b]) + RH;

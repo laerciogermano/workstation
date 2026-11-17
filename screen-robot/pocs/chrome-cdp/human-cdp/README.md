@@ -224,7 +224,7 @@ Fingerprint: `cameraVideo`, `cameraCaptureFile`, `cameraLabel`. `startCdp` deriv
 
 **Vídeo grande:** `ensureCaptureFile` sempre gera Y4M leve no cache (`640x360`, `12fps`, máx. `30s`) — inclusive se a fonte já for `.y4m`. Antes devolvia y4m/mjpeg cru (arquivo enorme → Chrome lento). Override: `setCamera(id, { size, fps, maxSeconds })`. Rollback: voltar early-return de `.y4m`/`.mjpeg` em `camera.mjs`.
 
-**Controle webcam (pause/play/seek):** UI no Editar + `POST /api/camera/playback`. Gera `live.next.y4m` e publica em `live.y4m` com `r+`/fsync (**sem** `ffmpeg -y` truncando o arquivo aberto — isso deixava a preview preta). Sem fechar o Chrome; reinicia só no primeiro bind ao `live.y4m` ou `restart:true`. Estado em `meta.cameraPlayback`. Rollback: voltar write direto com `-y` no live.
+**Controle webcam (pause/play/seek/zoom + preview):** UI no Editar + `POST /api/camera/playback` (`zoomIn|zoomOut|zoom`) e `GET /api/camera/preview?id=`. Zoom = crop central no ffmpeg (1×–3×). Preview JPEG do instante atual em `camera/preview.jpg`. Publica `live.y4m` sem truncar a zero. Rollback: remover zoom/preview da UI e de `controlCameraPlayback`.
 
 **Antes → depois:** só spoof OBS / chromeArgs manuais → `setCamera` + UI + campos no fingerprint. Rollback: `clearCamera(id)`; remover `src/camera.mjs` / `camera-ui/` / exports.
 

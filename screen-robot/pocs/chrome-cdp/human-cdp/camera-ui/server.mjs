@@ -23,6 +23,7 @@ import {
   setCamera,
   clearCamera,
   controlCameraPlayback,
+  getCameraPreviewPath,
   listFingerprintOptions,
   generateFingerprint,
   listSnapshots,
@@ -512,8 +513,31 @@ const server = createServer(async (req, res) => {
         action: body.action || 'status',
         positionSec: body.positionSec,
         deltaSec: body.deltaSec,
+        zoom: body.zoom,
         restart: body.restart === true,
       }));
+    }
+    if (req.method === 'GET' && path === '/api/camera/preview') {
+      const id = url.searchParams.get('id');
+      if (!id) return json(res, 400, { error: 'id obrigatório' });
+      // Atualiza frame no instante atual antes de servir.
+      try {
+        await controlCameraPlayback(id, { action: 'status' });
+      } catch {
+        /* pode não ter mídia ainda */
+      }
+      const preview = getCameraPreviewPath(id);
+      if (!preview || !existsSync(preview)) {
+        return json(res, 404, { error: 'preview ausente — aplique uma mídia' });
+      }
+      const buf = readFileSync(preview);
+      res.writeHead(200, {
+        'Content-Type': 'image/jpeg',
+        'Cache-Control': 'no-store',
+        'Content-Length': buf.length,
+      });
+      res.end(buf);
+      return;
     }
 
     json(res, 404, { error: 'not found' });

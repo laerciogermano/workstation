@@ -22,15 +22,22 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   cameraFromFingerprint,
+  clampZoom,
   DEFAULT_CAMERA_LABEL,
   DEFAULT_SEEK_STEP_SEC,
+  DEFAULT_ZOOM,
   ensureCaptureFile,
   liveCapturePath,
+  MAX_ZOOM,
   mergeMediaPermissions,
+  MIN_ZOOM,
   originFromUrl,
+  previewPath,
   probeMediaDuration,
   stripFakeCameraArgs,
   TRANSPORT_CAPTURE_SECONDS,
+  writePreviewFrame,
+  ZOOM_STEP,
 } from './camera.mjs';
 import { createSnapshot, restoreSelectedBeforeStart } from './snapshot.mjs';
 import {
@@ -552,7 +559,8 @@ function normalizeCameraPlayback(raw) {
       ? Number(raw.sourceDurationSec)
       : null;
   const startedAt = typeof raw.startedAt === 'string' ? raw.startedAt : null;
-  return { positionSec, paused, sourceDurationSec, startedAt };
+  const zoom = clampZoom(raw.zoom ?? DEFAULT_ZOOM);
+  return { positionSec, paused, sourceDurationSec, startedAt, zoom };
 }
 
 /** Posição efetiva (avança com o relógio se estiver playing). */
@@ -652,7 +660,16 @@ export async function setCamera(id, opts = {}) {
     paused: false,
     sourceDurationSec: duration,
     startedAt: new Date().toISOString(),
+    zoom: DEFAULT_ZOOM,
   };
+  try {
+    writePreviewFrame(resolve(video), cacheDir, {
+      startSec: 0,
+      zoom: DEFAULT_ZOOM,
+    });
+  } catch {
+    /* preview best-effort */
+  }
   updateCdp(row.id, { fingerprint, cameraPlayback });
 
   let restarted = false;
@@ -683,9 +700,10 @@ export async function setCamera(id, opts = {}) {
  *
  * @param {string} id
  * @param {{
- *   action?: 'pause'|'play'|'seek'|'seekBy'|'status',
+ *   action?: 'pause'|'play'|'seek'|'seekBy'|'zoomIn'|'zoomOut'|'zoom'|'status',
  *   positionSec?: number,
  *   deltaSec?: number,
+ *   zoom?: number,
  *   restart?: boolean,
  * }} [opts]
  */
@@ -702,20 +720,29 @@ export async function controlCameraPlayback(id, opts = {}) {
     paused: false,
     sourceDurationSec: probeMediaDuration(cam.video),
     startedAt: new Date().toISOString(),
+    zoom: DEFAULT_ZOOM,
   };
   if (playback.sourceDurationSec == null) {
     playback.sourceDurationSec = probeMediaDuration(cam.video);
   }
 
   if (action === 'status') {
+    const pos = effectiveCameraPosition(playback);
+    const cacheDir = cameraCacheDir(row.id);
+    try {
+      writePreviewFrame(cam.video, cacheDir, { startSec: pos, zoom: playback.zoom });
+    } catch {
+      /* ignore */
+    }
     return {
       id: row.id,
       video: cam.video,
       captureFile: cam.captureFile,
       label: cam.label,
+      previewPath: previewPath(cacheDir),
       playback: {
         ...playback,
-        positionSec: effectiveCameraPosition(playback),
+        positionSec: pos,
         basePositionSec: playback.positionSec,
       },
     };
@@ -723,6 +750,7 @@ export async function controlCameraPlayback(id, opts = {}) {
 
   let positionSec = effectiveCameraPosition(playback);
   let paused = playback.paused;
+  let zoom = playback.zoom ?? DEFAULT_ZOOM;
 
   if (action === 'pause') {
     paused = true;
@@ -733,8 +761,16 @@ export async function controlCameraPlayback(id, opts = {}) {
   } else if (action === 'seekBy') {
     const delta = Number(opts.deltaSec);
     positionSec = Math.max(0, positionSec + (Number.isFinite(delta) ? delta : DEFAULT_SEEK_STEP_SEC));
+  } else if (action === 'zoomIn') {
+    zoom = clampZoom(zoom + ZOOM_STEP);
+  } else if (action === 'zoomOut') {
+    zoom = clampZoom(zoom - ZOOM_STEP);
+  } else if (action === 'zoom') {
+    zoom = clampZoom(opts.zoom);
   } else {
-    throw new Error(`action inválida: ${action} (pause|play|seek|seekBy|status)`);
+    throw new Error(
+      `action inválida: ${action} (pause|play|seek|seekBy|zoomIn|zoomOut|zoom|status)`,
+    );
   }
 
   if (playback.sourceDurationSec != null) {
@@ -748,10 +784,16 @@ export async function controlCameraPlayback(id, opts = {}) {
   const captureFile = ensureCaptureFile(cam.video, cacheDir, {
     startSec: positionSec,
     paused,
+    zoom,
     maxSeconds: paused ? 2 : TRANSPORT_CAPTURE_SECONDS,
     live: true,
     force: true,
   });
+  try {
+    writePreviewFrame(cam.video, cacheDir, { startSec: positionSec, zoom });
+  } catch {
+    /* preview best-effort */
+  }
 
   const prev = normalizeFingerprint(meta?.fingerprint) || {};
   const fingerprint = {
@@ -765,6 +807,7 @@ export async function controlCameraPlayback(id, opts = {}) {
     paused,
     sourceDurationSec: playback.sourceDurationSec,
     startedAt: paused ? null : new Date().toISOString(),
+    zoom,
   };
   updateCdp(row.id, { fingerprint, cameraPlayback: nextPlayback });
 
@@ -782,11 +825,25 @@ export async function controlCameraPlayback(id, opts = {}) {
     video: cam.video,
     captureFile,
     label: fingerprint.cameraLabel,
+    previewPath: previewPath(cacheDir),
     playback: nextPlayback,
     restarted,
     action,
     soft: !restarted,
+    zoomMin: MIN_ZOOM,
+    zoomMax: MAX_ZOOM,
   };
+}
+
+/**
+ * Caminho do JPEG de preview do CDP (ou null).
+ * @param {string} id
+ */
+export function getCameraPreviewPath(id) {
+  const row = getCdp(id);
+  if (!row) throw new Error(`cdp não encontrado: ${id}`);
+  const p = previewPath(cameraCacheDir(row.id));
+  return existsSync(p) ? p : null;
 }
 
 /**

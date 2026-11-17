@@ -169,13 +169,21 @@
           <button type="button" class="ghost" id="clear-media">Limpar seleção</button>
         </div>
         <h3>Controle da webcam</h3>
-        <p class="hint">Pause / play / ≪ ≫ só reescrevem o live.y4m — sem fechar o Chrome (pode levar ~2–3s no loop).</p>
+        <p class="hint">Pause / play / ≪ ≫ / zoom reescrevem o live.y4m — sem fechar o Chrome (~2–3s no loop).</p>
+        <div class="stage" id="cam-preview-stage" style="min-height:200px;margin:0.35rem 0">
+          <img id="cam-preview" alt="preview da webcam" style="max-width:100%;max-height:280px;display:none" />
+          <div class="placeholder" id="cam-preview-empty">Preview aparece após aplicar mídia</div>
+        </div>
         <p class="meta" id="playback-status">—</p>
         <div class="dlg-actions">
           <button type="button" class="ghost" id="cam-seek-back" title="-5s">≪ -5s</button>
           <button type="button" class="secondary" id="cam-pause">Pause</button>
           <button type="button" id="cam-play">Play</button>
           <button type="button" class="ghost" id="cam-seek-fwd" title="+5s">+5s ≫</button>
+        </div>
+        <div class="dlg-actions">
+          <button type="button" class="ghost" id="cam-zoom-out" title="zoom out">− Zoom</button>
+          <button type="button" class="secondary" id="cam-zoom-in" title="zoom in">+ Zoom</button>
         </div>
         <label>Ir para (segundos)
           <div class="dlg-actions" style="margin-top:0.35rem">
@@ -418,18 +426,42 @@
       const el = $('playback-status');
       if (!pb) {
         el.textContent = 'sem playback — aplique uma mídia';
+        $('cam-preview').style.display = 'none';
+        $('cam-preview-empty').style.display = 'block';
         return;
       }
       const pos = Number(pb.positionSec) || 0;
       const dur = pb.sourceDurationSec != null ? Number(pb.sourceDurationSec) : null;
+      const zoom = Number(pb.zoom) || 1;
       const mmss = (s) => {
         const t = Math.max(0, Math.floor(s));
         const m = Math.floor(t / 60);
         const sec = String(t % 60).padStart(2, '0');
         return `${m}:${sec}`;
       };
-      el.textContent = `${pb.paused ? 'pausado' : 'tocando'} · ${mmss(pos)}${dur != null ? ' / ' + mmss(dur) : ''}`;
+      el.textContent = `${pb.paused ? 'pausado' : 'tocando'} · ${mmss(pos)}${dur != null ? ' / ' + mmss(dur) : ''} · zoom ${zoom.toFixed(2)}×`;
       $('cam-seek-pos').value = String(Math.round(pos * 10) / 10);
+      refreshCamPreview();
+    }
+
+    function refreshCamPreview() {
+      const id = $('id').value.trim();
+      const img = $('cam-preview');
+      const empty = $('cam-preview-empty');
+      if (!id) {
+        img.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+      img.onload = () => {
+        img.style.display = 'block';
+        empty.style.display = 'none';
+      };
+      img.onerror = () => {
+        img.style.display = 'none';
+        empty.style.display = 'block';
+      };
+      img.src = `/api/camera/preview?id=${encodeURIComponent(id)}&t=${Date.now()}`;
     }
 
     async function cameraPlayback(action, extra = {}) {
@@ -698,6 +730,14 @@
         flash('aplicando mídia…');
         const media = await syncEditorMedia(id, { restart: true });
         await refreshFingerprintField(id);
+        if (media.mediaId) {
+          try {
+            const st = await cameraPlayback('status');
+            paintPlayback(st.playback);
+          } catch { refreshCamPreview(); }
+        } else {
+          paintPlayback(null);
+        }
         flash(media.mediaId ? 'mídia aplicada no CDP' : 'seleção limpa', 'ok');
         await loadList({ quiet: true });
       } catch (e) { flash(String(e.message || e), 'err'); }
@@ -735,6 +775,8 @@
     $('cam-play').addEventListener('click', () => runPlayback('play'));
     $('cam-seek-back').addEventListener('click', () => runPlayback('seekBy', { deltaSec: -5 }));
     $('cam-seek-fwd').addEventListener('click', () => runPlayback('seekBy', { deltaSec: 5 }));
+    $('cam-zoom-in').addEventListener('click', () => runPlayback('zoomIn'));
+    $('cam-zoom-out').addEventListener('click', () => runPlayback('zoomOut'));
     $('cam-seek-go').addEventListener('click', () => {
       const positionSec = Number($('cam-seek-pos').value) || 0;
       return runPlayback('seek', { positionSec });

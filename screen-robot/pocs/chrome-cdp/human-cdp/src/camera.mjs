@@ -87,6 +87,43 @@ export const DEFAULT_SEEK_STEP_SEC = 5;
 export const LIVE_CAPTURE_NAME = 'live.y4m';
 /** Segmento curto no transporte: EOF rápido → Chrome relê o Y4M novo. */
 export const TRANSPORT_CAPTURE_SECONDS = 3;
+export const DEFAULT_ZOOM = 1;
+export const MIN_ZOOM = 1;
+export const MAX_ZOOM = 3;
+export const ZOOM_STEP = 0.25;
+export const PREVIEW_NAME = 'preview.jpg';
+
+/**
+ * @param {unknown} zoom
+ * @returns {number}
+ */
+export function clampZoom(zoom) {
+  const z = Number(zoom);
+  if (!Number.isFinite(z)) return DEFAULT_ZOOM;
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(z * 100) / 100));
+}
+
+/**
+ * @param {string} size ex. 640x360
+ * @param {number} [fps]
+ * @param {number} [zoom]
+ */
+export function captureVideoFilter(size, fps, zoom = DEFAULT_ZOOM) {
+  const z = clampZoom(zoom);
+  const fpsPart = fps != null ? `,fps=${fps}` : '';
+  if (z <= 1.001) {
+    return `scale=${size}:force_original_aspect_ratio=decrease${fpsPart}`;
+  }
+  // Zoom centro: recorta iw/z × ih/z e escala de volta.
+  return `crop=iw/${z}:ih/${z},scale=${size}:force_original_aspect_ratio=decrease${fpsPart}`;
+}
+
+/**
+ * @param {string} cacheDir
+ */
+export function previewPath(cacheDir) {
+  return join(cacheDir, PREVIEW_NAME);
+}
 
 /**
  * @param {string} videoPath
@@ -117,7 +154,7 @@ export function probeMediaDuration(videoPath) {
 /**
  * @param {string} videoPath mp4/y4m/mjpeg…
  * @param {string} outY4m
- * @param {string | { size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean }} [sizeOrOpts]
+ * @param {string | { size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, zoom?: number }} [sizeOrOpts]
  */
 export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZE) {
   const absIn = resolve(videoPath);
@@ -135,7 +172,8 @@ export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZ
   );
   const startSec = Math.max(0, Number(opts.startSec) || 0);
   const paused = opts.paused === true;
-  const vf = `scale=${size}:force_original_aspect_ratio=decrease,fps=${fps}`;
+  const zoom = clampZoom(opts.zoom);
+  const vf = captureVideoFilter(size, fps, zoom);
   mkdirSync(dirname(outY4m), { recursive: true });
 
   if (paused) {
@@ -178,6 +216,37 @@ export function convertToY4m(videoPath, outY4m, sizeOrOpts = DEFAULT_CAPTURE_SIZ
     { stdio: 'pipe' },
   );
   return outY4m;
+}
+
+/**
+ * Frame JPEG do instante atual (com zoom) p/ preview na UI.
+ * @param {string} videoPath
+ * @param {string} outJpeg
+ * @param {{ startSec?: number, zoom?: number, size?: string }} [opts]
+ */
+export function extractPreviewJpeg(videoPath, outJpeg, opts = {}) {
+  const absIn = resolve(videoPath);
+  if (!existsSync(absIn)) throw new Error(`vídeo não encontrado: ${absIn}`);
+  if (!commandExists('ffmpeg')) throw new Error('ffmpeg não encontrado no PATH');
+  const size = String(opts.size || DEFAULT_CAPTURE_SIZE).replace(/[^0-9x]/gi, '') || DEFAULT_CAPTURE_SIZE;
+  const startSec = Math.max(0, Number(opts.startSec) || 0);
+  const zoom = clampZoom(opts.zoom);
+  const vf = captureVideoFilter(size, null, zoom);
+  mkdirSync(dirname(outJpeg), { recursive: true });
+  execFileSync(
+    'ffmpeg',
+    [
+      '-y',
+      '-ss', String(startSec),
+      '-i', absIn,
+      '-frames:v', '1',
+      '-vf', vf,
+      '-q:v', '3',
+      outJpeg,
+    ],
+    { stdio: 'pipe' },
+  );
+  return outJpeg;
 }
 
 function commandExists(bin) {
@@ -231,7 +300,7 @@ export function publishLiveCapture(livePath, nextPath) {
  * Encode → live.next.y4m → publica em live.y4m sem janela de 0 bytes.
  * @param {string} videoPath
  * @param {string} cacheDir
- * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, zoom?: number }} [opts]
  */
 export function writeLiveCapture(videoPath, cacheDir, opts = {}) {
   mkdirSync(cacheDir, { recursive: true });
@@ -245,7 +314,7 @@ export function writeLiveCapture(videoPath, cacheDir, opts = {}) {
  * Garante Y4M leve no cache (sempre normaliza — y4m/mjpeg grande também).
  * @param {string} videoPath
  * @param {string} cacheDir pasta p/ Y4M gerado
- * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, force?: boolean, outPath?: string, live?: boolean }} [opts]
+ * @param {{ size?: string, fps?: number, maxSeconds?: number, startSec?: number, paused?: boolean, zoom?: number, force?: boolean, outPath?: string, live?: boolean }} [opts]
  */
 export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   const abs = resolve(videoPath);
@@ -255,6 +324,7 @@ export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   let maxSeconds = opts.maxSeconds != null ? Number(opts.maxSeconds) : DEFAULT_CAPTURE_MAX_SECONDS;
   let startSec = Math.max(0, Number(opts.startSec) || 0);
   const paused = opts.paused === true;
+  const zoom = clampZoom(opts.zoom);
   const duration = probeMediaDuration(abs);
   if (duration != null) {
     // deixa pelo menos ~1s de conteúdo (evita Y4M vazio → preto)
@@ -267,7 +337,7 @@ export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
   mkdirSync(cacheDir, { recursive: true });
 
   if (opts.live || (opts.outPath && resolve(opts.outPath) === resolve(liveCapturePath(cacheDir)))) {
-    return writeLiveCapture(abs, cacheDir, { size, fps, maxSeconds, startSec, paused });
+    return writeLiveCapture(abs, cacheDir, { size, fps, maxSeconds, startSec, paused, zoom });
   }
 
   const base = basename(abs, extname(abs)) || 'capture';
@@ -287,7 +357,18 @@ export function ensureCaptureFile(videoPath, cacheDir, opts = {}) {
       return out;
     }
   }
-  return convertToY4m(abs, out, { size, fps, maxSeconds, startSec, paused });
+  return convertToY4m(abs, out, { size, fps, maxSeconds, startSec, paused, zoom });
+}
+
+/**
+ * Atualiza preview.jpg do CDP no instante/zoom atuais.
+ * @param {string} videoPath
+ * @param {string} cacheDir
+ * @param {{ startSec?: number, zoom?: number, size?: string }} [opts]
+ */
+export function writePreviewFrame(videoPath, cacheDir, opts = {}) {
+  mkdirSync(cacheDir, { recursive: true });
+  return extractPreviewJpeg(videoPath, previewPath(cacheDir), opts);
 }
 
 /**

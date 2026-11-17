@@ -604,6 +604,52 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fe-d b.ext { color: var(--muted); }
 .fe-d b { cursor: pointer; pointer-events: auto; }
 .fe-d b:hover, .fe-d b.on { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
+/* ---- Flow em SVG ---- */
+.fview { display: block; overflow: visible; }
+.fview text { font-family: var(--font); font-size: 10px; fill: var(--body); }
+.fview .sv-title { font-size: 11px; font-weight: 600; text-anchor: middle; }
+.fview .sv-hl, .fview .sv-row { stroke: var(--line); }
+.fview .sv-div { stroke: color-mix(in srgb, var(--muted) 55%, transparent); }
+.fview .sv-chip rect { fill: var(--wash); stroke: color-mix(in srgb, var(--muted) 70%, transparent); stroke-width: 1.3; }
+.fview .sv-chip text { font: 600 10px var(--mono); fill: var(--ink); text-anchor: middle; }
+.fview .sv-los { fill: var(--paper); stroke: var(--muted); stroke-width: 1.3; }
+.fview .sv-ax { stroke: var(--muted); stroke-width: 1.3; }
+.fview .sv-selr { fill: color-mix(in srgb, #c98a2b 26%, transparent); }
+.fview .sv-band { fill: color-mix(in srgb, var(--warn) 7%, transparent); stroke: color-mix(in srgb, var(--warn) 45%, transparent); stroke-dasharray: 3 3; }
+.fview .sv-band.lp { fill: color-mix(in srgb, var(--ok) 5%, transparent); stroke: color-mix(in srgb, var(--ok) 45%, transparent); }
+.fview .sv-bandl { stroke: var(--warn); stroke-width: 2; }
+.fview .sv-bandl.lp { stroke: var(--ok); }
+.fview [data-act] { cursor: pointer; }
+.fview .sv-fn { fill: var(--fn); }
+.fview .sv-fn.abs { fill: color-mix(in srgb, var(--fn) 8%, var(--paper)); stroke: var(--fn); stroke-width: 1.5; }
+.fview .sv-fn.nag { fill: transparent; stroke: var(--fn); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.fview g[data-act]:hover .sv-fn, .fview g[data-act]:hover .sv-sum { filter: brightness(1.12); }
+.fview .sv-fsel { fill: none; stroke: var(--ink); stroke-width: 2; }
+.fview .sv-sum { fill: var(--fn); }
+.fview .sv-fbt { fill: #fff; pointer-events: none; }
+.fview .sv-fbt.abs, .fview .sv-fbt.nag { fill: var(--ink); }
+.fview .sv-dn { font: 500 10.5px var(--mono); fill: var(--muted); }
+.fview .sv-dl:hover, .fview .sv-dl.on { fill: var(--ink); text-decoration: underline; }
+.fview .sv-pill text { font: 600 10px var(--mono); }
+.fview .sv-pill.if rect { fill: color-mix(in srgb, var(--warn) 18%, var(--paper)); } .fview .sv-pill.if text { fill: var(--warn); }
+.fview .sv-pill.loop rect { fill: color-mix(in srgb, var(--ok) 18%, var(--paper)); } .fview .sv-pill.loop text { fill: var(--ok); }
+.fview .sv-pill.fail rect { fill: color-mix(in srgb, var(--fail) 16%, var(--paper)); } .fview .sv-pill.fail text { fill: var(--fail); font-family: var(--font); }
+.fview .sv-pill.exec rect { fill: color-mix(in srgb, var(--run) 16%, var(--paper)); } .fview .sv-pill.exec text { fill: var(--run); font-family: var(--font); }
+.fview .sv-pill.cancel rect { fill: color-mix(in srgb, var(--muted) 16%, var(--paper)); } .fview .sv-pill.cancel text { fill: var(--muted); font-family: var(--font); }
+.fview .sv-fd rect { fill: var(--paper); stroke: var(--dado); stroke-width: 1.2; }
+.fview .sv-fd.ext rect { fill: var(--dado); }
+.fview .sv-fd text { font: 500 9.5px var(--mono); fill: var(--body); }
+.fview .sv-fd.ext text { fill: var(--muted); }
+.fview .sv-fd:hover text, .fview .sv-fd.on text { fill: var(--ink); text-decoration: underline; }
+:root[data-tema="eternos"] .fview .sv-fn { fill: #fff; stroke: #0b0b0b; stroke-width: 1.5; }
+:root[data-tema="eternos"] .fview .sv-fn.abs { fill: #0b0b0b; }
+:root[data-tema="eternos"] .fview .sv-fn.nag { fill: transparent; }
+:root[data-tema="eternos"] .fview .sv-fbt { fill: #0b0b0b; }
+:root[data-tema="eternos"] .fview .sv-fbt.abs { fill: #f6f6f6; }
+:root[data-tema="eternos"] .fview .sv-selr { fill: rgba(0,0,0,.07); }
+:root[data-tema="eternos"] .fview .sv-band, :root[data-tema="eternos"] .fview .sv-band.lp { fill: rgba(0,0,0,.035); }
+:root[data-tema="eternos"] .fview .sv-fd rect { fill: #fff; stroke: #0b0b0b; }
+:root[data-tema="eternos"] .fview .sv-fd.ext rect { fill: #0b0b0b; }
 /* filtro transversal flutuante (centro, acima da legenda) */
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
@@ -1819,22 +1865,23 @@ function flow(s) {
     if (!bag.length) return "";
     return `<span class="fo" title="dados em e${ei}: ${esc(bag.map(([n]) => n).join(", "))}">${bag.map(([n, ext]) => `<b class="fd${ext ? " ext" : ""}">${esc(n)}</b>`).join("")}</span>`;
   };
-  const barRow = ({ u }) => {
-    const c = colOf(u), g = geo(u), p = flowProg(u), sel = s.sel === u.id ? " sel" : "";
-    if (hasK(u)) {
-      const marks = "";
-      const io = compIO(u), left = io.ias.map(n => itF(n, true)).join(""); // dados só como □/■ (nomes ficam embaixo, por eN)
-      const ei = (layout[u.id] || { e: 0 }).e + 1;
-      return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fsum${sel}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · composição = camada">${marks}</div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
-    }
-    if (isData(u)) return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fdia${sel}${p >= 1 ? " ok" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.cx - 7}px" title="Dado · ${esc(u.title)}"></div></div>`; // ◆ estado: nome só na tabela
+  // ---- visualização do Flow em SVG: cada linha desenhada no y da sua posição (tabela à esquerda continua HTML)
+  const tw = (t, px) => Math.ceil(String(t).length * px);
+  const pill = (x, y, txt, cls) => `<g class="sv-pill ${cls}"><rect x="${x}" y="${y - 8}" width="${tw(txt, 6.1) + 10}" height="16" rx="3"/><text x="${x + 5}" y="${y + 3.5}">${esc(txt)}</text></g>`;
+  const tagsOf = u => u.st === "fail" ? [["fail", "falhou"]] : u.st === "exec" ? [["exec", "executando"]] : u.st === "cancel" ? [["cancel", "cancelada"]] : [];
+  const dnames = (x, y, list) => `<text class="sv-dn" x="${x}" y="${y + 3.5}">${list.map((n, i) => `${i ? `<tspan>, </tspan>` : ""}<tspan class="sv-dl${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</tspan>`).join("")}<title>${esc(list.join(", "))}</title></text>`;
+  const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra) { h += dnames(cx, y, extra); cx += tw(extra.join(", "), 6.3) + 10; } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
+  const rowSvg = (r, i) => {
+    const y0 = yTop(i), ym = yMid(i);
+    if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop");
+    if (r.st) return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})`, "if");
+    if (r.io) { const g = geo(r.u); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, ioNames(r)); }
+    const u = r.u, g = geo(u), sel = s.sel === u.id;
+    if (hasK(u)) return `<g data-act="drawer" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>${sel ? `<rect class="sv-fsel" x="${g.x1 - 3}" y="${y0 + 9}" width="${g.x2 - g.x1 + 6}" height="19" rx="3"/>` : ""}` + after(g.ox + 10, ym, u);
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do context` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    const ei = (layout[u.id] || { e: 0 }).e + 1;
-    return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}">${s.txtIn ? `<span class="fb-t">${esc(u.title)}</span>` : ""}</div><span class="flbl" style="left:${g.ox + 10}px">${s.txtIn ? "" : `<span class="fnm">${esc(u.title)}</span>`}${s.compacto && (u.outs || []).length ? `<span class="io-l c-out" title="${esc(u.outs.map(o => o[0]).join(", "))}">${u.outs.map(o => `<b data-act="reveal-dado" data-n="${esc(o[0])}">${esc(o[0])}</b>`).join(", ")}</span>` : ""}${flowTags(u)}</span></div>`;
+    return `${sel ? `<rect class="sv-fsel" x="${g.x1 - 3}" y="${y0 + 3}" width="${g.x2 - g.x1 + 6}" height="28" rx="14"/>` : ""}<g data-act="drawer" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${g.x1 + 9}" y="${ym + 3.5}">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
   };
-  const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px"><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span></div>`; };
-  const bars = disp.map(r => r.lp ? `<div class="rr"><span class="flbl" style="left:${geo(r.lp).ix + 12}px"><span class="ftag loop">↻ ${esc(lpTxt(r.lp))}</span></span></div>` : r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
   const isFn = u => !isData(u) && !hasK(u);
@@ -1871,8 +1918,8 @@ function flow(s) {
     const i1 = Math.max(...st.body.map(id => idxOut[id] ?? idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
     st.x = x;
     svg += `<path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
-    return `<div class="fband" style="top:${yTop(st.hi)}px;height:${(i1 - st.hi + 1) * RH}px"></div>`;
-  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<div class="fband lp" style="top:${yTop(a)}px;height:${(b - a + 1) * RH}px"></div>`; }).join("");
+    return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
+  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   if (!s.noDeps) rows.forEach(({ u }) => {
     if (!u.cond || idx[u.cond[1]] == null) return;
     const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === (idxOut[u.id] ?? idx[u.id]) + 1), ybk = yTop(idx[u.cond[1]]) + 27;
@@ -1895,16 +1942,22 @@ function flow(s) {
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
         <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Responsável</span></div></div>${left}</div>
-        <div class="gright"><div class="ghead fhead"><div class="fh-top" style="width:${nSteps * W}px;margin-left:${OX}px">${esc(pl)}</div>
-          <div class="fh-e">${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>`).join("")}</div></div>
-          <div class="gbg"><div class="g0" style="width:${OX}px"></div>${Array.from({ length: nSteps }, () => `<div style="width:${W}px"></div>`).join("")}<div style="width:${TAIL}px"></div></div>
-          <div class="fstr" style="width:${CW}px;height:${H}px">${bands}</div>
-          <div class="grows-r">${bars}</div>
-          <div class="fh-e bot" style="height:${FOOT}px"><i class="ax" style="left:${OX}px;width:${nSteps * W}px"></i>${Array.from({ length: nSteps + 1 }, (_, i) => `<span style="left:${OX + i * W}px" title="estado ${i}">e${i}</span>${stShow[i].length ? `<div class="fe-d" style="left:${OX + i * W}px">${stShow[i].map(([n, ext]) => `<b class="${ext ? "ext" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}" title="${esc(n)} · em e${i}${ext ? " · entrada externa" : ""} · abrir no Explorar">${esc(n)}</b>`).join("")}</div>` : ""}`).join("")}</div>
-          <svg class="gsvg fsvg" width="${CW}" height="${H}"><defs>
+        <div class="gright">${(() => {
+          const xs = i => OX + i * W, yF = 52 + H, axW = nSteps * W;
+          const head = `<text class="sv-title" x="${OX + axW / 2}" y="17">${esc(pl)}</text><line class="sv-hl" x1="${OX}" y1="26" x2="${OX + axW}" y2="26"/><line class="sv-hl" x1="0" y1="52" x2="${CW}" y2="52"/>`
+            + Array.from({ length: nSteps + 1 }, (_, i) => `<g class="sv-chip"><rect x="${xs(i) - 11}" y="29" width="22" height="15" rx="2"/><text x="${xs(i)}" y="40">e${i}</text><title>estado ${i}</title></g><rect class="sv-los" x="${xs(i) - 3}" y="${49}" width="6" height="6" transform="rotate(45 ${xs(i)} 52)"/>`).join("");
+          const divs = Array.from({ length: nSteps + 1 }, (_, i) => `<line class="sv-div" x1="${xs(i)}" y1="52" x2="${xs(i)}" y2="${yF + FOOT}"/>`).join("");
+          const selRows = disp.map((r, i) => (r.u && s.sel === r.u.id && !r.lp) ? `<rect class="sv-selr" x="0" y="${yTop(i)}" width="${CW}" height="${RH}"/>` : "").join("");
+          const lines = disp.map((r, i) => `<line class="sv-row" x1="0" y1="${yTop(i) + RH}" x2="${CW}" y2="${yTop(i) + RH}"/>`).join("");
+          const foot = `<line class="sv-hl" x1="0" y1="${yF}" x2="${CW}" y2="${yF}"/><line class="sv-ax" x1="${OX}" y1="${yF + 10}" x2="${OX + axW}" y2="${yF + 10}"/>`
+            + Array.from({ length: nSteps + 1 }, (_, i) => `<rect class="sv-los" x="${xs(i) - 3}" y="${yF + 7}" width="6" height="6" transform="rotate(45 ${xs(i)} ${yF + 10})"/><g class="sv-chip"><rect x="${xs(i) - 11}" y="${yF + 19}" width="22" height="15" rx="2"/><text x="${xs(i)}" y="${yF + 30}">e${i}</text></g>`
+              + stShow[i].map(([n, ext], j) => `<g class="sv-fd${ext ? " ext" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}"><rect x="${xs(i) - 4.2}" y="${yF + 44 + j * 14}" width="8.4" height="8.4"/><text x="${xs(i) + 8}" y="${yF + 51.5 + j * 14}">${esc(n)}</text><title>${esc(n)} · em e${i}${ext ? " · entrada externa" : ""} · abrir no Explorar</title></g>`).join("")).join("");
+          return `<svg class="fsvg fview" width="${CW}" height="${52 + Math.max(H, RH) + FOOT}" xmlns="http://www.w3.org/2000/svg"><defs>
             <marker id="fahl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--ok)"/></marker>
             <marker id="fah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a0a0a0"/></marker>
-            <marker id="fahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--warn)"/></marker></defs>${svg}</svg></div>
+            <marker id="fahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="var(--warn)"/></marker></defs>
+            ${head}${divs}${foot}<g transform="translate(0 52)">${bands}${selRows}${lines}${svg}${disp.map(rowSvg).join("")}</g></svg>`;
+        })()}</div>
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>

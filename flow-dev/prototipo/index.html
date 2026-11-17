@@ -250,7 +250,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; }
 .gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; }
 .gantt.flow .grow.iorow .io-d, .flbl.fio-n b { font: 500 10.5px var(--mono); color: var(--body); cursor: pointer; }
-.flbl.fio-n { gap: 8px; pointer-events: auto; }
+.flbl.fio-n { gap: 0; pointer-events: auto; }
+.io-l { font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .flbl.fio-n b:hover, .gantt.flow .grow.iorow .io-d:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 .node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 .node.proj.cur .t b { color: var(--accent); }
@@ -1741,7 +1742,7 @@ function flow(s) {
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? (r.u.ins || []) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : "saída"}</span>${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join("")}</span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const left = disp.map(r => r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
@@ -1776,7 +1777,7 @@ function flow(s) {
     const ei = (layout[u.id] || { e: 0 }).e + 1;
     return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
   };
-  const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join("")}</span></div>`; };
+  const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px"><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span></div>`; };
   const bars = disp.map(r => r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;

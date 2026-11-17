@@ -950,6 +950,7 @@ export async function connectCdp(id, connectOpts = {}) {
     cdpUrl: st.cdpUrl,
     url: connectOpts.url,
     urlIncludes: connectOpts.urlIncludes,
+    targetId: connectOpts.targetId,
     newTab: connectOpts.newTab,
     chromeApp: connectOpts.chromeApp,
     debug: wantDebug,

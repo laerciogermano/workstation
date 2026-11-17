@@ -41,6 +41,7 @@ function cursorKey(cdpUrl) {
  * @typedef {object} ConnectOptions
  * @property {string} [cdpUrl]
  * @property {string} [urlIncludes] filtra aba existente
+ * @property {string} [targetId] aba específica (/json/list id)
  * @property {string} [url] se setado, abre/navega
  * @property {boolean} [newTab]
  * @property {boolean} [debug] painel de diagnóstico do bot-lab junto ao mouse
@@ -473,6 +474,62 @@ export class HumanCdpSession {
   }
 
   /**
+   * Digita no elemento já focado (sem click em seletor) — ritmo humano.
+   * @param {string} text
+   */
+  async typeFocused(text) {
+    await this.ensureFocus({ force: true });
+    for (const ch of String(text)) {
+      await this.ensureFocus({ settleMs: 0 });
+      await this.send('Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        key: ch,
+        code: ch.length === 1 && /[a-zA-Z]/.test(ch) ? `Key${ch.toUpperCase()}` : undefined,
+        windowsVirtualKeyCode: ch.length === 1 ? ch.toUpperCase().charCodeAt(0) : undefined,
+      });
+      await this.send('Input.insertText', { text: ch });
+      await this.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        key: ch,
+        code: ch.length === 1 && /[a-zA-Z]/.test(ch) ? `Key${ch.toUpperCase()}` : undefined,
+        windowsVirtualKeyCode: ch.length === 1 ? ch.toUpperCase().charCodeAt(0) : undefined,
+      });
+      await sleep(keyGapMs());
+    }
+  }
+
+  /**
+   * Cola texto no foco atual (como Ctrl/Cmd+V) via insertText em bloco.
+   * @param {string} text
+   */
+  async paste(text) {
+    await this.ensureFocus({ force: true });
+    const raw = String(text ?? '');
+    if (!raw) return;
+    await this.send('Input.insertText', { text: raw });
+  }
+
+  /**
+   * Tecla especial / atalho (Enter, Backspace, setas, Ctrl/Cmd+…).
+   * @param {string} key
+   * @param {{ code?: string, keyCode?: number, modifiers?: number, text?: string }} [opts]
+   */
+  async pressKey(key, { code, keyCode, modifiers = 0, text } = {}) {
+    await this.ensureFocus({ force: true });
+    const payload = {
+      key,
+      code: code || undefined,
+      windowsVirtualKeyCode: keyCode || undefined,
+      modifiers,
+    };
+    await this.send('Input.dispatchKeyEvent', { type: 'keyDown', ...payload, text: text || undefined });
+    if (text && !(modifiers & 2) && !(modifiers & 4)) {
+      await this.send('Input.insertText', { text });
+    }
+    await this.send('Input.dispatchKeyEvent', { type: 'keyUp', ...payload });
+  }
+
+  /**
    * Wheel humano. Antes: arrasta até `selector` (se dado) ou centro da viewport.
    * Wheel sempre na posição atual do cursor (nunca teleporta o ponteiro).
    * @param {{ dy?: number, steps?: number, selector?: string }} [opts]
@@ -627,8 +684,13 @@ export async function connect(opts = {}) {
   } else {
     page = await pickPage(cdpUrl, {
       urlIncludes: opts.urlIncludes,
+      targetId: opts.targetId,
       url: opts.url,
+      createIfMissing: !opts.targetId,
     });
+  }
+  if (!page?.webSocketDebuggerUrl && opts.targetId) {
+    throw new Error(`aba não encontrada: ${opts.targetId}`);
   }
   const cdp = createCdpSession(page.webSocketDebuggerUrl);
   await cdp.ready;

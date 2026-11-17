@@ -12,6 +12,7 @@ export {
 export {
   createCdpSession,
   pickPage,
+  listPages,
   openPage,
   getJson,
   ensureStandbyPage,
@@ -134,6 +135,7 @@ export {
   setViewConfig,
   startView,
   stopView,
+  setViewTarget,
   readLatestFrame,
   clearViewFrames,
 } from './view.mjs';

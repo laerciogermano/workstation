@@ -38,6 +38,7 @@ import {
   setViewConfig,
   startView,
   stopView,
+  setViewTarget,
   readLatestFrame,
   clearViewFrames,
   viewRoot,
@@ -49,6 +50,10 @@ import {
   getSelectedMedia,
   selectMediaForCdp,
   applySelectedMedia,
+  listPages,
+  openPage,
+  closePageTarget,
+  ensureStandbyPage,
 } from '../src/index.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -312,6 +317,83 @@ const server = createServer(async (req, res) => {
       });
     }
 
+    const tabsPath = path.match(/^\/api\/cdps\/([^/]+)\/tabs(?:\/([^/]+))?(?:\/(navigate|activate))?$/);
+    if (tabsPath) {
+      const id = decodeURIComponent(tabsPath[1]);
+      const tabId = tabsPath[2] ? decodeURIComponent(tabsPath[2]) : null;
+      const action = tabsPath[3] || null;
+      const row = getCdp(id);
+      if (!row) return json(res, 404, { error: `CDP não encontrado: ${id}` });
+      if (row.status !== 'up' || !row.cdpUrl) {
+        return json(res, 409, { error: `CDP ${id} precisa estar up` });
+      }
+
+      if (req.method === 'GET' && !tabId) {
+        const tabs = await listPages(row.cdpUrl);
+        const view = getViewConfig(id);
+        return json(res, 200, {
+          cdpId: id,
+          tabs,
+          activeTargetId: view.targetId || tabs[0]?.id || null,
+        });
+      }
+      if (req.method === 'POST' && !tabId) {
+        const body = await readBody(req).catch(() => ({}));
+        const url = String(body.url || 'about:blank').trim() || 'about:blank';
+        const page = await openPage(row.cdpUrl, url);
+        const targetId = page.id || page.targetId;
+        await setViewTarget(id, targetId).catch(async () => startView(id, { targetId }));
+        const tabs = await listPages(row.cdpUrl);
+        return json(res, 201, {
+          tab: {
+            id: targetId,
+            targetId,
+            title: page.title || '',
+            url: page.url || url,
+          },
+          tabs,
+          activeTargetId: targetId,
+        });
+      }
+      if (req.method === 'POST' && tabId && action === 'activate') {
+        await setViewTarget(id, tabId);
+        const tabs = await listPages(row.cdpUrl);
+        return json(res, 200, {
+          ok: true,
+          activeTargetId: tabId,
+          tabs,
+          view: getViewConfig(id),
+        });
+      }
+      if (req.method === 'POST' && tabId && action === 'navigate') {
+        const body = await readBody(req);
+        const url = String(body.url || '').trim();
+        if (!url) return json(res, 400, { error: 'url obrigatória' });
+        const page = await connectCdp(id, { targetId: tabId });
+        try {
+          await page.goto(url);
+        } finally {
+          page.close();
+        }
+        await setViewTarget(id, tabId).catch(async () => startView(id, { targetId: tabId }));
+        const tabs = await listPages(row.cdpUrl);
+        const active = tabs.find((t) => t.id === tabId) || null;
+        return json(res, 200, { ok: true, tab: active, tabs, activeTargetId: tabId });
+      }
+      if (req.method === 'DELETE' && tabId) {
+        await ensureStandbyPage(row.cdpUrl, tabId);
+        await closePageTarget(row.cdpUrl, tabId);
+        const tabs = await listPages(row.cdpUrl);
+        const next = tabs[0]?.id || null;
+        if (next) {
+          await setViewTarget(id, next).catch(async () => startView(id, { targetId: next }));
+        } else {
+          stopView(id);
+        }
+        return json(res, 200, { ok: true, tabs, activeTargetId: next });
+      }
+    }
+
     const cdpExtra = path.match(
       /^\/api\/cdps\/([^/]+)\/(start|stop|backups|snapshots|view|input|media)(?:\/([^/]+))?$/,
     );
@@ -414,7 +496,8 @@ const server = createServer(async (req, res) => {
           return json(res, 200, setViewConfig(id, body));
         }
         if (req.method === 'POST' && sub === 'start') {
-          return json(res, 200, await startView(id));
+          const body = await readBody(req).catch(() => ({}));
+          return json(res, 200, await startView(id, { targetId: body.targetId }));
         }
         if (req.method === 'POST' && sub === 'stop') {
           return json(res, 200, stopView(id));
@@ -426,28 +509,66 @@ const server = createServer(async (req, res) => {
 
       if (section === 'input' && req.method === 'POST') {
         const body = await readBody(req);
-        const page = await connectCdp(id);
+        const targetId = body.targetId || getViewConfig(id).targetId || undefined;
+        const page = await connectCdp(id, { targetId });
         try {
           if (body.type === 'click') {
             await page.clickAt(Number(body.x), Number(body.y), {
               clicks: body.clicks || 1,
             });
-          } else if (body.type === 'type') {
-            await page.type(body.selector || 'body', String(body.text || ''), {
-              delayMs: body.delayMs,
+          } else if (body.type === 'type' || body.type === 'key') {
+            if (body.selector) {
+              await page.type(body.selector, String(body.text || ''), {
+                delayMs: body.delayMs,
+              });
+            } else {
+              await page.typeFocused(String(body.text || ''));
+            }
+          } else if (body.type === 'paste') {
+            await page.paste(String(body.text || ''));
+          } else if (body.type === 'keydown' || body.type === 'press') {
+            await page.pressKey(String(body.key || ''), {
+              code: body.code,
+              keyCode: body.keyCode,
+              modifiers: Number(body.modifiers || 0),
+              text: body.text,
             });
-          } else if (body.type === 'key') {
-            // digita caractere avulso via insertText na página
-            await page.ensureFocus({ force: true });
-            await page.send('Input.insertText', { text: String(body.text || '') });
           } else {
-            return json(res, 400, { error: 'type inválido (click|type|key)' });
+            return json(res, 400, {
+              error: 'type inválido (click|type|key|paste|keydown|press)',
+            });
           }
-          return json(res, 200, { ok: true });
+          return json(res, 200, { ok: true, targetId: page._targetId || targetId || null });
         } finally {
           page.close();
         }
       }
+    }
+
+    if (req.method === 'POST' && path === '/api/views/ensure-up') {
+      const up = listCdps().filter((c) => c.status === 'up');
+      const results = [];
+      for (const c of up) {
+        try {
+          const cur = getViewConfig(c.id);
+          if (!cur.running) {
+            if ((cur.config?.intervalMs ?? 0) !== 100) {
+              setViewConfig(c.id, { intervalMs: 100, quality: cur.config?.quality ?? 15 });
+            }
+            await startView(c.id);
+          }
+          const view = getViewConfig(c.id);
+          results.push({
+            id: c.id,
+            ok: true,
+            running: view.running,
+            config: view.config,
+          });
+        } catch (e) {
+          results.push({ id: c.id, ok: false, error: String(e.message || e) });
+        }
+      }
+      return json(res, 200, { results, count: results.length });
     }
 
     const cdpOne = path.match(/^\/api\/cdps\/([^/]+)$/);

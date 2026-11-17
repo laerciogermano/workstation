@@ -201,16 +201,19 @@ Meta `.human-cdp.json` atual é preservada no restore. Legado `~/chrome-cdp-back
 
 ```text
 ~/chrome-cdp-view/<cdpId>/
-  config.json     # quality (default 15), intervalMs (1000), maxKeep
+  config.json     # quality (default 15), intervalMs (100), maxKeep
   latest.jpg
   frames/*.jpg
 ```
 
 ```js
-import { startView, stopView, setViewConfig } from './src/index.mjs';
-setViewConfig('meu-cdp', { quality: 12, intervalMs: 1000 });
+import { startView, stopView, setViewConfig, setViewTarget } from './src/index.mjs';
+setViewConfig('meu-cdp', { quality: 12, intervalMs: 100 });
 await startView('meu-cdp'); // CDP precisa estar up
+await setViewTarget('meu-cdp', targetId); // troca aba fotografada
 ```
+
+**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **100 ms**; abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: restaurar `camera-ui/` + `intervalMs: 1000` / min 250 em `view.mjs`.
 
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
 

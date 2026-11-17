@@ -61,9 +61,26 @@
     .backup-item { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--line); align-items: center; }
     .backup-item:last-child { border-bottom: 0; }
     .backup-item.selected { background: var(--paper-2); }
-    .stage { background: #111; border-radius: var(--radius); min-height: 360px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .stage { background: #111; border-radius: var(--radius); min-height: 360px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; outline: none; }
+    .stage:focus { box-shadow: inset 0 0 0 2px var(--accent); }
     .stage img { max-width: 100%; max-height: 70vh; display: block; cursor: crosshair; }
     .stage .placeholder { color: #aaa; font-family: var(--font-display); font-size: 0.9rem; padding: 2rem; text-align: center; }
+    .nav-tabs { display: flex; gap: 0.35rem; margin-bottom: 1rem; }
+    .nav-tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.85rem; }
+    .wall-card { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer; background: var(--paper); transition: transform 0.2s var(--ease); }
+    .wall-card:hover { transform: translateY(-2px); border-color: var(--ink); }
+    .wall-card .thumb { background: #111; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .wall-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .wall-card .thumb .placeholder { color: #888; font-family: var(--font-display); font-size: 0.8rem; padding: 1rem; text-align: center; }
+    .wall-card .meta { padding: 0.65rem 0.75rem; display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; }
+    .tab-bar { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
+    .tab-chip { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.55rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); cursor: pointer; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tab-chip.active { border-color: var(--ink); background: var(--paper-2); }
+    .tab-chip .x { margin-left: 0.35rem; opacity: 0.55; }
+    .url-bar { display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; }
+    .url-bar input { flex: 1; min-width: 180px; }
+    .page { display: none; } .page.active { display: block; }
     @media (max-width: 820px) {
       .row, .row.head { grid-template-columns: 1fr 1fr; }
       .grid2, .grid3 { grid-template-columns: 1fr; }
@@ -71,7 +88,7 @@
   </style>
 </head>
 <body>
-  <div class="wrap" id="home">
+  <div class="wrap">
     <header>
       <div>
         <h1>Gestão de CDPs</h1>
@@ -84,8 +101,18 @@
         <button type="button" id="create">Criar CDP</button>
       </div>
     </header>
+    <div class="nav-tabs" role="tablist">
+      <button type="button" class="secondary active" data-page="lista" id="nav-lista">Lista</button>
+      <button type="button" class="secondary" data-page="telas" id="nav-telas">Telas ao vivo</button>
+    </div>
     <div id="flash" aria-live="polite"></div>
-    <div class="list" id="list"></div>
+    <div class="page active" id="page-lista">
+      <div class="list" id="list"></div>
+    </div>
+    <div class="page" id="page-telas">
+      <p class="meta" id="wall-meta" style="margin:0 0 0.85rem">CDPs up · clique abre o controle</p>
+      <div class="wall" id="wall"></div>
+    </div>
   </div>
 
   <dialog id="gallery" class="wide">
@@ -209,30 +236,30 @@
           <p class="paths" id="control-paths"></p>
         </div>
         <div class="dlg-actions">
-          <button type="button" id="view-start">Iniciar visão</button>
-          <button type="button" class="secondary" id="view-stop">Parar visão</button>
           <button type="button" class="ghost" id="control-close">Fechar</button>
         </div>
+      </div>
+      <div class="tab-bar" id="tab-bar"></div>
+      <div class="url-bar">
+        <input id="tab-url" type="url" placeholder="https://…" />
+        <button type="button" class="secondary" id="tab-go">Ir</button>
+        <button type="button" id="tab-new">Nova aba</button>
       </div>
       <div class="grid3">
         <label>Qualidade JPEG (1–100)
           <input id="view-quality" type="number" min="1" max="100" value="15" />
         </label>
         <label>Intervalo (ms)
-          <input id="view-interval" type="number" min="250" max="10000" value="1000" />
+          <input id="view-interval" type="number" min="100" max="10000" value="100" />
         </label>
         <label>&nbsp;
           <button type="button" class="secondary" id="view-save-cfg" style="width:100%">Salvar config</button>
         </label>
       </div>
-      <div class="stage" id="stage">
-        <div class="placeholder">Inicie a visão para ver a tela do CDP (prints em loop).</div>
+      <div class="stage" id="stage" tabindex="0">
+        <div class="placeholder">Abrindo tela…</div>
       </div>
-      <p class="hint">Clique na imagem para clicar no CDP (human-cdp / trajetória). Digite com o campo abaixo.</p>
-      <div class="dlg-actions">
-        <input id="type-text" placeholder="texto para digitar no CDP" style="flex:1;min-width:180px" />
-        <button type="button" class="secondary" id="type-send">Digitar</button>
-      </div>
+      <p class="hint">Clique na tela para focar. Depois digite, Enter, Backspace ou Ctrl/Cmd+V como na máquina.</p>
     </div>
   </dialog>
 
@@ -245,7 +272,11 @@
     let busy = false;
     let controlId = null;
     let viewTimer = null;
+    let wallTimer = null;
     let viewport = null;
+    let activeTabId = null;
+    let currentPage = 'lista';
+    let stageArmed = false;
 
     async function api(path, opts = {}) {
       const r = await fetch(path, {
@@ -829,25 +860,153 @@
       finally { setBusy(false); }
     });
 
+    function showPage(name) {
+      currentPage = name;
+      document.querySelectorAll('.nav-tabs button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.page === name);
+      });
+      document.querySelectorAll('.page').forEach((p) => {
+        p.classList.toggle('active', p.id === `page-${name}`);
+      });
+      if (name === 'telas') startWall();
+      else stopWall();
+    }
+
+    document.querySelectorAll('.nav-tabs button').forEach((b) => {
+      b.addEventListener('click', () => showPage(b.dataset.page));
+    });
+
+    function stopWall() {
+      if (wallTimer) clearInterval(wallTimer);
+      wallTimer = null;
+    }
+
+    async function startWall() {
+      stopWall();
+      try {
+        await api('/api/views/ensure-up', { method: 'POST', body: '{}' });
+      } catch { /* ignore */ }
+      const paint = async () => {
+        if (currentPage !== 'telas') return;
+        const up = cdps.filter((c) => c.status === 'up');
+        $('wall-meta').textContent = `${up.length} CDP(s) up · clique abre o controle`;
+        const box = $('wall');
+        const known = new Set(up.map((c) => c.id));
+        [...box.querySelectorAll('.wall-card')].forEach((el) => {
+          if (!known.has(el.dataset.id)) el.remove();
+        });
+        for (const c of up) {
+          let card = box.querySelector(`.wall-card[data-id="${CSS.escape(c.id)}"]`);
+          if (!card) {
+            card = document.createElement('div');
+            card.className = 'wall-card';
+            card.dataset.id = c.id;
+            card.innerHTML = `
+              <div class="thumb"><div class="placeholder">aguardando frame…</div></div>
+              <div class="meta">
+                <div>
+                  <p class="name" style="font-size:0.9rem;margin:0">${escapeHtml(c.name || c.id)}</p>
+                  <p class="id" style="margin:0.15rem 0 0">${escapeHtml(c.id)} · :${c.displayPort ?? '—'}</p>
+                </div>
+                <span class="badge up">up</span>
+              </div>`;
+            card.addEventListener('click', () => openControl(c.id));
+            box.appendChild(card);
+          }
+          try {
+            const r = await fetch(`/api/cdps/${encodeURIComponent(c.id)}/view/latest?t=${Date.now()}`);
+            if (!r.ok) continue;
+            const blob = await r.blob();
+            const url = URL.createObjectURL(blob);
+            const thumb = card.querySelector('.thumb');
+            let img = thumb.querySelector('img');
+            if (!img) {
+              thumb.innerHTML = '';
+              img = document.createElement('img');
+              img.alt = c.name || c.id;
+              thumb.appendChild(img);
+            }
+            const prev = img.src;
+            img.onload = () => { if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev); };
+            img.src = url;
+          } catch { /* ignore */ }
+        }
+        if (!up.length) {
+          box.innerHTML = '<div class="empty">Nenhum CDP up. Execute um na lista.</div>';
+        }
+      };
+      await loadList({ quiet: true }).catch(() => {});
+      paint();
+      wallTimer = setInterval(paint, 200);
+    }
+
+    function tabLabel(t) {
+      const title = (t.title || '').trim();
+      const url = (t.url || '').replace(/^https?:\/\//, '');
+      return title || url || t.id.slice(0, 8);
+    }
+
+    async function loadTabs() {
+      if (!controlId) return;
+      const data = await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs`);
+      const tabs = data.tabs || [];
+      if (!activeTabId || !tabs.some((t) => t.id === activeTabId)) {
+        activeTabId = data.activeTargetId || tabs[0]?.id || null;
+      }
+      const bar = $('tab-bar');
+      bar.innerHTML = tabs.map((t) => `
+        <button type="button" class="tab-chip ${t.id === activeTabId ? 'active' : ''}" data-tid="${escapeHtml(t.id)}" title="${escapeHtml(t.url || '')}">
+          ${escapeHtml(tabLabel(t))}
+          <span class="x" data-close="1">×</span>
+        </button>`).join('') || '<span class="hint">sem abas</span>';
+      const active = tabs.find((t) => t.id === activeTabId);
+      if (active) $('tab-url').value = active.url || '';
+    }
+
     async function openControl(id) {
       controlId = id;
+      activeTabId = null;
+      stageArmed = false;
       const c = cdps.find((x) => x.id === id) || { id, name: id };
       $('control-title').textContent = `Controlar · ${c.name || id}`;
-      $('control-meta').textContent = c.status === 'up' ? 'CDP up' : 'CDP down — execute antes';
-      const view = await api(`/api/cdps/${encodeURIComponent(id)}/view`).catch(() => null);
-      if (view?.config) {
-        $('view-quality').value = view.config.quality;
-        $('view-interval').value = view.config.intervalMs;
-        $('control-paths').textContent = view.path || '';
-      }
+      $('control-meta').textContent = c.status === 'up' ? 'abrindo tela…' : 'CDP down — execute antes';
+      $('stage').innerHTML = '<div class="placeholder">Abrindo tela…</div>';
       $('control').showModal();
-      if (view?.running) startViewPoll();
-      else stopViewPoll();
+      try {
+        await api(`/api/cdps/${encodeURIComponent(id)}/view`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            quality: Number($('view-quality').value) || 15,
+            intervalMs: Number($('view-interval').value) || 100,
+          }),
+        });
+        const started = await api(`/api/cdps/${encodeURIComponent(id)}/view/start`, {
+          method: 'POST',
+          body: JSON.stringify({}),
+        });
+        if (started?.config) {
+          $('view-quality').value = started.config.quality;
+          $('view-interval').value = started.config.intervalMs;
+          $('control-paths').textContent = started.path || '';
+        }
+        activeTabId = started?.targetId || null;
+        await loadTabs().catch(() => {});
+        startViewPoll();
+        flash('controle ativo — clique na tela e digite', 'ok');
+      } catch (e) {
+        flash(String(e.message || e), 'err');
+        $('control-meta').textContent = String(e.message || e);
+      }
     }
 
     function stopViewPoll() {
       if (viewTimer) clearInterval(viewTimer);
       viewTimer = null;
+    }
+
+    function pollMs() {
+      const n = Number($('view-interval').value);
+      return Number.isFinite(n) && n >= 100 ? n : 100;
     }
 
     function startViewPoll() {
@@ -869,18 +1028,26 @@
             img.addEventListener('click', onStageClick);
           }
           const prev = img.src;
-          img.onload = () => { if (prev) URL.revokeObjectURL(prev); };
+          img.onload = () => { if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev); };
           img.src = url;
-          // meta viewport
           const meta = await api(`/api/cdps/${encodeURIComponent(controlId)}/view`).catch(() => null);
           viewport = meta?.latestMeta?.viewport || viewport;
+          if (meta?.targetId) activeTabId = meta.targetId;
           $('control-meta').textContent = meta?.latestMeta?.at
-            ? `último print ${meta.latestMeta.at.replace('T',' ').slice(0,19)} · ${meta.latestMeta.bytes || '?'} B · q=${meta.config?.quality}`
+            ? `print ${meta.latestMeta.at.replace('T',' ').slice(0,19)} · ${meta.latestMeta.bytes || '?'} B · ${pollMs()}ms${stageArmed ? ' · teclado' : ''}`
             : 'visão ativa';
         } catch { /* ignore */ }
       };
       paint();
-      viewTimer = setInterval(paint, 1000);
+      viewTimer = setInterval(paint, pollMs());
+    }
+
+    async function sendInput(body) {
+      if (!controlId) return;
+      return api(`/api/cdps/${encodeURIComponent(controlId)}/input`, {
+        method: 'POST',
+        body: JSON.stringify({ ...body, targetId: activeTabId || undefined }),
+      });
     }
 
     async function onStageClick(ev) {
@@ -894,40 +1061,157 @@
       const x = Math.round(nx * vw);
       const y = Math.round(ny * vh);
       try {
-        flash(`clique ${x},${y}…`);
-        await api(`/api/cdps/${encodeURIComponent(controlId)}/input`, {
-          method: 'POST',
-          body: JSON.stringify({ type: 'click', x, y }),
-        });
-        flash(`clique ${x},${y}`, 'ok');
+        await sendInput({ type: 'click', x, y });
+        stageArmed = true;
+        $('stage').focus();
+        flash(`clique ${x},${y} · teclado ativo`, 'ok');
       } catch (e) {
         flash(String(e.message || e), 'err');
       }
     }
 
-    $('view-start').addEventListener('click', async () => {
+    function cdpModifiers(ev) {
+      let m = 0;
+      if (ev.altKey) m |= 1;
+      if (ev.ctrlKey) m |= 2;
+      if (ev.metaKey) m |= 4;
+      if (ev.shiftKey) m |= 8;
+      return m;
+    }
+
+    const SPECIAL_KEYS = new Set([
+      'Enter', 'Backspace', 'Tab', 'Escape', 'Delete',
+      'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+      'Home', 'End', 'PageUp', 'PageDown',
+    ]);
+
+    $('stage').addEventListener('keydown', async (ev) => {
+      if (!controlId || !stageArmed) return;
+      if (ev.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(ev.target.tagName)) return;
+      const isMod = ev.metaKey || ev.ctrlKey;
+      if (isMod && (ev.key === 'v' || ev.key === 'V')) return; // paste event
+      if (isMod && (ev.key === 'c' || ev.key === 'C' || ev.key === 'x' || ev.key === 'X' || ev.key === 'a' || ev.key === 'A')) {
+        ev.preventDefault();
+        try {
+          await sendInput({
+            type: 'keydown',
+            key: ev.key.length === 1 ? ev.key.toUpperCase() : ev.key,
+            code: ev.code,
+            keyCode: ev.keyCode,
+            modifiers: cdpModifiers(ev),
+          });
+        } catch (e) { flash(String(e.message || e), 'err'); }
+        return;
+      }
+      if (ev.key === 'Meta' || ev.key === 'Control' || ev.key === 'Alt' || ev.key === 'Shift') return;
+      ev.preventDefault();
+      try {
+        if (SPECIAL_KEYS.has(ev.key)) {
+          await sendInput({
+            type: 'keydown',
+            key: ev.key,
+            code: ev.code,
+            keyCode: ev.keyCode,
+            modifiers: cdpModifiers(ev),
+          });
+        } else if (ev.key.length === 1 && !isMod) {
+          await sendInput({ type: 'key', text: ev.key });
+        } else if (ev.key.length === 1 && isMod) {
+          await sendInput({
+            type: 'keydown',
+            key: ev.key,
+            code: ev.code,
+            keyCode: ev.keyCode,
+            modifiers: cdpModifiers(ev),
+          });
+        }
+      } catch (e) { flash(String(e.message || e), 'err'); }
+    });
+
+    $('stage').addEventListener('paste', async (ev) => {
+      if (!controlId || !stageArmed) return;
+      ev.preventDefault();
+      const text = ev.clipboardData?.getData('text/plain') || '';
+      if (!text) return;
+      try {
+        await sendInput({ type: 'paste', text });
+        flash(`colado ${text.length} chars`, 'ok');
+      } catch (e) { flash(String(e.message || e), 'err'); }
+    });
+
+    $('tab-bar').addEventListener('click', async (ev) => {
+      const chip = ev.target.closest('.tab-chip');
+      if (!chip || !controlId) return;
+      const tid = chip.dataset.tid;
+      const closing = ev.target.closest('[data-close]');
       try {
         setBusy(true);
-        await api(`/api/cdps/${encodeURIComponent(controlId)}/view`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            quality: Number($('view-quality').value),
-            intervalMs: Number($('view-interval').value),
-          }),
-        });
-        await api(`/api/cdps/${encodeURIComponent(controlId)}/view/start`, { method: 'POST', body: '{}' });
-        flash('visão iniciada', 'ok');
+        if (closing) {
+          const out = await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs/${encodeURIComponent(tid)}`, {
+            method: 'DELETE',
+          });
+          activeTabId = out.activeTargetId || null;
+        } else {
+          await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs/${encodeURIComponent(tid)}/activate`, {
+            method: 'POST',
+            body: '{}',
+          });
+          activeTabId = tid;
+        }
+        await loadTabs();
         startViewPoll();
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
     });
-    $('view-stop').addEventListener('click', async () => {
+
+    async function navigateActive(url) {
+      if (!controlId || !url) return;
+      if (!activeTabId) {
+        const created = await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs`, {
+          method: 'POST',
+          body: JSON.stringify({ url }),
+        });
+        activeTabId = created.activeTargetId || created.tab?.id || null;
+      } else {
+        await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs/${encodeURIComponent(activeTabId)}/navigate`, {
+          method: 'POST',
+          body: JSON.stringify({ url }),
+        });
+      }
+      await loadTabs();
+      startViewPoll();
+    }
+
+    $('tab-go').addEventListener('click', async () => {
       try {
-        await api(`/api/cdps/${encodeURIComponent(controlId)}/view/stop`, { method: 'POST', body: '{}' });
-        stopViewPoll();
-        flash('visão parada', 'ok');
+        setBusy(true);
+        await navigateActive($('tab-url').value.trim());
+        flash('navegou', 'ok');
       } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
     });
+    $('tab-url').addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        $('tab-go').click();
+      }
+    });
+    $('tab-new').addEventListener('click', async () => {
+      try {
+        setBusy(true);
+        const url = $('tab-url').value.trim() || 'about:blank';
+        const out = await api(`/api/cdps/${encodeURIComponent(controlId)}/tabs`, {
+          method: 'POST',
+          body: JSON.stringify({ url }),
+        });
+        activeTabId = out.activeTargetId || out.tab?.id || null;
+        await loadTabs();
+        startViewPoll();
+        flash('nova aba', 'ok');
+      } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
+    });
+
     $('view-save-cfg').addEventListener('click', async () => {
       try {
         await api(`/api/cdps/${encodeURIComponent(controlId)}/view`, {
@@ -937,27 +1221,25 @@
             intervalMs: Number($('view-interval').value),
           }),
         });
+        startViewPoll();
         flash('config de print salva', 'ok');
-      } catch (e) { flash(String(e.message || e), 'err'); }
-    });
-    $('type-send').addEventListener('click', async () => {
-      try {
-        await api(`/api/cdps/${encodeURIComponent(controlId)}/input`, {
-          method: 'POST',
-          body: JSON.stringify({ type: 'key', text: $('type-text').value }),
-        });
-        flash('texto enviado', 'ok');
       } catch (e) { flash(String(e.message || e), 'err'); }
     });
     $('control-close').addEventListener('click', () => {
       stopViewPoll();
+      stageArmed = false;
       $('control').close();
       controlId = null;
+      activeTabId = null;
     });
 
     $('create').addEventListener('click', () => openCreate().catch((e) => flash(String(e.message || e), 'err')));
     $('cancel').addEventListener('click', () => $('editor').close());
-    $('refresh').addEventListener('click', () => loadList().catch((e) => flash(String(e.message || e), 'err')));
+    $('refresh').addEventListener('click', () => {
+      loadList()
+        .then(() => { if (currentPage === 'telas') return startWall(); })
+        .catch((e) => flash(String(e.message || e), 'err'));
+    });
 
     loadList().catch((e) => flash(String(e.message || e), 'err'));
     setInterval(() => {

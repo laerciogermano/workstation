@@ -28,7 +28,7 @@ const loops = new Map();
 
 const DEFAULT_CONFIG = {
   quality: 15,
-  intervalMs: 1000,
+  intervalMs: 100,
   format: 'jpeg',
   maxKeep: 40,
   scale: 0.35,
@@ -68,7 +68,7 @@ function writeConfig(id, cfg) {
   mkdirSync(viewDir(id), { recursive: true });
   const next = {
     quality: clampInt(cfg.quality, 1, 100, DEFAULT_CONFIG.quality),
-    intervalMs: clampInt(cfg.intervalMs, 250, 10000, DEFAULT_CONFIG.intervalMs),
+    intervalMs: clampInt(cfg.intervalMs, 100, 10000, DEFAULT_CONFIG.intervalMs),
     format: 'jpeg',
     maxKeep: clampInt(cfg.maxKeep, 1, 200, DEFAULT_CONFIG.maxKeep),
     scale: clampFloat(cfg.scale, 0.1, 1, DEFAULT_CONFIG.scale),
@@ -94,11 +94,13 @@ export function viewRoot() {
 }
 
 export function getViewConfig(cdpId) {
+  const loop = loops.get(cdpId);
   return {
     cdpId,
     path: viewDir(cdpId),
     config: readConfig(cdpId),
     running: loops.has(cdpId),
+    targetId: loop?.targetId || null,
     latest: existsSync(latestPath(cdpId)) ? latestPath(cdpId) : null,
     latestMeta: existsSync(metaPath(cdpId))
       ? JSON.parse(readFileSync(metaPath(cdpId), 'utf8'))
@@ -180,23 +182,34 @@ async function takeFrame(cdpId) {
   return meta;
 }
 
-export async function startView(cdpId) {
+export async function startView(cdpId, { targetId } = {}) {
   const row = getCdp(cdpId);
   if (!row) throw new Error(`cdp não encontrado: ${cdpId}`);
   if (row.status !== 'up' || row.port == null || !isPortListening(row.port)) {
     throw new Error(`CDP ${cdpId} precisa estar up para visão`);
   }
   if (loops.has(cdpId)) {
-    return getViewConfig(cdpId);
+    const cur = loops.get(cdpId);
+    if (!targetId || cur?.targetId === targetId) {
+      return getViewConfig(cdpId);
+    }
+    stopView(cdpId);
   }
 
   writeConfig(cdpId, readConfig(cdpId));
   const session = await connect({
     cdpUrl: row.cdpUrl,
     chromeApp: 'Google Chrome',
+    targetId: targetId || undefined,
   });
 
-  const entry = { timer: null, session, running: true, viewport: null };
+  const entry = {
+    timer: null,
+    session,
+    running: true,
+    viewport: null,
+    targetId: targetId || session._targetId || null,
+  };
   loops.set(cdpId, entry);
 
   const tick = async () => {
@@ -231,6 +244,13 @@ export function stopView(cdpId) {
   }
   loops.delete(cdpId);
   return getViewConfig(cdpId);
+}
+
+/** Troca a aba fotografada (reinicia o loop na target). */
+export async function setViewTarget(cdpId, targetId) {
+  if (!targetId) throw new Error('targetId obrigatório');
+  stopView(cdpId);
+  return startView(cdpId, { targetId });
 }
 
 export function readLatestFrame(cdpId) {

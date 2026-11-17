@@ -9,3 +9,4 @@
 | 005 | 2026-11-17 | Galeria + ordem por criação | [005-2026-11-17-galeria-midias-ordem.md](005-2026-11-17-galeria-midias-ordem.md) | Galeria de vídeos; select por CDP; listas mais recente primeiro. |
 | 006 | 2026-11-17 | Snapshot + file picker | [006-2026-11-17-snapshot-file-picker.md](006-2026-11-17-snapshot-file-picker.md) | Snapshot na criação/start; galeria com seletor de arquivo. |
 | 007 | 2026-11-17 | Snapshot baixar/importar | [007-2026-11-17-snapshot-baixar-importar.md](007-2026-11-17-snapshot-baixar-importar.md) | Baixar `.tar.gz` e Importar na UI de snapshots. |
+| 008 | 2026-11-17 | Controle auto + abas + teclado + mural | [008-2026-11-17-controle-auto-abas-teclado-mural.md](008-2026-11-17-controle-auto-abas-teclado-mural.md) | Visão auto 100 ms; abas/URL; teclado no espelho; página Telas ao vivo. |

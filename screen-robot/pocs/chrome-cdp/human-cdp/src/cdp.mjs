@@ -77,13 +77,34 @@ export async function getJson(cdpBase, path) {
   return res.json();
 }
 
+export async function listPages(cdpBase) {
+  const targets = await getJson(cdpBase, '/json/list');
+  return (targets || [])
+    .filter((t) => t.type === 'page')
+    .map((t) => ({
+      id: t.id || t.targetId,
+      targetId: t.id || t.targetId,
+      title: t.title || '',
+      url: t.url || '',
+      type: t.type,
+      webSocketDebuggerUrl: t.webSocketDebuggerUrl || null,
+    }));
+}
+
 export async function pickPage(
   cdpBase,
-  { urlIncludes, createIfMissing = true, url } = {},
+  { urlIncludes, targetId, createIfMissing = true, url } = {},
 ) {
   const pickOnce = async () => {
     const targets = await getJson(cdpBase, '/json/list');
     const pages = (targets || []).filter((t) => t.type === 'page');
+    if (targetId) {
+      const hit = pages.find(
+        (t) => t.id === targetId || t.targetId === targetId,
+      );
+      if (hit?.webSocketDebuggerUrl) return hit;
+      return null;
+    }
     if (urlIncludes) {
       const hit = pages.find((t) => String(t.url || '').includes(urlIncludes));
       if (hit?.webSocketDebuggerUrl) return hit;

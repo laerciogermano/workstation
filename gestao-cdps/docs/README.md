@@ -10,4 +10,4 @@
 
 ## Próximos passos
 
-→ Manter visão estável · em seguida PRD a partir da visão (CRUD, formulário, start/stop, controle por tela via human-cdp).
+→ Manter visão estável · em seguida PRD a partir da visão (lista + status, CRUD, formulário, start/stop, controle por tela via human-cdp).

@@ -1518,9 +1518,9 @@
         ]
       }
     ],
-    "description": "Interface gráfica sobre human-cdp: criar/editar/remover CDPs, executar/parar e controlar por tela (mouse e teclado) com reprodução humana no Chrome.",
-    "context": "CRUD e operação de CDPs hoje passam por código/CLI da lib human-cdp. Falta um console gráfico para gerir perfis (formulário de criação), start/stop e dirigir a sessão pela tela — com cada movimento, clique e dígito reproduzidos no CDP como humano.",
-    "objective": "Ser o console gráfico padrão de CDPs humanos: CRUD com formulário, executar/parar, e controle remoto por tela em que mouse e teclado são espelhados via human-cdp (foco + trajetória + ritmo).",
+    "description": "Interface gráfica sobre human-cdp: lista com status, criar/editar/remover, executar/parar e controlar por tela (mouse e teclado) com reprodução humana no Chrome.",
+    "context": "CRUD e operação de CDPs hoje passam por código/CLI da lib human-cdp. Falta um console gráfico com lista de CDPs e status (up/down), ações de criar/editar/remover, start/stop e controle da sessão pela tela — cada movimento, clique e dígito reproduzido no CDP como humano.",
+    "objective": "Ser o console gráfico padrão de CDPs humanos: lista com status, criar/editar/remover (formulário), executar/parar, e controle remoto por tela espelhado via human-cdp (foco + trajetória + ritmo).",
     "sections": [
       {
         "id": "visao",

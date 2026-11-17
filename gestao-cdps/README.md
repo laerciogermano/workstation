@@ -15,14 +15,15 @@ Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 
 ## Visão
 
-A **Gestão de CDPs** é o app com **interface gráfica** para **criar, editar, remover, executar e parar** CDPs, e **controlar cada sessão pela tela**: movimento do mouse, cliques e digitação na UI são **reproduzidos no Chrome via CDP** com comportamento **humano** (trajetória, ritmo, foco) através da lib **human-cdp**.
+A **Gestão de CDPs** é o app com **interface gráfica** centrada numa **lista de CDPs com status**, com ações de **criar, editar e remover**, além de **executar / parar** e **controlar cada sessão pela tela**: movimento do mouse, cliques e digitação na UI são **reproduzidos no Chrome via CDP** com comportamento **humano** (trajetória, ritmo, foco) através da lib **human-cdp**.
 
 ## Problema
 
-Hoje o CRUD e a operação de CDPs passam por código/CLI (`createCdp`, `connectCdp`, `stopCdp`, scripts). Não há um painel único para gerir perfis e **dirigir** a sessão com o mouse e o teclado, com a garantia de que cada gesto vira input humano no browser.
+Hoje o CRUD e a operação de CDPs passam por código/CLI (`createCdp`, `connectCdp`, `stopCdp`, scripts). Não há um painel único com **lista + status** para gerir perfis e **dirigir** a sessão com o mouse e o teclado, com a garantia de que cada gesto vira input humano no browser.
 
 | Dor | O que acontece hoje |
 |-----|---------------------|
+| **Sem lista visual** | Não dá para ver de uma vez quais CDPs existem e se estão up/down. |
 | **CRUD sem UI** | Criar/editar/remover CDP exige script ou API da lib. |
 | **Formulário espalhado** | Dados de criação (nome, porta, URL, fingerprint…) sem formulário único. |
 | **Start/stop manual** | Subir e parar Chrome/CDP fora de um console visual. |
@@ -35,21 +36,22 @@ Já existe a lib **human-cdp**. Falta o **produto de gestão + telemetria de inp
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Operador** | Quem sobe e usa CDPs no dia a dia | Criar/editar/ligar/desligar e controlar a sessão pela tela |
-| **Operação lab** | Quem mantém perfis Chrome / portas | Ver lista, status up/down, dados do formulário, remover com segurança |
+| **Operador** | Quem sobe e usa CDPs no dia a dia | Ver a **lista com status**, criar/editar/remover, ligar/desligar e controlar pela tela |
+| **Operação lab** | Quem mantém perfis Chrome / portas | Lista clara up/down, dados do formulário, remover com segurança |
 | **Desenvolvedor de automações** | Quem hoje chama a lib no código | Preferir a UI para gestão e inspeção; scripts só quando necessário |
 
 ## Objetivo
 
-Ser o **console gráfico padrão** de CDPs humanos no lab: **CRUD** com formulário de criação, **executar / parar**, e **controle remoto por tela** em que **todo** movimento de mouse, clique e dígito é espelhado no CDP via **human-cdp**.
+Ser o **console gráfico padrão** de CDPs humanos no lab: **lista com status**, **criar / editar / remover** (formulário de criação), **executar / parar**, e **controle remoto por tela** em que **todo** movimento de mouse, clique e dígito é espelhado no CDP via **human-cdp**.
 
 ## Proposta de valor
 
-O operador gerencia e **dirige** o Chrome pela UI; a lib garante que o gesto seja humano no destino — sem reinventar trajetória/foco em cada script.
+O operador vê a **lista**, o **status** de cada CDP e **dirige** o Chrome pela UI; a lib garante que o gesto seja humano no destino — sem reinventar trajetória/foco em cada script.
 
 | Necessidade | O que a Gestão de CDPs faz |
 |-------------|----------------------------|
-| Criar / editar / remover | Formulário com os **dados de criação** do CDP; lista e edição; remoção |
+| Ver todos os CDPs | **Lista** com identificação e **status** (ex.: up / down) |
+| Criar / editar / remover | Ações na lista + formulário com os **dados de criação** do CDP |
 | Executar / parar | Start e stop do CDP a partir da UI |
 | Ver a sessão | Tela (viewport / espelho) do browser ligado |
 | Controlar | Mouse move, clique e digitação na UI → reprodução no CDP |
@@ -57,7 +59,9 @@ O operador gerencia e **dirige** o Chrome pela UI; a lib garante que o gesto sej
 
 ### Exemplos
 
-**Novo CDP** — Operador preenche o formulário (nome, porta, URL padrão, fingerprint/obs…) e cria o perfil.
+**Lista com status** — A tela principal mostra os CDPs e se cada um está ligado ou parado; dali o operador cria, edita ou remove.
+
+**Novo CDP** — Operador preenche o formulário (nome, porta, URL padrão, fingerprint/obs…) e cria o perfil; ele entra na lista.
 
 **Ligar** — Clica executar; o Chrome sobe (ou reconecta) e a tela do CDP aparece na UI.
 
@@ -71,9 +75,10 @@ O operador gerencia e **dirige** o Chrome pela UI; a lib garante que o gesto sej
 
 1. **UI sobre a lib** — gestão e controle usam `human-cdp`; não reimplementar CDP cru na UI.
 2. **Todo gesto é humano** — move, clique e type **sempre** com trajetória/foco/ritmo; sem `el.click()` / press solto.
-3. **Formulário = contrato de criação** — os campos da UI refletem os dados reais de criação/edição do CDP.
-4. **Executar e parar explícitos** — start/stop são ações de primeira classe na tela.
-5. **Um CDP por vez no controle** — a sessão ativa sob telemetria de input é clara para o operador.
+3. **Lista + status primeiro** — a gestão começa pela lista de CDPs e pelo status de cada um; criar/editar/remover partem daí.
+4. **Formulário = contrato de criação** — os campos da UI refletem os dados reais de criação/edição do CDP.
+5. **Executar e parar explícitos** — start/stop são ações de primeira classe na tela.
+6. **Um CDP por vez no controle** — a sessão ativa sob telemetria de input é clara para o operador.
 
 ## Escopo da visão
 
@@ -81,7 +86,8 @@ O operador gerencia e **dirige** o Chrome pela UI; a lib garante que o gesto sej
 
 | Área | Em escopo |
 |------|-----------|
-| **CRUD** | Criar, listar, editar, remover CDPs |
+| **Lista** | Listar todos os CDPs com **status** (ex.: up / down) |
+| **CRUD** | Criar, editar e remover CDPs a partir da lista |
 | **Formulário** | Dados de criação do CDP (id/nome, porta, URL padrão, observações, fingerprint quando aplicável) |
 | **Lifecycle** | Executar (start/connect) e parar (stop) |
 | **Tela** | Visualizar a sessão ativa o suficiente para controlar |
@@ -102,6 +108,14 @@ O operador gerencia e **dirige** o Chrome pela UI; a lib garante que o gesto sej
 
 Perfil Chrome gerenciado pela lib (`~/chrome-profiles/<id>/` + meta `.human-cdp.json` + porta de debug).
 
+### Lista de CDPs
+
+Vista principal da gestão: cada linha/item é um CDP com **status** e ações (criar, editar, remover; executar/parar).
+
+### Status
+
+Estado operacional do CDP na lista (no mínimo **up** / **down**; alinhado ao que a lib consegue observar — porta/processo).
+
 ### Formulário de criação / edição
 
 Conjunto de campos que alimenta `createCdp` / `updateCdp` (nome, porta, defaultUrl, obs, fingerprint…).
@@ -120,7 +134,8 @@ Move, down/up (clique) ou tecla capturados na UI e reproduzidos no CDP.
 
 ## Critérios de sucesso (visão)
 
-- Dá para **criar, editar e remover** CDPs pela UI com o formulário de dados de criação.
+- A UI mostra uma **lista de CDPs com status**.
+- Dá para **criar, editar e remover** CDPs a partir dessa lista (formulário de dados de criação).
 - Dá para **executar e parar** um CDP pela UI.
 - Com a sessão ativa, **mover o mouse, clicar e digitar** na tela do app reproduz o gesto no Chrome via **human-cdp**.
 - Nenhum caminho de controle da UI usa clique/teleporte sem trajetória humana.
@@ -136,5 +151,5 @@ Move, down/up (clique) ou tecla capturados na UI e reproduzidos no CDP.
 ## Próximos passos
 
 1. Validar e refinar **este** documento de visão.
-2. [`docs/`](docs/README.md) → PRD / funcionalidades (formulário, lifecycle, superfície de controle).
+2. [`docs/`](docs/README.md) → PRD / funcionalidades (lista + status, formulário, lifecycle, superfície de controle).
 3. Discovery (épicos / stories) só depois da visão estável.

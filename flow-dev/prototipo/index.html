@@ -245,6 +245,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node.proj .t b { font-weight: 600; }
 .node.proj .meta { gap: 2px; }
 .flbl .fnm { color: var(--body); }
+/* linhas de entrada e saída de cada função */
+.gantt.flow .grow.iorow .nm { gap: 6px; font-size: 11px; }
+.gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; }
+.gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; }
+.gantt.flow .grow.iorow .io-d, .flbl.fio-n b { font: 500 10.5px var(--mono); color: var(--body); cursor: pointer; }
+.flbl.fio-n { gap: 8px; pointer-events: auto; }
+.flbl.fio-n b:hover, .gantt.flow .grow.iorow .io-d:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 .node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 .node.proj.cur .t b { color: var(--accent); }
 .node.proj .pj-b { width: 22px; height: 22px; opacity: .55; }
@@ -485,7 +492,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fav svg { width: 12px; height: 12px; }
 .fav.maquina { background: var(--t-maquina); border-color: var(--t-maquina); color: #fff; } /* concreta = cheia */
 .fav.pessoa { color: var(--t-pessoa); border-color: var(--t-pessoa); }
-.resp-pick { position: relative; display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.resp-pick { position: relative; display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
+.resp-pick select { position: absolute; inset: 0; opacity: 0; width: 100%; max-width: none; }
+.resp-pick .rp-n { font-size: 11px; color: var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .resp-pick select { appearance: none; -webkit-appearance: none; border: 1px dashed var(--line-2); background: var(--paper); border-radius: 6px; height: 24px; padding: 0 20px 0 7px; font-size: 11px; color: var(--muted); max-width: 96px; cursor: pointer;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: right 9px top 10px, right 5px top 10px; background-size: 4px 4px; background-repeat: no-repeat; }
 .resp-pick.on select { border-style: solid; color: var(--body); }
@@ -1650,7 +1659,7 @@ function ring(p, c, st) {
 function respPick(u) {
   const r = agent(u.resp);
   const opts = Object.keys(TYPES).map(t => `<optgroup label="${TYPES[t].n}">${CAT.filter(c => c.type === t).map(c => `<option value="${c.id}"${u.resp === c.id ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</optgroup>`).join("");
-  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}">${icon(TYPES[r.type].ic)}</span>` : `<span class="fav none">${icon("plus")}</span>`}<select data-resp="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Selecionar responsável (agente, biblioteca ou pessoa)"><option value=""${r ? "" : " selected"}>Selecionar…</option>${opts}</select></span>`;
+  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}">${icon(TYPES[r.type].ic)}</span>` : `<span class="fav none" title="Adicionar responsável">${icon("plus")}</span>`}${r ? `<span class="rp-n">${esc(r.name)}</span>` : ""}<select data-resp="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Selecionar responsável (agente, biblioteca ou pessoa)"><option value=""${r ? "" : " selected"}>Selecionar…</option>${opts}</select></span>`;
 }
 function avatar(id) {
   const a = agent(id);
@@ -1688,9 +1697,17 @@ function flow(s) {
   const structs = STRUCTS.map(st => ({ ...st, body: st.body.filter(id => rIdx[id] != null) })).filter(st => st.body.length);
   const headAt = {};
   structs.forEach(st => { st.i0 = Math.min(...st.body.map(id => rIdx[id])); (headAt[st.i0] = headAt[st.i0] || []).push(st); });
+  // cada função ocupa 3 linhas: entrada (dados que recebe) · task (barra) · saída (dados que produz)
+  const leaf = u => !isData(u) && !flowKids(u).length;
   const disp = [];
-  rows.forEach((r, i) => { (headAt[i] || []).forEach(st => disp.push({ st, d: r.d })); disp.push(r); });
-  const idx = {}; disp.forEach((r, i) => { if (r.u) idx[r.u.id] = i; else r.st.hi = i; });
+  rows.forEach((r, i) => {
+    (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
+    if (leaf(r.u) && (r.u.ins || []).length) disp.push({ io: "in", u: r.u, d: r.d });
+    disp.push(r);
+    if (leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
+  });
+  const idx = {}, idxIn = {}, idxOut = {};
+  disp.forEach((r, i) => { if (r.st) r.st.hi = i; else if (r.io === "in") idxIn[r.u.id] = i; else if (r.io === "out") idxOut[r.u.id] = i; else idx[r.u.id] = i; });
   const hasK = u => flowKids(u).length > 0;
   // camada = composição de topo (endereços que se conhecem). Dado de entrada produzido na mesma camada = concreto (□);
   // vindo de fora (context / outra camada) = abstrato (■). Função IA = abstrata (chega pelo context); lib Node = concreta (import).
@@ -1723,7 +1740,9 @@ function flow(s) {
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}<b>${esc(u.title)}</b></span>
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
-  const left = disp.map(r => r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
+  const ioNames = (r) => r.io === "in" ? (r.u.ins || []) : (r.u.outs || []).map(o => o[0]);
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : "saída"}</span>${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join("")}</span><span></span></div>`;
+  const left = disp.map(r => r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas externas; eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
@@ -1757,7 +1776,8 @@ function flow(s) {
     const ei = (layout[u.id] || { e: 0 }).e + 1;
     return `<div class="rr${s.sel === u.id ? " sel" : ""}"><div class="fbar ${k}${sel}${u.st === "fail" ? " fail" : ""}" data-act="drawer" data-id="${u.id}" style="--c:${c};left:${g.x1}px;width:${g.x2 - g.x1}px" title="${esc(u.title)} · ${kt}"></div><span class="flbl" style="left:${g.ox + 10}px"><span class="fnm">${esc(u.title)}</span>${flowTags(u)}</span></div>`;
   };
-  const bars = disp.map(r => r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
+  const ioBar = r => { const g = geo(r.u), x = r.io === "in" ? g.ix : g.ox; return `<div class="rr io${s.sel === r.u.id ? " sel" : ""}"><span class="flbl fio-n" style="left:${x + 9}px">${ioNames(r).map(n => `<b data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join("")}</span></div>`; };
+  const bars = disp.map(r => r.io ? ioBar(r) : r.st ? `<div class="rr"><span class="flbl" style="left:${geo(rows[r.st.i0].u).ix + 12}px"><span class="ftag if">if (${esc(r.st.test)})</span></span></div>` : barRow(r)).join("");
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
   const isFn = u => !isData(u) && !hasK(u);
@@ -1772,9 +1792,9 @@ function flow(s) {
   });
   if (!s.noDeps) {
     FD.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
-      const A = $u(a), B = $u(b), ga = geo(A), gb = geo(B), y1 = yMid(idx[a]), y2 = yMid(idx[b]);
+      const A = $u(a), B = $u(b), ga = geo(A), gb = geo(B), ra = idxOut[a] ?? idx[a], rb = idxIn[b] ?? idx[b], y1 = yMid(ra), y2 = yMid(rb);
       const dir = y2 > y1 ? 1 : -1, r1 = ga.data ? 8 : hasK(A) ? 5 : 4, r2 = gb.data ? 8 : hasK(B) ? 5 : 4;
-      const yB = dir > 0 ? yTop(idx[b]) : yTop(idx[b]) + RH;
+      const yB = dir > 0 ? yTop(rb) : yTop(rb) + RH;
       const d = ga.ox === gb.ix ? `M${ga.ox} ${y1 + dir * r1} V${y2 - dir * r2}` : `M${ga.ox} ${y1 + dir * r1} V${yB} H${gb.ix} V${y2 - dir * r2}`;
       svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}"/>`;
     });
@@ -1784,19 +1804,21 @@ function flow(s) {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const allAbs = (u.ins || []).length && (u.ins || []).every(n => absData(u, n));
-    if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
-    if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(u.ins[0])}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(u.ins.join(", "))} · entrada</title></rect>`; }
+    else if (dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${allAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${allAbs ? "entrada abstrata (context)" : "entrada concreta (mesma camada)"}</title></rect>`;
+    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(u.outs[0][0])}" x="${g.ox - 4}" y="${yo - 4}" width="8" height="8"><title>${esc(u.outs.map(o => o[0]).join(", "))} · saída</title></rect>`; }
+    else if (srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {
-    const i1 = Math.max(...st.body.map(id => idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
+    const i1 = Math.max(...st.body.map(id => idxOut[id] ?? idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
     st.x = x;
     svg += `<path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
     return `<div class="fband" style="top:${yTop(st.hi)}px;height:${(i1 - st.hi + 1) * RH}px"></div>`;
   }).join("");
   if (!s.noDeps) rows.forEach(({ u }) => {
     if (!u.cond || idx[u.cond[1]] == null) return;
-    const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === idx[u.id] + 1), ybk = yTop(idx[u.cond[1]]) + 27;
+    const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === (idxOut[u.id] ?? idx[u.id]) + 1), ybk = yTop(idx[u.cond[1]]) + 27;
     const yb = st ? yMid(st.hi) : yTop(idx[u.id]) + RH, xs = st ? st.x - 6 : g.ox - 5;
     svg += `<path class="fback" d="M${xs} ${yb} H${back.ox - 7} V${ybk + 2}" marker-end="url(#fahb)"><title>senão (!${esc(u.cond[0])}) → volta a ${esc($u(u.cond[1]).title)}</title></path>`;
     svg += `<text class="ftxt" x="${back.ox - 3}" y="${yb + 12}">senão ↺</text>`;
@@ -1808,7 +1830,7 @@ function flow(s) {
   const nAbs = new Set(fnAll.filter(u => fnKind(u) === "abs").map(u => u.agent)).size + new Set(fnAll.flatMap(u => (u.ins || []).filter(n => absData(u, n)))).size;
   const nConc = new Set(fnAll.filter(u => fnKind(u) === "conc").map(u => u.agent)).size + prodSetPre.size;
   // embaixo: todos os dados de cada estado (acumulado) ou só os novos daquele eN
-  const stShow = s.dadosNovos ? stNew : stBag;
+  const stShow = s.dadosTodos ? stBag : stNew; // padrão: só os novos
   const FOOT = 48 + Math.max(0, ...stShow.map(d => d.length)) * 14;
   const worldW = LW + CW, worldH = 52 + Math.max(H, RH) + FOOT;
   const toolbar = zoomToolbar("flow", "Flow", "workflow");
@@ -1829,7 +1851,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="dados-modo" data-m="todos" aria-current="${!s.dadosNovos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!!s.dadosNovos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -2719,7 +2741,7 @@ const ACT = {
   "proj-sel": t => { const p = t.dataset.plan, id = "pjx:" + p; if (cur.plan !== p) { cur.plan = p; OPEN.delete(id); unset("drawer", "mach"); cur.sel = null; if (cur.v !== "flow") view("flow"); } else OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   noop: () => false,
   "reveal-dado": t => { revealDado(t.dataset.n); },
-  "dados-modo": t => { cur.dadosNovos = t.dataset.m === "novos"; },
+  "dados-modo": t => { cur.dadosTodos = t.dataset.m === "todos"; },
   "ag-cfg": t => { unset("drawer", "mdCfg", "mach"); cur.agCfg = cur.agCfg === t.dataset.id ? null : t.dataset.id; },
   "md-cfg": t => { unset("drawer", "agCfg", "mach"); cur.mdCfg = cur.mdCfg === t.dataset.id ? null : t.dataset.id; },
   "cfg-close": () => { unset("agCfg", "mdCfg"); },

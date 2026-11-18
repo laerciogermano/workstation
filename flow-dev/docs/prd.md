@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.4 |
+| Versão | 1.5 |
 
 ## IDR — identificador único
 
@@ -94,3 +94,12 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 | ←/↑ paralelo juntava só u ao grupo do irmão | une os dois grupos de paralelo (ninguém perde o par ao sair) |
 
 **Voltar:** em `fnKeyMove` ↓, testar `parLeft`/`unParallel` antes de `seqRight`→`child`.
+
+## Estados `sN` e marcas de dado
+
+| Antes | Depois |
+|---|---|
+| Eixo rotulado `e0…eN` (estado) | `s0…sN` (*state*) |
+| Todo dado sob o eixo = □ | Folha = □ · árvore (`dKids`) = cubo |
+
+**Voltar:** rótulos `e${i}` no SVG do Flow; `fdMark` só com `<rect>`.

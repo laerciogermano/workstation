@@ -99,7 +99,7 @@ Uma instrução pode ter **instruções filhas**. Assim surge a **composição**
 | **Composição** | função com funções filhas; o tempo dela vai do primeiro ao último filho | `○` com filhos |
 | **Dado** | substantivo em `snake_case`; tem **tipo**; pode ter **campos filhos** (`dados_cliente.contatos.email`) | `□` sólido · `■` abstrato |
 | **Entrada / saída** | endereço nomeado; uma função tem *n* entradas e *n* saídas | `in` / `out` |
-| **Estado `eN`** | divisória entre passos; o que existe no `e3` é o acúmulo dos dados até ali | `e0 … eN` |
+| **Estado `sN`** | divisória entre passos; o que existe no `s3` é o acúmulo dos dados até ali | `s0 … sN` |
 | **Responsável** | quem executa: agente de IA, biblioteca, **script próprio** ou pessoa | avatar |
 | **Módulo** | arquivo que guarda **dados e funções** que mudam juntos | `*.layer.js` · `*.data.js` |
 | **state** | o que chega de fora da camada (dados e agentes abstratos) | `function f(state)` |
@@ -136,7 +136,7 @@ Se a raiz está sólida, o roteiro pode executar. Se está preta, basta seguir o
 | Estrutura | No fluxo | Leitura |
 |-----------|----------|---------|
 | Sequência | `a → b` | b começa quando a termina |
-| Paralelo | `a ∥ b` | mesmo passo `eN` |
+| Paralelo | `a ∥ b` | mesmo passo `sN` |
 | Seleção | `◇ if (proposta_aprovada)` | o corpo só roda se o teste passar; `senão ↺` volta ao passo indicado |
 | Repetição | `↻ for (idioma of ["en", "es"])` | a função roda uma vez por item |
 
@@ -350,8 +350,8 @@ do {
 | Nome = verbo | renomear (F2) ou criar | o nome é recusado se não começar com verbo (Comprar…, Enviar…, Fazer…) |
 | Dado | **Explorar › Dados** | clique abre o painel: **Tipo**, **Valor** e **Módulo** |
 | Dado em árvore | caret ▸ no dado · `+` no hover · “+ Campo” no painel | campo filho = `pai.campo`; o pai fica sólido quando todos os campos têm valor |
-| Sólido × abstrato | `□` e `■` no Flow (e0…eN) e cubos no Explorar | clique no `■` → definir valor → vira `□` e vai para o módulo |
-| Estados `eN` | eixo do Flow | os dados de cada passo ficam embaixo da divisória |
+| Sólido × abstrato | `□` e `■` no Flow (s0…sN) e cubos no Explorar | clique no `■` → definir valor → vira `□` e vai para o módulo |
+| Estados `sN` | eixo do Flow | sob cada sN: folha = □, árvore (com filhos) = cubo |
 | Responsável | coluna **Responsável** do Flow | select: **Scripts (meus módulos)**, Bibliotecas Node.js, Agentes, Pessoas |
 | Script próprio | **Explorar › Módulos** (`ƒ nome()`) | uma função escrita por você que pode ser responsável de qualquer etapa |
 | Módulo | **Explorar › Módulos** | guarda **dados e funções** que mudam juntos (antes chamado “Arquivos”) |

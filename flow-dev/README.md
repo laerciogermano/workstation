@@ -48,9 +48,9 @@ Ser o **Flow IDE**: Explorar + Flow, agentes **IA** e **bibliotecas Node.js** (v
 
 | Conceito (documento FOP) | No Flow |
 |---|---|
-| Estado (e0, e1, e2…) | divisórias do eixo, rotuladas no cabeçalho |
-| Função (mudança de estado) | barra de eN a eN+1, com passos e % feito |
-| Dado (unidade de informação) | □ sobre a divisória (entrada/saída) · ao final de cada função, chips com o **bag acumulado** do estado de saída (eN) · sob cada eN no rodapé, a mesma lista acumulada |
+| Estado (s0, s1, s2…) | divisórias do eixo, rotuladas no cabeçalho |
+| Função (mudança de estado) | barra de sN a sN+1, com passos e % feito |
+| Dado (unidade de informação) | □/cubo sobre e sob a divisória (folha = □, árvore com filhos = cubo) · chips com o **bag acumulado** do estado de saída (sN) |
 | n entradas / n saídas | detalhe da etapa + assinatura `function f(state)` |
 | Sequência | conector (botão **Sequência** liga/desliga) |
 | Paralelo | tag `∥ paralelo` · `Promise.all` no export |

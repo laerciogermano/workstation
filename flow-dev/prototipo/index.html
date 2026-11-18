@@ -1546,7 +1546,7 @@ function explorer(s) {
       const sel = (s.sel === u.id || (s.multi || []).includes(u.id)) ? " sel" : "";
       const fa = agent(u.agent), fabs = !isFolder(u) && !kids(u.id).length && fa?.type === "ia", ffull = !isFolder(u) && !kids(u.id).length && fa?.type === "maquina";
       const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : fnIcon(u);
-      const tools = isData(u) || isFolder(u) || (s.ren === u.id && s.fresh !== u.id) ? "" : `<span class="ex-tools"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Novo (filho)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Novo irmão">${icon("between-horizontal-end")}</button></span>`;
+      const tools = isData(u) || isFolder(u) || (s.ren === u.id && s.fresh !== u.id) ? "" : `<span class="ex-tools"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button></span>`;
       const a = agent(u.agent);
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
       const body = s.ren === u.id && s.fresh !== u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
@@ -2096,7 +2096,7 @@ function flow(s) {
     const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="fsel" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
-      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Novo · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Novo irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button></span>`}
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
@@ -2229,7 +2229,7 @@ function flow(s) {
           // comparar renderizadores: SVG direto · HTML (div/span) · Canvas (2D) — os dois últimos são convertidos do mesmo desenho
           // opção B: ações flutuando logo acima da barra (task) selecionada — comparar com a barra da coluna Nome (opção A)
           const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30;
-            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><span class="bt-n">${esc(u.title)}</span><i class="sep"></i><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}<span>Editar</span></button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Novo · elemento filho (Tab)">${icon("plus")}<span>Novo</span></button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Novo irmão · abaixo (Enter)">${icon("between-horizontal-end")}<span>Irmão</span></button></div>`; };
+            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><span class="bt-n">${esc(u.title)}</span><i class="sep"></i><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}<span>Editar</span></button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}<span>Filho</span></button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter)">${icon("between-horizontal-end")}<span>Irmão</span></button></div>`; };
           // aparece no hover da task (como a Árvore do Plans) e fica na selecionada
           const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) && s.ren !== r.u.id ? toolOf(r.u, i) : "").join("");
           return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools;
@@ -3310,7 +3310,7 @@ const ACT = {
   // dado no Flow (□ ■ e nomes): abre o painel para definir valor; abstrato com valor vira concreto e vai para um arquivo
   "reveal-dado": t => { const n = t.dataset.n; if (!n) return false; revealDado(n); unset("drawer", "agCfg", "mdCfg", "mach"); cur.dadoEdit = n; cur.estado = n; },
   "sec-toggle": t => { const k = t.dataset.sec; SEC_CLOSED.has(k) ? SEC_CLOSED.delete(k) : SEC_CLOSED.add(k); },
-  // clique no elemento do Flow: só seleciona e mostra as ações (Editar · Novo · Novo irmão); o painel abre em Editar
+  // clique no elemento do Flow: só seleciona e mostra as ações (Editar · Filho · Irmão); o painel abre em Editar
   fsel: t => { const id = t.dataset.id; unset("drawer", "dadoEdit", "agCfg", "mdCfg"); cur.sel = id; },
   "dado-kid": t => { const n = t.dataset.n; unset("drawer", "agCfg", "mdCfg"); cur.dadoEdit = n; cur.estado = n; OPEN.add("dt:" + n); cur.focusKid = true; },
   "fn-child": t => { addFnEl(t.dataset.id || cur.sel, "child"); },

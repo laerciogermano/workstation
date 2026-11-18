@@ -2023,7 +2023,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd> paralelo / pai <kbd>↑</kbd> paralelo · troca · pai <kbd>→</kbd> sequência <kbd>↓</kbd> troca / seq. direita</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd> paralelo / pai <kbd>↑</kbd> paralelo · troca · pai <kbd>→</kbd> sequência <kbd>↓</kbd> troca / 1º filho / seq.</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias eN

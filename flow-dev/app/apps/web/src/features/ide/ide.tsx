@@ -8,6 +8,7 @@ export type View = "flow" | "catalog";
 export interface Ui {
   v: View; plan: string | null; flowRoot: string | null; sel: string | null; multi: string[];
   drawer: string | null; picker: boolean; dadoEdit: string | null; agCfg: string | null; mdCfg: string | null; mach: string | null; console: ConsoleLine[] | null;
+  termOpen: boolean; termLines: ConsoleLine[];
   exp: boolean; expTab: "ir" | "js" | "ts" | "py"; ctx: { id: string | null; x: number; y: number } | null; confirm: string[] | null;
   q: string | null; ren: string | null; fresh: string | null; renLy: string | null; renCat: string | null; edgeMenu: { a: string; b: string; x: number; y: number } | null;
   ctxPanel: boolean; compacto: boolean; txtIn: boolean; dadosTodos: boolean; noDeps: boolean; catTab: "ia" | "pessoa" | "maquina" | "script"; catBlock: string | null; estado: string | null;
@@ -15,6 +16,7 @@ export interface Ui {
 }
 const initial = (): Ui => ({
   v: "flow", plan: null, flowRoot: null, sel: null, multi: [], drawer: null, picker: false, dadoEdit: null, agCfg: null, mdCfg: null, mach: null, console: null,
+  termOpen: false, termLines: [],
   exp: false, expTab: "js", ctx: null, confirm: null, q: null, ren: null, fresh: null, renLy: null, renCat: null, edgeMenu: null,
   ctxPanel: false, compacto: false, txtIn: false, dadosTodos: false, noDeps: false, catTab: "ia", catBlock: null, estado: null,
   open: new Set(), flowClosed: new Set(), secClosed: new Set(), clip: null, focusQ: false, flash: null,
@@ -38,6 +40,7 @@ export interface Ide {
   saveDado: (name: string, v: { type?: string; value?: string | null; moduleFile?: string }) => Promise<void>; addKid: (parent: string, name: string) => Promise<void>; toggleCube: (name: string) => Promise<void>; newDado: () => Promise<void>;
   // execução e exportação
   runPlan: () => Promise<void>; complete: (id: string) => Promise<void>; cancelRun: () => Promise<void>; retry: (id: string) => Promise<void>; runMachine: (id: string, code: string) => Promise<void>; openExport: (tab?: Ui["expTab"]) => void;
+  termLog: (lines: ConsoleLine | ConsoleLine[]) => void; clearTerm: () => void; toggleTerm: () => void;
 }
 const IdeCtx = createContext<Ide | null>(null);
 export const useIde = (): Ide => { const v = useContext(IdeCtx); if (!v) throw new Error("useIde fora do provider"); return v; };
@@ -171,12 +174,36 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
     const r = await call(() => api.post<{ name: string; hostId: string }>(pid, `/plans/${plan}/new-dado`));
     if (r) { set({ dadoEdit: r.name, estado: r.name, sel: r.hostId, drawer: null }); toast(`Dado “${r.name}” — defina o valor para ficar concreto`, "box"); }
   };
+  const termLog: Ide["termLog"] = lines => {
+    const arr = Array.isArray(lines) ? lines : [lines];
+    patch(u => ({ termOpen: true, termLines: [...u.termLines, ...arr] }));
+    requestAnimationFrame(() => { const b = document.querySelector("[data-term]"); if (b) b.scrollTop = b.scrollHeight; });
+  };
+  const clearTerm: Ide["clearTerm"] = () => set({ termLines: [] });
+  const toggleTerm: Ide["toggleTerm"] = () => patch(u => ({ termOpen: !u.termOpen }));
   const runPlan: Ide["runPlan"] = async () => {
     const plan = sRef.current.plan; if (!plan) return;
-    // Executar vale para tudo: Node executa lib, IA executa agente, pessoa fica aguardando
-    const ids = m.ganttRows(plan).map(r => r.u).filter(u => !m.isData(u) && !m.flowKids(u).length && (!u.status || u.status === "pendente" || u.status === "wait")).map(u => u.id);
-    if (!ids.length) { toast("Nada a executar. Falhas só voltam com “Tentar de novo”.", "info"); return; }
-    try { const r = await api.run(pid, plan); apply(r.snapshot); setRunIds(ids); toast(`Executando ${r.started} etapa${r.started === 1 ? "" : "s"}`, "play"); } catch (e) { fail(e); }
+    // Executar vale para tudo: Node executa lib (logs no Terminal), IA/pessoa via runner do plano
+    const leaves = m.ganttRows(plan).map(r => r.u).filter(u => !m.isData(u) && !m.flowKids(u).length && (!u.status || u.status === "pendente" || u.status === "wait"));
+    if (!leaves.length) { toast("Nada a executar. Falhas só voltam com “Tentar de novo”.", "info"); return; }
+    const machines = leaves.filter(u => ["maquina", "script"].includes(m.agent(u.agentId)?.kind ?? ""));
+    const others = leaves.filter(u => !machines.includes(u));
+    try {
+      termLog({ kind: "cmd", text: `$ flow run --plano ${m.plans.find(p => p.id === plan)?.name ?? plan}` });
+      let lastSnap = null as import("@flow/shared").Snapshot | null;
+      for (const u of machines) {
+        const r = await api.runMachine(pid, u.id, u.code ?? `console.log("olá");`);
+        termLog(r.lines);
+        set({ console: r.lines, termOpen: true });
+        if (r.snapshot) lastSnap = r.snapshot;
+      }
+      if (lastSnap) apply(lastSnap);
+      if (others.length) {
+        const r = await api.run(pid, plan); apply(r.snapshot); setRunIds(others.map(u => u.id));
+        others.forEach(u => termLog({ kind: "dim", text: `▶ ${u.title}: na fila (${m.agent(u.agentId)?.kind ?? "—"})` }));
+      }
+      toast(`Executando ${leaves.length} etapa${leaves.length === 1 ? "" : "s"}`, "play");
+    } catch (e) { fail(e); }
   };
   const complete: Ide["complete"] = async id => {
     try { const r = await api.complete(pid, id); apply(r.snapshot); setRunIds(m.ganttRows(sRef.current.plan!).map(x => x.u.id)); toast(`${U(id)?.title}: concluída pela pessoa`, "check"); } catch (e) { fail(e); }
@@ -185,7 +212,12 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
   const retry: Ide["retry"] = async id => { try { const r = await api.retry(pid, id); apply(r.snapshot); setRunIds([id]); toast(`Tentando de novo: ${U(id)?.title}`, "rotate-ccw"); } catch (e) { fail(e); } };
   const runMachine: Ide["runMachine"] = async (id, code) => {
     set({ console: [] });
-    try { const r = await api.runMachine(pid, id, code); set({ console: r.lines }); } catch (e) { fail(e); }
+    try {
+      const r = await api.runMachine(pid, id, code);
+      termLog(r.lines);
+      set({ console: r.lines, termOpen: true });
+      if (r.snapshot) apply(r.snapshot);
+    } catch (e) { fail(e); }
   };
   const openExport: Ide["openExport"] = tab => {
     set({ exp: true, expTab: tab ?? sRef.current.expTab });
@@ -196,6 +228,7 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
   const ide: Ide = {
     pid, m, s, set, patch, toast, exportData, call, select, openDrawer, closePanels, revealDado, editDado, setFlowRootFrom, openFlowView, activeFlowRoot, toggleOpen, toggleFlowClosed,
     addFn, newFlow, renameCommit, renameCancel, askRemove, confirmRemove, patchEl, assign, dup, paste, move, saveDado, addKid, toggleCube, newDado, runPlan, complete, cancelRun, retry, runMachine, openExport,
+    termLog, clearTerm, toggleTerm,
   };
   return <IdeCtx.Provider value={{ ...ide, exportData }}>{children}<ExportLoader ide={ide} setData={setExportData} /></IdeCtx.Provider>;
 }

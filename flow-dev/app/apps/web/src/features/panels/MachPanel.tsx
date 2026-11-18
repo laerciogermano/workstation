@@ -3,7 +3,7 @@ import { Icon } from "../../ui/Icon";
 import { AgChip } from "../../ui/parts";
 import { useIde } from "../ide/ide";
 
-const LIBS = ["node:fs", "node:http", "node:path", "node:crypto", "node:stream"];
+const LIBS = ["node:fs", "node:http", "node:path", "node:crypto", "node:stream", "node:console"];
 
 export function MachPanel() {
   const ide = useIde();

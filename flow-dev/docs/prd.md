@@ -186,3 +186,13 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Agentes sem `tasks` no banco | Migration `004_agent_tasks` + seed |
 
 **Voltar:** dropar coluna `tasks`; reverter FlowView/Drawer/CSS; migration down.
+
+## App React · Terminal + Hello World
+
+| Antes | Depois |
+|---|---|
+| Logs só no `MachPanel` | Ícone Terminal na toolbar + painel `TermPanel` no rodapé |
+| Projeto em branco sem console | Plano **Hello World** · `node:console` · task `log` · `console.log("Hello, World!")` |
+| `run-machine` só devolvia lines | Também grava status/ok + snapshot; `runPlan` manda libs para o Terminal |
+
+**Voltar:** remover `TermPanel`/`termOpen`/`termLines`; projeto em branco sem plano Hello; `run-machine` só `{ lines }`.

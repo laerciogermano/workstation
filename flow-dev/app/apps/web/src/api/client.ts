@@ -43,6 +43,6 @@ export const api = {
   cancel: (p: string, plan: string) => req<{ cancelled: number; snapshot: Snapshot }>("POST", `/projects/${p}/plans/${plan}/cancel`, {}),
   retry: (p: string, el: string) => req<{ snapshot: Snapshot }>("POST", `/projects/${p}/elements/${el}/retry`, {}),
   complete: (p: string, el: string) => req<{ snapshot: Snapshot }>("POST", `/projects/${p}/elements/${el}/complete`, {}),
-  runMachine: (p: string, el: string, code: string) => req<{ lines: ConsoleLine[] }>("POST", `/projects/${p}/elements/${el}/run-machine`, { code }),
+  runMachine: (p: string, el: string, code: string) => req<{ lines: ConsoleLine[]; snapshot?: import("@flow/shared").Snapshot }>("POST", `/projects/${p}/elements/${el}/run-machine`, { code }),
   exportPlan: (p: string, plan: string, format: string) => req<ExportResult>("GET", `/projects/${p}/plans/${plan}/export?format=${format}`),
 };

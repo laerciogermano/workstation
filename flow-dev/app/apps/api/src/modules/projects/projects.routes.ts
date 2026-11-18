@@ -43,9 +43,26 @@ projectsRouter.post("/", ah(async (req, res) => {
     const p = (await db.query("insert into flow.projects (owner_id, name) values ($1,$2) returning id", [user._id, b.name])).rows[0].id as number;
     const plan = (await db.query("insert into flow.plans (project_id, name) values ($1,'Plano principal') returning id", [p])).rows[0].id;
     const m = (await db.query("insert into flow.models (project_id, name, api_id, vendor, color) values ($1,'Claude Sonnet 5.5','claude-sonnet-5-5','Anthropic','#D97757') returning id", [p])).rows[0].id;
-    for (const [k, n, s] of [["maquina", "node:http", "Node.js · requisições HTTP"], ["maquina", "node:fs", "Node.js · sistema de arquivos"], ["maquina", "node:path", "Node.js · caminhos"], ["maquina", "node:crypto", "Node.js · crypto"], ["maquina", "node:stream", "Node.js · streams"]] as const)
-      await db.query("insert into flow.agents (project_id, kind, name, sub) values ($1,$2,$3,$4)", [p, k, n, s]);
+    for (const [k, n, s, tasks] of [
+      ["maquina", "node:http", "Node.js · requisições HTTP", ["get", "post", "request", "createServer", "put", "patch", "delete", "head"]],
+      ["maquina", "node:fs", "Node.js · sistema de arquivos", ["readFile", "writeFile", "copyFile", "mkdir", "readdir", "unlink", "rename", "appendFile", "stat"]],
+      ["maquina", "node:path", "Node.js · caminhos", ["join", "resolve", "basename", "dirname", "extname", "parse", "format"]],
+      ["maquina", "node:crypto", "Node.js · crypto", ["randomBytes", "createHash", "createHmac", "randomUUID"]],
+      ["maquina", "node:stream", "Node.js · streams", ["pipeline", "finished", "Readable", "Writable", "Transform"]],
+      ["maquina", "node:console", "Node.js · console", ["log", "info", "warn", "error", "debug", "table", "clear"]],
+    ] as const)
+      await db.query("insert into flow.agents (project_id, kind, name, sub, tasks) values ($1,$2,$3,$4,$5)", [p, k, n, s, tasks]);
     await db.query("insert into flow.agents (project_id, kind, name, sub, model_id, prompt) values ($1,'ia','Lia','Agente · redação',$2,'Descreva aqui o que este agente faz.')", [p, m]);
+    const consoleAg = (await db.query("select id from flow.agents where project_id=$1 and name='node:console'", [p])).rows[0].id as number;
+    const helloPlan = (await db.query("insert into flow.plans (project_id, name, position) values ($1,'Hello World',1) returning id", [p])).rows[0].id as number;
+    const hello = (await db.query("insert into flow.elements (project_id, plan_id, kind, title, context, position) values ($1,$2,'file','Hello World','Projeto console: Executar imprime no Terminal',0) returning id", [p, helloPlan])).rows[0].id as number;
+    await db.query(
+      `insert into flow.elements (project_id, plan_id, parent_id, kind, title, agent_id, status, code, position)
+       values ($1,$2,$3,'file','log',$4,'pendente',$5,0)`,
+      [p, helloPlan, hello, consoleAg, 'console.log("Hello, World!");']);
+    await db.query(
+      `insert into flow.element_ios (element_id, direction, name, ref, position)
+       select id, 'out', 'saudacao', 'out/saudacao.txt', 0 from flow.elements where parent_id = $1 and title = 'log'`, [hello]);
     const root = (await db.query("insert into flow.elements (project_id, plan_id, kind, title, position) values ($1,$2,'folder',$3,0) returning id", [p, plan, req.body.name ?? "Projeto"])).rows[0].id;
     await db.query("insert into flow.elements (project_id, plan_id, parent_id, kind, title, context, position) values ($1,$2,$3,'file','Fazer meu primeiro fluxo','Comece adicionando filhos (+) e dados.',0)", [p, plan, root]);
     return p;
@@ -195,8 +212,23 @@ projectsRouter.post("/:pid/elements/:eid/run-machine", ah(async (req, res) => {
   const m = new FlowModel(await loadSnapshot(pool, id));
   const u = m.u(String(req.params.eid));
   if (!u || !["maquina", "script"].includes(m.agent(u.agentId)?.kind ?? "")) throw notFound("Etapa com biblioteca Node");
-  const r = await runMachine({ title: u.title, code: req.body?.code ?? u.code ?? `// ${u.title} · Node.js\nconsole.log("olá")`, inputs: machineInputs(m, u), declared: u.ins });
-  res.json({ lines: r.lines });
+  const code = req.body?.code ?? u.code ?? `// ${u.title} · Node.js\nconsole.log("olá")`;
+  if (req.body?.code != null && req.body.code !== u.code) await pool.query("update flow.elements set code = $2 where public_id = $1", [u.id, String(req.body.code).slice(0, 100_000)]);
+  await pool.query("update flow.elements set status = 'exec', error = null where public_id = $1", [u.id]);
+  const r = await runMachine({ title: u.title, code, inputs: machineInputs(m, u), declared: u.ins });
+  if (!r.ok) {
+    await pool.query("update flow.elements set status = 'fail', error = $2 where public_id = $1",
+      [u.id, r.lines.filter(l => l.kind === "er").map(l => l.text.replace(/^✗ /, "")).join(" · ") || "Falhou"]);
+  } else {
+    for (const [k, v] of Object.entries(r.saida)) {
+      if (!u.outs.some(o => o[0] === k)) continue;
+      const val = (typeof v === "string" ? v : JSON.stringify(v)).slice(0, 10_000);
+      await pool.query("update flow.data_defs set value = $3 where project_id = $1 and name = $2", [id, k, val]);
+    }
+    await pool.query("update flow.elements set status = 'ok', error = null where public_id = $1", [u.id]);
+  }
+  await pool.query("update flow.projects set updated_at = now() where id = $1", [id]);
+  res.json({ lines: r.lines, snapshot: await loadSnapshot(pool, id) });
 }));
 
 // ---------- exportação ----------

@@ -11,6 +11,7 @@ import { DadoPanel } from "../panels/DadoPanel";
 import { AgentPanel } from "../panels/AgentPanel";
 import { ModelPanel } from "../panels/ModelPanel";
 import { ConfirmDialog, ContextMenu, ExportDialog } from "../panels/Dialogs";
+import { TermPanel } from "../panels/TermPanel";
 
 export function IdePage({ projectId, user, onExit, onAccount }: { projectId: string; user: Me; onExit: () => void; onAccount: () => void }) {
   return <IdeProvider pid={projectId}><Shell user={user} onExit={onExit} onAccount={onAccount} /></IdeProvider>;
@@ -51,6 +52,7 @@ function Shell({ user, onExit, onAccount }: { user: Me; onExit: () => void; onAc
         <span className="cmdk" role="button" tabIndex={0} onClick={() => set({ q: s.q == null ? "" : null })}><Icon n="search" />Buscar ou executar comando<kbd>⌘K</kbd></span>
         <span className="sp" />
         <span className="tb-temas" aria-label="Temas">{TEMAS.map(t => <button key={t.id} title={`Tema ${t.name}`} aria-label={`Tema ${t.name}`} aria-pressed={tema === t.id} onClick={() => { setTema(t.id); set({}); }}><span><i style={{ background: t.a }} /><i style={{ background: t.b }} /></span></button>)}</span>
+        <button className={"ib tb-term"} title="Terminal (logs de execução)" aria-label="Terminal" aria-pressed={s.termOpen} onClick={() => ide.toggleTerm()}><Icon n="terminal" /></button>
         <button className="av" style={{ border: 0 }} onClick={onAccount} title={user.guest ? "Visitante · salvar com uma conta" : user.email ?? ""}>{user.guest ? "V" : user.name.split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase()}</button>
       </header>
       <div className="body">
@@ -70,6 +72,7 @@ function Shell({ user, onExit, onAccount }: { user: Me; onExit: () => void; onAc
           </div>
         </section>
       </div>
+      <TermPanel />
       {s.ctx && <ContextMenu />}{s.confirm && <ConfirmDialog />}{s.exp && <ExportDialog />}
     </div>
   );

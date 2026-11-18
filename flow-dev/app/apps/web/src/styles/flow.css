@@ -917,6 +917,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .io span.ref { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 11px; }
 .console { flex: 1; overflow-y: auto; padding: 8px 12px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--body); background: var(--panel); }
 .console .ok { color: var(--ok); } .console .dim { color: var(--muted); } .console .er { color: var(--fail); }
+.tb .tb-term[aria-pressed="true"] { color: var(--accent); background: var(--wash); }
+.term { flex: none; height: 200px; display: flex; flex-direction: column; border-top: 1px solid var(--line-2); background: var(--panel); }
+.term header { height: 30px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 12px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.term header svg { width: 14px; height: 14px; }
+.term header b { font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); }
+.term header .sp { flex: 1; }
+.term header .ib { width: 24px; height: 24px; }
+.term-b { flex: 1; overflow-y: auto; padding: 8px 12px; font: 11px/1.6 var(--mono); color: var(--body); white-space: pre-wrap; }
+.term-b .ok { color: var(--ok); } .term-b .dim { color: var(--muted); } .term-b .er { color: var(--fail); }
 
 /* modal */
 .scrim { position: absolute; inset: 0; background: rgba(24,27,33,.32); z-index: 40; display: grid; place-items: center; animation: fade .2s; }

@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.6 |
+| Versão | 1.7 |
 
 ## IDR — identificador único
 
@@ -62,3 +62,12 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | Todo dado sob o eixo = □ | Folha = □ · árvore (`dKids`) = cubo |
 
 **Voltar:** rótulos `e${i}` no SVG do Flow; `fdMark` só com `<rect>`.
+
+## Toolbar Remover + abstrata só borda
+
+| Antes | Depois |
+|---|---|
+| bar-tools / fl-tools / Explorar: editar · filho · irmão | + **Remover** (`ask-rm` / trash) |
+| Função abstrata sem agente (`nag`): borda **tracejada** | borda **sólida**, fill transparente |
+
+**Voltar:** tirar botão `ask-rm` das toolbars; `.sv-fn.nag` / `.fbar.nag` com `stroke-dasharray` / `border-style: dashed`.

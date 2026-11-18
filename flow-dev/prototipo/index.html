@@ -647,8 +647,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
 /* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
 .gantt.flow .grow { position: relative; }
-/* guias de recuo: uma linha vertical por nível (16 px), como num editor de código */
-.gantt.flow .fl-guides { position: absolute; left: 14px; top: 0; bottom: -1px; pointer-events: none; background: repeating-linear-gradient(to right, transparent 0 12px, var(--line-2) 12px 13px, transparent 13px 16px); } /* linha sob o • do nível */
+/* guias de recuo só da hierarquia: uma linha vertical sob cada composição ancestral (e sob a função nas linhas de entrada/saída) */
+.gantt.flow .fl-g { position: absolute; top: 0; bottom: -1px; width: 1px; background: var(--line-2); pointer-events: none; }
+.node .ex-ren { flex: 1; min-width: 0; height: 22px; border: 1px solid var(--accent); border-radius: 5px; padding: 0 6px; font: inherit; font-size: 12.5px; color: var(--ink); background: var(--paper); outline: none; margin-right: 6px; }
+.side .dkind { border: 0; background: none; padding: 0 2px; width: 20px; height: 18px; display: inline-grid; place-items: center; color: var(--dado); border-radius: 4px; cursor: pointer; }
+.side .dkind:hover { background: var(--wash); }
+.side .dkind svg { width: 13px; height: 13px; }
 .gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
 .gantt.flow .grow:hover .fl-tools { display: flex; } /* ações só no hover, nunca no clique */
 .gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
@@ -1520,7 +1524,10 @@ const DATA_TYPE = { dados_cliente: "objeto", "dados_cliente.nome": "texto", "dad
 const dKids = name => DATA_KIDS[name] || [];
 const dLeaf = name => String(name).split(".").pop();
 /** Ícone do dado: composto (tem campos) = cubo · folha = quadrado. */
-const dIcon = name => icon(dKids(name).length ? "box" : "square");
+/** Botão no painel da função: alterna a entrada/saída entre cubo (composto) e □ (dado simples). */
+const dKindBtn = n => `<button class="dkind" data-act="dado-kind" data-n="${esc(n)}" title="${isCube(n) ? "Cubo (composto) · clique para virar dado simples □" : "Dado simples □ · clique para virar cubo (composto)"}">${dIcon(n)}</button>`;
+const isCube = name => dKids(name).length > 0 || dType(name) === "objeto";
+const dIcon = name => icon(isCube(name) ? "box" : "square");
 const dType = name => DATA_TYPE[name] || (dKids(name).length ? "objeto" : "texto");
 /** Com filhos: tem valor quando todos os campos têm (igual às funções: só fica sólido quando tudo está preenchido). */
 function dadoHasValue(name) { const ks = dKids(name); if (ks.length) return ks.every(dadoHasValue); return DATA_VAL[name] != null && String(DATA_VAL[name]).length > 0; }
@@ -1722,7 +1729,7 @@ function explorer(s) {
       const id = "ly:" + l.id, isOpen = q ? true : OPEN.has(id);
       const nf = l.items.filter(i => i[0] === "fn").length, ns = l.items.filter(i => i[0] === "script").length, nd = l.items.length - nf - ns;
       const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", ns ? `${ns} script${ns > 1 ? "s" : ""}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
-      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
+      let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file-code-2")}</span>${s.renLy === l.id ? `<input class="ex-ren mono" data-ren-ly="${l.id}" data-act="noop" value="${esc(l.file)}" aria-label="Nome do módulo">` : `<span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span><span class="ex-tools"><button class="ib" data-act="ren-ly" data-id="${l.id}" title="Renomear">${icon("pencil")}</button></span>`}</div>`;
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
         if (k === "fn") { const u = $u(v); if (!u) return; h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}${fnIcon(u)}<span class="t">${esc(u.title)}</span></div>`; }
@@ -1739,7 +1746,7 @@ function explorer(s) {
     if (q) hits += list.length;
     const html = list.map(a => {
       const uses = U.filter(u => !u.arch && u.resp === a.id).length;
-      return `<div class="node" style="padding-left:8px" title="${esc(a.sub)}"><span class="car"></span>${faceOf(a)}<span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(a.sub.split(" · ")[0])}</span>${uses ? `<span class="mono">· ${uses}</span>` : ""}</span></div>`;
+      return `<div class="node" style="padding-left:8px" title="${esc(a.sub)}"><span class="car"></span>${faceOf(a)}${s.renCat === a.id ? `<input class="ex-ren" data-ren-cat="${a.id}" data-act="noop" value="${esc(a.name)}" aria-label="Nome da pessoa">` : `<span class="t">${markTitle(a.name, q)}</span><span class="meta"><span>${esc(a.sub.split(" · ")[0])}</span>${uses ? `<span class="mono">· ${uses}</span>` : ""}</span><span class="ex-tools"><button class="ib" data-act="ren-cat" data-id="${a.id}" title="Renomear">${icon("pencil")}</button></span>`}</div>`;
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma pessoa.</p>`, n: list.length };
   })();
@@ -1962,7 +1969,7 @@ function drawer(s) {
       ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>`}
       ${u.st || u.err ? `<div class="fld"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
       ${isFolder(u) ? "" : (() => { const L = flowLayout(u.plan).layout[u.id] || { s: 0, e: 0 }; return `<div class="g2"><div class="fld"><label>Início</label><input type="text" value="passo ${L.s}" readonly></div><div class="fld"><label>Passos</label><input type="text" value="${isData(u) ? "0 · dado" : L.e - L.s + 1}" readonly></div></div>`; })()}
-      ${(u.ins || []).length || (u.outs || []).length ? `<div class="fld"><span class="l">Estado (entradas e saídas)</span><div class="list-r">${(u.ins || []).map(n => `<div>${icon("arrow-down-to-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">entrada</span></div>`).join("")}${(u.outs || []).map(([n, ref]) => `<div>${icon("arrow-up-from-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r mono">${ref}</span></div>`).join("")}</div></div>` : ""}
+      ${(u.ins || []).length || (u.outs || []).length ? `<div class="fld"><span class="l">Estado (entradas e saídas)</span><div class="list-r">${(u.ins || []).map(n => `<div>${icon("arrow-down-to-line")}${dKindBtn(n)}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">entrada</span></div>`).join("")}${(u.outs || []).map(([n, ref]) => `<div>${icon("arrow-up-from-line")}${dKindBtn(n)}<span class="mono" style="color:var(--accent)">${n}</span><span class="r mono">${ref}</span></div>`).join("")}</div></div>` : ""}
       ${isFolder(u) ? "" : `<div class="fld"><span class="l">Função FOP · ${isData(u) ? "dado" : flowKids(u).length ? "composição" : a?.type === "ia" ? "endereço abstrato (IA no contexto)" : a ? "endereço concreto (import)" : "sem agente"}</span><pre class="sig">${fopSig(u)}</pre></div>`}
       <div class="fld"><span class="l">Hierarquia</span><div class="list-r">
         ${p ? `<button data-act="drawer" data-id="${p.id}">${icon("corner-left-up")}${esc(p.title)}<span class="r">pai</span></button>` : `<div style="color:var(--muted)">${icon("corner-left-up")}Raiz</div>`}
@@ -2178,7 +2185,7 @@ function flow(s) {
   seqLink(topsFD);
   rows.forEach(r => { if (flowKids(r.u).length) seqLink(fnSibs(r.u.id)); });
   const { layout, nSteps } = flowLayout(s.plan, rootId);
-  const LW = 380, RH = 34, TAIL = 440;
+  const LW = 440, RH = 34, TAIL = 440; // coluna Nome mais larga: nomes do fim do fluxo cabem
   // texto dentro: passo só um pouco maior que o maior nome (≈5,6 px por letra a 10 px + respiro)
   const maxT = Math.max(0, ...rows.filter(r => !isData(r.u) && !flowKids(r.u).length).map(r => r.u.title.length));
   const INS = s.txtIn ? 22 : 28; // recuo da barra até a divisória (longe dos □ de dados)
@@ -2239,20 +2246,24 @@ function flow(s) {
   // recuo do Nome segue a sequência do fluxo: cada passo (sN) empurra a linha para a direita; paralelos ficam alinhados
   const s0Root = (layout[rootId] || { s: 0 }).s;
   // nível = profundidade + passo; 16 px por nível para as guias verticais alinharem em todas as linhas
-  const lvl = (u, d) => d + Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root));
-  const ind = (u, d) => lvl(u, d) * 16;
-  const gd = n => n > 0 ? `<span class="fl-guides" style="width:${n * 16}px" aria-hidden="true"></span>` : "";
+  // recuo = profundidade (16 px) + passo do fluxo (10 px); guias verticais só da hierarquia: uma sob cada composição ancestral
+  const stepOf = u => Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root));
+  const ind = (u, d) => d * 16 + stepOf(u) * 10;
+  const ancs = u => { const out = []; let p = $u(u.parent); while (p && !isFolder(p)) { out.unshift(p); if (p.id === rootId) break; p = $u(p.parent); } return out; };
+  const dOf = u => { let d = 0, p = $u(u.parent); while (p && !isFolder(p) && p.id !== rootId) { d++; p = $u(p.parent); } return p && p.id === rootId ? d + 1 : d; };
+  const gx = a => ind(a, dOf(a)) + 6; // centro da setinha da composição
+  const gdA = (u, self) => [...ancs(u).map(gx), ...(self ? [ind(u, dOf(u)) + 13] : [])].map(x => `<i class="fl-g" style="left:${14 + x}px" aria-hidden="true"></i>`).join("");
   const leftRow = ({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">${gd(lvl(u, d))}
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">${gdA(u)}
       <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gd(lvl(r.u, r.d) + 1)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${dKids(n).length ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2261,7 +2272,7 @@ function flow(s) {
     const uniq = [...new Map(tg.map(t => [t.id, t])).values()];
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
   };
-  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)">${gd(lvl(r.lp, r.d))}<span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}">${gd(lvl(rows[r.st.i0].u, r.d))}<span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)">${gdA(r.lp)}<span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}">${gdA(rows[r.st.i0].u)}<span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: s0 = entradas abstratas (outra camada/state); sN = saídas novas; stBag = bag acumulado em sN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
@@ -2292,7 +2303,7 @@ function flow(s) {
   };
   /** Marca do dado sob sN: árvore (filhos) = cubo; folha = □. */
   const fdMark = (n, x, y) => {
-    if (dKids(n).length) {
+    if (isCube(n)) {
       return `<path d="M${x + 4.2} ${y} L${x + 8.4} ${y + 2.2} L${x + 8.4} ${y + 6} L${x + 4.2} ${y + 8.4} L${x} ${y + 6} L${x} ${y + 2.2} Z M${x} ${y + 2.2} L${x + 4.2} ${y + 4.4} L${x + 8.4} ${y + 2.2} M${x + 4.2} ${y + 4.4} V${y + 8.4}"/>`;
     }
     return `<rect x="${x}" y="${y}" width="8.4" height="8.4"/>`;
@@ -2338,7 +2349,7 @@ function flow(s) {
   // entrada/saída: cubo quando algum dado da lista tem campos (árvore), □ quando são só folhas
   const ioMark = (names, cx, cy, cls, n0, tip) => {
     const at = `class="${cls}" data-act="reveal-dado" data-n="${esc(n0 || "")}"`, t = `<title>${tip}</title>`;
-    if (names.some(n => dKids(n).length)) {
+    if (names.some(isCube)) {
       const x = cx - 5, y = cy - 5.5;
       return `<path ${at} stroke-linejoin="round" d="M${x + 5} ${y} L${x + 10} ${y + 2.7} L${x + 10} ${y + 8.3} L${x + 5} ${y + 11} L${x} ${y + 8.3} L${x} ${y + 2.7} Z M${x} ${y + 2.7} L${x + 5} ${y + 5.4} L${x + 10} ${y + 2.7} M${x + 5} ${y + 5.4} V${y + 11}">${t}</path>`;
     }
@@ -3367,7 +3378,7 @@ function paint(keepScroll = true) {
   fit();
   applyZView();
   renderFlowAlt(T0);
-  const f = holder.querySelector(cur.focusQ ? "[data-q]" : cur.focusKid ? 'form[data-form="dado-kid"] input' : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; delete cur.focusKid; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
+  const f = holder.querySelector(cur.focusQ ? "[data-q]" : cur.focusKid ? 'form[data-form="dado-kid"] input' : "[data-newn], [data-ren], [data-ren-cat], [data-ren-ly], .newcard input, .tnew input"); delete cur.focusQ; delete cur.focusKid; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
   const fl = holder.querySelector(".flash, .node.sel"); if (fl && cur.flash) fl.scrollIntoView({ block: "nearest", inline: "nearest" });
   cur.flash = null;
   try { history.replaceState(null, "", "#" + t); } catch (e) {}
@@ -3516,6 +3527,14 @@ const ACT = {
   // dado no Flow (□ ■ e nomes): abre o painel para definir valor; abstrato com valor vira concreto e vai para um arquivo
   "reveal-dado": t => { const n = t.dataset.n; if (!n) return false; revealDado(n); unset("drawer", "agCfg", "mdCfg", "mach"); cur.dadoEdit = n; cur.estado = n; },
   "sec-toggle": t => { const k = t.dataset.sec; SEC_CLOSED.has(k) ? SEC_CLOSED.delete(k) : SEC_CLOSED.add(k); },
+  "ren-cat": t => { unset("renLy"); cur.renCat = t.dataset.id; },
+  "ren-ly": t => { unset("renCat"); cur.renLy = t.dataset.id; },
+  "dado-kind": t => {
+    const n = t.dataset.n;
+    if (dKids(n).length) { toast(`${n} tem campos: remova os campos no painel do dado para virar dado simples`, "info"); return false; }
+    DATA_TYPE[n] = isCube(n) ? "texto" : "objeto";
+    toast(`${n}: ${isCube(n) ? "cubo (composto)" : "dado simples □"}`, isCube(n) ? "box" : "square");
+  },
   "sec-expand": t => {
     const k = t.dataset.sec; SEC_CLOSED.delete(k);
     secKids(k).forEach(id => OPEN.add(id));
@@ -3922,8 +3941,22 @@ holder.addEventListener("change", e => {
   if (t.dataset.renameCol) { COLS.find(c => c.id === t.dataset.renameCol).name = t.value.trim() || "Sem nome"; paint(); }
   if (t.dataset.renameLane) { LANES.find(c => c.id === t.dataset.renameLane).name = t.value.trim() || "Sem nome"; paint(); }
 });
+/** Renomear pessoa / módulo na lista do Explorar. */
+function commitRenX(t, ok) {
+  if (t.dataset.renCat) { const a = CAT.find(x => x.id === t.dataset.renCat), v = t.value.trim(); if (ok && a && v) a.name = v; unset("renCat"); }
+  if (t.dataset.renLy) {
+    const L = LAYERS.find(x => x.id === t.dataset.renLy); let v = t.value.trim();
+    if (ok && L && v) { if (!/\.js$/.test(v)) v = v.replace(/\.+$/, "") + ".layer.js"; if (LAYERS.some(x => x !== L && x.file === v)) toast(`Já existe ${v}`, "triangle-alert"); else L.file = v; }
+    unset("renLy");
+  }
+}
 holder.addEventListener("keydown", e => {
   const t = e.target;
+  if (t.matches?.("[data-ren-cat], [data-ren-ly]")) {
+    if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); commitRenX(t, true); paint(); }
+    else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); commitRenX(t, false); paint(); }
+    return;
+  }
   if (t.matches("[data-newn]")) {
     if (e.key === "Enter") { const v = t.value.trim(); if (!v) return; const nn = cur.newn; const u = create(nn.parent, nn.kind, v); unset("newn"); cur.sel = u.id; paint(); toast(nn.kind === "folder" ? `Pasta “${v}” criada` : `Arquivo “${v}” criado. Já está no Board.`); }
     if (e.key === "Escape") { e.stopPropagation(); unset("newn"); paint(); }
@@ -3953,6 +3986,7 @@ holder.addEventListener("mousedown", e => {
   if (u && v) u.title = v;
   unset("ren", "fresh");
 }, true);
+holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren-cat], [data-ren-ly]") && (cur.renCat || cur.renLy)) { commitRenX(e.target, true); setTimeout(paint, 0); } });
 holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren && cur.ren === e.target.dataset.ren && $u(cur.ren)) { /* só o campo do elemento em edição agora */ const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren", "fresh"); setTimeout(paint, 0); } });
 holder.addEventListener("change", e => { const t = e.target; if (t.matches("select[data-dado-layer]")) { const i = holder.querySelector(`input[data-dado-file="${t.dataset.dadoLayer}"]`); if (i) { i.style.display = t.value === "__new" ? "" : "none"; if (t.value === "__new") i.focus(); } } });
 holder.addEventListener("submit", e => {

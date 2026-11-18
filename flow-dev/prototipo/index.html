@@ -2449,7 +2449,7 @@ function flow(s) {
   const leftRow = (r) => {
     const { u, d } = r, nest = nestOf(r), has = hasK(u), a = agent(u.agent);
     const open = has && !FLOW_CLOSED.has(u.id);
-    const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
+    const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : "";
     const resp = has || isData(u) ? `<span class="c-ag muted">—</span>` : `<span class="c-ag">${a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>`;
     const task = isData(u) ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}<b>${esc(u.title)}</b></span>`
       : has ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b>${esc(u.title)}</b>`}</span>`

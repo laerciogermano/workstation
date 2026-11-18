@@ -328,6 +328,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .tb .proj { display: flex; align-items: center; gap: 6px; border: 0; background: none; color: var(--body); padding: 4px 8px; border-radius: 6px; font-weight: 500; }
 .tb .proj:hover { background: var(--wash); }
 .tb .sp { flex: 1; }
+/* temas no topo da janela: sempre à mão, inclusive em tela cheia */
+.tb .tb-temas { display: flex; align-items: center; gap: 4px; margin-right: 6px; }
+.tb .tb-temas button { width: 16px; height: 16px; border-radius: 50%; padding: 0; border: 1.5px solid var(--paper); box-shadow: 0 0 0 1px var(--line-2); position: relative; cursor: pointer; flex: none; }
+.tb .tb-temas button[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--ink); }
+.tb .tb-temas button span { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.tb .tb-temas button i { display: block; }
 .tb .cmdk { display: flex; align-items: center; gap: 8px; width: 300px; height: 28px; border: 1px solid var(--line); background: var(--paper); border-radius: 7px; padding: 0 10px; color: var(--muted); }
 .tb .cmdk kbd { margin-left: auto; font-family: var(--mono); font-size: 11px; }
 .av { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; background: var(--t-pessoa); flex: none; }
@@ -672,6 +678,14 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .dado-kids button small { margin-left: auto; font: 400 11px var(--sans, inherit); color: var(--muted); }
 .dado-kids form { display: flex; gap: 6px; padding: 6px; background: var(--panel); }
 .dado-kids form input { flex: 1; height: 26px; border: 1px solid var(--line-2); border-radius: 5px; padding: 0 8px; font: 500 12px var(--mono); background: var(--paper); }
+/* arrastar funções no Flow */
+.gantt.flow .gleft .grow[data-act="fsel"] { cursor: grab; }
+body.fdragging, body.fdragging * { cursor: grabbing !important; user-select: none; }
+.gantt.flow .grow.drop-before { box-shadow: inset 0 2px 0 var(--accent); }
+.gantt.flow .grow.drop-after { box-shadow: inset 0 -2px 0 var(--accent); }
+.gantt.flow .grow.drop-child { background: color-mix(in srgb, var(--accent) 12%, var(--paper)); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.fdrag-ghost { position: fixed; z-index: 9999; pointer-events: none; padding: 5px 10px; border-radius: 7px; background: var(--ink, #111); color: #fff; font: 600 12px system-ui, sans-serif; box-shadow: 0 8px 20px -8px rgba(0,0,0,.45); white-space: nowrap; }
+.fdrag-ghost[data-m]::after { content: " · " attr(data-m) " " attr(data-t); font-weight: 400; opacity: .8; }
 /* opção B: ações em cima da barra selecionada no canvas */
 .gright .bar-tools { position: absolute; z-index: 5; display: none; align-items: center; gap: 2px; height: 26px; padding: 1px 2px 1px 8px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 7px; box-shadow: var(--shadow); white-space: nowrap; animation: btIn .12s var(--ease); }
 .gright .bar-tools::after { content: ""; position: absolute; left: 14px; bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
@@ -1476,6 +1490,7 @@ function win(s) {
       <span class="sp"></span>
       <span class="cmdk">${icon("search")}Buscar ou executar comando<kbd>⌘K</kbd></span>
       <span class="sp"></span>
+      <span class="tb-temas" aria-label="Temas">${TEMAS.map(t => `<button data-tema="${t.id}" title="Tema ${esc(t.name)}" aria-label="Tema ${esc(t.name)}" aria-pressed="${document.documentElement.dataset.tema === t.id}"><span><i style="background:${t.a}"></i><i style="background:${t.b}"></i></span></button>`).join("")}</span>
       <button class="ib">${icon("bell")}</button>
       <span class="av">AS</span>
     </header>
@@ -1887,36 +1902,33 @@ function flowLayout(plan) {
     }
     return step;
   }
-  function place(pid) {
-    const kids = kidsPlan(pid).filter(k => !k.arch && !isFolder(k) && k.plan === plan);
-    kids.forEach(k => place(k.id));
-    if (!kids.length) return;
-    const step = stepsAmong(kids.map(k => k.id));
-    kids.forEach(k => {
-      const ck = kidsPlan(k.id).filter(c => !c.arch && !isFolder(c));
-      if (ck.length) {
-        const spans = ck.map(c => layout[c.id]).filter(Boolean);
-        layout[k.id] = spans.length ? { s: Math.min(...spans.map(x => x.s)), e: Math.max(...spans.map(x => x.e)) } : { s: step[k.id] || 0, e: step[k.id] || 0 };
-      } else layout[k.id] = { s: step[k.id], e: step[k.id] };
+  // composição ocupa o passo que tem entre os irmãos e se alarga com os filhos: novo filho não move o pai
+  const kidsOf = pid => kidsPlan(pid).filter(k => !k.arch && !isFolder(k) && k.plan === plan);
+  const W = {};
+  function width(id) {
+    if (W[id] != null) return W[id];
+    const ks = kidsOf(id); if (!ks.length) return (W[id] = 1);
+    const step = stepsAmong(ks.map(k => k.id)), mw = {};
+    ks.forEach(k => { if (!isData(k)) mw[step[k.id]] = Math.max(mw[step[k.id]] || 0, width(k.id)); });
+    return (W[id] = Math.max(1, Object.values(mw).reduce((a, b) => a + b, 0)));
+  }
+  function place(id, base) {
+    const ks = kidsOf(id);
+    if (!ks.length) { layout[id] = { s: base, e: base }; return; }
+    const step = stepsAmong(ks.map(k => k.id)), mw = {};
+    ks.forEach(k => { if (!isData(k)) mw[step[k.id]] = Math.max(mw[step[k.id]] || 0, width(k.id)); });
+    const start = {}; let x = base;
+    [...new Set(Object.values(step))].sort((a, b) => a - b).forEach(c => { start[c] = x; x += mw[c] || 0; });
+    ks.forEach(k => {
+      const c = step[k.id];
+      if (isData(k)) { const e = start[c] + Math.max(1, mw[c] || 1) - 1; layout[k.id] = { s: e, e }; } // dado (◆) no fim do passo do predecessor
+      else place(k.id, start[c]);
     });
+    layout[id] = { s: base, e: base + width(id) - 1 };
   }
   const tops = U.filter(u => !u.arch && !isFolder(u) && u.plan === plan && (!u.parent || isFolder($u(u.parent))));
   let offset = 0;
-  tops.forEach(t => {
-    place(t.id);
-    const ck = kidsPlan(t.id).filter(c => !c.arch && !isFolder(c));
-    if (ck.length) {
-      const spans = ck.map(c => layout[c.id]).filter(Boolean);
-      layout[t.id] = spans.length ? { s: Math.min(...spans.map(x => x.s)), e: Math.max(...spans.map(x => x.e)) } : { s: 0, e: 0 };
-    } else layout[t.id] = { s: 0, e: 0 };
-    const L = layout[t.id], shift = offset - L.s, width = L.e - L.s + 1;
-    (function sh(id) {
-      if (!layout[id]) return;
-      layout[id] = { s: layout[id].s + shift, e: layout[id].e + shift };
-      kidsPlan(id).filter(c => !c.arch && !isFolder(c)).forEach(c => sh(c.id));
-    })(t.id);
-    offset += width;
-  });
+  tops.forEach(t => { place(t.id, offset); offset += width(t.id); });
   const nSteps = Math.max(1, ...Object.values(layout).map(l => l.e + 1), offset > 0 ? offset - 1 : 1);
   return { layout, nSteps };
 }
@@ -3237,31 +3249,53 @@ function create(parent, kind, title, extra = {}) {
   U.push(u); if (parent) OPEN.add(parent); return u;
 }
 /** Novo elemento de função no Flow: "child" = último filho · "after"/"before" = irmão. Entra na sequência (DEPS) e já abre para renomear. */
-function addFnEl(refId, mode) {
-  const ref = $u(refId); if (!ref) return null;
+/** Encaixa u (e a subárvore dele) junto de ref: "child" = último filho · "after"/"before" = irmão, já ligado na sequência (DEPS). */
+function linkInto(u, ref, mode) {
   const parent = mode === "child" ? ref.id : ref.parent;
-  const sibs = kidsPlan(mode === "child" ? ref.id : ref.parent).filter(k => !k.arch && !isFolder(k) && !isData(k));
-  const u = create(parent, "file", "Fazer nova função", { plan: ref.plan, lane: ref.lane, col: COLS[0].id });
-  U.splice(U.indexOf(u), 1);
+  const sibs = kidsPlan(parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.id !== u.id);
+  const block = [u, ...desc(u.id)].sort((a, b) => U.indexOf(a) - U.indexOf(b));
+  U = U.filter(x => !block.includes(x));
   const tail = id => { const d = desc(id); return d.length ? Math.max(...d.map(x => U.indexOf(x))) : U.indexOf($u(id)); };
-  if (mode === "before") U.splice(U.indexOf(ref), 0, u);
-  else if (mode === "after") U.splice(tail(ref.id) + 1, 0, u);
-  else U.splice(tail(ref.id) + 1, 0, u);
+  const at = mode === "before" ? U.indexOf(ref) : tail(ref.id) + 1;
+  U.splice(at, 0, ...block);
+  u.parent = parent; block.forEach(x => { x.plan = ref.plan; });
   const sib = new Set(sibs.map(k => k.id));
   if (mode === "child") { const last = sibs[sibs.length - 1]; if (last) DEPS.push([last.id, u.id]); }
   else if (mode === "after") { DEPS.forEach(dp => { if (dp[0] === ref.id && sib.has(dp[1])) dp[0] = u.id; }); DEPS.push([ref.id, u.id]); }
   else { DEPS.forEach(dp => { if (dp[1] === ref.id && sib.has(dp[0])) dp[1] = u.id; }); DEPS.push([u.id, ref.id]); }
+  STRUCTS.forEach(st => { if (mode !== "child" && st.body.includes(ref.id) && !st.body.includes(u.id)) st.body.splice(st.body.indexOf(ref.id) + (mode === "after" ? 1 : 0), 0, u.id); });
   if (parent) OPEN.add(parent);
+}
+/** Tira u da sequência sem apagar: a → u → b vira a → b. */
+function unlinkSeq(id) {
+  const ins = DEPS.filter(d => d[1] === id).map(d => d[0]), outs = DEPS.filter(d => d[0] === id).map(d => d[1]);
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][0] === id || DEPS[i][1] === id) DEPS.splice(i, 1);
+  for (let i = PARS.length - 1; i >= 0; i--) if (PARS[i].includes(id)) PARS.splice(i, 1);
+  ins.forEach(a => outs.forEach(b => { if (!DEPS.some(d => d[0] === a && d[1] === b)) DEPS.push([a, b]); }));
+  STRUCTS.forEach(st => { const k = st.body.indexOf(id); if (k >= 0) st.body.splice(k, 1); });
+}
+/** Novo elemento de função no Flow; já abre para renomear. */
+function addFnEl(refId, mode) {
+  const ref = $u(refId); if (!ref) return null;
+  const u = create(mode === "child" ? ref.id : ref.parent, "file", "Fazer nova função", { plan: ref.plan, lane: ref.lane, col: COLS[0].id });
+  linkInto(u, ref, mode);
   unset("drawer", "ctx", "dadoEdit");
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
+/** Arrastar e soltar: move a função (com as filhas) para antes, depois ou dentro de outra. */
+function moveFn(id, refId, mode) {
+  const u = $u(id), ref = $u(refId);
+  if (!u || !ref || id === refId || isDesc(refId, id) || isData(u)) return false;
+  if (mode !== "child" && ref.parent === u.parent) { const sb = kidsPlan(u.parent).filter(k => !k.arch && !isData(k)); const a = sb.indexOf(u), b = sb.indexOf(ref); if ((mode === "after" && b === a - 1) || (mode === "before" && b === a + 1)) return false; }
+  unlinkSeq(id);
+  linkInto(u, ref, mode);
+  cur.sel = id; unset("drawer");
+  return true;
+}
 /** Elemento novo cancelado com Esc: sai de U e a sequência é religada (a → novo → b volta a a → b). */
 function dropFresh(id) {
-  const ins = DEPS.filter(d => d[1] === id).map(d => d[0]), outs = DEPS.filter(d => d[0] === id).map(d => d[1]);
-  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][0] === id || DEPS[i][1] === id) DEPS.splice(i, 1);
-  ins.forEach(a => outs.forEach(b => { if (!DEPS.some(d => d[0] === a && d[1] === b)) DEPS.push([a, b]); }));
-  removeIds([id]); unset("fresh", "ren"); cur.sel = null;
+  unlinkSeq(id); removeIds([id]); unset("fresh", "ren"); cur.sel = null;
 }
 const slugFile = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const dadoLayer = name => LAYERS.find(l => l.items.some(i => i[0] === "dado" && i[1] === name)) || null;
@@ -3528,6 +3562,44 @@ holder.addEventListener("click", e => {
   const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
   const r = ACT[h.act.act]?.(t, e); if (r !== false) paint();
 }, true);
+/** Arrastar função no Flow (linha da tabela ou barra): solta em cima = antes, embaixo = depois, no meio = filho. */
+let fDrag = null, fDragEat = false;
+function fDropAt(y) {
+  const rows = [...holder.querySelectorAll('.gantt.flow .gleft .grow[data-act="fsel"][data-id]')];
+  for (const r of rows) { const b = r.getBoundingClientRect(); if (y >= b.top && y <= b.bottom) { const f = (y - b.top) / b.height; return { el: r, id: r.dataset.id, mode: f < .3 ? "before" : f > .7 ? "after" : "child" }; } }
+  return null;
+}
+holder.addEventListener("pointerdown", e => {
+  if (e.button !== 0 || e.target.closest("button, input, select, .fl-tools, .bar-tools")) return;
+  const el = e.target.closest('.gantt.flow .gleft .grow[data-act="fsel"][data-id], .gantt.flow .gright [data-act="fsel"][data-id]');
+  const h = !el && e.target.closest?.(".fv-cv") ? flowHit(e) : null;
+  const id = el ? el.dataset.id : h?.act?.act === "fsel" ? h.act.id : null;
+  if (!id || isData($u(id))) return;
+  fDrag = { id, x: e.clientX, y: e.clientY, on: false };
+}, true);
+holder.addEventListener("pointermove", e => {
+  if (!fDrag) return;
+  if (!fDrag.on && Math.hypot(e.clientX - fDrag.x, e.clientY - fDrag.y) < 6) return;
+  if (!fDrag.on) { fDrag.on = true; document.body.classList.add("fdragging"); const g = document.createElement("div"); g.className = "fdrag-ghost"; g.textContent = $u(fDrag.id).title; document.body.appendChild(g); fDrag.ghost = g; }
+  e.preventDefault();
+  fDrag.ghost.style.left = e.clientX + 12 + "px"; fDrag.ghost.style.top = e.clientY + 8 + "px";
+  holder.querySelectorAll(".grow.drop-before, .grow.drop-after, .grow.drop-child").forEach(x => x.classList.remove("drop-before", "drop-after", "drop-child"));
+  const d = fDropAt(e.clientY); fDrag.drop = null;
+  if (d && d.id !== fDrag.id && !isDesc(d.id, fDrag.id)) { d.el.classList.add("drop-" + d.mode); fDrag.drop = d; fDrag.ghost.dataset.m = d.mode === "child" ? "dentro de" : d.mode === "before" ? "antes de" : "depois de"; fDrag.ghost.dataset.t = $u(d.id).title; }
+  else { delete fDrag.ghost.dataset.m; }
+});
+const fDragEnd = () => {
+  if (!fDrag) return;
+  const d = fDrag.drop, id = fDrag.id, on = fDrag.on;
+  fDrag.ghost?.remove(); document.body.classList.remove("fdragging"); fDrag = null;
+  if (!on) return;
+  fDragEat = true; setTimeout(() => { fDragEat = false; }, 0);
+  if (d && moveFn(id, d.id, d.mode)) { paint(); toast(`${$u(id).title} → ${d.mode === "child" ? "dentro de" : d.mode === "before" ? "antes de" : "depois de"} ${$u(d.id).title}`, "move"); }
+  else paint();
+};
+holder.addEventListener("pointerup", fDragEnd);
+holder.addEventListener("pointercancel", fDragEnd);
+holder.addEventListener("click", e => { if (fDragEat) { e.stopImmediatePropagation(); e.preventDefault(); fDragEat = false; } }, true);
 /** Hover numa task do Flow mostra as ações em cima dela; sair da task e da barra esconde (com folga para alcançar os botões). */
 let barHov = null, barHovT = 0;
 function setBarHov(id) {

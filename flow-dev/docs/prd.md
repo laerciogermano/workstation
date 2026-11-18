@@ -46,7 +46,7 @@
 
 ## Flow — mover / criar só pelos ícones (sem setas)
 
-As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos ícones da linha selecionada: **+ filho** e **irmão abaixo** (atalhos que continuam: `C` irmão, `⇧C` filho, `Enter`/`Tab`, `E` editar).
+As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é só pelos ícones (no hover da linha): **editar**, **+ filho** e **irmão abaixo**. Sem atalhos `C`, `⇧C`, `Enter`, `Tab`, `E` nem setas entre telas.
 
 | Antes | Depois |
 |---|---|

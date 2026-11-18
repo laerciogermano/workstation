@@ -1404,8 +1404,15 @@ let U = [
   { id: "u39", title: "Testar webhook", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["crm_ok"], outs: [["webhook_ok", "out/webhook.json"]] },
   { id: "u40", title: "Treinar equipe do cliente", ctx: "Sessão de 1 h com o time da Acme", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["kickoff"], outs: [["treinamento", "out/treinamento.md"]] },
   { id: "d3", kind: "data", title: "Cliente ativo", parent: "u16", plan: "onb", lane: "l2", col: "c1", ins: ["kickoff", "boas_vindas"] },
-  /* raiz limpa: sem agente, sem I/O, sem filhos — referência visual do elemento vazio */
-  { id: "u24", title: "Fazer nova função", parent: "f2", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u24", title: "Fazer nova função", ctx: "Do pedido à função publicada no catálogo", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u90", title: "Descrever o pedido", ctx: "O que a função recebe e devolve", parent: "u24", agent: "a1", col: "c5", lane: "l2", st: "ok", plan: "onb", outs: [["pedido_fn", "out/pedido-fn.md"]] },
+  { id: "u91", title: "Definir entradas e saídas", parent: "u24", agent: "a4", col: "c4", lane: "l2", st: "ok", plan: "onb", ins: ["pedido_fn"], outs: [["contrato_fn", "out/contrato-fn.json"]] },
+  { id: "u92", title: "Escrever a função", parent: "u24", agent: "a1", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["codigo_fn", "out/funcao.js"]] },
+  { id: "u93", title: "Escrever testes", parent: "u24", agent: "a3", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["testes_fn", "out/funcao.test.js"]] },
+  { id: "u94", title: "Validar", ctx: "Roda os testes e revisa o código", parent: "u24", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u95", title: "Rodar testes", parent: "u94", agent: "m5", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["codigo_fn", "testes_fn"], outs: [["resultado_testes", "out/testes.json"]], loop: ["caso", "testes_fn.casos"] },
+  { id: "u96", title: "Revisar código", parent: "u94", agent: "a4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["resultado_testes"], outs: [["fn_aprovada", "out/revisao.md"]] },
+  { id: "u97", title: "Publicar no catálogo", parent: "u24", agent: "m2", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["fn_aprovada"], outs: [["fn_publicada", "out/catalogo.json"]] },
   { id: "u42", title: "Atualizar site institucional", ctx: "Página inicial nova, fotos e publicação", parent: "f3", agent: "a4", col: "c2", lane: "l3", plan: "padrao" },
   { id: "u73", title: "Levantar métricas atuais", parent: "u42", agent: "m1", col: "c5", lane: "l3", st: "ok", plan: "padrao", outs: [["metricas", "out/metricas.json"]] },
   { id: "u20", title: "Reescrever página inicial", ctx: "Mais curta, foco em quem contrata", parent: "u42", agent: "a1", col: "c3", lane: "l3", st: "cancel", s: 7, e: 8, plan: "padrao", ins: ["metricas"], outs: [["pagina", "out/index.html"]] },
@@ -1421,7 +1428,7 @@ let U = [
 U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "file"; });
 // DEPS = sequência (a → b); PARS = paralelo; u.cond = seleção [dado testado, volta para]; u.loop = repetição [var, lista]; kind "data" = dado (◆, 0 passos)
 const DEPS = [["u4", "u66"], ["u4", "u67"], ["u30", "u50"], ["u31", "u51"], ["u32", "u51"], ["u51", "u52"], ["u50", "d4"], ["d4", "u33"], ["u33", "u53"], ["u33", "u54"], ["u53", "u34"], ["u54", "u34"], ["u34", "u55"], ["u56", "u57"], ["u57", "u58"], ["u55", "u59"], ["u3", "u60"], ["u3", "u65"], ["u61", "u62"], ["u62", "u63"], ["u63", "u64"], ["u60", "d5"], ["u65", "d5"], ["d5", "u68"], ["u68", "u5"], ["u68", "u35"], ["u5", "u6"], ["u35", "u6"], ["u6", "u36"], ["u36", "u69"], ["u70", "u71"], ["u69", "d6"], ["u73", "u20"], ["u21", "u43"], ["u43", "u74"], ["u75", "u76"], ["u74", "u22"], ["u22", "u44"], ["u44", "u77"], ["u10", "u11"], ["u11", "u12"], ["u12", "d1"], ["d1", "u13"], ["d1", "u14"], ["u13", "d2"], ["u14", "d2"], ["d2", "u15"], ["u15", "u16"], ["u18", "u19"], ["u19", "u23"], ["u23", "d3"], ["u17", "d3"], ["u20", "u22"]];
-const PARS = [["u13", "u14"], ["u17", "u18"], ["u31", "u32"], ["u53", "u54"], ["u60", "u65"], ["u66", "u67"], ["u5", "u35"], ["u70", "u72"], ["u20", "u21"], ["u37", "u40"]];
+const PARS = [["u13", "u14"], ["u17", "u18"], ["u31", "u32"], ["u53", "u54"], ["u60", "u65"], ["u66", "u67"], ["u5", "u35"], ["u70", "u72"], ["u20", "u21"], ["u37", "u40"], ["u92", "u93"]];
 // Estruturas FOP (documento, itens 12–13): seleção = if (◇ no conector) com corpo; repetição = u.loop (for/map) ou recursão (u.cond volta)
 const STRUCTS = [
   { k: "if", test: "proposta_aprovada", body: ["d1", "u13", "u14", "d2", "u15"] },
@@ -2129,7 +2136,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias sN
@@ -2220,7 +2227,7 @@ function flow(s) {
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">
       <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
-      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
@@ -2370,7 +2377,7 @@ function flow(s) {
           // comparar renderizadores: SVG direto · HTML (div/span) · Canvas (2D) — os dois últimos são convertidos do mesmo desenho
           // opção B: ações flutuando logo acima da barra (task) selecionada — comparar com a barra da coluna Nome (opção A)
           const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30;
-            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão (Enter)">${icon("between-horizontal-end")}</button><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
+            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
           // aparece no hover da task (como a Árvore do Plans) e fica na selecionada
           const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) && s.ren !== r.u.id ? toolOf(r.u, i) : "").join("");
           return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools;
@@ -3349,7 +3356,6 @@ function openT(t) {
 }
 function closePlayer() { if (player.classList.contains("full")) toggleFull(false); player.classList.remove("open", "focus"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
 function goBack() { const p = hist.pop(); if (p) { cur = p; paint(false); } }
-function step(d) { const i = ORDER.indexOf(tFor(cur)); show(specFor(ORDER[(i + d + ORDER.length) % ORDER.length]), true); }
 function toast(msg, ic = "circle-check") {
   setTimeout(() => {
     const t = holder.querySelector(".toast"); if (!t) return;
@@ -3970,23 +3976,14 @@ document.addEventListener("keydown", e => {
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
-  // atalhos do Flow: C cria · E edita (mover função só pelos ícones)
-  if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && !e.altKey) {
-    const k = e.key.toLowerCase();
-    if (k === "c") { e.preventDefault(); addFnEl(sel.id, e.shiftKey ? "child" : "after"); paint(); return; }
-    if (k === "e") { e.preventDefault(); unset("dadoEdit", "agCfg", "mdCfg"); cur.drawer = sel.id; paint(); return; }
-  }
-  if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && (e.key === "Enter" || e.key === "Tab")) { e.preventDefault(); addFnEl(sel.id, e.key === "Tab" ? "child" : e.shiftKey ? "before" : "after"); paint(); return; }
+  // Flow: criar filho / irmão e editar só pelos ícones (sem C, ⇧C, Enter, Tab, E)
   if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod))) { e.preventDefault(); ACT["ask-rm"]({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.key.toLowerCase() === "d") { e.preventDefault(); ACT.dup({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.key.toLowerCase() === "x") { ACT.cut({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.altKey && e.code === "KeyC") { ACT["copy-path"]({ dataset: { id: sel.id } }); return; }
   if (sel && mod && e.key.toLowerCase() === "c") { ACT.copy({ dataset: { id: sel.id } }); paint(); return; }
   if (mod && e.key.toLowerCase() === "v") { pasteInto(cur.sel); paint(); return; }
-  if (e.key.startsWith("Arrow") && cur.v === "flow") return; // setas não movem nada no Flow
-  if (e.key === "ArrowRight") step(1);
-  else if (e.key === "ArrowLeft") step(-1);
-  else if (e.key === "Backspace") { e.preventDefault(); goBack(); }
+  if (e.key === "Backspace") { e.preventDefault(); goBack(); }
   else if (e.key.toLowerCase() === "h") player.classList.toggle("hints");
   else if (e.key.toLowerCase() === "f") { player.classList.toggle("focus"); fit(); }
   else if (e.key.toLowerCase() === "t") toggleFull();

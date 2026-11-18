@@ -2023,7 +2023,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>↑</kbd> irmão do pai <kbd>↓</kbd> filho <kbd>←</kbd> paralelo <kbd>→</kbd> sequência <kbd>⇧↑</kbd><kbd>⇧↓</kbd> posição <kbd>⌥↑</kbd><kbd>⌥↓</kbd> início/fim</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd><kbd>↑</kbd> paralelo ou irmão do pai <kbd>→</kbd><kbd>↓</kbd> sequência</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias eN
@@ -3275,17 +3275,24 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
-/** Mover pelo teclado: ↑ sai do pai (vira irmão dele) · ↓ vira filho do irmão anterior · ← paralelo ao irmão anterior · → volta à sequência · ⇧↑/⇧↓ uma posição · ⌥↑/⌥↓ início/fim. */
-function fnKeyMove(u, key, shift, alt) {
+/** Mover pelo teclado: ←/↑ = se há irmão à esquerda → paralelo a ele; senão → irmão do pai. →/↓ = volta à sequência. */
+function fnKeyMove(u, key) {
   const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
-  const p = $u(u.parent), canOut = p && !isFolder(p), prev = i > 0 ? sibs[i - 1] : null;
+  const prev = i > 0 ? sibs[i - 1] : null;
+  const p = $u(u.parent), canOut = p && !isFolder(p);
   let ok = false, msg = "", no = "Já está na ponta";
-  if (key === "ArrowUp" && (shift || alt)) { if (i > 0) { ok = moveFn(u.id, alt ? sibs[0].id : prev.id, "before"); msg = alt ? "primeiro irmão" : "subiu uma posição"; } }
-  else if (key === "ArrowDown" && (shift || alt)) { if (i < sibs.length - 1) { ok = moveFn(u.id, alt ? sibs[sibs.length - 1].id : sibs[i + 1].id, "after"); msg = alt ? "último irmão" : "desceu uma posição"; } }
-  else if (key === "ArrowUp") { no = "Já está no nível de cima"; if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `virou irmão de ${p.title}`; } }
-  else if (key === "ArrowDown") { no = "Precisa de um irmão acima para virar filho dele"; if (prev) { ok = moveFn(u.id, prev.id, "child"); msg = `virou filho de ${prev.title}`; } }
-  else if (key === "ArrowLeft") { no = prev ? "Já está em paralelo com o irmão anterior" : "Não há irmão anterior para ficar em paralelo"; if (prev && !isPar(prev.id, u.id)) { makeParallel(u, prev); ok = true; msg = `em paralelo com ${prev.title}`; } }
-  else if (key === "ArrowRight") { no = "Já está em sequência"; if (prev && isPar(prev.id, u.id)) { unParallel(u, prev); ok = true; msg = `volta a vir depois de ${prev.title}`; } }
+  if (key === "ArrowLeft" || key === "ArrowUp") {
+    if (prev) {
+      no = "Já está em paralelo com o irmão à esquerda";
+      if (!isPar(prev.id, u.id)) { makeParallel(u, prev); ok = true; msg = `em paralelo com ${prev.title}`; }
+    } else {
+      no = "Já está no nível de cima";
+      if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `virou irmão de ${p.title}`; }
+    }
+  } else if (key === "ArrowRight" || key === "ArrowDown") {
+    no = "Já está em sequência";
+    if (prev && isPar(prev.id, u.id)) { unParallel(u, prev); ok = true; msg = `volta a vir depois de ${prev.title}`; }
+  }
   paint();
   toast(ok ? `${u.title}: ${msg}` : no, ok ? "move" : "info");
 }
@@ -3816,12 +3823,12 @@ document.addEventListener("keydown", e => {
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
-  // atalhos do Flow com função selecionada: C cria · ↑ irmão do pai · ↓ filho do irmão anterior · ← paralelo · → sequência · ⇧↑⇧↓ posição · ⌥↑⌥↓ início/fim · E edita
-  if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && (!e.altKey || e.key.startsWith("Arrow"))) {
+  // atalhos do Flow: C cria · ←/↑ paralelo (ou irmão do pai) · →/↓ sequência · E edita
+  if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && !e.altKey) {
     const k = e.key.toLowerCase();
     if (k === "c") { e.preventDefault(); addFnEl(sel.id, e.shiftKey ? "child" : "after"); paint(); return; }
     if (k === "e") { e.preventDefault(); unset("dadoEdit", "agCfg", "mdCfg"); cur.drawer = sel.id; paint(); return; }
-    if (e.key.startsWith("Arrow")) { e.preventDefault(); fnKeyMove(sel, e.key, e.shiftKey, e.altKey); return; }
+    if (e.key.startsWith("Arrow") && !e.shiftKey) { e.preventDefault(); fnKeyMove(sel, e.key); return; }
   }
   if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && (e.key === "Enter" || e.key === "Tab")) { e.preventDefault(); addFnEl(sel.id, e.key === "Tab" ? "child" : e.shiftKey ? "before" : "after"); paint(); return; }
   if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod))) { e.preventDefault(); ACT["ask-rm"]({ dataset: { id: sel.id } }); paint(); return; }

@@ -2023,7 +2023,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd><kbd>↑</kbd> paralelo ou irmão do pai <kbd>→</kbd><kbd>↓</kbd> sequência</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd><kbd>↑</kbd> paralelo / irmão esquerdo do pai <kbd>→</kbd> sequência <kbd>↓</kbd> troca paralelo</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias eN
@@ -3275,26 +3275,53 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
-/** Mover pelo teclado: ←/↑ = se há irmão à esquerda → paralelo a ele; senão → irmão do pai. →/↓ = volta à sequência. */
+/** Troca a ordem de dois irmãos no array U (mantém PARS/DEPS). */
+function swapSibBlocks(a, b) {
+  const block = id => { const u = $u(id); return [u, ...desc(id)].sort((x, y) => U.indexOf(x) - U.indexOf(y)); };
+  const ba = block(a.id), bb = block(b.id);
+  let ia = U.indexOf(ba[0]), ib = U.indexOf(bb[0]);
+  if (ia < 0 || ib < 0 || ia === ib) return false;
+  const items = [...U];
+  if (ia < ib) {
+    items.splice(ib, bb.length);
+    items.splice(ia, ba.length);
+    items.splice(ia, 0, ...bb, ...ba);
+  } else {
+    items.splice(ia, ba.length);
+    items.splice(ib, bb.length);
+    items.splice(ib, 0, ...ba, ...bb);
+  }
+  U = items;
+  return true;
+}
+/**
+ * ← / ↑: irmão sequencial à esquerda → paralelo; senão → irmão esquerdo do pai.
+ * →: irmão paralelo → volta a sequencial à direita; senão nada.
+ * ↓: irmão paralelo abaixo/acima → troca ordem (vai pra baixo); senão nada.
+ */
 function fnKeyMove(u, key) {
   const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
   const prev = i > 0 ? sibs[i - 1] : null;
+  const seqLeft = prev && !isPar(prev.id, u.id) ? prev : null;
+  const parLeft = prev && isPar(prev.id, u.id) ? prev : null;
+  const parBelow = sibs.slice(i + 1).find(s => isPar(s.id, u.id)) || null;
+  const anyPar = parLeft || parBelow || sibs.find(s => s.id !== u.id && isPar(s.id, u.id)) || null;
   const p = $u(u.parent), canOut = p && !isFolder(p);
-  let ok = false, msg = "", no = "Já está na ponta";
+  let ok = false, msg = "", no = "";
   if (key === "ArrowLeft" || key === "ArrowUp") {
-    if (prev) {
-      no = "Já está em paralelo com o irmão à esquerda";
-      if (!isPar(prev.id, u.id)) { makeParallel(u, prev); ok = true; msg = `em paralelo com ${prev.title}`; }
-    } else {
-      no = "Já está no nível de cima";
-      if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `virou irmão de ${p.title}`; }
-    }
-  } else if (key === "ArrowRight" || key === "ArrowDown") {
-    no = "Já está em sequência";
-    if (prev && isPar(prev.id, u.id)) { unParallel(u, prev); ok = true; msg = `volta a vir depois de ${prev.title}`; }
+    if (seqLeft) { makeParallel(u, seqLeft); ok = true; msg = `em paralelo com ${seqLeft.title}`; }
+    else if (canOut) { ok = moveFn(u.id, p.id, "before"); msg = `irmão esquerdo de ${p.title}`; }
+    else no = "Já está no nível de cima";
+  } else if (key === "ArrowRight") {
+    const a = parLeft || anyPar;
+    if (a) { unParallel(u, a); ok = true; msg = `sequencial depois de ${a.title}`; }
+  } else if (key === "ArrowDown") {
+    // irmão paralelo mais abaixo → troca ordem (u vai pra baixo); se só há paralelo acima, já está embaixo → nada
+    if (parBelow) { ok = swapSibBlocks(u, parBelow); if (ok) msg = `abaixo de ${parBelow.title}`; }
   }
   paint();
-  toast(ok ? `${u.title}: ${msg}` : no, ok ? "move" : "info");
+  if (ok) toast(`${u.title}: ${msg}`, "move");
+  else if (no) toast(no, "info");
 }
 const isPar = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 /** ← : u passa a rodar no mesmo passo do irmão anterior a (mesmas entradas de sequência; quem vinha depois de u espera os dois). */
@@ -3823,7 +3850,7 @@ document.addEventListener("keydown", e => {
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
-  // atalhos do Flow: C cria · ←/↑ paralelo (ou irmão do pai) · →/↓ sequência · E edita
+  // atalhos do Flow: C cria · ←/↑ paralelo ou irmão esquerdo do pai · → sequência · ↓ troca paralelo · E edita
   if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && !e.altKey) {
     const k = e.key.toLowerCase();
     if (k === "c") { e.preventDefault(); addFnEl(sel.id, e.shiftKey ? "child" : "after"); paint(); return; }

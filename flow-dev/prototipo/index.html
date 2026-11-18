@@ -2024,13 +2024,13 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd> paralelo / pai <kbd>↑</kbd> paralelo · troca · pai <kbd>→</kbd> seq. / troca <kbd>↓</kbd> troca / 1º filho / seq.</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias sN
   const rows = ganttRows(s.plan).filter(r => !isData(r.u));
   // sequência pela ordem das linhas (igual ao layout): cada passo liga no seguinte entre irmãos; ◆ não conta.
-  // DEPS antigos podem ficar velhos depois das setas — não servem para desenhar
+  // DEPS antigos podem ficar velhos depois de mover — não servem para desenhar
   const FD = [];
   const fnSibs = pid => (pid ? kidsPlan(pid) : []).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === s.plan);
   const seqLink = list => {
@@ -2206,7 +2206,7 @@ function flow(s) {
     return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
   }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   if (!s.noDeps) rows.forEach(({ u }) => {
-    // senão só volta a um irmão anterior (mesmo pai); se as setas separaram os dois, a volta não faz sentido
+    // senão só volta a um irmão anterior (mesmo pai); se foram separados, a volta não faz sentido
     const tb = u.cond && $u(u.cond[1]);
     if (!tb || idx[tb.id] == null || tb.parent !== u.parent || idx[tb.id] > idx[u.id]) return;
     const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === (idxOut[u.id] ?? idx[u.id]) + 1), ybk = yTop(idx[u.cond[1]]) + 27;
@@ -3290,147 +3290,7 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
-/** Troca a ordem de dois irmãos no array U (mantém PARS/DEPS). */
-/** Troca a e b de lugar na sequência: quem vinha antes/depois de um passa a ligar no outro (DEPS e PARS entre irmãos) e a ordem em U também. */
-function swapSeq(a, b) {
-  const sib = new Set(kidsPlan(a.parent).filter(k => !k.arch && !isFolder(k) && !isData(k)).map(k => k.id));
-  const sw = id => id === a.id ? b.id : id === b.id ? a.id : id;
-  const touch = pr => (pr[0] === a.id || pr[0] === b.id || pr[1] === a.id || pr[1] === b.id) && sib.has(pr[0]) && sib.has(pr[1]);
-  DEPS.forEach(d => { if (touch(d)) { d[0] = sw(d[0]); d[1] = sw(d[1]); } });
-  PARS.forEach(d => { if (touch(d)) { d[0] = sw(d[0]); d[1] = sw(d[1]); } });
-  STRUCTS.forEach(st => { const ia = st.body.indexOf(a.id), ib = st.body.indexOf(b.id); if (ia >= 0 && ib >= 0) { st.body[ia] = b.id; st.body[ib] = a.id; } });
-  swapSibBlocks(a, b);
-  cur.sel = a.id;
-  return true;
-}
-function swapSibBlocks(a, b) {
-  const block = id => { const u = $u(id); return [u, ...desc(id)].sort((x, y) => U.indexOf(x) - U.indexOf(y)); };
-  const ba = block(a.id), bb = block(b.id);
-  let ia = U.indexOf(ba[0]), ib = U.indexOf(bb[0]);
-  if (ia < 0 || ib < 0 || ia === ib) return false;
-  const items = [...U];
-  if (ia < ib) {
-    items.splice(ib, bb.length);
-    items.splice(ia, ba.length);
-    items.splice(ia, 0, ...bb, ...ba);
-  } else {
-    items.splice(ia, ba.length);
-    items.splice(ib, bb.length);
-    items.splice(ib, 0, ...ba, ...bb);
-  }
-  U = items;
-  return true;
-}
-/**
- * Setas: ordem das linhas (U) + paralelo (PARS). 1ª condição que bater vale.
- * ←: sequencial esquerdo → paralelo; senão → irmão esquerdo do pai.
- * →: paralelo → sequencial direito do grupo; senão sequencial direito → troca; senão nada.
- * ↑: sequencial esquerdo → paralelo; senão paralelo acima → inverte; senão → irmão esquerdo do pai.
- * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho; senão paralelo com de cima →
- *    sequencial direito dele; senão → irmão direito do pai.
- */
-function fnKeyMove(u, key) {
-  const sibsOf = pid => kidsPlan(pid).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan);
-  const sibs = sibsOf(u.parent);
-  const groups = [];
-  sibs.forEach(x => { const g = groups[groups.length - 1]; if (g && g.some(y => isPar(y.id, x.id))) g.push(x); else groups.push([x]); });
-  const gi = groups.findIndex(g => g.includes(u)), G = groups[gi] || [u], k = G.indexOf(u);
-  const leftG = groups[gi - 1] || null, rightG = groups[gi + 1] || null;
-  const inPar = G.length > 1, parAbove = k > 0 ? G[k - 1] : null, parBelow = k < G.length - 1 ? G[k + 1] : null;
-  const seqLeft = !inPar || k === 0 ? leftG : null;
-  const p = $u(u.parent), canOut = p && !isFolder(p);
-  const blockOf = x => [x, ...desc(x.id)].sort((m, n) => U.indexOf(m) - U.indexOf(n));
-  const lastOf = x => { const b = blockOf(x); return b[b.length - 1]; };
-  const detach = () => {
-    for (let i = PARS.length - 1; i >= 0; i--) if (PARS[i].includes(u.id)) PARS.splice(i, 1);
-    const rest = G.filter(x => x !== u);
-    rest.forEach((x, i) => rest.slice(i + 1).forEach(y => { if (!isPar(x.id, y.id)) PARS.push([x.id, y.id]); }));
-  };
-  const put = (ref, where, parent) => {
-    const blk = blockOf(u), set = new Set(blk);
-    const rest = U.filter(x => !set.has(x));
-    const at = where === "before" ? rest.indexOf(blockOf(ref)[0]) : where === "first" ? rest.indexOf(ref) + 1 : rest.indexOf(lastOf(ref)) + 1;
-    if (at < 0) return false;
-    rest.splice(at, 0, ...blk);
-    U = rest;
-    if (parent !== undefined && u.parent !== parent) {
-      STRUCTS.forEach(st => { const j = st.body.indexOf(u.id); if (j >= 0) st.body.splice(j, 1); });
-      u.parent = parent; if (parent) OPEN.add(parent);
-    }
-    return true;
-  };
-  /** Troca o bloco de u com o passo sequencial (grupo de irmãos) à direita/esquerda. */
-  const swapWithGroup = g => {
-    const A = blockOf(u), B = g.flatMap(x => blockOf(x)), set = new Set([...A, ...B]);
-    const aFirst = U.indexOf(A[0]) < U.indexOf(B[0]);
-    let at = 0;
-    for (let i = 0, lim = Math.min(U.indexOf(A[0]), U.indexOf(B[0])); i < lim; i++) if (!set.has(U[i])) at++;
-    const rest = U.filter(x => !set.has(x));
-    rest.splice(at, 0, ...(aFirst ? [...B, ...A] : [...A, ...B]));
-    U = rest;
-    return true;
-  };
-  const joinPar = g => {
-    detach();
-    if (!put(g[g.length - 1], "after")) return false;
-    g.forEach(x => { if (!isPar(x.id, u.id)) PARS.push([x.id, u.id]); });
-    return true;
-  };
-  const out = where => { detach(); return put(p, where, p.parent); };
-  const unPar = () => {
-    detach();
-    const rest = G.filter(x => x !== u);
-    return put(rest[rest.length - 1], "after");
-  };
-  let ok = false, msg = "", no = "";
-  if (key === "ArrowLeft") {
-    if (seqLeft) { ok = joinPar(seqLeft); if (ok) msg = `em paralelo com ${seqLeft.map(x => x.title).join(", ")}`; }
-    else if (canOut) { ok = out("before"); if (ok) msg = `irmão esquerdo de ${p.title}`; }
-    else no = "Já está no nível de cima";
-  } else if (key === "ArrowUp") {
-    if (seqLeft) { ok = joinPar(seqLeft); if (ok) msg = `em paralelo com ${seqLeft.map(x => x.title).join(", ")}`; }
-    else if (parAbove) { ok = put(parAbove, "before"); if (ok) msg = `acima de ${parAbove.title}`; }
-    else if (canOut) { ok = out("before"); if (ok) msg = `irmão esquerdo de ${p.title}`; }
-    else no = "Já está no nível de cima";
-  } else if (key === "ArrowRight") {
-    if (inPar) { ok = unPar(); if (ok) msg = "sequencial depois do paralelo"; }
-    else if (rightG) { ok = swapWithGroup(rightG); if (ok) msg = `trocou com ${rightG.map(x => x.title).join(", ")}`; }
-  } else if (key === "ArrowDown") {
-    if (parBelow) { ok = put(parBelow, "after"); if (ok) msg = `abaixo de ${parBelow.title}`; }
-    else if (rightG && !isDesc(rightG[0].id, u.id)) {
-      const t = rightG[0]; detach(); ok = put(t, "first", t.id); if (ok) msg = `1º filho de ${t.title}`;
-    } else if (inPar) { ok = unPar(); if (ok) { const rest = G.filter(x => x !== u); msg = `sequencial depois de ${rest[rest.length - 1].title}`; } }
-    else if (canOut) { ok = out("after"); if (ok) msg = `irmão direito de ${p.title}`; }
-  }
-  if (ok) cur.sel = u.id;
-  paint();
-  if (ok) toast(`${u.title}: ${msg}`, "move");
-  else toast(no || `${u.title}: nenhum movimento possível para essa seta`, "info");
-}
 const isPar = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
-/** ← : u passa a rodar no mesmo passo do irmão anterior a (mesmas entradas de sequência; quem vinha depois de u espera os dois). */
-function makeParallel(u, a) {
-  const predsA = DEPS.filter(d => d[1] === a.id).map(d => d[0]);
-  const succU = DEPS.filter(d => d[0] === u.id).map(d => d[1]);
-  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === u.id) DEPS.splice(i, 1);
-  predsA.forEach(x => DEPS.push([x, u.id]));
-  succU.forEach(b => { if (!DEPS.some(d => d[0] === a.id && d[1] === b)) DEPS.push([a.id, b]); });
-  DEPS.forEach(d => { if (d[0] === a.id && d[1] === u.id) d[1] = "__x"; });
-  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === "__x") DEPS.splice(i, 1);
-  const grp = x => [x, ...PARS.filter(pr => pr.includes(x)).map(pr => pr[0] === x ? pr[1] : pr[0])];
-  const gu = grp(u.id);
-  grp(a.id).forEach(g => gu.forEach(m => { if (g !== m && !isPar(g, m)) PARS.push([g, m]); }));
-  cur.sel = u.id;
-}
-/** → num elemento em paralelo: volta a ser sequencial, logo depois do irmão anterior. */
-function unParallel(u, a) {
-  const predsA = new Set(DEPS.filter(d => d[1] === a.id).map(d => d[0]));
-  for (let i = PARS.length - 1; i >= 0; i--) if (PARS[i].includes(u.id)) PARS.splice(i, 1);
-  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === u.id && predsA.has(DEPS[i][0])) DEPS.splice(i, 1);
-  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][0] === a.id && DEPS.some(d => d[0] === u.id && d[1] === DEPS[i][1])) DEPS.splice(i, 1);
-  DEPS.push([a.id, u.id]);
-  cur.sel = u.id;
-}
 /** Move a função (com as filhas) para antes, depois ou dentro de outra. */
 function moveFn(id, refId, mode) {
   const u = $u(id), ref = $u(refId);
@@ -3921,9 +3781,6 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (!player.classList.contains("open")) { const th = e.target.closest?.(".thumb"); if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openT(th.dataset.open); } return; }
-  // select (responsável, tipo…) ou botão que ficou com foco depois do clique não pode engolir as setas do Flow
-  const ae0 = document.activeElement;
-  if (e.key.startsWith("Arrow") && cur.v === "flow" && cur.sel && ae0 && /SELECT|BUTTON/.test(ae0.tagName) && ae0.closest(".gantt.flow, .bar-tools, .fl-tools")) ae0.blur();
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
   if (e.key === "Escape") {
     if (cur.ctx || cur.picker) { closeOverlays(); paint(); return; }
@@ -3936,17 +3793,13 @@ document.addEventListener("keydown", e => {
   }
   if (typing) return;
   const sel = cur.sel && $u(cur.sel);
-  if (e.key.startsWith("Arrow") && !e.shiftKey && !(e.metaKey || e.ctrlKey) && !e.altKey && cur.v === "flow" && (!sel || isFolder(sel) || isData(sel))) {
-    e.preventDefault(); toast(sel ? "As setas movem só funções: selecione uma função" : "Clique numa função para movê-la com as setas", "info"); return;
-  }
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
-  // atalhos do Flow: C cria · ← paralelo/pai · ↑ paralelo·troca·pai · → sequência · ↓ troca/sequência · E edita
+  // atalhos do Flow: C cria · E edita (mover função só pelos ícones)
   if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && !e.altKey) {
     const k = e.key.toLowerCase();
     if (k === "c") { e.preventDefault(); addFnEl(sel.id, e.shiftKey ? "child" : "after"); paint(); return; }
     if (k === "e") { e.preventDefault(); unset("dadoEdit", "agCfg", "mdCfg"); cur.drawer = sel.id; paint(); return; }
-    if (e.key.startsWith("Arrow") && !e.shiftKey) { e.preventDefault(); fnKeyMove(sel, e.key); return; }
   }
   if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && (e.key === "Enter" || e.key === "Tab")) { e.preventDefault(); addFnEl(sel.id, e.key === "Tab" ? "child" : e.shiftKey ? "before" : "after"); paint(); return; }
   if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod))) { e.preventDefault(); ACT["ask-rm"]({ dataset: { id: sel.id } }); paint(); return; }
@@ -3955,6 +3808,7 @@ document.addEventListener("keydown", e => {
   if (sel && mod && e.altKey && e.code === "KeyC") { ACT["copy-path"]({ dataset: { id: sel.id } }); return; }
   if (sel && mod && e.key.toLowerCase() === "c") { ACT.copy({ dataset: { id: sel.id } }); paint(); return; }
   if (mod && e.key.toLowerCase() === "v") { pasteInto(cur.sel); paint(); return; }
+  if (e.key.startsWith("Arrow") && cur.v === "flow") return; // setas não movem nada no Flow
   if (e.key === "ArrowRight") step(1);
   else if (e.key === "ArrowLeft") step(-1);
   else if (e.key === "Backspace") { e.preventDefault(); goBack(); }

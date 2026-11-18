@@ -647,6 +647,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
 /* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
 .gantt.flow .grow { position: relative; }
+/* guias de recuo: uma linha vertical por nível (16 px), como num editor de código */
+.gantt.flow .fl-guides { position: absolute; left: 14px; top: 0; bottom: -1px; pointer-events: none; background: repeating-linear-gradient(to right, transparent 0 7px, var(--line-2) 7px 8px, transparent 8px 16px); }
 .gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
 .gantt.flow .grow:hover .fl-tools { display: flex; } /* ações só no hover, nunca no clique */
 .gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
@@ -2225,18 +2227,21 @@ function flow(s) {
   };
   // recuo do Nome segue a sequência do fluxo: cada passo (sN) empurra a linha para a direita; paralelos ficam alinhados
   const s0Root = (layout[rootId] || { s: 0 }).s;
-  const ind = (u, d) => d * 18 + Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root)) * 16;
+  // nível = profundidade + passo; 16 px por nível para as guias verticais alinharem em todas as linhas
+  const lvl = (u, d) => d + Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root));
+  const ind = (u, d) => lvl(u, d) * 16;
+  const gd = n => n > 0 ? `<span class="fl-guides" style="width:${n * 16}px" aria-hidden="true"></span>` : "";
   const leftRow = ({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">${gd(lvl(u, d))}
       <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${dKids(n).length ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gd(lvl(r.u, r.d) + 1)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${dKids(n).length ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2245,7 +2250,7 @@ function flow(s) {
     const uniq = [...new Map(tg.map(t => [t.id, t])).values()];
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
   };
-  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}"><span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)">${gd(lvl(r.lp, r.d))}<span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}">${gd(lvl(rows[r.st.i0].u, r.d))}<span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: s0 = entradas abstratas (outra camada/state); sN = saídas novas; stBag = bag acumulado em sN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));

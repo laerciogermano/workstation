@@ -26,6 +26,6 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 | Parâmetro FOP `context` | `state` (`function f(state)`, export JS) |
 | Cubos em Arquivos/Estados | Abstrato = ■ preto · concreto = □ branco |
 | Pessoas / Agentes no Explorar | Avatar com iniciais (ou foto); agente IA leva selo bot |
-| Explorar | Seções separadas: **Projetos** · **Funções** · **Dados** (não mais aninhados) |
+| Explorar | Sem seção **Projetos**; **Funções** = só funções; **Dados** = lista plana de dados |
 | Adicionar fluxo / dado | `+` em Funções e Dados; menu de contexto |
 | Definir valor do dado | Painel no clique; com valor → concreto (sólido), sem valor → abstrato |

@@ -1430,56 +1430,20 @@ function explorer(s) {
     }
   }
 
-  // Estados em árvore, igual ao Explorar das tasks (Planos): pasta → composição → etapa → dados que ela produz
-  const guidesOf = lvl => Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
-  const padOf = lvl => 8 + Math.min(lvl, 14) * 14;
-  const outMatch = (u, name, ref) => !q || name.toLowerCase().includes(q) || u.title.toLowerCase().includes(q) || String(ref).toLowerCase().includes(q);
-  let estHits = 0;
-  function estWalk(pid, lvl, plan) {
-    const rows = [];
-    kids(pid).filter(u => !u.arch && !isData(u) && (pid || u.plan === plan)).forEach(u => {
-      // mesma árvore das tarefas (Planos), nó a nó — só que com quadrados e os dados como folhas, tipo árvore JSON
-      const outs = (u.outs || []).filter(([n, r]) => outMatch(u, n, r)), sub = estWalk(u.id, lvl + 1, plan);
-      if (q && !outs.length && !sub.length && !u.title.toLowerCase().includes(q)) return;
-      const id = "esx:" + u.id, isOpen = q ? true : OPEN.has(id); // recolhido por padrão
-      const fa = agent(u.agent), comp = kids(u.id).some(k => !k.arch), fabs = !isFolder(u) && !comp && fa?.type === "ia", ffull = !isFolder(u) && !comp && fa?.type === "maquina";
-      rows.push(`<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:${padOf(lvl)}px">${guidesOf(lvl)}<span class="car">${outs.length || sub.length ? icon("chevron-right") : ""}</span><span class="fi dado" title="${isFolder(u) ? "Pasta" : comp ? "Composição" : "Função"}">${icon("box")}</span><span class="t">${markTitle(u.title, q)}</span>${u.st ? `<span class="meta"><span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span></span>` : ""}</div>`);
-      if (!isOpen) return;
-      rows.push(...sub);
-      outs.forEach(([name, ref]) => {
-        estHits++;
-        const abs = dadoIsAbs(name), has = dadoHasValue(name);
-        rows.push(`<div class="node${s.estado === name ? " sel" : ""}" data-estado="${esc(name)}" data-id="${u.id}" data-act="dado-edit" data-n="${esc(name)}" style="padding-left:${padOf(lvl + 1)}px">${guidesOf(lvl + 1)}<span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}${has ? " · " + DATA_VAL[name] : ""}">${icon("box")}</span><span class="t mono">${markTitle(name, q)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[name]) : "sem valor"}</span></span></div>`);
-      });
-    });
-    return rows;
-  }
-  // Projetos = lista plana; Funções e Dados = seções próprias (agrupadas por projeto)
-  const projRows = [];
+  // Funções = só funções (árvore de composição, sem agrupador de projeto). Dados = lista plana de dados.
   const fnSecRows = [];
-  const dadoSecRows = [];
-  let nFuncoes = 0, nDadosSec = 0;
   PLANS.forEach(p => {
-    planRows = []; walk(null, 1, p.id);
-    const est = estWalk(null, 1, p.id);
-    const n = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
-    if (!q || planRows.length || est.length || p.name.toLowerCase().includes(q)) {
-      projRows.push(`<div class="node proj${s.plan === p.id ? " cur sel" : ""}" data-act="proj-sel" data-plan="${p.id}" data-id="pjx:${p.id}" title="Abrir ${esc(p.name)} no Flow" style="padding-left:8px"><span class="car"></span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}<button class="ib pj-b" data-act="proj-open" data-plan="${p.id}" title="Abrir sanfonas">${icon("chevrons-up-down")}</button><button class="ib pj-b" data-act="proj-close" data-plan="${p.id}" title="Fechar sanfonas">${icon("chevrons-down-up")}</button></span></div>`);
-    }
-    if (planRows.length || (!q && n)) {
-      const rid = "pjp:" + p.id, rOpen = q ? true : OPEN.has(rid);
-      nFuncoes += U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === p.id).length;
-      fnSecRows.push(`<div class="node${rOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="toggle" data-id="${rid}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span><span class="meta">${n}</span></div>`);
-      if (rOpen) fnSecRows.push(...planRows);
-    }
-    if (est.length) {
-      const eid = "pje:" + p.id, eOpen = q ? true : OPEN.has(eid);
-      nDadosSec += est.filter(h => h.includes("data-estado")).length || est.length;
-      dadoSecRows.push(`<div class="node${eOpen ? " openf" : ""}${s.plan === p.id ? " cur" : ""}" data-act="toggle" data-id="${eid}" style="padding-left:8px"><span class="car">${icon("chevron-right")}</span><span class="fi plan" title="Projeto">${icon("folder-kanban")}</span><span class="t"><b>${markTitle(p.name, q)}</b></span></div>`);
-      if (eOpen) dadoSecRows.push(...est);
-    }
+    planRows = [];
+    walk(null, 1, p.id);
+    fnSecRows.push(...planRows);
   });
-  if (q) hits += estHits;
+  const nFuncoes = U.filter(u => !u.arch && !isFolder(u) && !isData(u)).length;
+  const catalog = stateCatalog().filter(d => !q || d.name.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
+  if (q) hits += catalog.length;
+  const dadoSecRows = catalog.map(d => {
+    const abs = dadoIsAbs(d.name), has = dadoHasValue(d.name);
+    return `<div class="node${s.estado === d.name ? " sel" : ""}" data-estado="${esc(d.name)}" data-id="${d.id}" data-act="dado-edit" data-n="${esc(d.name)}" style="padding-left:8px"><span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}${has ? " · " + DATA_VAL[d.name] : ""}">${icon("box")}</span><span class="t mono">${markTitle(d.name, q)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[d.name]) : "sem valor"}</span></span></div>`;
+  });
 
   // Agentes: modelos de IA treinados com prompt pronto · abrir mostra modelo, prompt e onde é usado
   const agentRows = (() => {
@@ -1527,21 +1491,17 @@ function explorer(s) {
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma pessoa.</p>`, n: list.length };
   })();
-  const empty = !projRows.length && !fnSecRows.length && !dadoSecRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
+  const empty = !fnSecRows.length && !dadoSecRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
-      <button class="ib" data-act="new-file" title="Novo projeto">${icon("circle-plus")}</button>
-      <button class="ib" data-act="new-folder" title="Nova pasta de projetos">${icon("folder-plus")}</button>
+      <button class="ib" data-act="new-file" title="Nova função">${icon("circle-plus")}</button>
+      <button class="ib" data-act="new-folder" title="Nova pasta de funções">${icon("folder-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="expand-all" title="Abrir todas as sanfonas">${icon("chevrons-up-down")}</button>
       <button class="ib" data-act="collapse" title="Fechar todas as sanfonas">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar projetos, funções, dados, pessoas…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar funções, dados, pessoas…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
-      <div class="ex-sec" data-sec="projetos">
-        <div class="ex-sec-h">${icon("folder-kanban")} Projetos<span class="n">${PLANS.length}</span></div>
-        ${projRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum projeto.</p>`}
-      </div>
       <div class="ex-sec" data-sec="funcoes">
         <div class="ex-sec-h">${icon("circle")} Funções<span class="n">${nFuncoes}</span><button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
         ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função. <button class="btn" data-act="new-flow" style="margin-left:6px;height:24px;font-size:11px">${icon("plus")}Fluxo</button></p>`}
@@ -1572,32 +1532,28 @@ function explorer(s) {
 // clicar numa função ou num dado no Flow revela no Explorar (abre o caminho e rola até o item)
 function revealFn(id) {
   const u = $u(id); if (!u) return;
-  OPEN.delete("pjx:" + u.plan); OPEN.add("pjp:" + u.plan);
   let p = u.parent; while (p) { OPEN.add(p); p = $u(p).parent; }
   STRUCTS.forEach(st => { if (st.body.includes(id)) OPEN.add("ifx:" + (u.parent || null) + ":" + st.test); });
-  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "fn" && v === id)).forEach(l => OPEN.add("ly:" + l.id)); // e a layer da função
+  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "fn" && v === id)).forEach(l => OPEN.add("ly:" + l.id));
   unset("estado");
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
 function revealDado(name) {
   const u = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === name)); if (!u) return;
-  OPEN.delete("pjx:" + u.plan); OPEN.add("pje:" + u.plan);
-  let x = u; while (x) { OPEN.add("esx:" + x.id); x = x.parent ? $u(x.parent) : null; }
   cur.estado = name; cur.sel = u.id;
-  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "dado" && v === name)).forEach(l => OPEN.add("ly:" + l.id)); // abre também a layer do dado
+  ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "dado" && v === name)).forEach(l => OPEN.add("ly:" + l.id));
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-estado="${name}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
 function projAll(plan, openAll) {
   const us = U.filter(u => !u.arch && u.plan === plan);
   const ids = new Set(us.map(u => u.id));
   const ifKeys = STRUCTS.map(st => { const b = st.body.map($u).find(x => x && !isData(x) && ids.has(x.id)); return b ? "ifx:" + (b.parent || null) + ":" + st.test : null; }).filter(Boolean);
-  OPEN.delete("pjx:" + plan);
   if (openAll) {
-    us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); OPEN.add("esx:" + u.id); });
-    ifKeys.forEach(k => OPEN.add(k)); OPEN.add("pje:" + plan); OPEN.add("pjp:" + plan);
+    us.forEach(u => { if (kids(u.id).length) OPEN.add(u.id); });
+    ifKeys.forEach(k => OPEN.add(k));
   } else {
     us.forEach(u => { OPEN.delete(u.id); OPEN.delete("esx:" + u.id); });
-    ifKeys.forEach(k => OPEN.delete(k)); OPEN.delete("pje:" + plan); OPEN.delete("pjp:" + plan);
+    ifKeys.forEach(k => OPEN.delete(k));
   }
 }
 function newRow(nn, lvl) {
@@ -3147,7 +3103,6 @@ const ACT = {
   "proj-sel": t => {
     const p = t.dataset.plan;
     cur.plan = p; unset("drawer", "mach"); cur.sel = null;
-    OPEN.add("pjp:" + p); OPEN.add("pje:" + p); // abre Funções e Dados desse projeto
     if (cur.v !== "flow") view("flow");
   },
   noop: () => false,
@@ -3167,9 +3122,9 @@ const ACT = {
     const root = planRoot(plan);
     const lane = root?.lane || LANES[0].id;
     const u = create(root?.id || null, "file", "Novo fluxo", { plan, lane, col: COLS[0].id, ctx: "Fluxo adicionado no Explorar" });
-    OPEN.add("pjp:" + plan); if (root) OPEN.add(root.id);
+    if (root) OPEN.add(root.id);
     cur.sel = u.id; cur.drawer = u.id; cur.plan = plan;
-    toast(`Fluxo “${u.title}” em ${PLANS.find(p => p.id === plan)?.name || plan}`, "workflow");
+    toast(`Fluxo “${u.title}”`, "workflow");
   },
   "new-dado": () => {
     const plan = cur.plan || PLANS[0].id;
@@ -3178,7 +3133,6 @@ const ACT = {
     const host = U.find(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === plan && !kids(u.id).some(k => !k.arch)) || create(root?.id || null, "file", "Definir " + name, { plan, lane: root?.lane || LANES[0].id, col: COLS[0].id });
     host.outs = host.outs || [];
     if (!host.outs.some(o => o[0] === name)) host.outs.push([name, "out/" + name + ".json"]);
-    OPEN.add("pje:" + plan); OPEN.add("esx:" + host.id);
     cur.dadoEdit = name; cur.estado = name; cur.sel = host.id; cur.plan = plan;
     toast(`Dado “${name}” — defina o valor para ficar concreto`, "box");
   },
@@ -3193,17 +3147,15 @@ const ACT = {
   "proj-open": t => { projAll(t.dataset.plan, true); },
   "proj-close": t => { projAll(t.dataset.plan, false); },
   "expand-all": () => {
-    OPEN.clear(); // pjx ausente = projeto aberto
+    OPEN.clear();
     ensureLayers();
-    U.filter(u => !u.arch && (isFolder(u) || kids(u.id).some(k => !k.arch))).forEach(u => { OPEN.add(u.id); OPEN.add("esx:" + u.id); });
-    PLANS.forEach(p => { OPEN.add("pjp:" + p.id); OPEN.add("pje:" + p.id); });
+    U.filter(u => !u.arch && (isFolder(u) || kids(u.id).some(k => !k.arch))).forEach(u => OPEN.add(u.id));
     LAYERS.forEach(l => OPEN.add("ly:" + l.id));
     STRUCTS.forEach(st => { const p = st.body.map($u).find(x => x && !x.arch); if (p) OPEN.add("ifx:" + (p.parent || null) + ":" + st.test); });
     toast("Sanfonas abertas", "chevrons-up-down");
   },
   collapse: () => {
     OPEN.clear();
-    PLANS.forEach(p => OPEN.add("pjx:" + p.id)); // pjx presente = projeto fechado
     toast("Sanfonas fechadas", "chevrons-down-up");
   },
   search: () => { if (cur.q != null) unset("q"); else { cur.q = ""; cur.focusQ = true; } },

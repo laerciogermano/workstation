@@ -2024,7 +2024,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd> paralelo / pai <kbd>↑</kbd> paralelo · troca · pai <kbd>→</kbd> sequência <kbd>↓</kbd> troca / 1º filho / seq.</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>←</kbd> paralelo / pai <kbd>↑</kbd> paralelo · troca · pai <kbd>→</kbd> sequência / 1º filho <kbd>↓</kbd> troca / 1º filho / pai</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias sN
@@ -3324,10 +3324,9 @@ function swapSibBlocks(a, b) {
 /**
  * Setas: só mexem na ordem das linhas (U) e no paralelo (PARS) — o mesmo que o layout usa.
  * ←: sequencial esquerdo → paralelo a ele; senão → irmão esquerdo do pai.
- * →: tem paralelo → sai do grupo, vira sequencial direito; senão sequencial direito → troca; senão nada.
+ * →: tem paralelo → sai do grupo, vira sequencial direito; senão sequencial direito → 1º filho dele; senão nada.
  * ↑: sequencial esquerdo → paralelo a ele; senão paralelo acima → inverte; senão → irmão esquerdo do pai.
- * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho dele; senão paralelo acima →
- *    sai do grupo (sequencial direito); senão → irmão direito do pai.
+ * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho dele; senão → irmão direito do pai.
  */
 function fnKeyMove(u, key) {
   const sibsOf = pid => kidsPlan(pid).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan);
@@ -3370,11 +3369,10 @@ function fnKeyMove(u, key) {
     else no = "Já está no nível de cima";
   } else if (key === "ArrowRight") {
     if (inPar) { detach(); put(G[G.length - 1] === u ? G[G.length - 2] : G[G.length - 1], "after"); ok = true; msg = "sequencial depois do paralelo"; }
-    else if (rightG) { put(rightG[rightG.length - 1], "after"); ok = true; msg = `trocou com ${rightG.map(x => x.title).join(", ")}`; }
+    else if (rightG) { const t = rightG[0]; put(t, "first", t.id); ok = true; msg = `1º filho de ${t.title}`; }
   } else if (key === "ArrowDown") {
     if (parBelow) { put(parBelow, "after"); ok = true; msg = `abaixo de ${parBelow.title}`; }
     else if (rightG) { const t = rightG[0]; detach(); put(t, "first", t.id); ok = true; msg = `1º filho de ${t.title}`; }
-    else if (inPar) { detach(); put(G[G.length - 2], "after"); ok = true; msg = "sequencial depois do paralelo"; }
     else if (canOut) { out("after"); ok = true; msg = `irmão direito de ${p.title}`; }
   }
   if (ok) cur.sel = u.id;

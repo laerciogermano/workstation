@@ -23,6 +23,7 @@ export function FlowView() {
   const pan = useRef<{ id: number; x: number; y: number; ox: number; oy: number; moved: boolean; soft: boolean } | null>(null);
   const [hov, setHov] = useState<{ id: string; x: number } | null>(null);
   const hovT = useRef<number>(0);
+  const skipBlur = useRef(false);
 
   const hidden = (id: string): boolean => { let p = m.u(id)?.parentId; while (p && !m.isFolder(m.u(p))) { if (s.flowClosed.has(p)) return true; p = m.u(p)?.parentId ?? null; } return false; };
   const rows = m.ganttRows(plan, rootId).filter(r => !m.isData(r.u) && !hidden(r.u.id));
@@ -128,11 +129,19 @@ export function FlowView() {
           {editing
             ? <input className="fl-ren" defaultValue={u.title} autoFocus aria-label="Nome do elemento" onClick={e => e.stopPropagation()}
                 onFocus={e => e.currentTarget.select()}
+                onBlur={e => {
+                  // clicar fora salva e desseleciona
+                  if (skipBlur.current) { skipBlur.current = false; return; }
+                  const v = e.currentTarget.value.trim();
+                  if (v && v !== u.title && !isVerb(v) && !m.isData(u)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); void ide.renameCommit(u.id, ""); }
+                  else void ide.renameCommit(u.id, v);
+                  set({ sel: null });
+                }}
                 onKeyDown={e => {
-                  if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); if (v && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } void ide.renameCommit(u.id, v); }
-                  if (e.key === "Escape") { e.stopPropagation(); void ide.renameCancel(u.id); }
+                  if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); if (v && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } skipBlur.current = true; void ide.renameCommit(u.id, v); }
+                  if (e.key === "Escape") { e.stopPropagation(); skipBlur.current = true; void ide.renameCancel(u.id); }
                 }} />
-            : <b>{u.title}</b>}
+            : <b title="Clique para renomear" style={{ cursor: "text" }} onClick={e => { e.stopPropagation(); set({ ren: u.id, fresh: null, sel: u.id }); }}>{u.title}</b>}
         </span>
         {!editing && (
           <span className="fl-tools" role="toolbar" aria-label="Ações do elemento">
@@ -321,12 +330,12 @@ export function FlowView() {
     if ((e.target as HTMLElement).closest("button, a, input, select, textarea, .dz, .bar-tools, .fl-tools, .edge-pop, .vdock, .ex-tools, .picker, .ctx, .modal, .scrim")) return;
     const soft = !!(e.target as HTMLElement).closest("[style*='cursor'], .grow, .sv-lbl, .sv-dn, .nm, .io-d, .io-l, text");
     pan.current = { id: e.pointerId, x: e.clientX, y: e.clientY, ox: view.x, oy: view.y, moved: false, soft };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* ignore */ }
   };
   const onMove = (e: RPointerEvent<HTMLDivElement>) => {
     const p = pan.current; if (!p || p.id !== e.pointerId) return;
     const dx = e.clientX - p.x, dy = e.clientY - p.y;
     if (!p.moved && Math.hypot(dx, dy) < 5) return;
+    if (!p.moved) { try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* ignore */ } }
     p.moved = true; e.currentTarget.classList.add("panning"); setHov(null);
     setView(v => ({ ...v, x: p.ox + dx, y: p.oy + dy }));
   };

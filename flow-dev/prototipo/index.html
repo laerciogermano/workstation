@@ -1342,11 +1342,18 @@ let U = [
   { id: "f2", kind: "folder", title: "Clientes", parent: null, lane: "l2", plan: "onb" },
   { id: "f3", kind: "folder", title: "Site institucional", parent: null, lane: "l3", plan: "padrao" },
   { id: "u1", title: "Comprar fone de ouvido", ctx: "Uso diário, cancelamento de ruído, até R$ 500", parent: "f1", agent: "a4", col: "c1", lane: "l1", s: 9, e: 10, plan: "padrao" },
+  { id: "u30", title: "Listar requisitos", ctx: "Bluetooth, ANC, bateria > 20 h", parent: "u1", agent: "a4", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["requisitos", "out/requisitos.json"]] },
+  { id: "u31", title: "Pesquisar modelos", parent: "u1", agent: "a3", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["requisitos"], outs: [["modelos_fone", "out/modelos-fone.json"]] },
+  { id: "u32", title: "Ler avaliações", parent: "u1", agent: "a3", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["requisitos"], outs: [["avaliacoes", "out/avaliacoes.json"]], loop: ["site", '["reddit", "youtube", "rtings"]'] },
+  { id: "u33", title: "Escolher modelo", parent: "u1", agent: "a4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["modelos_fone", "avaliacoes"], outs: [["fone_escolhido", "out/fone.json"]] },
+  { id: "u34", title: "Comprar fone", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido"], outs: [["pedido_fone", "out/pedido-fone.json"]] },
   { id: "u2", title: "Comprar celular", ctx: "Até R$ 3.000, câmera boa, 256 GB", parent: "f1", agent: "a4", col: "c2", lane: "l1", plan: "padrao" },
   { id: "u3", title: "Definir orçamento", parent: "u2", agent: "a4", col: "c5", lane: "l1", s: 0, e: 0, plan: "padrao", outs: [["orcamento", "out/orcamento.json"]] },
   { id: "u4", title: "Comparar modelos", ctx: "Três modelos até o orçamento, com prós e contras", parent: "u2", agent: "a3", col: "c3", lane: "l1", st: "exec", s: 1, e: 7, plan: "padrao", ins: ["orcamento"], outs: [["comparativo", "out/comparativo.json"]] },
   { id: "u5", title: "Escolher loja", parent: "u2", agent: "a3", col: "c1", lane: "l1", st: "pendente", s: 8, e: 8, plan: "padrao", ins: ["comparativo"], outs: [["loja", "out/loja.json"]] },
-  { id: "u6", title: "Comprar", parent: "u2", agent: "a4", col: "c1", lane: "l1", s: 9, e: 9, plan: "padrao", ins: ["loja"] },
+  { id: "u35", title: "Ver cashback", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["comparativo"], outs: [["cashback", "out/cashback.json"]] },
+  { id: "u6", title: "Comprar", parent: "u2", agent: "a4", col: "c1", lane: "l1", s: 9, e: 9, plan: "padrao", ins: ["loja", "cashback"], outs: [["pedido", "out/pedido.json"]] },
+  { id: "u36", title: "Acompanhar entrega", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["entrega", "out/entrega.json"]], loop: ["dia", "rastreio.dias"] },
   { id: "u9", title: "Fazer onboarding da Acme", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
   { id: "u10", title: "Coletar dados do cliente", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
   { id: "u11", title: "Rascunhar proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
@@ -1356,22 +1363,30 @@ let U = [
   { id: "u14", title: "Gerar contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["contrato", "out/contrato.pdf"], ["resumo_juridico", "out/resumo.md"]] },
   { id: "d2", kind: "data", title: "Contexto completo", parent: "u9", plan: "onb", lane: "l2", col: "c1", ins: ["proposta_en", "proposta_es", "contrato"] },
   { id: "u15", title: "Enviar ao cliente", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["proposta_en", "proposta_es", "contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
+  { id: "u41", title: "Registrar no CRM", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["crm_registro", "out/crm-registro.json"]] },
   { id: "u16", title: "Ativar cliente", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
   { id: "u17", title: "Agendar kickoff", ctx: "Chamada de 30 min depois do contrato assinado", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["kickoff", "out/kickoff.ics"]] },
   { id: "u18", title: "Criar conta no sistema", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["dados_cliente"], outs: [["conta_id", "out/conta.json"]] },
   { id: "u19", title: "Gerar credenciais", parent: "u16", agent: "m4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["credenciais", "out/credenciais.json"]] },
   { id: "u23", title: "Enviar boas-vindas", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["credenciais"], outs: [["boas_vindas", "out/boas-vindas.json"]], loop: ["contato", "dados_cliente.contatos"] },
+  { id: "u37", title: "Configurar integrações", ctx: "CRM e webhook de faturamento", parent: "u16", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u38", title: "Conectar CRM", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["crm_ok", "out/crm.json"]] },
+  { id: "u39", title: "Testar webhook", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["crm_ok"], outs: [["webhook_ok", "out/webhook.json"]] },
+  { id: "u40", title: "Treinar equipe do cliente", ctx: "Sessão de 1 h com o time da Acme", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["kickoff"], outs: [["treinamento", "out/treinamento.md"]] },
   { id: "d3", kind: "data", title: "Cliente ativo", parent: "u16", plan: "onb", lane: "l2", col: "c1", ins: ["kickoff", "boas_vindas"] },
   /* raiz limpa: sem agente, sem I/O, sem filhos — referência visual do elemento vazio */
   { id: "u24", title: "Fazer nova função", parent: "f2", col: "c1", lane: "l2", plan: "onb" },
-  { id: "u20", title: "Reescrever página inicial", ctx: "Mais curta, foco em quem contrata", parent: "f3", agent: "a1", col: "c3", lane: "l3", st: "cancel", s: 7, e: 8, plan: "padrao", outs: [["pagina", "out/index.html"]] },
-  { id: "u21", title: "Escolher fotos", parent: "f3", agent: "a4", col: "c2", lane: "l3", s: 5, e: 9, plan: "padrao" },
-  { id: "u22", title: "Publicar build", parent: "f3", agent: "m2", col: "c1", lane: "l3", s: 10, e: 10, plan: "padrao", ins: ["pagina"], code: CODE_BUILD, loop: ["tentativa", "[1, 2, 3]"] },
+  { id: "u42", title: "Atualizar site institucional", ctx: "Página inicial nova, fotos e publicação", parent: "f3", agent: "a4", col: "c2", lane: "l3", plan: "padrao" },
+  { id: "u20", title: "Reescrever página inicial", ctx: "Mais curta, foco em quem contrata", parent: "u42", agent: "a1", col: "c3", lane: "l3", st: "cancel", s: 7, e: 8, plan: "padrao", outs: [["pagina", "out/index.html"]] },
+  { id: "u21", title: "Escolher fotos", parent: "u42", agent: "a4", col: "c2", lane: "l3", s: 5, e: 9, plan: "padrao", outs: [["fotos", "out/fotos/"]] },
+  { id: "u43", title: "Otimizar imagens", parent: "u42", agent: "m2", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["fotos"], outs: [["fotos_web", "out/fotos-web/"]], loop: ["foto", "fotos"] },
+  { id: "u22", title: "Publicar build", parent: "u42", agent: "m2", col: "c1", lane: "l3", s: 10, e: 10, plan: "padrao", ins: ["pagina", "fotos_web"], outs: [["publicado", "out/publicado.json"]], code: CODE_BUILD, loop: ["tentativa", "[1, 2, 3]"] },
+  { id: "u44", title: "Avisar no Slack", parent: "u42", agent: "m1", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["publicado"], outs: [["aviso", "out/aviso.json"]] },
 ];
 U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "file"; });
 // DEPS = sequência (a → b); PARS = paralelo; u.cond = seleção [dado testado, volta para]; u.loop = repetição [var, lista]; kind "data" = dado (◆, 0 passos)
 const DEPS = [["u3", "u4"], ["u4", "u5"], ["u5", "u6"], ["u10", "u11"], ["u11", "u12"], ["u12", "d1"], ["d1", "u13"], ["d1", "u14"], ["u13", "d2"], ["u14", "d2"], ["d2", "u15"], ["u15", "u16"], ["u18", "u19"], ["u19", "u23"], ["u23", "d3"], ["u17", "d3"], ["u20", "u22"]];
-const PARS = [["u13", "u14"], ["u17", "u18"]];
+const PARS = [["u13", "u14"], ["u17", "u18"], ["u31", "u32"], ["u5", "u35"], ["u20", "u21"], ["u37", "u40"]];
 // Estruturas FOP (documento, itens 12–13): seleção = if (◇ no conector) com corpo; repetição = u.loop (for/map) ou recursão (u.cond volta)
 const STRUCTS = [
   { k: "if", test: "proposta_aprovada", body: ["d1", "u13", "u14", "d2", "u15"] },
@@ -1549,8 +1564,8 @@ function explorer(s) {
   let planRows = [];
   function walk(pid, lvl, plan) {
     if (s.newn && (s.newn.parent || null) === pid && (pid || plan === PLANS[0].id)) planRows.push(newRow(s.newn, lvl));
-    // seleção (if) como no Flow: nó ◇ if (condição) com as etapas do corpo dentro, no lugar da primeira delas
-    const ifs = STRUCTS.map(st => ({ st, body: st.body.map($u).filter(x => x && !x.arch && !isData(x) && (x.parent || null) === pid) })).filter(x => x.body.length);
+    // Funções lista só os roots (cada um abre a própria visualização no Flow): sem filhos e sem nó if
+    const ifs = [];
     const inIf = new Map(); ifs.forEach(x => x.body.forEach(b => inIf.set(b.id, x)));
     const done = new Set();
     kids(pid).forEach(u => {
@@ -1571,7 +1586,7 @@ function explorer(s) {
       one(u, lvl);
     });
     function one(u, lvl) {
-      const has = kids(u.id).length > 0, isOpen = show ? true : open.has(u.id);
+      const has = false, isOpen = false; // só roots: a estrutura interna fica no Flow
       const ind = 8 + Math.min(lvl, 14) * 14;
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
       const isRoot = !u.parent || isFolder($u(u.parent));
@@ -1595,7 +1610,7 @@ function explorer(s) {
     walk(null, 1, p.id);
     fnSecRows.push(...planRows);
   });
-  const nFuncoes = U.filter(u => !u.arch && !isFolder(u) && !isData(u)).length;
+  const nFuncoes = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && (!u.parent || isFolder($u(u.parent)))).length;
   const catalog = stateCatalog().filter(d => !q || d.name.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
   if (q) hits += catalog.length;
   const dadoRow = (name, lvl) => {

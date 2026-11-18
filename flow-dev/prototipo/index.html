@@ -3322,46 +3322,62 @@ function swapSibBlocks(a, b) {
   return true;
 }
 /**
- * ←: sequencial esquerdo → paralelo; senão → irmão esquerdo do pai.
- * →: paralelo → sequencial direito; senão sequencial direito → troca; senão nada.
- * ↑: sequencial esquerdo → paralelo; senão paralelo → inverte com o de cima; senão → irmão esquerdo do pai.
- * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho; senão paralelo com de cima →
- *    sequencial direito dele; senão → irmão direito do pai.
+ * Setas: só mexem na ordem das linhas (U) e no paralelo (PARS) — o mesmo que o layout usa.
+ * ←: sequencial esquerdo → paralelo a ele; senão → irmão esquerdo do pai.
+ * →: tem paralelo → sai do grupo, vira sequencial direito; senão sequencial direito → troca; senão nada.
+ * ↑: sequencial esquerdo → paralelo a ele; senão paralelo acima → inverte; senão → irmão esquerdo do pai.
+ * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho dele; senão paralelo acima →
+ *    sai do grupo (sequencial direito); senão → irmão direito do pai.
  */
 function fnKeyMove(u, key) {
-  const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
-  const prev = i > 0 ? sibs[i - 1] : null;
-  const next = i >= 0 && i < sibs.length - 1 ? sibs[i + 1] : null;
-  const seqLeft = prev && !isPar(prev.id, u.id) ? prev : null;
-  const seqRight = next && !isPar(next.id, u.id) ? next : null;
-  const parLeft = prev && isPar(prev.id, u.id) ? prev : null;
-  const parBelow = sibs.slice(i + 1).find(s => isPar(s.id, u.id)) || null;
-  const anyPar = parLeft || parBelow || sibs.find(s => s.id !== u.id && isPar(s.id, u.id)) || null;
+  const sibsOf = pid => kidsPlan(pid).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan);
+  const sibs = sibsOf(u.parent);
+  // grupos = passos: irmãos vizinhos em paralelo formam um grupo (igual ao flowLayout)
+  const groups = [];
+  sibs.forEach(x => { const g = groups[groups.length - 1]; if (g && g.some(y => isPar(y.id, x.id))) g.push(x); else groups.push([x]); });
+  const gi = groups.findIndex(g => g.includes(u)), G = groups[gi] || [u], k = G.indexOf(u);
+  const leftG = groups[gi - 1] || null, rightG = groups[gi + 1] || null;
+  const inPar = G.length > 1, parAbove = k > 0 ? G[k - 1] : null, parBelow = k < G.length - 1 ? G[k + 1] : null;
+  const seqLeft = !inPar || k === 0 ? leftG : null; // só quem está sozinho (ou é o 1º do grupo) tem sequencial à esquerda
   const p = $u(u.parent), canOut = p && !isFolder(p);
+  const blockOf = x => [x, ...desc(x.id)].sort((m, n) => U.indexOf(m) - U.indexOf(n));
+  const lastOf = x => { const b = blockOf(x); return b[b.length - 1]; };
+  // sai do paralelo: os que ficam no grupo continuam paralelos entre si
+  const detach = () => {
+    for (let i = PARS.length - 1; i >= 0; i--) if (PARS[i].includes(u.id)) PARS.splice(i, 1);
+    const rest = G.filter(x => x !== u);
+    rest.forEach((x, i) => rest.slice(i + 1).forEach(y => { if (!isPar(x.id, y.id)) PARS.push([x.id, y.id]); }));
+  };
+  // tira o bloco de u e põe antes/depois de ref (ou logo após ref = 1º filho)
+  const put = (ref, where, parent) => {
+    const blk = blockOf(u), set = new Set(blk);
+    const rest = U.filter(x => !set.has(x));
+    let at = where === "before" ? rest.indexOf(blockOf(ref)[0]) : where === "first" ? rest.indexOf(ref) + 1 : rest.indexOf(lastOf(ref)) + 1;
+    rest.splice(at, 0, ...blk);
+    U = rest;
+    if (parent !== undefined && u.parent !== parent) { STRUCTS.forEach(st => { const j = st.body.indexOf(u.id); if (j >= 0) st.body.splice(j, 1); }); u.parent = parent; }
+  };
+  const joinPar = g => { detach(); put(g[g.length - 1], "after"); g.forEach(x => PARS.push([x.id, u.id])); };
+  const out = where => { detach(); put(p, where, p.parent); };
   let ok = false, msg = "", no = "";
-  if (key === "ArrowLeft") {
-    if (seqLeft) { makeParallel(u, seqLeft); ok = true; msg = `em paralelo com ${seqLeft.title}`; }
-    else if (canOut) { ok = moveFn(u.id, p.id, "before"); msg = `irmão esquerdo de ${p.title}`; }
+  if (key === "ArrowLeft" || (key === "ArrowUp" && seqLeft)) {
+    if (seqLeft) { joinPar(seqLeft); ok = true; msg = `em paralelo com ${seqLeft.map(x => x.title).join(", ")}`; }
+    else if (canOut) { out("before"); ok = true; msg = `irmão esquerdo de ${p.title}`; }
     else no = "Já está no nível de cima";
   } else if (key === "ArrowUp") {
-    if (seqLeft) { makeParallel(u, seqLeft); ok = true; msg = `em paralelo com ${seqLeft.title}`; }
-    else if (parLeft) { ok = swapSibBlocks(u, parLeft); if (ok) msg = `acima de ${parLeft.title}`; }
-    else if (canOut) { ok = moveFn(u.id, p.id, "before"); msg = `irmão esquerdo de ${p.title}`; }
+    if (parAbove) { put(parAbove, "before"); ok = true; msg = `acima de ${parAbove.title}`; }
+    else if (canOut) { out("before"); ok = true; msg = `irmão esquerdo de ${p.title}`; }
     else no = "Já está no nível de cima";
   } else if (key === "ArrowRight") {
-    const a = parLeft || anyPar;
-    if (a) { unParallel(u, a); ok = true; msg = `sequencial depois de ${a.title}`; }
-    else if (seqRight) { ok = swapSeq(u, seqRight); if (ok) msg = `trocou com ${seqRight.title}`; }
+    if (inPar) { detach(); put(G[G.length - 1] === u ? G[G.length - 2] : G[G.length - 1], "after"); ok = true; msg = "sequencial depois do paralelo"; }
+    else if (rightG) { put(rightG[rightG.length - 1], "after"); ok = true; msg = `trocou com ${rightG.map(x => x.title).join(", ")}`; }
   } else if (key === "ArrowDown") {
-    if (parBelow) { ok = swapSibBlocks(u, parBelow); if (ok) msg = `abaixo de ${parBelow.title}`; }
-    else if (seqRight) {
-      const first = kidsPlan(seqRight.id).filter(k => !k.arch && !isFolder(k) && !isData(k))[0];
-      ok = first ? moveFn(u.id, first.id, "before") : moveFn(u.id, seqRight.id, "child");
-      if (ok) msg = `1º filho de ${seqRight.title}`;
-    }
-    else if (parLeft) { unParallel(u, prev); ok = true; msg = `sequencial depois de ${prev.title}`; }
-    else if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `irmão direito de ${p.title}`; }
+    if (parBelow) { put(parBelow, "after"); ok = true; msg = `abaixo de ${parBelow.title}`; }
+    else if (rightG) { const t = rightG[0]; detach(); put(t, "first", t.id); ok = true; msg = `1º filho de ${t.title}`; }
+    else if (inPar) { detach(); put(G[G.length - 2], "after"); ok = true; msg = "sequencial depois do paralelo"; }
+    else if (canOut) { out("after"); ok = true; msg = `irmão direito de ${p.title}`; }
   }
+  if (ok) cur.sel = u.id;
   paint();
   if (ok) toast(`${u.title}: ${msg}`, "move");
   else toast(no || `${u.title}: nenhum movimento possível para essa seta`, "info");

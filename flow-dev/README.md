@@ -101,7 +101,7 @@ Referências (ligações, agentes, pais/filhos, export FOP-IR) usam o **ID**, nu
 
 ## Protótipo
 
-[`prototipo/`](prototipo/) — alta fidelidade a partir do Plans, cortado para Explorar + Flow. Tema padrão **Gantt** = [`inputs/gantt-sample.png`](inputs/gantt-sample.png).
+[`prototipo/`](prototipo/) — alta fidelidade a partir do Plans, cortado para Explorar + Flow. Bolas de tema no topo (todas as paletas). **Tablet Black** = fundo preto, dados roxos, funções/fontes de dados azuis. **Gantt** = [`inputs/gantt-sample.png`](inputs/gantt-sample.png). Voltar: remover `tablet-black` de `TEMAS`/CSS em `prototipo/index.html`.
 
 ## Caminho inverso
 

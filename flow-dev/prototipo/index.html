@@ -3296,14 +3296,16 @@ function swapSibBlocks(a, b) {
 }
 /**
  * ←: sequencial esquerdo → paralelo; senão → irmão esquerdo do pai.
- * →: paralelo → sequencial à direita; senão nada.
- * ↑: sequencial esquerdo → paralelo; senão se paralelo → inverte com o de cima; senão → irmão esquerdo do pai.
+ * →: paralelo → sequencial direito; senão sequencial direito → troca; senão nada.
+ * ↑: sequencial esquerdo → paralelo; senão paralelo → inverte com o de cima; senão → irmão esquerdo do pai.
  * ↓: paralelo embaixo → troca; senão → sequencial direito do de cima; sem de cima → irmão direito do pai.
  */
 function fnKeyMove(u, key) {
   const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
   const prev = i > 0 ? sibs[i - 1] : null;
+  const next = i >= 0 && i < sibs.length - 1 ? sibs[i + 1] : null;
   const seqLeft = prev && !isPar(prev.id, u.id) ? prev : null;
+  const seqRight = next && !isPar(next.id, u.id) ? next : null;
   const parLeft = prev && isPar(prev.id, u.id) ? prev : null;
   const parBelow = sibs.slice(i + 1).find(s => isPar(s.id, u.id)) || null;
   const anyPar = parLeft || parBelow || sibs.find(s => s.id !== u.id && isPar(s.id, u.id)) || null;
@@ -3321,10 +3323,10 @@ function fnKeyMove(u, key) {
   } else if (key === "ArrowRight") {
     const a = parLeft || anyPar;
     if (a) { unParallel(u, a); ok = true; msg = `sequencial depois de ${a.title}`; }
+    else if (seqRight) { ok = swapSibBlocks(u, seqRight); if (ok) msg = `trocou com ${seqRight.title}`; }
   } else if (key === "ArrowDown") {
     if (parBelow) { ok = swapSibBlocks(u, parBelow); if (ok) msg = `abaixo de ${parBelow.title}`; }
     else if (prev) {
-      // sequencial direito do de cima: se paralelo, desfaz; se já sequencial, já está
       if (parLeft) { unParallel(u, prev); ok = true; msg = `sequencial depois de ${prev.title}`; }
     } else if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `irmão direito de ${p.title}`; }
   }

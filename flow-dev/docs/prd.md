@@ -62,8 +62,8 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 
 ### ↑ cima
 
-1. Se existir **irmão paralelo** → **inverte a ordem** com o de cima.
-2. Senão, se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
+1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
+2. Senão, se existir **irmão paralelo** → **inverte a ordem** com o de cima.
 3. Senão → vira **irmão sequencial esquerdo** do elemento pai.
 4. Sem alvo elegível → não faz nada.
 
@@ -80,15 +80,15 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 |---|---|---|---|
 | ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
 | → | sequencial direito do paralelo | troca com sequencial direito | noop |
-| ↑ | inverte com paralelo de cima | paralelo ao sequencial esquerdo | irmão sequencial esquerdo do pai |
+| ↑ | paralelo ao sequencial esquerdo | inverte com paralelo de cima | irmão sequencial esquerdo do pai |
 | ↓ | troca com paralelo embaixo | sequencial direito do de cima | sequencial direito do pai |
 
 ### Antes → depois
 
-| Antes (v1.2) | Depois |
+| Antes | Depois |
 |---|---|
 | → só saía do paralelo; senão noop | → também troca com sequencial direito |
-| ↑ sem caso de paralelo | ↑ inverte ordem com o paralelo de cima |
+| ↑ priorizava invert paralelo antes de sequencial esquerdo | ↑ sequencial esquerdo → paralelo; senão invert paralelo; senão pai |
 | ↓ só trocava com paralelo; senão noop | ↓ fallback: sequencial direito do de cima, depois do pai |
 
-**Voltar:** regras v1.2 neste arquivo (commit anterior da seção de setas).
+**Voltar:** restaurar `fnKeyMove` sem `seqRight`/`swapSibBlocks` na →; ordem ↑ antiga neste arquivo.

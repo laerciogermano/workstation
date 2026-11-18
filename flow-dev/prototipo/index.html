@@ -3899,6 +3899,17 @@ holder.addEventListener("keydown", e => {
   }
   if (t.matches("[data-code]") && e.key === "Tab") { e.preventDefault(); const s = t.selectionStart; t.setRangeText("  ", s, t.selectionEnd, "end"); t.dispatchEvent(new Event("input", { bubbles: true })); }
 });
+// botão de ação (menu da barra, linha ou Explorar) com um nome em edição: confirma o nome aqui e não deixa o campo perder o foco,
+// senão o focusout redesenha a tela antes do clique e o clique cai no DOM novo (menu some e a ação não roda)
+holder.addEventListener("mousedown", e => {
+  const btn = e.target.closest?.(".bar-tools [data-act], .fl-tools [data-act], .ex-tools [data-act]");
+  const inp = document.activeElement;
+  if (!btn || !inp || !inp.matches?.("[data-ren]")) return;
+  e.preventDefault();
+  const u = $u(inp.dataset.ren), v = inp.value.trim();
+  if (u && v) u.title = v;
+  unset("ren", "fresh");
+}, true);
 holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren && $u(cur.ren)) { const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren", "fresh"); setTimeout(paint, 0); } });
 holder.addEventListener("change", e => { const t = e.target; if (t.matches("select[data-dado-layer]")) { const i = holder.querySelector(`input[data-dado-file="${t.dataset.dadoLayer}"]`); if (i) { i.style.display = t.value === "__new" ? "" : "none"; if (t.value === "__new") i.focus(); } } });
 holder.addEventListener("submit", e => {

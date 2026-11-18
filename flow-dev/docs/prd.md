@@ -167,3 +167,13 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Clique no cubo sintético sem painel | `revealDado` + `dadoPanel` listam os dados reais; export JS/Py usa `propostas`/`pacote_contrato` |
 
 **Voltar:** `newIns = u => u.ins \|\| []`; remover `SYNTH_IN`/`synthIn`/absorb/`shared`; export com `proposta_en`/`contrato` soltos.
+
+## Responsável → Task (ordem e catálogo)
+
+| Antes | Depois |
+|---|---|
+| Colunas Flow: Nome · Responsável | **Responsável · Task** (nome = task) |
+| Título livre em qualquer etapa | Cada item do `CAT` tem `tasks[]` obrigatórias; lib Node = métodos (`node:http` → `get`/`post`/…) |
+| — | `taskPick` / `data-task` + `syncTaskTitle` ao trocar responsável |
+
+**Voltar:** grid `minmax(0,1fr) 130px` + header Nome/Responsável; remover `tasks`/`taskPick`/`syncTaskTitle`; títulos em português livre.

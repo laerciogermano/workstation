@@ -634,7 +634,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gmain .zcanvas { flex:1; min-width:0; background: var(--paper); }
 .gantt.flow .fhead { height: 52px; padding: 0; }
 .gantt.flow .gleft .fhead { display:grid; align-items:end; padding: 0 12px 8px 14px; }
-.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 130px; gap: 6px; align-items:center; }
+.fl-cols { display:grid; grid-template-columns: 148px minmax(0,1fr); gap: 6px; align-items:center; }
 .fhead .fl-cols span { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color: var(--muted); }
 .gantt.flow .grow, .gantt.flow .grows-r .rr { height: 34px; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
@@ -660,6 +660,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ring .val { stroke-linecap: round; }
 .ring b { position: relative; font-size: 7.5px; letter-spacing: -.02em; font-weight: 600; color: var(--ink); }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
+.gantt.flow .c-ag.muted { color: var(--muted); font-size: 11px; justify-content: center; }
+.gantt.flow .task-pick { appearance: none; -webkit-appearance: none; border: 1px solid var(--line-2); background: var(--paper); border-radius: 5px; height: 24px; padding: 0 22px 0 7px; font: 12px/1 var(--mono); color: var(--ink); max-width: 100%; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 7px center; }
+.gantt.flow .task-pick:hover { border-color: var(--muted); }
+.gantt.flow .task-miss { color: var(--fail); font-size: 11px; }
 /* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
 .gantt.flow .grow { position: relative; }
 /* guias de recuo só da hierarquia: uma linha vertical sob cada composição ancestral (e sob a função nas linhas de entrada/saída) */
@@ -668,7 +673,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .side .dkind { border: 0; background: none; padding: 0 2px; width: 20px; height: 18px; display: inline-grid; place-items: center; color: var(--dado); border-radius: 4px; cursor: pointer; }
 .side .dkind:hover { background: var(--wash); }
 .side .dkind svg { width: 13px; height: 13px; }
-.gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
+.gantt.flow .grow .fl-tools { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
 .gantt.flow .grow:hover .fl-tools { display: flex; } /* ações só no hover, nunca no clique */
 .gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
 .gantt.flow .grow .fl-tools .ib:hover { color: var(--accent); }
@@ -1254,7 +1259,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="var(--accent)"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="var(--accent)"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="var(--accent)" stroke-width="1.2"/></svg>Flow.dev · Flow IDE</div>
       <h1>Programar no fluxo</h1>
-      <p>Explorar + tela Flow. Barras no estilo <code>inputs/gantt-sample.png</code>; à esquerda responsável e descrição. Agentes = IA ou biblioteca Node.js.</p>
+      <p>Explorar + tela Flow. Barras no estilo <code>inputs/gantt-sample.png</code>; à esquerda responsável e depois a task. Agentes = IA ou biblioteca Node.js.</p>
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-32"><i data-lucide="play"></i>Navegar no protótipo</button>
@@ -1291,24 +1296,31 @@ const NDAYS = 19;
 const WD = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
 const CAT = [
-  { id: "a1", type: "ia", name: "Lia", sub: "Agente · redação de propostas" },
-  { id: "a2", type: "ia", name: "Teo", sub: "Agente · tradução" },
-  { id: "a3", type: "ia", name: "Nina", sub: "Agente · pesquisa e comparação" },
-  { id: "a4", type: "ia", name: "Davi", sub: "Agente · revisão e aprovação" },
-  { id: "h1", type: "pessoa", name: "Ana Souza", sub: "Comercial · aprova propostas" },
-  { id: "h2", type: "pessoa", name: "Bruno Lima", sub: "Jurídico · revisa contratos" },
-  { id: "h3", type: "pessoa", name: "Carla Dias", sub: "Sucesso do cliente · kickoff" },
-  { id: "h4", type: "pessoa", name: "Você", sub: "Decisões e compras pessoais" },
-  { id: "s1", type: "script", name: "validarCnpj()", sub: "cliente.data.js · função própria", mod: "cliente.data.js" },
-  { id: "s2", type: "script", name: "calcularPrecoAnual()", sub: "proposta.layer.js · função própria", mod: "proposta.layer.js" },
-  { id: "s3", type: "script", name: "montarBoasVindas()", sub: "credenciais.layer.js · função própria", mod: "credenciais.layer.js" },
-  { id: "m1", type: "maquina", name: "node:http", sub: "Node.js · requisições HTTP" },
-  { id: "m2", type: "maquina", name: "node:fs", sub: "Node.js · sistema de arquivos" },
-  { id: "m3", type: "maquina", name: "node:path", sub: "Node.js · caminhos" },
-  { id: "m4", type: "maquina", name: "node:crypto", sub: "Node.js · crypto" },
-  { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
-  { id: "m6", type: "maquina", name: "node:console", sub: "Node.js · console" },
+  { id: "a1", type: "ia", name: "Lia", sub: "Agente · redação de propostas", tasks: ["redigir_proposta", "gerar_contrato", "montar_boas_vindas", "descrever_pedido", "escrever_funcao", "reescrever_pagina", "treinar_equipe", "avaliar_na_loja", "responder_interessados"] },
+  { id: "a2", type: "ia", name: "Teo", sub: "Agente · tradução", tasks: ["traduzir"] },
+  { id: "a3", type: "ia", name: "Nina", sub: "Agente · pesquisa e comparação", tasks: ["pesquisar_modelos", "ler_avaliacoes", "montar_shortlist", "comparar_modelos", "testar_cameras", "escolher_loja", "pedir_troca", "comparar_frete", "escrever_testes", "medir_conversao", "pesquisar_opcoes", "avaliar_aparelho"] },
+  { id: "a4", type: "ia", name: "Davi", sub: "Agente · revisão e aprovação", tasks: ["revisar_proposta", "escolher_fotos", "revisar_texto", "definir_entradas_saidas", "revisar_codigo", "validar", "configurar_integracoes", "fazer_nova_funcao", "atualizar_site", "fazer_onboarding", "comprar_fone", "comprar_celular", "hello_world", "fazer_kickoff"] },
+  { id: "h1", type: "pessoa", name: "Ana Souza", sub: "Comercial · aprova propostas", tasks: ["aprovar_proposta"] },
+  { id: "h2", type: "pessoa", name: "Bruno Lima", sub: "Jurídico · revisa contratos", tasks: ["revisar_contrato"] },
+  { id: "h3", type: "pessoa", name: "Carla Dias", sub: "Sucesso do cliente · kickoff", tasks: ["fazer_kickoff"] },
+  { id: "h4", type: "pessoa", name: "Você", sub: "Decisões e compras pessoais", tasks: ["listar_requisitos", "escolher_modelo", "fotografar_e_anunciar", "entregar_e_receber", "definir_orcamento", "avaliar_aparelho", "testar_anc", "imprimir_hello_world", "comprar", "configurar_celular", "transferir_dados", "receber_e_testar", "hello_world"] },
+  { id: "s1", type: "script", name: "validarCnpj()", sub: "cliente.data.js · função própria", mod: "cliente.data.js", tasks: ["validarCnpj"] },
+  { id: "s2", type: "script", name: "calcularPrecoAnual()", sub: "proposta.layer.js · função própria", mod: "proposta.layer.js", tasks: ["calcularPrecoAnual"] },
+  { id: "s3", type: "script", name: "montarBoasVindas()", sub: "credenciais.layer.js · função própria", mod: "credenciais.layer.js", tasks: ["montarBoasVindas"] },
+  { id: "m1", type: "maquina", name: "node:http", sub: "Node.js · requisições HTTP", tasks: ["get", "post", "request", "createServer", "put", "patch", "delete", "head"] },
+  { id: "m2", type: "maquina", name: "node:fs", sub: "Node.js · sistema de arquivos", tasks: ["readFile", "writeFile", "copyFile", "mkdir", "readdir", "unlink", "rename", "appendFile", "stat"] },
+  { id: "m3", type: "maquina", name: "node:path", sub: "Node.js · caminhos", tasks: ["join", "resolve", "basename", "dirname", "extname", "parse", "format"] },
+  { id: "m4", type: "maquina", name: "node:crypto", sub: "Node.js · crypto", tasks: ["randomBytes", "createHash", "createHmac", "randomUUID"] },
+  { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams", tasks: ["pipeline", "finished", "Readable", "Writable", "Transform"] },
+  { id: "m6", type: "maquina", name: "node:console", sub: "Node.js · console", tasks: ["log", "info", "warn", "error", "debug", "table", "clear"] },
 ];
+/** Tasks obrigatórias do responsável: lib Node = métodos; agente/pessoa/script = verbos cadastrados. */
+const agentTasks = id => (agent(id)?.tasks || []).slice();
+const syncTaskTitle = u => {
+  const ts = agentTasks(u.agent);
+  if (!ts.length) return;
+  if (!ts.includes(u.title)) u.title = ts[0];
+};
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
 // Arquivos (antes Layers): cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
 const LAYERS = [
@@ -1392,87 +1404,87 @@ let U = [
   { id: "f2", kind: "folder", title: "Clientes", parent: null, lane: "l2", plan: "onb" },
   { id: "f3", kind: "folder", title: "Site institucional", parent: null, lane: "l3", plan: "padrao" },
   { id: "f4", kind: "folder", title: "Hello World", parent: null, lane: "l4", plan: "hello" },
-  { id: "u1", title: "Comprar fone de ouvido", ctx: "Uso diário, cancelamento de ruído, até R$ 500", parent: "f1", agent: "a4", col: "c1", lane: "l1", s: 9, e: 10, plan: "padrao" },
-  { id: "u30", title: "Listar requisitos", ctx: "Bluetooth, ANC, bateria > 20 h", parent: "u1", agent: "h4", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["requisitos", "out/requisitos.json"]] },
-  { id: "u50", title: "Pesquisar opções", ctx: "Modelos, avaliações e preços em paralelo", parent: "u1", agent: "a3", col: "c3", lane: "l1", plan: "padrao" },
-  { id: "u31", title: "Pesquisar modelos", parent: "u50", agent: "a3", col: "c3", lane: "l1", st: "ok", plan: "padrao", ins: ["requisitos"], outs: [["modelos_fone", "out/modelos-fone.json"]] },
-  { id: "u32", title: "Ler avaliações", parent: "u50", agent: "a3", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["requisitos"], outs: [["avaliacoes", "out/avaliacoes.json"]], loop: ["site", '["reddit", "youtube", "rtings"]'] },
-  { id: "u51", title: "Buscar preços", parent: "u50", agent: "m1", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["modelos_fone"], outs: [["precos_fone", "out/precos-fone.json"]], loop: ["loja", '["amazon", "kabum", "mercadolivre"]'] },
-  { id: "u52", title: "Montar shortlist", ctx: "Top 3 por nota × preço", parent: "u50", agent: "a3", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["modelos_fone", "avaliacoes", "precos_fone"], outs: [["shortlist", "out/shortlist.json"]] },
+  { id: "u1", title: "comprar_fone", ctx: "Uso diário, cancelamento de ruído, até R$ 500", parent: "f1", agent: "a4", col: "c1", lane: "l1", s: 9, e: 10, plan: "padrao" },
+  { id: "u30", title: "listar_requisitos", ctx: "Bluetooth, ANC, bateria > 20 h", parent: "u1", agent: "h4", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["requisitos", "out/requisitos.json"]] },
+  { id: "u50", title: "pesquisar_opcoes", ctx: "Modelos, avaliações e preços em paralelo", parent: "u1", agent: "a3", col: "c3", lane: "l1", plan: "padrao" },
+  { id: "u31", title: "pesquisar_modelos", parent: "u50", agent: "a3", col: "c3", lane: "l1", st: "ok", plan: "padrao", ins: ["requisitos"], outs: [["modelos_fone", "out/modelos-fone.json"]] },
+  { id: "u32", title: "ler_avaliacoes", parent: "u50", agent: "a3", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["requisitos"], outs: [["avaliacoes", "out/avaliacoes.json"]], loop: ["site", '["reddit", "youtube", "rtings"]'] },
+  { id: "u51", title: "get", parent: "u50", agent: "m1", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["modelos_fone"], outs: [["precos_fone", "out/precos-fone.json"]], loop: ["loja", '["amazon", "kabum", "mercadolivre"]'] },
+  { id: "u52", title: "montar_shortlist", ctx: "Top 3 por nota × preço", parent: "u50", agent: "a3", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["modelos_fone", "avaliacoes", "precos_fone"], outs: [["shortlist", "out/shortlist.json"]] },
   { id: "d4", kind: "data", title: "Shortlist", parent: "u1", plan: "padrao", lane: "l1", col: "c1", ins: ["shortlist"] },
-  { id: "u33", title: "Escolher modelo", parent: "u1", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["shortlist"], outs: [["fone_escolhido", "out/fone.json"]], cond: ["fone_escolhido", "u31"] },
-  { id: "u53", title: "Procurar cupom", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido"], outs: [["cupom", "out/cupom.json"]] },
-  { id: "u54", title: "Calcular frete", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido"], outs: [["frete", "out/frete.json"]] },
-  { id: "u34", title: "Comprar fone", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido", "cupom", "frete"], outs: [["pedido_fone", "out/pedido-fone.json"]] },
-  { id: "u55", title: "Receber e testar", parent: "u1", agent: "h4", col: "c1", lane: "l1", plan: "padrao" },
-  { id: "u56", title: "Rastrear pedido", parent: "u55", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido_fone"], outs: [["entrega_fone", "out/entrega-fone.json"]], loop: ["dia", "rastreio.dias"] },
-  { id: "u57", title: "Testar ANC e bateria", ctx: "Ônibus, escritório e 1 dia inteiro de uso", parent: "u55", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["entrega_fone", "requisitos"], outs: [["teste_fone", "out/teste-fone.json"]] },
-  { id: "u58", title: "Pedir troca", ctx: "Dentro dos 7 dias do direito de arrependimento", parent: "u55", agent: "a3", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["teste_fone", "pedido_fone"], outs: [["troca", "out/troca.json"]] },
-  { id: "u59", title: "Avaliar na loja", parent: "u1", agent: "a1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["teste_fone"], outs: [["review_fone", "out/review-fone.md"]] },
-  { id: "u2", title: "Comprar celular", ctx: "Até R$ 3.000, câmera boa, 256 GB", parent: "f1", agent: "a4", col: "c2", lane: "l1", plan: "padrao" },
-  { id: "u3", title: "Definir orçamento", parent: "u2", agent: "h4", col: "c5", lane: "l1", st: "ok", s: 0, e: 0, plan: "padrao", outs: [["orcamento", "out/orcamento.json"]] },
-  { id: "u60", title: "Vender celular antigo", ctx: "O valor entra no orçamento", parent: "u2", agent: "h4", col: "c2", lane: "l1", plan: "padrao" },
-  { id: "u61", title: "Avaliar aparelho", parent: "u60", agent: "a3", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["valor_usado", "out/valor-usado.json"]] },
-  { id: "u62", title: "Fotografar e anunciar", parent: "u60", agent: "h4", col: "c2", lane: "l1", plan: "padrao", ins: ["valor_usado"], outs: [["anuncio", "out/anuncio.json"]] },
-  { id: "u63", title: "Responder interessados", parent: "u60", agent: "a1", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["anuncio"], outs: [["comprador", "out/comprador.json"]], loop: ["msg", "anuncio.mensagens"] },
-  { id: "u64", title: "Entregar e receber", parent: "u60", agent: "h4", col: "c1", lane: "l1", plan: "padrao", ins: ["comprador"], outs: [["venda", "out/venda.json"]] },
-  { id: "u65", title: "Pesquisar modelos", ctx: "Câmera, bateria e anos de atualização", parent: "u2", agent: "a3", col: "c3", lane: "l1", plan: "padrao" },
-  { id: "u4", title: "Comparar modelos", ctx: "Três modelos até o orçamento, com prós e contras", parent: "u65", agent: "a3", col: "c3", lane: "l1", st: "exec", s: 1, e: 7, plan: "padrao", ins: ["orcamento"], outs: [["comparativo", "out/comparativo.json"]] },
-  { id: "u66", title: "Testar câmeras", ctx: "Fotos noturnas e vídeo 4K dos reviews", parent: "u65", agent: "a3", col: "c3", lane: "l1", st: "pendente", plan: "padrao", ins: ["comparativo"], outs: [["notas_camera", "out/notas-camera.json"]], loop: ["modelo", "comparativo.modelos"] },
-  { id: "u67", title: "Ver histórico de preço", parent: "u65", agent: "m1", col: "c3", lane: "l1", st: "fail", plan: "padrao", ins: ["comparativo"], outs: [["historico", "out/historico.json"]], err: "Buscapé respondeu 429 (limite de requisições).", loop: ["modelo", "comparativo.modelos"] },
+  { id: "u33", title: "escolher_modelo", parent: "u1", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["shortlist"], outs: [["fone_escolhido", "out/fone.json"]], cond: ["fone_escolhido", "u31"] },
+  { id: "u53", title: "get", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido"], outs: [["cupom", "out/cupom.json"]] },
+  { id: "u54", title: "get", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido"], outs: [["frete", "out/frete.json"]] },
+  { id: "u34", title: "post", parent: "u1", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["fone_escolhido", "cupom", "frete"], outs: [["pedido_fone", "out/pedido-fone.json"]] },
+  { id: "u55", title: "receber_e_testar", parent: "u1", agent: "h4", col: "c1", lane: "l1", plan: "padrao" },
+  { id: "u56", title: "post", parent: "u55", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido_fone"], outs: [["entrega_fone", "out/entrega-fone.json"]], loop: ["dia", "rastreio.dias"] },
+  { id: "u57", title: "testar_anc", ctx: "Ônibus, escritório e 1 dia inteiro de uso", parent: "u55", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["entrega_fone", "requisitos"], outs: [["teste_fone", "out/teste-fone.json"]] },
+  { id: "u58", title: "pedir_troca", ctx: "Dentro dos 7 dias do direito de arrependimento", parent: "u55", agent: "a3", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["teste_fone", "pedido_fone"], outs: [["troca", "out/troca.json"]] },
+  { id: "u59", title: "avaliar_na_loja", parent: "u1", agent: "a1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["teste_fone"], outs: [["review_fone", "out/review-fone.md"]] },
+  { id: "u2", title: "comprar_celular", ctx: "Até R$ 3.000, câmera boa, 256 GB", parent: "f1", agent: "a4", col: "c2", lane: "l1", plan: "padrao" },
+  { id: "u3", title: "definir_orcamento", parent: "u2", agent: "h4", col: "c5", lane: "l1", st: "ok", s: 0, e: 0, plan: "padrao", outs: [["orcamento", "out/orcamento.json"]] },
+  { id: "u60", title: "avaliar_aparelho", ctx: "O valor entra no orçamento", parent: "u2", agent: "h4", col: "c2", lane: "l1", plan: "padrao" },
+  { id: "u61", title: "avaliar_aparelho", parent: "u60", agent: "a3", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["valor_usado", "out/valor-usado.json"]] },
+  { id: "u62", title: "fotografar_e_anunciar", parent: "u60", agent: "h4", col: "c2", lane: "l1", plan: "padrao", ins: ["valor_usado"], outs: [["anuncio", "out/anuncio.json"]] },
+  { id: "u63", title: "responder_interessados", parent: "u60", agent: "a1", col: "c3", lane: "l1", st: "exec", plan: "padrao", ins: ["anuncio"], outs: [["comprador", "out/comprador.json"]], loop: ["msg", "anuncio.mensagens"] },
+  { id: "u64", title: "entregar_e_receber", parent: "u60", agent: "h4", col: "c1", lane: "l1", plan: "padrao", ins: ["comprador"], outs: [["venda", "out/venda.json"]] },
+  { id: "u65", title: "pesquisar_modelos", ctx: "Câmera, bateria e anos de atualização", parent: "u2", agent: "a3", col: "c3", lane: "l1", plan: "padrao" },
+  { id: "u4", title: "comparar_modelos", ctx: "Três modelos até o orçamento, com prós e contras", parent: "u65", agent: "a3", col: "c3", lane: "l1", st: "exec", s: 1, e: 7, plan: "padrao", ins: ["orcamento"], outs: [["comparativo", "out/comparativo.json"]] },
+  { id: "u66", title: "testar_cameras", ctx: "Fotos noturnas e vídeo 4K dos reviews", parent: "u65", agent: "a3", col: "c3", lane: "l1", st: "pendente", plan: "padrao", ins: ["comparativo"], outs: [["notas_camera", "out/notas-camera.json"]], loop: ["modelo", "comparativo.modelos"] },
+  { id: "u67", title: "get", parent: "u65", agent: "m1", col: "c3", lane: "l1", st: "fail", plan: "padrao", ins: ["comparativo"], outs: [["historico", "out/historico.json"]], err: "Buscapé respondeu 429 (limite de requisições).", loop: ["modelo", "comparativo.modelos"] },
   { id: "d5", kind: "data", title: "Decisão", parent: "u2", plan: "padrao", lane: "l1", col: "c1", ins: ["comparativo", "notas_camera", "historico", "venda"] },
-  { id: "u68", title: "Escolher modelo", parent: "u2", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["comparativo", "notas_camera", "historico"], outs: [["modelo", "out/modelo.json"]], cond: ["modelo", "u4"] },
-  { id: "u5", title: "Escolher loja", parent: "u2", agent: "a3", col: "c1", lane: "l1", st: "pendente", s: 8, e: 8, plan: "padrao", ins: ["modelo"], outs: [["loja", "out/loja.json"]] },
-  { id: "u35", title: "Ver cashback", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["modelo"], outs: [["cashback", "out/cashback.json"]] },
-  { id: "u6", title: "Comprar", parent: "u2", agent: "h4", col: "c1", lane: "l1", s: 9, e: 9, plan: "padrao", ins: ["loja", "cashback", "venda"], outs: [["pedido", "out/pedido.json"]] },
-  { id: "u36", title: "Acompanhar entrega", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["entrega", "out/entrega.json"]], loop: ["dia", "rastreio.dias"] },
-  { id: "u69", title: "Configurar celular", parent: "u2", agent: "h4", col: "c1", lane: "l1", plan: "padrao" },
-  { id: "u70", title: "Transferir dados", ctx: "Fotos, WhatsApp e contatos do aparelho antigo", parent: "u69", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["entrega"], outs: [["backup", "out/backup.json"]] },
-  { id: "u71", title: "Instalar apps", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["backup"], outs: [["apps", "out/apps.json"]], loop: ["app", "backup.apps"] },
-  { id: "u72", title: "Ativar seguro", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["apolice", "out/apolice.pdf"]] },
+  { id: "u68", title: "escolher_modelo", parent: "u2", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["comparativo", "notas_camera", "historico"], outs: [["modelo", "out/modelo.json"]], cond: ["modelo", "u4"] },
+  { id: "u5", title: "escolher_loja", parent: "u2", agent: "a3", col: "c1", lane: "l1", st: "pendente", s: 8, e: 8, plan: "padrao", ins: ["modelo"], outs: [["loja", "out/loja.json"]] },
+  { id: "u35", title: "get", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["modelo"], outs: [["cashback", "out/cashback.json"]] },
+  { id: "u6", title: "comprar", parent: "u2", agent: "h4", col: "c1", lane: "l1", s: 9, e: 9, plan: "padrao", ins: ["loja", "cashback", "venda"], outs: [["pedido", "out/pedido.json"]] },
+  { id: "u36", title: "get", parent: "u2", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["entrega", "out/entrega.json"]], loop: ["dia", "rastreio.dias"] },
+  { id: "u69", title: "configurar_celular", parent: "u2", agent: "h4", col: "c1", lane: "l1", plan: "padrao" },
+  { id: "u70", title: "transferir_dados", ctx: "Fotos, WhatsApp e contatos do aparelho antigo", parent: "u69", agent: "h4", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["entrega"], outs: [["backup", "out/backup.json"]] },
+  { id: "u71", title: "get", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["backup"], outs: [["apps", "out/apps.json"]], loop: ["app", "backup.apps"] },
+  { id: "u72", title: "get", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["apolice", "out/apolice.pdf"]] },
   { id: "d6", kind: "data", title: "Celular pronto", parent: "u2", plan: "padrao", lane: "l1", col: "c1", ins: ["apps", "apolice"] },
-  { id: "u200", title: "Hello World", ctx: "Projeto console: executar imprime no terminal", parent: "f4", agent: "h4", col: "c2", lane: "l4", plan: "hello" },
-  { id: "u201", title: "Imprimir Hello World", parent: "u200", agent: "m6", col: "c1", lane: "l4", st: "pendente", s: 0, e: 0, plan: "hello", outs: [["saudacao", "out/saudacao.txt"]], code: CODE_HELLO },
-  { id: "u9", title: "Fazer onboarding da Acme", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
-  { id: "u10", title: "Coletar dados do cliente", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
-  { id: "u11", title: "Rascunhar proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
-  { id: "u12", title: "Revisar proposta", parent: "u9", agent: "a4", col: "c4", lane: "l2", prog: .6, s: 3, e: 7, plan: "onb", ins: ["rascunho"], outs: [["proposta_aprovada", "out/proposta.md"]], cond: ["proposta_aprovada", "u11"] },
+  { id: "u200", title: "hello_world", ctx: "Projeto console: executar imprime no terminal", parent: "f4", agent: "h4", col: "c2", lane: "l4", plan: "hello" },
+  { id: "u201", title: "log", parent: "u200", agent: "m6", col: "c1", lane: "l4", st: "pendente", s: 0, e: 0, plan: "hello", outs: [["saudacao", "out/saudacao.txt"]], code: CODE_HELLO },
+  { id: "u9", title: "fazer_onboarding", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
+  { id: "u10", title: "get", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
+  { id: "u11", title: "redigir_proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
+  { id: "u12", title: "revisar_proposta", parent: "u9", agent: "a4", col: "c4", lane: "l2", prog: .6, s: 3, e: 7, plan: "onb", ins: ["rascunho"], outs: [["proposta_aprovada", "out/proposta.md"]], cond: ["proposta_aprovada", "u11"] },
   { id: "d1", kind: "data", title: "Proposta aprovada", parent: "u9", plan: "onb", lane: "l2", col: "c4", ins: ["proposta_aprovada"] },
-  { id: "u13", title: "Traduzir proposta", ctx: "Inglês e espanhol, manter termos do contrato", parent: "u9", agent: "a2", col: "c3", lane: "l2", st: "fail", s: 8, e: 9, plan: "onb", ins: ["proposta_aprovada"], outs: [["propostas", "out/propostas.json"]], err: "Limite de contexto: o anexo do contrato passou de 200 páginas.", loop: ["idioma", '["en", "es"]'] },
-  { id: "u14", title: "Gerar contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["pacote_contrato", "out/pacote-contrato.json"]] },
+  { id: "u13", title: "traduzir", ctx: "Inglês e espanhol, manter termos do contrato", parent: "u9", agent: "a2", col: "c3", lane: "l2", st: "fail", s: 8, e: 9, plan: "onb", ins: ["proposta_aprovada"], outs: [["propostas", "out/propostas.json"]], err: "Limite de contexto: o anexo do contrato passou de 200 páginas.", loop: ["idioma", '["en", "es"]'] },
+  { id: "u14", title: "gerar_contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["pacote_contrato", "out/pacote-contrato.json"]] },
   { id: "d2", kind: "data", title: "Contexto completo", parent: "u9", plan: "onb", lane: "l2", col: "c1", ins: ["propostas", "pacote_contrato"] },
-  { id: "u15", title: "Enviar ao cliente", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["propostas", "pacote_contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
-  { id: "u41", title: "Registrar no CRM", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["crm_registro", "out/crm-registro.json"]] },
-  { id: "u16", title: "Ativar cliente", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
-  { id: "u17", title: "Agendar kickoff", ctx: "Chamada de 30 min depois do contrato assinado", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["kickoff", "out/kickoff.ics"]] },
-  { id: "u18", title: "Criar conta no sistema", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["dados_cliente"], outs: [["conta_id", "out/conta.json"]] },
-  { id: "u19", title: "Gerar credenciais", parent: "u16", agent: "m4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["credenciais", "out/credenciais.json"]] },
-  { id: "u23", title: "Enviar boas-vindas", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["credenciais"], outs: [["boas_vindas", "out/boas-vindas.json"]], loop: ["contato", "dados_cliente.contatos"] },
-  { id: "u37", title: "Configurar integrações", ctx: "CRM e webhook de faturamento", parent: "u16", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
-  { id: "u38", title: "Conectar CRM", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["crm_ok", "out/crm.json"]] },
-  { id: "u39", title: "Testar webhook", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["crm_ok"], outs: [["webhook_ok", "out/webhook.json"]] },
-  { id: "u40", title: "Treinar equipe do cliente", ctx: "Sessão de 1 h com o time da Acme", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["kickoff"], outs: [["treinamento", "out/treinamento.md"]] },
+  { id: "u15", title: "post", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["propostas", "pacote_contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
+  { id: "u41", title: "get", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["crm_registro", "out/crm-registro.json"]] },
+  { id: "u16", title: "fazer_kickoff", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u17", title: "montar_boas_vindas", ctx: "Chamada de 30 min depois do contrato assinado", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["kickoff", "out/kickoff.ics"]] },
+  { id: "u18", title: "post", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["dados_cliente"], outs: [["conta_id", "out/conta.json"]] },
+  { id: "u19", title: "randomUUID", parent: "u16", agent: "m4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["credenciais", "out/credenciais.json"]] },
+  { id: "u23", title: "post", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["credenciais"], outs: [["boas_vindas", "out/boas-vindas.json"]], loop: ["contato", "dados_cliente.contatos"] },
+  { id: "u37", title: "configurar_integracoes", ctx: "CRM e webhook de faturamento", parent: "u16", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u38", title: "get", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["crm_ok", "out/crm.json"]] },
+  { id: "u39", title: "get", parent: "u37", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["crm_ok"], outs: [["webhook_ok", "out/webhook.json"]] },
+  { id: "u40", title: "treinar_equipe", ctx: "Sessão de 1 h com o time da Acme", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["kickoff"], outs: [["treinamento", "out/treinamento.md"]] },
   { id: "d3", kind: "data", title: "Cliente ativo", parent: "u16", plan: "onb", lane: "l2", col: "c1", ins: ["kickoff", "boas_vindas"] },
-  { id: "u24", title: "Fazer nova função", ctx: "Do pedido à função publicada no catálogo", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
-  { id: "u90", title: "Descrever o pedido", ctx: "O que a função recebe e devolve", parent: "u24", agent: "a1", col: "c5", lane: "l2", st: "ok", plan: "onb", outs: [["pedido_fn", "out/pedido-fn.md"]] },
-  { id: "u91", title: "Definir entradas e saídas", parent: "u24", agent: "a4", col: "c4", lane: "l2", st: "ok", plan: "onb", ins: ["pedido_fn"], outs: [["contrato_fn", "out/contrato-fn.json"]] },
-  { id: "u92", title: "Escrever a função", parent: "u24", agent: "a1", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["codigo_fn", "out/funcao.js"]] },
-  { id: "u93", title: "Escrever testes", parent: "u24", agent: "a3", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["testes_fn", "out/funcao.test.js"]] },
-  { id: "u94", title: "Validar", ctx: "Roda os testes e revisa o código", parent: "u24", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
-  { id: "u95", title: "Rodar testes", parent: "u94", agent: "m5", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["codigo_fn", "testes_fn"], outs: [["resultado_testes", "out/testes.json"]], loop: ["caso", "testes_fn.casos"] },
-  { id: "u96", title: "Revisar código", parent: "u94", agent: "a4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["resultado_testes"], outs: [["fn_aprovada", "out/revisao.md"]] },
-  { id: "u97", title: "Publicar no catálogo", parent: "u24", agent: "m2", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["fn_aprovada"], outs: [["fn_publicada", "out/catalogo.json"]] },
-  { id: "u42", title: "Atualizar site institucional", ctx: "Página inicial nova, fotos e publicação", parent: "f3", agent: "a4", col: "c2", lane: "l3", plan: "padrao" },
-  { id: "u73", title: "Levantar métricas atuais", parent: "u42", agent: "m1", col: "c5", lane: "l3", st: "ok", plan: "padrao", outs: [["metricas", "out/metricas.json"]] },
-  { id: "u20", title: "Reescrever página inicial", ctx: "Mais curta, foco em quem contrata", parent: "u42", agent: "a1", col: "c3", lane: "l3", st: "cancel", s: 7, e: 8, plan: "padrao", ins: ["metricas"], outs: [["pagina", "out/index.html"]] },
-  { id: "u21", title: "Escolher fotos", parent: "u42", agent: "a4", col: "c2", lane: "l3", s: 5, e: 9, plan: "padrao", outs: [["fotos", "out/fotos/"]] },
-  { id: "u43", title: "Otimizar imagens", parent: "u42", agent: "m2", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["fotos"], outs: [["fotos_web", "out/fotos-web/"]], loop: ["foto", "fotos"] },
-  { id: "u74", title: "Revisar e testar", parent: "u42", agent: "a4", col: "c4", lane: "l3", plan: "padrao" },
-  { id: "u75", title: "Revisar texto", parent: "u74", agent: "a4", col: "c4", lane: "l3", st: "pendente", plan: "padrao", ins: ["pagina"], outs: [["texto_ok", "out/texto-ok.json"]], cond: ["texto_ok", "u20"] },
-  { id: "u76", title: "Testar no celular", parent: "u74", agent: "m1", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["pagina", "fotos_web"], outs: [["lighthouse", "out/lighthouse.json"]], loop: ["tela", '["375", "768", "1440"]'] },
-  { id: "u22", title: "Publicar build", parent: "u42", agent: "m2", col: "c1", lane: "l3", s: 10, e: 10, plan: "padrao", ins: ["pagina", "fotos_web", "texto_ok"], outs: [["publicado", "out/publicado.json"]], code: CODE_BUILD, loop: ["tentativa", "[1, 2, 3]"] },
-  { id: "u44", title: "Avisar no Slack", parent: "u42", agent: "m1", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["publicado"], outs: [["aviso", "out/aviso.json"]] },
-  { id: "u77", title: "Medir conversão", ctx: "Comparar com as métricas antigas depois de 7 dias", parent: "u42", agent: "a3", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["publicado", "metricas"], outs: [["conversao", "out/conversao.json"]] },
+  { id: "u24", title: "fazer_nova_funcao", ctx: "Do pedido à função publicada no catálogo", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u90", title: "descrever_pedido", ctx: "O que a função recebe e devolve", parent: "u24", agent: "a1", col: "c5", lane: "l2", st: "ok", plan: "onb", outs: [["pedido_fn", "out/pedido-fn.md"]] },
+  { id: "u91", title: "definir_entradas_saidas", parent: "u24", agent: "a4", col: "c4", lane: "l2", st: "ok", plan: "onb", ins: ["pedido_fn"], outs: [["contrato_fn", "out/contrato-fn.json"]] },
+  { id: "u92", title: "escrever_funcao", parent: "u24", agent: "a1", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["codigo_fn", "out/funcao.js"]] },
+  { id: "u93", title: "escrever_testes", parent: "u24", agent: "a3", col: "c3", lane: "l2", st: "exec", plan: "onb", ins: ["contrato_fn"], outs: [["testes_fn", "out/funcao.test.js"]] },
+  { id: "u94", title: "validar", ctx: "Roda os testes e revisa o código", parent: "u24", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u95", title: "pipeline", parent: "u94", agent: "m5", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["codigo_fn", "testes_fn"], outs: [["resultado_testes", "out/testes.json"]], loop: ["caso", "testes_fn.casos"] },
+  { id: "u96", title: "revisar_codigo", parent: "u94", agent: "a4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["resultado_testes"], outs: [["fn_aprovada", "out/revisao.md"]] },
+  { id: "u97", title: "writeFile", parent: "u24", agent: "m2", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["fn_aprovada"], outs: [["fn_publicada", "out/catalogo.json"]] },
+  { id: "u42", title: "atualizar_site", ctx: "Página inicial nova, fotos e publicação", parent: "f3", agent: "a4", col: "c2", lane: "l3", plan: "padrao" },
+  { id: "u73", title: "get", parent: "u42", agent: "m1", col: "c5", lane: "l3", st: "ok", plan: "padrao", outs: [["metricas", "out/metricas.json"]] },
+  { id: "u20", title: "reescrever_pagina", ctx: "Mais curta, foco em quem contrata", parent: "u42", agent: "a1", col: "c3", lane: "l3", st: "cancel", s: 7, e: 8, plan: "padrao", ins: ["metricas"], outs: [["pagina", "out/index.html"]] },
+  { id: "u21", title: "escolher_fotos", parent: "u42", agent: "a4", col: "c2", lane: "l3", s: 5, e: 9, plan: "padrao", outs: [["fotos", "out/fotos/"]] },
+  { id: "u43", title: "writeFile", parent: "u42", agent: "m2", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["fotos"], outs: [["fotos_web", "out/fotos-web/"]], loop: ["foto", "fotos"] },
+  { id: "u74", title: "validar", parent: "u42", agent: "a4", col: "c4", lane: "l3", plan: "padrao" },
+  { id: "u75", title: "revisar_texto", parent: "u74", agent: "a4", col: "c4", lane: "l3", st: "pendente", plan: "padrao", ins: ["pagina"], outs: [["texto_ok", "out/texto-ok.json"]], cond: ["texto_ok", "u20"] },
+  { id: "u76", title: "get", parent: "u74", agent: "m1", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["pagina", "fotos_web"], outs: [["lighthouse", "out/lighthouse.json"]], loop: ["tela", '["375", "768", "1440"]'] },
+  { id: "u22", title: "copyFile", parent: "u42", agent: "m2", col: "c1", lane: "l3", s: 10, e: 10, plan: "padrao", ins: ["pagina", "fotos_web", "texto_ok"], outs: [["publicado", "out/publicado.json"]], code: CODE_BUILD, loop: ["tentativa", "[1, 2, 3]"] },
+  { id: "u44", title: "get", parent: "u42", agent: "m1", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["publicado"], outs: [["aviso", "out/aviso.json"]] },
+  { id: "u77", title: "medir_conversao", ctx: "Comparar com as métricas antigas depois de 7 dias", parent: "u42", agent: "a3", col: "c1", lane: "l3", st: "pendente", plan: "padrao", ins: ["publicado", "metricas"], outs: [["conversao", "out/conversao.json"]] },
 ];
 U.forEach((u, i) => { u.uuid = uuidFor(i); u.arch = false; u.kind = u.kind || "file"; });
 // DEPS = sequência (a → b); PARS = paralelo; u.cond = seleção [dado testado, volta para]; u.loop = repetição [var, lista]; kind "data" = dado (◆, 0 passos)
@@ -2055,10 +2067,10 @@ function drawer(s) {
     <div class="side-h"><span class="k">${icon(isFolder(u) ? "folder" : "file-text")}${VOCAB[from === "catalog" ? "flow" : from] || "Etapa"}<button class="uid" data-act="copy-uuid" data-id="${u.id}" title="Copiar UUID">${u.uuid.slice(0, 13)}… ${icon("copy")}</button></span><span class="sp"></span>
       ${u.arch ? `<span class="tag">arquivada</span>` : ""}<button class="ib" data-act="close-drawer" aria-label="Fechar">${icon("x")}</button></div>
     <div class="side-b">
-      <div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título">
-        <div class="vocab">${Object.entries(VOCAB).map(([k, n]) => `<span class="${k === from ? "on" : ""}">${n}</span>`).join("")}<span style="border:0;padding:0">mesma unidade no Flow e no Explorar</span></div></div>
+      ${isData(u) ? `<div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título"></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}${a.tasks?.length ? ` · ${a.tasks.length} tasks` : ""}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>
+      <div class="fld"><label>Task${a?.type === "maquina" ? " · método da lib" : ""}</label>${a && (a.tasks || []).length ? `<select data-task="${u.id}" aria-label="Task">${(a.tasks || []).map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select><p style="font-size:12px;color:var(--muted);margin-top:6px">O nome da etapa é a task cadastrada do responsável${a.type === "maquina" ? " (métodos de " + esc(a.name) + ")" : ""}.</p>` : `<input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Task"><p style="font-size:12px;color:var(--fail);margin-top:6px">Escolha um responsável com tasks cadastradas.</p>`}</div>`}
       <div class="fld"><label>Contexto</label><textarea data-edit="ctx" data-id="${u.id}" placeholder="Orçamento, preferências, restrições">${esc(u.ctx || "")}</textarea></div>
-      ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>`}
+      ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : ""}
       ${u.st || u.err ? `<div class="fld"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
       ${isFolder(u) ? "" : (() => { const L = flowLayout(u.plan).layout[u.id] || { s: 0, e: 0 }; return `<div class="g2"><div class="fld"><label>Início</label><input type="text" value="passo ${L.s}" readonly></div><div class="fld"><label>Passos</label><input type="text" value="${isData(u) ? "0 · dado" : L.e - L.s + 1}" readonly></div></div>`; })()}
       ${(u.ins || []).length || (u.outs || []).length ? `<div class="fld"><span class="l">Estado (entradas e saídas)</span><div class="list-r">${(u.ins || []).map(n => `<div>${icon("arrow-down-to-line")}${dKindBtn(n)}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">entrada</span></div>`).join("")}${(u.outs || []).map(([n, ref]) => `<div>${icon("arrow-up-from-line")}${dKindBtn(n)}<span class="mono" style="color:var(--accent)">${n}</span><span class="r mono">${ref}</span></div>`).join("")}</div></div>` : ""}
@@ -2236,6 +2248,13 @@ function respPick(u) {
 const brandOf = a => !a ? "" : a.type === "maquina" ? "#5FA04E" : a.type === "ia" ? (modelOf(AGENT_CFG[a.id]?.model)?.cor || "") : "";
 const brandSt = a => { const c = brandOf(a); return c ? ` style="--brand:${c}"` : ""; };
 /** Responsável da função (não-IA): biblioteca Node, script próprio (função de um módulo), pessoa ou agente. */
+function taskPick(u) {
+  const ts = agentTasks(u.agent);
+  if (!ts.length) return `<b>${esc(u.title)}</b>`;
+  const ok = ts.includes(u.title);
+  const miss = ok ? "" : `<option value="" selected disabled class="task-miss">${esc(u.title || "escolher task…")}</option>`;
+  return `<select class="task-pick" data-task="${u.id}" data-act="noop" aria-label="Task de ${esc(agent(u.agent)?.name || "")}" title="Task cadastrada do responsável (obrigatória)">${miss}${ts.map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+}
 function agentPick(u) {
   const a = agent(u.agent);
   const opts = ["script", "maquina", "ia", "pessoa"].map(t => `<optgroup label="${TYPES[t].n}">${CAT.filter(c => c.type === t).map(c => `<option value="${c.id}"${u.agent === c.id ? " selected" : ""}>${esc(c.name)}${c.mod ? " · " + esc(c.mod) : ""}</option>`).join("")}</optgroup>`).join("");
@@ -2387,14 +2406,17 @@ function flow(s) {
     const { u, d } = r, nest = nestOf(r), has = hasK(u), a = agent(u.agent);
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
+    const resp = has || isData(u) ? `<span class="c-ag muted">—</span>` : `<span class="c-ag">${a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>`;
+    const task = isData(u) ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}<b>${esc(u.title)}</b></span>`
+      : has ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b>${esc(u.title)}</b>`}</span>`
+      : `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}${a ? taskPick(u) : (s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b class="task-miss">${esc(u.title || "sem task")}</b>`)}</span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}${nest ? ` nest-${nest}` : ""}" data-act="fsel" data-id="${u.id}">${gdA(u, false, nest)}
-      <span class="nm" style="padding-left:${ind(u, d) + nest * NEST + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
-      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
-      <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
+      ${resp}${task}
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}</div>`;
   };
   const ioNames = (r) => [r.nm];
   /* dado puro (□): um nome por marca — sem “a, b” sob o mesmo ícone; cubo pode resumir a árvore */
-  const ioLeft = r => { const nest = nestOf(r); const lbl = !r.first ? "" : r.shared || r.to ? "entrada · saída" : r.io === "in" ? "entrada" : "saída"; return `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${nest ? ` nest-${nest}` : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true, nest)}<span class="nm" style="padding-left:${ind(r.u, r.d) + nest * NEST + 28}px"><span class="io-k">${lbl}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}${SYNTH_IN.has(r.nm) ? " · cubo de entrada (visual)" : ""}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`; };
+  const ioLeft = r => { const nest = nestOf(r); const lbl = !r.first ? "" : r.shared || r.to ? "entrada · saída" : r.io === "in" ? "entrada" : "saída"; return `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${nest ? ` nest-${nest}` : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true, nest)}<span class="c-ag"></span><span class="nm" style="padding-left:${ind(r.u, r.d) + nest * NEST + 14}px"><span class="io-k">${lbl}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}${SYNTH_IN.has(r.nm) ? " · cubo de entrada (visual)" : ""}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span></div>`; };
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2403,7 +2425,7 @@ function flow(s) {
     const uniq = [...new Map(tg.map(t => [t.id, t])).values()];
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
   };
-  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)">${gdA(r.lp)}<span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}">${gdA(rows[r.st.i0].u)}<span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)">${gdA(r.lp)}<span class="c-ag"></span><span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}">${gdA(rows[r.st.i0].u)}<span class="c-ag"></span><span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span></div>` : leftRow(r)).join("");
   // dados por estado: s0 = entradas abstratas (outra camada/state); sN = saídas novas; stBag = bag acumulado em sN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
@@ -2531,7 +2553,7 @@ function flow(s) {
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
-        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Nome</span><span>Responsável</span></div></div>${left}</div>
+        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Responsável</span><span>Task</span></div></div>${left}</div>
         <div class="gright">${(() => {
           const xs = i => OX + i * W, yF = 52 + H, axW = nSteps * W;
           const head = `<text class="sv-title" x="${OX + axW / 2}" y="17">${esc(pl)}</text><line class="sv-hl" x1="${OX}" y1="26" x2="${OX + axW}" y2="26"/><line class="sv-hl" x1="0" y1="52" x2="${CW}" y2="52"/>`
@@ -3180,7 +3202,7 @@ function catalog(s) {
     <nav class="seg" style="align-self:flex-start">${Object.entries(TYPES).map(([k, v]) => `<button data-act="cat-tab" data-t="${k}" aria-current="${k === t}">${icon(v.ic)}${v.n}<span style="color:var(--muted);font-weight:500">${CAT.filter(c => c.type === k).length}</span></button>`).join("")}</nav>
     <form class="cat-add" data-form="cat"><input name="n" placeholder="${t === "ia" ? "Nome do modelo ou agente" : "Módulo Node (node:fs, node:http…)"}" aria-label="Nome"><input name="d" placeholder="${t === "ia" ? "Fornecedor · uso" : "Pacote / runtime Node.js"}" aria-label="Descrição"><button class="btn pri">${icon("plus")}Incluir</button></form>
     <div class="ctable"><div class="crow"><span>Nome</span><span>Descrição</span><span>Uso</span><span></span></div>
-      ${list.map(c => { const us = inUse(c.id); return `<div class="crow">${agChip(c.id)}<span class="sub">${esc(c.sub)}</span>
+      ${list.map(c => { const us = inUse(c.id); const nt = (c.tasks || []).length; return `<div class="crow">${agChip(c.id)}<span class="sub">${esc(c.sub)}${nt ? ` · <span class="mono">${nt} task${nt > 1 ? "s" : ""}</span>` : ""}</span>
         <span class="use${us.length ? "" : " free"}">${us.length ? `<b class="num">${us.length}</b> unidade${us.length > 1 ? "s" : ""}` : "livre"}</span>
         <button class="btn ghost danger rm" data-act="cat-rm" data-c="${c.id}">${icon("trash-2")}Remover</button>
         ${s.catBlock === c.id ? `<div class="block"><p><b>${esc(c.name)}</b> é responsável por ${us.length} unidade${us.length > 1 ? "s" : ""}. Troque o responsável nelas para remover.</p><div class="list-r">${us.map(u => `<button data-act="drawer" data-id="${u.id}" data-from="board">${icon("file-text")}${esc(u.title)}<span class="r">${esc(path(u.id).slice(0, -1).join(" / "))}</span></button>`).join("")}</div></div>` : ""}</div>`; }).join("")}
@@ -3884,7 +3906,7 @@ const ACT = {
   tsel: t => { cur.sel = t.dataset.id; },
   "close-drawer": () => unset("drawer", "picker", "from", "dadoEdit"),
   picker: () => { cur.picker = !cur.picker; },
-  assign: t => { const u = $u(t.dataset.id); u.agent = t.dataset.c || undefined; const a = agent(u.agent); if (!a || a.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; unset("picker"); toast(u.agent ? `Responsável: ${agent(u.agent).name}` : "Sem responsável"); },
+  assign: t => { const u = $u(t.dataset.id); u.agent = t.dataset.c || undefined; const a = agent(u.agent); if (!a || a.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); unset("picker"); toast(u.agent ? `${a.name} · ${u.title}` : "Sem responsável"); },
   archive: t => { const u = $u(t.dataset.id); u.arch = !u.arch; toast(u.arch ? "Arquivada. Fica fora das visões até desarquivar." : "Desarquivada", "archive"); if (u.arch) { unset("drawer"); cur.sel = null; } },
   "copy-uuid": t => { navigator.clipboard?.writeText($u(t.dataset.id).uuid).catch(() => {}); toast("UUID copiado", "copy"); },
   retry: t => { const u = $u(t.dataset.id); delete u.err; startRun([u.id]); toast(`Tentando de novo: ${u.title}`, "rotate-ccw"); return false; },
@@ -4122,7 +4144,8 @@ holder.addEventListener("change", e => {
   }
   if (t.matches("[data-plan]")) { cur.plan = t.value; cur.flowRoot = planTops(t.value)[0]?.id || null; unset("mach", "drawer"); paint(); return; }
   if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
-  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; toast(r ? `${u.title}: ${TYPES[r.type].one.toLowerCase()} ${r.name}` : "Responsável removido", r ? TYPES[r.type].ic : "user-round"); paint(); return; }
+  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); toast(r ? `${r.name} · ${u.title}` : "Responsável removido", r ? TYPES[r.type].ic : "user-round"); paint(); return; }
+  if (t.matches("[data-task]")) { const u = $u(t.dataset.task); if (!u || !t.value) return; u.title = t.value; toast(`${agent(u.agent)?.name || "—"} · ${u.title}`, "circle-check"); paint(); return; }
   if (t.matches("[data-dado-type]")) { DATA_TYPE[t.dataset.dadoType] = t.value; toast(`${t.dataset.dadoType}: ${DTYPE_N[t.value]}`, "box"); paint(); return; }
   if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }
   if (t.dataset.estateTitle) {

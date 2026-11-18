@@ -1884,25 +1884,15 @@ function ganttRows(plan) {
 function flowLayout(plan) {
   const layout = {};
   const parallel = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  // passo segue a ordem das linhas: cada irmão é o passo seguinte do anterior (nunca pula coluna);
+  // em paralelo com alguém do passo atual = mesmo passo; dado (◆) não ocupa passo (fica no fim do anterior)
   function stepsAmong(ids) {
-    const set = new Set(ids);
-    const pred = Object.fromEntries(ids.map(id => [id, []]));
-    DEPS.forEach(([a, b]) => { if (set.has(a) && set.has(b)) pred[b].push(a); });
-    const rem = new Set(ids), step = {};
-    let col = 0;
-    while (rem.size) {
-      let ready = ids.filter(id => rem.has(id) && pred[id].every(p => !rem.has(p)));
-      if (!ready.length) ready = [...rem];
-      const used = new Set();
-      ready.forEach(id => {
-        if (used.has(id) || !rem.has(id)) return;
-        // dado (◆) não ocupa passo: fica no fim do passo do predecessor
-        if (isData($u(id)) && pred[id].length) { step[id] = Math.max(...pred[id].map(p => step[p])); used.add(id); rem.delete(id); return; }
-        const group = [id, ...ready.filter(o => o !== id && rem.has(o) && parallel(id, o))];
-        group.forEach(g => { step[g] = col; used.add(g); rem.delete(g); });
-        col++;
-      });
-    }
+    const step = {}; let col = -1, grp = [];
+    ids.forEach(id => {
+      if (isData($u(id))) { step[id] = Math.max(0, col); return; }
+      if (col >= 0 && grp.some(g => parallel(g, id))) { step[id] = col; grp.push(id); return; }
+      step[id] = ++col; grp = [id];
+    });
     return step;
   }
   // composição ocupa o passo que tem entre os irmãos e se alarga com os filhos: novo filho não move o pai

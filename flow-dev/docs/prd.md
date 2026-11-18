@@ -70,9 +70,9 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 ### ↓ baixo
 
 1. Se existir **irmão paralelo embaixo** → **troca a ordem** e vai para baixo.
-2. Senão → vira **irmão sequencial direito** do de cima.
-3. Se **não** tiver **irmão sequencial à direita** → vira **irmão sequencial direito** do pai.
-4. Se tiver **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
+2. Senão, se estiver paralelo com o de cima → vira **irmão sequencial direito** do de cima.
+3. Senão, se existir **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
+4. Senão (sem irmão sequencial à direita) → vira **irmão sequencial direito** do pai.
 5. Sem alvo elegível → não faz nada.
 
 ### Aceite
@@ -82,13 +82,12 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 | ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
 | → | sequencial direito do paralelo | troca com sequencial direito | noop |
 | ↑ | paralelo ao sequencial esquerdo | inverte com paralelo de cima | irmão sequencial esquerdo do pai |
-| ↓ | troca com paralelo embaixo | sequencial direito do de cima | sem seq. direito → seq. direito do pai; com seq. direito → 1º filho dele |
+| ↓ | troca com paralelo embaixo | sequencial direito do de cima | seq. direito → 1º filho; senão seq. direito do pai |
 
 ### Antes → depois
 
-| Antes (v1.3) | Depois |
+| Antes | Depois |
 |---|---|
 | ↓ sem caso “irmão sequencial à direita” | ↓ com sequencial à direita → vira 1º filho desse irmão |
-| ↑ paralelo no meio da cadeia | ↑ paralelo fica como caso à parte (inverte com o de cima) |
 
-**Voltar:** regras v1.3 neste arquivo.
+**Voltar:** `fnKeyMove` ↓ sem ramo `seqRight`→`child`; commit anterior da seção de setas.

@@ -89,5 +89,8 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 | Antes | Depois |
 |---|---|
 | ↓: unParallel com o de cima antes de seq. direito → filho | ↓: seq. direito → 1º filho **antes** do unParallel |
+| ↓ com sequencial à direita entrava como **último** filho | entra como **primeiro** filho (antes do 1º filho existente) |
+| → troca com sequencial direito só reordenava a lista | troca também a sequência (DEPS/PARS): o Flow mostra a ordem nova |
+| ←/↑ paralelo juntava só u ao grupo do irmão | une os dois grupos de paralelo (ninguém perde o par ao sair) |
 
 **Voltar:** em `fnKeyMove` ↓, testar `parLeft`/`unParallel` antes de `seqRight`→`child`.

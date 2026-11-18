@@ -3276,6 +3276,18 @@ function addFnEl(refId, mode) {
   return u;
 }
 /** Troca a ordem de dois irmãos no array U (mantém PARS/DEPS). */
+/** Troca a e b de lugar na sequência: quem vinha antes/depois de um passa a ligar no outro (DEPS e PARS entre irmãos) e a ordem em U também. */
+function swapSeq(a, b) {
+  const sib = new Set(kidsPlan(a.parent).filter(k => !k.arch && !isFolder(k) && !isData(k)).map(k => k.id));
+  const sw = id => id === a.id ? b.id : id === b.id ? a.id : id;
+  const touch = pr => (pr[0] === a.id || pr[0] === b.id || pr[1] === a.id || pr[1] === b.id) && sib.has(pr[0]) && sib.has(pr[1]);
+  DEPS.forEach(d => { if (touch(d)) { d[0] = sw(d[0]); d[1] = sw(d[1]); } });
+  PARS.forEach(d => { if (touch(d)) { d[0] = sw(d[0]); d[1] = sw(d[1]); } });
+  STRUCTS.forEach(st => { const ia = st.body.indexOf(a.id), ib = st.body.indexOf(b.id); if (ia >= 0 && ib >= 0) { st.body[ia] = b.id; st.body[ib] = a.id; } });
+  swapSibBlocks(a, b);
+  cur.sel = a.id;
+  return true;
+}
 function swapSibBlocks(a, b) {
   const block = id => { const u = $u(id); return [u, ...desc(id)].sort((x, y) => U.indexOf(x) - U.indexOf(y)); };
   const ba = block(a.id), bb = block(b.id);
@@ -3324,10 +3336,14 @@ function fnKeyMove(u, key) {
   } else if (key === "ArrowRight") {
     const a = parLeft || anyPar;
     if (a) { unParallel(u, a); ok = true; msg = `sequencial depois de ${a.title}`; }
-    else if (seqRight) { ok = swapSibBlocks(u, seqRight); if (ok) msg = `trocou com ${seqRight.title}`; }
+    else if (seqRight) { ok = swapSeq(u, seqRight); if (ok) msg = `trocou com ${seqRight.title}`; }
   } else if (key === "ArrowDown") {
     if (parBelow) { ok = swapSibBlocks(u, parBelow); if (ok) msg = `abaixo de ${parBelow.title}`; }
-    else if (seqRight) { ok = moveFn(u.id, seqRight.id, "child"); if (ok) msg = `1º filho de ${seqRight.title}`; }
+    else if (seqRight) {
+      const first = kidsPlan(seqRight.id).filter(k => !k.arch && !isFolder(k) && !isData(k))[0];
+      ok = first ? moveFn(u.id, first.id, "before") : moveFn(u.id, seqRight.id, "child");
+      if (ok) msg = `1º filho de ${seqRight.title}`;
+    }
     else if (parLeft) { unParallel(u, prev); ok = true; msg = `sequencial depois de ${prev.title}`; }
     else if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `irmão direito de ${p.title}`; }
   }
@@ -3345,8 +3361,9 @@ function makeParallel(u, a) {
   succU.forEach(b => { if (!DEPS.some(d => d[0] === a.id && d[1] === b)) DEPS.push([a.id, b]); });
   DEPS.forEach(d => { if (d[0] === a.id && d[1] === u.id) d[1] = "__x"; });
   for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === "__x") DEPS.splice(i, 1);
-  const group = [a.id, ...PARS.filter(pr => pr.includes(a.id)).map(pr => pr[0] === a.id ? pr[1] : pr[0])];
-  group.forEach(g => { if (g !== u.id && !isPar(g, u.id)) PARS.push([g, u.id]); });
+  const grp = x => [x, ...PARS.filter(pr => pr.includes(x)).map(pr => pr[0] === x ? pr[1] : pr[0])];
+  const gu = grp(u.id);
+  grp(a.id).forEach(g => gu.forEach(m => { if (g !== m && !isPar(g, m)) PARS.push([g, m]); }));
   cur.sel = u.id;
 }
 /** → num elemento em paralelo: volta a ser sequencial, logo depois do irmão anterior. */

@@ -13,6 +13,10 @@
 SSHPASS='…' bash deploy/publicar.sh
 ```
 
+`nginx-plans.conf` já inclui **:443 + fullchain**. Template só `:80` + reload antes do certbot fazia o HTTPS cair no default (`centralizador`) — certificado/SAN errados.
+
+**Voltar ao bug:** conf só com `listen 80` + reload sem SSL.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `plans`

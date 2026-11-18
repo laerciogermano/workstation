@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.13 |
+| Versão | 1.14 |
 
 ## IDR — identificador único
 
@@ -118,3 +118,11 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Default sem `flowRoot` (podia cair na raiz vazia) | `DEF.flowRoot = "u9"` (Onboarding) e preferência por root com filhos |
 
 **Voltar:** seed antigo de `FLOW_CLOSED` com todas as composições; `DEF` sem `flowRoot`.
+
+## Toggle do painel de notas (T-xx)
+
+| Antes | Depois |
+|---|---|
+| Painel direito (T-32…) sempre aberto no player | Botão **Notas** / tecla **N** · classe `notes-off` · preferência em `localStorage` |
+
+**Voltar:** remover `data-notes`, `notes-off`, `toggleNotes` e atalho `N`.

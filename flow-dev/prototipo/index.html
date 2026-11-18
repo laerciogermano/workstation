@@ -287,6 +287,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 }
 .player.open { display: grid; }
 .player.focus { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
+/* ocultar só o painel direito (notas T-xx) — stage permanece em área nomeada */
+.player.notes-off { grid-template-columns: 230px minmax(0, 1fr); grid-template-areas: "list stage"; }
+.player.notes-off .notes { display: none; }
 /* tela cheia: o app ocupa a janela inteira, sem moldura nem escala — como se estivesse navegando no sistema */
 .player.full { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
 .player.full .list, .player.full .notes { display: none; }
@@ -297,7 +300,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .full-exit:hover { opacity: 1; }
 .full-exit svg { width: 14px; height: 14px; }
 .player.full .full-exit { display: inline-flex; }
+.notes-reopen { display: none; position: fixed; right: 14px; top: 50%; transform: translateY(-50%); z-index: 120; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: color-mix(in srgb, var(--paper) 94%, transparent); color: var(--body); font-size: 12px; font-weight: 600; box-shadow: var(--shadow); }
+.notes-reopen:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line-2)); }
+.notes-reopen svg { width: 14px; height: 14px; }
+.player.open.notes-off:not(.full):not(.focus) .notes-reopen { display: inline-flex; }
 .player.focus .list, .player.focus .notes { display: none; }
+.player .list .close[data-notes][aria-pressed="true"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--wash)); }
 .player .list { grid-area: list; background: var(--paper); border-right: 1px solid var(--line); overflow-y: auto; padding: 14px 10px 24px; min-width: 0; }
 .player .list .close { display: flex; align-items: center; gap: 8px; border: 0; background: var(--wash); border-radius: 8px; height: 38px; padding: 0 14px; font-weight: 600; font-size: 14px; margin: 0 4px 8px; }
 .player .list h4 { font-size: 12px; color: var(--muted); margin: 16px 8px 4px; font-weight: 600; }
@@ -1244,10 +1252,11 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 <div class="foot">Pessoas, clientes e datas são de exemplo. Protótipo desktop (janela 1440 × 900). Só Explorar + Flow; agentes = IA e bibliotecas Node.js.</div>
 
 <div class="player" id="player" role="dialog" aria-label="Protótipo navegável">
-  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><button class="close" data-full title="Usar o sistema em tela cheia (T)"><i data-lucide="maximize"></i>Tela cheia</button></aside>
+  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><button class="close" data-full title="Usar o sistema em tela cheia (T)"><i data-lucide="maximize"></i>Tela cheia</button><button class="close" data-notes title="Mostrar / ocultar notas do cenário T-xx (N)" aria-pressed="true"><i data-lucide="panel-right"></i>Notas</button></aside>
   <button class="full-exit" data-full title="Sair da tela cheia (Esc)"><i data-lucide="minimize"></i>Sair</button>
+  <button class="notes-reopen" data-notes title="Mostrar notas do cenário (N)"><i data-lucide="panel-right"></i>Notas</button>
   <div class="stage" id="stage"><div class="holder" id="holder"></div></div>
-  <aside class="notes"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
+  <aside class="notes" id="pnotes-panel"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
 </div>
 
 <script>
@@ -3344,6 +3353,21 @@ function tFor(s) {
   if (s.v === "flow") { if (s.mach) return "T-33"; if (s.rev) return "T-01"; return "T-32"; }
   return "T-32";
 }
+function syncNotesToggle() {
+  const on = !player.classList.contains("notes-off");
+  player.querySelectorAll("[data-notes]").forEach(b => {
+    if (b.classList.contains("notes-reopen")) return;
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.title = on ? "Ocultar notas do cenário T-xx (N)" : "Mostrar notas do cenário T-xx (N)";
+  });
+}
+function toggleNotes(on = player.classList.contains("notes-off")) {
+  player.classList.toggle("notes-off", !on);
+  try { localStorage.setItem("flow-dev-notes", on ? "1" : "0"); } catch (e) {}
+  syncNotesToggle();
+  lucide.createIcons();
+  fit();
+}
 function toggleFull(on = !player.classList.contains("full")) {
   player.classList.toggle("full", on);
   try { if (on && !document.fullscreenElement) document.documentElement.requestFullscreen?.(); else if (!on && document.fullscreenElement) document.exitFullscreen?.(); } catch (e) {}
@@ -3373,7 +3397,8 @@ function paint(keepScroll = true) {
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
   const zoomHint = ["diagram", "gantt", "flow", "tree"].includes(cur.v) ? "<br><b>Scroll</b> zoom · arrastar fundo = pan · − / + / ajustar" : "";
   pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
-    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>T</b> tela cheia (navegar no sistema) · <b>F</b> só a janela · <b>H</b> áreas clicáveis${zoomHint}</div>`;
+    <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>T</b> tela cheia · <b>F</b> só a janela · <b>N</b> notas (T-xx) · <b>H</b> áreas clicáveis${zoomHint}</div>`;
+  syncNotesToggle();
   lucide.createIcons();
   fit();
   applyZView();
@@ -4065,6 +4090,7 @@ document.addEventListener("click", e => {
   const tb = e.target.closest("button[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
   const o = e.target.closest("[data-open]"); if (o) { openT(o.dataset.open); return; }
   if (e.target.closest("[data-full]")) { toggleFull(); return; }
+  if (e.target.closest("[data-notes]")) { toggleNotes(); return; }
   if (e.target.closest("[data-close]")) { closePlayer(); return; }
   const a = e.target.closest("#plist a[data-t]"); if (a) { show(specFor(a.dataset.t)); return; }
 });
@@ -4094,6 +4120,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Backspace") { e.preventDefault(); goBack(); }
   else if (e.key.toLowerCase() === "h") player.classList.toggle("hints");
   else if (e.key.toLowerCase() === "f") { player.classList.toggle("focus"); fit(); }
+  else if (e.key.toLowerCase() === "n") toggleNotes();
   else if (e.key.toLowerCase() === "t") toggleFull();
 });
 addEventListener("resize", fit);
@@ -4102,6 +4129,8 @@ addEventListener("resize", fit);
 document.getElementById("flownav").innerHTML = FLOWS.map(f => `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`).join("");
 let saved = "cobalto"; try { saved = localStorage.getItem("tema-flow-dev-v2") || "cobalto"; } catch (e) {}
 setTema(TEMAS.some(t => t.id === saved) ? saved : "cobalto");
+try { if (localStorage.getItem("flow-dev-notes") === "0") player.classList.add("notes-off"); } catch (e) {}
+syncNotesToggle();
 buildGallery();
 const h0 = location.hash.slice(1); if (SCREENS[h0]) openT(h0);
 </script>

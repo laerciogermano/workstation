@@ -1,0 +1,25 @@
+{
+  "name": "flow-dev",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Flow.dev — Flow IDE (Explorar + Flow) · monólito modular Node/TS + React + PostgreSQL",
+  "type": "module",
+  "workspaces": ["packages/*", "apps/*"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run db:migrate -w @flow/api",
+    "db:seed": "npm run db:seed -w @flow/api",
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @flow/api\" \"npm run dev -w @flow/web\"",
+    "build": "npm run build -w @flow/web && npm run build -w @flow/api",
+    "start": "npm run start -w @flow/api",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "verify": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.9.0"
+  }
+}

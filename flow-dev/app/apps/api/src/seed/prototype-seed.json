@@ -1,0 +1,2836 @@
+{
+ "CAT": [
+  {
+   "id": "a1",
+   "type": "ia",
+   "name": "Lia",
+   "sub": "Agente · redação de propostas"
+  },
+  {
+   "id": "a2",
+   "type": "ia",
+   "name": "Teo",
+   "sub": "Agente · tradução"
+  },
+  {
+   "id": "a3",
+   "type": "ia",
+   "name": "Nina",
+   "sub": "Agente · pesquisa e comparação"
+  },
+  {
+   "id": "a4",
+   "type": "ia",
+   "name": "Davi",
+   "sub": "Agente · revisão e aprovação"
+  },
+  {
+   "id": "h1",
+   "type": "pessoa",
+   "name": "Ana Souza",
+   "sub": "Comercial · aprova propostas"
+  },
+  {
+   "id": "h2",
+   "type": "pessoa",
+   "name": "Bruno Lima",
+   "sub": "Jurídico · revisa contratos"
+  },
+  {
+   "id": "h3",
+   "type": "pessoa",
+   "name": "Carla Dias",
+   "sub": "Sucesso do cliente · kickoff"
+  },
+  {
+   "id": "h4",
+   "type": "pessoa",
+   "name": "Você",
+   "sub": "Decisões e compras pessoais"
+  },
+  {
+   "id": "s1",
+   "type": "script",
+   "name": "validarCnpj()",
+   "sub": "cliente.data.js · função própria",
+   "mod": "cliente.data.js"
+  },
+  {
+   "id": "s2",
+   "type": "script",
+   "name": "calcularPrecoAnual()",
+   "sub": "proposta.layer.js · função própria",
+   "mod": "proposta.layer.js"
+  },
+  {
+   "id": "s3",
+   "type": "script",
+   "name": "montarBoasVindas()",
+   "sub": "credenciais.layer.js · função própria",
+   "mod": "credenciais.layer.js"
+  },
+  {
+   "id": "m1",
+   "type": "maquina",
+   "name": "node:http",
+   "sub": "Node.js · requisições HTTP"
+  },
+  {
+   "id": "m2",
+   "type": "maquina",
+   "name": "node:fs",
+   "sub": "Node.js · sistema de arquivos"
+  },
+  {
+   "id": "m3",
+   "type": "maquina",
+   "name": "node:path",
+   "sub": "Node.js · caminhos"
+  },
+  {
+   "id": "m4",
+   "type": "maquina",
+   "name": "node:crypto",
+   "sub": "Node.js · crypto"
+  },
+  {
+   "id": "m5",
+   "type": "maquina",
+   "name": "node:stream",
+   "sub": "Node.js · streams"
+  }
+ ],
+ "AGENT_CFG": {
+  "a1": {
+   "model": "opus",
+   "prompt": "Você redige propostas comerciais. Tom direto, preço anual em destaque, sem jargão."
+  },
+  "a2": {
+   "model": "gpt",
+   "prompt": "Traduza para inglês e espanhol mantendo os termos do contrato e a formatação."
+  },
+  "a3": {
+   "model": "haiku",
+   "prompt": "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking."
+  },
+  "a4": {
+   "model": "sonnet",
+   "prompt": "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo."
+  }
+ },
+ "MODELS": [
+  {
+   "id": "opus",
+   "name": "Claude Opus 5.5",
+   "api": "claude-opus-5-5",
+   "vendor": "Anthropic",
+   "cor": "#D97757"
+  },
+  {
+   "id": "sonnet",
+   "name": "Claude Sonnet 5.5",
+   "api": "claude-sonnet-5-5",
+   "vendor": "Anthropic",
+   "cor": "#D97757"
+  },
+  {
+   "id": "haiku",
+   "name": "Claude Haiku 5.5",
+   "api": "claude-haiku-5-5",
+   "vendor": "Anthropic",
+   "cor": "#D97757"
+  },
+  {
+   "id": "gpt",
+   "name": "GPT",
+   "api": "gpt",
+   "vendor": "OpenAI",
+   "cor": "#10A37F"
+  }
+ ],
+ "LAYERS": [
+  {
+   "id": "l1",
+   "file": "proposta.layer.js",
+   "items": [
+    [
+     "fn",
+     "u11"
+    ],
+    [
+     "fn",
+     "u12"
+    ],
+    [
+     "fn",
+     "u13"
+    ],
+    [
+     "script",
+     "s2"
+    ]
+   ]
+  },
+  {
+   "id": "l2",
+   "file": "envio.layer.js",
+   "items": [
+    [
+     "fn",
+     "u15"
+    ]
+   ]
+  },
+  {
+   "id": "l3",
+   "file": "cliente.data.js",
+   "items": [
+    [
+     "dado",
+     "dados_cliente"
+    ],
+    [
+     "script",
+     "s1"
+    ]
+   ]
+  },
+  {
+   "id": "l4",
+   "file": "contrato.data.js",
+   "items": [
+    [
+     "dado",
+     "pacote_contrato"
+    ],
+    [
+     "dado",
+     "propostas"
+    ]
+   ]
+  },
+  {
+   "id": "l5",
+   "file": "credenciais.layer.js",
+   "items": [
+    [
+     "fn",
+     "u18"
+    ],
+    [
+     "fn",
+     "u19"
+    ],
+    [
+     "dado",
+     "conta_id"
+    ],
+    [
+     "dado",
+     "credenciais"
+    ],
+    [
+     "script",
+     "s3"
+    ]
+   ]
+  },
+  {
+   "id": "lx5",
+   "file": "comprar-fone-de-ouvido.layer.js",
+   "items": [
+    [
+     "fn",
+     "u30"
+    ],
+    [
+     "dado",
+     "requisitos"
+    ],
+    [
+     "fn",
+     "u33"
+    ],
+    [
+     "dado",
+     "fone_escolhido"
+    ],
+    [
+     "fn",
+     "u53"
+    ],
+    [
+     "dado",
+     "cupom"
+    ],
+    [
+     "fn",
+     "u54"
+    ],
+    [
+     "dado",
+     "frete"
+    ],
+    [
+     "fn",
+     "u34"
+    ],
+    [
+     "dado",
+     "pedido_fone"
+    ],
+    [
+     "fn",
+     "u59"
+    ],
+    [
+     "dado",
+     "review_fone"
+    ]
+   ]
+  },
+  {
+   "id": "lx6",
+   "file": "pesquisar-opcoes.layer.js",
+   "items": [
+    [
+     "fn",
+     "u31"
+    ],
+    [
+     "dado",
+     "modelos_fone"
+    ],
+    [
+     "fn",
+     "u32"
+    ],
+    [
+     "dado",
+     "avaliacoes"
+    ],
+    [
+     "fn",
+     "u51"
+    ],
+    [
+     "dado",
+     "precos_fone"
+    ],
+    [
+     "fn",
+     "u52"
+    ],
+    [
+     "dado",
+     "shortlist"
+    ]
+   ]
+  },
+  {
+   "id": "lx7",
+   "file": "receber-e-testar.layer.js",
+   "items": [
+    [
+     "fn",
+     "u56"
+    ],
+    [
+     "dado",
+     "entrega_fone"
+    ],
+    [
+     "fn",
+     "u57"
+    ],
+    [
+     "dado",
+     "teste_fone"
+    ],
+    [
+     "fn",
+     "u58"
+    ],
+    [
+     "dado",
+     "troca"
+    ]
+   ]
+  },
+  {
+   "id": "lx8",
+   "file": "comprar-celular.layer.js",
+   "items": [
+    [
+     "fn",
+     "u3"
+    ],
+    [
+     "dado",
+     "orcamento"
+    ],
+    [
+     "fn",
+     "u68"
+    ],
+    [
+     "dado",
+     "modelo"
+    ],
+    [
+     "fn",
+     "u5"
+    ],
+    [
+     "dado",
+     "loja"
+    ],
+    [
+     "fn",
+     "u35"
+    ],
+    [
+     "dado",
+     "cashback"
+    ],
+    [
+     "fn",
+     "u6"
+    ],
+    [
+     "dado",
+     "pedido"
+    ],
+    [
+     "fn",
+     "u36"
+    ],
+    [
+     "dado",
+     "entrega"
+    ]
+   ]
+  },
+  {
+   "id": "lx9",
+   "file": "vender-celular-antigo.layer.js",
+   "items": [
+    [
+     "fn",
+     "u61"
+    ],
+    [
+     "dado",
+     "valor_usado"
+    ],
+    [
+     "fn",
+     "u62"
+    ],
+    [
+     "dado",
+     "anuncio"
+    ],
+    [
+     "fn",
+     "u63"
+    ],
+    [
+     "dado",
+     "comprador"
+    ],
+    [
+     "fn",
+     "u64"
+    ],
+    [
+     "dado",
+     "venda"
+    ]
+   ]
+  },
+  {
+   "id": "lx10",
+   "file": "pesquisar-modelos.layer.js",
+   "items": [
+    [
+     "fn",
+     "u4"
+    ],
+    [
+     "dado",
+     "comparativo"
+    ],
+    [
+     "fn",
+     "u66"
+    ],
+    [
+     "dado",
+     "notas_camera"
+    ],
+    [
+     "fn",
+     "u67"
+    ],
+    [
+     "dado",
+     "historico"
+    ]
+   ]
+  },
+  {
+   "id": "lx11",
+   "file": "configurar-celular.layer.js",
+   "items": [
+    [
+     "fn",
+     "u70"
+    ],
+    [
+     "dado",
+     "backup"
+    ],
+    [
+     "fn",
+     "u71"
+    ],
+    [
+     "dado",
+     "apps"
+    ],
+    [
+     "fn",
+     "u72"
+    ],
+    [
+     "dado",
+     "apolice"
+    ]
+   ]
+  },
+  {
+   "id": "lx12",
+   "file": "fazer-onboarding-da-acme.layer.js",
+   "items": [
+    [
+     "fn",
+     "u10"
+    ],
+    [
+     "dado",
+     "rascunho"
+    ],
+    [
+     "dado",
+     "proposta_aprovada"
+    ],
+    [
+     "fn",
+     "u14"
+    ],
+    [
+     "dado",
+     "envio_id"
+    ],
+    [
+     "fn",
+     "u41"
+    ],
+    [
+     "dado",
+     "crm_registro"
+    ]
+   ]
+  },
+  {
+   "id": "lx13",
+   "file": "ativar-cliente.layer.js",
+   "items": [
+    [
+     "fn",
+     "u17"
+    ],
+    [
+     "dado",
+     "kickoff"
+    ],
+    [
+     "fn",
+     "u23"
+    ],
+    [
+     "dado",
+     "boas_vindas"
+    ],
+    [
+     "fn",
+     "u40"
+    ],
+    [
+     "dado",
+     "treinamento"
+    ]
+   ]
+  },
+  {
+   "id": "lx14",
+   "file": "configurar-integracoes.layer.js",
+   "items": [
+    [
+     "fn",
+     "u38"
+    ],
+    [
+     "dado",
+     "crm_ok"
+    ],
+    [
+     "fn",
+     "u39"
+    ],
+    [
+     "dado",
+     "webhook_ok"
+    ]
+   ]
+  },
+  {
+   "id": "lx15",
+   "file": "fazer-nova-funcao.layer.js",
+   "items": [
+    [
+     "fn",
+     "u90"
+    ],
+    [
+     "dado",
+     "pedido_fn"
+    ],
+    [
+     "fn",
+     "u91"
+    ],
+    [
+     "dado",
+     "contrato_fn"
+    ],
+    [
+     "fn",
+     "u92"
+    ],
+    [
+     "dado",
+     "codigo_fn"
+    ],
+    [
+     "fn",
+     "u93"
+    ],
+    [
+     "dado",
+     "testes_fn"
+    ],
+    [
+     "fn",
+     "u97"
+    ],
+    [
+     "dado",
+     "fn_publicada"
+    ]
+   ]
+  },
+  {
+   "id": "lx16",
+   "file": "validar.layer.js",
+   "items": [
+    [
+     "fn",
+     "u95"
+    ],
+    [
+     "dado",
+     "resultado_testes"
+    ],
+    [
+     "fn",
+     "u96"
+    ],
+    [
+     "dado",
+     "fn_aprovada"
+    ]
+   ]
+  },
+  {
+   "id": "lx17",
+   "file": "atualizar-site-institucional.layer.js",
+   "items": [
+    [
+     "fn",
+     "u73"
+    ],
+    [
+     "dado",
+     "metricas"
+    ],
+    [
+     "fn",
+     "u20"
+    ],
+    [
+     "dado",
+     "pagina"
+    ],
+    [
+     "fn",
+     "u21"
+    ],
+    [
+     "dado",
+     "fotos"
+    ],
+    [
+     "fn",
+     "u43"
+    ],
+    [
+     "dado",
+     "fotos_web"
+    ],
+    [
+     "fn",
+     "u22"
+    ],
+    [
+     "dado",
+     "publicado"
+    ],
+    [
+     "fn",
+     "u44"
+    ],
+    [
+     "dado",
+     "aviso"
+    ],
+    [
+     "fn",
+     "u77"
+    ],
+    [
+     "dado",
+     "conversao"
+    ]
+   ]
+  },
+  {
+   "id": "lx18",
+   "file": "revisar-e-testar.layer.js",
+   "items": [
+    [
+     "fn",
+     "u75"
+    ],
+    [
+     "dado",
+     "texto_ok"
+    ],
+    [
+     "fn",
+     "u76"
+    ],
+    [
+     "dado",
+     "lighthouse"
+    ]
+   ]
+  }
+ ],
+ "U": [
+  {
+   "id": "f1",
+   "kind": "folder",
+   "title": "Pessoal",
+   "parent": null,
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "538453d7-f663-4593-a1b7-d1b76c815384",
+   "arch": false
+  },
+  {
+   "id": "f2",
+   "kind": "folder",
+   "title": "Clientes",
+   "parent": null,
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "f1bbcd88-949a-4f44-afee-6feee632f1bb",
+   "arch": false
+  },
+  {
+   "id": "f3",
+   "kind": "folder",
+   "title": "Site institucional",
+   "parent": null,
+   "lane": "l3",
+   "plan": "padrao",
+   "uuid": "8ff34739-32d2-48f5-ae26-0e265fe38ff3",
+   "arch": false
+  },
+  {
+   "id": "u1",
+   "title": "Comprar fone de ouvido",
+   "ctx": "Uso diário, cancelamento de ruído, até R$ 500",
+   "parent": "f1",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l1",
+   "s": 9,
+   "e": 10,
+   "plan": "padrao",
+   "uuid": "2e2ac0ea-d109-42a6-ac5d-ac5dd9942e2a",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u30",
+   "title": "Listar requisitos",
+   "ctx": "Bluetooth, ANC, bateria > 20 h",
+   "parent": "u1",
+   "agent": "h4",
+   "col": "c5",
+   "lane": "l1",
+   "st": "ok",
+   "plan": "padrao",
+   "outs": [
+    [
+     "requisitos",
+     "out/requisitos.json"
+    ]
+   ],
+   "uuid": "cc623a9b-6f41-4c57-aa95-4a955345cc62",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u50",
+   "title": "Pesquisar opções",
+   "ctx": "Modelos, avaliações e preços em paralelo",
+   "parent": "u1",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "6a99b44c-0d78-4608-a8cc-e8ccccf66a99",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u31",
+   "title": "Pesquisar modelos",
+   "parent": "u50",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "st": "ok",
+   "plan": "padrao",
+   "ins": [
+    "requisitos"
+   ],
+   "outs": [
+    [
+     "modelos_fone",
+     "out/modelos-fone.json"
+    ]
+   ],
+   "uuid": "08d12dfd-abb0-4fb9-a704-870446a708d1",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u32",
+   "title": "Ler avaliações",
+   "parent": "u50",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "st": "exec",
+   "plan": "padrao",
+   "ins": [
+    "requisitos"
+   ],
+   "outs": [
+    [
+     "avaliacoes",
+     "out/avaliacoes.json"
+    ]
+   ],
+   "loop": [
+    "site",
+    "[\"reddit\", \"youtube\", \"rtings\"]"
+   ],
+   "uuid": "a708a7ae-49e7-496a-a53b-253bc058a708",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u51",
+   "title": "Buscar preços",
+   "parent": "u50",
+   "agent": "m1",
+   "col": "c3",
+   "lane": "l1",
+   "st": "exec",
+   "plan": "padrao",
+   "ins": [
+    "modelos_fone"
+   ],
+   "outs": [
+    [
+     "precos_fone",
+     "out/precos-fone.json"
+    ]
+   ],
+   "loop": [
+    "loja",
+    "[\"amazon\", \"kabum\", \"mercadolivre\"]"
+   ],
+   "uuid": "4540215f-e81f-431b-a373-c3733a094540",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u52",
+   "title": "Montar shortlist",
+   "ctx": "Top 3 por nota × preço",
+   "parent": "u50",
+   "agent": "a3",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "modelos_fone",
+    "avaliacoes",
+    "precos_fone"
+   ],
+   "outs": [
+    [
+     "shortlist",
+     "out/shortlist.json"
+    ]
+   ],
+   "uuid": "e3779b10-8656-4ccc-a1aa-61aab3bae377",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d4",
+   "kind": "data",
+   "title": "Shortlist",
+   "parent": "u1",
+   "plan": "padrao",
+   "lane": "l1",
+   "col": "c1",
+   "ins": [
+    "shortlist"
+   ],
+   "uuid": "81af14c1-248e-467d-afe2-ffe22d6b81af",
+   "arch": false
+  },
+  {
+   "id": "u33",
+   "title": "Escolher modelo",
+   "parent": "u1",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "shortlist"
+   ],
+   "outs": [
+    [
+     "fone_escolhido",
+     "out/fone.json"
+    ]
+   ],
+   "cond": [
+    "fone_escolhido",
+    "u31"
+   ],
+   "uuid": "1fe68e72-c2c5-402e-ae19-9e19a71c1fe6",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u53",
+   "title": "Procurar cupom",
+   "parent": "u1",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "fone_escolhido"
+   ],
+   "outs": [
+    [
+     "cupom",
+     "out/cupom.json"
+    ]
+   ],
+   "uuid": "be1e0823-60fc-49df-ac51-3c5120cdbe1e",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u54",
+   "title": "Calcular frete",
+   "parent": "u1",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "fone_escolhido"
+   ],
+   "outs": [
+    [
+     "frete",
+     "out/frete.json"
+    ]
+   ],
+   "uuid": "5c5581d4-ff34-4390-aa88-da889a7e5c55",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u34",
+   "title": "Comprar fone",
+   "parent": "u1",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "fone_escolhido",
+    "cupom",
+    "frete"
+   ],
+   "outs": [
+    [
+     "pedido_fone",
+     "out/pedido-fone.json"
+    ]
+   ],
+   "uuid": "fa8cfb85-9d6b-4d41-a8c0-78c0142ffa8c",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u55",
+   "title": "Receber e testar",
+   "parent": "u1",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "98c47536-3ba3-46f2-a6f7-16f78de098c4",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u56",
+   "title": "Rastrear pedido",
+   "parent": "u55",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "pedido_fone"
+   ],
+   "outs": [
+    [
+     "entrega_fone",
+     "out/entrega-fone.json"
+    ]
+   ],
+   "loop": [
+    "dia",
+    "rastreio.dias"
+   ],
+   "uuid": "36fbeee7-d9da-40a3-a52f-b52f079136fb",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u57",
+   "title": "Testar ANC e bateria",
+   "ctx": "Ônibus, escritório e 1 dia inteiro de uso",
+   "parent": "u55",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "entrega_fone",
+    "requisitos"
+   ],
+   "outs": [
+    [
+     "teste_fone",
+     "out/teste-fone.json"
+    ]
+   ],
+   "uuid": "d5336898-7812-4a54-a366-53668142d533",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u58",
+   "title": "Pedir troca",
+   "ctx": "Dentro dos 7 dias do direito de arrependimento",
+   "parent": "u55",
+   "agent": "a3",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "teste_fone",
+    "pedido_fone"
+   ],
+   "outs": [
+    [
+     "troca",
+     "out/troca.json"
+    ]
+   ],
+   "uuid": "736ae249-1649-4405-a19d-f19dfaf3736a",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u59",
+   "title": "Avaliar na loja",
+   "parent": "u1",
+   "agent": "a1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "teste_fone"
+   ],
+   "outs": [
+    [
+     "review_fone",
+     "out/review-fone.md"
+    ]
+   ],
+   "uuid": "11a25bfa-b481-4db6-afd5-8fd574a411a2",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u2",
+   "title": "Comprar celular",
+   "ctx": "Até R$ 3.000, câmera boa, 256 GB",
+   "parent": "f1",
+   "agent": "a4",
+   "col": "c2",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "afd9d5ab-52b8-4767-ae0c-2e0cee55afd9",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u3",
+   "title": "Definir orçamento",
+   "parent": "u2",
+   "agent": "h4",
+   "col": "c5",
+   "lane": "l1",
+   "st": "ok",
+   "s": 0,
+   "e": 0,
+   "plan": "padrao",
+   "outs": [
+    [
+     "orcamento",
+     "out/orcamento.json"
+    ]
+   ],
+   "uuid": "4e114f5c-f0f0-4118-ac44-cc4468064e11",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u60",
+   "title": "Vender celular antigo",
+   "ctx": "O valor entra no orçamento",
+   "parent": "u2",
+   "agent": "h4",
+   "col": "c2",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "ec48c90d-8f27-4ac9-aa7b-6a7be1b7ec48",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u61",
+   "title": "Avaliar aparelho",
+   "parent": "u60",
+   "agent": "a3",
+   "col": "c5",
+   "lane": "l1",
+   "st": "ok",
+   "plan": "padrao",
+   "outs": [
+    [
+     "valor_usado",
+     "out/valor-usado.json"
+    ]
+   ],
+   "uuid": "8a8042be-2d5f-447a-a8b3-08b35b688a80",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u62",
+   "title": "Fotografar e anunciar",
+   "parent": "u60",
+   "agent": "h4",
+   "col": "c2",
+   "lane": "l1",
+   "plan": "padrao",
+   "ins": [
+    "valor_usado"
+   ],
+   "outs": [
+    [
+     "anuncio",
+     "out/anuncio.json"
+    ]
+   ],
+   "uuid": "28b7bc6f-cb96-4e2b-a6ea-a6ead51928b7",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u63",
+   "title": "Responder interessados",
+   "parent": "u60",
+   "agent": "a1",
+   "col": "c3",
+   "lane": "l1",
+   "st": "exec",
+   "plan": "padrao",
+   "ins": [
+    "anuncio"
+   ],
+   "outs": [
+    [
+     "comprador",
+     "out/comprador.json"
+    ]
+   ],
+   "loop": [
+    "msg",
+    "anuncio.mensagens"
+   ],
+   "uuid": "c6ef3620-69ce-47dc-a522-45224ecac6ef",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u64",
+   "title": "Entregar e receber",
+   "parent": "u60",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "plan": "padrao",
+   "ins": [
+    "comprador"
+   ],
+   "outs": [
+    [
+     "venda",
+     "out/venda.json"
+    ]
+   ],
+   "uuid": "6526afd1-0805-418d-a359-e359c87b6526",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u65",
+   "title": "Pesquisar modelos",
+   "ctx": "Câmera, bateria e anos de atualização",
+   "parent": "u2",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "035e2982-a63d-4b3e-a191-8191422c035e",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u4",
+   "title": "Comparar modelos",
+   "ctx": "Três modelos até o orçamento, com prós e contras",
+   "parent": "u65",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "st": "exec",
+   "s": 1,
+   "e": 7,
+   "plan": "padrao",
+   "ins": [
+    "orcamento"
+   ],
+   "outs": [
+    [
+     "comparativo",
+     "out/comparativo.json"
+    ]
+   ],
+   "uuid": "a195a333-4474-44ef-afc8-1fc8bbdda195",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u66",
+   "title": "Testar câmeras",
+   "ctx": "Fotos noturnas e vídeo 4K dos reviews",
+   "parent": "u65",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "comparativo"
+   ],
+   "outs": [
+    [
+     "notas_camera",
+     "out/notas-camera.json"
+    ]
+   ],
+   "loop": [
+    "modelo",
+    "comparativo.modelos"
+   ],
+   "uuid": "3fcd1ce4-e2ac-4ea0-ae00-be00358e3fcd",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u67",
+   "title": "Ver histórico de preço",
+   "parent": "u65",
+   "agent": "m1",
+   "col": "c3",
+   "lane": "l1",
+   "st": "fail",
+   "plan": "padrao",
+   "ins": [
+    "comparativo"
+   ],
+   "outs": [
+    [
+     "historico",
+     "out/historico.json"
+    ]
+   ],
+   "err": "Buscapé respondeu 429 (limite de requisições).",
+   "loop": [
+    "modelo",
+    "comparativo.modelos"
+   ],
+   "uuid": "de049695-80e3-4851-ac37-5c37af3fde04",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d5",
+   "kind": "data",
+   "title": "Decisão",
+   "parent": "u2",
+   "plan": "padrao",
+   "lane": "l1",
+   "col": "c1",
+   "ins": [
+    "comparativo",
+    "notas_camera",
+    "historico",
+    "venda"
+   ],
+   "uuid": "7c3c1046-1f1b-4202-aa6f-fa6f28f07c3c",
+   "arch": false
+  },
+  {
+   "id": "u68",
+   "title": "Escolher modelo",
+   "parent": "u2",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "comparativo",
+    "notas_camera",
+    "historico"
+   ],
+   "outs": [
+    [
+     "modelo",
+     "out/modelo.json"
+    ]
+   ],
+   "cond": [
+    "modelo",
+    "u4"
+   ],
+   "uuid": "1a7389f7-bd52-4bb3-a8a6-98a6a2a11a73",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u5",
+   "title": "Escolher loja",
+   "parent": "u2",
+   "agent": "a3",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "s": 8,
+   "e": 8,
+   "plan": "padrao",
+   "ins": [
+    "modelo"
+   ],
+   "outs": [
+    [
+     "loja",
+     "out/loja.json"
+    ]
+   ],
+   "uuid": "b8ab03a8-5b89-4564-a6de-36de1c52b8ab",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u35",
+   "title": "Ver cashback",
+   "parent": "u2",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "modelo"
+   ],
+   "outs": [
+    [
+     "cashback",
+     "out/cashback.json"
+    ]
+   ],
+   "uuid": "56e27d59-f9c1-4f15-a515-d515960356e2",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u6",
+   "title": "Comprar",
+   "parent": "u2",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "s": 9,
+   "e": 9,
+   "plan": "padrao",
+   "ins": [
+    "loja",
+    "cashback",
+    "venda"
+   ],
+   "outs": [
+    [
+     "pedido",
+     "out/pedido.json"
+    ]
+   ],
+   "uuid": "f519f70a-97f8-48c6-a34d-734d0fb4f519",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u36",
+   "title": "Acompanhar entrega",
+   "parent": "u2",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "pedido"
+   ],
+   "outs": [
+    [
+     "entrega",
+     "out/entrega.json"
+    ]
+   ],
+   "loop": [
+    "dia",
+    "rastreio.dias"
+   ],
+   "uuid": "935170bb-3630-4277-a184-118489659351",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u69",
+   "title": "Configurar celular",
+   "parent": "u2",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "plan": "padrao",
+   "uuid": "3188ea6c-d467-4c28-afbc-afbc03163188",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u70",
+   "title": "Transferir dados",
+   "ctx": "Fotos, WhatsApp e contatos do aparelho antigo",
+   "parent": "u69",
+   "agent": "h4",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "entrega"
+   ],
+   "outs": [
+    [
+     "backup",
+     "out/backup.json"
+    ]
+   ],
+   "uuid": "cfc0641d-729f-45d9-adf3-4df37cc7cfc0",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u71",
+   "title": "Instalar apps",
+   "parent": "u69",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "backup"
+   ],
+   "outs": [
+    [
+     "apps",
+     "out/apps.json"
+    ]
+   ],
+   "loop": [
+    "app",
+    "backup.apps"
+   ],
+   "uuid": "6df7ddce-10d6-4f8a-ac2a-ec2af6786df7",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u72",
+   "title": "Ativar seguro",
+   "parent": "u69",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l1",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "pedido"
+   ],
+   "outs": [
+    [
+     "apolice",
+     "out/apolice.pdf"
+    ]
+   ],
+   "uuid": "0c2f577f-af0e-493b-aa62-8a6270290c2f",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d6",
+   "kind": "data",
+   "title": "Celular pronto",
+   "parent": "u2",
+   "plan": "padrao",
+   "lane": "l1",
+   "col": "c1",
+   "ins": [
+    "apps",
+    "apolice"
+   ],
+   "uuid": "aa66d130-4d45-42ec-a899-2899e9daaa66",
+   "arch": false
+  },
+  {
+   "id": "u9",
+   "title": "Fazer onboarding da Acme",
+   "ctx": "Cliente novo, contrato anual, proposta em português, inglês e espanhol",
+   "parent": "f2",
+   "agent": "a4",
+   "col": "c2",
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "489e4ae1-eb7d-4c9d-a6d1-c6d1638b489e",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u10",
+   "title": "Coletar dados do cliente",
+   "parent": "u9",
+   "agent": "m1",
+   "col": "c5",
+   "lane": "l2",
+   "st": "ok",
+   "s": 0,
+   "e": 0,
+   "plan": "onb",
+   "outs": [
+    [
+     "dados_cliente",
+     "out/dados_cliente.json"
+    ]
+   ],
+   "code": "// Coletar dados do cliente · node:http + node:fs\nimport { http } from \"node:http\"\nimport { fs } from \"node:fs\"\n\nvar res = await http.get(\"https://crm.local/clientes/acme\")\nfs.write(\"out/dados_cliente.json\", res.body)\nsaida.dados_cliente = \"out/dados_cliente.json\"",
+   "uuid": "e6d5c492-89b4-464e-a508-6508dd3ce6d5",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u11",
+   "title": "Rascunhar proposta",
+   "ctx": "Tom direto, preço anual em destaque",
+   "parent": "u9",
+   "agent": "a1",
+   "col": "c5",
+   "lane": "l2",
+   "st": "ok",
+   "s": 1,
+   "e": 2,
+   "plan": "onb",
+   "ins": [
+    "dados_cliente"
+   ],
+   "outs": [
+    [
+     "rascunho",
+     "out/rascunho.md"
+    ]
+   ],
+   "uuid": "850d3e43-27ec-4fff-a340-034056ed850d",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u12",
+   "title": "Revisar proposta",
+   "parent": "u9",
+   "agent": "a4",
+   "col": "c4",
+   "lane": "l2",
+   "prog": 0.6,
+   "s": 3,
+   "e": 7,
+   "plan": "onb",
+   "ins": [
+    "rascunho"
+   ],
+   "outs": [
+    [
+     "proposta_aprovada",
+     "out/proposta.md"
+    ]
+   ],
+   "cond": [
+    "proposta_aprovada",
+    "u11"
+   ],
+   "uuid": "2344b7f4-c623-49b0-a177-a177d09e2344",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d1",
+   "kind": "data",
+   "title": "Proposta aprovada",
+   "parent": "u9",
+   "plan": "onb",
+   "lane": "l2",
+   "col": "c4",
+   "ins": [
+    "proposta_aprovada"
+   ],
+   "uuid": "c17c31a5-645b-4361-afaf-3faf4a4fc17c",
+   "arch": false
+  },
+  {
+   "id": "u13",
+   "title": "Traduzir proposta",
+   "ctx": "Inglês e espanhol, manter termos do contrato",
+   "parent": "u9",
+   "agent": "a2",
+   "col": "c3",
+   "lane": "l2",
+   "st": "fail",
+   "s": 8,
+   "e": 9,
+   "plan": "onb",
+   "ins": [
+    "proposta_aprovada"
+   ],
+   "outs": [
+    [
+     "propostas",
+     "out/propostas.json"
+    ]
+   ],
+   "err": "Limite de contexto: o anexo do contrato passou de 200 páginas.",
+   "loop": [
+    "idioma",
+    "[\"en\", \"es\"]"
+   ],
+   "uuid": "5fb3ab56-0292-4d12-ade6-dde6c4005fb3",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u14",
+   "title": "Gerar contrato",
+   "parent": "u9",
+   "agent": "a1",
+   "col": "c3",
+   "lane": "l2",
+   "st": "pendente",
+   "s": 8,
+   "e": 10,
+   "plan": "onb",
+   "ins": [
+    "proposta_aprovada",
+    "dados_cliente"
+   ],
+   "outs": [
+    [
+     "pacote_contrato",
+     "out/pacote-contrato.json"
+    ]
+   ],
+   "uuid": "fdeb2507-a0ca-46c3-ac1e-7c1e3db1fdeb",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d2",
+   "kind": "data",
+   "title": "Contexto completo",
+   "parent": "u9",
+   "plan": "onb",
+   "lane": "l2",
+   "col": "c1",
+   "ins": [
+    "propostas",
+    "pacote_contrato"
+   ],
+   "uuid": "9c229eb8-3f01-4074-aa55-1a55b7629c22",
+   "arch": false
+  },
+  {
+   "id": "u15",
+   "title": "Enviar ao cliente",
+   "parent": "u9",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "s": 11,
+   "e": 11,
+   "plan": "onb",
+   "ins": [
+    "propostas",
+    "pacote_contrato"
+   ],
+   "outs": [
+    [
+     "envio_id",
+     "out/envio.json"
+    ]
+   ],
+   "code": "// Enviar ao cliente · node:http\nimport { http } from \"node:http\"\nimport { console as stdio } from \"node:console\"\n\nfor (const idioma of [\"en\", \"es\"]) {\n  const res = await http.post(\"https://api.acme.com/propostas\", {\n    arquivo: entrada[\"proposta_\" + idioma],\n    contrato: entrada.contrato,\n  })\n  stdio.log(\"enviado \" + idioma + \": \" + res.status)\n  saida.envio_id = res.body.id\n}",
+   "loop": [
+    "idioma",
+    "[\"en\", \"es\"]"
+   ],
+   "uuid": "3a5a1869-dd39-4a25-a88d-b88d31133a5a",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u41",
+   "title": "Registrar no CRM",
+   "parent": "u9",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "envio_id"
+   ],
+   "outs": [
+    [
+     "crm_registro",
+     "out/crm-registro.json"
+    ]
+   ],
+   "uuid": "d891921a-7b70-43d6-a6c4-56c4aac4d891",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u16",
+   "title": "Ativar cliente",
+   "ctx": "Depois do envio: kickoff, conta e credenciais",
+   "parent": "f2",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "76c90bcb-19a7-4d87-a4fc-f4fc247576c9",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u17",
+   "title": "Agendar kickoff",
+   "ctx": "Chamada de 30 min depois do contrato assinado",
+   "parent": "u16",
+   "agent": "a1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "envio_id"
+   ],
+   "outs": [
+    [
+     "kickoff",
+     "out/kickoff.ics"
+    ]
+   ],
+   "uuid": "1500857c-b7df-4738-a333-93339e261500",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u18",
+   "title": "Criar conta no sistema",
+   "parent": "u16",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "dados_cliente"
+   ],
+   "outs": [
+    [
+     "conta_id",
+     "out/conta.json"
+    ]
+   ],
+   "uuid": "b337ff2d-5616-40e9-a16b-316b17d7b337",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u19",
+   "title": "Gerar credenciais",
+   "parent": "u16",
+   "agent": "m4",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "conta_id"
+   ],
+   "outs": [
+    [
+     "credenciais",
+     "out/credenciais.json"
+    ]
+   ],
+   "uuid": "516f78de-f44e-4a9a-afa2-cfa29188516f",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u23",
+   "title": "Enviar boas-vindas",
+   "parent": "u16",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "credenciais"
+   ],
+   "outs": [
+    [
+     "boas_vindas",
+     "out/boas-vindas.json"
+    ]
+   ],
+   "loop": [
+    "contato",
+    "dados_cliente.contatos"
+   ],
+   "uuid": "efa6f28f-9285-444b-adda-6dda0b39efa6",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u37",
+   "title": "Configurar integrações",
+   "ctx": "CRM e webhook de faturamento",
+   "parent": "u16",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "8dde6c40-30bd-4dfc-ac11-0c1184ea8dde",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u38",
+   "title": "Conectar CRM",
+   "parent": "u37",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "conta_id"
+   ],
+   "outs": [
+    [
+     "crm_ok",
+     "out/crm.json"
+    ]
+   ],
+   "uuid": "2c15e5f1-cef4-47ad-aa48-aa48fe9b2c15",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u39",
+   "title": "Testar webhook",
+   "parent": "u37",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "crm_ok"
+   ],
+   "outs": [
+    [
+     "webhook_ok",
+     "out/webhook.json"
+    ]
+   ],
+   "uuid": "ca4d5fa2-6d2c-415e-a880-4880784cca4d",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u40",
+   "title": "Treinar equipe do cliente",
+   "ctx": "Sessão de 1 h com o time da Acme",
+   "parent": "u16",
+   "agent": "a1",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "kickoff"
+   ],
+   "outs": [
+    [
+     "treinamento",
+     "out/treinamento.md"
+    ]
+   ],
+   "uuid": "6884d953-0b63-4b0f-a6b7-e6b7f1fd6884",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "d3",
+   "kind": "data",
+   "title": "Cliente ativo",
+   "parent": "u16",
+   "plan": "onb",
+   "lane": "l2",
+   "col": "c1",
+   "ins": [
+    "kickoff",
+    "boas_vindas"
+   ],
+   "uuid": "06bc5304-a99b-44c0-a4ef-84ef6bae06bc",
+   "arch": false
+  },
+  {
+   "id": "u24",
+   "title": "Fazer nova função",
+   "ctx": "Do pedido à função publicada no catálogo",
+   "parent": "f2",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "a4f3ccb5-47d2-4e71-a326-2326e55fa4f3",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u90",
+   "title": "Descrever o pedido",
+   "ctx": "O que a função recebe e devolve",
+   "parent": "u24",
+   "agent": "a1",
+   "col": "c5",
+   "lane": "l2",
+   "st": "ok",
+   "plan": "onb",
+   "outs": [
+    [
+     "pedido_fn",
+     "out/pedido-fn.md"
+    ]
+   ],
+   "uuid": "432b4666-e60a-4822-a15e-c15e5f10432b",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u91",
+   "title": "Definir entradas e saídas",
+   "parent": "u24",
+   "agent": "a4",
+   "col": "c4",
+   "lane": "l2",
+   "st": "ok",
+   "plan": "onb",
+   "ins": [
+    "pedido_fn"
+   ],
+   "outs": [
+    [
+     "contrato_fn",
+     "out/contrato-fn.json"
+    ]
+   ],
+   "uuid": "e162c017-8441-41d3-af95-5f95d8c1e162",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u92",
+   "title": "Escrever a função",
+   "parent": "u24",
+   "agent": "a1",
+   "col": "c3",
+   "lane": "l2",
+   "st": "exec",
+   "plan": "onb",
+   "ins": [
+    "contrato_fn"
+   ],
+   "outs": [
+    [
+     "codigo_fn",
+     "out/funcao.js"
+    ]
+   ],
+   "uuid": "7f9a39c8-2279-4b84-adcd-fdcd52727f9a",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u93",
+   "title": "Escrever testes",
+   "parent": "u24",
+   "agent": "a3",
+   "col": "c3",
+   "lane": "l2",
+   "st": "exec",
+   "plan": "onb",
+   "ins": [
+    "contrato_fn"
+   ],
+   "outs": [
+    [
+     "testes_fn",
+     "out/funcao.test.js"
+    ]
+   ],
+   "uuid": "1dd1b379-c0b0-4535-ac04-9c04cc231dd1",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u94",
+   "title": "Validar",
+   "ctx": "Roda os testes e revisa o código",
+   "parent": "u24",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l2",
+   "plan": "onb",
+   "uuid": "bc092d2a-5ee8-4ee6-aa3c-3a3c45d4bc09",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u95",
+   "title": "Rodar testes",
+   "parent": "u94",
+   "agent": "m5",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "codigo_fn",
+    "testes_fn"
+   ],
+   "outs": [
+    [
+     "resultado_testes",
+     "out/testes.json"
+    ]
+   ],
+   "loop": [
+    "caso",
+    "testes_fn.casos"
+   ],
+   "uuid": "5a40a6db-fd1f-4897-a873-d873bf855a40",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u96",
+   "title": "Revisar código",
+   "parent": "u94",
+   "agent": "a4",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "resultado_testes"
+   ],
+   "outs": [
+    [
+     "fn_aprovada",
+     "out/revisao.md"
+    ]
+   ],
+   "uuid": "f878208c-9b57-4248-a6ab-76ab3936f878",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u97",
+   "title": "Publicar no catálogo",
+   "parent": "u24",
+   "agent": "m2",
+   "col": "c1",
+   "lane": "l2",
+   "st": "pendente",
+   "plan": "onb",
+   "ins": [
+    "fn_aprovada"
+   ],
+   "outs": [
+    [
+     "fn_publicada",
+     "out/catalogo.json"
+    ]
+   ],
+   "uuid": "96af9a3d-398e-4bf9-a4e2-14e2b2e796af",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u42",
+   "title": "Atualizar site institucional",
+   "ctx": "Página inicial nova, fotos e publicação",
+   "parent": "f3",
+   "agent": "a4",
+   "col": "c2",
+   "lane": "l3",
+   "plan": "padrao",
+   "uuid": "34e713ee-d7c6-45aa-a31a-b31a2c9834e7",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u73",
+   "title": "Levantar métricas atuais",
+   "parent": "u42",
+   "agent": "m1",
+   "col": "c5",
+   "lane": "l3",
+   "st": "ok",
+   "plan": "padrao",
+   "outs": [
+    [
+     "metricas",
+     "out/metricas.json"
+    ]
+   ],
+   "uuid": "d31e8d9f-75fd-4f5b-a151-5151a649d31e",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u20",
+   "title": "Reescrever página inicial",
+   "ctx": "Mais curta, foco em quem contrata",
+   "parent": "u42",
+   "agent": "a1",
+   "col": "c3",
+   "lane": "l3",
+   "st": "cancel",
+   "s": 7,
+   "e": 8,
+   "plan": "padrao",
+   "ins": [
+    "metricas"
+   ],
+   "outs": [
+    [
+     "pagina",
+     "out/index.html"
+    ]
+   ],
+   "uuid": "71560750-1434-490c-af89-ef891ffa7156",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u21",
+   "title": "Escolher fotos",
+   "parent": "u42",
+   "agent": "a4",
+   "col": "c2",
+   "lane": "l3",
+   "s": 5,
+   "e": 9,
+   "plan": "padrao",
+   "outs": [
+    [
+     "fotos",
+     "out/fotos/"
+    ]
+   ],
+   "uuid": "0f8d8101-b26c-42bd-adc0-8dc099ab0f8d",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u43",
+   "title": "Otimizar imagens",
+   "parent": "u42",
+   "agent": "m2",
+   "col": "c1",
+   "lane": "l3",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "fotos"
+   ],
+   "outs": [
+    [
+     "fotos_web",
+     "out/fotos-web/"
+    ]
+   ],
+   "loop": [
+    "foto",
+    "fotos"
+   ],
+   "uuid": "adc4fab2-50a3-4c6e-abf8-2bf8135cadc4",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u74",
+   "title": "Revisar e testar",
+   "parent": "u42",
+   "agent": "a4",
+   "col": "c4",
+   "lane": "l3",
+   "plan": "padrao",
+   "uuid": "4bfc7463-eedb-461f-aa2f-ca2f8d0d4bfc",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u75",
+   "title": "Revisar texto",
+   "parent": "u74",
+   "agent": "a4",
+   "col": "c4",
+   "lane": "l3",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "pagina"
+   ],
+   "outs": [
+    [
+     "texto_ok",
+     "out/texto-ok.json"
+    ]
+   ],
+   "cond": [
+    "texto_ok",
+    "u20"
+   ],
+   "uuid": "ea33ee14-8d12-4fd0-a867-686706beea33",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u76",
+   "title": "Testar no celular",
+   "parent": "u74",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l3",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "pagina",
+    "fotos_web"
+   ],
+   "outs": [
+    [
+     "lighthouse",
+     "out/lighthouse.json"
+    ]
+   ],
+   "loop": [
+    "tela",
+    "[\"375\", \"768\", \"1440\"]"
+   ],
+   "uuid": "886b67c5-2b4a-4981-a69e-069e806f886b",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u22",
+   "title": "Publicar build",
+   "parent": "u42",
+   "agent": "m2",
+   "col": "c1",
+   "lane": "l3",
+   "s": 10,
+   "e": 10,
+   "plan": "padrao",
+   "ins": [
+    "pagina",
+    "fotos_web",
+    "texto_ok"
+   ],
+   "outs": [
+    [
+     "publicado",
+     "out/publicado.json"
+    ]
+   ],
+   "code": "// Publicar build · node:fs\nimport { fs } from \"node:fs\"\n\nvar tentativas = 0\nwhile (!fs.exists(entrada.pagina) && tentativas < 3) tentativas++\nfs.copy(entrada.pagina, \"/var/www/site/index.html\")\nsaida.publicado = true",
+   "loop": [
+    "tentativa",
+    "[1, 2, 3]"
+   ],
+   "uuid": "26a2e176-c981-4332-a4d5-a4d5fa2026a2",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u44",
+   "title": "Avisar no Slack",
+   "parent": "u42",
+   "agent": "m1",
+   "col": "c1",
+   "lane": "l3",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "publicado"
+   ],
+   "outs": [
+    [
+     "aviso",
+     "out/aviso.json"
+    ]
+   ],
+   "uuid": "c4da5b27-67b9-4ce3-a30d-430d73d1c4da",
+   "arch": false,
+   "kind": "file"
+  },
+  {
+   "id": "u77",
+   "title": "Medir conversão",
+   "ctx": "Comparar com as métricas antigas depois de 7 dias",
+   "parent": "u42",
+   "agent": "a3",
+   "col": "c1",
+   "lane": "l3",
+   "st": "pendente",
+   "plan": "padrao",
+   "ins": [
+    "publicado",
+    "metricas"
+   ],
+   "outs": [
+    [
+     "conversao",
+     "out/conversao.json"
+    ]
+   ],
+   "uuid": "6311d4d8-05f0-4694-a144-e144ed826311",
+   "arch": false,
+   "kind": "file"
+  }
+ ],
+ "DEPS": [
+  [
+   "u4",
+   "u66"
+  ],
+  [
+   "u4",
+   "u67"
+  ],
+  [
+   "u30",
+   "u50"
+  ],
+  [
+   "u31",
+   "u51"
+  ],
+  [
+   "u32",
+   "u51"
+  ],
+  [
+   "u51",
+   "u52"
+  ],
+  [
+   "u50",
+   "d4"
+  ],
+  [
+   "d4",
+   "u33"
+  ],
+  [
+   "u33",
+   "u53"
+  ],
+  [
+   "u33",
+   "u54"
+  ],
+  [
+   "u53",
+   "u34"
+  ],
+  [
+   "u54",
+   "u34"
+  ],
+  [
+   "u34",
+   "u55"
+  ],
+  [
+   "u56",
+   "u57"
+  ],
+  [
+   "u57",
+   "u58"
+  ],
+  [
+   "u55",
+   "u59"
+  ],
+  [
+   "u3",
+   "u60"
+  ],
+  [
+   "u3",
+   "u65"
+  ],
+  [
+   "u61",
+   "u62"
+  ],
+  [
+   "u62",
+   "u63"
+  ],
+  [
+   "u63",
+   "u64"
+  ],
+  [
+   "u60",
+   "d5"
+  ],
+  [
+   "u65",
+   "d5"
+  ],
+  [
+   "d5",
+   "u68"
+  ],
+  [
+   "u68",
+   "u5"
+  ],
+  [
+   "u68",
+   "u35"
+  ],
+  [
+   "u5",
+   "u6"
+  ],
+  [
+   "u35",
+   "u6"
+  ],
+  [
+   "u6",
+   "u36"
+  ],
+  [
+   "u36",
+   "u69"
+  ],
+  [
+   "u70",
+   "u71"
+  ],
+  [
+   "u69",
+   "d6"
+  ],
+  [
+   "u73",
+   "u20"
+  ],
+  [
+   "u21",
+   "u43"
+  ],
+  [
+   "u43",
+   "u74"
+  ],
+  [
+   "u75",
+   "u76"
+  ],
+  [
+   "u74",
+   "u22"
+  ],
+  [
+   "u22",
+   "u44"
+  ],
+  [
+   "u44",
+   "u77"
+  ],
+  [
+   "u10",
+   "u11"
+  ],
+  [
+   "u11",
+   "u12"
+  ],
+  [
+   "u12",
+   "d1"
+  ],
+  [
+   "d1",
+   "u13"
+  ],
+  [
+   "d1",
+   "u14"
+  ],
+  [
+   "u13",
+   "d2"
+  ],
+  [
+   "u14",
+   "d2"
+  ],
+  [
+   "d2",
+   "u15"
+  ],
+  [
+   "u15",
+   "u16"
+  ],
+  [
+   "u18",
+   "u19"
+  ],
+  [
+   "u19",
+   "u23"
+  ],
+  [
+   "u23",
+   "d3"
+  ],
+  [
+   "u17",
+   "d3"
+  ],
+  [
+   "u20",
+   "u22"
+  ]
+ ],
+ "PARS": [
+  [
+   "u13",
+   "u14"
+  ],
+  [
+   "u17",
+   "u18"
+  ],
+  [
+   "u31",
+   "u32"
+  ],
+  [
+   "u53",
+   "u54"
+  ],
+  [
+   "u60",
+   "u65"
+  ],
+  [
+   "u66",
+   "u67"
+  ],
+  [
+   "u5",
+   "u35"
+  ],
+  [
+   "u70",
+   "u72"
+  ],
+  [
+   "u20",
+   "u21"
+  ],
+  [
+   "u37",
+   "u40"
+  ],
+  [
+   "u92",
+   "u93"
+  ]
+ ],
+ "STRUCTS": [
+  {
+   "k": "if",
+   "test": "proposta_aprovada",
+   "body": [
+    "d1",
+    "u13",
+    "u14",
+    "d2",
+    "u15"
+   ]
+  },
+  {
+   "k": "if",
+   "test": "shortlist.length > 0",
+   "body": [
+    "d4",
+    "u33",
+    "u53",
+    "u54",
+    "u34"
+   ]
+  },
+  {
+   "k": "if",
+   "test": "teste_fone.defeito",
+   "body": [
+    "u58"
+   ]
+  },
+  {
+   "k": "if",
+   "test": "comparativo.length > 0",
+   "body": [
+    "d5",
+    "u68",
+    "u5",
+    "u35",
+    "u6"
+   ]
+  },
+  {
+   "k": "if",
+   "test": "pedido.seguro",
+   "body": [
+    "u72"
+   ]
+  },
+  {
+   "k": "if",
+   "test": "pagina",
+   "body": [
+    "u74",
+    "u22"
+   ]
+  }
+ ],
+ "DATA_KIDS": {
+  "dados_cliente": [
+   "dados_cliente.nome",
+   "dados_cliente.cnpj",
+   "dados_cliente.contatos"
+  ],
+  "dados_cliente.contatos": [
+   "dados_cliente.contatos.email",
+   "dados_cliente.contatos.telefone"
+  ],
+  "credenciais": [
+   "credenciais.usuario",
+   "credenciais.senha"
+  ],
+  "propostas": [
+   "propostas.en",
+   "propostas.es"
+  ],
+  "pacote_contrato": [
+   "pacote_contrato.contrato",
+   "pacote_contrato.resumo_juridico"
+  ]
+ },
+ "DATA_TYPE": {
+  "dados_cliente": "objeto",
+  "dados_cliente.nome": "texto",
+  "dados_cliente.cnpj": "texto",
+  "dados_cliente.contatos": "lista",
+  "dados_cliente.contatos.email": "texto",
+  "dados_cliente.contatos.telefone": "texto",
+  "credenciais": "objeto",
+  "propostas": "objeto",
+  "propostas.en": "texto",
+  "propostas.es": "texto",
+  "pacote_contrato": "objeto",
+  "pacote_contrato.contrato": "arquivo",
+  "pacote_contrato.resumo_juridico": "texto",
+  "credenciais.usuario": "texto",
+  "credenciais.senha": "texto",
+  "orcamento": "numero",
+  "proposta_aprovada": "booleano",
+  "kickoff": "data",
+  "contrato": "arquivo"
+ },
+ "DATA_VAL": {},
+ "PLANS": [
+  {
+   "id": "padrao",
+   "name": "Plano padrão"
+  },
+  {
+   "id": "onb",
+   "name": "Onboarding Acme"
+  }
+ ]
+}

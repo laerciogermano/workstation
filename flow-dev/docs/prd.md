@@ -70,8 +70,8 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 ### ↓ baixo
 
 1. Se existir **irmão paralelo embaixo** → **troca a ordem** e vai para baixo.
-2. Senão, se estiver paralelo com o de cima → vira **irmão sequencial direito** do de cima.
-3. Senão, se existir **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
+2. Senão, se existir **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
+3. Senão, se estiver paralelo com o de cima → vira **irmão sequencial direito** do de cima.
 4. Senão (sem irmão sequencial à direita) → vira **irmão sequencial direito** do pai.
 5. Sem alvo elegível → não faz nada.
 
@@ -82,12 +82,12 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 | ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
 | → | sequencial direito do paralelo | troca com sequencial direito | noop |
 | ↑ | paralelo ao sequencial esquerdo | inverte com paralelo de cima | irmão sequencial esquerdo do pai |
-| ↓ | troca com paralelo embaixo | sequencial direito do de cima | seq. direito → 1º filho; senão seq. direito do pai |
+| ↓ | troca com paralelo embaixo | seq. direito → 1º filho | seq. direito do de cima; senão seq. direito do pai |
 
 ### Antes → depois
 
 | Antes | Depois |
 |---|---|
-| ↓ sem caso “irmão sequencial à direita” | ↓ com sequencial à direita → vira 1º filho desse irmão |
+| ↓: unParallel com o de cima antes de seq. direito → filho | ↓: seq. direito → 1º filho **antes** do unParallel |
 
-**Voltar:** `fnKeyMove` ↓ sem ramo `seqRight`→`child`; commit anterior da seção de setas.
+**Voltar:** em `fnKeyMove` ↓, testar `parLeft`/`unParallel` antes de `seqRight`→`child`.

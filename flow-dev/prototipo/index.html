@@ -3298,8 +3298,8 @@ function swapSibBlocks(a, b) {
  * ←: sequencial esquerdo → paralelo; senão → irmão esquerdo do pai.
  * →: paralelo → sequencial direito; senão sequencial direito → troca; senão nada.
  * ↑: sequencial esquerdo → paralelo; senão paralelo → inverte com o de cima; senão → irmão esquerdo do pai.
- * ↓: paralelo embaixo → troca; senão paralelo com de cima → sequencial direito dele;
- *    senão sequencial direito → 1º filho dele; senão → irmão direito do pai.
+ * ↓: paralelo embaixo → troca; senão sequencial direito → 1º filho; senão paralelo com de cima →
+ *    sequencial direito dele; senão → irmão direito do pai.
  */
 function fnKeyMove(u, key) {
   const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
@@ -3327,8 +3327,8 @@ function fnKeyMove(u, key) {
     else if (seqRight) { ok = swapSibBlocks(u, seqRight); if (ok) msg = `trocou com ${seqRight.title}`; }
   } else if (key === "ArrowDown") {
     if (parBelow) { ok = swapSibBlocks(u, parBelow); if (ok) msg = `abaixo de ${parBelow.title}`; }
-    else if (parLeft) { unParallel(u, prev); ok = true; msg = `sequencial depois de ${prev.title}`; }
     else if (seqRight) { ok = moveFn(u.id, seqRight.id, "child"); if (ok) msg = `1º filho de ${seqRight.title}`; }
+    else if (parLeft) { unParallel(u, prev); ok = true; msg = `sequencial depois de ${prev.title}`; }
     else if (canOut) { ok = moveFn(u.id, p.id, "after"); msg = `irmão direito de ${p.title}`; }
   }
   paint();

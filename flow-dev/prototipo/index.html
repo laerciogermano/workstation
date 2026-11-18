@@ -417,7 +417,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flbl .c-out { pointer-events: auto; }
 .flbl .c-out b { font-weight: 500; cursor: pointer; }
 .flbl .c-out b:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
-.io-l { font: 500 10.5px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.io-l { display: inline-flex; align-items: center; gap: 10px; font: 500 9.5px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.gantt.flow .grow.iorow .io-d { display: inline-flex; align-items: center; gap: 4px; }
 .flbl.fio-n b:hover, .gantt.flow .grow.iorow .io-d:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 .node.proj.cur { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 .node.proj.cur .t b { color: var(--accent); }
@@ -639,7 +640,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* seleção pega a linha inteira: tabela + área das barras */
 .gantt.flow .grows-r .rr.sel { background: color-mix(in srgb, var(--ink) 6%, transparent); }
 .gantt.flow .grow.sel { background: color-mix(in srgb, var(--ink) 7%, var(--paper)); box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--ink) 18%, transparent), inset 0 1px 0 color-mix(in srgb, var(--ink) 18%, transparent); } /* seleção neutra (sem amarelo) */
-.gantt.flow .grow .nm { gap: 8px; font-size: 13px; }
+.gantt.flow .grow .nm { gap: 8px; font-size: 12px; font-family: var(--mono); }
 .gantt.flow .grow .nm b { font-weight: 400; color: var(--ink); }
 .gantt.flow .grow.grp .nm b { font-weight: 500; }
 .gantt.flow .grow .nm .car { width: 14px; margin-right: -4px; }
@@ -749,12 +750,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fbar .fill { position:absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 68%, #000); }
 .fbar:hover { filter: brightness(1.12); }
 .fbar.sel, .fsum.sel, .fdia.sel { outline: 2px solid var(--ink); outline-offset: 2px; }
-.fsum { position:absolute; top: 12px; height: 7px; background: var(--c); cursor:pointer; z-index: 2; }
-.fsum .fill { position:absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--c) 70%, #000); }
-.fsum::before, .fsum::after { content:""; position:absolute; top: 0; border: 4px solid transparent; border-top: 6px solid var(--c); }
-.fsum::before { left: 0; border-left-color: var(--c); }
-.fsum::after { right: 0; border-right-color: var(--c); }
-.fsum::before, .fsum::after { top: 6px; }
+/* composição: mesma altura, bordas arredondadas como a task — sem “pontas” */
+.fsum { position:absolute; top: 12px; height: 7px; border-radius: 4px; background: var(--c); cursor:pointer; z-index: 2; }
+.fsum .fill { position:absolute; inset: 0 auto 0 0; border-radius: inherit; background: color-mix(in srgb, var(--c) 70%, #000); }
 .fsum .gm { position:absolute; top: -1.5px; width: 8px; height: 8px; margin-left: -4px; background: color-mix(in srgb, var(--c) 45%, #fff); transform: rotate(45deg); }
 .fdia { position:absolute; top: 10px; width: 14px; height: 14px; cursor:pointer; z-index: 2; }
 .fdia::before { content:""; position:absolute; inset: 2px; background: color-mix(in srgb, var(--c) 45%, var(--paper)); border: 1.5px solid var(--c); transform: rotate(45deg); }
@@ -778,7 +776,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flegend i { display:inline-block; }
 .lg-bar { width: 18px; height: 8px; border-radius: 2px; background: var(--fn); }
 .lg-dia { width: 8px; height: 8px; background: var(--fn); transform: rotate(45deg); }
-.lg-sum { width: 18px; height: 4px; background: var(--fn); }
+.lg-sum { width: 18px; height: 4px; border-radius: 2px; background: var(--fn); }
 .lg-seq { width: 14px; height: 8px; border-top: 1.2px solid #9a9a9a; border-right: 1.2px solid #9a9a9a; }
 .chipb { display:inline-flex; align-items:center; gap: 5px; font: 500 11px var(--font); color: var(--muted); background: none; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; }
 .chipb svg { width: 13px; height: 13px; }
@@ -799,7 +797,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fh-e.bot span { top: 19px; }
 /* dados de cada estado, empilhados embaixo do sN (documento FOP, item 3): folha = □, árvore = cubo */
 .fe-d { position: absolute; top: 42px; transform: translateX(-4.2px); /* marca centrada sobre a linha sN, nome à direita */ display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
-.fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9.5px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
+.fe-d b { display: flex; align-items: center; gap: 5px; font: 500 9px/1.1 var(--mono); color: var(--body); white-space: nowrap; max-width: 112px; overflow: hidden; text-overflow: ellipsis; }
 .fe-d b::before { content: ""; flex: none; box-sizing: border-box; width: 8.4px; height: 8.4px; border: 1.2px solid var(--dado); background: var(--paper); }
 .fe-d b.tree::before { width: 9px; height: 9px; border: none; background:
   linear-gradient(135deg, transparent 42%, var(--dado) 42% 58%, transparent 58%) center / 100% 1.2px no-repeat,
@@ -812,12 +810,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fe-d b:hover, .fe-d b.on { color: var(--ink); text-decoration: underline; text-decoration-color: var(--dado); }
 /* ---- Flow em SVG ---- */
 .fview { display: block; overflow: visible; }
-.fview text { font-family: var(--font); font-size: 10px; fill: var(--body); }
-.fview .sv-title { font-size: 11px; font-weight: 600; text-anchor: middle; }
+.fview text { font-family: var(--mono); font-size: 9px; fill: var(--body); }
+.fview .sv-title { font: 600 10px var(--mono); text-anchor: middle; }
+.fview .sv-lbl { font: 500 9px var(--mono); fill: var(--ink); }
 .fview .sv-hl, .fview .sv-row { stroke: var(--line); }
 .fview .sv-div { stroke: color-mix(in srgb, var(--muted) 55%, transparent); }
 .fview .sv-chip rect { fill: var(--wash); stroke: color-mix(in srgb, var(--muted) 70%, transparent); stroke-width: 1.3; }
-.fview .sv-chip text { font: 600 10px var(--mono); fill: var(--ink); text-anchor: middle; }
+.fview .sv-chip text { font: 600 9px var(--mono); fill: var(--ink); text-anchor: middle; }
 .fview .sv-los { fill: var(--paper); stroke: var(--muted); stroke-width: 1.3; }
 .fview .sv-ax { stroke: var(--muted); stroke-width: 1.3; }
 .fview .sv-selr { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
@@ -837,9 +836,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fview .sv-sum { fill: var(--fn); }
 .fview .sv-fbt { fill: #fff; pointer-events: none; }
 .fview .sv-fbt.abs, .fview .sv-fbt.nag { fill: var(--ink); }
-.fview .sv-dn { font: 500 10.5px var(--mono); fill: var(--muted); }
+.fview .sv-dn { font: 500 9px var(--mono); fill: var(--muted); }
 .fview .sv-dl:hover, .fview .sv-dl.on { fill: var(--ink); text-decoration: underline; }
-.fview .sv-pill text { font: 600 10px var(--mono); }
+.fview .sv-pill text { font: 600 9px var(--mono); }
+.fview .fdep-hit { stroke: transparent; stroke-width: 14; fill: none; cursor: pointer; pointer-events: stroke; }
+.fview .fdep-hit:hover + .fdep, .fview .fdep:hover { stroke: var(--accent); }
+.edge-pop { position: absolute; z-index: 8; display: flex; gap: 2px; height: 28px; padding: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 8px; box-shadow: var(--shadow); }
+.edge-pop .ib { width: 26px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--body); border-radius: 6px; border: 0; background: none; }
+.edge-pop .ib:hover { color: var(--accent); background: var(--panel); }
+.edge-pop .ib svg { width: 14px; height: 14px; }
 .fview .sv-pill.if rect { fill: color-mix(in srgb, var(--warn) 18%, var(--paper)); } .fview .sv-pill.if text { fill: var(--warn); }
 .fview .sv-pill.loop rect { fill: color-mix(in srgb, var(--ok) 18%, var(--paper)); } .fview .sv-pill.loop text { fill: var(--ok); }
 .fview .sv-pill.fail rect { fill: color-mix(in srgb, var(--fail) 16%, var(--paper)); } .fview .sv-pill.fail text { fill: var(--fail); font-family: var(--font); }
@@ -847,7 +852,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fview .sv-pill.cancel rect { fill: color-mix(in srgb, var(--muted) 16%, var(--paper)); } .fview .sv-pill.cancel text { fill: var(--muted); font-family: var(--font); }
 .fview .sv-fd rect, .fview .sv-fd path { fill: var(--paper); stroke: var(--dado); stroke-width: 1.2; }
 .fview .sv-fd.ext rect, .fview .sv-fd.ext path { fill: var(--dado); }
-.fview .sv-fd text { font: 500 9.5px var(--mono); fill: var(--body); }
+.fview .sv-fd text { font: 500 9px var(--mono); fill: var(--body); }
 .fview .sv-fd.ext text { fill: var(--muted); }
 .fview .sv-fd:hover text, .fview .sv-fd.on text { fill: var(--ink); text-decoration: underline; }
 :root[data-tema="eternos"] .fview .sv-fn { fill: #fff; stroke: #0b0b0b; stroke-width: 1.5; }
@@ -863,7 +868,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .vdock.fdock { bottom: 50px; align-items: center; }
 .vdock.fdock button { width: 34px; padding: 0; justify-content: center; }
 /* texto dentro da barra (toggle no menu) */
-.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font-size: 10px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.fbar .fb-t { position: relative; z-index: 1; display: block; padding: 0 9px; font: 500 9px/22px var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 .fbar.abs .fb-t, .fbar.nag .fb-t { color: var(--ink); line-height: 19px; }
 .vdock.fdock .fd-stat { font: 500 10.5px var(--mono); color: var(--muted); padding: 0 8px 0 4px; white-space: nowrap; min-width: 118px; }
 .fv-host { position: relative; }
@@ -2275,11 +2280,12 @@ function flow(s) {
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">${gdA(u)}
       <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
-      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  /* dado puro (□): um nome por marca — sem “a, b” sob o mesmo ícone; cubo pode resumir a árvore */
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2328,15 +2334,27 @@ function flow(s) {
   const tw = (t, px) => Math.ceil(String(t).length * px);
   const pill = (x, y, txt, cls) => `<g class="sv-pill ${cls}"><rect x="${x}" y="${y - 8}" width="${tw(txt, 6.1) + 10}" height="16" rx="3"/><text x="${x + 5}" y="${y + 3.5}">${esc(txt)}</text></g>`;
   const tagsOf = u => u.st === "fail" ? [["fail", "falhou"]] : u.st === "exec" ? [["exec", "executando"]] : u.st === "cancel" ? [["cancel", "cancelada"]] : [];
-  const dnames = (x, y, list) => `<text class="sv-dn" x="${x}" y="${y + 3.5}">${list.map((n, i) => `${i ? `<tspan>, </tspan>` : ""}<tspan class="sv-dl${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</tspan>`).join("")}<title>${esc(list.join(", "))}</title></text>`;
-  const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra) { h += dnames(cx, y, extra); cx += tw(extra.join(", "), 6.3) + 10; } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
+  /* cada folha = um □ + um nome; sem “proposta_en, proposta_es” no mesmo texto */
+  const dnames = (x, y, list) => {
+    let h = "", cx = x;
+    (list || []).forEach(n => {
+      const cube = isCube(n);
+      const mk = cube
+        ? `<path fill="var(--paper)" stroke="var(--dado)" stroke-width="1.1" stroke-linejoin="round" d="M${cx + 4} ${y - 5} L${cx + 8} ${y - 2.8} L${cx + 8} ${y + 2.2} L${cx + 4} ${y + 4.5} L${cx} ${y + 2.2} L${cx} ${y - 2.8} Z M${cx} ${y - 2.8} L${cx + 4} ${y - 0.5} L${cx + 8} ${y - 2.8} M${cx + 4} ${y - 0.5} V${y + 4.5}"/>`
+        : `<rect x="${cx}" y="${y - 4}" width="8" height="8" fill="var(--paper)" stroke="var(--dado)" stroke-width="1.1"/>`;
+      h += `<g class="sv-fd${cube ? " tree" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${mk}<text class="sv-dn" x="${cx + 11}" y="${y + 3}">${esc(n)}</text><title>${esc(n)}${cube ? " · cubo" : " · folha (□)"}</title></g>`;
+      cx += tw(n, 5.4) + 18;
+    });
+    return h;
+  };
+  const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra && extra.length) { h += dnames(cx, y, extra); cx += extra.reduce((w, n) => w + tw(n, 5.4) + 18, 0); } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
   const rowSvg = (r, i) => {
     const y0 = yTop(i), ym = yMid(i);
     if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop");
     if (r.st) return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})${senaoOf(r.st)}`, "if");
     if (r.io) { const g = geo(r.u); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, ioNames(r)); }
     const u = r.u, g = geo(u), sel = s.sel === u.id;
-    if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
+    if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7" rx="3.5"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do state` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
     return `<g data-act="fsel" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
@@ -2359,29 +2377,34 @@ function flow(s) {
       const dir = y2 > y1 ? 1 : -1, r1 = ga.data ? 8 : hasK(A) ? 5 : 4, r2 = gb.data ? 8 : hasK(B) ? 5 : 4;
       const yB = dir > 0 ? yTop(rb) : yTop(rb) + RH;
       const d = ga.ox === gb.ix ? `M${ga.ox} ${y1 + dir * r1} V${y2 - dir * r2}` : `M${ga.ox} ${y1 + dir * r1} V${yB} H${gb.ix} V${y2 - dir * r2}`;
-      svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}"/>`;
+      const midY = (y1 + y2) / 2, midX = ga.ox === gb.ix ? ga.ox : (ga.ox + gb.ix) / 2;
+      svg += `<path class="fdep-hit" data-act="edge-menu" data-a="${a}" data-b="${b}" data-mx="${midX}" data-my="${midY}" d="${d}"/><path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" data-act="edge-menu" data-a="${a}" data-b="${b}" data-mx="${midX}" data-my="${midY}" d="${d}"><title>Clique: seleção ou repetição</title></path>`;
     });
   }
-  // entrada/saída: cubo quando algum dado da lista tem campos (árvore), □ quando são só folhas
-  const ioMark = (names, cx, cy, cls, n0, tip) => {
-    const at = `class="${cls}" data-act="reveal-dado" data-n="${esc(n0 || "")}"`, t = `<title>${tip}</title>`;
-    if (names.some(isCube)) {
+  // entrada/saída: cubo = árvore; folha □ = um valor por marca (nunca “a, b” no mesmo □)
+  const ioMarkOne = (n, cx, cy, cls, tip) => {
+    const at = `class="${cls}" data-act="reveal-dado" data-n="${esc(n || "")}"`, t = `<title>${tip}</title>`;
+    if (isCube(n)) {
       const x = cx - 5, y = cy - 5.5;
       return `<path ${at} stroke-linejoin="round" d="M${x + 5} ${y} L${x + 10} ${y + 2.7} L${x + 10} ${y + 8.3} L${x + 5} ${y + 11} L${x} ${y + 8.3} L${x} ${y + 2.7} Z M${x} ${y + 2.7} L${x + 5} ${y + 5.4} L${x + 10} ${y + 2.7} M${x + 5} ${y + 5.4} V${y + 11}">${t}</path>`;
     }
     return `<rect ${at} x="${cx - 4}" y="${cy - 4}" width="8" height="8">${t}</rect>`;
   };
-  // dados □ / cubo sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
+  const ioMarks = (names, cx, cy, cls, tipSuf) => {
+    const list = names.length ? names : [""];
+    if (list.length === 1 || list.some(isCube)) return ioMarkOne(list[0], cx, cy, cls, `${esc(list[0] || "")} · ${tipSuf}`);
+    return list.map((n, i) => ioMarkOne(n, cx, cy + (i - (list.length - 1) / 2) * 12, cls, `${esc(n)} · ${tipSuf}`)).join("");
+  };
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const inNames = idxIn[u.id] != null ? newIns(u) : (u.ins || []);
     const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : (u.ins || []).some(n => absData(u, n));
     const inTip = inAbs ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)";
-    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>${ioMark(inNames, g.ix, yi, `fdot${inAbs ? " a" : ""}`, inNames[0], `${esc(inNames.join(", "))} · ${inTip}`)}`; }
-    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMark(u.ins || [], g.ix, y, `fdot${inAbs ? " a" : ""}`, (u.ins || [])[0], `${esc((u.ins || []).join(", "))} · ${inTip}`)}`;
-    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>${ioMark(u.outs.map(o => o[0]), g.ox, yo, "fdot", u.outs[0][0], `${esc(u.outs.map(o => o[0]).join(", "))} · saída`)}`; }
-    else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/>${ioMark((u.outs || []).map(o => o[0]), g.ox, y, "fdot", ((u.outs || [])[0] || [""])[0], `${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta`)}`;
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>${ioMarks(inNames, g.ix, yi, `fdot${inAbs ? " a" : ""}`, inTip)}`; }
+    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMarks(u.ins || [], g.ix, y, `fdot${inAbs ? " a" : ""}`, inTip)}`;
+    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>${ioMarks(u.outs.map(o => o[0]), g.ox, yo, "fdot", "saída")}`; }
+    else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/>${ioMarks((u.outs || []).map(o => o[0]), g.ox, y, "fdot", "saída concreta")}`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {
@@ -2433,16 +2456,16 @@ function flow(s) {
             ${head}${divs}${foot}<g transform="translate(0 52)">${bands}${selRows}${lines}${svg}${disp.map(rowSvg).join("")}</g></svg>`;
           // comparar renderizadores: SVG direto · HTML (div/span) · Canvas (2D) — os dois últimos são convertidos do mesmo desenho
           // opção B: ações flutuando logo acima da barra (task) selecionada — comparar com a barra da coluna Nome (opção A)
-          const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30;
-            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}<button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
-          // aparece no hover da task (como a Árvore do Plans) e fica na selecionada
-          const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) ? toolOf(r.u, i) : "").join(""); // inclusive o elemento novo ainda com nome em edição
-          return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools;
+          const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30, kids = hasK(u);
+            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px">${kids ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${FLOW_CLOSED.has(u.id) ? "Abrir filhos" : "Fechar filhos"}">${icon(FLOW_CLOSED.has(u.id) ? "chevrons-up-down" : "chevrons-down-up")}</button>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}<button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
+          const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) ? toolOf(r.u, i) : "").join("");
+          const edgePop = s.edgeMenu ? `<div class="edge-pop" role="menu" aria-label="Estrutura na sequência" style="left:${Math.max(4, s.edgeMenu.x - 28)}px;top:${Math.max(56, s.edgeMenu.y - 36)}px"><button class="ib" data-act="edge-if" data-a="${esc(s.edgeMenu.a)}" data-b="${esc(s.edgeMenu.b)}" title="Seleção (if)">${icon("diamond")}</button><button class="ib" data-act="edge-loop" data-a="${esc(s.edgeMenu.a)}" data-b="${esc(s.edgeMenu.b)}" title="Repetição (for)">${icon("repeat")}</button><button class="ib" data-act="edge-clear" title="Fechar">${icon("x")}</button></div>` : "";
+          return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools + edgePop;
         })()}</div>
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="flow-kids" data-m="open" title="Abrir elementos filhos" aria-label="Abrir filhos">${icon("chevrons-up-down")}</button><button data-act="flow-kids" data-m="close" title="Fechar elementos filhos" aria-label="Fechar filhos">${icon("chevrons-down-up")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -3438,7 +3461,7 @@ function toast(msg, ic = "circle-check") {
 }
 const unset = (...k) => k.forEach(x => delete cur[x]);
 function closeOverlays() { unset("ctx", "picker"); }
-function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from", "dadoEdit", "agCfg", "mdCfg"); cur.v = v; Object.assign(cur, extra); }
+function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from", "dadoEdit", "agCfg", "mdCfg", "edgeMenu"); cur.v = v; Object.assign(cur, extra); }
 
 // execução de IA (US-07, US-11)
 function startRun(ids) {
@@ -3543,6 +3566,38 @@ const ACT = {
   "cat-rm": t => { const c = t.dataset.c; if (inUse(c).length) { cur.catBlock = cur.catBlock === c ? null : c; return; } const i = CAT.findIndex(x => x.id === c); const n = CAT[i].name; CAT.splice(i, 1); toast(`${n} saiu do catálogo`); },
   toggle: t => { const id = t.dataset.id; OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
   "flow-toggle": t => { const id = t.dataset.id; if (!id) return false; FLOW_CLOSED.has(id) ? FLOW_CLOSED.delete(id) : FLOW_CLOSED.add(id); cur.sel = id; },
+  "flow-kids": t => {
+    const close = t.dataset.m === "close";
+    const comps = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && kidsPlan(u.id).some(x => !x.arch && !isFolder(x) && !isData(x)) && (!cur.flowRoot || u.id === cur.flowRoot || isDesc(u.id, cur.flowRoot)));
+    if (close) comps.forEach(u => FLOW_CLOSED.add(u.id));
+    else comps.forEach(u => FLOW_CLOSED.delete(u.id));
+    toast(close ? "Filhos fechados" : "Filhos abertos", close ? "chevrons-down-up" : "chevrons-up-down");
+  },
+  "edge-menu": (t, e) => {
+    const a = t.dataset.a, b = t.dataset.b; if (!a || !b) return false;
+    const gr = holder.querySelector(".gantt.flow .gright");
+    let x = +t.dataset.mx || 80, y = 52 + (+t.dataset.my || 40);
+    if (e && gr) {
+      const r = gr.getBoundingClientRect(), sx = gr.offsetWidth / (r.width || 1), sy = gr.offsetHeight / (r.height || 1);
+      x = (e.clientX - r.left) * sx; y = (e.clientY - r.top) * sy;
+    }
+    cur.edgeMenu = { a, b, x, y }; cur.sel = b;
+  },
+  "edge-clear": () => { unset("edgeMenu"); },
+  "edge-if": t => {
+    const a = t.dataset.a, b = t.dataset.b, B = $u(b); if (!B || isData(B)) return false;
+    const test = (B.ins && B.ins[0]) || "condicao";
+    B.cond = [test, a];
+    const st = STRUCTS.find(s => s.body.includes(b));
+    if (!st) STRUCTS.push({ k: "if", test, body: [b] });
+    else st.test = test;
+    unset("edgeMenu"); toast(`Seleção if (${test}) em ${B.title}`, "diamond");
+  },
+  "edge-loop": t => {
+    const b = t.dataset.b, B = $u(b); if (!B || isData(B)) return false;
+    B.loop = B.loop || ["item", "lista"];
+    unset("edgeMenu"); toast(`Repetição em ${B.title}`, "repeat");
+  },
   // abrir / fechar todos os accordeons de um plano (projeto): roteiros, ifs e Estados
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
   "proj-sel": t => {
@@ -3818,6 +3873,7 @@ holder.addEventListener("wheel", e => {
   zZoomAt(key, canvas, x, y, ZVIEWS[key].z * factor);
 }, { passive: false });
 holder.addEventListener("click", e => {
+  if (holder.dataset.panMoved) { e.preventDefault(); e.stopImmediatePropagation(); return; }
   const h = flowHit(e); if (!h) return;
   e.stopImmediatePropagation();
   const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
@@ -3882,45 +3938,51 @@ holder.addEventListener("mouseleave", () => setBarHov(null));
 window.addEventListener("blur", () => setBarHov(null));
 // rolar / dar zoom com o menu aberto: some (a barra mudou de lugar)
 holder.addEventListener("wheel", () => { if (barHov) setBarHov(null); }, { passive: true });
+/** Pan também a partir de textos/elementos: arrastar move o mapa; clique curto mantém a ação. */
 holder.addEventListener("pointerdown", e => {
-  if (flowHit(e)) return; // clique em barra/dado no canvas não vira pan
   const canvas = e.target.closest(".zcanvas");
   const key = canvas?.dataset?.zcanvas || zKey();
   if (!canvas || !key || !ZVIEWS[key] || cur?.v !== key) return;
-  if (e.target.closest(".dnode, .tnode, .enode, .gbar, .funit, .grow, .fbar, .fsum, .fdia, .fe-d b, [data-act], button, a, input, select, textarea, .dz, .tnew")) return; // clique em função/dado não vira pan
+  if (e.target.closest("button, a, input, select, textarea, .dz, .bar-tools, .fl-tools, .edge-pop, .vdock, .ex-tools, .tnew, .picker, .ctx, .modal, .scrim")) return;
   if (e.button !== 0 && e.button !== 1) return;
   const st = ZVIEWS[key];
-  zPan = { key, id: e.pointerId, x: e.clientX, y: e.clientY, ox: st.x, oy: st.y };
+  zPan = { key, id: e.pointerId, x: e.clientX, y: e.clientY, ox: st.x, oy: st.y, moved: false, soft: !!(flowHit(e) || e.target.closest("[data-act], .grow, .fbar, .fsum, .fdia, .fe-d b, text, .sv-lbl, .sv-dn, .sv-fbt, .nm, .io-d, .io-l")) };
   try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
-  canvas.classList.add("panning");
-  e.preventDefault();
+  if (!zPan.soft) { canvas.classList.add("panning"); e.preventDefault(); }
 });
 holder.addEventListener("pointermove", e => {
   if (!zPan || e.pointerId !== zPan.id) return;
   const canvas = holder.querySelector(`[data-zcanvas="${zPan.key}"]`);
   const st = ZVIEWS[zPan.key];
   if (!canvas || !st) return;
+  const dx = e.clientX - zPan.x, dy = e.clientY - zPan.y;
+  if (!zPan.moved && Math.hypot(dx, dy) < 5) return;
+  if (!zPan.moved) { zPan.moved = true; canvas.classList.add("panning"); try { canvas.setPointerCapture(e.pointerId); } catch (_) {} }
   const rect = canvas.getBoundingClientRect();
   const sx = rect.width ? canvas.clientWidth / rect.width : 1;
   const sy = rect.height ? canvas.clientHeight / rect.height : 1;
-  st.x = zPan.ox + (e.clientX - zPan.x) * sx;
-  st.y = zPan.oy + (e.clientY - zPan.y) * sy;
+  st.x = zPan.ox + dx * sx;
+  st.y = zPan.oy + dy * sy;
   applyZView(zPan.key);
+  e.preventDefault();
 });
 const endZPan = e => {
   if (!zPan || (e.pointerId != null && e.pointerId !== zPan.id)) return;
-  const key = zPan.key;
+  const key = zPan.key, moved = zPan.moved;
   zPan = null;
   holder.querySelector(`[data-zcanvas="${key}"]`)?.classList.remove("panning");
+  if (moved) { holder.dataset.panMoved = "1"; setTimeout(() => delete holder.dataset.panMoved, 0); }
 };
 holder.addEventListener("pointerup", endZPan);
 holder.addEventListener("pointercancel", endZPan);
 
 holder.addEventListener("click", e => {
+  if (holder.dataset.panMoved) { e.preventDefault(); e.stopPropagation(); return; }
   const t = e.target.closest("[data-act]");
   const node = e.target.closest("[data-node]");
   const cardEl = e.target.closest("[data-card]");
   if (cur.ctx && !e.target.closest(".ctx")) { unset("ctx"); if (!t && !node) { paint(); return; } }
+  if (cur.edgeMenu && !e.target.closest(".edge-pop, [data-act='edge-menu']")) { unset("edgeMenu"); if (!t) { paint(); return; } }
   if (t && ACT[t.dataset.act]) { const r = ACT[t.dataset.act](t, e); if (r !== false) paint(); return; }
   if (node) {
     const id = node.dataset.node;

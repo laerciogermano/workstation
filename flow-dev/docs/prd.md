@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.14 |
+| Versão | 1.15 |
 
 ## IDR — identificador único
 
@@ -126,3 +126,16 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Painel direito (T-32…) sempre aberto no player | Toggle **dentro** do painel de notas; fechado = faixa 44px só com ícone no topo · tecla **N** · `localStorage` |
 
 **Voltar:** remover `data-notes`, `notes-off`, `toggleNotes` e atalho `N`.
+
+## Flow UI — pan, tipografia, composição, filhos, dado folha, aresta
+
+| Antes | Depois |
+|---|---|
+| Pan só no fundo vazio do `zcanvas` | Arrastar textos/elementos também move o mapa (limiar 5px; clique curto mantém ação) |
+| Fonte ~10–13px sans no diagrama | Mono ~9px (densidade tipo VS Code) |
+| Barra de composição (`fsum` / `sv-sum`) com “pontas” | Retângulo arredondado (`rx`), mesma altura 7px |
+| Sem toggle de filhos no menu transversal / bar-tools | `flow-kids` no `vdock` + ícone sanfona em `bar-tools`/`fl-tools` |
+| Folha □ podia listar `a, b` no mesmo rótulo | Um nome por □; várias folhas = várias marcas |
+| Clique na aresta de sequência sem ação | Menu: seleção (`edge-if`) ou repetição (`edge-loop`) |
+
+**Voltar:** pointerdown antigo (bloqueio em `[data-act]`/`.grow`); fontes anteriores; `::before/::after` do `.fsum` + path das pontas no SVG; remover `flow-kids`/`edge-*`/`dnames` com marca por folha.

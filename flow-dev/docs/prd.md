@@ -226,3 +226,11 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | `syncTaskTitle` forçava 1ª task em todo responsável | Só sincroniza título em responsável concreto |
 
 **Voltar:** `taskPick` / drawer sempre com select quando há `tasks[]`.
+
+## Protótipo · indentar coluna Task
+
+| Antes | Depois |
+|---|---|
+| Indentação hierárquica + guias sempre ligadas | Botão no menu transversal (`indent-task`): liga/desliga recuo e guias (`s.indent`, padrão ligado) |
+
+**Voltar:** remover botão e sempre usar `ind()`/`gdA()`.

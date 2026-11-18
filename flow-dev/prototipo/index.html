@@ -678,14 +678,19 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .dado-kids button small { margin-left: auto; font: 400 11px var(--sans, inherit); color: var(--muted); }
 .dado-kids form { display: flex; gap: 6px; padding: 6px; background: var(--panel); }
 .dado-kids form input { flex: 1; height: 26px; border: 1px solid var(--line-2); border-radius: 5px; padding: 0 8px; font: 500 12px var(--mono); background: var(--paper); }
-/* arrastar funções no Flow */
+/* arrastar funções no Flow: o destino aparece como espaço tracejado (tabela e canvas) */
 .gantt.flow .gleft .grow[data-act="fsel"] { cursor: grab; }
 body.fdragging, body.fdragging * { cursor: grabbing !important; user-select: none; }
-.gantt.flow .grow.drop-before { box-shadow: inset 0 2px 0 var(--accent); }
-.gantt.flow .grow.drop-after { box-shadow: inset 0 -2px 0 var(--accent); }
-.gantt.flow .grow.drop-child { background: color-mix(in srgb, var(--accent) 12%, var(--paper)); box-shadow: inset 0 0 0 1.5px var(--accent); }
-.fdrag-ghost { position: fixed; z-index: 9999; pointer-events: none; padding: 5px 10px; border-radius: 7px; background: var(--ink, #111); color: #fff; font: 600 12px system-ui, sans-serif; box-shadow: 0 8px 20px -8px rgba(0,0,0,.45); white-space: nowrap; }
-.fdrag-ghost[data-m]::after { content: " · " attr(data-m) " " attr(data-t); font-weight: 400; opacity: .8; }
+body.fdragging .bar-tools, body.fdragging .fl-tools { display: none !important; }
+.gantt.flow .grow.ph { background: color-mix(in srgb, var(--accent) 6%, var(--paper)) !important; box-shadow: none !important; position: relative; }
+.gantt.flow .grow.ph > * { opacity: .45; }
+.gantt.flow .grow.ph::after { content: ""; position: absolute; inset: 3px 4px; border: 1.5px dashed var(--accent); border-radius: 6px; pointer-events: none; }
+.gantt.flow .grow.ph + .grow.ph::after { top: -1px; border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0; }
+.gantt.flow .grow.ph:has(+ .grow.ph)::after { bottom: -1px; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.fview g.ph rect, .fview g.sv-sumg.ph rect { fill: transparent !important; stroke: var(--accent) !important; stroke-dasharray: 4 3; stroke-width: 1.5 !important; }
+.fview g.ph text { opacity: .5; }
+.fdrag-ghost { position: fixed; z-index: 9999; pointer-events: none; display: flex; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: 8px; background: #111; color: #fff; font: 600 12px system-ui, sans-serif; box-shadow: 0 10px 24px -10px rgba(0,0,0,.5); white-space: nowrap; }
+.fdrag-ghost small { font-weight: 400; opacity: .75; font-size: 11px; }
 /* opção B: ações em cima da barra selecionada no canvas */
 .gright .bar-tools { position: absolute; z-index: 5; display: none; align-items: center; gap: 2px; height: 26px; padding: 1px 2px 1px 8px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 7px; box-shadow: var(--shadow); white-space: nowrap; animation: btIn .12s var(--ease); }
 .gright .bar-tools::after { content: ""; position: absolute; left: 14px; bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
@@ -2102,19 +2107,21 @@ function flow(s) {
     if (isData(u)) { const cx = OX + (L.s + 1) * W; return { x1: cx - 7, x2: cx + 7, cx, ix: cx, ox: cx, data: true }; }
     return { x1: OX + L.s * W + INS, x2: OX + (L.e + 1) * W - INS, ix: OX + L.s * W, ox: OX + (L.e + 1) * W };
   };
+  // arrastando: o elemento (e as filhas) já aparece no destino como espaço tracejado
+  const phOf = u => !!s.dragId && !!u && (u.id === s.dragId || isDesc(u.id, s.dragId));
   const leftRow = ({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
     const dur = isData(u) ? 0 : L.e - L.s + 1;
     const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="fsel" data-id="${u.id}">
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${phOf(u) ? " ph" : ""}" data-act="fsel" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${phOf(r.u) ? " ph" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
-  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow${phOf(r.lp) ? " ph" : ""}" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: e0 = entradas abstratas (outra camada/state); eN = saídas novas; stBag = bag acumulado em eN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));
@@ -2155,10 +2162,10 @@ function flow(s) {
     if (r.st) return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})`, "if");
     if (r.io) { const g = geo(r.u); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, ioNames(r)); }
     const u = r.u, g = geo(u), sel = s.sel === u.id;
-    if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
+    if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg${phOf(u) ? " ph" : ""}"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do state` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    return `<g data-act="fsel" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
+    return `<g data-act="fsel" data-id="${u.id}"${phOf(u) ? ' class="ph"' : ""}><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
   };
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
@@ -3562,11 +3569,28 @@ holder.addEventListener("click", e => {
   const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
   const r = ACT[h.act.act]?.(t, e); if (r !== false) paint();
 }, true);
-/** Arrastar função no Flow (linha da tabela ou barra): solta em cima = antes, embaixo = depois, no meio = filho. */
+/** Arrastar função no Flow (linha ou barra) com prévia: o elemento já ocupa o destino como espaço tracejado;
+ *  soltar confirma, Esc desfaz. Metade de cima = antes · metade de baixo = depois · arrastar para a direita = dentro (filho).
+ *  Entradas e saídas não bloqueiam a mudança de lugar. */
 let fDrag = null, fDragEat = false;
-function fDropAt(y) {
-  const rows = [...holder.querySelectorAll('.gantt.flow .gleft .grow[data-act="fsel"][data-id]')];
-  for (const r of rows) { const b = r.getBoundingClientRect(); if (y >= b.top && y <= b.bottom) { const f = (y - b.top) / b.height; return { el: r, id: r.dataset.id, mode: f < .3 ? "before" : f > .7 ? "after" : "child" }; } }
+function flowSnap() { return { U: U.map(u => [u, u.parent, u.plan]), DEPS: DEPS.map(d => [...d]), PARS: PARS.map(d => [...d]), ST: STRUCTS.map(st => [...st.body]) }; }
+function flowRestore(sn) {
+  U = sn.U.map(([u, p, pl]) => { u.parent = p; u.plan = pl; return u; });
+  DEPS.length = 0; sn.DEPS.forEach(d => DEPS.push([...d]));
+  PARS.length = 0; sn.PARS.forEach(d => PARS.push([...d]));
+  STRUCTS.forEach((st, i) => { st.body = [...sn.ST[i]]; });
+}
+function fDragTarget(e) {
+  const rows = [...holder.querySelectorAll(".gantt.flow .gleft .grow")];
+  for (const r of rows) {
+    const b = r.getBoundingClientRect(); if (e.clientY < b.top || e.clientY > b.bottom) continue;
+    if (r.classList.contains("ph")) return { keep: true };
+    const own = r.dataset.id || r.dataset.own; if (!own) return null;
+    const top = (e.clientY - b.top) / b.height < .5;
+    const io = r.dataset.io;
+    const mode = e.clientX - fDrag.x > 56 ? "child" : io === "in" || io === "lp" ? "before" : io === "out" ? "after" : top ? "before" : "after";
+    return { id: own, mode };
+  }
   return null;
 }
 holder.addEventListener("pointerdown", e => {
@@ -3575,30 +3599,41 @@ holder.addEventListener("pointerdown", e => {
   const h = !el && e.target.closest?.(".fv-cv") ? flowHit(e) : null;
   const id = el ? el.dataset.id : h?.act?.act === "fsel" ? h.act.id : null;
   if (!id || isData($u(id))) return;
-  fDrag = { id, x: e.clientX, y: e.clientY, on: false };
+  fDrag = { id, x: e.clientX, y: e.clientY, on: false, key: "" };
 }, true);
-holder.addEventListener("pointermove", e => {
+document.addEventListener("pointermove", e => {
   if (!fDrag) return;
   if (!fDrag.on && Math.hypot(e.clientX - fDrag.x, e.clientY - fDrag.y) < 6) return;
-  if (!fDrag.on) { fDrag.on = true; document.body.classList.add("fdragging"); const g = document.createElement("div"); g.className = "fdrag-ghost"; g.textContent = $u(fDrag.id).title; document.body.appendChild(g); fDrag.ghost = g; }
+  if (!fDrag.on) {
+    fDrag.on = true; fDrag.snap = flowSnap(); fDrag.sel0 = cur.sel;
+    document.body.classList.add("fdragging"); cur.dragId = fDrag.id; unset("drawer");
+    const g = document.createElement("div"); g.className = "fdrag-ghost"; g.innerHTML = `<b>${esc($u(fDrag.id).title)}</b><small>↕ escolha o lugar · → arraste para a direita para pôr dentro</small>`; document.body.appendChild(g); fDrag.ghost = g;
+    paint();
+  }
   e.preventDefault();
-  fDrag.ghost.style.left = e.clientX + 12 + "px"; fDrag.ghost.style.top = e.clientY + 8 + "px";
-  holder.querySelectorAll(".grow.drop-before, .grow.drop-after, .grow.drop-child").forEach(x => x.classList.remove("drop-before", "drop-after", "drop-child"));
-  const d = fDropAt(e.clientY); fDrag.drop = null;
-  if (d && d.id !== fDrag.id && !isDesc(d.id, fDrag.id)) { d.el.classList.add("drop-" + d.mode); fDrag.drop = d; fDrag.ghost.dataset.m = d.mode === "child" ? "dentro de" : d.mode === "before" ? "antes de" : "depois de"; fDrag.ghost.dataset.t = $u(d.id).title; }
-  else { delete fDrag.ghost.dataset.m; }
+  fDrag.ghost.style.left = e.clientX + 14 + "px"; fDrag.ghost.style.top = e.clientY + 10 + "px";
+  const t = fDragTarget(e); if (!t || t.keep) return;
+  if (t.id === fDrag.id || isDesc(t.id, fDrag.id)) return;
+  const key = t.id + ":" + t.mode; if (key === fDrag.key) return;
+  fDrag.key = key;
+  flowRestore(fDrag.snap); moveFn(fDrag.id, t.id, t.mode); cur.sel = fDrag.id; fDrag.drop = t;
+  fDrag.ghost.querySelector("small").textContent = (t.mode === "child" ? "dentro de " : t.mode === "before" ? "antes de " : "depois de ") + $u(t.id).title;
+  paint();
 });
-const fDragEnd = () => {
+function fDragStop(commit) {
   if (!fDrag) return;
-  const d = fDrag.drop, id = fDrag.id, on = fDrag.on;
+  const { on, drop, id, snap } = fDrag;
   fDrag.ghost?.remove(); document.body.classList.remove("fdragging"); fDrag = null;
   if (!on) return;
   fDragEat = true; setTimeout(() => { fDragEat = false; }, 0);
-  if (d && moveFn(id, d.id, d.mode)) { paint(); toast(`${$u(id).title} → ${d.mode === "child" ? "dentro de" : d.mode === "before" ? "antes de" : "depois de"} ${$u(d.id).title}`, "move"); }
-  else paint();
-};
-holder.addEventListener("pointerup", fDragEnd);
-holder.addEventListener("pointercancel", fDragEnd);
+  unset("dragId");
+  if (!commit) flowRestore(snap);
+  paint();
+  if (commit && drop) toast(`${$u(id).title} → ${drop.mode === "child" ? "dentro de" : drop.mode === "before" ? "antes de" : "depois de"} ${$u(drop.id).title}`, "move");
+}
+document.addEventListener("pointerup", () => fDragStop(true));
+document.addEventListener("pointercancel", () => fDragStop(false));
+document.addEventListener("keydown", e => { if (fDrag?.on && e.key === "Escape") { e.stopImmediatePropagation(); fDragStop(false); } }, true);
 holder.addEventListener("click", e => { if (fDragEat) { e.stopImmediatePropagation(); e.preventDefault(); fDragEat = false; } }, true);
 /** Hover numa task do Flow mostra as ações em cima dela; sair da task e da barra esconde (com folga para alcançar os botões). */
 let barHov = null, barHovT = 0;

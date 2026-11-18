@@ -6,7 +6,7 @@ export interface ConsoleLine { kind: "cmd" | "out" | "ok" | "er" | "dim"; text: 
  * Executa o código de uma etapa "biblioteca Node" num sandbox sem rede nem disco real:
  * módulos node:http / node:fs / node:path / node:crypto são simulados e as entradas vêm do state.
  */
-export async function runMachine(opts: { title: string; code: string; inputs: Record<string, string | null>; declared: string[] }): Promise<ConsoleLine[]> {
+export async function runMachine(opts: { title: string; code: string; inputs: Record<string, string | null>; declared: string[] }): Promise<{ lines: ConsoleLine[]; saida: Record<string, unknown>; ok: boolean }> {
   const lines: ConsoleLine[] = [{ kind: "cmd", text: `$ flow run "${opts.title}"` }];
   const log = (kind: ConsoleLine["kind"], text: string) => { if (lines.length < 200) lines.push({ kind, text: String(text).slice(0, 500) }); };
   const vfs = new Map<string, string>();
@@ -41,6 +41,7 @@ export async function runMachine(opts: { title: string; code: string; inputs: Re
   });
   const saida: Record<string, unknown> = {};
   const ctx = vm.createContext({ ...binds, console: mods.console, entrada, saida, setTimeout: undefined }, { codeGeneration: { strings: false, wasm: false } });
+  let ok = false;
   try {
     const script = new vm.Script(`(async () => {\n${body}\n})()`, { filename: "etapa.js" });
     const p = script.runInContext(ctx, { timeout: 1000 }) as Promise<unknown>;
@@ -48,10 +49,11 @@ export async function runMachine(opts: { title: string; code: string; inputs: Re
     await Promise.race([p, new Promise((_, rej) => { to = setTimeout(() => rej(new Error("tempo esgotado (3 s)")), 3000); })]).finally(() => clearTimeout(to));
     Object.entries(saida).forEach(([k, v]) => log("ok", `✓ saida.${k} = ${JSON.stringify(v)}`));
     if (!Object.keys(saida).length) log("ok", "✓ concluída");
+    ok = true;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     log("er", `✗ ${msg}`);
     if (/sem valor/.test(msg)) log("dim", "Contexto incompleto. A tarefa não executa.");
   }
-  return lines;
+  return { lines, saida, ok };
 }

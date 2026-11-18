@@ -35,7 +35,7 @@ export async function seedDemoProject(db: Db, ownerId: number, name: string): Pr
       `insert into flow.elements (project_id, plan_id, parent_id, kind, title, context, agent_id, resp_id, status, error, progress, loop_var, loop_list, code, archived, position)
        values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) returning id`,
       [projectId, planId.get(u.plan), u.parent ? elId.get(u.parent) : null, u.kind ?? "file", u.title, u.ctx ?? null, u.agent ? agentId.get(u.agent) ?? null : null, u.resp ? agentId.get(u.resp) ?? null : null,
-        u.st ?? null, u.err ?? null, u.prog ?? null, u.loop?.[0] ?? null, u.loop?.[1] ?? null, u.code ?? null, u.arch ?? false, position]))[0]!.id;
+        (u.st === "exec" ? "pendente" : u.st) ?? null, u.err ?? null, u.prog ?? null, u.loop?.[0] ?? null, u.loop?.[1] ?? null, u.code ?? null, u.arch ?? false, position]))[0]!.id;
     elId.set(u.id, id);
   }
   // cond (senão → volta) depois que todos existem

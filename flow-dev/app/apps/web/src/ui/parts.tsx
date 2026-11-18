@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 
 export const ST: Record<RunStatus, [string, string, string]> = {
   pendente: ["pendente", "circle-dashed", "pendente"], exec: ["exec", "loader-circle", "em execução"], ok: ["ok", "check", "concluída"],
-  fail: ["fail", "circle-x", "falhou"], cancel: ["cancel", "ban", "cancelada"],
+  fail: ["fail", "circle-x", "falhou"], cancel: ["cancel", "ban", "cancelada"], wait: ["wait", "hourglass", "aguardando pessoa"],
 };
 export const StBadge = ({ st }: { st: RunStatus | null }) => (st ? <span className={"st " + ST[st][0]}><Icon n={ST[st][1]} />{ST[st][2]}</span> : null);
 export const initials = (name?: string): string => String(name || "?").trim().split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase() || "?";

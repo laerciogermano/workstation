@@ -1,7 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { api, ApiError } from "./api/client";
-import { AuthPage } from "./features/auth/AuthPage";
+import { AccountDialog } from "./features/auth/AccountDialog";
+import { clearPersonKey, getPersonKey, savePersonKey } from "./features/auth/person";
 import { ProjectsPage } from "./features/projects/ProjectsPage";
 import { IdePage } from "./features/ide/IdePage";
 
@@ -13,13 +14,26 @@ function useHashRoute(): string {
 }
 
 export function App() {
-  const qc = useQueryClient();
   const route = useHashRoute();
-  const me = useQuery({ queryKey: ["me"], queryFn: async () => { try { return (await api.me()).user; } catch (e) { if (e instanceof ApiError && e.status === 401) return null; throw e; } } });
+  const [acct, setAcct] = useState(false);
+  // sem tela de login: toda pessoa entra como visitante (UUID próprio) e vincula uma conta quando quiser
+  const me = useQuery({
+    queryKey: ["me"],
+    queryFn: async () => {
+      let user;
+      try { user = (await api.me()).user; } catch (e) {
+        if (!(e instanceof ApiError && e.status === 401)) throw e;
+        user = (await api.guest(getPersonKey())).user;
+      }
+      if (user.guest && user.personKey) savePersonKey(user.personKey); else if (!user.guest) clearPersonKey();
+      return user;
+    },
+  });
   if (me.isPending) return <div className="boot">Carregando…</div>;
-  if (me.isError) return <div className="boot">Não foi possível falar com o servidor.</div>;
-  if (!me.data) return <AuthPage onDone={() => qc.invalidateQueries({ queryKey: ["me"] })} />;
+  if (me.isError || !me.data) return <div className="boot">Não foi possível falar com o servidor.</div>;
   const m = /^\/p\/([0-9a-f-]{36})$/.exec(route);
-  if (m) return <IdePage projectId={m[1]!} user={me.data} onExit={() => { location.hash = "#/"; }} />;
-  return <ProjectsPage user={me.data} onLogout={async () => { await api.logout(); qc.clear(); qc.invalidateQueries({ queryKey: ["me"] }); }} />;
+  const page = m
+    ? <IdePage projectId={m[1]!} user={me.data} onExit={() => { location.hash = "#/"; }} onAccount={() => setAcct(true)} />
+    : <ProjectsPage user={me.data} onAccount={() => setAcct(true)} />;
+  return <>{page}{acct && <AccountDialog me={me.data} onClose={() => setAcct(false)} />}</>;
 }

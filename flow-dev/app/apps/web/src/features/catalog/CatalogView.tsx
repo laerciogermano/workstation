@@ -28,7 +28,7 @@ export function CatalogView() {
       <nav className="seg" style={{ alignSelf: "flex-start" }}>
         {(Object.keys(TYPE_INFO) as AgentKind[]).map(k => <button key={k} aria-current={k === t} onClick={() => set({ catTab: k, catBlock: null })}><Icon n={TYPE_INFO[k].ic} />{TYPE_INFO[k].n}<span style={{ color: "var(--muted)", fontWeight: 500 }}>{m.agents.filter(c => c.kind === k).length}</span></button>)}</nav>
       <form className="cat-add" onSubmit={add}>
-        <input placeholder={t === "ia" ? "Nome do modelo ou agente" : "Módulo Node (node:fs, node:http…)"} aria-label="Nome" value={n} onChange={e => setN(e.target.value)} maxLength={120} />
+        <input placeholder={t === "ia" ? "Nome do modelo ou agente" : "Biblioteca Node (node:fs, node:http…)"} aria-label="Nome" value={n} onChange={e => setN(e.target.value)} maxLength={120} />
         <input placeholder={t === "ia" ? "Fornecedor · uso" : "Pacote / runtime Node.js"} aria-label="Descrição" value={d} onChange={e => setD(e.target.value)} maxLength={200} />
         <button className="btn pri"><Icon n="plus" />Incluir</button></form>
       <div className="ctable"><div className="crow"><span>Nome</span><span>Descrição</span><span>Uso</span><span /></div>

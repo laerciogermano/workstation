@@ -30,3 +30,6 @@
 .toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; z-index: 99; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 .win, .win .body, .ex { overflow: clip; }
+.st.wait { color: var(--warn); background: color-mix(in srgb, var(--warn) 13%, transparent); }
+.fview .sv-pill.wait rect { fill: color-mix(in srgb, var(--warn) 16%, var(--paper)); } .fview .sv-pill.wait text { fill: var(--warn); font-family: var(--font); }
+.runbar .wait-l { display: inline-flex; gap: 6px; align-items: center; }

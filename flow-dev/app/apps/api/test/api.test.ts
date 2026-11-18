@@ -17,8 +17,10 @@ const post = async (url: string, body: unknown = {}) => { const r = await agentA
 beforeAll(async () => {
   await migrate();
   for (const [ag, n] of [[agentA, "a"], [agentB, "b"]] as const) {
+    const g = await ag.post("/api/v1/auth/guest").send({});
+    expect(g.status).toBe(201); expect(g.body.user.guest).toBe(true); expect(g.body.user.personKey).toMatch(/^[0-9a-f-]{36}$/);
     const r = await ag.post("/api/v1/auth/register").send({ email: `${n}${tag}@t.dev`, password: "senha-forte-1", name: n });
-    expect(r.status).toBe(201);
+    expect(r.status).toBe(201); expect(r.body.user.guest).toBe(false);
   }
   const list = await agentA.get("/api/v1/projects");
   pidA = list.body.projects[0].id;
@@ -32,8 +34,31 @@ afterAll(async () => {
 describe("auth e autorização", () => {
   it("nega sem sessão (deny-by-default)", async () => { expect((await request(app).get("/api/v1/projects")).status).toBe(401); });
   it("rejeita senha curta e e-mail duplicado", async () => {
-    expect((await request(app).post("/api/v1/auth/register").send({ email: "x@y.com", password: "123", name: "x" })).status).toBe(400);
-    expect((await request(app).post("/api/v1/auth/register").send({ email: `a${tag}@t.dev`, password: "senha-forte-1", name: "a" })).status).toBe(409);
+    const g = request.agent(app); await g.post("/api/v1/auth/guest").send({});
+    expect((await g.post("/api/v1/auth/register").send({ email: "x@y.com", password: "123", name: "x" })).status).toBe(400);
+    expect((await g.post("/api/v1/auth/register").send({ email: `a${tag}@t.dev`, password: "senha-forte-1", name: "a" })).status).toBe(409);
+  });
+  it("visitante: retoma pelo código; conta com senha não retoma por código", async () => {
+    const g1 = request.agent(app); const k = (await g1.post("/api/v1/auth/guest").send({})).body.user.personKey as string;
+    const g2 = request.agent(app); const r = await g2.post("/api/v1/auth/guest").send({ key: k });
+    expect(r.body.user.personKey).toBe(k);
+    expect((await g2.get("/api/v1/projects")).body.projects.length).toBe(1); // mesmo projeto de exemplo
+    const reg = request.agent(app); const k2 = (await reg.post("/api/v1/auth/guest").send({})).body.user.personKey as string;
+    await reg.post("/api/v1/auth/register").send({ email: `k${tag}@t.dev`, password: "senha-forte-1", name: "k" });
+    const other = request.agent(app); const r2 = await other.post("/api/v1/auth/guest").send({ key: k2 });
+    expect(r2.body.user.personKey).not.toBe(k2); // virou outro visitante: o código não abre conta com senha
+  });
+  it("vincular mantém o UUID e os projetos; entrar numa conta leva os projetos do visitante", async () => {
+    const g = request.agent(app); const u = (await g.post("/api/v1/auth/guest").send({})).body.user;
+    const before = (await g.get("/api/v1/projects")).body.projects[0].id;
+    const r = await g.post("/api/v1/auth/register").send({ email: `v${tag}@t.dev`, password: "senha-forte-1", name: "v" });
+    expect(r.body.user.id).toBe(u.id);
+    expect((await g.get("/api/v1/projects")).body.projects[0].id).toBe(before);
+    const g3 = request.agent(app); await g3.post("/api/v1/auth/guest").send({});
+    await g3.post("/api/v1/projects").send({ name: "do visitante", demo: false });
+    await g3.post("/api/v1/auth/login").send({ email: `v${tag}@t.dev`, password: "senha-forte-1" });
+    const names = (await g3.get("/api/v1/projects")).body.projects.map((p: { name: string }) => p.name);
+    expect(names).toContain("do visitante");
   });
   it("login errado não revela se o e-mail existe", async () => {
     const r = await request(app).post("/api/v1/auth/login").send({ email: `a${tag}@t.dev`, password: "errada-errada" });
@@ -144,21 +169,36 @@ describe("exportação e execução", () => {
     expect(js).toContain("Promise.all"); expect(js).toContain("export default async function");
   });
   it("sandbox: simula http/fs, sem rede e erra com entrada sem valor", async () => {
-    const ok = await runMachine({ title: "t", code: 'import { http } from "node:http"\nconst r = await http.get("https://x.test/a")\nsaida.id = r.body.id', inputs: {}, declared: [] });
+    const ok = (await runMachine({ title: "t", code: 'import { http } from "node:http"\nconst r = await http.get("https://x.test/a")\nsaida.id = r.body.id', inputs: {}, declared: [] })).lines;
     expect(ok.some(l => l.kind === "ok" && l.text.includes("saida.id"))).toBe(true);
-    const bad = await runMachine({ title: "t", code: "saida.x = entrada.pagina", inputs: { pagina: null }, declared: ["pagina"] });
+    const bad = (await runMachine({ title: "t", code: "saida.x = entrada.pagina", inputs: { pagina: null }, declared: ["pagina"] })).lines;
     expect(bad.some(l => l.kind === "er")).toBe(true);
-    const esc = await runMachine({ title: "t", code: "process.exit(1)", inputs: {}, declared: [] });
+    const esc = (await runMachine({ title: "t", code: "process.exit(1)", inputs: {}, declared: [] })).lines;
     expect(esc.some(l => l.kind === "er")).toBe(true); // process não existe no sandbox
-    const loop = await runMachine({ title: "t", code: "while(true){}", inputs: {}, declared: [] });
+    const loop = (await runMachine({ title: "t", code: "while(true){}", inputs: {}, declared: [] })).lines;
     expect(loop.some(l => l.kind === "er")).toBe(true); // timeout
   });
-  it("executar IA: pendente → exec → ok e persiste no banco", async () => {
-    const plan = snap.plans.find(p => p.name.includes("Onboarding"))!;
-    const r = await agentA.post(`/api/v1/projects/${pidA}/plans/${plan.id}/run`).send({});
-    expect(r.status).toBe(200);
-    await new Promise(res => setTimeout(res, 5500));
-    const s = (await agentA.get(`/api/v1/projects/${pidA}`)).body.snapshot as Snapshot;
-    expect(s.elements.filter(e => e.planId === plan.id && e.status === "ok").length).toBeGreaterThan(0);
+  it("executar vale para tudo: lib executa (state ganha valor) e a pessoa trava o fluxo até concluir", async () => {
+    const plan = snap.plans.find(p => p.name.includes("Padrão") || p.name.includes("padr"))!;
+    const pessoa = snap.agents.find(a => a.kind === "pessoa")!, ia = snap.agents.find(a => a.kind === "ia")!, lib = snap.agents.find(a => a.name === "node:http")!;
+    const root = snap.elements.find(e => e.title === "Comprar fone de ouvido")!;
+    const mk = async (t: string) => (await post("/elements", { mode: "child", refId: root.id, title: t })).body.result as string;
+    const a = await mk("Coletar algo"), b = await mk("Aprovar algo"), c = await mk("Redigir algo");
+    const patchE = (id: string, body: object) => agentA.patch(`/api/v1/projects/${pidA}/elements/${id}`).send(body);
+    await patchE(a, { agentId: lib.id, code: 'import { http } from "node:http"\nconst r = await http.get("https://x.test")\nsaida.coletado_x = r.body.id', outs: [["coletado_x", "out/x.json"]] });
+    await patchE(b, { agentId: pessoa.id });
+    await patchE(c, { agentId: ia.id });
+    const st = async (id: string) => ((await agentA.get(`/api/v1/projects/${pidA}`)).body.snapshot as Snapshot).elements.find(e => e.id === id)!.status;
+    // isola o teste: arquiva os demais filhos do root
+    for (const k of snap.elements.filter(e => e.parentId === root.id && ![a, b, c].includes(e.id))) await patchE(k.id, { archived: true });
+    expect((await agentA.post(`/api/v1/projects/${pidA}/plans/${plan.id}/run`).send({})).body.started).toBeGreaterThan(0);
+    await new Promise(r => setTimeout(r, 1800));
+    const after = (await agentA.get(`/api/v1/projects/${pidA}`)).body.snapshot as Snapshot;
+    expect(after.data.find(d => d.name === "coletado_x")?.value).toBe("env_7f3a91"); // Node executou
+    expect(await st(a)).toBe("ok"); expect(await st(b)).toBe("wait"); expect(await st(c)).toBe("pendente"); // pessoa trava o passo seguinte
+    expect((await agentA.post(`/api/v1/projects/${pidA}/elements/${b}/complete`).send({})).status).toBe(200);
+    await new Promise(r => setTimeout(r, 2200));
+    expect(await st(b)).toBe("ok"); expect(await st(c)).toBe("ok"); // retomou e a IA executou
+    expect((await agentA.post(`/api/v1/projects/${pidA}/elements/${a}/complete`).send({})).status).toBe(400); // lib não é "concluída" por pessoa
   });
 });

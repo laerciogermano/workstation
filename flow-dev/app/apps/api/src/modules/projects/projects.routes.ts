@@ -6,7 +6,7 @@ import {
 } from "@flow/shared";
 import { pool, withTx, type Db } from "../../db/pool";
 import { ah, parse } from "../../shared/http";
-import { notFound } from "../../shared/errors";
+import { badRequest, notFound } from "../../shared/errors";
 import { me } from "../auth/auth.routes";
 import { loadSnapshot, ownedProject } from "./snapshot.repo";
 import { seedDemoProject } from "./demo-seed";
@@ -15,7 +15,7 @@ import * as El from "../elements/elements.service";
 import { getEl, getPlanId, touchProject } from "../elements/elements.repo";
 import * as Data from "../data/data.service";
 import * as Cat from "../catalog/catalog.service";
-import { cancelRun, startRun } from "../runs/runner";
+import { cancelRun, completeByPerson, machineInputs, runSingle, startPlanRun } from "../runs/runner";
 import { runMachine } from "../runs/machine-sandbox";
 
 export const projectsRouter = Router();
@@ -165,13 +165,10 @@ projectsRouter.delete("/:pid/modules/:mid", ah(async (req, res) => {
 
 // ---------- execução ----------
 projectsRouter.post("/:pid/plans/:planId/run", ah(async (req, res) => {
-  const user = me(req);
-  const { id } = await ownedProject(pool, pid(req), user._id);
+  const { id } = await ownedProject(pool, pid(req), me(req)._id);
   const planId = await getPlanId(pool as unknown as Db, id, String(req.params.planId));
-  const { rows } = await pool.query(
-    "select e.id from flow.elements e join flow.agents a on a.id = e.agent_id where e.project_id=$1 and e.plan_id=$2 and a.kind='ia' and e.status='pendente' and not e.archived", [id, planId]);
-  await startRun(rows.map(r => r.id as number));
-  res.json({ started: rows.length, snapshot: await loadSnapshot(pool, id) });
+  const started = await startPlanRun(id, planId, String(req.params.planId));
+  res.json({ started, snapshot: await loadSnapshot(pool, id) });
 }));
 projectsRouter.post("/:pid/plans/:planId/cancel", ah(async (req, res) => {
   const { id } = await ownedProject(pool, pid(req), me(req)._id);
@@ -182,24 +179,24 @@ projectsRouter.post("/:pid/plans/:planId/cancel", ah(async (req, res) => {
 projectsRouter.post("/:pid/elements/:eid/retry", ah(async (req, res) => {
   const { id } = await ownedProject(pool, pid(req), me(req)._id);
   const u = await getEl(pool as unknown as Db, id, String(req.params.eid));
-  await startRun([u.id]);
+  await runSingle(id, u.public_id);
+  res.json({ snapshot: await loadSnapshot(pool, id) });
+}));
+/** A pessoa responsável concluiu a etapa. */
+projectsRouter.post("/:pid/elements/:eid/complete", ah(async (req, res) => {
+  const { id } = await ownedProject(pool, pid(req), me(req)._id);
+  const u = await getEl(pool as unknown as Db, id, String(req.params.eid));
+  const plan = (await pool.query("select public_id from flow.plans where id = $1", [u.plan_id])).rows[0].public_id as string;
+  if (!(await completeByPerson(id, u.plan_id, plan, u.public_id))) throw badRequest("Só etapa de pessoa, aguardando, pode ser concluída");
   res.json({ snapshot: await loadSnapshot(pool, id) });
 }));
 projectsRouter.post("/:pid/elements/:eid/run-machine", ah(async (req, res) => {
   const { id } = await ownedProject(pool, pid(req), me(req)._id);
-  const snap = await loadSnapshot(pool, id);
-  const m = new FlowModel(snap);
+  const m = new FlowModel(await loadSnapshot(pool, id));
   const u = m.u(String(req.params.eid));
-  if (!u || m.agent(u.agentId)?.kind !== "maquina") throw notFound("Etapa com biblioteca Node");
-  const producers = m.els.filter(x => !x.archived);
-  const inputs: Record<string, string | null> = {};
-  u.ins.forEach(n => {
-    const v = m.dValue(n); if (v) { inputs[n] = v; return; }
-    const prod = producers.find(x => x.outs.some(o => o[0] === n));
-    inputs[n] = prod && prod.status === "ok" ? prod.outs.find(o => o[0] === n)![1] : null;
-  });
-  const lines = await runMachine({ title: u.title, code: req.body?.code ?? u.code ?? `// ${u.title} · Node.js\nconsole.log("olá")`, inputs, declared: u.ins });
-  res.json({ lines });
+  if (!u || !["maquina", "script"].includes(m.agent(u.agentId)?.kind ?? "")) throw notFound("Etapa com biblioteca Node");
+  const r = await runMachine({ title: u.title, code: req.body?.code ?? u.code ?? `// ${u.title} · Node.js\nconsole.log("olá")`, inputs: machineInputs(m, u), declared: u.ins });
+  res.json({ lines: r.lines });
 }));
 
 // ---------- exportação ----------

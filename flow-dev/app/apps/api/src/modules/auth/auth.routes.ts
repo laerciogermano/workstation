@@ -1,10 +1,10 @@
 import { Router, type Request, type RequestHandler, type Response } from "express";
 import rateLimit from "express-rate-limit";
-import { loginBody, registerBody } from "@flow/shared";
+import { guestBody, loginBody, registerBody } from "@flow/shared";
 import { config } from "../../config";
 import { ah, parse } from "../../shared/http";
 import { unauthorized } from "../../shared/errors";
-import { destroySession, login, register, userFromToken, type AuthUser } from "./auth.service";
+import { createGuest, destroySession, guestByKey, login, upgrade, userFromToken, type AuthUser } from "./auth.service";
 
 export const COOKIE = "flow_sid";
 declare module "express-serve-static-core" { interface Request { user?: AuthUser } }
@@ -21,18 +21,25 @@ export const loadUser: RequestHandler = ah(async (req, _res, next) => {
 /** deny-by-default: toda rota fora de /auth exige usuário. */
 export const requireUser: RequestHandler = (req, _res, next) => (req.user ? next() : next(unauthorized()));
 export const me = (req: Request): AuthUser => { if (!req.user) throw unauthorized(); return req.user; };
-const pub = (u: AuthUser) => ({ id: u.id, email: u.email, name: u.name });
+const pub = (u: AuthUser) => ({ id: u.id, email: u.email, name: u.name, guest: u.guest, ...(u.guest ? { personKey: u.personKey } : {}) });
 const setCookie = (res: Response, token: string) => res.cookie(COOKIE, token, cookieOpts);
 
 export const authRouter = Router();
+/** Entra sem conta: retoma pelo código (person_key) ou cria um visitante novo. */
+authRouter.post("/guest", authLimiter, ah(async (req, res) => {
+  const b = parse(guestBody, req.body);
+  const r = (b.key ? await guestByKey(b.key) : null) ?? await createGuest();
+  setCookie(res, r.token); res.status(201).json({ user: pub(r.user) });
+}));
+/** Vincular conta ao visitante atual (mesmo UUID). */
 authRouter.post("/register", authLimiter, ah(async (req, res) => {
   const b = parse(registerBody, req.body);
-  const { user, token } = await register(b.email, b.password, b.name);
-  setCookie(res, token); res.status(201).json({ user: pub(user) });
+  const user = await upgrade(me(req), b.email, b.password, b.name);
+  res.status(201).json({ user: pub(user) });
 }));
 authRouter.post("/login", authLimiter, ah(async (req, res) => {
   const b = parse(loginBody, req.body);
-  const { user, token } = await login(b.email, b.password);
+  const { user, token } = await login(b.email, b.password, req.user);
   setCookie(res, token); res.json({ user: pub(user) });
 }));
 authRouter.post("/logout", ah(async (req, res) => {

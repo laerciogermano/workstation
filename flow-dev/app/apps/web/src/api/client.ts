@@ -19,15 +19,17 @@ async function req<T>(method: string, url: string, body?: unknown): Promise<T> {
   return data as T;
 }
 
+export type Me = UserDto & { personKey?: string };
 export interface MutationResult<R = unknown> { snapshot: Snapshot; result: R }
 export interface ProjectListItem { id: string; name: string; updatedAt: string; functions: number }
 export interface ExportResult { format: string; fileName: string; code: string; blocked: boolean; missing: { name: string; element: string }[]; orphans: { name: string; element: string }[] }
 export interface ConsoleLine { kind: "cmd" | "out" | "ok" | "er" | "dim"; text: string }
 
 export const api = {
-  me: () => req<{ user: UserDto }>("GET", "/auth/me"),
-  login: (b: { email: string; password: string }) => req<{ user: UserDto }>("POST", "/auth/login", b),
-  register: (b: { email: string; password: string; name: string }) => req<{ user: UserDto }>("POST", "/auth/register", b),
+  me: () => req<{ user: Me }>("GET", "/auth/me"),
+  guest: (key?: string) => req<{ user: Me }>("POST", "/auth/guest", key ? { key } : {}),
+  login: (b: { email: string; password: string }) => req<{ user: Me }>("POST", "/auth/login", b),
+  register: (b: { email: string; password: string; name: string }) => req<{ user: Me }>("POST", "/auth/register", b),
   logout: () => req<void>("POST", "/auth/logout"),
   projects: () => req<{ projects: ProjectListItem[] }>("GET", "/projects"),
   createProject: (b: { name: string; demo: boolean }) => req<{ id: string }>("POST", "/projects", b),
@@ -40,6 +42,7 @@ export const api = {
   run: (p: string, plan: string) => req<{ started: number; snapshot: Snapshot }>("POST", `/projects/${p}/plans/${plan}/run`, {}),
   cancel: (p: string, plan: string) => req<{ cancelled: number; snapshot: Snapshot }>("POST", `/projects/${p}/plans/${plan}/cancel`, {}),
   retry: (p: string, el: string) => req<{ snapshot: Snapshot }>("POST", `/projects/${p}/elements/${el}/retry`, {}),
+  complete: (p: string, el: string) => req<{ snapshot: Snapshot }>("POST", `/projects/${p}/elements/${el}/complete`, {}),
   runMachine: (p: string, el: string, code: string) => req<{ lines: ConsoleLine[] }>("POST", `/projects/${p}/elements/${el}/run-machine`, { code }),
   exportPlan: (p: string, plan: string, format: string) => req<ExportResult>("GET", `/projects/${p}/plans/${plan}/export?format=${format}`),
 };

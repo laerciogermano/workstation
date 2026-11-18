@@ -7,6 +7,7 @@ const dataName = z.string().trim().min(1).max(160).regex(/^[a-zA-Z_][a-zA-Z0-9_]
 const uuid = z.string().uuid();
 
 export const registerBody = z.object({ email: z.string().trim().toLowerCase().email().max(200), password: z.string().min(8).max(200), name: text(120) });
+export const guestBody = z.object({ key: z.string().uuid().optional() });
 export const loginBody = z.object({ email: z.string().trim().toLowerCase().email().max(200), password: z.string().min(1).max(200) });
 
 export const createProjectBody = z.object({ name: text(120), demo: z.boolean().default(false) });

@@ -1,10 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { UserDto } from "@flow/shared";
-import { api } from "../../api/client";
+import { api, type Me } from "../../api/client";
 import { Icon } from "../../ui/Icon";
 
-export function ProjectsPage({ user, onLogout }: { user: UserDto; onLogout: () => void }) {
+export function ProjectsPage({ user, onAccount }: { user: Me; onAccount: () => void }) {
   const qc = useQueryClient();
   const list = useQuery({ queryKey: ["projects"], queryFn: async () => (await api.projects()).projects });
   const [name, setName] = useState(""), [demo, setDemo] = useState(false);
@@ -16,8 +15,8 @@ export function ProjectsPage({ user, onLogout }: { user: UserDto; onLogout: () =
   const submit = (e: FormEvent) => { e.preventDefault(); if (name.trim()) create.mutate(); };
   return (
     <div className="page"><div className="pj">
-      <div className="pj-h"><h1>Projetos</h1><span style={{ color: "var(--muted)", fontSize: 13 }}>{user.name}</span>
-        <button className="btn" onClick={onLogout}><Icon n="arrow-up-from-line" />Sair</button></div>
+      <div className="pj-h"><h1>Projetos</h1><span style={{ color: "var(--muted)", fontSize: 13 }}>{user.guest ? "Visitante" : user.name}</span>
+        <button className={"btn" + (user.guest ? " pri" : "")} onClick={onAccount}><Icon n="user-round" />{user.guest ? "Salvar com uma conta" : "Conta"}</button></div>
       <form className="pj-new" onSubmit={submit}>
         <input type="text" placeholder="Nome do novo projeto" aria-label="Nome do projeto" value={name} maxLength={120} onChange={e => setName(e.target.value)} />
         <label><input type="checkbox" checked={demo} onChange={e => setDemo(e.target.checked)} />Com o exemplo do protótipo</label>

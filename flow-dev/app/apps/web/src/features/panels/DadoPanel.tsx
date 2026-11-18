@@ -63,7 +63,7 @@ function DadoForm(p: { name: string; prod?: string; prodTitle?: string; cons: { 
               <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>{p.kids.length ? "Fica sólido quando todos os campos têm valor." : "Objeto sem campos: adicione os campos filhos ou troque o tipo."}</p></div>
             <div className="fld">
               <ModuleField files={p.files} file={file} setFile={setFile} newFile={newFile} setNewFile={setNewFile} />
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}><button className="btn pri" onClick={save}><Icon n="check" />Salvar módulo</button></div></div>
+              <div style={{ display: "flex", gap: 8, marginTop: 8 }}><button className="btn pri" onClick={save}><Icon n="check" />Salvar arquivo</button></div></div>
           </>
         ) : (
           <div className="fld">
@@ -85,11 +85,11 @@ function ModuleField(p: { files: string[]; file: string; setFile: (f: string) =>
   const { m } = useIde();
   return (
     <>
-      <label>Módulo (dados + funções)</label>
+      <label>Arquivo (dados + funções)</label>
       <select className="dado-layer" value={p.file} onChange={e => p.setFile(e.target.value)}>
-        {p.files.map(f => <option key={f} value={f}>{f}{!m.modules.some(l => l.file === f) ? " · novo" : ""}</option>)}<option value="__new">Outro módulo…</option></select>
+        {p.files.map(f => <option key={f} value={f}>{f}{!m.modules.some(l => l.file === f) ? " · novo" : ""}</option>)}<option value="__new">Outro arquivo…</option></select>
       {p.file === "__new" && <input className="dado-layer" placeholder="nome.data.js" style={{ marginTop: 6 }} value={p.newFile} onChange={e => p.setNewFile(e.target.value)} />}
-      <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>Com valor, o dado fica concreto e passa a morar neste módulo (Explorar › Módulos).</p>
+      <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>Com valor, o dado fica concreto e passa a morar neste arquivo (Explorar › Arquivos).</p>
     </>
   );
 }

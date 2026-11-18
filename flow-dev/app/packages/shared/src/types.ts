@@ -1,7 +1,7 @@
 /** Tipos do domínio Flow (contrato único entre API e web). Nomes de código em inglês; rótulos de UI ficam no front. */
 export type AgentKind = "ia" | "pessoa" | "maquina" | "script";
 export type ElementKind = "folder" | "file" | "data";
-export type RunStatus = "pendente" | "exec" | "ok" | "fail" | "cancel";
+export type RunStatus = "pendente" | "exec" | "ok" | "fail" | "cancel" | "wait";
 export type DataType = "texto" | "numero" | "inteiro" | "booleano" | "data" | "lista" | "objeto" | "arquivo";
 export type LinkKind = "seq" | "par";
 export type ModuleItemKind = "fn" | "dado" | "script";
@@ -49,7 +49,7 @@ export interface Snapshot {
   modules: ModuleDto[];
   data: DataDto[];
 }
-export interface UserDto { id: string; email: string; name: string }
+export interface UserDto { id: string; email: string | null; name: string; guest: boolean }
 
 export const DATA_TYPES: DataType[] = ["texto", "numero", "inteiro", "booleano", "data", "lista", "objeto", "arquivo"];
 export const DTYPE_N: Record<DataType, string> = {

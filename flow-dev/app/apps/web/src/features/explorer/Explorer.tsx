@@ -167,7 +167,7 @@ export function Explorer() {
             {catalog.length ? catalog.map(d => dadoRow(d.name, 0)) : emptyP("Nenhum dado.")}
           </div>
           <div className={"ex-sec" + (secOpen("arquivos") ? " open" : "")}>
-            {head("arquivos", "files", "Módulos", mods.length, async () => { const id = await apiCall(a => a.post<string>(ide.pid, "/modules", {})); if (id) { patch(u => ({ open: new Set([...u.open, "ly:" + id]) })); ide.toast("Módulo criado", "file-code-2"); } }, "Adicionar módulo")}
+            {head("arquivos", "files", "Arquivos", mods.length, async () => { const id = await apiCall(a => a.post<string>(ide.pid, "/modules", {})); if (id) { patch(u => ({ open: new Set([...u.open, "ly:" + id]) })); ide.toast("Arquivo criado", "file-code-2"); } }, "Adicionar arquivo")}
             {mods.map(l => {
               const id = "ly:" + l.id, isOpen = q ? true : s.open.has(id);
               const nf = l.items.filter(i => i.kind === "fn").length, ns = l.items.filter(i => i.kind === "script").length, nd = l.items.length - nf - ns;
@@ -178,7 +178,7 @@ export function Explorer() {
                   <div className={"node" + (isOpen ? " openf" : "")} style={{ paddingLeft: 8 }} title={l.file} onClick={() => toggleOpen(id)}>
                     <span className="car"><Icon n="chevron-right" /></span><span className="fi lyr"><Icon n="file-code-2" /></span>
                     {s.renLy === l.id
-                      ? <input ref={renRef} className="ex-ren mono" defaultValue={l.file} aria-label="Nome do módulo" onClick={e => e.stopPropagation()}
+                      ? <input ref={renRef} className="ex-ren mono" defaultValue={l.file} aria-label="Nome do arquivo" onClick={e => e.stopPropagation()}
                           onKeyDown={async e => { if (e.key === "Escape") { e.stopPropagation(); set({ renLy: null }); } if (e.key === "Enter") { e.preventDefault(); let v = e.currentTarget.value.trim(); if (v) { if (!/\.js$/.test(v)) v = v.replace(/\.+$/, "") + ".layer.js"; await apiCall(a => a.patch(ide.pid, `/modules/${l.id}`, { file: v })); } set({ renLy: null }); } }} />
                       : <><span className="t mono"><Mark q={q} text={l.file} /></span><span className="meta">{resumo}</span>
                         <span className="ex-tools"><button className="ib" title="Renomear" onClick={e => { e.stopPropagation(); set({ renLy: l.id, renCat: null }); }}><Icon n="pencil" /></button></span></>}

@@ -202,7 +202,7 @@ export function FlowView() {
   const yMid = (i: number) => i * RH + RH / 2, yTop = (i: number) => i * RH;
   const isFn = (u: ElementDto) => !m.isData(u) && !hasK(u);
   const srcOf = new Set(FD.map(d => d[0])), dstOf = new Set(FD.map(d => d[1]));
-  const tagsOf = (u: ElementDto): [string, string][] => (u.status === "fail" ? [["fail", "falhou"]] : u.status === "exec" ? [["exec", "executando"]] : u.status === "cancel" ? [["cancel", "cancelada"]] : []);
+  const tagsOf = (u: ElementDto): [string, string][] => (u.status === "wait" ? [["wait", "aguardando pessoa"]] : u.status === "fail" ? [["fail", "falhou"]] : u.status === "exec" ? [["exec", "executando"]] : u.status === "cancel" ? [["cancel", "cancelada"]] : []);
   const pill = (x: number, y: number, txt: string, cls: string, key: string) => <g key={key} className={"sv-pill " + cls}><rect x={x} y={y - 8} width={tw(txt, 6.1) + 10} height={16} rx={3} /><text x={x + 5} y={y + 3.5}>{txt}</text></g>;
   const dnames = (x: number, y: number, list: string[], key: string) => (
     <text key={key} className="sv-dn" x={x} y={y + 3.5}>{list.map((n, i) => <tspan key={n}>{i ? <tspan>, </tspan> : null}<tspan className={"sv-dl" + (s.estado === n ? " on" : "")} onClick={() => ide.editDado(n)} style={{ cursor: "pointer" }}>{n}</tspan></tspan>)}<title>{list.join(", ")}</title></text>);
@@ -346,7 +346,8 @@ export function FlowView() {
   useEffect(() => { fit(); }, [rootId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---------- cabeçalho / rodapé ----------
-  const running = m.els.filter(u => u.planId === plan && u.status === "exec" && m.agent(u.agentId)?.kind === "ia");
+  const running = m.els.filter(u => u.planId === plan && u.status === "exec");
+  const waiting = m.els.filter(u => u.planId === plan && u.status === "wait" && !u.archived);
   const { missing } = m.fopCheck(plan);
   const fnAll = rows.map(r => r.u).filter(isFn);
   const nAbs = new Set(fnAll.filter(u => m.fnKind(u) === "abs").map(u => u.agentId)).size + new Set(fnAll.flatMap(u => u.ins.filter(n => absData(u, n)))).size;
@@ -355,7 +356,8 @@ export function FlowView() {
 
   return (
     <div className="gantt flow zview">
-      {running.length > 0 && <div className="runbar"><b><Icon n="loader-circle" />Executando {running.length} tarefa{running.length > 1 ? "s" : ""} de IA</b><span>{running.map(u => u.title).join(" · ")}</span><span className="sp" /><span>Só tarefas com responsável IA rodam. Pessoas e máquinas seguem como estão.</span><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
+      {running.length > 0 && <div className="runbar"><b><Icon n="loader-circle" />Executando {running.length} etapa{running.length > 1 ? "s" : ""}</b><span>{running.map(u => u.title).join(" · ")}</span><span className="sp" /><span>Node executa libs · a IA executa agentes · pessoas são aguardadas.</span><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
+      {waiting.length > 0 && <div className="runbar"><b><Icon n="hourglass" />Aguardando {waiting.length} pessoa{waiting.length > 1 ? "s" : ""}</b>{waiting.map(u => <span key={u.id} className="wait-l">{u.title} · {m.agent(u.agentId)?.name}<button className="btn" onClick={() => void ide.complete(u.id)}><Icon n="check" />Concluir</button></span>)}<span className="sp" /><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
       <div className="ztoolbar"><span style={{ fontSize: 12, fontWeight: 600, color: "var(--muted)" }}><Icon n="workflow" /> Flow</span>
         <button className={"btn ghost" + (s.ctxPanel ? " on" : "")} style={{ height: 26, fontSize: 12 }} title="Contexto e camadas" onClick={() => set({ ctxPanel: !s.ctxPanel })}>
           <Icon n={missing.length ? "circle-x" : "circle-check"} />{tops.length} camada{tops.length === 1 ? "" : "s"} · {nAbs} abstratos · {nConc} concretos · {missing.length ? "contexto incompleto" : "contexto completo · executável"}</button>

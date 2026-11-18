@@ -37,7 +37,7 @@ export interface Ide {
   // dados e catálogo
   saveDado: (name: string, v: { type?: string; value?: string | null; moduleFile?: string }) => Promise<void>; addKid: (parent: string, name: string) => Promise<void>; toggleCube: (name: string) => Promise<void>; newDado: () => Promise<void>;
   // execução e exportação
-  runPlan: () => Promise<void>; cancelRun: () => Promise<void>; retry: (id: string) => Promise<void>; runMachine: (id: string, code: string) => Promise<void>; openExport: (tab?: Ui["expTab"]) => void;
+  runPlan: () => Promise<void>; complete: (id: string) => Promise<void>; cancelRun: () => Promise<void>; retry: (id: string) => Promise<void>; runMachine: (id: string, code: string) => Promise<void>; openExport: (tab?: Ui["expTab"]) => void;
 }
 const IdeCtx = createContext<Ide | null>(null);
 export const useIde = (): Ide => { const v = useContext(IdeCtx); if (!v) throw new Error("useIde fora do provider"); return v; };
@@ -50,7 +50,12 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
   const key = useMemo(() => ["snap", pid], [pid]);
   const q = useQuery({
     queryKey: key, queryFn: async () => (await api.snapshot(pid)).snapshot,
-    refetchInterval: query => { const d = query.state.data as Snapshot | undefined; return d && runIds.some(id => { const st = d.elements.find(e => e.id === id)?.status; return st === "pendente" || st === "exec"; }) ? 900 : false; },
+    refetchInterval: query => {
+      const d = query.state.data as Snapshot | undefined; if (!d) return false;
+      const st = runIds.map(id => d.elements.find(e => e.id === id)?.status);
+      // segue enquanto roda; para quando trava em pessoa (wait) ou falha
+      return st.includes("exec") || (st.includes("pendente") && !st.includes("wait") && !st.includes("fail")) ? 900 : false;
+    },
   });
   const snap = q.data;
   const m = useMemo(() => (snap ? new FlowModel(snap) : null), [snap]);
@@ -166,9 +171,13 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
   };
   const runPlan: Ide["runPlan"] = async () => {
     const plan = sRef.current.plan; if (!plan) return;
-    const ids = m.els.filter(u => u.planId === plan && !u.archived && m.agent(u.agentId)?.kind === "ia" && u.status === "pendente").map(u => u.id);
-    if (!ids.length) { toast("Nenhuma tarefa de IA pendente. Falhas só voltam com “Tentar de novo”.", "info"); return; }
-    try { const r = await api.run(pid, plan); apply(r.snapshot); setRunIds(ids); } catch (e) { fail(e); }
+    // Executar vale para tudo: Node executa lib, IA executa agente, pessoa fica aguardando
+    const ids = m.ganttRows(plan).map(r => r.u).filter(u => !m.isData(u) && !m.flowKids(u).length && (!u.status || u.status === "pendente" || u.status === "wait")).map(u => u.id);
+    if (!ids.length) { toast("Nada a executar. Falhas só voltam com “Tentar de novo”.", "info"); return; }
+    try { const r = await api.run(pid, plan); apply(r.snapshot); setRunIds(ids); toast(`Executando ${r.started} etapa${r.started === 1 ? "" : "s"}`, "play"); } catch (e) { fail(e); }
+  };
+  const complete: Ide["complete"] = async id => {
+    try { const r = await api.complete(pid, id); apply(r.snapshot); setRunIds(m.ganttRows(sRef.current.plan!).map(x => x.u.id)); toast(`${U(id)?.title}: concluída pela pessoa`, "check"); } catch (e) { fail(e); }
   };
   const cancelRun: Ide["cancelRun"] = async () => { const plan = sRef.current.plan; if (!plan) return; try { const r = await api.cancel(pid, plan); apply(r.snapshot); toast("Execução cancelada", "ban"); } catch (e) { fail(e); } };
   const retry: Ide["retry"] = async id => { try { const r = await api.retry(pid, id); apply(r.snapshot); setRunIds([id]); toast(`Tentando de novo: ${U(id)?.title}`, "rotate-ccw"); } catch (e) { fail(e); } };
@@ -184,7 +193,7 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
 
   const ide: Ide = {
     pid, m, s, set, patch, toast, exportData, call, select, openDrawer, closePanels, revealDado, editDado, setFlowRootFrom, openFlowView, activeFlowRoot, toggleOpen, toggleFlowClosed,
-    addFn, newFlow, renameCommit, renameCancel, askRemove, confirmRemove, patchEl, assign, dup, paste, move, saveDado, addKid, toggleCube, newDado, runPlan, cancelRun, retry, runMachine, openExport,
+    addFn, newFlow, renameCommit, renameCancel, askRemove, confirmRemove, patchEl, assign, dup, paste, move, saveDado, addKid, toggleCube, newDado, runPlan, complete, cancelRun, retry, runMachine, openExport,
   };
   return <IdeCtx.Provider value={{ ...ide, exportData }}>{children}<ExportLoader ide={ide} setData={setExportData} /></IdeCtx.Provider>;
 }

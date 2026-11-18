@@ -22,3 +22,6 @@ O gap apontado pelo core ("worker + fila + outbox") foi **adiado de propósito**
 
 ## ADR-006 · Migrations imutáveis + rollback (aceito)
 `db/migrations/NNN_*.sql` com checksum em `public.flow_migrations`; alterar uma já aplicada falha o boot. Rollback total: `npm run db:migrate -w @flow/api -- down` (`*.down.sql`).
+
+## ADR-007 · Visitante por UUID, conta depois (aceito)
+Sem tela de login. `users.person_key` (uuid v4, segredo da pessoa) identifica o visitante; sessão em cookie httpOnly e o código fica no navegador para retomar. `/auth/register` **vincula** e-mail+senha ao mesmo usuário (mesmo UUID e projetos); `/auth/login` leva os projetos do visitante para a conta existente. Contas com senha **não** retomam por código. Pendente: limpeza de visitantes abandonados.

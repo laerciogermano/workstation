@@ -39,7 +39,7 @@ export function Drawer() {
           </div>)}
         {(u.status || u.error) && (
           <div className="fld"><span className="l">Execução</span>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}><StBadge st={u.status} />{(u.status === "fail" || u.status === "cancel") && <button className="btn" onClick={() => void ide.retry(u.id)}><Icon n="rotate-ccw" />Tentar de novo</button>}</div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}><StBadge st={u.status} />{u.status === "wait" && <button className="btn pri" onClick={() => void ide.complete(u.id)}><Icon n="check" />Concluir (feito pela pessoa)</button>}{(u.status === "fail" || u.status === "cancel") && <button className="btn" onClick={() => void ide.retry(u.id)}><Icon n="rotate-ccw" />Tentar de novo</button>}</div>
             {u.error && u.status === "fail" && <p style={{ fontSize: 12, color: "var(--fail)" }}>{u.error}</p>}</div>)}
         {!m.isFolder(u) && <div className="g2"><div className="fld"><label>Início</label><input type="text" value={`passo ${L.s}`} readOnly /></div><div className="fld"><label>Passos</label><input type="text" value={m.isData(u) ? "0 · dado" : String(L.e - L.s + 1)} readOnly /></div></div>}
         {(u.ins.length > 0 || u.outs.length > 0) && (

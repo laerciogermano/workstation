@@ -853,6 +853,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fview .sv-dn { font: 500 9px var(--mono); fill: var(--muted); }
 .fview .sv-dl:hover, .fview .sv-dl.on { fill: var(--ink); text-decoration: underline; }
 .fview .sv-pill text { font: 600 9px var(--mono); }
+.fview .sv-pill.struct-hit { cursor: pointer; }
 .fview .fdep-hit { stroke: transparent; stroke-width: 14; fill: none; cursor: pointer; pointer-events: stroke; }
 .fview .fdep-hit:hover + .fdep, .fview .fdep:hover { stroke: var(--accent); }
 .edge-pop { position: absolute; z-index: 8; display: flex; gap: 2px; height: 28px; padding: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 8px; box-shadow: var(--shadow); }
@@ -914,7 +915,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fsvg .fif-hit { cursor: pointer; }
 .fsvg .fif-hit .fif-pad { fill: transparent; stroke: none; }
 .fsvg .floop { fill: none; stroke: var(--ok); stroke-width: 1.1; stroke-dasharray: 3 3; }
-.fsvg .farc { fill: none; stroke: var(--ok); stroke-width: 1.3; }
+.fsvg .floop-hit { cursor: pointer; }
+.fsvg .floop-hit .floop { fill: transparent; }
+.fsvg .farc { fill: none; stroke: var(--ok); stroke-width: 1.3; pointer-events: none; }
 .fsvg .ftxt { font: 600 9.5px var(--mono); fill: var(--warn); }
 .fstr { position: absolute; left: 0; top: 52px; pointer-events: none; z-index: 1; }
 .fband { position: absolute; left: 0; right: 0; background: color-mix(in srgb, var(--warn) 7%, transparent); border-left: 2px solid var(--warn); border-top: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--warn) 45%, transparent); }
@@ -2513,14 +2516,21 @@ function flow(s) {
   };
   // ---- visualização do Flow em SVG: cada linha desenhada no y da sua posição (tabela à esquerda continua HTML)
   const tw = (t, px) => Math.ceil(String(t).length * px);
-  const pill = (x, y, txt, cls) => `<g class="sv-pill ${cls}"><rect x="${x}" y="${y - 8}" width="${tw(txt, 6.1) + 10}" height="16" rx="3"/><text x="${x + 5}" y="${y + 3.5}">${esc(txt)}</text></g>`;
+  const pill = (x, y, txt, cls, hit) => {
+    const hitA = hit ? ` class="sv-pill ${cls} struct-hit" data-act="bar-struct" data-kind="${hit.kind}" data-id="${hit.id}"` : ` class="sv-pill ${cls}"`;
+    const tip = hit ? (hit.kind === "loop" ? `${esc(txt)} · remover repetição` : `${esc(txt)} · remover seleção`) : esc(txt);
+    return `<g${hitA}><rect x="${x}" y="${y - 8}" width="${tw(txt, 6.1) + 10}" height="16" rx="3"/><text x="${x + 5}" y="${y + 3.5}">${esc(txt)}</text><title>${tip}</title></g>`;
+  };
   const tagsOf = u => u.st === "wait" ? [["wait", "aguardando pessoa"]] : u.st === "fail" ? [["fail", "falhou"]] : u.st === "exec" ? [["exec", "executando"]] : u.st === "cancel" ? [["cancel", "cancelada"]] : [];
   const dnames = (x, y, list) => `<text class="sv-dn" x="${x}" y="${y + 3.5}">${list.map((n, i) => `${i ? `<tspan>, </tspan>` : ""}<tspan class="sv-dl${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</tspan>`).join("")}<title>${esc(list.join(", "))}</title></text>`;
   const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra && extra.length) { h += dnames(cx, y, extra); cx += tw(extra.join(", "), 6.3) + 10; } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
   const rowSvg = (r, i) => {
     const y0 = yTop(i), ym = yMid(i);
-    if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop");
-    if (r.st) return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})${senaoOf(r.st)}`, "if");
+    if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop", { kind: "loop", id: r.lp.id });
+    if (r.st) {
+      const bid = r.st.bid || r.st.body.find(id => $u(id) && !isData($u(id))) || r.st.body[0];
+      return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})${senaoOf(r.st)}`, "if", { kind: "if", id: bid });
+    }
     if (r.io) { const g = geo(r.u); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, ioNames(r)); }
     const u = r.u, g = geo(u), sel = s.sel === u.id;
     if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7" rx="3.5"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
@@ -2533,12 +2543,11 @@ function flow(s) {
   const isFn = u => !isData(u) && !hasK(u);
   const srcOf = new Set(FD.map(d => d[0])), dstOf = new Set(FD.map(d => d[1]));
   let svg = "";
-  // repetição (for / map): moldura tracejada + arco ↻ sobre a barra
+  // repetição (for / map): moldura tracejada + arco ↻ sobre a barra (hover → toolbar remover)
   rows.forEach(({ u }) => {
     if (!u.loop || !isFn(u)) return;
     const g = geo(u), t = yTop(idx[u.id]);
-    svg += `<rect class="floop" x="${g.x1 - 4}" y="${t + 3}" width="${g.x2 - g.x1 + 8}" height="28" rx="6"><title>for (${esc(u.loop[0])} of ${esc(u.loop[1])})</title></rect>`;
-    svg += `<path class="farc" d="M${g.x2 - 8} ${t + 3} C${g.x2 - 8} ${t - 5} ${g.x1 + 8} ${t - 5} ${g.x1 + 8} ${t + 1}" marker-end="url(#fahl)"/>`;
+    svg += `<g class="floop-hit" data-act="bar-struct" data-kind="loop" data-id="${u.id}"><rect class="floop" x="${g.x1 - 4}" y="${t + 3}" width="${g.x2 - g.x1 + 8}" height="28" rx="6"/><path class="farc" d="M${g.x2 - 8} ${t + 3} C${g.x2 - 8} ${t - 5} ${g.x1 + 8} ${t - 5} ${g.x1 + 8} ${t + 1}" marker-end="url(#fahl)"/><title>for (${esc(u.loop[0])} of ${esc(u.loop[1])}) · remover repetição</title></g>`;
   });
   if (!s.noDeps) {
     FD.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
@@ -2579,8 +2588,8 @@ function flow(s) {
     const bid = st.body.find(id => $u(id) && !isData($u(id))) || st.body[0];
     st.x = x; st.bid = bid;
     svg += `<g class="fif-hit" data-act="bar-struct" data-kind="if" data-id="${bid}"><circle class="fif-pad" cx="${x}" cy="${y}" r="12"/><path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"/><title>if (${esc(st.test)}) · remover seleção</title></g>`;
-    return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
-  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxEnd[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
+    return `<rect class="sv-band" data-act="bar-struct" data-kind="if" data-id="${bid}" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
+  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxEnd[id] ?? idx[id]; return `<rect class="sv-band lp" data-act="bar-struct" data-kind="loop" data-id="${id}" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   // senão: sem path tracejado no canvas (anotação no if / coluna Nome)
   const H = disp.length * RH;
   const rootU = rootId ? $u(rootId) : null;

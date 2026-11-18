@@ -138,7 +138,7 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Folha □ podia listar `a, b` no mesmo rótulo | Um nome por □; várias folhas = várias marcas |
 | Clique na aresta de sequência sem ação | Menu: seleção (`edge-if`) ou repetição (`edge-loop`) |
 | Só via aresta | Também em `fl-tools` / `bar-tools` / menu de contexto / drawer: `fn-if` e `fn-loop` (toggle) |
-| Sem remover dedicado na linha `if`/`for` | `rm-if` / `rm-loop` em `fl-tools` da linha, `bar-tools` flutuante acima do losango `◇` (`fif-hit` / `data-for=if:id` / `loop:id`), edge-pop e drawer |
+| Sem remover dedicado na linha `if`/`for` | `rm-if` / `rm-loop`; hover no visual (`fif-hit`, pill `if`/`loop`, moldura `floop`, faixa) → `bar-tools` acima; também `fl-tools`, edge-pop e drawer |
 
 **Voltar:** pointerdown antigo (bloqueio em `[data-act]`/`.grow`); fontes anteriores; `::before/::after` do `.fsum` + path das pontas no SVG; remover `flow-kids`/`edge-*`/`dnames` com marca por folha; tirar botões `fn-if`/`fn-loop`/`rm-if`/`rm-loop`.
 

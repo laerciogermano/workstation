@@ -4199,7 +4199,7 @@ holder.addEventListener("change", e => {
   }
   if (t.matches("[data-plan]")) { cur.plan = t.value; cur.flowRoot = planTops(t.value)[0]?.id || null; unset("mach", "drawer"); paint(); return; }
   if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
-  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); toast(r ? `${r.name} · ${u.title}` : "Responsável removido", r ? TYPES[r.type].ic : "user-round"); paint(); return; }
+  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); toast(r ? `${r.name} · ${u.title}` : "Responsável removido", r ? (TYPES[r.type]?.ic || "user-round") : "user-round"); paint(); return; }
   if (t.matches("[data-task]")) { const u = $u(t.dataset.task); if (!u || !t.value) return; u.title = t.value; toast(`${agent(u.agent)?.name || "—"} · ${u.title}`, "circle-check"); paint(); return; }
   if (t.matches("[data-dado-type]")) { DATA_TYPE[t.dataset.dadoType] = t.value; toast(`${t.dataset.dadoType}: ${DTYPE_N[t.value]}`, "box"); paint(); return; }
   if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }

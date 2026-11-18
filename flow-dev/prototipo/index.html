@@ -692,11 +692,9 @@ body.fdragging .bar-tools, body.fdragging .fl-tools { display: none !important; 
 .fdrag-ghost { position: fixed; z-index: 9999; pointer-events: none; display: flex; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: 8px; background: #111; color: #fff; font: 600 12px system-ui, sans-serif; box-shadow: 0 10px 24px -10px rgba(0,0,0,.5); white-space: nowrap; }
 .fdrag-ghost small { font-weight: 400; opacity: .75; font-size: 11px; }
 /* opção B: ações em cima da barra selecionada no canvas */
-.gright .bar-tools { position: absolute; z-index: 5; display: none; align-items: center; gap: 2px; height: 26px; padding: 1px 2px 1px 8px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 7px; box-shadow: var(--shadow); white-space: nowrap; animation: btIn .12s var(--ease); }
-.gright .bar-tools::after { content: ""; position: absolute; left: 14px; bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
-.gright .bar-tools .bt-n { font-size: 11px; font-weight: 600; color: var(--ink); max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
-.gright .bar-tools i.sep { width: 1px; height: 14px; margin: 0 3px; background: var(--line); }
-.gright .bar-tools .ib { width: auto; height: 22px; padding: 0 6px; gap: 4px; display: inline-flex; align-items: center; font-size: 11px; color: var(--body); border-radius: 5px; }
+.gright .bar-tools { position: absolute; z-index: 5; display: none; align-items: center; gap: 1px; height: 26px; padding: 1px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 7px; box-shadow: var(--shadow); white-space: nowrap; animation: btIn .12s var(--ease); }
+.gright .bar-tools::after { content: ""; position: absolute; left: 10px; bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
+.gright .bar-tools .ib { width: 24px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--body); border-radius: 5px; }
 .gright .bar-tools .ib:hover { color: var(--accent); background: var(--panel); }
 .gright .bar-tools .ib svg { width: 13px; height: 13px; }
 .gright .bar-tools.on, .gright .bar-tools.hov { display: flex; }
@@ -2248,7 +2246,7 @@ function flow(s) {
           // comparar renderizadores: SVG direto · HTML (div/span) · Canvas (2D) — os dois últimos são convertidos do mesmo desenho
           // opção B: ações flutuando logo acima da barra (task) selecionada — comparar com a barra da coluna Nome (opção A)
           const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30;
-            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><span class="bt-n">${esc(u.title)}</span><i class="sep"></i><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}<span>Editar</span></button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}<span>Filho</span></button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter)">${icon("between-horizontal-end")}<span>Irmão</span></button></div>`; };
+            return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão (Enter)">${icon("between-horizontal-end")}</button></div>`; };
           // aparece no hover da task (como a Árvore do Plans) e fica na selecionada
           const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) && s.ren !== r.u.id ? toolOf(r.u, i) : "").join("");
           return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools;

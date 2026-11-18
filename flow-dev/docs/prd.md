@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.11 |
+| Versão | 1.13 |
 
 ## IDR — identificador único
 
@@ -109,3 +109,12 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | Senão = path tracejado `fback` no canvas | Sem seta; texto `· senão → …` na linha/pill do `if` |
 
 **Voltar:** `ganttRows`/`flowLayout` sem `rootId`; redesenhar bloco `fback`; remover `setFlowRootFrom`.
+
+## Fluxos de exemplo visíveis
+
+| Antes | Depois |
+|---|---|
+| `FLOW_CLOSED` iniciava com todas as composições → canvas só com barra-resumo | `FLOW_CLOSED` vazio + `openFlowView(root)` ao trocar root |
+| Default sem `flowRoot` (podia cair na raiz vazia) | `DEF.flowRoot = "u9"` (Onboarding) e preferência por root com filhos |
+
+**Voltar:** seed antigo de `FLOW_CLOSED` com todas as composições; `DEF` sem `flowRoot`.

@@ -1520,8 +1520,20 @@ function fnIcon(u) {
 /** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
-/** Sanfona do Flow (coluna Nome): ids de composição fechados — filhos somem da lista e do desenho. Começa fechado (= só pais). */
-const FLOW_CLOSED = new Set(U.filter(u => !u.arch && !isFolder(u) && !isData(u) && kidsPlan(u.id).some(k => !k.arch && !isFolder(k) && !isData(k))).map(u => u.id));
+/** Sanfona do Flow (coluna Nome): ids fechados escondem filhos. Começa vazio = fluxos de exemplo abertos e visíveis. */
+const FLOW_CLOSED = new Set();
+let _flowRootOpened = null;
+/** Ao trocar de root, abre a árvore inteira para o fluxo complexo aparecer no canvas. */
+function openFlowView(rootId) {
+  if (!rootId || !$u(rootId)) return;
+  const stack = [rootId];
+  while (stack.length) {
+    const id = stack.pop();
+    FLOW_CLOSED.delete(id);
+    kidsPlan(id).forEach(k => { if (!k.arch && !isFolder(k) && !isData(k)) stack.push(k.id); });
+  }
+  _flowRootOpened = rootId;
+}
 function planRoot(plan) { return U.find(u => !u.arch && isFolder(u) && u.plan === plan && !u.parent) || null; }
 /** Dado abstrato = sem valor definido e usado numa camada que não o produz. */
 function dadoIsAbs(name) {
@@ -1543,7 +1555,7 @@ const CHAT = {};
 const COPILOT = { open: false, tabs: [], active: null, seq: 0 };
 
 // ================= janela =================
-const DEF = { v: "flow", plan: "onb", fm: "ordem", catTab: "ia" };
+const DEF = { v: "flow", plan: "onb", flowRoot: "u9", fm: "ordem", catTab: "ia" };
 function viewDock(s) {
   return `<nav class="vdock" aria-label="Visões">${VIEWS.map(([id, ic, n]) => `<button data-act="view" data-v="${id}" aria-current="${s.v === id}">${icon(ic)}${n}</button>`).join("")}</nav>`;
 }
@@ -2002,14 +2014,19 @@ function setFlowRootFrom(id) {
   const u = $u(id); if (!u || isFolder(u)) return;
   if (u.plan) cur.plan = u.plan;
   if (isData(u)) return;
-  cur.flowRoot = flowTop(u).id;
+  const root = flowTop(u).id;
+  if (cur.flowRoot !== root) _flowRootOpened = null;
+  cur.flowRoot = root;
+  openFlowView(root);
 }
 function activeFlowRoot(s) {
   const tops = planTops(s.plan);
   if (!tops.length) return null;
   if (s.flowRoot && tops.some(t => t.id === s.flowRoot)) return s.flowRoot;
   if (s.sel) { const u = $u(s.sel); if (u && u.plan === s.plan && !isFolder(u) && !isData(u)) return flowTop(u).id; }
-  return tops[0].id;
+  // preferir root com filhos (exemplo visualizável), não a raiz vazia
+  const rich = tops.find(t => kidsPlan(t.id).some(k => !k.arch && !isFolder(k) && !isData(k)));
+  return (rich || tops[0]).id;
 }
 function runbarHtml(s) {
   const running = U.filter(u => u.plan === s.plan && u.st === "exec" && agent(u.agent)?.type === "ia");
@@ -2117,6 +2134,7 @@ function flow(s) {
   // um root por visualização — s0…sN e linhas só daquela composição de topo
   const rootId = activeFlowRoot(s);
   if (rootId && s.flowRoot !== rootId) s.flowRoot = rootId;
+  if (rootId && _flowRootOpened !== rootId) openFlowView(rootId);
   // sanfona: ancestrais em FLOW_CLOSED escondem a subárvore (lista + SVG)
   const flowHidden = id => { let p = $u(id)?.parent; while (p && !isFolder($u(p))) { if (FLOW_CLOSED.has(p)) return true; p = $u(p).parent; } return false; };
   const rows = ganttRows(s.plan, rootId).filter(r => !isData(r.u) && !flowHidden(r.u.id));
@@ -3446,7 +3464,11 @@ const ACT = {
   "proj-sel": t => {
     const p = t.dataset.plan;
     cur.plan = p; unset("drawer", "mach"); cur.sel = null;
-    cur.flowRoot = planTops(p)[0]?.id || null;
+    const tops = planTops(p);
+    const rich = tops.find(t => kidsPlan(t.id).some(k => !k.arch && !isFolder(k) && !isData(k)));
+    cur.flowRoot = (rich || tops[0])?.id || null;
+    _flowRootOpened = null;
+    if (cur.flowRoot) openFlowView(cur.flowRoot);
     if (cur.v !== "flow") view("flow");
   },
   noop: () => false,

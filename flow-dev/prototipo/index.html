@@ -1536,6 +1536,7 @@ function fnIcon(u) {
 /** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
+const EX_SECS = ["funcoes", "dados", "arquivos", "pessoas", "agentes", "modelos"];
 /** Sanfona do Flow (coluna Nome): ids fechados escondem filhos. Começa vazio = fluxos de exemplo abertos e visíveis. */
 const FLOW_CLOSED = new Set();
 let _flowRootOpened = null;
@@ -3589,10 +3590,13 @@ const ACT = {
     U.filter(u => !u.arch && (isFolder(u) || kids(u.id).some(k => !k.arch))).forEach(u => OPEN.add(u.id));
     LAYERS.forEach(l => OPEN.add("ly:" + l.id));
     STRUCTS.forEach(st => { const p = st.body.map($u).find(x => x && !x.arch); if (p) OPEN.add("ifx:" + (p.parent || null) + ":" + st.test); });
+    stateCatalog().forEach(d => { if (dKids(d.name).length) OPEN.add("dt:" + d.name); }); // cubos de dados
+    SEC_CLOSED.clear(); // seções (Funções, Dados, Módulos…) também abrem
     toast("Sanfonas abertas", "chevrons-up-down");
   },
   collapse: () => {
     OPEN.clear();
+    EX_SECS.forEach(k => SEC_CLOSED.add(k)); // seções também fecham
     toast("Sanfonas fechadas", "chevrons-down-up");
   },
   search: () => { if (cur.q != null) unset("q"); else { cur.q = ""; cur.focusQ = true; } },

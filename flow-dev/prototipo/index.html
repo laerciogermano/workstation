@@ -287,9 +287,12 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 }
 .player.open { display: grid; }
 .player.focus { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
-/* ocultar só o painel direito (notas T-xx) — stage permanece em área nomeada */
-.player.notes-off { grid-template-columns: 230px minmax(0, 1fr); grid-template-areas: "list stage"; }
-.player.notes-off .notes { display: none; }
+/* recolher painel direito (notas T-xx): coluna fina só com ícone no topo */
+.player.notes-off { grid-template-columns: 230px minmax(0, 1fr) 44px; grid-template-areas: "list stage notes"; }
+.player.notes-off .notes { padding: 0; overflow: hidden; }
+.player.notes-off .notes .notes-body,
+.player.notes-off .notes .temas { display: none; }
+.player.notes-off .notes .notes-h { padding: 10px 0 0; justify-content: center; }
 /* tela cheia: o app ocupa a janela inteira, sem moldura nem escala — como se estivesse navegando no sistema */
 .player.full { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage"; }
 .player.full .list, .player.full .notes { display: none; }
@@ -300,12 +303,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .full-exit:hover { opacity: 1; }
 .full-exit svg { width: 14px; height: 14px; }
 .player.full .full-exit { display: inline-flex; }
-.notes-reopen { display: none; position: fixed; right: 14px; top: 50%; transform: translateY(-50%); z-index: 120; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: color-mix(in srgb, var(--paper) 94%, transparent); color: var(--body); font-size: 12px; font-weight: 600; box-shadow: var(--shadow); }
-.notes-reopen:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line-2)); }
-.notes-reopen svg { width: 14px; height: 14px; }
-.player.open.notes-off:not(.full):not(.focus) .notes-reopen { display: inline-flex; }
 .player.focus .list, .player.focus .notes { display: none; }
-.player .list .close[data-notes][aria-pressed="true"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--wash)); }
 .player .list { grid-area: list; background: var(--paper); border-right: 1px solid var(--line); overflow-y: auto; padding: 14px 10px 24px; min-width: 0; }
 .player .list .close { display: flex; align-items: center; gap: 8px; border: 0; background: var(--wash); border-radius: 8px; height: 38px; padding: 0 14px; font-weight: 600; font-size: 14px; margin: 0 4px 8px; }
 .player .list h4 { font-size: 12px; color: var(--muted); margin: 16px 8px 4px; font-weight: 600; }
@@ -317,7 +315,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .player .stage { grid-area: stage; position: relative; overflow: hidden; min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
 .player .holder { position: relative; }
 .player .holder > .win { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
-.player .notes { grid-area: notes; background: var(--paper); border-left: 1px solid var(--line); padding: 24px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.player .notes { grid-area: notes; background: var(--paper); border-left: 1px solid var(--line); padding: 0 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.player .notes .notes-h { display: flex; align-items: center; justify-content: flex-end; padding: 12px 0 0; flex: none; }
+.player .notes .notes-tog { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: var(--wash); color: var(--muted); display: inline-flex; align-items: center; justify-content: center; }
+.player .notes .notes-tog:hover { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--wash)); }
+.player .notes .notes-tog[aria-pressed="true"] { color: var(--accent); }
+.player .notes .notes-tog svg { width: 16px; height: 16px; }
+.player .notes .notes-body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .player .notes .id { color: var(--accent); font-size: 22px; }
 .player .notes h3 { font-weight: 600; font-size: 26px; letter-spacing: -0.02em; line-height: 1.1; }
 .player .notes .cus { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1252,11 +1256,14 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 <div class="foot">Pessoas, clientes e datas são de exemplo. Protótipo desktop (janela 1440 × 900). Só Explorar + Flow; agentes = IA e bibliotecas Node.js.</div>
 
 <div class="player" id="player" role="dialog" aria-label="Protótipo navegável">
-  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><button class="close" data-full title="Usar o sistema em tela cheia (T)"><i data-lucide="maximize"></i>Tela cheia</button><button class="close" data-notes title="Mostrar / ocultar notas do cenário T-xx (N)" aria-pressed="true"><i data-lucide="panel-right"></i>Notas</button></aside>
+  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><button class="close" data-full title="Usar o sistema em tela cheia (T)"><i data-lucide="maximize"></i>Tela cheia</button></aside>
   <button class="full-exit" data-full title="Sair da tela cheia (Esc)"><i data-lucide="minimize"></i>Sair</button>
-  <button class="notes-reopen" data-notes title="Mostrar notas do cenário (N)"><i data-lucide="panel-right"></i>Notas</button>
   <div class="stage" id="stage"><div class="holder" id="holder"></div></div>
-  <aside class="notes" id="pnotes-panel"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
+  <aside class="notes" id="pnotes-panel">
+    <div class="notes-h"><button class="notes-tog" data-notes title="Ocultar notas (N)" aria-pressed="true" aria-label="Notas do cenário"><i data-lucide="panel-right"></i></button></div>
+    <div class="notes-body" id="pnotes"></div>
+    <div class="temas"><span>Tema</span><div class="sw" data-temas></div></div>
+  </aside>
 </div>
 
 <script>
@@ -3355,11 +3362,11 @@ function tFor(s) {
 }
 function syncNotesToggle() {
   const on = !player.classList.contains("notes-off");
-  player.querySelectorAll("[data-notes]").forEach(b => {
-    if (b.classList.contains("notes-reopen")) return;
-    b.setAttribute("aria-pressed", on ? "true" : "false");
-    b.title = on ? "Ocultar notas do cenário T-xx (N)" : "Mostrar notas do cenário T-xx (N)";
-  });
+  const b = player.querySelector(".notes [data-notes]");
+  if (!b) return;
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.title = on ? "Ocultar notas (N)" : "Mostrar notas (N)";
+  b.innerHTML = `<i data-lucide="${on ? "panel-right" : "panel-right-open"}"></i>`;
 }
 function toggleNotes(on = player.classList.contains("notes-off")) {
   player.classList.toggle("notes-off", !on);

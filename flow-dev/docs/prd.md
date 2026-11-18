@@ -123,6 +123,6 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 
 | Antes | Depois |
 |---|---|
-| Painel direito (T-32…) sempre aberto no player | Botão **Notas** / tecla **N** · classe `notes-off` · preferência em `localStorage` |
+| Painel direito (T-32…) sempre aberto no player | Toggle **dentro** do painel de notas; fechado = faixa 44px só com ícone no topo · tecla **N** · `localStorage` |
 
 **Voltar:** remover `data-notes`, `notes-off`, `toggleNotes` e atalho `N`.

@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.3 |
+| Versão | 1.4 |
 
 ## IDR — identificador único
 
@@ -71,24 +71,24 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 
 1. Se existir **irmão paralelo embaixo** → **troca a ordem** e vai para baixo.
 2. Senão → vira **irmão sequencial direito** do de cima.
-3. Senão (sem irmão sequencial direito / sem “de cima”) → vira **irmão sequencial direito** do pai.
-4. Sem pai elegível → não faz nada.
+3. Se **não** tiver **irmão sequencial à direita** → vira **irmão sequencial direito** do pai.
+4. Se tiver **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
+5. Sem alvo elegível → não faz nada.
 
 ### Aceite
 
-| Tecla | 1ª condição | 2ª | 3ª / fallback |
+| Tecla | 1ª | 2ª | 3ª / 4ª |
 |---|---|---|---|
 | ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
 | → | sequencial direito do paralelo | troca com sequencial direito | noop |
 | ↑ | paralelo ao sequencial esquerdo | inverte com paralelo de cima | irmão sequencial esquerdo do pai |
-| ↓ | troca com paralelo embaixo | sequencial direito do de cima | sequencial direito do pai |
+| ↓ | troca com paralelo embaixo | sequencial direito do de cima | sem seq. direito → seq. direito do pai; com seq. direito → 1º filho dele |
 
 ### Antes → depois
 
-| Antes | Depois |
+| Antes (v1.3) | Depois |
 |---|---|
-| → só saía do paralelo; senão noop | → também troca com sequencial direito |
-| ↑ priorizava invert paralelo antes de sequencial esquerdo | ↑ sequencial esquerdo → paralelo; senão invert paralelo; senão pai |
-| ↓ só trocava com paralelo; senão noop | ↓ fallback: sequencial direito do de cima, depois do pai |
+| ↓ sem caso “irmão sequencial à direita” | ↓ com sequencial à direita → vira 1º filho desse irmão |
+| ↑ paralelo no meio da cadeia | ↑ paralelo fica como caso à parte (inverte com o de cima) |
 
-**Voltar:** restaurar `fnKeyMove` sem `seqRight`/`swapSibBlocks` na →; ordem ↑ antiga neste arquivo.
+**Voltar:** regras v1.3 neste arquivo.

@@ -910,7 +910,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .flbl .fo b.fd.ext::before { background: var(--dado); }
 .fsvg .fstub { stroke: #9a9a9a; stroke-width: 1.2; }
 .fsvg .fdot { fill: var(--paper); stroke: var(--dado); stroke-width: 1.3; }
-.fsvg .fif { fill: var(--paper); stroke: var(--warn); stroke-width: 1.5; }
+.fsvg .fif { fill: var(--paper); stroke: var(--warn); stroke-width: 1.5; pointer-events: none; }
+.fsvg .fif-hit { cursor: pointer; }
+.fsvg .fif-hit .fif-pad { fill: transparent; stroke: none; }
 .fsvg .floop { fill: none; stroke: var(--ok); stroke-width: 1.1; stroke-dasharray: 3 3; }
 .fsvg .farc { fill: none; stroke: var(--ok); stroke-width: 1.3; }
 .fsvg .ftxt { font: 600 9.5px var(--mono); fill: var(--warn); }
@@ -2574,8 +2576,9 @@ function flow(s) {
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {
     const i1 = Math.max(...st.body.map(id => idxEnd[id] ?? idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
-    st.x = x;
-    svg += `<path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
+    const bid = st.body.find(id => $u(id) && !isData($u(id))) || st.body[0];
+    st.x = x; st.bid = bid;
+    svg += `<g class="fif-hit" data-act="bar-struct" data-kind="if" data-id="${bid}"><circle class="fif-pad" cx="${x}" cy="${y}" r="12"/><path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"/><title>if (${esc(st.test)}) · remover seleção</title></g>`;
     return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
   }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxEnd[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   // senão: sem path tracejado no canvas (anotação no if / coluna Nome)
@@ -2620,17 +2623,22 @@ function flow(s) {
           // opção B: ações flutuando logo acima da barra (task) selecionada — comparar com a barra da coluna Nome (opção A)
           const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30, kids = hasK(u);
             return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px">${kids ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${FLOW_CLOSED.has(u.id) ? "Abrir filhos" : "Fechar filhos"}">${icon(FLOW_CLOSED.has(u.id) ? "chevrons-up-down" : "chevrons-down-up")}</button>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}${!kids && !isData(u) ? `<button class="ib${STRUCTS.some(st => st.body.includes(u.id)) ? " on" : ""}" data-act="fn-if" data-id="${u.id}" title="${STRUCTS.some(st => st.body.includes(u.id)) ? "Remover seleção (if)" : "Adicionar seleção (if)"}">${icon("diamond")}</button><button class="ib${u.loop ? " on" : ""}" data-act="fn-loop" data-id="${u.id}" title="${u.loop ? "Remover repetição (for)" : "Adicionar repetição (for)"}">${icon("repeat")}</button>` : ""}<button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
-          const structTool = (u, i, kind) => {
+          const structTool = (u, i, kind, anchorX) => {
             if (!u) return "";
-            const g = geo(u), top = Math.max(54, 52 + yTop(i) + 6 - 30);
+            const top = Math.max(54, 52 + yTop(i) + 6 - 30);
+            const left = Math.max(4, (anchorX != null ? anchorX : geo(u).x1) - 12);
             const rm = kind === "loop"
               ? `<button class="ib danger" data-act="rm-loop" data-id="${u.id}" title="Remover repetição (for)">${icon("repeat")}</button>`
               : `<button class="ib danger" data-act="rm-if" data-id="${u.id}" title="Remover seleção (if)">${icon("diamond")}</button>`;
-            return `<div class="bar-tools" data-for="${kind}:${u.id}" role="toolbar" aria-label="${kind === "loop" ? "Ações da repetição" : "Ações da seleção"}" style="left:${Math.max(4, g.x1)}px;top:${top}px">${rm}</div>`;
+            return `<div class="bar-tools" data-for="${kind}:${u.id}" role="toolbar" aria-label="${kind === "loop" ? "Ações da repetição" : "Ações da seleção"}" style="left:${left}px;top:${top}px">${rm}</div>`;
           };
           const barTools = disp.map((r, i) => {
-            if (r.lp) return structTool(r.lp, i, "loop");
-            if (r.st) { const bid = r.st.body.find(id => $u(id) && !isData($u(id))) || r.st.body[0]; return structTool($u(bid), i, "if"); }
+            if (r.lp) return structTool(r.lp, i, "loop", geo(r.lp).ix + 12);
+            if (r.st) {
+              const bid = r.st.bid || r.st.body.find(id => $u(id) && !isData($u(id))) || r.st.body[0];
+              const ax = r.st.x != null ? r.st.x : geo(rows[r.st.i0]?.u || $u(bid)).ix;
+              return structTool($u(bid), i, "if", ax);
+            }
             return r.u && !r.io && !isData(r.u) ? toolOf(r.u, i) : "";
           }).join("");
           const edgeB = s.edgeMenu ? $u(s.edgeMenu.b) : null;
@@ -4166,12 +4174,18 @@ function setBarHov(id, clientX) {
 }
 holder.addEventListener("mousemove", e => {
   const bt = e.target.closest?.(".bar-tools");
-  if (bt) { setBarHov(bt.dataset.for, e.clientX); return; }
-  // linha if / for na coluna Task: toolbar flutuante em cima (remover estrutura)
+  if (bt) { setBarHov(bt.dataset.for, null); return; }
+  // losango if (canvas): toolbar fixa em cima do ◇
+  const fif = e.target.closest?.(".fif-hit[data-act='bar-struct'], [data-act='bar-struct']");
+  if (fif?.dataset?.id) {
+    setBarHov(`${fif.dataset.kind || "if"}:${fif.dataset.id}`, null);
+    return;
+  }
+  // linha if / for na coluna Task: mesma toolbar (posição do losango / pill, sem seguir o cursor)
   const structRow = e.target.closest?.(".gantt.flow .grow.ifrow, .gantt.flow .grow.forrow");
   if (structRow) {
     const id = structRow.dataset.own || structRow.dataset.id;
-    if (id) { setBarHov((structRow.classList.contains("forrow") ? "loop:" : "if:") + id, e.clientX); return; }
+    if (id) { setBarHov((structRow.classList.contains("forrow") ? "loop:" : "if:") + id, null); return; }
   }
   const g = e.target.closest?.('.gright [data-act="fsel"][data-id], .gright .sv-sumg[data-act="fsel"]');
   if (g?.dataset?.id) { setBarHov(g.dataset.id, e.clientX); return; }

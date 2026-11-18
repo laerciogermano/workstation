@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.2 |
+| Versão | 1.3 |
 
 ## IDR — identificador único
 
@@ -46,44 +46,49 @@
 
 ## Teclado — setas no Flow (reordenar / paralelizar)
 
-Com um elemento de função selecionado, as setas **movem a estrutura** (não o foco de seleção). Cada direção tem regra própria.
+Com um elemento de função selecionado, as setas **movem a estrutura** (não o foco de seleção). Cada direção tem regra própria; a primeira condição que bater vale.
 
 ### ← esquerda
 
 1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
-2. Se não existir → vira **irmão esquerdo** do elemento pai.
+2. Senão → vira **irmão esquerdo** do elemento pai.
 3. Sem pai elegível → não faz nada.
 
 ### → direita
 
 1. Se existir **irmão paralelo** → passa a ser **irmão sequencial direito** desse irmão.
-2. Se não existir → **não faz nada**.
+2. Senão, se existir **irmão sequencial à direita** → **troca de lugar** com ele.
+3. Senão → **não faz nada**.
 
 ### ↑ cima
 
-1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
-2. Se não existir → vira **irmão sequencial esquerdo** do elemento pai.
-3. Sem pai elegível → não faz nada.
+1. Se existir **irmão paralelo** → **inverte a ordem** com o de cima.
+2. Senão, se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
+3. Senão → vira **irmão sequencial esquerdo** do elemento pai.
+4. Sem alvo elegível → não faz nada.
 
 ### ↓ baixo
 
-1. Se existir **irmão paralelo** → **troca a ordem** e vai para **baixo** (fica sequencial abaixo do irmão).
-2. Se não existir → **não faz nada**.
+1. Se existir **irmão paralelo embaixo** → **troca a ordem** e vai para baixo.
+2. Senão → vira **irmão sequencial direito** do de cima.
+3. Senão (sem irmão sequencial direito / sem “de cima”) → vira **irmão sequencial direito** do pai.
+4. Sem pai elegível → não faz nada.
 
 ### Aceite
 
-| Tecla | Com irmão adequado | Sem irmão adequado |
-|---|---|---|
-| ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai |
-| → | sequencial direito do paralelo | noop |
-| ↑ | paralelo ao sequencial esquerdo | irmão sequencial esquerdo do pai |
-| ↓ | ordem invertida / abaixo do paralelo | noop |
+| Tecla | 1ª condição | 2ª | 3ª / fallback |
+|---|---|---|---|
+| ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
+| → | sequencial direito do paralelo | troca com sequencial direito | noop |
+| ↑ | inverte com paralelo de cima | paralelo ao sequencial esquerdo | irmão sequencial esquerdo do pai |
+| ↓ | troca com paralelo embaixo | sequencial direito do de cima | sequencial direito do pai |
 
 ### Antes → depois
 
-| Antes | Depois |
+| Antes (v1.2) | Depois |
 |---|---|
-| ←/↑ e →/↓ simétricos (paralelo ↔ sequência) | quatro direções com regras distintas |
-| →/↓ sempre tentavam “voltar à sequência” | → = sequencial direito; ↓ = troca ordem e desce; sem paralelo = noop |
+| → só saía do paralelo; senão noop | → também troca com sequencial direito |
+| ↑ sem caso de paralelo | ↑ inverte ordem com o paralelo de cima |
+| ↓ só trocava com paralelo; senão noop | ↓ fallback: sequencial direito do de cima, depois do pai |
 
-**Voltar:** tratar ←/↑ juntos e →/↓ juntos como no protótipo antigo (`fnKeyMove` simétrico).
+**Voltar:** regras v1.2 neste arquivo (commit anterior da seção de setas).

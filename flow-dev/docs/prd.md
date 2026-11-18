@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.5 |
+| Versão | 1.6 |
 
 ## IDR — identificador único
 
@@ -46,24 +46,24 @@
 
 ## Teclado — setas no Flow (reordenar / paralelizar)
 
-Com um elemento de função selecionado, as setas **movem a estrutura** (não o foco de seleção). Cada direção tem regra própria; a primeira condição que bater vale.
+Com um elemento de função selecionado, as setas **movem a estrutura** (ordem em `U` + `PARS`). A **primeira** condição que bater vale. Layout e conectores leem essa ordem — não DEPS antigos.
 
 ### ← esquerda
 
-1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
+1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele (junta ao passo da esquerda).
 2. Senão → vira **irmão esquerdo** do elemento pai.
 3. Sem pai elegível → não faz nada.
 
 ### → direita
 
-1. Se existir **irmão paralelo** → passa a ser **irmão sequencial direito** desse irmão.
-2. Senão, se existir **irmão sequencial à direita** → **troca de lugar** com ele.
-3. Senão → **não faz nada**.
+1. Se existir **irmão paralelo** → sai do paralelo e vira **irmão sequencial direito** do grupo.
+2. Senão, se existir **irmão sequencial à direita** → **troca de lugar** com ele (passo inteiro, se o da direita for um grupo paralelo).
+3. Senão → **não faz nada** (→ **não** vira filho).
 
 ### ↑ cima
 
 1. Se existir **irmão sequencial à esquerda** → fica **paralelo** a ele.
-2. Senão, se existir **irmão paralelo** → **inverte a ordem** com o de cima.
+2. Senão, se existir **irmão paralelo acima** → **inverte a ordem** com o de cima.
 3. Senão → vira **irmão sequencial esquerdo** do elemento pai.
 4. Sem alvo elegível → não faz nada.
 
@@ -71,8 +71,8 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 
 1. Se existir **irmão paralelo embaixo** → **troca a ordem** e vai para baixo.
 2. Senão, se existir **irmão sequencial à direita** → vira o **primeiro filho** desse irmão.
-3. Senão, se estiver paralelo com o de cima → vira **irmão sequencial direito** do de cima.
-4. Senão (sem irmão sequencial à direita) → vira **irmão sequencial direito** do pai.
+3. Senão, se estiver paralelo com o de cima → vira **irmão sequencial direito** do de cima (sai do paralelo).
+4. Senão → vira **irmão sequencial direito** do pai.
 5. Sem alvo elegível → não faz nada.
 
 ### Aceite
@@ -80,20 +80,19 @@ Com um elemento de função selecionado, as setas **movem a estrutura** (não o 
 | Tecla | 1ª | 2ª | 3ª / 4ª |
 |---|---|---|---|
 | ← | paralelo ao sequencial esquerdo | irmão esquerdo do pai | noop |
-| → | sequencial direito do paralelo | troca com sequencial direito | noop |
+| → | sequencial direito do paralelo | **troca** com sequencial direito | noop |
 | ↑ | paralelo ao sequencial esquerdo | inverte com paralelo de cima | irmão sequencial esquerdo do pai |
-| ↓ | troca com paralelo embaixo | seq. direito → 1º filho | seq. direito do de cima; senão seq. direito do pai |
+| ↓ | troca com paralelo embaixo | seq. direito → **1º filho** | seq. direito do de cima; senão seq. direito do pai |
 
 ### Antes → depois
 
 | Antes | Depois |
 |---|---|
-| ↓: unParallel com o de cima antes de seq. direito → filho | ↓: seq. direito → 1º filho **antes** do unParallel |
-| ↓ com sequencial à direita entrava como **último** filho | entra como **primeiro** filho (antes do 1º filho existente) |
-| → troca com sequencial direito só reordenava a lista | troca também a sequência (DEPS/PARS): o Flow mostra a ordem nova |
-| ←/↑ paralelo juntava só u ao grupo do irmão | une os dois grupos de paralelo (ninguém perde o par ao sair) |
+| → com sequencial à direita virava **1º filho** | → **troca** de lugar com o sequencial à direita |
+| ↓ sem ramo “sai do paralelo com o de cima” | ↓: sem paralelo embaixo e sem direita → unParallel |
+| setas acumulavam DEPS/PARS inconsistentes | setas só tocam `U` + `PARS`; desenho ignora DEPS velhos |
 
-**Voltar:** em `fnKeyMove` ↓, testar `parLeft`/`unParallel` antes de `seqRight`→`child`.
+**Voltar:** em `fnKeyMove` →, ramo `rightG` → `put(..., "first")` (filho); ↓ sem `inPar`/`unPar`.
 
 ## Estados `sN` e marcas de dado
 

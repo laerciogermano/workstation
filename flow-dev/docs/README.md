@@ -36,3 +36,4 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 | Dado plano | Dado com campos filhos (opcional) e **Tipo** no painel |
 | Seção **Arquivos** | **Módulos** (dados + funções); scripts próprios podem ser responsáveis |
 | Seções fixas no Explorar | Todas as seções abrem e fecham |
+| Teoria só em `docs/linguagem-flow.md` | **Explorar › Docs** (T-60…62): Fundamentos da linguagem com exemplo vivo do fluxo Onboarding Acme e botão que aplica cada conceito no Flow · código em `prototipo/docs.js` + `docs.css` |

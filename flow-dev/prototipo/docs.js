@@ -54,15 +54,16 @@
     const { layout } = flowLayout(list[0].plan, top.id);
     const rows = list.map(u => ({ u, ...(layout[u.id] || { s: 0, e: 0 }) }));
     const s0 = Math.min(...rows.map(r => r.s)), n = Math.max(...rows.map(r => r.e)) + 1 - s0;
-    const CW = Math.max(96, Math.min(150, Math.floor(660 / Math.max(n, 1)))), LP = 18, TOP = 30, RH = 32;
+    const CW = Math.max(84, Math.min(130, Math.floor(560 / Math.max(n, 1)))), LP = 18, TOP = 30, RH = 30;
     const axis = Array.from({ length: n + 1 }, (_, i) => `<i class="dk-div" style="left:${LP + i * CW}px"></i><span class="dk-sx" style="left:${LP + i * CW}px">s${i}</span>`).join("");
     const bars = rows.map((r, i) => {
       const x = LP + (r.s - s0) * CW, w = (r.e - r.s + 1) * CW, y = TOP + i * RH;
-      const tag = mark[r.u.id] ? `<span class="dk-mk" style="left:${x + w - 6}px;top:${y + 4}px">${mark[r.u.id]}</span>` : "";
+      // texto fora da barra (padrão do Flow): nome à direita, com a marca da estrutura (∥, ↻…)
+      const lbl = `<span class="dk-bl" style="left:${x + w - 4}px;top:${y + 4}px">${mark[r.u.id] ? `<em>${mark[r.u.id]}</em>` : ""}${esc(r.u.title)}${r.u.loop ? " <em>↻</em>" : ""}</span>`;
       if (r.u.id === sum) return `<span class="dk-sum" style="left:${x}px;width:${w}px;top:${y + 8}px"><b>${esc(r.u.title)}</b></span>`;
-      return dkBar(r.u, w - 20, `position:absolute;left:${x + 10}px;top:${y + 4}px`) + tag;
+      return `<span class="fbar dk-fb ${fnKind(r.u)}" style="--c:var(--fn);position:absolute;left:${x + 10}px;top:${y + 4}px;width:${w - 20}px"><span class="fb-t">&nbsp;</span></span>` + lbl;
     }).join("");
-    return `<div class="dk-flow-w"><div class="dk-flow" style="width:${LP * 2 + n * CW + 90}px;height:${TOP + rows.length * RH + 6}px">${axis}${bars}</div></div>`;
+    return `<div class="dk-flow-w"><div class="dk-flow" style="width:${LP * 2 + n * CW + 200}px;height:${TOP + rows.length * RH + 6}px">${axis}${bars}</div></div>`;
   }
   /** Dados acumulados em cada sN (o “bag” sob o eixo do Flow). */
   function dkBags(rootId) {

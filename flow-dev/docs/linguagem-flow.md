@@ -357,6 +357,7 @@ do {
 | Módulo | **Explorar › Módulos** | guarda **dados e funções** que mudam juntos (antes chamado “Arquivos”) |
 | Seleção / repetição | linhas `◇ if` e `↻ for` | abrir a linha mostra o corpo |
 | Exportar | botão **Exportar** | gera JS a partir do mesmo modelo (TS e C seguem a Parte III) |
+| Esta teoria | **Explorar › Docs** | cada conceito com o exemplo vivo do IDE; o botão do bloco “No Flow IDE” abre o lugar exato no Flow |
 
 ## 13. Editar o fluxo
 

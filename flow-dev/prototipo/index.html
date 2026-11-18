@@ -2368,7 +2368,7 @@ function flow(s) {
           const lines = disp.map((r, i) => `<line class="sv-row" x1="0" y1="${yTop(i) + RH}" x2="${CW}" y2="${yTop(i) + RH}"/>`).join("");
           const foot = `<line class="sv-hl" x1="0" y1="${yF}" x2="${CW}" y2="${yF}"/><line class="sv-ax" x1="${OX}" y1="${yF + 10}" x2="${OX + axW}" y2="${yF + 10}"/>`
             + Array.from({ length: nSteps + 1 }, (_, i) => `<rect class="sv-los" x="${xs(i) - 3}" y="${yF + 7}" width="6" height="6" transform="rotate(45 ${xs(i)} ${yF + 10})"/><g class="sv-chip"><rect x="${xs(i) - 11}" y="${yF + 19}" width="22" height="15" rx="2"/><text x="${xs(i)}" y="${yF + 30}">s${i}</text></g>`
-              + stShow[i].map(([n, ext, depth], j) => { const ind = (depth || 0) * 10, x0 = xs(i) - 4.2 + ind, lbl = depth ? dLeaf(n) : n;
+              + stShow[i].map(([n, ext, depth], j) => { const x0 = xs(i) - 4.2, /* sem recuo: árvore e folhas alinhadas na mesma linha do sN */ lbl = depth ? dLeaf(n) : n;
                 return `<g class="sv-fd${ext ? " ext" : ""}${dKids(n).length ? " tree" : ""}${depth ? " kid" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${fdMark(n, x0, yF + 44 + j * 14)}<text x="${x0 + 12.4}" y="${yF + 51.5 + j * 14}">${esc(lbl)}</text><title>${esc(n)} · em s${i}${dKids(n).length ? " · árvore (cubo)" : " · folha (□)"}${ext ? " · entrada externa" : ""} · abrir no Explorar</title></g>`; }).join("")).join("");
           const HH = 52 + Math.max(H, RH) + FOOT, mode = s.render || "svg";
           const svgStr = `<svg class="fsvg fview" width="${CW}" height="${HH}" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -2381,7 +2381,7 @@ function flow(s) {
           const toolOf = (u, i) => { const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30;
             return `<div class="bar-tools${s.sel === u.id ? " on" : ""}" data-for="${u.id}" role="toolbar" aria-label="Ações da task" style="left:${Math.max(4, g.x1)}px;top:${Math.max(54, top)}px"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}<button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></div>`; };
           // aparece no hover da task (como a Árvore do Plans) e fica na selecionada
-          const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) && s.ren !== r.u.id ? toolOf(r.u, i) : "").join("");
+          const barTools = disp.map((r, i) => r.u && !r.io && !r.st && !r.lp && !isData(r.u) ? toolOf(r.u, i) : "").join(""); // inclusive o elemento novo ainda com nome em edição
           return (mode === "svg" ? svgStr : `<div class="fv-host" data-r="${mode}" style="width:${CW}px;height:${HH}px"><div class="fv-src">${svgStr}</div></div>`) + barTools;
         })()}</div>
       </div>

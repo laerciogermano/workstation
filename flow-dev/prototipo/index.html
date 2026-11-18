@@ -1035,6 +1035,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .io .mono { color: var(--accent); }
 .io span.ref { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 11px; }
 .console { flex: 1; overflow-y: auto; padding: 8px 12px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--body); background: var(--panel); }
+.tb .tb-term[aria-pressed="true"] { color: var(--accent); background: var(--wash); }
+.term { flex: none; height: 200px; display: flex; flex-direction: column; border-top: 1px solid var(--line-2); background: var(--panel); }
+.term header { height: 30px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 12px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.term header svg { width: 14px; height: 14px; }
+.term header b { font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); }
+.term header .sp { flex: 1; }
+.term header .ib { width: 24px; height: 24px; }
+.term-b { flex: 1; overflow-y: auto; padding: 8px 12px; font: 11px/1.6 var(--mono); color: var(--body); white-space: pre-wrap; }
+.term-b .ok { color: var(--ok); } .term-b .dim { color: var(--muted); } .term-b .er { color: var(--fail); } .term-b .wr { color: var(--warn); }
 .console .ok { color: var(--ok); } .console .dim { color: var(--muted); } .console .er { color: var(--fail); }
 
 /* modal */
@@ -1297,6 +1306,7 @@ const CAT = [
   { id: "m3", type: "maquina", name: "node:path", sub: "Node.js · caminhos" },
   { id: "m4", type: "maquina", name: "node:crypto", sub: "Node.js · crypto" },
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams" },
+  { id: "m6", type: "maquina", name: "node:console", sub: "Node.js · console" },
 ];
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
 // Arquivos (antes Layers): cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
@@ -1342,8 +1352,11 @@ let COLS = [
   { id: "c4", name: "Revisão", exec: false },
   { id: "c5", name: "Concluído", exec: false },
 ];
-let LANES = [{ id: "l1", name: "Pessoal" }, { id: "l2", name: "Clientes" }, { id: "l3", name: "Site" }];
-const PLANS = [{ id: "padrao", name: "Plano padrão" }, { id: "onb", name: "Onboarding Acme" }];
+let LANES = [{ id: "l1", name: "Pessoal" }, { id: "l2", name: "Clientes" }, { id: "l3", name: "Site" }, { id: "l4", name: "Console" }];
+const PLANS = [{ id: "padrao", name: "Plano padrão" }, { id: "onb", name: "Onboarding Acme" }, { id: "hello", name: "Hello World" }];
+
+const CODE_HELLO = `// Hello World · node:console
+console.log("Hello, World!");`;
 
 const CODE_ENVIO = `// Enviar ao cliente · node:http
 import { http } from "node:http"
@@ -1377,6 +1390,7 @@ let U = [
   { id: "f1", kind: "folder", title: "Pessoal", parent: null, lane: "l1", plan: "padrao" },
   { id: "f2", kind: "folder", title: "Clientes", parent: null, lane: "l2", plan: "onb" },
   { id: "f3", kind: "folder", title: "Site institucional", parent: null, lane: "l3", plan: "padrao" },
+  { id: "f4", kind: "folder", title: "Hello World", parent: null, lane: "l4", plan: "hello" },
   { id: "u1", title: "Comprar fone de ouvido", ctx: "Uso diário, cancelamento de ruído, até R$ 500", parent: "f1", agent: "a4", col: "c1", lane: "l1", s: 9, e: 10, plan: "padrao" },
   { id: "u30", title: "Listar requisitos", ctx: "Bluetooth, ANC, bateria > 20 h", parent: "u1", agent: "h4", col: "c5", lane: "l1", st: "ok", plan: "padrao", outs: [["requisitos", "out/requisitos.json"]] },
   { id: "u50", title: "Pesquisar opções", ctx: "Modelos, avaliações e preços em paralelo", parent: "u1", agent: "a3", col: "c3", lane: "l1", plan: "padrao" },
@@ -1416,6 +1430,8 @@ let U = [
   { id: "u71", title: "Instalar apps", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["backup"], outs: [["apps", "out/apps.json"]], loop: ["app", "backup.apps"] },
   { id: "u72", title: "Ativar seguro", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["apolice", "out/apolice.pdf"]] },
   { id: "d6", kind: "data", title: "Celular pronto", parent: "u2", plan: "padrao", lane: "l1", col: "c1", ins: ["apps", "apolice"] },
+  { id: "u200", title: "Hello World", ctx: "Projeto console: executar imprime no terminal", parent: "f4", agent: "h4", col: "c2", lane: "l4", plan: "hello" },
+  { id: "u201", title: "Imprimir Hello World", parent: "u200", agent: "m6", col: "c1", lane: "l4", st: "pendente", s: 0, e: 0, plan: "hello", outs: [["saudacao", "out/saudacao.txt"]], code: CODE_HELLO },
   { id: "u9", title: "Fazer onboarding da Acme", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
   { id: "u10", title: "Coletar dados do cliente", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
   { id: "u11", title: "Rascunhar proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
@@ -1628,6 +1644,7 @@ function win(s) {
       <span class="cmdk">${icon("search")}Buscar ou executar comando<kbd>⌘K</kbd></span>
       <span class="sp"></span>
       <span class="tb-temas" aria-label="Temas">${TEMAS.map(t => `<button data-tema="${t.id}" title="Tema ${esc(t.name)}" aria-label="Tema ${esc(t.name)}" aria-pressed="${document.documentElement.dataset.tema === t.id}"><span><i style="background:${t.a}"></i><i style="background:${t.b}"></i></span></button>`).join("")}</span>
+      <button class="ib tb-term" data-act="term" title="Terminal (logs de execução)" aria-label="Terminal" aria-pressed="${!!TERM.open}">${icon("terminal")}</button>
       <button class="ib">${icon("bell")}</button>
       <span class="av">AS</span>
     </header>
@@ -1640,9 +1657,28 @@ function win(s) {
         </div>
       </section>
     </div>
+    ${TERM.open ? termPanel() : ""}
     ${s.ctx ? ctxMenu(s) : ""}${s.confirm ? confirmDlg(s) : ""}${s.exp ? exportDlg(s) : ""}
     <div class="toast" role="status" aria-live="polite"></div>
   </div>`;
+}
+
+// ----- Terminal: logs de execução (barra superior) -----
+const TERM = { open: false, lines: [] };
+const termPanel = () => `<section class="term" aria-label="Terminal"><header>${icon("terminal")}<b>Terminal</b><span class="sp"></span><button class="ib" data-act="term-clear" title="Limpar">${icon("trash-2")}</button><button class="ib" data-act="term" title="Fechar">${icon("x")}</button></header><div class="term-b" data-term>${TERM.lines.length ? TERM.lines.join("<br>") : `<span class="dim">Terminal pronto. Execute um projeto para ver os logs aqui.</span>`}</div></section>`;
+function termLog(html) {
+  TERM.lines.push(html);
+  const b = holder.querySelector("[data-term]");
+  if (b) { b.innerHTML = TERM.lines.join("<br>"); b.scrollTop = b.scrollHeight; }
+}
+/** Roda o código de verdade quando é JS puro (sem import); devolve as linhas impressas pelo console. */
+function execCode(code) {
+  if (/^\s*import\s/m.test(code)) return null;
+  const out = [], fmt = a => a.map(x => typeof x === "string" ? x : (() => { try { return JSON.stringify(x); } catch (e) { return String(x); } })()).join(" ");
+  const con = { log: (...a) => out.push(esc(fmt(a))), info: (...a) => out.push(esc(fmt(a))), warn: (...a) => out.push(`<span class="wr">${esc(fmt(a))}</span>`), error: (...a) => out.push(`<span class="er">${esc(fmt(a))}</span>`) };
+  try { new Function("console", code)(con); out.push(`<span class="ok">✓ concluída</span>`); }
+  catch (e) { out.push(`<span class="er">✗ ${esc(e.name + ": " + e.message)}</span>`); out.failed = true; }
+  return out;
 }
 
 // ----- Explorar · Planos (círculo) + Estados (cubo) -----
@@ -3415,6 +3451,7 @@ function paint(keepScroll = true) {
   const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
   holder.innerHTML = win(cur);
   if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
+  const termB = holder.querySelector("[data-term]"); if (termB) termB.scrollTop = termB.scrollHeight;
   const chatThread = holder.querySelector("[data-chat-thread]");
   if (chatThread && cur.v === "chat") chatThread.scrollTop = chatThread.scrollHeight;
   const t = tFor(cur); curT = t; const s = SCREENS[t];
@@ -3460,10 +3497,11 @@ function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "
 // execução de IA (US-07, US-11)
 function startRun(ids) {
   ids.forEach(id => { $u(id).st = "pendente"; });
+  TERM.open = true; termLog(`<span class="dim">$ plans run --plano ${esc(cur.plan || "")}</span>`);
   paint();
   ids.forEach((id, i) => {
-    setTimeout(() => { const u = $u(id); if (u && u.st === "pendente") { u.st = "exec"; if (player.classList.contains("open")) paint(); } }, 500 + i * 250);
-    setTimeout(() => { const u = $u(id); if (u && u.st === "exec") { u.st = "ok"; if (COLS.some(c => c.id === "c4") && u.col === "c3") u.col = "c4"; if (player.classList.contains("open")) { paint(); toast(`${u.title}: concluída`); } } }, 4200 + i * 900);
+    setTimeout(() => { const u = $u(id); if (u && u.st === "pendente") { u.st = "exec"; termLog(`▶ ${esc(u.title)}: executando`); if (player.classList.contains("open")) paint(); } }, 500 + i * 250);
+    setTimeout(() => { const u = $u(id); if (u && u.st === "exec") { u.st = "ok"; termLog(`<span class="ok">✓ ${esc(u.title)}: concluída</span>`); if (COLS.some(c => c.id === "c4") && u.col === "c3") u.col = "c4"; if (player.classList.contains("open")) { paint(); toast(`${u.title}: concluída`); } } }, 4200 + i * 900);
   });
 }
 function create(parent, kind, title, extra = {}) {
@@ -3798,7 +3836,7 @@ const ACT = {
   "up-col": t => { const i = COLS.findIndex(c => c.id === t.dataset.id); if (i > 0) [COLS[i - 1], COLS[i]] = [COLS[i], COLS[i - 1]]; },
   "up-lane": t => { const i = LANES.findIndex(c => c.id === t.dataset.id); if (i > 0) [LANES[i - 1], LANES[i]] = [LANES[i], LANES[i - 1]]; },
   fm: t => { cur.fm = t.dataset.m; unset("mach"); },
-  "run-plan": () => { const ids = U.filter(u => u.plan === cur.plan && agent(u.agent)?.type === "ia" && u.st === "pendente").map(u => u.id); if (!ids.length) { toast("Nenhuma tarefa de IA pendente. Falhas só voltam com “Tentar de novo”.", "info"); return; } startRun(ids); return false; },
+  "run-plan": () => { const ids = U.filter(u => u.plan === cur.plan && agent(u.agent)?.type === "ia" && u.st === "pendente").map(u => u.id); const mach = U.filter(u => !u.arch && u.plan === cur.plan && agent(u.agent)?.type === "maquina" && u.code && !/^\s*import\s/m.test(u.code) && u.st === "pendente"); if (mach.length) { TERM.open = true; mach.forEach((u, i) => setTimeout(() => runMachine(u), i * 1500)); if (!ids.length) return false; } if (!ids.length) { toast("Nenhuma tarefa de IA pendente. Falhas só voltam com “Tentar de novo”.", "info"); return; } startRun(ids); return false; },
   "cancel-run": () => { U.filter(u => u.plan === cur.plan && u.st === "exec").forEach(u => u.st = "cancel"); toast("Execução cancelada", "ban"); },
   export: () => { cur.exp = true; cur.expTab = cur.expTab || "ir"; },
   "close-export": () => unset("exp"),
@@ -3808,6 +3846,8 @@ const ACT = {
   mach: t => { const u = $u(t.dataset.id); view("flow", { mach: u.id, sel: u.id, fm: "ordem", plan: u.plan }); },
   "close-mach": () => unset("mach", "console"),
   "run-mach": t => { runMachine($u(t.dataset.id)); return false; },
+  term: () => { TERM.open = !TERM.open; },
+  "term-clear": () => { TERM.lines = []; },
   tnew: t => { cur.tnew = { parent: t.dataset.id }; OPEN.add(t.dataset.id); unset("drawer", "tnode"); },
   "tnew-root": () => { cur.tnew = { parent: null }; unset("drawer", "tnode"); },
   unnest: t => { const u = $u(t.dataset.id), p = $u(u.parent); u.parent = p.parent; toast(`“${u.title}” saiu de “${p.title}”`, "corner-left-up"); },
@@ -3839,18 +3879,21 @@ function pasteInto(targetId) {
   if (dest) OPEN.add(dest);
 }
 function runMachine(u) {
-  const out = [];
   const lines = [`<span class="dim">$ plans run "${esc(u.title)}"</span>`];
   const code = u.code || "";
-  if (code.includes("http.post")) lines.push("→ POST api.acme.com/propostas (en) 201", "enviado en: 201", "→ POST api.acme.com/propostas (es) 201", "enviado es: 201", `<span class="ok">✓ saida.envio_id = "env_7f3a91"</span>`);
+  const real = code ? execCode(code) : null;
+  let failed = false;
+  if (real) { lines.push(...real); failed = !!real.failed; }
+  else if (code.includes("http.post")) lines.push("→ POST api.acme.com/propostas (en) 201", "enviado en: 201", "→ POST api.acme.com/propostas (es) 201", "enviado es: 201", `<span class="ok">✓ saida.envio_id = "env_7f3a91"</span>`);
   else if (code.includes("http.get")) lines.push("→ GET crm.local/clientes/acme 200", "fs.write out/dados_cliente.json (2,1 KB)", `<span class="ok">✓ saida.dados_cliente</span>`);
   else if (code.includes("fs.copy")) lines.push(`<span class="er">✗ entrada.pagina sem valor: “Reescrever página inicial” foi cancelada</span>`, `<span class="dim">Contexto incompleto. A tarefa não executa.</span>`);
   else lines.push("olá", `<span class="ok">✓ concluída</span>`);
+  TERM.open = true;
   cur.console = ""; paint();
   lines.forEach((l, i) => setTimeout(() => {
-    cur.console = (cur.console || "") + l + "<br>";
+    cur.console = (cur.console || "") + l + "<br>"; termLog(l);
     const c = holder.querySelector("[data-console]"); if (c) { c.innerHTML = cur.console; c.scrollTop = c.scrollHeight; }
-    if (i === lines.length - 1 && !l.includes("Contexto")) { u.st = "ok"; toast(`${u.title}: concluída`); }
+    if (i === lines.length - 1 && !l.includes("Contexto") && !failed) { u.st = "ok"; toast(`${u.title}: concluída`); }
   }, 250 + i * 380));
 }
 

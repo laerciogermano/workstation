@@ -3595,7 +3595,7 @@ holder.addEventListener("click", e => {
   const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
   const r = ACT[h.act.act]?.(t, e); if (r !== false) paint();
 }, true);
-/** Hover numa task/composição do Flow: menu acima, sempre perto do cursor (eixo X); sair esconde com folga. */
+/** Hover numa task/composição: menu aparece perto de onde o mouse entrou e fica parado (não segue o cursor). */
 let barHov = null, barHovT = 0;
 function placeBarNearCursor(id, clientX) {
   const t = holder.querySelector(`.bar-tools[data-for="${id}"]`);
@@ -3611,12 +3611,13 @@ function placeBarNearCursor(id, clientX) {
 }
 function setBarHov(id, clientX) {
   clearTimeout(barHovT);
-  if (id !== barHov) {
-    holder.querySelectorAll(".bar-tools.hov").forEach(x => x.classList.remove("hov"));
-    barHov = id;
-    if (id) { const t = holder.querySelector(`.bar-tools[data-for="${id}"]`); if (t) { t.classList.add("hov"); lucide.createIcons(); } }
+  if (id === barHov) return; // já visível nesta barra — não reposiciona ao mover o mouse
+  holder.querySelectorAll(".bar-tools.hov").forEach(x => x.classList.remove("hov"));
+  barHov = id;
+  if (id) {
+    const t = holder.querySelector(`.bar-tools[data-for="${id}"]`);
+    if (t) { t.classList.add("hov"); lucide.createIcons(); if (clientX != null) placeBarNearCursor(id, clientX); }
   }
-  if (id && clientX != null) placeBarNearCursor(id, clientX);
 }
 holder.addEventListener("mousemove", e => {
   const bt = e.target.closest?.(".bar-tools");

@@ -77,7 +77,7 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | Antes | Depois |
 |---|---|
 | Seta `.car` na coluna Nome só visual | `flow-toggle` + `FLOW_CLOSED` esconde filhos na lista e no SVG |
-| `bar-tools` fixo em `left: g.x1` | segue o cursor no eixo X (`placeBarNearCursor` + `--tip-x`) |
+| `bar-tools` fixo em `left: g.x1` | ao entrar no hover: ancora no X do mouse e **fica parado** |
 
 **Voltar:** remover `FLOW_CLOSED` / `flow-toggle`; `setBarHov` sem `clientX`; `::after` com `left: 10px`.
 

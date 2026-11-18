@@ -93,6 +93,45 @@
 :root[data-tema="eternos-black"] .node .fi.dado.abs svg { fill: #000; stroke: #f2f2f2; }
 :root[data-tema="eternos-black"] .gantt.flow .grow.sel { background: rgba(255,255,255,.08); }
 :root[data-tema="eternos-black"] .gantt.flow .grow.ifrow, :root[data-tema="eternos-black"] .gantt.flow .grow.forrow { background: rgba(255,255,255,.04); }
+/* Tablet Black: fundo preto estilo tablet; dados = roxo; funções + fontes de dados = azul */
+:root[data-tema="tablet-black"] {
+  --accent: #5b8cff; --accent-2: #7aa2ff; --on-accent: #0a0a0a;
+  --ink: #f2f2f2; --body: #c4c4c4; --muted: #8a8a8a; --line: #262626; --line-2: #3a3a3a;
+  --paper: #0b0b0b; --panel: #121212; --wash: #1c1c1c; --stage: #050505; --bezel: #3a3a3a;
+  --ok: #52a943; --run: #5b8cff; --warn: #c9a24a; --fail: #e2735f; --idle: #8a8a8a;
+  --t-pessoa: #5b8cff; --t-ia: #a855f7; --t-maquina: #52a943;
+  --fn: #5b8cff; --dado: #a855f7;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-tema="tablet-black"] .fview .sv-fn { fill: #5b8cff; stroke: #5b8cff; stroke-width: 1.5; }
+:root[data-tema="tablet-black"] .fview .sv-fn.abs { fill: color-mix(in srgb, #5b8cff 14%, #0b0b0b); stroke: #5b8cff; }
+:root[data-tema="tablet-black"] .fview .sv-fn.nag { fill: transparent; stroke: #5b8cff; stroke-dasharray: 4 3; }
+:root[data-tema="tablet-black"] .fview .sv-fbt { fill: #0b0b0b; }
+:root[data-tema="tablet-black"] .fview .sv-fbt.abs { fill: #dbe7ff; }
+:root[data-tema="tablet-black"] .fview .sv-selr { fill: rgba(91,140,255,.12); }
+:root[data-tema="tablet-black"] .fview .sv-band, :root[data-tema="tablet-black"] .fview .sv-band.lp { fill: rgba(255,255,255,.04); }
+:root[data-tema="tablet-black"] .fsvg .fdot { fill: #0b0b0b; stroke: #a855f7; }           /* dado = roxo */
+:root[data-tema="tablet-black"] .fsvg .fdot.a { fill: #5b8cff; stroke: #5b8cff; }          /* fonte de dados = azul */
+:root[data-tema="tablet-black"] .fview .sv-fd rect { fill: #0b0b0b; stroke: #a855f7; }
+:root[data-tema="tablet-black"] .fview .sv-fd.ext rect { fill: #5b8cff; stroke: #5b8cff; } /* fonte externa = azul */
+:root[data-tema="tablet-black"] .fe-d b::before, :root[data-tema="tablet-black"] .mk { background: #0b0b0b; border-color: #a855f7; }
+:root[data-tema="tablet-black"] .fe-d b.ext::before, :root[data-tema="tablet-black"] .mk.a { background: #5b8cff; border-color: #5b8cff; }
+:root[data-tema="tablet-black"] .lg-fc { background: #5b8cff; border: 1.5px solid #5b8cff; }
+:root[data-tema="tablet-black"] .lg-fa { background: color-mix(in srgb, #5b8cff 14%, #0b0b0b); border: 1.5px solid #5b8cff; }
+:root[data-tema="tablet-black"] .lg-dot { background: #0b0b0b; border-color: #a855f7; }
+:root[data-tema="tablet-black"] .lg-da { background: #5b8cff; border: 1.3px solid #5b8cff; }
+:root[data-tema="tablet-black"] .fav { background: #121212; border-color: #5b8cff; color: #dbe7ff; }
+:root[data-tema="tablet-black"] .fav.maquina { background: #121212; border-color: #52a943; color: #52a943; }
+:root[data-tema="tablet-black"] .fav.ia { background: #121212; border-color: #a855f7; color: #e9d5ff; }
+:root[data-tema="tablet-black"] .fav.pessoa { background: #121212; border-color: #5b8cff; color: #dbe7ff; }
+:root[data-tema="tablet-black"] .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); }
+:root[data-tema="tablet-black"] .node .fi.plan.abs svg { fill: #5b8cff; }
+:root[data-tema="tablet-black"] .node .fi.plan.ia svg { fill: #a855f7; }
+:root[data-tema="tablet-black"] .node .fi.dado svg { fill: #0b0b0b; stroke: #a855f7; }
+:root[data-tema="tablet-black"] .node .fi.dado.abs svg { fill: #5b8cff; stroke: #5b8cff; }
+:root[data-tema="tablet-black"] .gantt.flow .grow.sel { background: rgba(91,140,255,.12); }
+:root[data-tema="tablet-black"] .gantt.flow .grow.ifrow, :root[data-tema="tablet-black"] .gantt.flow .grow.forrow { background: rgba(255,255,255,.04); }
 :root[data-tema="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; --stage: #e4e9ea; --bezel: #c9d1d2; }
 :root[data-tema="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --stage: #e5e7f0; --bezel: #c9cddd; --t-ia: #a2458e; }
 :root[data-tema="cobalto"] { --accent: #2563eb; --accent-2: #1d4ed8; --line: #dbe4f3; --line-2: #c9d6ea; --panel: #f3f6fc; --wash: #eaf0fa; --stage: #e2e9f4; --bezel: #b8c7de; --run: #2563eb; --t-pessoa: #2563eb; }
@@ -137,7 +176,8 @@
 :root[data-tema="gantt"] .gbar,
 :root[data-tema="noite"] .gbar,
 :root[data-tema="graphite"] .gbar,
-:root[data-tema="ardosia"] .gbar {
+:root[data-tema="ardosia"] .gbar,
+:root[data-tema="tablet-black"] .gbar {
   background: color-mix(in srgb, var(--c) 42%, transparent);
   border-color: color-mix(in srgb, var(--c) 72%, transparent);
   color: var(--ink);
@@ -145,7 +185,8 @@
 :root[data-tema="gantt"] .gbar .fill,
 :root[data-tema="noite"] .gbar .fill,
 :root[data-tema="graphite"] .gbar .fill,
-:root[data-tema="ardosia"] .gbar .fill {
+:root[data-tema="ardosia"] .gbar .fill,
+:root[data-tema="tablet-black"] .gbar .fill {
   background: color-mix(in srgb, var(--c) 70%, transparent);
 }
 :root[data-tema="gantt"] .gbar.parent,
@@ -188,10 +229,13 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .play:hover { background: var(--accent-2); }
 .play svg { width: 18px; height: 18px; }
 .temas { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
-.temas .sw { display: flex; flex-wrap: wrap; gap: 6px; max-width: 280px; }
+.temas .sw { display: flex; flex-wrap: wrap; gap: 6px; }
+.hero .temas { grid-column: 1 / -1; align-items: center; gap: 12px; padding-top: 4px; }
+.hero .temas .sw { flex-wrap: wrap; gap: 8px; max-width: none; }
 .temas button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--line-2); padding: 0; position: relative; }
 .temas button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--ink); }
 .temas button span { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.temas button i { display: block; width: 100%; height: 100%; }
 .temas-sec { padding: 56px 0 24px; border-top: 1px solid var(--line); margin-top: 40px; }
 .temas-sec h2 { font-size: 32px; font-weight: 600; letter-spacing: -0.03em; }
 .temas-sec .d { color: var(--body); margin-top: 10px; max-width: 70ch; }
@@ -1136,8 +1180,8 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     </div>
     <div class="hero-actions">
       <button class="play" data-open="T-32"><i data-lucide="play"></i>Navegar no protótipo</button>
-      <div class="temas"><span>Tema</span><div class="sw" data-temas></div></div>
     </div>
+    <div class="temas" aria-label="Temas"><span>Tema</span><div class="sw" data-temas></div></div>
     <nav class="flownav" id="flownav" aria-label="Fluxos"></nav>
   </div>
 </header>
@@ -1145,7 +1189,7 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 <main class="wrap" id="gallery"></main>
 <section class="wrap temas-sec" aria-labelledby="temas-h">
   <h2 id="temas-h">Temas</h2>
-  <p class="d">Paletas do Flow IDE. O tema <b>Gantt</b> (padrão) segue <code>inputs/gantt-sample.png</code> — preto + azul #4981f6 + verde #52a943.</p>
+  <p class="d">Paletas do Flow IDE. Bolas no topo escolhem o tema. <b>Tablet Black</b>: fundo preto; dados em roxo; funções e fontes de dados em azul. <b>Gantt</b> segue <code>inputs/gantt-sample.png</code>.</p>
   <div class="temas-grid" id="temas-grid"></div>
 </section>
 <div class="foot">Pessoas, clientes e datas são de exemplo. Protótipo desktop (janela 1440 × 900). Só Explorar + Flow; agentes = IA e bibliotecas Node.js.</div>
@@ -3019,6 +3063,7 @@ const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
 const TEMAS = [
   { id: "eternos", name: "Eternos Mutáveis", a: "#0b0b0b", b: "#ffffff", desc: "Do livro: o mundo material (estado, concreto) é branco e o abstrato é preto. Sólido = branco preenchido · abstrato = preto preenchido." },
   { id: "eternos-black", name: "Eternos Mutáveis Black", a: "#f2f2f2", b: "#0b0b0b", desc: "Eternos Mutáveis no escuro: fundo preto; material (concreto) segue branco e o abstrato segue preto, com contorno claro." },
+  { id: "tablet-black", name: "Tablet Black", a: "#5b8cff", b: "#a855f7", desc: "Preto estilo tablet: dados em roxo; funções e fontes de dados em azul." },
   { id: "papel", name: "Papel", a: "#d4432a", b: "#f8f6f2", desc: "Claro editorial — accent terracota no papel quente." },
   { id: "teal", name: "Teal", a: "#0f766e", b: "#f6f8f8", desc: "Verde-água sóbrio para leitura longa." },
   { id: "indigo", name: "Índigo", a: "#3d4fb8", b: "#f6f7fb", desc: "Azul produto / SaaS clássico." },

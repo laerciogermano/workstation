@@ -3750,11 +3750,24 @@ function placeBarNearCursor(id, clientX) {
   if (!t || !gr || clientX == null) return;
   const grR = gr.getBoundingClientRect();
   const sx = grR.width ? gr.offsetWidth / grR.width : 1;
+  const sy = grR.height ? gr.offsetHeight / grR.height : 1;
+  // limite = parte VISÍVEL do canvas (zcanvas tem overflow hidden), não a largura total: senão os botões saem da tela e o clique não pega
+  const vR = (gr.closest(".zcanvas") || holder).getBoundingClientRect();
+  const dock = holder.querySelector(".vdock")?.getBoundingClientRect();
   const lx = (clientX - grR.left) * sx;
-  const tw = t.offsetWidth || 120;
-  const left = Math.max(4, Math.min(lx - 14, Math.max(4, gr.offsetWidth - tw - 4)));
+  const tw = t.offsetWidth || 120, th = t.offsetHeight || 26;
+  const minX = Math.max(4, (vR.left - grR.left) * sx + 4), maxX = Math.max(minX, Math.min(gr.offsetWidth, (vR.right - grR.left) * sx) - tw - 4);
+  const left = Math.max(minX, Math.min(lx - 14, maxX));
   t.style.left = left + "px";
   t.style.setProperty("--tip-x", Math.max(6, Math.min(tw - 14, lx - left - 4)) + "px");
+  // vertical: se ficar fora do topo visível ou embaixo da barra flutuante (vdock), vai para baixo da barra / sobe
+  const top0 = parseFloat(t.dataset.top0 || (t.dataset.top0 = t.style.top)) || t.offsetTop;
+  const cTop = grR.top + top0 / sy, cBot = cTop + th / sy;
+  let top = top0;
+  if (cTop < vR.top + 2) top = top0 + (th + 34);                       // abaixo da barra
+  const cL = grR.left + left / sx, cR = cL + tw / sx;
+  if (dock && cBot > dock.top - 4 && cTop < dock.bottom && cR > dock.left && cL < dock.right) top = top0 - (cBot - dock.top + 8) * sy; // sobe acima da vdock
+  t.style.top = top + "px";
 }
 function setBarHov(id, clientX) {
   clearTimeout(barHovT);
@@ -3910,7 +3923,7 @@ holder.addEventListener("mousedown", e => {
   if (u && v) u.title = v;
   unset("ren", "fresh");
 }, true);
-holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren && $u(cur.ren)) { const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren", "fresh"); setTimeout(paint, 0); } });
+holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren && cur.ren === e.target.dataset.ren && $u(cur.ren)) { /* só o campo do elemento em edição agora */ const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren", "fresh"); setTimeout(paint, 0); } });
 holder.addEventListener("change", e => { const t = e.target; if (t.matches("select[data-dado-layer]")) { const i = holder.querySelector(`input[data-dado-file="${t.dataset.dadoLayer}"]`); if (i) { i.style.display = t.value === "__new" ? "" : "none"; if (t.value === "__new") i.focus(); } } });
 holder.addEventListener("submit", e => {
   e.preventDefault();

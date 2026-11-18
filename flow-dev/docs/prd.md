@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.8 |
+| Versão | 1.9 |
 
 ## IDR — identificador único
 
@@ -80,3 +80,14 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | `bar-tools` fixo em `left: g.x1` | segue o cursor no eixo X (`placeBarNearCursor` + `--tip-x`) |
 
 **Voltar:** remover `FLOW_CLOSED` / `flow-toggle`; `setBarHov` sem `clientX`; `::after` com `left: 10px`.
+
+## Estados filhos + painel dado + raiz limpa
+
+| Antes | Depois |
+|---|---|
+| sN lista só o dado raiz (cubo) | `stExpand`: filhos indentados com □ sob o cubo |
+| select Tipo: `Texto · TS string · C char*` | só o nome (`Texto`) |
+| Valor texto = `<textarea>` | linha `Tipo e valor` (select + input) |
+| — | seed `u24` “Fazer nova função” raiz vazia (sem agente/I/O) |
+
+**Voltar:** foot sem `stExpand`; options com TS/C; textarea de valor; remover `u24`.

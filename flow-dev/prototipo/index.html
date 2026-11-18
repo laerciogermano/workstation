@@ -3744,7 +3744,8 @@ function placeBarNearCursor(id, clientX) {
 }
 function setBarHov(id, clientX) {
   clearTimeout(barHovT);
-  if (id === barHov) return; // já visível nesta barra — não reposiciona ao mover o mouse
+  // já visível nesta barra — não reposiciona ao mover o mouse. Depois de um paint o DOM é novo: confere a classe de verdade
+  if (id && id === barHov && holder.querySelector(`.bar-tools.hov[data-for="${id}"]`)) return;
   holder.querySelectorAll(".bar-tools.hov").forEach(x => x.classList.remove("hov"));
   barHov = id;
   if (id) {
@@ -3768,6 +3769,11 @@ holder.addEventListener("mousemove", e => {
   }
   if (barHov && !e.target.closest?.(".bar-tools")) { clearTimeout(barHovT); barHovT = setTimeout(() => setBarHov(null), 250); }
 });
+// mouse saiu da área (ou da janela): some na hora, sem depender de outro mousemove
+holder.addEventListener("mouseleave", () => setBarHov(null));
+window.addEventListener("blur", () => setBarHov(null));
+// rolar / dar zoom com o menu aberto: some (a barra mudou de lugar)
+holder.addEventListener("wheel", () => { if (barHov) setBarHov(null); }, { passive: true });
 holder.addEventListener("pointerdown", e => {
   if (flowHit(e)) return; // clique em barra/dado no canvas não vira pan
   const canvas = e.target.closest(".zcanvas");

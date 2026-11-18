@@ -1739,19 +1739,19 @@ function explorer(s) {
         ${dadoSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum dado.</p>`}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("arquivos") ? " open" : ""}" data-sec="arquivos">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Módulos<span class="n">${layerRows.n}</span></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Módulos<span class="n">${layerRows.n}</span><button class="ib" data-act="new-modulo" title="Adicionar módulo">${icon("plus")}</button></div>
         ${layerRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("pessoas") ? " open" : ""}" data-sec="pessoas">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="pessoas" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="pessoas" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span><button class="ib" data-act="new-pessoa" title="Adicionar pessoa">${icon("plus")}</button></div>
         ${pessoaRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("agentes") ? " open" : ""}" data-sec="agentes">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="agentes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="agentes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span><button class="ib" data-act="new-agente" title="Adicionar agente">${icon("plus")}</button></div>
         ${agentRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("modelos") ? " open" : ""}" data-sec="modelos">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="modelos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("bot")} Modelos<span class="n">${modelRows.n}</span></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="modelos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("bot")} Modelos<span class="n">${modelRows.n}</span><button class="ib" data-act="new-modelo" title="Adicionar modelo">${icon("plus")}</button></div>
         ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
@@ -3521,6 +3521,30 @@ const ACT = {
     if (!host.outs.some(o => o[0] === name)) host.outs.push([name, "out/" + name + ".json"]);
     cur.dadoEdit = name; cur.estado = name; cur.sel = host.id; cur.plan = plan;
     toast(`Dado “${name}” — defina o valor para ficar concreto`, "box");
+  },
+  // + em cada seção do Explorar: cria o item e abre a seção
+  "new-modulo": () => {
+    const n = LAYERS.length + 1, L = { id: "lv" + (++seq), file: `novo-modulo-${n}.layer.js`, items: [] };
+    LAYERS.push(L); OPEN.add("ly:" + L.id); SEC_CLOSED.delete("arquivos");
+    toast(`Módulo “${L.file}”`, "file-code-2");
+  },
+  "new-pessoa": () => {
+    const id = "h" + (++seq);
+    CAT.push({ id, type: "pessoa", name: "Nova pessoa", sub: "Defina a função · responsabilidade" }); SEC_CLOSED.delete("pessoas");
+    toast("Pessoa adicionada", "user-round");
+  },
+  "new-agente": () => {
+    const id = "a" + (++seq);
+    CAT.push({ id, type: "ia", name: "Novo agente", sub: "Agente · defina o prompt" });
+    AGENT_CFG[id] = { model: MODELS[0].id, prompt: "" };
+    SEC_CLOSED.delete("agentes"); unset("drawer", "mdCfg", "mach"); cur.agCfg = id;
+    toast("Agente adicionado: escolha o modelo e escreva o prompt", "user-round-cog");
+  },
+  "new-modelo": () => {
+    const id = "md" + (++seq);
+    MODELS.push({ id, name: "Novo modelo", api: "novo-modelo", vendor: "Defina o fornecedor", cor: "#8a8a8a" });
+    SEC_CLOSED.delete("modelos"); unset("drawer", "agCfg", "mach"); cur.mdCfg = id;
+    toast("Modelo adicionado", "bot");
   },
   "txt-in": () => { cur.txtIn = !cur.txtIn; },
   render: t => { cur.render = t.dataset.m; },

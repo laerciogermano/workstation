@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.9 |
+| Versão | 1.10 |
 
 ## IDR — identificador único
 
@@ -91,3 +91,12 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | — | seed `u24` “Fazer nova função” raiz vazia (sem agente/I/O) |
 
 **Voltar:** foot sem `stExpand`; options com TS/C; textarea de valor; remover `u24`.
+
+## Funções: só pais até abrir
+
+| Antes | Depois |
+|---|---|
+| Clique na linha da composição toggleava `OPEN` (filhas apareciam ao selecionar) | Clique na linha só seleciona; filhas só com a seta (`toggle`) |
+| Flow começava com todas as composições abertas | `FLOW_CLOSED` inicia com todas as composições (só pais na coluna Nome) |
+
+**Voltar:** restaurar toggle de `OPEN` no clique do `data-node`; `FLOW_CLOSED = new Set()`.

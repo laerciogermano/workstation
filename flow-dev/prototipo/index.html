@@ -1469,8 +1469,8 @@ function fnIcon(u) {
 /** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
-/** Sanfona do Flow (coluna Nome): ids de composição fechados — filhos somem da lista e do desenho. */
-const FLOW_CLOSED = new Set();
+/** Sanfona do Flow (coluna Nome): ids de composição fechados — filhos somem da lista e do desenho. Começa fechado (= só pais). */
+const FLOW_CLOSED = new Set(U.filter(u => !u.arch && !isFolder(u) && !isData(u) && kidsPlan(u.id).some(k => !k.arch && !isFolder(k) && !isData(k))).map(u => u.id));
 function planRoot(plan) { return U.find(u => !u.arch && isFolder(u) && u.plan === plan && !u.parent) || null; }
 /** Dado abstrato = sem valor definido e usado numa camada que não o produz. */
 function dadoIsAbs(name) {
@@ -3682,9 +3682,7 @@ holder.addEventListener("click", e => {
     const u = $u(id);
     const now = Date.now(), dbl = lastNode.id === id && now - lastNode.t < 420; lastNode = { id, t: now };
     if (dbl && !isFolder(u)) { if (cur.v === "catalog") view("flow"); cur.from = "explorar"; cur.drawer = u.id; cur.sel = u.id; paint(); return; }
-    // sanfona: pasta ou composição abre/fecha a cada clique na linha (não só na setinha)
-    if (isFolder(u)) { OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); cur.sel = id; paint(); return; }
-    if (kids(id).some(k => !k.arch && !isData(k))) OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id);
+    // sanfona só na seta (data-act=toggle / flow-toggle); clique na linha só seleciona — filhas ficam ocultas até abrir
     cur.sel = id; cur.flash = id; if (cur.v === "catalog") view("flow", { sel: id, flash: id }); if ((cur.v === "gantt" || cur.v === "flow" || cur.v === "diagram" || cur.v === "estados" || cur.v === "metas") && u.plan) cur.plan = u.plan;
     paint(); return;
   }

@@ -6,6 +6,7 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 |----------|--------|
 | [`../README.md`](../README.md) | Visão · **IDR** (ID único ≠ nome) |
 | [`prd.md`](prd.md) | PRD · requisito IDR |
+| [`linguagem-flow.md`](linguagem-flow.md) | Conceito (artigo Flow), linguagem, transpilação JS · TS · C e uso no IDE |
 | [`../prototipo/`](../prototipo/) | Protótipo alta fidelidade (Flow IDE) |
 | [`../deploy/README.md`](../deploy/README.md) | Publicação `flow-ide.laerciogermano.com` |
 | [`../config/config-ia.md`](../config/config-ia.md) | Regras para a IA |
@@ -29,3 +30,9 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 | Explorar | Sem seção **Projetos**; **Funções** = só funções; **Dados** = lista plana de dados |
 | Adicionar fluxo / dado | `+` em Funções e Dados; menu de contexto |
 | Definir valor do dado | Painel no clique; com valor → concreto (sólido), sem valor → abstrato |
+| Clique abre o detalhe | Clique seleciona e mostra **Editar · Novo · Novo irmão** (padrão da Árvore do Plans) |
+| Agrupadores Pessoal / Site em Funções | Só funções, e o nome é sempre verbo |
+| Ícone de função por tipo de agente | Sólido = tudo preenchido · preto = falta filha · vazado = sem responsável |
+| Dado plano | Dado com campos filhos (opcional) e **Tipo** no painel |
+| Seção **Arquivos** | **Módulos** (dados + funções); scripts próprios podem ser responsáveis |
+| Seções fixas no Explorar | Todas as seções abrem e fecham |

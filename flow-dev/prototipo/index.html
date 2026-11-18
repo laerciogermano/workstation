@@ -599,6 +599,35 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow .fl-tools .ib svg { width: 14px; height: 14px; }
 .gantt.flow .grow .fl-tools i.sep { width: 1px; margin: 3px 1px; background: var(--line); }
 .gantt.flow .grow .nm input.fl-ren { flex: 1; min-width: 0; height: 24px; border: 1px solid var(--accent); border-radius: 5px; padding: 0 6px; font: inherit; color: var(--ink); background: var(--paper); outline: none; }
+/* função preenchida (sólida) = todas as filhas com responsável · preta = falta preencher alguma filha · vazada = sem responsável */
+.node .fi.plan svg { fill: none; }
+.node .fi.plan.ok svg { fill: currentColor; }
+.node .fi.plan.pend { color: var(--ink); }
+.node .fi.plan.pend svg { fill: currentColor; }
+.node .fi.script { color: var(--accent); }
+.fav.script { background: #fff; color: var(--accent); border-color: var(--accent); }
+.face.script { border-color: var(--accent); }
+/* seções do Explorar: sanfona */
+.ex-sec-h { cursor: pointer; user-select: none; }
+.ex-sec-h .car { width: 12px; display: grid; place-items: center; margin-left: -8px; }
+.ex-sec-h .car svg { width: 12px; height: 12px; color: var(--muted); transition: transform .15s; }
+.ex-sec.open .ex-sec-h .car svg { transform: rotate(90deg); }
+.ex-sec:not(.open) { padding-bottom: 6px; }
+.ex-sec:not(.open) > :not(.ex-sec-h) { display: none; }
+/* ações no nó do Explorar (padrão da Árvore do Plans) */
+.node { position: relative; }
+.node .ex-tools { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; gap: 1px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
+.node:hover .ex-tools, .node.sel .ex-tools { display: flex; }
+.node .ex-tools .ib { width: 22px; height: 20px; color: var(--muted); }
+.node .ex-tools .ib:hover { color: var(--accent); }
+.node .ex-tools .ib svg { width: 13px; height: 13px; }
+.node .dado-ty { font: 500 10px var(--mono); color: var(--muted); }
+.dado-kids { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.dado-kids button { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 0; border-bottom: 1px solid var(--line); background: var(--paper); text-align: left; font: 500 12px var(--mono); color: var(--ink); cursor: pointer; }
+.dado-kids button:hover { background: var(--panel); }
+.dado-kids button small { margin-left: auto; font: 400 11px var(--sans, inherit); color: var(--muted); }
+.dado-kids form { display: flex; gap: 6px; padding: 6px; background: var(--panel); }
+.dado-kids form input { flex: 1; height: 26px; border: 1px solid var(--line-2); border-radius: 5px; padding: 0 8px; font: 500 12px var(--mono); background: var(--paper); }
 .dado-layer { width: 100%; height: 30px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--paper); color: var(--ink); font: 500 12px var(--mono); padding: 0 8px; }
 .fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: #fff; border: 1.5px solid var(--t-ia); } /* preenchido = fundo branco */
 .fav svg { width: 12px; height: 12px; }
@@ -1143,6 +1172,9 @@ const CAT = [
   { id: "h1", type: "pessoa", name: "Ana Souza", sub: "Comercial · aprova propostas" },
   { id: "h2", type: "pessoa", name: "Bruno Lima", sub: "Jurídico · revisa contratos" },
   { id: "h3", type: "pessoa", name: "Carla Dias", sub: "Sucesso do cliente · kickoff" },
+  { id: "s1", type: "script", name: "validarCnpj()", sub: "cliente.data.js · função própria", mod: "cliente.data.js" },
+  { id: "s2", type: "script", name: "calcularPrecoAnual()", sub: "proposta.layer.js · função própria", mod: "proposta.layer.js" },
+  { id: "s3", type: "script", name: "montarBoasVindas()", sub: "credenciais.layer.js · função própria", mod: "credenciais.layer.js" },
   { id: "m1", type: "maquina", name: "node:http", sub: "Node.js · requisições HTTP" },
   { id: "m2", type: "maquina", name: "node:fs", sub: "Node.js · sistema de arquivos" },
   { id: "m3", type: "maquina", name: "node:path", sub: "Node.js · caminhos" },
@@ -1152,11 +1184,11 @@ const CAT = [
 // Agentes = modelos de IA já configurados (modelo + prompt pronto), usados como agente das etapas
 // Arquivos (antes Layers): cada um guarda o que quiser — uma informação, várias, uma função ou várias (camada substituível, FOP item 17)
 const LAYERS = [
-  { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"]] },
+  { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"], ["script", "s2"]] },
   { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
-  { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"]] },
+  { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"], ["script", "s1"]] },
   { id: "l4", file: "contrato.data.js", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
-  { id: "l5", file: "credenciais.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"]] },
+  { id: "l5", file: "credenciais.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"], ["script", "s3"]] },
 ];
 function ensureLayers() {
   const fnIn = new Set(LAYERS.flatMap(l => l.items.filter(i => i[0] === "fn").map(i => i[1])));
@@ -1184,7 +1216,7 @@ const AGENT_CFG = {
   a3: { model: "haiku", prompt: "Pesquise e compare até 3 opções. Devolva prós, contras e um ranking." },
   a4: { model: "sonnet", prompt: "Revise o texto. Responda proposta_aprovada = true ou devolva com o motivo." },
 };
-const TYPES = { ia: { n: "Agentes", one: "Agente", ic: "user-round-cog" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" } };
+const TYPES = { ia: { n: "Agentes", one: "Agente", ic: "user-round-cog" }, pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" }, maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" }, script: { n: "Scripts (meus módulos)", one: "Script", ic: "file-code-2" } };
 
 let COLS = [
   { id: "c1", name: "Backlog", exec: false },
@@ -1234,7 +1266,7 @@ let U = [
   { id: "u4", title: "Comparar modelos", ctx: "Três modelos até o orçamento, com prós e contras", parent: "u2", agent: "a3", col: "c3", lane: "l1", st: "exec", s: 1, e: 7, plan: "padrao", ins: ["orcamento"], outs: [["comparativo", "out/comparativo.json"]] },
   { id: "u5", title: "Escolher loja", parent: "u2", agent: "a3", col: "c1", lane: "l1", st: "pendente", s: 8, e: 8, plan: "padrao", ins: ["comparativo"], outs: [["loja", "out/loja.json"]] },
   { id: "u6", title: "Comprar", parent: "u2", agent: "a4", col: "c1", lane: "l1", s: 9, e: 9, plan: "padrao", ins: ["loja"] },
-  { id: "u9", title: "Onboarding Acme", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
+  { id: "u9", title: "Fazer onboarding da Acme", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
   { id: "u10", title: "Coletar dados do cliente", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
   { id: "u11", title: "Rascunhar proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
   { id: "u12", title: "Revisar proposta", parent: "u9", agent: "a4", col: "c4", lane: "l2", prog: .6, s: 3, e: 7, plan: "onb", ins: ["rascunho"], outs: [["proposta_aprovada", "out/proposta.md"]], cond: ["proposta_aprovada", "u11"] },
@@ -1243,7 +1275,7 @@ let U = [
   { id: "u14", title: "Gerar contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["contrato", "out/contrato.pdf"], ["resumo_juridico", "out/resumo.md"]] },
   { id: "d2", kind: "data", title: "Contexto completo", parent: "u9", plan: "onb", lane: "l2", col: "c1", ins: ["proposta_en", "proposta_es", "contrato"] },
   { id: "u15", title: "Enviar ao cliente", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["proposta_en", "proposta_es", "contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
-  { id: "u16", title: "Ativação do cliente", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
+  { id: "u16", title: "Ativar cliente", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
   { id: "u17", title: "Agendar kickoff", ctx: "Chamada de 30 min depois do contrato assinado", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["kickoff", "out/kickoff.ics"]] },
   { id: "u18", title: "Criar conta no sistema", parent: "u16", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["dados_cliente"], outs: [["conta_id", "out/conta.json"]] },
   { id: "u19", title: "Gerar credenciais", parent: "u16", agent: "m4", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["conta_id"], outs: [["credenciais", "out/credenciais.json"]] },
@@ -1327,7 +1359,33 @@ function faceOf(a, { lg = false } = {}) {
 function topOf(u) { let x = u; while (x?.parent && !isFolder($u(x.parent))) x = $u(x.parent); return x; }
 /** Valores definidos no state: com valor, o dado deixa de ser abstrato (fica concreto / sólido). */
 const DATA_VAL = {};
-function dadoHasValue(name) { return DATA_VAL[name] != null && String(DATA_VAL[name]).length > 0; }
+/** Dado em árvore (opcional): campos filhos com caminho completo (dados_cliente.nome). Sem filhos = dado simples. */
+const DATA_KIDS = {
+  dados_cliente: ["dados_cliente.nome", "dados_cliente.cnpj", "dados_cliente.contatos"],
+  "dados_cliente.contatos": ["dados_cliente.contatos.email", "dados_cliente.contatos.telefone"],
+  credenciais: ["credenciais.usuario", "credenciais.senha"],
+};
+/** Tipos de dado (select no painel) · equivalentes em JS / TS / C para a exportação. */
+const DTYPES = [["texto", "string", "char*"], ["numero", "number", "double"], ["inteiro", "number", "int"], ["booleano", "boolean", "bool"], ["data", "Date", "time_t"], ["lista", "T[]", "T*"], ["objeto", "{ … }", "struct"], ["arquivo", "Blob", "FILE*"]];
+const DTYPE_N = { texto: "Texto", numero: "Número", inteiro: "Inteiro", booleano: "Booleano", data: "Data", lista: "Lista", objeto: "Objeto", arquivo: "Arquivo" };
+const DATA_TYPE = { dados_cliente: "objeto", "dados_cliente.nome": "texto", "dados_cliente.cnpj": "texto", "dados_cliente.contatos": "lista", "dados_cliente.contatos.email": "texto", "dados_cliente.contatos.telefone": "texto", credenciais: "objeto", "credenciais.usuario": "texto", "credenciais.senha": "texto", orcamento: "numero", proposta_aprovada: "booleano", kickoff: "data", contrato: "arquivo" };
+const dKids = name => DATA_KIDS[name] || [];
+const dLeaf = name => String(name).split(".").pop();
+const dType = name => DATA_TYPE[name] || (dKids(name).length ? "objeto" : "texto");
+/** Com filhos: tem valor quando todos os campos têm (igual às funções: só fica sólido quando tudo está preenchido). */
+function dadoHasValue(name) { const ks = dKids(name); if (ks.length) return ks.every(dadoHasValue); return DATA_VAL[name] != null && String(DATA_VAL[name]).length > 0; }
+/** Função preenchida = folha com responsável; composição = todas as filhas preenchidas. */
+function fnFilled(u) { const ks = kids(u.id).filter(k => !k.arch && !isData(k)); return ks.length ? ks.every(fnFilled) : !!agent(u.agent); }
+function fnIcon(u) {
+  if (isFolder(u)) return `<span class="fi folder">${icon("folder")}</span>`;
+  const comp = kids(u.id).some(k => !k.arch && !isData(k)), ok = fnFilled(u);
+  const cls = ok ? " ok" : comp ? " pend" : "";
+  const tip = ok ? (comp ? "Composição sólida · todas as funções preenchidas" : "Função sólida · responsável definido") : comp ? "Falta preencher: alguma função filha está sem responsável" : "Função abstrata · sem responsável";
+  return `<span class="fi plan${cls}" title="${tip}">${icon("circle")}</span>`;
+}
+/** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
+function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
+const SEC_CLOSED = new Set();
 function planRoot(plan) { return U.find(u => !u.arch && isFolder(u) && u.plan === plan && !u.parent) || null; }
 /** Dado abstrato = sem valor definido e usado numa camada que não o produz. */
 function dadoIsAbs(name) {
@@ -1413,6 +1471,7 @@ function explorer(s) {
       if (isData(u)) return;
       if (!pid && u.plan !== plan) return; // raiz: só os roteiros deste plano (projeto)
       if (show && !show.has(u.id)) return;
+      if (isFolder(u)) { walk(u.id, lvl, plan); return; } // sem agrupadores (Pessoal, Site…): só funções, que são verbos
       const box = inIf.get(u.id);
       if (box && !done.has(box)) {
         done.add(box);
@@ -1431,11 +1490,12 @@ function explorer(s) {
       const guides = Array.from({ length: Math.min(lvl, 14) }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
       const sel = (s.sel === u.id || (s.multi || []).includes(u.id)) ? " sel" : "";
       const fa = agent(u.agent), fabs = !isFolder(u) && !kids(u.id).length && fa?.type === "ia", ffull = !isFolder(u) && !kids(u.id).length && fa?.type === "maquina";
-      const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : `<span class="fi plan${ffull ? " abs" : ""}${fabs ? " ia" : ""}" title="${kids(u.id).length ? "Composição" : fabs ? "Função abstrata (IA no state)" : fa ? "Função concreta (import)" : "Função"}">${icon("circle")}</span>`;
+      const fi = isData(u) ? `<span class="fi dado" title="Dado">${icon("diamond")}</span>` : fnIcon(u);
+      const tools = isData(u) || isFolder(u) || (s.ren === u.id && s.fresh !== u.id) ? "" : `<span class="ex-tools"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><button class="ib" data-act="fn-child" data-id="${u.id}" title="Novo (filho)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Novo irmão">${icon("between-horizontal-end")}</button></span>`;
       const a = agent(u.agent);
       const meta = isFolder(u) ? `<span class="meta">${desc(u.id).filter(x => !x.arch).length}</span>` : `<span class="meta">${a ? icon(TYPES[a.type].ic) : ""}${u.st ? `<span class="st ${ST[u.st][0]}" style="padding:0 3px">${icon(ST[u.st][1])}</span>` : ""}</span>`;
-      const body = s.ren === u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
-      planRows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}</div>`);
+      const body = s.ren === u.id && s.fresh !== u.id ? `<input data-ren="${u.id}" value="${esc(u.title)}" aria-label="Novo nome">` : `<span class="t">${markTitle(u.title, q)}</span>${meta}`;
+      planRows.push(`<div class="node${sel}${has && isOpen ? " openf" : ""}${CLIP && CLIP.mode === "cut" && CLIP.ids.includes(u.id) ? " cut" : ""}" data-node="${u.id}" draggable="true" style="padding-left:${ind}px">${guides}<span class="car" data-act="toggle" data-id="${u.id}">${has ? icon("chevron-right") : ""}</span>${fi}${body}${tools}</div>`);
       if (has && isOpen) walk(u.id, lvl + 1, plan);
     }
   }
@@ -1450,10 +1510,15 @@ function explorer(s) {
   const nFuncoes = U.filter(u => !u.arch && !isFolder(u) && !isData(u)).length;
   const catalog = stateCatalog().filter(d => !q || d.name.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
   if (q) hits += catalog.length;
-  const dadoSecRows = catalog.map(d => {
-    const abs = dadoIsAbs(d.name), has = dadoHasValue(d.name);
-    return `<div class="node${s.estado === d.name ? " sel" : ""}" data-estado="${esc(d.name)}" data-id="${d.id}" data-act="dado-edit" data-n="${esc(d.name)}" style="padding-left:8px"><span class="car"></span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}${has ? " · " + DATA_VAL[d.name] : ""}">${icon("box")}</span><span class="t mono">${markTitle(d.name, q)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[d.name]) : "sem valor"}</span></span></div>`;
-  });
+  const dadoRow = (name, lvl) => {
+    const ks = dKids(name), abs = dadoIsAbs(name), has = dadoHasValue(name), id = "dt:" + name, isOpen = q ? true : OPEN.has(id);
+    const guides = Array.from({ length: lvl }, (_, i) => `<span class="guide" style="left:${16 + i * 14}px"></span>`).join("");
+    const val = ks.length ? `<span class="dado-val${has ? "" : " empty"}">${ks.filter(dadoHasValue).length}/${ks.length} campos</span>` : `<span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[name]) : "sem valor"}</span>`;
+    let h = `<div class="node${s.estado === name ? " sel" : ""}${ks.length && isOpen ? " openf" : ""}" data-estado="${esc(name)}" data-act="dado-edit" data-n="${esc(name)}" style="padding-left:${8 + lvl * 14}px">${guides}<span class="car"${ks.length ? ` data-act="toggle" data-id="${esc(id)}"` : ""}>${ks.length ? icon("chevron-right") : ""}</span><span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"} · ${DTYPE_N[dType(name)]}">${icon("box")}</span><span class="t mono">${markTitle(lvl ? dLeaf(name) : name, q)}</span><span class="meta"><span class="dado-ty">${dType(name)}</span>${val}</span><span class="ex-tools"><button class="ib" data-act="dado-edit" data-n="${esc(name)}" title="Editar valor e tipo">${icon("pencil")}</button><button class="ib" data-act="dado-kid" data-n="${esc(name)}" title="Novo campo (filho)">${icon("plus")}</button></span></div>`;
+    if (ks.length && isOpen) ks.forEach(k => { h += dadoRow(k, lvl + 1); });
+    return h;
+  };
+  const dadoSecRows = catalog.map(d => dadoRow(d.name, 0));
 
   // Agentes: modelos de IA treinados com prompt pronto · abrir mostra modelo, prompt e onde é usado
   const agentRows = (() => {
@@ -1479,12 +1544,13 @@ function explorer(s) {
     if (q) hits += list.length;
     const html = list.map(l => {
       const id = "ly:" + l.id, isOpen = q ? true : OPEN.has(id);
-      const nf = l.items.filter(i => i[0] === "fn").length, nd = l.items.length - nf;
-      const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
+      const nf = l.items.filter(i => i[0] === "fn").length, ns = l.items.filter(i => i[0] === "script").length, nd = l.items.length - nf - ns;
+      const resumo = [nf ? `${nf} ${nf === 1 ? "função" : "funções"}` : "", ns ? `${ns} script${ns > 1 ? "s" : ""}` : "", nd ? `${nd} dado${nd > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
       let h = `<div class="node${isOpen ? " openf" : ""}" data-act="toggle" data-id="${id}" style="padding-left:8px" title="${esc(l.file)}"><span class="car">${icon("chevron-right")}</span><span class="fi lyr">${icon("file-code-2")}</span><span class="t mono">${markTitle(l.file, q)}</span><span class="meta">${resumo}</span></div>`;
       if (isOpen) l.items.forEach(([k, v]) => {
         const g = `<span class="guide" style="left:16px"></span><span class="car"></span>`;
-        if (k === "fn") { const u = $u(v); if (!u) return; const fa = agent(u.agent); h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}<span class="fi plan${fa?.type === "maquina" ? " abs" : fa?.type === "ia" ? " ia" : ""}">${icon("circle")}</span><span class="t">${esc(u.title)}</span></div>`; }
+        if (k === "fn") { const u = $u(v); if (!u) return; h += `<div class="node${s.sel === u.id ? " sel" : ""}" data-act="drawer" data-id="${u.id}" style="padding-left:22px">${g}${fnIcon(u)}<span class="t">${esc(u.title)}</span></div>`; }
+        else if (k === "script") { const sc = agent(v); if (!sc) return; const n = U.filter(x => !x.arch && x.agent === sc.id).length; h += `<div class="node" style="padding-left:22px" title="Função escrita por você · pode ser responsável no Flow">${g}<span class="fi script">${icon("file-code-2")}</span><span class="t mono">${esc(sc.name)}</span><span class="meta">${n ? `responsável em ${n}` : "livre"}</span></div>`; }
         else { const abs = dadoIsAbs(v), has = dadoHasValue(v); h += `<div class="node${s.estado === v ? " sel" : ""}" data-act="dado-edit" data-n="${esc(v)}" style="padding-left:22px">${g}<span class="fi dado${abs ? " abs" : ""}" title="Dado ${abs ? "abstrato" : "concreto"}">${icon("box")}</span><span class="t mono">${esc(v)}</span><span class="meta"><span class="dado-val${has ? "" : " empty"}">${has ? esc(DATA_VAL[v]) : "sem valor"}</span></span></div>`; }
       });
       return h;
@@ -1505,35 +1571,34 @@ function explorer(s) {
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
       <button class="ib" data-act="new-file" title="Nova função">${icon("circle-plus")}</button>
-      <button class="ib" data-act="new-folder" title="Nova pasta de funções">${icon("folder-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="expand-all" title="Abrir todas as sanfonas">${icon("chevrons-up-down")}</button>
       <button class="ib" data-act="collapse" title="Fechar todas as sanfonas">${icon("chevrons-down-up")}</button>
     </div>
     ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar funções, dados, pessoas…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
-      <div class="ex-sec" data-sec="funcoes">
-        <div class="ex-sec-h">${icon("circle")} Funções<span class="n">${nFuncoes}</span><button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("funcoes") ? " open" : ""}" data-sec="funcoes">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="funcoes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("circle")} Funções<span class="n">${nFuncoes}</span><button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
         ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função. <button class="btn" data-act="new-flow" style="margin-left:6px;height:24px;font-size:11px">${icon("plus")}Fluxo</button></p>`}
       </div>
-      <div class="ex-sec" data-sec="dados">
-        <div class="ex-sec-h">${icon("box")} Dados<span class="n">${stateCatalog().length}</span><button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("dados") ? " open" : ""}" data-sec="dados">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="dados" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("box")} Dados<span class="n">${stateCatalog().length}</span><button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
         ${dadoSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum dado.</p>`}
       </div>
-      <div class="ex-sec" data-sec="arquivos">
-        <div class="ex-sec-h">${icon("files")} Arquivos<span class="n">${layerRows.n}</span></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("arquivos") ? " open" : ""}" data-sec="arquivos">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Módulos<span class="n">${layerRows.n}</span></div>
         ${layerRows.html}
       </div>
-      <div class="ex-sec" data-sec="pessoas">
-        <div class="ex-sec-h">${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("pessoas") ? " open" : ""}" data-sec="pessoas">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="pessoas" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span></div>
         ${pessoaRows.html}
       </div>
-      <div class="ex-sec" data-sec="agentes">
-        <div class="ex-sec-h">${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("agentes") ? " open" : ""}" data-sec="agentes">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="agentes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span></div>
         ${agentRows.html}
       </div>
-      <div class="ex-sec" data-sec="modelos">
-        <div class="ex-sec-h">${icon("bot")} Modelos<span class="n">${modelRows.n}</span></div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("modelos") ? " open" : ""}" data-sec="modelos">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="modelos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("bot")} Modelos<span class="n">${modelRows.n}</span></div>
         ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
@@ -1644,12 +1709,22 @@ function dadoPanel(s) {
         <span class="fi dado${abs ? " abs" : ""}" style="width:22px;height:22px;display:grid;place-items:center;color:var(--dado)">${icon("box")}</span>
         <div><b class="mono" style="font-size:16px">${esc(name)}</b><div style="font-size:12px;color:var(--muted)">${abs ? "Abstrato (preto) · sem valor no state" : "Concreto (sólido) · valor definido"}</div></div>
       </div>
-      <div class="fld"><label>Valor</label><textarea data-dado-val="${esc(name)}" rows="4" placeholder="Defina o valor — o dado deixa de ser abstrato">${esc(DATA_VAL[name] || "")}</textarea></div>
-      <div class="fld"><label>Arquivo (layer)</label>${(() => { ensureLayers(); const curL = dadoLayer(name), sug = curL ? curL.file : dadoLayerSug(name);
+      ${name.includes(".") ? `<div class="fld"><span class="l">Campo de</span><button data-act="dado-edit" data-n="${esc(name.slice(0, name.lastIndexOf(".")))}">${icon("corner-left-up")}<span class="mono">${esc(name.slice(0, name.lastIndexOf(".")))}</span></button></div>` : ""}
+      <div class="fld"><label>Tipo</label><select class="dado-layer" data-dado-type="${esc(name)}" data-act="noop">${DTYPES.map(([k, ts, c]) => `<option value="${k}"${dType(name) === k ? " selected" : ""}>${DTYPE_N[k]} · TS ${esc(ts)} · C ${esc(c)}</option>`).join("")}</select></div>
+      ${(() => { const ks = dKids(name), ty = dType(name), v = esc(DATA_VAL[name] || "");
+        if (ks.length || ty === "objeto") return `<div class="fld"><label>Campos (filhos)</label><div class="dado-kids">${ks.map(k => `<button data-act="dado-edit" data-n="${esc(k)}"><span class="fi dado${dadoIsAbs(k) ? " abs" : ""}" style="color:var(--dado);display:grid">${icon("box")}</span>${esc(dLeaf(k))}<small>${DTYPE_N[dType(k)]} · ${dadoHasValue(k) ? esc(DATA_VAL[k] || (dKids(k).length ? "completo" : "")) : "sem valor"}</small></button>`).join("")}
+          <form data-form="dado-kid" data-n="${esc(name)}"><input name="k" placeholder="novo_campo" aria-label="Nome do campo"><button class="btn">${icon("plus")}Campo</button></form></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">${ks.length ? "Fica sólido quando todos os campos têm valor." : "Objeto sem campos: adicione os campos filhos ou troque o tipo."}</p></div><div class="fld">`;
+        const inp = ty === "booleano" ? `<select class="dado-layer" data-dado-val="${esc(name)}" data-act="noop"><option value="">—</option><option${v === "true" ? " selected" : ""}>true</option><option${v === "false" ? " selected" : ""}>false</option></select>`
+          : ty === "numero" || ty === "inteiro" ? `<input class="dado-layer" type="number"${ty === "inteiro" ? ' step="1"' : ' step="any"'} data-dado-val="${esc(name)}" data-act="noop" value="${v}">`
+          : ty === "data" ? `<input class="dado-layer" type="date" data-dado-val="${esc(name)}" data-act="noop" value="${v}">`
+          : `<textarea data-dado-val="${esc(name)}" rows="${ty === "lista" ? 4 : 3}" placeholder="${ty === "lista" ? "Um item por linha" : ty === "arquivo" ? "Caminho do arquivo (out/…)" : "Defina o valor — o dado deixa de ser abstrato"}">${v}</textarea>`;
+        return `<div class="fld"><label>Valor</label>${inp}</div><div class="fld">`; })()}
+<label>Módulo (dados + funções)</label>${(() => { ensureLayers(); const curL = dadoLayer(name), sug = curL ? curL.file : dadoLayerSug(name);
         const files = [...new Set([...LAYERS.map(l => l.file), sug])];
-        return `<select class="dado-layer" data-dado-layer="${esc(name)}" data-act="noop">${files.map(f => `<option value="${esc(f)}"${f === sug ? " selected" : ""}>${esc(f)}${curL && f === curL.file ? " · atual" : !LAYERS.some(l => l.file === f) ? " · novo" : ""}</option>`).join("")}<option value="__new">Outro arquivo…</option></select>
+        return `<select class="dado-layer" data-dado-layer="${esc(name)}" data-act="noop">${files.map(f => `<option value="${esc(f)}"${f === sug ? " selected" : ""}>${esc(f)}${curL && f === curL.file ? " · atual" : !LAYERS.some(l => l.file === f) ? " · novo" : ""}</option>`).join("")}<option value="__new">Outro módulo…</option></select>
           <input class="dado-layer" data-dado-file="${esc(name)}" data-act="noop" placeholder="nome.data.js" style="margin-top:6px;display:none">
-          <p style="font-size:12px;color:var(--muted);margin-top:6px">Com valor, o dado fica concreto e passa a morar neste arquivo (Explorar › Arquivos).</p>`; })()}
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Com valor, o dado fica concreto e passa a morar neste módulo (Explorar › Módulos).</p>`; })()}
         <div style="display:flex;gap:8px;margin-top:8px">
           <button class="btn pri" data-act="dado-save" data-n="${esc(name)}">${icon("check")}Salvar valor</button>
           ${has ? `<button class="btn" data-act="dado-clear" data-n="${esc(name)}">${icon("eraser")}Limpar</button>` : ""}
@@ -1871,6 +1946,12 @@ function respPick(u) {
 // cor do responsável: Node = verde da marca; agente = cor do modelo (Claude laranja, GPT verde OpenAI); pessoa = azul
 const brandOf = a => !a ? "" : a.type === "maquina" ? "#5FA04E" : a.type === "ia" ? (modelOf(AGENT_CFG[a.id]?.model)?.cor || "") : "";
 const brandSt = a => { const c = brandOf(a); return c ? ` style="--brand:${c}"` : ""; };
+/** Responsável da função (não-IA): biblioteca Node, script próprio (função de um módulo), pessoa ou agente. */
+function agentPick(u) {
+  const a = agent(u.agent);
+  const opts = ["script", "maquina", "ia", "pessoa"].map(t => `<optgroup label="${TYPES[t].n}">${CAT.filter(c => c.type === t).map(c => `<option value="${c.id}"${u.agent === c.id ? " selected" : ""}>${esc(c.name)}${c.mod ? " · " + esc(c.mod) : ""}</option>`).join("")}</optgroup>`).join("");
+  return `<span class="resp-pick${a ? " on" : ""}">${avatar(u.agent)}<select data-agent="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Escolher responsável: script seu, biblioteca, agente ou pessoa"><option value=""${a ? "" : " selected"}>Selecionar…</option>${opts}</select></span>`;
+}
 function avatar(id) {
   const a = agent(id);
   if (!a) return `<span class="fav none" title="Sem agente">${icon("plus")}</span><span class="fav-n" style="color:var(--muted)">sem agente</span>`;
@@ -1958,10 +2039,10 @@ function flow(s) {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
     const dur = isData(u) ? 0 : L.e - L.s + 1;
     const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="drawer" data-id="${u.id}">
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="fsel" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
-      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Adicionar elemento"><button class="ib" data-act="fn-before" data-id="${u.id}" title="Elemento irmão acima (⇧Enter)">${icon("between-horizontal-start")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Elemento irmão abaixo (Enter)">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Elemento filho (Tab)">${icon("corner-down-right")}</button></span>`}
-      <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Novo · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Novo irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button></span>`}
+      <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
   const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
@@ -2007,10 +2088,10 @@ function flow(s) {
     if (r.st) return pill(geo(rows[r.st.i0].u).ix + 12, ym, `if (${r.st.test})`, "if");
     if (r.io) { const g = geo(r.u); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, ioNames(r)); }
     const u = r.u, g = geo(u), sel = s.sel === u.id;
-    if (hasK(u)) return `<g data-act="drawer" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
+    if (hasK(u)) return `<g data-act="fsel" data-id="${u.id}" class="sv-sumg"><rect class="sv-sum${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 12}" width="${g.x2 - g.x1}" height="7"/><path class="sv-sum" d="M${g.x1} ${y0 + 19} l0 6 l7 -6z M${g.x2} ${y0 + 19} l0 6 l-7 -6z"/><title>${esc(u.title)} · composição = camada</title></g>` + after(g.ox + 10, ym, u);
     const k = fnKind(u), a = agent(u.agent);
     const kt = k === "abs" ? `função abstrata · ${a.name} vem do state` : k === "conc" ? `função concreta · import ${a.name}` : "sem agente";
-    return `<g data-act="drawer" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
+    return `<g data-act="fsel" data-id="${u.id}"><rect class="sv-fn ${k}${u.st === "fail" ? " fail" : ""}${sel ? " sel" : ""}" x="${g.x1}" y="${y0 + 6}" width="${g.x2 - g.x1}" height="22" rx="11"/>${s.txtIn ? `<text class="sv-fbt ${k}" x="${(g.x1 + g.x2) / 2}" y="${ym + 3.5}" text-anchor="middle">${esc(u.title)}</text>` : ""}<title>${esc(u.title)} · ${kt}</title></g>` + after(g.ox + 10, ym, u, s.compacto && (u.outs || []).length ? u.outs.map(o => o[0]) : "");
   };
   // conectores (sequência) como no documento FOP: saem do dado de saída □ na divisória eN e descem até o □ de entrada
   const yMid = i => i * RH + RH / 2, yTop = i => i * RH;
@@ -2729,7 +2810,7 @@ function ctxMenu(s) {
   const it = (act, ic, n, k = "", cls = "") => `<button data-act="${act}" data-id="${u ? u.id : ""}" class="${cls}">${icon(ic)}${n}${k ? `<kbd>${k}</kbd>` : ""}</button>`;
   return `<div class="ctx" style="left:${s.ctx.x}px;top:${s.ctx.y}px" role="menu">
     ${it("new-flow", "workflow", "Novo fluxo")}${it("new-dado", "box", "Novo dado")}<hr>
-    ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
+    ${it("new-file", "file-plus", "Nova função")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
     ${u && !isFolder(u) && !isData(u) ? it("fn-before", "between-horizontal-start", "Elemento irmão acima", "⇧↵") + it("fn-after", "between-horizontal-end", "Elemento irmão abaixo", "↵") + it("fn-child", "corner-down-right", "Elemento filho", "⇥") + "<hr>" : ""}
     ${u && !isFolder(u) ? it("open-in-flow", "workflow", "Abrir no Flow") + "<hr>" : ""}
@@ -3047,7 +3128,7 @@ function paint(keepScroll = true) {
   fit();
   applyZView();
   renderFlowAlt(T0);
-  const f = holder.querySelector(cur.focusQ ? "[data-q]" : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
+  const f = holder.querySelector(cur.focusQ ? "[data-q]" : cur.focusKid ? 'form[data-form="dado-kid"] input' : "[data-newn], [data-ren], .newcard input, .tnew input"); delete cur.focusQ; delete cur.focusKid; if (f) { f.focus(); if (f.dataset.ren) f.select(); }
   const fl = holder.querySelector(".flash, .node.sel"); if (fl && cur.flash) fl.scrollIntoView({ block: "nearest", inline: "nearest" });
   cur.flash = null;
   try { history.replaceState(null, "", "#" + t); } catch (e) {}
@@ -3099,7 +3180,7 @@ function addFnEl(refId, mode) {
   const ref = $u(refId); if (!ref) return null;
   const parent = mode === "child" ? ref.id : ref.parent;
   const sibs = kidsPlan(mode === "child" ? ref.id : ref.parent).filter(k => !k.arch && !isFolder(k) && !isData(k));
-  const u = create(parent, "file", "Nova função", { plan: ref.plan, lane: ref.lane, col: COLS[0].id });
+  const u = create(parent, "file", "Fazer nova função", { plan: ref.plan, lane: ref.lane, col: COLS[0].id });
   U.splice(U.indexOf(u), 1);
   const tail = id => { const d = desc(id); return d.length ? Math.max(...d.map(x => U.indexOf(x))) : U.indexOf($u(id)); };
   if (mode === "before") U.splice(U.indexOf(ref), 0, u);
@@ -3167,6 +3248,10 @@ const ACT = {
   noop: () => false,
   // dado no Flow (□ ■ e nomes): abre o painel para definir valor; abstrato com valor vira concreto e vai para um arquivo
   "reveal-dado": t => { const n = t.dataset.n; if (!n) return false; revealDado(n); unset("drawer", "agCfg", "mdCfg", "mach"); cur.dadoEdit = n; cur.estado = n; },
+  "sec-toggle": t => { const k = t.dataset.sec; SEC_CLOSED.has(k) ? SEC_CLOSED.delete(k) : SEC_CLOSED.add(k); },
+  // clique no elemento do Flow: só seleciona e mostra as ações (Editar · Novo · Novo irmão); o painel abre em Editar
+  fsel: t => { const id = t.dataset.id; unset("drawer", "dadoEdit", "agCfg", "mdCfg"); cur.sel = id; },
+  "dado-kid": t => { const n = t.dataset.n; unset("drawer", "agCfg", "mdCfg"); cur.dadoEdit = n; cur.estado = n; OPEN.add("dt:" + n); cur.focusKid = true; },
   "fn-child": t => { addFnEl(t.dataset.id || cur.sel, "child"); },
   "fn-after": t => { addFnEl(t.dataset.id || cur.sel, "after"); },
   "fn-before": t => { addFnEl(t.dataset.id || cur.sel, "before"); },
@@ -3174,14 +3259,15 @@ const ACT = {
   "dado-close": () => { unset("dadoEdit"); },
   "dado-save": t => {
     const n = t.dataset.n;
-    const ta = holder.querySelector(`textarea[data-dado-val="${n}"]`);
+    const ta = holder.querySelector(`[data-dado-val="${n}"]`);
     const v = (ta?.value || "").trim();
+    if (dKids(n).length) { const L = putDadoInLayer(n.split(".")[0], (holder.querySelector(`select[data-dado-layer="${n}"]`)?.value || dadoLayerSug(n)).replace("__new", dadoLayerSug(n))); toast(dadoHasValue(n) ? `${n}: sólido · em ${L.file}` : `${n}: faltam campos sem valor`, "box"); return; }
     if (!v) { delete DATA_VAL[n]; toast(`${n}: valor limpo · voltou a abstrato`, "box"); }
     else {
       DATA_VAL[n] = v;
       const sel = holder.querySelector(`select[data-dado-layer="${n}"]`);
       const file = (sel?.value === "__new" ? holder.querySelector(`input[data-dado-file="${n}"]`)?.value.trim() : sel?.value) || dadoLayerSug(n);
-      const L = putDadoInLayer(n, /\.js$/.test(file) ? file : file + ".data.js");
+      const L = putDadoInLayer(n.split(".")[0], /\.js$/.test(file) ? file : file + ".data.js");
       toast(`${n}: concreto (sólido) · em ${L.file}`, "box");
     }
   },
@@ -3190,7 +3276,7 @@ const ACT = {
     const plan = cur.plan || PLANS[0].id;
     const root = planRoot(plan);
     const lane = root?.lane || LANES[0].id;
-    const u = create(root?.id || null, "file", "Novo fluxo", { plan, lane, col: COLS[0].id, ctx: "Fluxo adicionado no Explorar" });
+    const u = create(root?.id || null, "file", "Fazer novo fluxo", { plan, lane, col: COLS[0].id, ctx: "Fluxo adicionado no Explorar" });
     if (root) OPEN.add(root.id);
     cur.sel = u.id; cur.drawer = u.id; cur.plan = plan;
     toast(`Fluxo “${u.title}”`, "workflow");
@@ -3462,6 +3548,8 @@ holder.addEventListener("change", e => {
   }
   if (t.matches("[data-plan]")) { cur.plan = t.value; unset("mach", "drawer"); paint(); return; }
   if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
+  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; toast(r ? `${u.title}: ${TYPES[r.type].one.toLowerCase()} ${r.name}` : "Responsável removido", r ? TYPES[r.type].ic : "user-round"); paint(); return; }
+  if (t.matches("[data-dado-type]")) { DATA_TYPE[t.dataset.dadoType] = t.value; toast(`${t.dataset.dadoType}: ${DTYPE_N[t.value]}`, "box"); paint(); return; }
   if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }
   if (t.dataset.estateTitle) {
     const u = $u(t.dataset.estateTitle); if (!u) return;
@@ -3481,6 +3569,7 @@ holder.addEventListener("keydown", e => {
     return;
   }
   if (t.matches("[data-ren]")) {
+    if (e.key === "Enter" && t.value.trim() && !isFolder($u(t.dataset.ren)) && !isData($u(t.dataset.ren)) && !isVerbTitle(t.value)) { e.preventDefault(); e.stopPropagation(); toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; }
     if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); const v = t.value.trim(), fresh = cur.fresh === t.dataset.ren; if (v) $u(t.dataset.ren).title = v; unset("ren", "fresh"); paint(); if (v) toast(fresh ? `Elemento “${v}” criado` : "Renomeado em todas as visões", fresh ? "circle-plus" : "circle-check"); }
     if (e.key === "Escape") { e.stopPropagation(); if (cur.fresh === t.dataset.ren) dropFresh(t.dataset.ren); else unset("ren"); paint(); }
     return;
@@ -3497,6 +3586,14 @@ holder.addEventListener("change", e => { const t = e.target; if (t.matches("sele
 holder.addEventListener("submit", e => {
   e.preventDefault();
   const f = e.target, v = n => (f.elements[n]?.value || "").trim();
+  if (f.dataset.form === "dado-kid") {
+    const n = f.dataset.n, k = v("k").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9_]+/g, "_").replace(/^_|_$/g, "");
+    if (!k) return;
+    const full = n + "." + k;
+    (DATA_KIDS[n] = DATA_KIDS[n] || []).includes(full) || DATA_KIDS[n].push(full);
+    if (!DATA_TYPE[n] || DATA_TYPE[n] !== "lista") DATA_TYPE[n] = DATA_TYPE[n] === "lista" ? "lista" : "objeto";
+    delete DATA_VAL[n]; OPEN.add("dt:" + n); cur.focusKid = true; paint(); toast(`Campo ${full}`, "box"); return;
+  }
   if (f.dataset.form === "card") {
     if (!v("t")) { cur.newCard.err = "O título é obrigatório."; paint(); return; }
     const lane = LANES.find(l => l.id === f.dataset.lane);

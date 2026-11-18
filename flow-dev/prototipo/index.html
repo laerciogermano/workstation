@@ -1537,6 +1537,14 @@ function fnIcon(u) {
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
 const EX_SECS = ["funcoes", "dados", "arquivos", "pessoas", "agentes", "modelos"];
+/** Mesmos toggles em todas as seções: abrir / fechar os itens filhos da seção (e a própria seção). */
+const secTools = k => `<button class="ib" data-act="sec-expand" data-sec="${k}" title="Abrir os itens filhos">${icon("chevrons-up-down")}</button><button class="ib" data-act="sec-collapse" data-sec="${k}" title="Fechar os itens filhos">${icon("chevrons-down-up")}</button>`;
+/** Chaves de sanfona (OPEN) dos itens com filhos de cada seção. Funções = composições abertas no Flow (FLOW_CLOSED). */
+function secKids(k) {
+  if (k === "dados") return stateCatalog().filter(d => dKids(d.name).length).map(d => "dt:" + d.name);
+  if (k === "arquivos") { ensureLayers(); return LAYERS.map(l => "ly:" + l.id); }
+  return [];
+}
 /** Sanfona do Flow (coluna Nome): ids fechados escondem filhos. Começa vazio = fluxos de exemplo abertos e visíveis. */
 const FLOW_CLOSED = new Set();
 let _flowRootOpened = null;
@@ -1746,27 +1754,27 @@ function explorer(s) {
     ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar funções, dados, pessoas…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
       <div class="ex-sec${q || !SEC_CLOSED.has("funcoes") ? " open" : ""}" data-sec="funcoes">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="funcoes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("circle")} Funções<span class="n">${nFuncoes}</span><button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="funcoes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("circle")} Funções<span class="n">${nFuncoes}</span>${secTools("funcoes")}<button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
         ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função. <button class="btn" data-act="new-flow" style="margin-left:6px;height:24px;font-size:11px">${icon("plus")}Fluxo</button></p>`}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("dados") ? " open" : ""}" data-sec="dados">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="dados" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("box")} Dados<span class="n">${stateCatalog().length}</span><button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="dados" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("box")} Dados<span class="n">${stateCatalog().length}</span>${secTools("dados")}<button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
         ${dadoSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum dado.</p>`}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("arquivos") ? " open" : ""}" data-sec="arquivos">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Módulos<span class="n">${layerRows.n}</span><button class="ib" data-act="new-modulo" title="Adicionar módulo">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Módulos<span class="n">${layerRows.n}</span>${secTools("arquivos")}<button class="ib" data-act="new-modulo" title="Adicionar módulo">${icon("plus")}</button></div>
         ${layerRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("pessoas") ? " open" : ""}" data-sec="pessoas">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="pessoas" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span><button class="ib" data-act="new-pessoa" title="Adicionar pessoa">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="pessoas" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("users-round")} Pessoas<span class="n">${pessoaRows.n}</span>${secTools("pessoas")}<button class="ib" data-act="new-pessoa" title="Adicionar pessoa">${icon("plus")}</button></div>
         ${pessoaRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("agentes") ? " open" : ""}" data-sec="agentes">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="agentes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span><button class="ib" data-act="new-agente" title="Adicionar agente">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="agentes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("user-round-cog")} Agentes<span class="n">${agentRows.n}</span>${secTools("agentes")}<button class="ib" data-act="new-agente" title="Adicionar agente">${icon("plus")}</button></div>
         ${agentRows.html}
       </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("modelos") ? " open" : ""}" data-sec="modelos">
-        <div class="ex-sec-h" data-act="sec-toggle" data-sec="modelos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("bot")} Modelos<span class="n">${modelRows.n}</span><button class="ib" data-act="new-modelo" title="Adicionar modelo">${icon("plus")}</button></div>
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="modelos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("bot")} Modelos<span class="n">${modelRows.n}</span>${secTools("modelos")}<button class="ib" data-act="new-modelo" title="Adicionar modelo">${icon("plus")}</button></div>
         ${modelRows.html}
       </div>`}</div></div>
     <div class="ex-cfg"><button data-act="catalog" class="${s.v === "catalog" ? "on" : ""}">${icon("settings-2")}<span><b>Configurações</b><small>IA · Node.js · Pessoas · ${CAT.length} no catálogo</small></span></button></div>
@@ -3508,6 +3516,17 @@ const ACT = {
   // dado no Flow (□ ■ e nomes): abre o painel para definir valor; abstrato com valor vira concreto e vai para um arquivo
   "reveal-dado": t => { const n = t.dataset.n; if (!n) return false; revealDado(n); unset("drawer", "agCfg", "mdCfg", "mach"); cur.dadoEdit = n; cur.estado = n; },
   "sec-toggle": t => { const k = t.dataset.sec; SEC_CLOSED.has(k) ? SEC_CLOSED.delete(k) : SEC_CLOSED.add(k); },
+  "sec-expand": t => {
+    const k = t.dataset.sec; SEC_CLOSED.delete(k);
+    secKids(k).forEach(id => OPEN.add(id));
+    if (k === "funcoes") FLOW_CLOSED.clear(); // composições abertas no Flow
+  },
+  "sec-collapse": t => {
+    const k = t.dataset.sec, ks = secKids(k);
+    if (k === "funcoes") U.filter(u => !u.arch && !isFolder(u) && !isData(u) && kidsPlan(u.id).some(x => !x.arch && !isFolder(x) && !isData(x))).forEach(u => FLOW_CLOSED.add(u.id));
+    else if (ks.length) ks.forEach(id => OPEN.delete(id));
+    else SEC_CLOSED.add(k); // seção sem itens com filhos (Pessoas, Agentes, Modelos): fecha a seção
+  },
   // clique no elemento do Flow: só seleciona e mostra as ações (Editar · Filho · Irmão); o painel abre em Editar
   fsel: t => { const id = t.dataset.id; unset("drawer", "dadoEdit", "agCfg", "mdCfg"); cur.sel = id; setFlowRootFrom(id); },
   "dado-kid": t => { const n = t.dataset.n; unset("drawer", "agCfg", "mdCfg"); cur.dadoEdit = n; cur.estado = n; OPEN.add("dt:" + n); cur.focusKid = true; },

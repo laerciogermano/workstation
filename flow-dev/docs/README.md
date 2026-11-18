@@ -30,7 +30,7 @@ Esteira enxuta (visão → protótipo). Detalhe de BDD/US fica no Plans quando c
 | Explorar | Sem seção **Projetos**; **Funções** = só funções; **Dados** = lista plana de dados |
 | Adicionar fluxo / dado | `+` em Funções e Dados; menu de contexto |
 | Definir valor do dado | Painel no clique; com valor → concreto (sólido), sem valor → abstrato |
-| Clique abre o detalhe | Clique seleciona e mostra **Editar · Novo · Novo irmão** (padrão da Árvore do Plans) |
+| Clique abre o detalhe | Clique seleciona e mostra **Editar · Filho · Irmão** (padrão da Árvore do Plans) |
 | Agrupadores Pessoal / Site em Funções | Só funções, e o nome é sempre verbo |
 | Ícone de função por tipo de agente | Sólido = tudo preenchido · preto = falta filha · vazado = sem responsável |
 | Dado plano | Dado com campos filhos (opcional) e **Tipo** no painel |

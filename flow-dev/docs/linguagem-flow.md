@@ -360,7 +360,7 @@ do {
 
 ## 13. Editar o fluxo
 
-1. **Clique** num elemento (linha ou barra). Ele fica selecionado e aparece a barra **Editar · Novo · Novo irmão**, como na Árvore do Plans.
+1. **Clique** num elemento (linha ou barra). Ele fica selecionado e aparece a barra **Editar · Filho · Irmão**, como na Árvore do Plans.
 2. **Editar** abre a janela de edição (título, contexto, responsável, entradas e saídas).
 3. **Novo** cria um **elemento filho**. Se o elemento ainda não tinha filhos, ele vira composição.
 4. **Novo irmão** cria o próximo passo logo abaixo e herda a sequência (a → novo → b).
@@ -378,7 +378,7 @@ do {
 
 - Cada seção (Funções, Dados, Módulos, Pessoas, Agentes, Modelos) abre e fecha pelo título.
 - **Funções** mostra só funções. Não há agrupadores do tipo “Pessoal” ou “Site institucional”: o que não é verbo não entra.
-- O hover numa função mostra **Editar · Novo · Novo irmão**; o hover num dado mostra **Editar · Novo campo**.
+- O hover numa função mostra **Editar · Filho · Irmão**; o hover num dado mostra **Editar · Novo campo**.
 
 ## 15. Do desenho ao código
 

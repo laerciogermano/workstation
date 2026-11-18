@@ -57,6 +57,7 @@
 :root[data-tema="eternos"] .node .fi.dado.abs svg { fill: #0b0b0b; stroke: #0b0b0b; } /* abstrato = preto */
 :root[data-tema="eternos"] .gantt.flow .grow.sel, :root[data-tema="eternos"] .gantt.flow .grows-r .rr.sel { background: rgba(0,0,0,.07); box-shadow: inset 0 -1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(0,0,0,.25); }
 :root[data-tema="eternos"] .fband, :root[data-tema="eternos"] .gantt.flow .grow.ifrow { background: rgba(0,0,0,.035); }
+:root[data-tema="eternos"] .gantt.flow { --warn: #0b0b0b; --ok: #444444; } /* Flow sem dourado: if, senão e repetição em preto/cinza */
 :root[data-tema="eternos-black"] {
   /* Eternos Mutáveis Black: mesmo sentido (material/concreto = branco · abstrato = preto) sobre fundo preto */
   --accent: #f2f2f2; --accent-2: #d8d8d8; --on-accent: #0b0b0b;
@@ -93,6 +94,7 @@
 :root[data-tema="eternos-black"] .node .fi.dado.abs svg { fill: #000; stroke: #f2f2f2; }
 :root[data-tema="eternos-black"] .gantt.flow .grow.sel { background: rgba(255,255,255,.08); }
 :root[data-tema="eternos-black"] .gantt.flow .grow.ifrow, :root[data-tema="eternos-black"] .gantt.flow .grow.forrow { background: rgba(255,255,255,.04); }
+:root[data-tema="eternos-black"] .gantt.flow { --warn: #f2f2f2; --ok: #c4c4c4; } /* Flow sem dourado */
 /* Tablet Black: fundo preto estilo tablet; dados = roxo; funções + fontes de dados = azul */
 :root[data-tema="tablet-black"] {
   --accent: #5b8cff; --accent-2: #7aa2ff; --on-accent: #0a0a0a;
@@ -643,7 +645,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
 .gantt.flow .grow { position: relative; }
 .gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
-.gantt.flow .grow:hover .fl-tools, .gantt.flow .grow.sel .fl-tools { display: flex; }
+.gantt.flow .grow:hover .fl-tools { display: flex; } /* ações só no hover, nunca no clique */
 .gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
 .gantt.flow .grow .fl-tools .ib:hover { color: var(--accent); }
 .gantt.flow .grow .fl-tools .ib svg { width: 14px; height: 14px; }
@@ -667,7 +669,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* ações no nó do Explorar (padrão da Árvore do Plans) */
 .node { position: relative; }
 .node .ex-tools { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; gap: 1px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
-.node:hover .ex-tools, .node.sel .ex-tools { display: flex; }
+.node:hover .ex-tools { display: flex; } /* só no hover */
 .node .ex-tools .ib { width: 22px; height: 20px; color: var(--muted); }
 .node .ex-tools .ib:hover { color: var(--accent); }
 .node .ex-tools .ib svg { width: 13px; height: 13px; }
@@ -695,7 +697,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gright .bar-tools .ib:hover { color: var(--accent); background: var(--panel); }
 .gright .bar-tools .ib.danger:hover { color: var(--fail); background: color-mix(in srgb, var(--fail) 12%, transparent); }
 .gright .bar-tools .ib svg { width: 13px; height: 13px; }
-.gright .bar-tools.on, .gright .bar-tools.hov { display: flex; }
+.gright .bar-tools.hov { display: flex; } /* ações só no hover, nunca no clique */
 .gright .bar-tools.hov { z-index: 6; }
 @keyframes btIn { from { opacity: 0; transform: translateY(3px); } }
 .dado-layer { width: 100%; height: 30px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--paper); color: var(--ink); font: 500 12px var(--mono); padding: 0 8px; }
@@ -2209,17 +2211,20 @@ function flow(s) {
     if (isData(u)) { const cx = OX + (L.s + 1) * W; return { x1: cx - 7, x2: cx + 7, cx, ix: cx, ox: cx, data: true }; }
     return { x1: OX + L.s * W + INS, x2: OX + (L.e + 1) * W - INS, ix: OX + L.s * W, ox: OX + (L.e + 1) * W };
   };
+  // recuo do Nome segue a sequência do fluxo: cada passo (sN) empurra a linha para a direita; paralelos ficam alinhados
+  const s0Root = (layout[rootId] || { s: 0 }).s;
+  const ind = (u, d) => d * 18 + Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root)) * 16;
   const leftRow = ({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">
-      <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
+      <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${r.d * 18 + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2228,7 +2233,7 @@ function flow(s) {
     const uniq = [...new Map(tg.map(t => [t.id, t])).values()];
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
   };
-  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}"><span class="nm" style="padding-left:${r.d * 18 + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
+  const left = disp.map(r => r.lp ? `<div class="grow fl-cols ifrow forrow" data-own="${r.lp.id}" data-io="lp" title="Repetição (documento FOP, item 13)"><span class="nm" style="padding-left:${ind(r.lp, r.d) + 10}px"><span class="lpd">↻</span><b class="mono">${esc(lpTxt(r.lp))}</b></span><span></span></div>` : r.io ? ioLeft(r) : r.st ? `<div class="grow fl-cols ifrow" title="Seleção (documento FOP, item 12)${esc(senaoOf(r.st))}"><span class="nm" style="padding-left:${ind(rows[r.st.i0].u, r.d) + 10}px"><span class="ifd"></span><b class="mono">if (${esc(r.st.test)})${esc(senaoOf(r.st))}</b></span><span></span></div>` : leftRow(r)).join("");
   // dados por estado: s0 = entradas abstratas (outra camada/state); sN = saídas novas; stBag = bag acumulado em sN
   const fnRowsPre = rows.map(r => r.u).filter(u => !isData(u) && !hasK(u));
   const prodSetPre = new Set(fnRowsPre.flatMap(u => (u.outs || []).map(o => o[0])));

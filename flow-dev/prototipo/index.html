@@ -3367,7 +3367,7 @@ function fnKeyMove(u, key) {
   }
   paint();
   if (ok) toast(`${u.title}: ${msg}`, "move");
-  else if (no) toast(no, "info");
+  else toast(no || `${u.title}: nenhum movimento possível para essa seta`, "info");
 }
 const isPar = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 /** ← : u passa a rodar no mesmo passo do irmão anterior a (mesmas entradas de sequência; quem vinha depois de u espera os dois). */
@@ -3898,6 +3898,9 @@ document.addEventListener("keydown", e => {
   }
   if (typing) return;
   const sel = cur.sel && $u(cur.sel);
+  if (e.key.startsWith("Arrow") && !e.shiftKey && !(e.metaKey || e.ctrlKey) && !e.altKey && cur.v === "flow" && (!sel || isFolder(sel) || isData(sel))) {
+    e.preventDefault(); toast(sel ? "As setas movem só funções: selecione uma função" : "Clique numa função para movê-la com as setas", "info"); return;
+  }
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
   // atalhos do Flow: C cria · ← paralelo/pai · ↑ paralelo·troca·pai · → sequência · ↓ troca/sequência · E edita

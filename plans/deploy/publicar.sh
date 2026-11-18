@@ -21,12 +21,14 @@ sshpass -e rsync -az \
 sshpass -e ssh -o StrictHostKeyChecking=no "root@$HOST" bash -s <<'REMOTE'
 set -euo pipefail
 chown -R www-data:www-data /opt/plans
+# Conf já traz :443 + certs — evita janela sem HTTPS (antes o template só :80 caía no centralizador).
 install -m 644 /tmp/nginx-plans.conf /etc/nginx/sites-available/plans
 ln -sfn /etc/nginx/sites-available/plans /etc/nginx/sites-enabled/plans
 nginx -t
 systemctl reload nginx
 
-if dig +short plans.laerciogermano.com A | grep -q 185.250.37.82; then
+if [[ ! -s /etc/letsencrypt/live/plans.laerciogermano.com/fullchain.pem ]] \
+  && dig +short plans.laerciogermano.com A | grep -q 185.250.37.82; then
   certbot --nginx -d plans.laerciogermano.com --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect || true
 fi
 REMOTE

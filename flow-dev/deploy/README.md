@@ -13,6 +13,10 @@
 SSHPASS='…' bash deploy/publicar.sh
 ```
 
+`nginx-flow-ide.conf` já inclui **:443 + fullchain**. Antes o template era só `:80` e o `publicar.sh` dava reload antes do certbot — na janela (ou se o certbot falhasse) o HTTPS caía no default (`centralizador`) e o browser “não acessava” o Flow IDE.
+
+**Voltar ao bug:** conf só com `listen 80` + reload sem SSL.
+
 ## Rollback
 
 1. hPanel → DNS `laerciogermano.com` → excluir A `flow-ide`

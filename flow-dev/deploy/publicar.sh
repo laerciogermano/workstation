@@ -21,12 +21,14 @@ sshpass -e rsync -az \
 sshpass -e ssh -o StrictHostKeyChecking=no "root@$HOST" bash -s <<'REMOTE'
 set -euo pipefail
 chown -R www-data:www-data /opt/flow-ide
+# Conf já traz :443 + certs — evita janela sem HTTPS (antes o template só :80 caía no centralizador).
 install -m 644 /tmp/nginx-flow-ide.conf /etc/nginx/sites-available/flow-ide
 ln -sfn /etc/nginx/sites-available/flow-ide /etc/nginx/sites-enabled/flow-ide
 nginx -t
 systemctl reload nginx
 
-if dig +short flow-ide.laerciogermano.com A | grep -q 185.250.37.82; then
+if [[ ! -s /etc/letsencrypt/live/flow-ide.laerciogermano.com/fullchain.pem ]] \
+  && dig +short flow-ide.laerciogermano.com A | grep -q 185.250.37.82; then
   certbot --nginx -d flow-ide.laerciogermano.com --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect || true
 fi
 REMOTE

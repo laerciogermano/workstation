@@ -3883,6 +3883,9 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (!player.classList.contains("open")) { const th = e.target.closest?.(".thumb"); if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openT(th.dataset.open); } return; }
+  // select (responsável, tipo…) ou botão que ficou com foco depois do clique não pode engolir as setas do Flow
+  const ae0 = document.activeElement;
+  if (e.key.startsWith("Arrow") && cur.v === "flow" && cur.sel && ae0 && /SELECT|BUTTON/.test(ae0.tagName) && ae0.closest(".gantt.flow, .bar-tools, .fl-tools")) ae0.blur();
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
   if (e.key === "Escape") {
     if (cur.ctx || cur.picker) { closeOverlays(); paint(); return; }

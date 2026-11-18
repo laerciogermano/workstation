@@ -1535,6 +1535,7 @@ function topOf(u) { let x = u; while (x?.parent && !isFolder($u(x.parent))) x = 
 /** Valores definidos no state: com valor, o dado deixa de ser abstrato (fica concreto / sólido). */
 const DATA_VAL = {};
 /** Dado em árvore (opcional): campos filhos com caminho completo (dados_cliente.nome). Sem filhos = dado simples. */
+const SYNTH_IN = new Set(); // cubos de entrada gerados na visualização (várias entradas = um cubo)
 const DATA_KIDS = {
   dados_cliente: ["dados_cliente.nome", "dados_cliente.cnpj", "dados_cliente.contatos"],
   "dados_cliente.contatos": ["dados_cliente.contatos.email", "dados_cliente.contatos.telefone"],
@@ -2227,7 +2228,9 @@ function flow(s) {
   structs.forEach(st => { st.i0 = Math.min(...st.body.map(id => rIdx[id])); (headAt[st.i0] = headAt[st.i0] || []).push(st); });
   // cada função ocupa 3 linhas: entrada (dados que recebe) · task (barra) · saída (dados que produz)
   const leaf = u => !isData(u) && !flowKids(u).length;
-  const newIns = u => u.ins || []; // cada função mostra toda a sua entrada e toda a sua saída (repetir entre funções é esperado)
+  // cada entrada/saída é UM dado ou UM cubo: várias entradas viram um cubo "entrada_<função>" só na visualização
+  const synthIn = u => { const n = "entrada_" + String(u.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""); DATA_KIDS[n] = u.ins.slice(); DATA_TYPE[n] = "objeto"; SYNTH_IN.add(n); return n; };
+  const newIns = u => (u.ins || []).length > 1 ? [synthIn(u)] : (u.ins || []);
   const disp = [];
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
@@ -2251,7 +2254,7 @@ function flow(s) {
   const leafFns = id => desc(id).filter(x => !x.arch && !isFolder(x) && !isData(x) && !flowKids(x).length);
   const prodIn = id => new Set(leafFns(id).flatMap(x => (x.outs || []).map(o => o[0])));
   const layerProd = {}; tops.forEach(t => layerProd[t] = prodIn(t));
-  const absData = (u, n) => !dadoHasValue(n) && !(layerProd[flowTop(u).id] || new Set()).has(n);
+  const absData = (u, n) => SYNTH_IN.has(n) ? dKids(n).some(k => absData(u, k)) : !dadoHasValue(n) && !(layerProd[flowTop(u).id] || new Set()).has(n);
   const fnKind = u => { const a = agent(u.agent); return !a ? "nag" : a.type === "ia" ? "abs" : "conc"; };
   const itD = (n, a, t) => `<span class="it" title="${esc(n)} · dado ${a ? "abstrato (state)" : "concreto"}${t ? " · " + t : ""}"><i class="mk${a ? " a" : ""}"></i>${esc(n)}</span>`;
   const itF = (n, a) => `<span class="it fn" title="${esc(n)} · função ${a ? "abstrata (state)" : "concreta (import)"}"><i class="mk f${a ? " a" : ""}"></i>${esc(n)}</span>`;
@@ -2387,11 +2390,11 @@ function flow(s) {
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
-    const inNames = idxIn[u.id] != null ? newIns(u) : (u.ins || []);
-    const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : (u.ins || []).some(n => absData(u, n));
+    const inNames = newIns(u);
+    const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : newIns(u).some(n => absData(u, n));
     const inTip = inAbs ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)";
     if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>`; }
-    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMarks(u.ins || [], g.ix, y, `fdot${inAbs ? " a" : ""}`, inTip)}`;
+    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMarks(newIns(u), g.ix, y, `fdot${inAbs ? " a" : ""}`, inTip)}`;
     if (idxOut[u.id] != null) { const yo = yMid(idxEnd[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>`; }
     else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/>${ioMarks((u.outs || []).map(o => o[0]), g.ox, y, "fdot", "saída concreta")}`;
   });

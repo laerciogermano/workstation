@@ -207,3 +207,13 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Notas Flow: Nome · Responsável | Responsável · Task |
 
 **Voltar:** hero `T-32`; label Módulos; `run-plan` só IA; remover `T-37` / status `wait` / `complete`.
+
+## Protótipo · Explorar = Arquivos + responsáveis tipados
+
+| Antes | Depois |
+|---|---|
+| Seções Funções · Dados · Arquivos · Pessoas · Agentes · Modelos | Só **Arquivos · Pessoas · Agentes · Modelos** (funções e dados moram dentro do arquivo) |
+| Responsável: script / lib / IA / pessoa | **arquivo · lib · pessoa · agente · modelo** (`file:…` / `md:…` + CAT) |
+| Cabeçalho Flow “N camadas · abstratos · concretos · contexto completo” | Já removido; limpa `nAbs`/`nConc` mortos e nota T-32 |
+
+**Voltar:** seções Funções/Dados; picker com `script`; tipar só CAT clássico.

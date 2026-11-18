@@ -590,6 +590,16 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ring .val { stroke-linecap: round; }
 .ring b { position: relative; font-size: 7.5px; letter-spacing: -.02em; font-weight: 600; color: var(--ink); }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
+/* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
+.gantt.flow .grow { position: relative; }
+.gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
+.gantt.flow .grow:hover .fl-tools, .gantt.flow .grow.sel .fl-tools { display: flex; }
+.gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
+.gantt.flow .grow .fl-tools .ib:hover { color: var(--accent); }
+.gantt.flow .grow .fl-tools .ib svg { width: 14px; height: 14px; }
+.gantt.flow .grow .fl-tools i.sep { width: 1px; margin: 3px 1px; background: var(--line); }
+.gantt.flow .grow .nm input.fl-ren { flex: 1; min-width: 0; height: 24px; border: 1px solid var(--accent); border-radius: 5px; padding: 0 6px; font: inherit; color: var(--ink); background: var(--paper); outline: none; }
+.dado-layer { width: 100%; height: 30px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--paper); color: var(--ink); font: 500 12px var(--mono); padding: 0 8px; }
 .fav { width: 22px; height: 22px; border-radius: 50%; flex: none; display:grid; place-items:center; color: var(--t-ia); background: #fff; border: 1.5px solid var(--t-ia); } /* preenchido = fundo branco */
 .fav svg { width: 12px; height: 12px; }
 .fav.maquina { background: #fff; border-color: var(--brand, var(--ok)); color: var(--brand, var(--ok)); } /* Node = verde done */
@@ -1634,7 +1644,12 @@ function dadoPanel(s) {
         <span class="fi dado${abs ? " abs" : ""}" style="width:22px;height:22px;display:grid;place-items:center;color:var(--dado)">${icon("box")}</span>
         <div><b class="mono" style="font-size:16px">${esc(name)}</b><div style="font-size:12px;color:var(--muted)">${abs ? "Abstrato (preto) · sem valor no state" : "Concreto (sólido) · valor definido"}</div></div>
       </div>
-      <div class="fld"><label>Valor</label><textarea data-dado-val="${esc(name)}" rows="4" placeholder="Defina o valor — o dado deixa de ser abstrato">${esc(DATA_VAL[name] || "")}</textarea>
+      <div class="fld"><label>Valor</label><textarea data-dado-val="${esc(name)}" rows="4" placeholder="Defina o valor — o dado deixa de ser abstrato">${esc(DATA_VAL[name] || "")}</textarea></div>
+      <div class="fld"><label>Arquivo (layer)</label>${(() => { ensureLayers(); const curL = dadoLayer(name), sug = curL ? curL.file : dadoLayerSug(name);
+        const files = [...new Set([...LAYERS.map(l => l.file), sug])];
+        return `<select class="dado-layer" data-dado-layer="${esc(name)}" data-act="noop">${files.map(f => `<option value="${esc(f)}"${f === sug ? " selected" : ""}>${esc(f)}${curL && f === curL.file ? " · atual" : !LAYERS.some(l => l.file === f) ? " · novo" : ""}</option>`).join("")}<option value="__new">Outro arquivo…</option></select>
+          <input class="dado-layer" data-dado-file="${esc(name)}" data-act="noop" placeholder="nome.data.js" style="margin-top:6px;display:none">
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Com valor, o dado fica concreto e passa a morar neste arquivo (Explorar › Arquivos).</p>`; })()}
         <div style="display:flex;gap:8px;margin-top:8px">
           <button class="btn pri" data-act="dado-save" data-n="${esc(name)}">${icon("check")}Salvar valor</button>
           ${has ? `<button class="btn" data-act="dado-clear" data-n="${esc(name)}">${icon("eraser")}Limpar</button>` : ""}
@@ -1944,7 +1959,8 @@ function flow(s) {
     const dur = isData(u) ? 0 : L.e - L.s + 1;
     const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="drawer" data-id="${u.id}">
-      <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}<b>${esc(u.title)}</b></span>
+      <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
+      ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Adicionar elemento"><button class="ib" data-act="fn-before" data-id="${u.id}" title="Elemento irmão acima (⇧Enter)">${icon("between-horizontal-start")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Elemento irmão abaixo (Enter)">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Elemento filho (Tab)">${icon("corner-down-right")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : avatar(u.agent)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
@@ -2715,6 +2731,7 @@ function ctxMenu(s) {
     ${it("new-flow", "workflow", "Novo fluxo")}${it("new-dado", "box", "Novo dado")}<hr>
     ${it("new-file", "file-plus", "Novo arquivo")}${it("new-folder", "folder-plus", "Nova pasta")}<hr>
     ${it("rename", "pencil", "Renomear", "F2")}${it("dup", "copy-plus", "Duplicar", "⌘D")}${it("cut", "scissors", "Recortar", "⌘X")}${it("copy", "copy", "Copiar", "⌘C")}${CLIP ? it("paste", "clipboard-paste", "Colar", "⌘V") : ""}${it("copy-path", "link", "Copiar caminho", "⌥⌘C")}<hr>
+    ${u && !isFolder(u) && !isData(u) ? it("fn-before", "between-horizontal-start", "Elemento irmão acima", "⇧↵") + it("fn-after", "between-horizontal-end", "Elemento irmão abaixo", "↵") + it("fn-child", "corner-down-right", "Elemento filho", "⇥") + "<hr>" : ""}
     ${u && !isFolder(u) ? it("open-in-flow", "workflow", "Abrir no Flow") + "<hr>" : ""}
     ${it("ask-rm", "trash-2", "Remover", "⌫", "danger")}</div>`;
 }
@@ -3077,6 +3094,48 @@ function create(parent, kind, title, extra = {}) {
   const u = { id: "n" + (++seq), uuid: uuidFor(seq), kind, title, parent: parent || null, col: COLS[0].id, lane, plan: p?.plan || root?.plan || "padrao", arch: false, ...extra };
   U.push(u); if (parent) OPEN.add(parent); return u;
 }
+/** Novo elemento de função no Flow: "child" = último filho · "after"/"before" = irmão. Entra na sequência (DEPS) e já abre para renomear. */
+function addFnEl(refId, mode) {
+  const ref = $u(refId); if (!ref) return null;
+  const parent = mode === "child" ? ref.id : ref.parent;
+  const sibs = kidsPlan(mode === "child" ? ref.id : ref.parent).filter(k => !k.arch && !isFolder(k) && !isData(k));
+  const u = create(parent, "file", "Nova função", { plan: ref.plan, lane: ref.lane, col: COLS[0].id });
+  U.splice(U.indexOf(u), 1);
+  const tail = id => { const d = desc(id); return d.length ? Math.max(...d.map(x => U.indexOf(x))) : U.indexOf($u(id)); };
+  if (mode === "before") U.splice(U.indexOf(ref), 0, u);
+  else if (mode === "after") U.splice(tail(ref.id) + 1, 0, u);
+  else U.splice(tail(ref.id) + 1, 0, u);
+  const sib = new Set(sibs.map(k => k.id));
+  if (mode === "child") { const last = sibs[sibs.length - 1]; if (last) DEPS.push([last.id, u.id]); }
+  else if (mode === "after") { DEPS.forEach(dp => { if (dp[0] === ref.id && sib.has(dp[1])) dp[0] = u.id; }); DEPS.push([ref.id, u.id]); }
+  else { DEPS.forEach(dp => { if (dp[1] === ref.id && sib.has(dp[0])) dp[1] = u.id; }); DEPS.push([u.id, ref.id]); }
+  if (parent) OPEN.add(parent);
+  unset("drawer", "ctx", "dadoEdit");
+  cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
+  return u;
+}
+/** Elemento novo cancelado com Esc: sai de U e a sequência é religada (a → novo → b volta a a → b). */
+function dropFresh(id) {
+  const ins = DEPS.filter(d => d[1] === id).map(d => d[0]), outs = DEPS.filter(d => d[0] === id).map(d => d[1]);
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][0] === id || DEPS[i][1] === id) DEPS.splice(i, 1);
+  ins.forEach(a => outs.forEach(b => { if (!DEPS.some(d => d[0] === a && d[1] === b)) DEPS.push([a, b]); }));
+  removeIds([id]); unset("fresh", "ren"); cur.sel = null;
+}
+const slugFile = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const dadoLayer = name => LAYERS.find(l => l.items.some(i => i[0] === "dado" && i[1] === name)) || null;
+/** Arquivo sugerido para um dado que ganhou valor: a layer de quem o consome (ou estado.data.js). */
+function dadoLayerSug(name) {
+  const c = U.find(x => !x.arch && (x.ins || []).includes(name));
+  const home = c ? (c.parent && !isFolder($u(c.parent)) ? $u(c.parent) : c) : null;
+  return home ? slugFile(home.title) + ".layer.js" : "estado.data.js";
+}
+function putDadoInLayer(name, file) {
+  LAYERS.forEach(l => { l.items = l.items.filter(i => !(i[0] === "dado" && i[1] === name)); });
+  let L = LAYERS.find(l => l.file === file);
+  if (!L) { L = { id: "lv" + (LAYERS.length + 1), file, items: [] }; LAYERS.push(L); }
+  L.items.push(["dado", name]); OPEN.add("ly:" + L.id);
+  return L;
+}
 function removeIds(ids) {
   const all = new Set(); ids.forEach(id => { all.add(id); desc(id).forEach(k => all.add(k.id)); });
   U = U.filter(u => !all.has(u.id));
@@ -3106,7 +3165,11 @@ const ACT = {
     if (cur.v !== "flow") view("flow");
   },
   noop: () => false,
-  "reveal-dado": t => { revealDado(t.dataset.n); },
+  // dado no Flow (□ ■ e nomes): abre o painel para definir valor; abstrato com valor vira concreto e vai para um arquivo
+  "reveal-dado": t => { const n = t.dataset.n; if (!n) return false; revealDado(n); unset("drawer", "agCfg", "mdCfg", "mach"); cur.dadoEdit = n; cur.estado = n; },
+  "fn-child": t => { addFnEl(t.dataset.id || cur.sel, "child"); },
+  "fn-after": t => { addFnEl(t.dataset.id || cur.sel, "after"); },
+  "fn-before": t => { addFnEl(t.dataset.id || cur.sel, "before"); },
   "dado-edit": t => { const n = t.dataset.n; revealDado(n); unset("drawer", "agCfg", "mdCfg"); cur.dadoEdit = n; cur.estado = n; },
   "dado-close": () => { unset("dadoEdit"); },
   "dado-save": t => {
@@ -3114,7 +3177,13 @@ const ACT = {
     const ta = holder.querySelector(`textarea[data-dado-val="${n}"]`);
     const v = (ta?.value || "").trim();
     if (!v) { delete DATA_VAL[n]; toast(`${n}: valor limpo · voltou a abstrato`, "box"); }
-    else { DATA_VAL[n] = v; toast(`${n}: concreto (sólido)`, "box"); }
+    else {
+      DATA_VAL[n] = v;
+      const sel = holder.querySelector(`select[data-dado-layer="${n}"]`);
+      const file = (sel?.value === "__new" ? holder.querySelector(`input[data-dado-file="${n}"]`)?.value.trim() : sel?.value) || dadoLayerSug(n);
+      const L = putDadoInLayer(n, /\.js$/.test(file) ? file : file + ".data.js");
+      toast(`${n}: concreto (sólido) · em ${L.file}`, "box");
+    }
   },
   "dado-clear": t => { delete DATA_VAL[t.dataset.n]; toast(`${t.dataset.n}: sem valor · abstrato`, "eraser"); },
   "new-flow": () => {
@@ -3412,8 +3481,8 @@ holder.addEventListener("keydown", e => {
     return;
   }
   if (t.matches("[data-ren]")) {
-    if (e.key === "Enter") { const v = t.value.trim(); if (v) $u(t.dataset.ren).title = v; unset("ren"); paint(); if (v) toast("Renomeado em todas as visões"); }
-    if (e.key === "Escape") { e.stopPropagation(); unset("ren"); paint(); }
+    if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); const v = t.value.trim(), fresh = cur.fresh === t.dataset.ren; if (v) $u(t.dataset.ren).title = v; unset("ren", "fresh"); paint(); if (v) toast(fresh ? `Elemento “${v}” criado` : "Renomeado em todas as visões", fresh ? "circle-plus" : "circle-check"); }
+    if (e.key === "Escape") { e.stopPropagation(); if (cur.fresh === t.dataset.ren) dropFresh(t.dataset.ren); else unset("ren"); paint(); }
     return;
   }
   if (t.closest(".tnew") && e.key === "Escape") { e.stopPropagation(); unset("tnew"); paint(); return; }
@@ -3423,7 +3492,8 @@ holder.addEventListener("keydown", e => {
   }
   if (t.matches("[data-code]") && e.key === "Tab") { e.preventDefault(); const s = t.selectionStart; t.setRangeText("  ", s, t.selectionEnd, "end"); t.dispatchEvent(new Event("input", { bubbles: true })); }
 });
-holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren) { const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren"); setTimeout(paint, 0); } });
+holder.addEventListener("focusout", e => { if (e.target.matches("[data-ren]") && cur.ren && $u(cur.ren)) { const v = e.target.value.trim(); if (v) $u(cur.ren).title = v; unset("ren", "fresh"); setTimeout(paint, 0); } });
+holder.addEventListener("change", e => { const t = e.target; if (t.matches("select[data-dado-layer]")) { const i = holder.querySelector(`input[data-dado-file="${t.dataset.dadoLayer}"]`); if (i) { i.style.display = t.value === "__new" ? "" : "none"; if (t.value === "__new") i.focus(); } } });
 holder.addEventListener("submit", e => {
   e.preventDefault();
   const f = e.target, v = n => (f.elements[n]?.value || "").trim();
@@ -3511,6 +3581,7 @@ document.addEventListener("keydown", e => {
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
+  if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && (e.key === "Enter" || e.key === "Tab")) { e.preventDefault(); addFnEl(sel.id, e.key === "Tab" ? "child" : e.shiftKey ? "before" : "after"); paint(); return; }
   if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod))) { e.preventDefault(); ACT["ask-rm"]({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.key.toLowerCase() === "d") { e.preventDefault(); ACT.dup({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.key.toLowerCase() === "x") { ACT.cut({ dataset: { id: sel.id } }); paint(); return; }

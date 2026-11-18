@@ -77,6 +77,7 @@
 :root[data-tema="eternos-black"] .fview .sv-selr { fill: rgba(255,255,255,.08); }
 :root[data-tema="eternos-black"] .fview .sv-band, :root[data-tema="eternos-black"] .fview .sv-band.lp { fill: rgba(255,255,255,.04); }
 :root[data-tema="eternos-black"] .fsvg .fdot { fill: #ffffff; stroke: #ffffff; }
+:root[data-tema="eternos-black"] .fsvg path.fdot { stroke: #0b0b0b; } /* cubo branco com arestas visíveis */
 :root[data-tema="eternos-black"] .fsvg .fdot.a { fill: #000000; stroke: #f2f2f2; }
 :root[data-tema="eternos-black"] .fview .sv-fd rect, :root[data-tema="eternos-black"] .fview .sv-fd path { fill: #ffffff; stroke: #ffffff; }
 :root[data-tema="eternos-black"] .fview .sv-fd.ext rect, :root[data-tema="eternos-black"] .fview .sv-fd.ext path { fill: #000000; stroke: #f2f2f2; }
@@ -396,7 +397,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 /* linhas de entrada e saída de cada função */
 .gantt.flow .grow.iorow .nm { gap: 6px; font-size: 11px; }
 .gantt.flow .grow.iorow .io-k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; min-width: 46px; white-space: nowrap; flex: none; }
-.gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; }
+.gantt.flow .grow.iorow .nm b.io-d { flex: none; overflow: visible; display: inline-flex; align-items: center; gap: 3px; }
+.gantt.flow .io-cube { width: 9px; height: 10px; flex: none; fill: var(--paper); stroke: var(--dado); stroke-width: 1.1; stroke-linejoin: round; }
+.gantt.flow .io-sq { width: 7px; height: 7px; flex: none; border: 1.2px solid var(--dado); background: var(--paper); }
 .gantt.flow .grow.iorow .io-d, .flbl.fio-n b { font: 500 10.5px var(--mono); color: var(--body); cursor: pointer; }
 .flbl.fio-n { gap: 0; pointer-events: auto; }
 .flbl .c-out { pointer-events: auto; }
@@ -2233,7 +2236,7 @@ function flow(s) {
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}"><span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(", "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${dKids(n).length ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join(", ")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2316,17 +2319,26 @@ function flow(s) {
       svg += `<path class="fdep${hasK(A) || hasK(B) ? " dash" : ""}" d="${d}"/>`;
     });
   }
-  // dados □ sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
+  // entrada/saída: cubo quando algum dado da lista tem campos (árvore), □ quando são só folhas
+  const ioMark = (names, cx, cy, cls, n0, tip) => {
+    const at = `class="${cls}" data-act="reveal-dado" data-n="${esc(n0 || "")}"`, t = `<title>${tip}</title>`;
+    if (names.some(n => dKids(n).length)) {
+      const x = cx - 5, y = cy - 5.5;
+      return `<path ${at} stroke-linejoin="round" d="M${x + 5} ${y} L${x + 10} ${y + 2.7} L${x + 10} ${y + 8.3} L${x + 5} ${y + 11} L${x} ${y + 8.3} L${x} ${y + 2.7} Z M${x} ${y + 2.7} L${x + 5} ${y + 5.4} L${x + 10} ${y + 2.7} M${x + 5} ${y + 5.4} V${y + 11}">${t}</path>`;
+    }
+    return `<rect ${at} x="${cx - 4}" y="${cy - 4}" width="8" height="8">${t}</rect>`;
+  };
+  // dados □ / cubo sobre as divisórias (entrada em e_s, saída em e_e+1) com o toco até a barra
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const inNames = idxIn[u.id] != null ? newIns(u) : (u.ins || []);
     const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : (u.ins || []).some(n => absData(u, n));
     const inTip = inAbs ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)";
-    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/><rect class="fdot${inAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc(inNames[0] || "")}" x="${g.ix - 4}" y="${yi - 4}" width="8" height="8"><title>${esc(inNames.join(", "))} · ${inTip}</title></rect>`; }
-    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/><rect class="fdot${inAbs ? " a" : ""}" data-act="reveal-dado" data-n="${esc((u.ins || [])[0] || "")}" x="${g.ix - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.ins || []).join(", "))} · ${inTip}</title></rect>`;
-    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(u.outs[0][0])}" x="${g.ox - 4}" y="${yo - 4}" width="8" height="8"><title>${esc(u.outs.map(o => o[0]).join(", "))} · saída</title></rect>`; }
-    else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/><rect class="fdot" data-act="reveal-dado" data-n="${esc(((u.outs || [])[0] || [""])[0])}" x="${g.ox - 4}" y="${y - 4}" width="8" height="8"><title>${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta</title></rect>`;
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>${ioMark(inNames, g.ix, yi, `fdot${inAbs ? " a" : ""}`, inNames[0], `${esc(inNames.join(", "))} · ${inTip}`)}`; }
+    else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMark(u.ins || [], g.ix, y, `fdot${inAbs ? " a" : ""}`, (u.ins || [])[0], `${esc((u.ins || []).join(", "))} · ${inTip}`)}`;
+    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>${ioMark(u.outs.map(o => o[0]), g.ox, yo, "fdot", u.outs[0][0], `${esc(u.outs.map(o => o[0]).join(", "))} · saída`)}`; }
+    else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/>${ioMark((u.outs || []).map(o => o[0]), g.ox, y, "fdot", ((u.outs || [])[0] || [""])[0], `${esc((u.outs || []).map(o => o[0]).join(", "))} · saída concreta`)}`;
   });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {

@@ -1,3 +1,4 @@
+import { DEFAULT_LIB_TASKS } from "@flow/shared";
 import type { Db } from "../../db/pool";
 import { badRequest, conflict, notFound } from "../../shared/errors";
 import { getAgentId } from "../elements/elements.repo";
@@ -9,13 +10,17 @@ const modelId = async (db: Db, projectId: number, pub: string | null | undefined
   return r.id;
 };
 
-export async function createAgent(db: Db, projectId: number, b: { kind: string; name: string; sub: string; moduleFile?: string | null; modelId?: string | null; prompt?: string | null }): Promise<string> {
+const defaultTasks = (kind: string, name: string): string[] =>
+  kind === "maquina" ? (DEFAULT_LIB_TASKS[name] ?? []) : kind === "script" ? [name.replace(/\(\)\s*$/, "")] : [];
+
+export async function createAgent(db: Db, projectId: number, b: { kind: string; name: string; sub: string; moduleFile?: string | null; modelId?: string | null; prompt?: string | null; tasks?: string[] }): Promise<string> {
   let mid = await modelId(db, projectId, b.modelId);
   if (b.kind === "ia" && !mid) mid = (await db.query("select id from flow.models where project_id=$1 order by id limit 1", [projectId])).rows[0]?.id ?? null;
-  return (await db.query("insert into flow.agents (project_id, kind, name, sub, module_file, model_id, prompt) values ($1,$2,$3,$4,$5,$6,$7) returning public_id",
-    [projectId, b.kind, b.name, b.sub, b.moduleFile ?? null, mid, b.kind === "ia" ? b.prompt ?? "" : null])).rows[0].public_id;
+  const tasks = b.tasks?.length ? b.tasks : defaultTasks(b.kind, b.name);
+  return (await db.query("insert into flow.agents (project_id, kind, name, sub, module_file, model_id, prompt, tasks) values ($1,$2,$3,$4,$5,$6,$7,$8) returning public_id",
+    [projectId, b.kind, b.name, b.sub, b.moduleFile ?? null, mid, b.kind === "ia" ? b.prompt ?? "" : null, tasks])).rows[0].public_id;
 }
-export async function patchAgent(db: Db, projectId: number, id: string, p: { name?: string; sub?: string; modelId?: string | null; prompt?: string | null; photoUrl?: string | null }): Promise<void> {
+export async function patchAgent(db: Db, projectId: number, id: string, p: { name?: string; sub?: string; modelId?: string | null; prompt?: string | null; photoUrl?: string | null; tasks?: string[] }): Promise<void> {
   const aid = await getAgentId(db, projectId, id);
   const sets: string[] = [], args: unknown[] = [];
   const set = (c: string, v: unknown) => { args.push(v); sets.push(`${c} = $${args.length}`); };
@@ -23,6 +28,7 @@ export async function patchAgent(db: Db, projectId: number, id: string, p: { nam
   if (p.sub !== undefined) set("sub", p.sub);
   if (p.prompt !== undefined) set("prompt", p.prompt);
   if (p.photoUrl !== undefined) set("photo_url", p.photoUrl);
+  if (p.tasks !== undefined) set("tasks", p.tasks);
   if (p.modelId !== undefined) set("model_id", await modelId(db, projectId, p.modelId));
   if (!sets.length) return;
   args.push(aid);

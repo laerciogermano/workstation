@@ -4,100 +4,160 @@
    "id": "a1",
    "type": "ia",
    "name": "Lia",
-   "sub": "Agente · redação de propostas"
+   "sub": "Agente · redação de propostas",
+   "tasks": []
   },
   {
    "id": "a2",
    "type": "ia",
    "name": "Teo",
-   "sub": "Agente · tradução"
+   "sub": "Agente · tradução",
+   "tasks": []
   },
   {
    "id": "a3",
    "type": "ia",
    "name": "Nina",
-   "sub": "Agente · pesquisa e comparação"
+   "sub": "Agente · pesquisa e comparação",
+   "tasks": []
   },
   {
    "id": "a4",
    "type": "ia",
    "name": "Davi",
-   "sub": "Agente · revisão e aprovação"
+   "sub": "Agente · revisão e aprovação",
+   "tasks": []
   },
   {
    "id": "h1",
    "type": "pessoa",
    "name": "Ana Souza",
-   "sub": "Comercial · aprova propostas"
+   "sub": "Comercial · aprova propostas",
+   "tasks": []
   },
   {
    "id": "h2",
    "type": "pessoa",
    "name": "Bruno Lima",
-   "sub": "Jurídico · revisa contratos"
+   "sub": "Jurídico · revisa contratos",
+   "tasks": []
   },
   {
    "id": "h3",
    "type": "pessoa",
    "name": "Carla Dias",
-   "sub": "Sucesso do cliente · kickoff"
+   "sub": "Sucesso do cliente · kickoff",
+   "tasks": []
   },
   {
    "id": "h4",
    "type": "pessoa",
    "name": "Você",
-   "sub": "Decisões e compras pessoais"
+   "sub": "Decisões e compras pessoais",
+   "tasks": []
   },
   {
    "id": "s1",
    "type": "script",
    "name": "validarCnpj()",
    "sub": "cliente.data.js · função própria",
-   "mod": "cliente.data.js"
+   "mod": "cliente.data.js",
+   "tasks": [
+    "validarCnpj"
+   ]
   },
   {
    "id": "s2",
    "type": "script",
    "name": "calcularPrecoAnual()",
    "sub": "proposta.layer.js · função própria",
-   "mod": "proposta.layer.js"
+   "mod": "proposta.layer.js",
+   "tasks": [
+    "calcularPrecoAnual"
+   ]
   },
   {
    "id": "s3",
    "type": "script",
    "name": "montarBoasVindas()",
    "sub": "credenciais.layer.js · função própria",
-   "mod": "credenciais.layer.js"
+   "mod": "credenciais.layer.js",
+   "tasks": [
+    "montarBoasVindas"
+   ]
   },
   {
    "id": "m1",
    "type": "maquina",
    "name": "node:http",
-   "sub": "Node.js · requisições HTTP"
+   "sub": "Node.js · requisições HTTP",
+   "tasks": [
+    "get",
+    "post",
+    "request",
+    "createServer",
+    "put",
+    "patch",
+    "delete",
+    "head"
+   ]
   },
   {
    "id": "m2",
    "type": "maquina",
    "name": "node:fs",
-   "sub": "Node.js · sistema de arquivos"
+   "sub": "Node.js · sistema de arquivos",
+   "tasks": [
+    "readFile",
+    "writeFile",
+    "copyFile",
+    "mkdir",
+    "readdir",
+    "unlink",
+    "rename",
+    "appendFile",
+    "stat"
+   ]
   },
   {
    "id": "m3",
    "type": "maquina",
    "name": "node:path",
-   "sub": "Node.js · caminhos"
+   "sub": "Node.js · caminhos",
+   "tasks": [
+    "join",
+    "resolve",
+    "basename",
+    "dirname",
+    "extname",
+    "parse",
+    "format"
+   ]
   },
   {
    "id": "m4",
    "type": "maquina",
    "name": "node:crypto",
-   "sub": "Node.js · crypto"
+   "sub": "Node.js · crypto",
+   "tasks": [
+    "randomBytes",
+    "createHash",
+    "createHmac",
+    "randomUUID"
+   ]
   },
   {
    "id": "m5",
    "type": "maquina",
    "name": "node:stream",
-   "sub": "Node.js · streams"
+   "sub": "Node.js · streams",
+   "tasks": [
+    "pipeline",
+    "finished",
+    "Readable",
+    "Writable",
+    "Transform"
+   ]
   }
  ],
  "AGENT_CFG": {
@@ -1623,7 +1683,7 @@
   },
   {
    "id": "u10",
-   "title": "Coletar dados do cliente",
+   "title": "get",
    "parent": "u9",
    "agent": "m1",
    "col": "c5",
@@ -1782,7 +1842,7 @@
   },
   {
    "id": "u15",
-   "title": "Enviar ao cliente",
+   "title": "post",
    "parent": "u9",
    "agent": "m1",
    "col": "c1",
@@ -2386,7 +2446,7 @@
   },
   {
    "id": "u22",
-   "title": "Publicar build",
+   "title": "copyFile",
    "parent": "u42",
    "agent": "m2",
    "col": "c1",

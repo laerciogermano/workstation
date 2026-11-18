@@ -32,6 +32,8 @@ export interface StructDto { id: string; test: string; body: string[] }
 export interface AgentDto {
   id: string; kind: AgentKind; name: string; sub: string; moduleFile: string | null;
   modelId: string | null; prompt: string | null; photoUrl: string | null;
+  /** Tasks obrigatórias do responsável. Lib Node = métodos (ex.: node:http → get/post/…). */
+  tasks: string[];
 }
 export interface ModelDto { id: string; name: string; api: string; vendor: string; color: string }
 export interface ModuleItemDto { kind: ModuleItemKind; ref: string }

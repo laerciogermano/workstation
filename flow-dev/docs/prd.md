@@ -177,3 +177,12 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | — | `taskPick` / `data-task` + `syncTaskTitle` ao trocar responsável |
 
 **Voltar:** grid `minmax(0,1fr) 130px` + header Nome/Responsável; remover `tasks`/`taskPick`/`syncTaskTitle`; títulos em português livre.
+
+## App React (:5180) · mesma regra Responsável → Task
+
+| Antes | Depois |
+|---|---|
+| FlowView Nome · Responsável | Responsável · Task (`agentTasksOf` / `DEFAULT_LIB_TASKS`) |
+| Agentes sem `tasks` no banco | Migration `004_agent_tasks` + seed |
+
+**Voltar:** dropar coluna `tasks`; reverter FlowView/Drawer/CSS; migration down.

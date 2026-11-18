@@ -1,9 +1,10 @@
+import { DEFAULT_LIB_TASKS } from "@flow/shared";
 import seed from "../../seed/prototype-seed.json";
 import type { Db } from "../../db/pool";
 
 interface ProtoU { id: string; kind?: string; title: string; ctx?: string; parent: string | null; agent?: string; resp?: string; plan: string; st?: string; err?: string; prog?: number; ins?: string[]; outs?: [string, string][]; loop?: [string, string]; cond?: [string, string]; code?: string; arch?: boolean }
 interface Proto {
-  CAT: { id: string; type: string; name: string; sub: string; mod?: string }[];
+  CAT: { id: string; type: string; name: string; sub: string; mod?: string; tasks?: string[] }[];
   AGENT_CFG: Record<string, { model: string; prompt: string }>;
   MODELS: { id: string; name: string; api: string; vendor: string; cor: string }[];
   LAYERS: { id: string; file: string; items: [string, string][] }[];
@@ -13,6 +14,8 @@ interface Proto {
   PLANS: { id: string; name: string }[];
 }
 const proto = seed as unknown as Proto;
+const tasksFor = (c: Proto["CAT"][number]): string[] =>
+  c.tasks?.length ? c.tasks : c.type === "maquina" ? (DEFAULT_LIB_TASKS[c.name] ?? []) : c.type === "script" ? [c.name.replace(/\(\)\s*$/, "")] : [];
 
 /** Cria o projeto de exemplo (idêntico ao protótipo): 2 planos, catálogo, funções, dados, módulos. */
 export async function seedDemoProject(db: Db, ownerId: number, name: string): Promise<number> {
@@ -24,8 +27,8 @@ export async function seedDemoProject(db: Db, ownerId: number, name: string): Pr
   for (const m of proto.MODELS) modelId.set(m.id, (await q<{ id: number }>("insert into flow.models (project_id, name, api_id, vendor, color) values ($1,$2,$3,$4,$5) returning id", [projectId, m.name, m.api, m.vendor, m.cor]))[0]!.id);
   for (const c of proto.CAT) {
     const cfg = proto.AGENT_CFG[c.id];
-    agentId.set(c.id, (await q<{ id: number }>("insert into flow.agents (project_id, kind, name, sub, module_file, model_id, prompt) values ($1,$2,$3,$4,$5,$6,$7) returning id",
-      [projectId, c.type, c.name, c.sub, c.mod ?? null, cfg ? modelId.get(cfg.model) ?? null : null, cfg?.prompt ?? null]))[0]!.id);
+    agentId.set(c.id, (await q<{ id: number }>("insert into flow.agents (project_id, kind, name, sub, module_file, model_id, prompt, tasks) values ($1,$2,$3,$4,$5,$6,$7,$8) returning id",
+      [projectId, c.type, c.name, c.sub, c.mod ?? null, cfg ? modelId.get(cfg.model) ?? null : null, cfg?.prompt ?? null, tasksFor(c)]))[0]!.id);
   }
   // elementos: pais antes dos filhos (a ordem do protótipo já garante); position = ordem entre irmãos
   const sib = new Map<string, number>();

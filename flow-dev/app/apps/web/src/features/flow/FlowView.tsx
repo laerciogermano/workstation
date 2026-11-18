@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode } from "react";
-import { TYPE_INFO, type AgentDto, type ElementDto } from "@flow/shared";
+import { TYPE_INFO, agentTasksOf, type AgentDto, type ElementDto } from "@flow/shared";
 import { Icon } from "../../ui/Icon";
 import { brandOf, ST } from "../../ui/parts";
 import { useIde } from "../ide/ide";
@@ -9,7 +9,7 @@ import { MachPanel } from "../panels/MachPanel";
 const Z_MIN = 0.25, Z_MAX = 2.5;
 const tw = (t: string, px: number) => Math.ceil(String(t).length * px);
 
-/** Tela Flow: tabela Nome · Responsável + plano cartesiano FOP em SVG (estados sN nas divisórias). */
+/** Tela Flow: tabela Responsável · Task + plano cartesiano FOP em SVG (estados sN nas divisórias). */
 export function FlowView() {
   const ide = useIde();
   const { m, s, set } = ide;
@@ -99,7 +99,7 @@ export function FlowView() {
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
   };
 
-  // ---------- coluna Nome (tabela) ----------
+  // ---------- colunas Responsável · Task ----------
   const agentSelect = (u: ElementDto, a: AgentDto | undefined, respMode: boolean) => {
     const kinds = respMode ? (["ia", "pessoa", "maquina", "script"] as const) : (["script", "maquina", "ia", "pessoa"] as const);
     const cur = respMode ? m.agent(u.respId) : a;
@@ -117,57 +117,83 @@ export function FlowView() {
       </span>
     );
   };
+  const taskSelect = (u: ElementDto, a: AgentDto | undefined) => {
+    const ts = agentTasksOf(a);
+    if (!ts.length) {
+      return <b title="Clique para renomear" style={{ cursor: "text" }} onClick={e => { e.stopPropagation(); set({ ren: u.id, fresh: null, sel: u.id }); }}>{u.title}</b>;
+    }
+    const ok = ts.includes(u.title);
+    return (
+      <select className="task-pick" aria-label={`Task de ${a?.name ?? ""}`} title="Task cadastrada do responsável (obrigatória)"
+        value={ok ? u.title : ""}
+        onClick={e => e.stopPropagation()}
+        onChange={e => { const v = e.target.value; if (v) void ide.patchEl(u.id, { title: v }); }}>
+        {!ok && <option value="" disabled>{u.title || "escolher task…"}</option>}
+        {ts.map(t => <option key={t} value={t}>{t}</option>)}
+      </select>
+    );
+  };
   const leftRow = (u: ElementDto, d: number) => {
     const has = hasK(u), a = m.agent(u.agentId);
     const open = has && !s.flowClosed.has(u.id);
     const editing = s.ren === u.id;
+    const lead = has
+      ? <><span className="car" title="Abrir / fechar sanfona" onClick={e => { e.stopPropagation(); ide.toggleFlowClosed(u.id); }}><Icon n="chevron-down" /></span><span className="gi"><Icon n="network" /></span></>
+      : <span className="dot" />;
+    const resp = has
+      ? <span className="c-ag muted">—</span>
+      : <span className="c-ag">{a?.kind === "ia" ? agentSelect(u, a, true) : agentSelect(u, a, false)}
+          {a?.kind === "maquina" && <button className="code-b" title="Programar" onClick={e => { e.stopPropagation(); set({ mach: u.id, sel: u.id, drawer: null, console: null }); }}><Icon n="code-xml" /></button>}</span>;
+    const task = (
+      <span className="nm" style={{ paddingLeft: ind(u, d) + (has ? 0 : 10) }}>
+        {lead}
+        {editing
+          ? <input className="fl-ren" defaultValue={u.title} autoFocus aria-label="Task" onClick={e => e.stopPropagation()}
+              onFocus={e => e.currentTarget.select()}
+              onBlur={e => {
+                if (skipBlur.current) { skipBlur.current = false; return; }
+                const v = e.currentTarget.value.trim();
+                const ts = agentTasksOf(a);
+                if (v && ts.length && !ts.includes(v)) { ide.toast("Escolha uma task do catálogo do responsável", "triangle-alert"); void ide.renameCommit(u.id, ""); }
+                else if (v && !ts.length && v !== u.title && !isVerb(v) && !m.isData(u)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); void ide.renameCommit(u.id, ""); }
+                else void ide.renameCommit(u.id, v);
+                set({ sel: null });
+              }}
+              onKeyDown={e => {
+                if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); const ts = agentTasksOf(a); if (v && ts.length && !ts.includes(v)) { ide.toast("Escolha uma task do catálogo do responsável", "triangle-alert"); return; } if (v && !ts.length && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } skipBlur.current = true; void ide.renameCommit(u.id, v); }
+                if (e.key === "Escape") { e.stopPropagation(); skipBlur.current = true; void ide.renameCancel(u.id); }
+              }} />
+          : has ? <b>{u.title}</b> : (a ? taskSelect(u, a) : <b className="task-miss">{u.title || "sem task"}</b>)}
+      </span>
+    );
     return (
       <div key={"r" + u.id} className={"grow fl-cols" + (s.sel === u.id ? " sel" : "") + (has ? " grp" : "") + (open ? " open" : "")} onClick={() => ide.select(u.id)}>
         {gdA(u)}
-        <span className="nm" style={{ paddingLeft: ind(u, d) + (has ? 0 : 10) }}>
-          {has ? <><span className="car" title="Abrir / fechar sanfona" onClick={e => { e.stopPropagation(); ide.toggleFlowClosed(u.id); }}><Icon n="chevron-down" /></span><span className="gi"><Icon n="network" /></span></> : <span className="dot" />}
-          {editing
-            ? <input className="fl-ren" defaultValue={u.title} autoFocus aria-label="Nome do elemento" onClick={e => e.stopPropagation()}
-                onFocus={e => e.currentTarget.select()}
-                onBlur={e => {
-                  // clicar fora salva e desseleciona
-                  if (skipBlur.current) { skipBlur.current = false; return; }
-                  const v = e.currentTarget.value.trim();
-                  if (v && v !== u.title && !isVerb(v) && !m.isData(u)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); void ide.renameCommit(u.id, ""); }
-                  else void ide.renameCommit(u.id, v);
-                  set({ sel: null });
-                }}
-                onKeyDown={e => {
-                  if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); if (v && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } skipBlur.current = true; void ide.renameCommit(u.id, v); }
-                  if (e.key === "Escape") { e.stopPropagation(); skipBlur.current = true; void ide.renameCancel(u.id); }
-                }} />
-            : <b title="Clique para renomear" style={{ cursor: "text" }} onClick={e => { e.stopPropagation(); set({ ren: u.id, fresh: null, sel: u.id }); }}>{u.title}</b>}
-        </span>
+        {resp}{task}
         {!editing && (
           <span className="fl-tools" role="toolbar" aria-label="Ações do elemento">
             {has && <><button className="ib" title={open ? "Fechar filhos" : "Abrir filhos"} onClick={e => { e.stopPropagation(); ide.toggleFlowClosed(u.id); }}><Icon n={open ? "chevrons-down-up" : "chevrons-up-down"} /></button><i className="sep" /></>}
-            <button className="ib" title="Editar (abre a janela de edição)" onClick={e => { e.stopPropagation(); ide.openDrawer(u.id); }}><Icon n="pencil" /></button><i className="sep" />
-            <button className="ib" title="Filho · elemento filho" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "child"); }}><Icon n="plus" /></button>
-            {!m.isTopFn(u) && <button className="ib" title="Irmão · abaixo" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "after"); }}><Icon n="between-horizontal-end" /></button>}<i className="sep" />
+            <button className="ib" title="Editar" onClick={e => { e.stopPropagation(); ide.openDrawer(u.id); }}><Icon n="pencil" /></button><i className="sep" />
+            <button className="ib" title="Filho" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "child"); }}><Icon n="plus" /></button>
+            {!m.isTopFn(u) && <button className="ib" title="Irmão" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "after"); }}><Icon n="between-horizontal-end" /></button>}<i className="sep" />
             <button className="ib danger" title="Remover" onClick={e => { e.stopPropagation(); ide.askRemove([u.id]); }}><Icon n="trash-2" /></button>
           </span>)}
-        <span className="c-ag">{has ? null : a?.kind === "ia" ? agentSelect(u, a, true) : agentSelect(u, a, false)}
-          {a?.kind === "maquina" && !has && <button className="code-b" title="Programar" onClick={e => { e.stopPropagation(); set({ mach: u.id, sel: u.id, drawer: null, console: null }); }}><Icon n="code-xml" /></button>}</span>
       </div>);
   };
   const left = disp.map((r, i) => {
-    if (r.lp) return <div key={"lp" + i} className="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)">{gdA(r.lp)}<span className="nm" style={{ paddingLeft: ind(r.lp, r.d) + 10 }}><span className="lpd">↻</span><b className="mono">{lpTxt(r.lp)}</b></span><span /></div>;
+    if (r.lp) return <div key={"lp" + i} className="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)">{gdA(r.lp)}<span className="c-ag" /><span className="nm" style={{ paddingLeft: ind(r.lp, r.d) + 10 }}><span className="lpd">↻</span><b className="mono">{lpTxt(r.lp)}</b></span></div>;
     if (r.io) {
       const u = r.u!;
       return (
         <div key={"io" + i} className={"grow fl-cols iorow" + (s.sel === u.id ? " sel" : "")}>{gdA(u, true)}
-          <span className="nm" style={{ paddingLeft: ind(u, r.d) + 28 }}>
+          <span className="c-ag" />
+          <span className="nm" style={{ paddingLeft: ind(u, r.d) + 14 }}>
             <span className="io-k">{!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span>
             <span className="io-l" title={r.nm}><b className="io-d" onClick={() => ide.editDado(r.nm!)}>
               {m.isCube(r.nm!) ? <svg className="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5" /></svg> : <i className="io-sq" aria-label="dado" />}{r.nm}</b></span>
-          </span><span /></div>);
+          </span></div>);
     }
-    if (r.st) return <div key={"if" + i} className="grow fl-cols ifrow" title={"Seleção (documento FOP, item 12)" + senaoOf(r.st)}>{gdA(rows[r.st.i0]!.u)}<span className="nm" style={{ paddingLeft: ind(rows[r.st.i0]!.u, r.d) + 10 }}><span className="ifd" /><b className="mono">if ({r.st.test}){senaoOf(r.st)}</b></span><span /></div>;
+    if (r.st) return <div key={"if" + i} className="grow fl-cols ifrow" title={"Seleção (documento FOP, item 12)" + senaoOf(r.st)}>{gdA(rows[r.st.i0]!.u)}<span className="c-ag" /><span className="nm" style={{ paddingLeft: ind(rows[r.st.i0]!.u, r.d) + 10 }}><span className="ifd" /><b className="mono">if ({r.st.test}){senaoOf(r.st)}</b></span></div>;
     return leftRow(r.u!, r.d);
   });
 
@@ -371,7 +397,7 @@ export function FlowView() {
         <div className="zcanvas" ref={canvasRef} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onMouseLeave={leaveBar}>
           <div className="zworld" style={{ width: worldW, height: worldH, transform: `translate(${view.x}px, ${view.y}px) scale(${view.z})` }}>
             <div className="gtable" style={{ gridTemplateColumns: `${LW}px ${CW}px`, width: worldW }}>
-              <div className="gleft"><div className="ghead fhead"><div className="fl-cols"><span>Nome</span><span>Responsável</span></div></div>{left}</div>
+              <div className="gleft"><div className="ghead fhead"><div className="fl-cols"><span>Responsável</span><span>Task</span></div></div>{left}</div>
               <div className="gright" ref={grightRef} onClick={() => { if (s.edgeMenu) set({ edgeMenu: null }); }}>
                 <svg className="fsvg fview" width={CW} height={HH} xmlns="http://www.w3.org/2000/svg">
                   <defs>

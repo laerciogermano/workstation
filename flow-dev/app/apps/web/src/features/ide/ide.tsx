@@ -146,7 +146,9 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
   };
   const assign: Ide["assign"] = async (id, agentId) => {
     await patchEl(id, { agentId }); set({ picker: false });
-    toast(agentId ? `Responsável: ${m.agent(agentId)?.name}` : "Sem responsável");
+    const a = agentId ? m.agent(agentId) : undefined;
+    const u = m.u(id);
+    toast(a ? `${a.name} · ${u?.title ?? ""}` : "Sem responsável");
   };
   const dup: Ide["dup"] = async id => { const nid = await call(() => api.post<string>(pid, `/elements/${id}/duplicate`)); if (nid) { set({ sel: nid, ctx: null }); toast("Duplicado, com IDRs novos"); } };
   const paste: Ide["paste"] = async targetId => {

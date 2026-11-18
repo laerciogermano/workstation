@@ -1,4 +1,4 @@
-import { TYPE_INFO, type AgentKind } from "@flow/shared";
+import { TYPE_INFO, agentTasksOf, type AgentKind } from "@flow/shared";
 import { Icon } from "../../ui/Icon";
 import { AgChip, StBadge } from "../../ui/parts";
 import { useIde } from "../ide/ide";
@@ -9,6 +9,7 @@ export function Drawer() {
   const u = m.u(s.drawer); if (!u) return null;
   const p = m.u(u.parentId), ks = m.kidsPlan(u.id).filter(k => !m.isFolder(k));
   const a = m.agent(u.agentId);
+  const tasks = agentTasksOf(a);
   const L = m.flowLayout(u.planId).layout[u.id] ?? { s: 0, e: 0 };
   const chk = m.fopCheck(u.planId);
   const from = "Etapa";
@@ -20,23 +21,38 @@ export function Drawer() {
         <button className="uid" title="Copiar IDR" onClick={() => { void navigator.clipboard?.writeText(u.id); ide.toast("IDR copiado", "copy"); }}>{u.id.slice(0, 13)}… <Icon n="copy" /></button></span><span className="sp" />
         {u.archived && <span className="tag">arquivada</span>}<button className="ib" aria-label="Fechar" onClick={() => set({ drawer: null, picker: false })}><Icon n="x" /></button></div>
       <div className="side-b">
-        <div className="fld"><input key={u.id + u.title} className="ttl" defaultValue={u.title} aria-label="Título"
-          onBlur={e => { const v = e.target.value.trim(); if (!v) { e.target.value = u.title; ide.toast("O título é obrigatório", "triangle-alert"); return; } if (v !== u.title) void ide.patchEl(u.id, { title: v }); }} />
-          <div className="vocab"><span className="on">Etapa</span><span>Arquivo</span><span>Agente</span><span style={{ border: 0, padding: 0 }}>mesma unidade no Flow e no Explorar</span></div></div>
-        <div className="fld"><label>Contexto</label><textarea key={u.id + "c"} defaultValue={u.context ?? ""} placeholder="Orçamento, preferências, restrições" onBlur={e => { if (e.target.value !== (u.context ?? "")) void ide.patchEl(u.id, { context: e.target.value || null }); }} /></div>
         {m.isData(u) ? (
+          <div className="fld"><input key={u.id + u.title} className="ttl" defaultValue={u.title} aria-label="Título"
+            onBlur={e => { const v = e.target.value.trim(); if (!v) { e.target.value = u.title; ide.toast("O título é obrigatório", "triangle-alert"); return; } if (v !== u.title) void ide.patchEl(u.id, { title: v }); }} /></div>
+        ) : (
+          <>
+            <div className="fld"><span className="l">Responsável</span>
+              <button className="resp" onClick={() => set({ picker: !s.picker })}><AgChip a={a} />{a && <small style={{ color: "var(--muted)" }}>{TYPE_INFO[a.kind].one}{tasks.length ? ` · ${tasks.length} tasks` : ""}</small>}<Icon n="chevron-down" className="chev" /></button>
+              {s.picker && (
+                <div className="picker">
+                  {kinds.map(t => <div key={t}><h5>{TYPE_INFO[t].n}</h5>{m.agents.filter(c => c.kind === t).map(c => <button key={c.id} className={u.agentId === c.id ? "on" : ""} onClick={() => void ide.assign(u.id, c.id)}><AgChip a={c} /><small>{c.sub}</small></button>)}</div>)}
+                  <button onClick={() => void ide.assign(u.id, null)}><AgChip /></button>
+                  <div className="note">Só quem está no catálogo do projeto. Filhos não herdam o responsável do pai.</div>
+                </div>)}
+            </div>
+            <div className="fld"><label>Task{a?.kind === "maquina" ? " · método da lib" : ""}</label>
+              {tasks.length
+                ? <><select key={u.id + u.title + (a?.id ?? "")} value={tasks.includes(u.title) ? u.title : ""} aria-label="Task" onChange={e => { if (e.target.value) void ide.patchEl(u.id, { title: e.target.value }); }}>
+                    {!tasks.includes(u.title) && <option value="" disabled>{u.title || "escolher task…"}</option>}
+                    {tasks.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>O nome da etapa é a task cadastrada do responsável{a?.kind === "maquina" ? ` (métodos de ${a.name})` : ""}.</p></>
+                : <><input key={u.id + u.title} className="ttl" defaultValue={u.title} aria-label="Task"
+                    onBlur={e => { const v = e.target.value.trim(); if (!v) { e.target.value = u.title; ide.toast("A task é obrigatória", "triangle-alert"); return; } if (v !== u.title) void ide.patchEl(u.id, { title: v }); }} />
+                  <p style={{ fontSize: 12, color: "var(--fail)", marginTop: 6 }}>Escolha um responsável com tasks cadastradas.</p></>}
+            </div>
+          </>
+        )}
+        <div className="fld"><label>Contexto</label><textarea key={u.id + "c"} defaultValue={u.context ?? ""} placeholder="Orçamento, preferências, restrições" onBlur={e => { if (e.target.value !== (u.context ?? "")) void ide.patchEl(u.id, { context: e.target.value || null }); }} /></div>
+        {m.isData(u) && (
           <div className="fld"><span className="l">Dado</span><div className="list-r"><div><Icon n="diamond" />Unidade de informação · 0 passos<span className="r">reúne</span></div>
             {u.ins.map(n => <div key={n}><Icon n="box" /><span className="mono" style={{ color: "var(--accent)" }}>{n}</span><span className="r">{chk.prod[n]?.title ?? "contexto"}</span></div>)}</div></div>
-        ) : (
-          <div className="fld"><span className="l">Responsável</span>
-            <button className="resp" onClick={() => set({ picker: !s.picker })}><AgChip a={a} />{a && <small style={{ color: "var(--muted)" }}>{TYPE_INFO[a.kind].one}</small>}<Icon n="chevron-down" className="chev" /></button>
-            {s.picker && (
-              <div className="picker">
-                {kinds.map(t => <div key={t}><h5>{TYPE_INFO[t].n}</h5>{m.agents.filter(c => c.kind === t).map(c => <button key={c.id} className={u.agentId === c.id ? "on" : ""} onClick={() => void ide.assign(u.id, c.id)}><AgChip a={c} /><small>{c.sub}</small></button>)}</div>)}
-                <button onClick={() => void ide.assign(u.id, null)}><AgChip /></button>
-                <div className="note">Só quem está no catálogo do projeto. Filhos não herdam o responsável do pai.</div>
-              </div>)}
-          </div>)}
+        )}
         {(u.status || u.error) && (
           <div className="fld"><span className="l">Execução</span>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}><StBadge st={u.status} />{u.status === "wait" && <button className="btn pri" onClick={() => void ide.complete(u.id)}><Icon n="check" />Concluir (feito pela pessoa)</button>}{(u.status === "fail" || u.status === "cancel") && <button className="btn" onClick={() => void ide.retry(u.id)}><Icon n="rotate-ccw" />Tentar de novo</button>}</div>

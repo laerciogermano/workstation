@@ -510,7 +510,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .gmain .zcanvas { flex:1; min-width:0; background: var(--paper); }
 .gantt.flow .fhead { height: 52px; padding: 0; }
 .gantt.flow .gleft .fhead { display:grid; align-items:end; padding: 0 12px 8px 14px; }
-.fl-cols { display:grid; grid-template-columns: minmax(0,1fr) 130px; gap: 6px; align-items:center; }
+.fl-cols { display:grid; grid-template-columns: 148px minmax(0,1fr); gap: 6px; align-items:center; }
 .fhead .fl-cols span { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color: var(--muted); }
 .gantt.flow .grow, .gantt.flow .grows-r .rr { height: 34px; }
 .gantt.flow .grow { padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); }
@@ -536,6 +536,11 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ring .val { stroke-linecap: round; }
 .ring b { position: relative; font-size: 7.5px; letter-spacing: -.02em; font-weight: 600; color: var(--ink); }
 .gantt.flow .c-ag { display:flex; align-items:center; gap: 6px; min-width: 0; }
+.gantt.flow .c-ag.muted { color: var(--muted); font-size: 11px; justify-content: center; }
+.gantt.flow .task-pick { appearance: none; -webkit-appearance: none; border: 1px solid var(--line-2); background: var(--paper); border-radius: 5px; height: 24px; padding: 0 22px 0 7px; font: 12px/1 var(--mono); color: var(--ink); max-width: 100%; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 7px center; }
+.gantt.flow .task-pick:hover { border-color: var(--muted); }
+.gantt.flow .task-miss { color: var(--fail); }
 /* adicionar elemento (padrão da Árvore do Plans): irmão acima · irmão abaixo · filho */
 .gantt.flow .grow { position: relative; }
 /* guias de recuo só da hierarquia: uma linha vertical sob cada composição ancestral (e sob a função nas linhas de entrada/saída) */
@@ -544,7 +549,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .side .dkind { border: 0; background: none; padding: 0 2px; width: 20px; height: 18px; display: inline-grid; place-items: center; color: var(--dado); border-radius: 4px; cursor: pointer; }
 .side .dkind:hover { background: var(--wash); }
 .side .dkind svg { width: 13px; height: 13px; }
-.gantt.flow .grow .fl-tools { position: absolute; right: 150px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
+.gantt.flow .grow .fl-tools { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); z-index: 2; }
 .gantt.flow .grow:hover .fl-tools { display: flex; } /* ações só no hover, nunca no clique */
 .gantt.flow .grow .fl-tools .ib { width: 24px; height: 22px; color: var(--muted); }
 .gantt.flow .grow .fl-tools .ib:hover { color: var(--accent); }

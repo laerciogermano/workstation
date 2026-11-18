@@ -17,7 +17,7 @@ export async function loadSnapshot(q: Q, projectId: number): Promise<Snapshot> {
     q.query("select public_id, name, updated_at from flow.projects where id = $1", [projectId]),
     q.query("select public_id, name, position from flow.plans where project_id = $1 order by position, id", [projectId]),
     q.query("select public_id, name, api_id, vendor, color from flow.models where project_id = $1 order by id", [projectId]),
-    q.query(`select a.public_id, a.kind, a.name, a.sub, a.module_file, m.public_id as model_id, a.prompt, a.photo_url
+    q.query(`select a.public_id, a.kind, a.name, a.sub, a.module_file, m.public_id as model_id, a.prompt, a.photo_url, a.tasks
              from flow.agents a left join flow.models m on m.id = a.model_id where a.project_id = $1 order by a.id`, [projectId]),
     q.query(`select e.id, e.public_id, pl.public_id as plan_id, par.public_id as parent_id, e.kind, e.title, e.context,
                     ag.public_id as agent_id, rs.public_id as resp_id, e.status, e.error, e.progress, e.loop_var, e.loop_list,
@@ -64,7 +64,7 @@ export async function loadSnapshot(q: Q, projectId: number): Promise<Snapshot> {
     elements,
     links: links.rows.map(r => ({ from: r.f, to: r.t, kind: r.kind })),
     structs: structs.rows.map(r => ({ id: r.pid, test: r.test, body: memBy.get(r.id) ?? [] })),
-    agents: agents.rows.map(r => ({ id: r.public_id, kind: r.kind, name: r.name, sub: r.sub, moduleFile: r.module_file, modelId: r.model_id, prompt: r.prompt, photoUrl: r.photo_url })),
+    agents: agents.rows.map(r => ({ id: r.public_id, kind: r.kind, name: r.name, sub: r.sub, moduleFile: r.module_file, modelId: r.model_id, prompt: r.prompt, photoUrl: r.photo_url, tasks: (r.tasks as string[] | null) ?? [] })),
     models: models.rows.map(r => ({ id: r.public_id, name: r.name, api: r.api_id, vendor: r.vendor, color: r.color })),
     modules: mods.rows.map(r => ({ id: r.public_id, file: r.file, items: itemsBy.get(r.id) ?? [] })),
     data: data.rows.map(r => ({ name: r.name, type: r.type as DataType, value: r.value, position: r.position })),

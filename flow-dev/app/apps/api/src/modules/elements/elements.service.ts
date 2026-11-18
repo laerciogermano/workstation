@@ -147,9 +147,15 @@ export async function patchElement(db: Db, projectId: number, id: string, p: Pat
   if (p.agentId !== undefined) {
     const aid = await getAgentId(db, projectId, p.agentId);
     set("agent_id", aid);
-    const kind = aid ? (await db.query("select kind from flow.agents where id = $1", [aid])).rows[0].kind : null;
-    if (!aid || kind === "pessoa") { set("status", null); set("error", null); }
+    const ag = aid ? (await db.query("select kind, name, tasks from flow.agents where id = $1", [aid])).rows[0] as { kind: string; name: string; tasks: string[] } : null;
+    if (!aid || ag?.kind === "pessoa") { set("status", null); set("error", null); }
     else if (!(await db.query("select status from flow.elements where id = $1", [u.id])).rows[0].status) set("status", "pendente");
+    // título = task do catálogo do responsável (lib Node = método)
+    const tasks = (ag?.tasks?.length ? ag.tasks : null) as string[] | null;
+    if (tasks?.length) {
+      const title = p.title ?? (await db.query("select title from flow.elements where id = $1", [u.id])).rows[0].title as string;
+      if (!tasks.includes(title) && p.title === undefined) set("title", tasks[0]);
+    }
   }
   if (p.loop !== undefined) { set("loop_var", p.loop?.[0] ?? null); set("loop_list", p.loop?.[1] ?? null); }
   if (p.cond !== undefined) {

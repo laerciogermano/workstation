@@ -137,8 +137,9 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Sem toggle de filhos no menu transversal / bar-tools | `flow-kids` no `vdock` + ícone sanfona em `bar-tools`/`fl-tools` |
 | Folha □ podia listar `a, b` no mesmo rótulo | Um nome por □; várias folhas = várias marcas |
 | Clique na aresta de sequência sem ação | Menu: seleção (`edge-if`) ou repetição (`edge-loop`) |
+| Só via aresta | Também em `fl-tools` / `bar-tools` / menu de contexto / drawer: `fn-if` e `fn-loop` (toggle) |
 
-**Voltar:** pointerdown antigo (bloqueio em `[data-act]`/`.grow`); fontes anteriores; `::before/::after` do `.fsum` + path das pontas no SVG; remover `flow-kids`/`edge-*`/`dnames` com marca por folha.
+**Voltar:** pointerdown antigo (bloqueio em `[data-act]`/`.grow`); fontes anteriores; `::before/::after` do `.fsum` + path das pontas no SVG; remover `flow-kids`/`edge-*`/`dnames` com marca por folha; tirar botões `fn-if`/`fn-loop`.
 
 ## Terminal + Hello World
 

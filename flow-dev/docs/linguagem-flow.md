@@ -355,7 +355,7 @@ do {
 | Responsável | coluna **Responsável** do Flow | select: **Scripts (meus módulos)**, Bibliotecas Node.js, Agentes, Pessoas |
 | Script próprio | **Explorar › Módulos** (`ƒ nome()`) | uma função escrita por você que pode ser responsável de qualquer etapa |
 | Módulo | **Explorar › Módulos** | guarda **dados e funções** que mudam juntos (antes chamado “Arquivos”) |
-| Seleção / repetição | linhas `◇ if` e `↻ for` | abrir a linha mostra o corpo |
+| Seleção / repetição | linhas `◇ if` e `↻ for` | abrir a linha mostra o corpo; hover → remover (`rm-if` / `rm-loop`) na toolbar acima |
 | Exportar | botão **Exportar** | gera JS a partir do mesmo modelo (TS e C seguem a Parte III) |
 | Esta teoria | **Explorar › Docs** | cada conceito com o exemplo vivo do IDE; o botão do bloco “No Flow IDE” abre o lugar exato no Flow |
 

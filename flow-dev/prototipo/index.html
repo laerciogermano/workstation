@@ -2029,13 +2029,18 @@ function flowLegend() {
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias sN
   const rows = ganttRows(s.plan).filter(r => !isData(r.u));
-  // sequência atravessando o ◆: a → ◆ → b vira a → b
+  // sequência pela ordem das linhas (igual ao layout): cada passo liga no seguinte entre irmãos; ◆ não conta.
+  // DEPS antigos podem ficar velhos depois das setas — não servem para desenhar
   const FD = [];
-  DEPS.forEach(([a, b]) => {
-    if (isData($u(a))) return;
-    if (!isData($u(b))) { FD.push([a, b]); return; }
-    DEPS.filter(([x]) => x === b).forEach(([, c]) => { if (!isData($u(c)) && !FD.some(([p, q]) => p === a && q === c)) FD.push([a, c]); });
-  });
+  const fnSibs = pid => (pid ? kidsPlan(pid) : []).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === s.plan);
+  const seqLink = list => {
+    const groups = [];
+    list.forEach(u => { const g = groups[groups.length - 1]; if (g && g.some(x => isPar(x.id, u.id))) g.push(u); else groups.push([u]); });
+    for (let i = 1; i < groups.length; i++) groups[i - 1].forEach(a => groups[i].forEach(b => FD.push([a.id, b.id])));
+  };
+  const topsFD = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === s.plan && (!u.parent || isFolder($u(u.parent))));
+  seqLink(topsFD);
+  rows.forEach(r => { if (flowKids(r.u).length) seqLink(fnSibs(r.u.id)); });
   const { layout, nSteps } = flowLayout(s.plan);
   const LW = 380, RH = 34, TAIL = 440;
   // texto dentro: passo só um pouco maior que o maior nome (≈5,6 px por letra a 10 px + respiro)
@@ -2201,7 +2206,9 @@ function flow(s) {
     return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
   }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   if (!s.noDeps) rows.forEach(({ u }) => {
-    if (!u.cond || idx[u.cond[1]] == null) return;
+    // senão só volta a um irmão anterior (mesmo pai); se as setas separaram os dois, a volta não faz sentido
+    const tb = u.cond && $u(u.cond[1]);
+    if (!tb || idx[tb.id] == null || tb.parent !== u.parent || idx[tb.id] > idx[u.id]) return;
     const g = geo(u), back = geo($u(u.cond[1])), st = structs.find(x => x.hi === (idxOut[u.id] ?? idx[u.id]) + 1), ybk = yTop(idx[u.cond[1]]) + 27;
     const yb = st ? yMid(st.hi) : yTop(idx[u.id]) + RH, xs = st ? st.x - 6 : g.ox - 5;
     svg += `<path class="fback" d="M${xs} ${yb} H${back.ox - 7} V${ybk + 2}" marker-end="url(#fahb)"><title>senão (!${esc(u.cond[0])}) → volta a ${esc($u(u.cond[1]).title)}</title></path>`;

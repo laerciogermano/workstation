@@ -157,3 +157,13 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Linha `for`/`if` e a task no mesmo recuo | Cabeçalho no nível atual; corpo (+ I/O) +16 px (`nestOf`) |
 
 **Voltar:** remover `nestOf` / `NEST` e o padding extra em `leftRow`/`ioLeft`.
+
+## Um dado ou um cubo por porta (entrada/saída)
+
+| Antes | Depois |
+|---|---|
+| Função com vários `outs`/`ins` → várias marcas na mesma junção | Saída multi: cubo real (`propostas`, `pacote_contrato`); entrada multi: cubo visual `entrada_<fn>` (`SYNTH_IN`) |
+| Saídas soltas + entrada multi = 3+ cubos na junção | Absorb: remove outs que batem com os kids e uma linha `entrada · saída` compartilhada (`shared`/`fromIds`) |
+| Clique no cubo sintético sem painel | `revealDado` + `dadoPanel` listam os dados reais; export JS/Py usa `propostas`/`pacote_contrato` |
+
+**Voltar:** `newIns = u => u.ins \|\| []`; remover `SYNTH_IN`/`synthIn`/absorb/`shared`; export com `proposta_en`/`contrato` soltos.

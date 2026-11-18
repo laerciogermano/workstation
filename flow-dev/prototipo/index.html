@@ -1363,10 +1363,10 @@ const CODE_ENVIO = `// Enviar ao cliente · node:http
 import { http } from "node:http"
 import { console as stdio } from "node:console"
 
-for (const idioma of ["en", "es"]) {
+for (const idioma of Object.keys(entrada.propostas)) {
   const res = await http.post("https://api.acme.com/propostas", {
-    arquivo: entrada["proposta_" + idioma],
-    contrato: entrada.contrato,
+    arquivo: entrada.propostas[idioma],
+    contrato: entrada.pacote_contrato.contrato,
   })
   stdio.log("enviado " + idioma + ": " + res.status)
   saida.envio_id = res.body.id
@@ -1860,8 +1860,20 @@ function revealFn(id) {
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-node="${id}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
 function revealDado(name) {
+  cur.estado = name;
+  // cubo sintético de entrada (só visual): abre o painel e destaca os dados reais agrupados
+  if (SYNTH_IN.has(name)) {
+    const kids = dKids(name);
+    kids.forEach(k => {
+      const u = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === k));
+      if (u) { let p = u.parent; while (p) { OPEN.add(p); p = $u(p).parent; } cur.sel = u.id; }
+      ensureLayers(); LAYERS.filter(l => l.items.some(([t, v]) => t === "dado" && v === k)).forEach(l => OPEN.add("ly:" + l.id));
+    });
+    setTimeout(() => { kids.forEach(k => { const n = holder.querySelector(`.ex .node[data-estado="${k}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "nearest" }); } }); }, 30);
+    return;
+  }
   const u = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === name)); if (!u) return;
-  cur.estado = name; cur.sel = u.id;
+  cur.sel = u.id;
   ensureLayers(); LAYERS.filter(l => l.items.some(([k, v]) => k === "dado" && v === name)).forEach(l => OPEN.add("ly:" + l.id));
   setTimeout(() => { const n = holder.querySelector(`.ex .node[data-estado="${name}"]`); if (n) { n.classList.add("flash"); n.scrollIntoView({ block: "center" }); } }, 30);
 }
@@ -1945,9 +1957,26 @@ function cfgPanel() {
 // janela de configuração do agente: nome, modelo (dos disponíveis) e prompt
 function dadoPanel(s) {
   const name = s.dadoEdit; if (!name) return "";
+  const synth = SYNTH_IN.has(name);
   const prod = U.find(x => !x.arch && (x.outs || []).some(o => o[0] === name));
-  const cons = U.filter(x => !x.arch && (x.ins || []).includes(name));
-  const has = dadoHasValue(name), abs = dadoIsAbs(name);
+  const cons = synth
+    ? U.filter(x => !x.arch && (x.ins || []).length > 1 && ("entrada_" + String(x.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")) === name)
+    : U.filter(x => !x.arch && (x.ins || []).includes(name));
+  const has = dadoHasValue(name), abs = synth ? dKids(name).some(k => dadoIsAbs(k)) : dadoIsAbs(name);
+  if (synth) {
+    const ks = dKids(name);
+    return `<aside class="side w360" aria-label="Cubo de entrada">
+      <div class="side-h"><span class="k">${icon("box")}Entrada · cubo (visual)</span><span class="sp"></span><button class="ib" data-act="dado-close" title="Fechar">${icon("x")}</button></div>
+      <div class="side-b">
+        <div class="fld" style="display:flex;align-items:center;gap:10px">
+          <span class="fi dado${abs ? " abs" : ""}" style="width:22px;height:22px;display:grid;place-items:center;color:var(--dado)">${dIcon(name)}</span>
+          <div><b class="mono" style="font-size:16px">${esc(name)}</b><div style="font-size:12px;color:var(--muted)">Agrupa várias entradas num cubo só na tela · os dados reais ficam abaixo</div></div>
+        </div>
+        <div class="fld"><label>Campos (entradas reais)</label><div class="dado-kids">${ks.map(k => { const hv = dadoHasValue(k); const vv = hv ? esc(DATA_VAL[k] || (dKids(k).length ? "completo" : "")) : "sem valor"; return `<button data-act="dado-edit" data-n="${esc(k)}"><span class="fi dado${dadoIsAbs(k) ? " abs" : ""}" style="color:var(--dado);display:grid">${dIcon(k)}</span>${esc(k)}<span class="dado-k-ty">${DTYPE_N[dType(k)]}</span><span class="dado-k-val${hv ? "" : " empty"}">${vv}</span></button>`; }).join("")}</div>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Clique num campo para editar o dado de verdade no Explorar.</p></div>
+        <div class="fld"><span class="l">Usado em</span>${cons.length ? `<div class="list-r">${cons.map(u => `<button data-act="drawer" data-id="${u.id}">${icon("circle")}${esc(u.title)}</button>`).join("")}</div>` : `<p style="font-size:12px;color:var(--muted)">—</p>`}</div>
+      </div></aside>`;
+  }
   return `<aside class="side w360" aria-label="Definir valor do dado">
     <div class="side-h"><span class="k">${icon("box")}Dado · valor no state</span><span class="sp"></span><button class="ib" data-act="dado-close" title="Fechar">${icon("x")}</button></div>
     <div class="side-b">
@@ -2269,22 +2298,51 @@ function flow(s) {
   const synthIn = u => { const n = "entrada_" + String(u.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""); DATA_KIDS[n] = u.ins.slice(); DATA_TYPE[n] = "objeto"; SYNTH_IN.add(n); return n; };
   const newIns = u => (u.ins || []).length > 1 ? [synthIn(u)] : (u.ins || []);
   const disp = [];
+  const sameList = (a, b) => a.length === b.length && [...a].sort().every((x, i) => x === [...b].sort()[i]);
   rows.forEach((r, i) => {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
     if (leaf(r.u) && r.u.loop) disp.push({ lp: r.u, d: r.d }); // repetição ganha linha própria, como o if
     if (!s.compacto && leaf(r.u) && newIns(r.u).length) {
-      // saída de A = entrada de B (mesmos dados, linhas vizinhas): as mesmas linhas servem aos dois. Um dado por linha.
-      let k = disp.length - 1; while (k >= 0 && (disp[k].st || disp[k].lp)) k--; // pula a linha do if
-      const grp = []; while (k >= 0 && disp[k].io === "out" && (!grp.length || disp[k].u === grp[0].u)) { grp.unshift(disp[k]); k--; }
-      const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
-      if (grp.length && !grp[0].to && same(grp.map(g => g.nm), newIns(r.u))) grp.forEach(g => g.to = r.u);
-      else newIns(r.u).forEach((n, j) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j === 0 }));
+      const ins = newIns(r.u);
+      let k = disp.length - 1; while (k >= 0 && (disp[k].st || disp[k].lp)) k--;
+      // cubo sintético: absorve as saídas soltas (mesmo de produtores diferentes) numa linha só — 1 cubo na junção
+      if (ins.length === 1 && SYNTH_IN.has(ins[0])) {
+        // pula tasks produtoras entre as saídas (ex.: propostas → Gerar contrato → pacote → Enviar)
+        const kids = dKids(ins[0]), want = new Set(kids), abs = [];
+        for (let j = k; j >= 0 && want.size; j--) {
+          const x = disp[j];
+          if (x.st || x.lp) continue;
+          if (x.io === "out" && !x.to && want.has(x.nm)) { abs.unshift(x); want.delete(x.nm); continue; }
+          if (x.io === "in" || x.shared) break;
+          if (x.io === "out" && !x.to) continue; // outra saída solta — segue procurando
+          if (!x.io && x.u) {
+            const outs = (x.u.outs || []).map(o => o[0]);
+            if (outs.some(n => kids.includes(n))) continue; // task do produtor das entradas
+            break;
+          }
+        }
+        if (!want.size && sameList(abs.map(a => a.nm), kids)) {
+          abs.forEach(o => { const ix = disp.indexOf(o); if (ix >= 0) disp.splice(ix, 1); });
+          disp.push({ io: "in", u: r.u, d: r.d, nm: ins[0], first: true, shared: true, fromIds: abs.map(o => o.u.id) });
+        } else ins.forEach((n, j2) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j2 === 0 }));
+      } else {
+        const grp = []; while (k >= 0 && disp[k].io === "out" && (!grp.length || disp[k].u === grp[0].u)) { grp.unshift(disp[k]); k--; }
+        if (grp.length && !grp[0].to && sameList(grp.map(g => g.nm), ins)) grp.forEach(g => g.to = r.u);
+        else ins.forEach((n, j2) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j2 === 0 }));
+      }
     }
     disp.push(r);
     if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) r.u.outs.forEach((o, j) => disp.push({ io: "out", u: r.u, d: r.d, nm: o[0], first: j === 0 }));
   });
   const idx = {}, idxIn = {}, idxOut = {}, idxEnd = {}, idxLoop = {};
-  disp.forEach((r, i) => { if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i; else if (r.io === "in") { if (r.first) idxIn[r.u.id] = i; } else if (r.io === "out") { if (r.first) { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } idxEnd[r.u.id] = i; } else idx[r.u.id] = i; });
+  disp.forEach((r, i) => {
+    if (r.lp) idxLoop[r.lp.id] = i;
+    else if (r.st) r.st.hi = i;
+    else if (r.shared && r.fromIds) { r.fromIds.forEach(id => { idxOut[id] = i; idxEnd[id] = i; }); idxIn[r.u.id] = i; }
+    else if (r.io === "in") { if (r.first) idxIn[r.u.id] = i; }
+    else if (r.io === "out") { if (r.first) { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } idxEnd[r.u.id] = i; }
+    else idx[r.u.id] = i;
+  });
   const hasK = u => flowKids(u).length > 0;
   // camada = composição de topo (endereços que se conhecem). Dado de entrada produzido na mesma camada = concreto (□);
   // vindo de fora (state / outra camada) = abstrato (■). Função IA = abstrata (chega pelo state); lib Node = concreta (import).
@@ -2336,7 +2394,7 @@ function flow(s) {
   };
   const ioNames = (r) => [r.nm];
   /* dado puro (□): um nome por marca — sem “a, b” sob o mesmo ícone; cubo pode resumir a árvore */
-  const ioLeft = r => { const nest = nestOf(r); return `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${nest ? ` nest-${nest}` : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true, nest)}<span class="nm" style="padding-left:${ind(r.u, r.d) + nest * NEST + 28}px"><span class="io-k">${!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`; };
+  const ioLeft = r => { const nest = nestOf(r); const lbl = !r.first ? "" : r.shared || r.to ? "entrada · saída" : r.io === "in" ? "entrada" : "saída"; return `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${nest ? ` nest-${nest}` : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true, nest)}<span class="nm" style="padding-left:${ind(r.u, r.d) + nest * NEST + 28}px"><span class="io-k">${lbl}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}${SYNTH_IN.has(r.nm) ? " · cubo de entrada (visual)" : ""}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`; };
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -3256,12 +3314,11 @@ function tsCode(plan) {
     proposta_aprovada = <span class="k">await</span> <span class="f">run</span>(${agentRef($u("u12"))}, ${g("u12")}, { rascunho })
   } <span class="k">while</span> (!proposta_aprovada.ok)   <span class="c">// seleção: não aprovada volta ao rascunho</span>
 
-  <span class="k">const</span> [traducoes, { contrato }] = <span class="k">await</span> Promise.<span class="f">all</span>([   <span class="c">// paralelo</span>
-    Promise.<span class="f">all</span>([<span class="s">"en"</span>, <span class="s">"es"</span>].<span class="f">map</span>(idioma =>       <span class="c">// repetição</span>
-      <span class="f">run</span>(${agentRef($u("u13"))}, ${g("u13")}, { proposta_aprovada, idioma }))),
-    <span class="f">run</span>(${agentRef($u("u14"))}, ${g("u14")}, { proposta_aprovada, dados_cliente }),
+  <span class="k">const</span> [propostas, pacote_contrato] = <span class="k">await</span> Promise.<span class="f">all</span>([   <span class="c">// paralelo · um cubo por saída</span>
+    <span class="f">run</span>(${agentRef($u("u13"))}, ${g("u13")}, { proposta_aprovada }),  <span class="c">// propostas.{en,es}</span>
+    <span class="f">run</span>(${agentRef($u("u14"))}, ${g("u14")}, { proposta_aprovada, dados_cliente }),  <span class="c">// pacote_contrato</span>
   ])
-  <span class="k">return</span> <span class="f">run</span>(${agentRef($u("u15"))}, ${g("u15")}, { ...traducoes, contrato })
+  <span class="k">return</span> <span class="f">run</span>(${agentRef($u("u15"))}, ${g("u15")}, { propostas, pacote_contrato })
 }`;
 }
 function pyCode(plan) {
@@ -3279,12 +3336,11 @@ function pyCode(plan) {
         proposta_aprovada = <span class="k">await</span> <span class="f">run</span>(${agentRef($u("u12"), true)}, ${g("u12")}, {<span class="s">"rascunho"</span>: rascunho})
         <span class="k">if</span> proposta_aprovada.ok: <span class="k">break</span>
 
-    traducoes, contrato = <span class="k">await</span> asyncio.<span class="f">gather</span>(  <span class="c"># paralelo</span>
-        asyncio.<span class="f">gather</span>(*[<span class="f">run</span>(${agentRef($u("u13"), true)}, ${g("u13")}, {<span class="s">"proposta_aprovada"</span>: proposta_aprovada, <span class="s">"idioma"</span>: i})
-                         <span class="k">for</span> i <span class="k">in</span> (<span class="s">"en"</span>, <span class="s">"es"</span>)]),  <span class="c"># repetição</span>
+    propostas, pacote_contrato = <span class="k">await</span> asyncio.<span class="f">gather</span>(  <span class="c"># paralelo · um cubo por saída</span>
+        <span class="f">run</span>(${agentRef($u("u13"), true)}, ${g("u13")}, {<span class="s">"proposta_aprovada"</span>: proposta_aprovada}),
         <span class="f">run</span>(${agentRef($u("u14"), true)}, ${g("u14")}, {<span class="s">"proposta_aprovada"</span>: proposta_aprovada, <span class="s">"dados_cliente"</span>: dados_cliente}),
     )
-    <span class="k">return await</span> <span class="f">run</span>(${agentRef($u("u15"), true)}, ${g("u15")}, {<span class="s">"traducoes"</span>: traducoes, <span class="s">"contrato"</span>: contrato})`;
+    <span class="k">return await</span> <span class="f">run</span>(${agentRef($u("u15"), true)}, ${g("u15")}, {<span class="s">"propostas"</span>: propostas, <span class="s">"pacote_contrato"</span>: pacote_contrato})`;
 }
 function agentRef(u) { const a = agent(u.agent); return a ? `agents.<span class="f">${a.type}</span>(<span class="s">"${a.name}"</span>)` : "agents.<span class=\"f\">nenhum</span>()"; }
 function exportDlg(s) {

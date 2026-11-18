@@ -907,6 +907,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .gantt.flow .grow.ifrow .nm b { color: var(--warn); font-weight: 600; font-size: 12px; }
 .gantt.flow .grow.forrow { background: color-mix(in srgb, var(--ok) 7%, transparent); }
 .gantt.flow .grow.forrow .nm b { color: var(--ok); }
+.gantt.flow .grow.nest-1 .nm, .gantt.flow .grow.nest-2 .nm { position: relative; }
 .lpd { width: 12px; flex: none; color: var(--ok); font-weight: 700; text-align: center; margin-right: 2px; }
 .fband.lp { background: color-mix(in srgb, var(--ok) 5%, transparent); border-left-color: var(--ok); border-top-color: color-mix(in srgb, var(--ok) 45%, transparent); border-bottom-color: color-mix(in srgb, var(--ok) 45%, transparent); }
 :root[data-tema="eternos"] .fband.lp, :root[data-tema="eternos"] .gantt.flow .grow.forrow { background: rgba(0,0,0,.035); }
@@ -2308,28 +2309,34 @@ function flow(s) {
     if (isData(u)) { const cx = OX + (L.s + 1) * W; return { x1: cx - 7, x2: cx + 7, cx, ix: cx, ox: cx, data: true }; }
     return { x1: OX + L.s * W + INS, x2: OX + (L.e + 1) * W - INS, ix: OX + L.s * W, ox: OX + (L.e + 1) * W };
   };
-  // recuo do Nome segue a sequência do fluxo: cada passo (sN) empurra a linha para a direita; paralelos ficam alinhados
+  // recuo do Nome: hierarquia + passo sN; corpo de for/if ganha +1 nível (16 px) à direita do cabeçalho
   const s0Root = (layout[rootId] || { s: 0 }).s;
-  // nível = profundidade + passo; 16 px por nível para as guias verticais alinharem em todas as linhas
-  // recuo = profundidade (16 px) + passo do fluxo (10 px); guias verticais só da hierarquia: uma sob cada composição ancestral
+  const NEST = 16;
   const stepOf = u => Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root));
   const ind = (u, d) => d * 16 + stepOf(u) * 10;
   const ancs = u => { const out = []; let p = $u(u.parent); while (p && !isFolder(p)) { out.unshift(p); if (p.id === rootId) break; p = $u(p.parent); } return out; };
   const dOf = u => { let d = 0, p = $u(u.parent); while (p && !isFolder(p) && p.id !== rootId) { d++; p = $u(p.parent); } return p && p.id === rootId ? d + 1 : d; };
-  const gx = a => ind(a, dOf(a)) + 6; // centro da setinha da composição
-  const gdA = (u, self) => [...ancs(u).map(gx), ...(self ? [ind(u, dOf(u)) + 13] : [])].map(x => `<i class="fl-g" style="left:${14 + x}px" aria-hidden="true"></i>`).join("");
-  const leftRow = ({ u, d }) => {
-    const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
+  const inIf = id => structs.some(st => st.body.includes(id));
+  /** Extra de indentação: cabeçalho for/if = 0; corpo (task/io dentro do for ou do if) = +1 por estrutura. */
+  const nestOf = r => {
+    if (r.lp || r.st) return 0;
+    const u = r.u; if (!u) return 0;
+    return (u.loop && !hasK(u) ? 1 : 0) + (inIf(u.id) ? 1 : 0);
+  };
+  const gx = a => ind(a, dOf(a)) + 6;
+  const gdA = (u, self, nest = 0) => [...ancs(u).map(gx), ...(self ? [ind(u, dOf(u)) + nest * NEST + 13] : [])].map(x => `<i class="fl-g" style="left:${14 + x}px" aria-hidden="true"></i>`).join("");
+  const leftRow = (r) => {
+    const { u, d } = r, nest = nestOf(r), has = hasK(u), a = agent(u.agent);
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">${gdA(u)}
-      <span class="nm" style="padding-left:${ind(u, d) + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}${nest ? ` nest-${nest}` : ""}" data-act="fsel" data-id="${u.id}">${gdA(u, false, nest)}
+      <span class="nm" style="padding-left:${ind(u, d) + nest * NEST + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
   const ioNames = (r) => [r.nm];
   /* dado puro (□): um nome por marca — sem “a, b” sob o mesmo ícone; cubo pode resumir a árvore */
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`;
+  const ioLeft = r => { const nest = nestOf(r); return `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}${nest ? ` nest-${nest}` : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true, nest)}<span class="nm" style="padding-left:${ind(r.u, r.d) + nest * NEST + 28}px"><span class="io-k">${!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`; };
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {

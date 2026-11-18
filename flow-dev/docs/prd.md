@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.16 |
+| Versão | 1.17 |
 
 ## IDR — identificador único
 
@@ -149,3 +149,11 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | — | Plano seed `hello` · pasta Hello World · `Imprimir Hello World` |
 
 **Voltar:** remover `TERM`/`termPanel`/`execCode`/`m6`/`hello`/`u200`/`u201`; `run-plan` só IA.
+
+## Indentação do corpo for / if
+
+| Antes | Depois |
+|---|---|
+| Linha `for`/`if` e a task no mesmo recuo | Cabeçalho no nível atual; corpo (+ I/O) +16 px (`nestOf`) |
+
+**Voltar:** remover `nestOf` / `NEST` e o padding extra em `leftRow`/`ioLeft`.

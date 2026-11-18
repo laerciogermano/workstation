@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.15 |
+| Versão | 1.16 |
 
 ## IDR — identificador único
 
@@ -139,3 +139,13 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Clique na aresta de sequência sem ação | Menu: seleção (`edge-if`) ou repetição (`edge-loop`) |
 
 **Voltar:** pointerdown antigo (bloqueio em `[data-act]`/`.grow`); fontes anteriores; `::before/::after` do `.fsum` + path das pontas no SVG; remover `flow-kids`/`edge-*`/`dnames` com marca por folha.
+
+## Terminal + Hello World
+
+| Antes | Depois |
+|---|---|
+| Logs só no painel `mach` / toast | Barra **Terminal** (`TERM`) no rodapé da janela; botão na toolbar |
+| `run-plan` só IA pendente | Também roda máquinas com JS puro (`execCode` / `node:console`) |
+| — | Plano seed `hello` · pasta Hello World · `Imprimir Hello World` |
+
+**Voltar:** remover `TERM`/`termPanel`/`execCode`/`m6`/`hello`/`u200`/`u201`; `run-plan` só IA.

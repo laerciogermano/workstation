@@ -9,14 +9,14 @@
 
 ## Decisões
 
-* O app serve **qualquer evento do GOB** (não só os 125 anos)
-* Perfil do irmão: **loja** e **potência** (além de nome e cidade)
-* Componentes **plugáveis (Lego)**; visibilidade **por papel**
-* **Gestão de riscos** como módulo plugável
+* O app serve qualquer evento do GOB (não só os 125 anos)
+* Perfil do irmão: loja e potência (além de nome e cidade)
+* Componentes plugáveis (Lego); visibilidade por papel
+* Gestão de riscos como módulo plugável
 
 ## Pendências
 
-* Receber **logomarca do GOB**
-* Detalhar **CIM**, papéis e módulo museu/acervo
+* Receber logomarca do GOB
+* Backoffice para gestão
 
 **Rollback:** remover este arquivo e o link em [`README.md`](README.md).

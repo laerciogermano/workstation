@@ -20,6 +20,8 @@ Material bruto do cliente (WhatsApp).
 | [`WhatsApp Ptt 2026-11-18 at 06.00.31.ogg`](WhatsApp%20Ptt%202026-11-18%20at%2006.00.31.ogg) + [`.transcricao.txt`](WhatsApp%20Ptt%202026-11-18%20at%2006.00.31.transcricao.txt) | Áudio | Referência potência+loja no evento; CIM (cadastro interno maçônico) se irmão for do GOB |
 | [`WhatsApp Ptt 2026-11-18 at 06.02.34.ogg`](WhatsApp%20Ptt%202026-11-18%20at%2006.02.34.ogg) + [`.transcricao.txt`](WhatsApp%20Ptt%202026-11-18%20at%2006.02.34.transcricao.txt) | Áudio | Arquitetura plugável (Lego): componente museu/acervo maçônico (docs, imóveis, joias/selos ~R$6M) + admin central |
 
+Análise (dito + decisões): [`../docs/analise-feedback-2026-11-18.md`](../docs/analise-feedback-2026-11-18.md).
+
 ## Prints (referência LIDE)
 
 | Hora | Tela |

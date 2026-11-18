@@ -196,3 +196,14 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | `run-machine` só devolvia lines | Também grava status/ok + snapshot; `runPlan` manda libs para o Terminal |
 
 **Voltar:** remover `TermPanel`/`termOpen`/`termLines`; projeto em branco sem plano Hello; `run-machine` só `{ lines }`.
+
+## Protótipo flow-ide · alinhado ao app :5180
+
+| Antes | Depois |
+|---|---|
+| Hero / galeria abriam Onboarding (`T-32`) | **T-37** Hello World + Terminal (plano `hello`, Terminal aberto, `node:console` · `log`) |
+| Explorar › **Módulos** | Explorar › **Arquivos** (igual ao app) |
+| `run-plan` só IA (+ máquinas com JS puro de forma parcial) | Executar vale para tudo: máquinas/scripts → Terminal; pessoa → `wait` + Concluir; IA → fila |
+| Notas Flow: Nome · Responsável | Responsável · Task |
+
+**Voltar:** hero `T-32`; label Módulos; `run-plan` só IA; remover `T-37` / status `wait` / `complete`.

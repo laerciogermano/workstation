@@ -1304,7 +1304,7 @@ const LAYERS = [
   { id: "l1", file: "proposta.layer.js", items: [["fn", "u11"], ["fn", "u12"], ["fn", "u13"], ["script", "s2"]] },
   { id: "l2", file: "envio.layer.js", items: [["fn", "u15"]] },
   { id: "l3", file: "cliente.data.js", items: [["dado", "dados_cliente"], ["script", "s1"]] },
-  { id: "l4", file: "contrato.data.js", items: [["dado", "contrato"], ["dado", "resumo_juridico"], ["dado", "proposta_en"], ["dado", "proposta_es"]] },
+  { id: "l4", file: "contrato.data.js", items: [["dado", "pacote_contrato"], ["dado", "propostas"]] },
   { id: "l5", file: "credenciais.layer.js", items: [["fn", "u18"], ["fn", "u19"], ["dado", "conta_id"], ["dado", "credenciais"], ["script", "s3"]] },
 ];
 function ensureLayers() {
@@ -1421,10 +1421,10 @@ let U = [
   { id: "u11", title: "Rascunhar proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
   { id: "u12", title: "Revisar proposta", parent: "u9", agent: "a4", col: "c4", lane: "l2", prog: .6, s: 3, e: 7, plan: "onb", ins: ["rascunho"], outs: [["proposta_aprovada", "out/proposta.md"]], cond: ["proposta_aprovada", "u11"] },
   { id: "d1", kind: "data", title: "Proposta aprovada", parent: "u9", plan: "onb", lane: "l2", col: "c4", ins: ["proposta_aprovada"] },
-  { id: "u13", title: "Traduzir proposta", ctx: "Inglês e espanhol, manter termos do contrato", parent: "u9", agent: "a2", col: "c3", lane: "l2", st: "fail", s: 8, e: 9, plan: "onb", ins: ["proposta_aprovada"], outs: [["proposta_en", "out/proposta-en.md"], ["proposta_es", "out/proposta-es.md"]], err: "Limite de contexto: o anexo do contrato passou de 200 páginas.", loop: ["idioma", '["en", "es"]'] },
-  { id: "u14", title: "Gerar contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["contrato", "out/contrato.pdf"], ["resumo_juridico", "out/resumo.md"]] },
-  { id: "d2", kind: "data", title: "Contexto completo", parent: "u9", plan: "onb", lane: "l2", col: "c1", ins: ["proposta_en", "proposta_es", "contrato"] },
-  { id: "u15", title: "Enviar ao cliente", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["proposta_en", "proposta_es", "contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
+  { id: "u13", title: "Traduzir proposta", ctx: "Inglês e espanhol, manter termos do contrato", parent: "u9", agent: "a2", col: "c3", lane: "l2", st: "fail", s: 8, e: 9, plan: "onb", ins: ["proposta_aprovada"], outs: [["propostas", "out/propostas.json"]], err: "Limite de contexto: o anexo do contrato passou de 200 páginas.", loop: ["idioma", '["en", "es"]'] },
+  { id: "u14", title: "Gerar contrato", parent: "u9", agent: "a1", col: "c3", lane: "l2", st: "pendente", s: 8, e: 10, plan: "onb", ins: ["proposta_aprovada", "dados_cliente"], outs: [["pacote_contrato", "out/pacote-contrato.json"]] },
+  { id: "d2", kind: "data", title: "Contexto completo", parent: "u9", plan: "onb", lane: "l2", col: "c1", ins: ["propostas", "pacote_contrato"] },
+  { id: "u15", title: "Enviar ao cliente", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", s: 11, e: 11, plan: "onb", ins: ["propostas", "pacote_contrato"], outs: [["envio_id", "out/envio.json"]], code: CODE_ENVIO, loop: ["idioma", '["en", "es"]'] },
   { id: "u41", title: "Registrar no CRM", parent: "u9", agent: "m1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["crm_registro", "out/crm-registro.json"]] },
   { id: "u16", title: "Ativar cliente", ctx: "Depois do envio: kickoff, conta e credenciais", parent: "f2", agent: "a4", col: "c1", lane: "l2", plan: "onb" },
   { id: "u17", title: "Agendar kickoff", ctx: "Chamada de 30 min depois do contrato assinado", parent: "u16", agent: "a1", col: "c1", lane: "l2", st: "pendente", plan: "onb", ins: ["envio_id"], outs: [["kickoff", "out/kickoff.ics"]] },
@@ -1479,10 +1479,10 @@ const GOALS = {
   dados_cliente: "CRM Acme completo",
   rascunho: "proposta PT aprovável",
   proposta_aprovada: "ok comercial",
-  proposta_en: "EN publicado",
-  proposta_es: "ES publicado",
-  contrato: "PDF assinado",
-  resumo_juridico: "checklist jurídico ok",
+  "propostas.en": "EN publicado",
+  "propostas.es": "ES publicado",
+  "pacote_contrato.contrato": "PDF assinado",
+  "pacote_contrato.resumo_juridico": "checklist jurídico ok",
   envio_id: "enviado ao cliente",
   pagina: "home no ar",
   publicado: "build live",
@@ -1539,11 +1539,13 @@ const DATA_KIDS = {
   dados_cliente: ["dados_cliente.nome", "dados_cliente.cnpj", "dados_cliente.contatos"],
   "dados_cliente.contatos": ["dados_cliente.contatos.email", "dados_cliente.contatos.telefone"],
   credenciais: ["credenciais.usuario", "credenciais.senha"],
+  propostas: ["propostas.en", "propostas.es"],
+  pacote_contrato: ["pacote_contrato.contrato", "pacote_contrato.resumo_juridico"],
 };
 /** Tipos de dado (select no painel) · equivalentes em JS / TS / C para a exportação. */
 const DTYPES = [["texto", "string", "char*"], ["numero", "number", "double"], ["inteiro", "number", "int"], ["booleano", "boolean", "bool"], ["data", "Date", "time_t"], ["lista", "T[]", "T*"], ["objeto", "{ … }", "struct"], ["arquivo", "Blob", "FILE*"]];
 const DTYPE_N = { texto: "Texto", numero: "Número", inteiro: "Inteiro", booleano: "Booleano", data: "Data", lista: "Lista", objeto: "Objeto", arquivo: "Arquivo" };
-const DATA_TYPE = { dados_cliente: "objeto", "dados_cliente.nome": "texto", "dados_cliente.cnpj": "texto", "dados_cliente.contatos": "lista", "dados_cliente.contatos.email": "texto", "dados_cliente.contatos.telefone": "texto", credenciais: "objeto", "credenciais.usuario": "texto", "credenciais.senha": "texto", orcamento: "numero", proposta_aprovada: "booleano", kickoff: "data", contrato: "arquivo" };
+const DATA_TYPE = { dados_cliente: "objeto", "dados_cliente.nome": "texto", "dados_cliente.cnpj": "texto", "dados_cliente.contatos": "lista", "dados_cliente.contatos.email": "texto", "dados_cliente.contatos.telefone": "texto", credenciais: "objeto", propostas: "objeto", "propostas.en": "texto", "propostas.es": "texto", pacote_contrato: "objeto", "pacote_contrato.contrato": "arquivo", "pacote_contrato.resumo_juridico": "texto", "credenciais.usuario": "texto", "credenciais.senha": "texto", orcamento: "numero", proposta_aprovada: "booleano", kickoff: "data", contrato: "arquivo" };
 const dKids = name => DATA_KIDS[name] || [];
 const dLeaf = name => String(name).split(".").pop();
 /** Ícone do dado: composto (tem campos) = cubo · folha = quadrado. */
@@ -3658,7 +3660,7 @@ const ACT = {
     const plan = cur.plan || PLANS[0].id;
     const name = "novo_dado_" + (seq + 1);
     const root = planRoot(plan);
-    const host = U.find(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === plan && !kids(u.id).some(k => !k.arch)) || create(root?.id || null, "file", "Definir " + name, { plan, lane: root?.lane || LANES[0].id, col: COLS[0].id });
+    const host = U.find(u => !u.arch && !isFolder(u) && !isData(u) && u.plan === plan && !(u.outs || []).length && !kids(u.id).some(k => !k.arch)) || create(root?.id || null, "file", "Definir " + name, { plan, lane: root?.lane || LANES[0].id, col: COLS[0].id });
     host.outs = host.outs || [];
     if (!host.outs.some(o => o[0] === name)) host.outs.push([name, "out/" + name + ".json"]);
     cur.dadoEdit = name; cur.estado = name; cur.sel = host.id; cur.plan = plan;

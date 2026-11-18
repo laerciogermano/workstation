@@ -2023,7 +2023,7 @@ function flowTags(u) {
   return t.map(([k, n]) => `<span class="ftag ${k}">${esc(n)}</span>`).join("");
 }
 function flowLegend() {
-  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>↑</kbd><kbd>↓</kbd> mover <kbd>⇧↑</kbd><kbd>⇧↓</kbd> início/fim <kbd>→</kbd> dentro <kbd>←</kbd> fora</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
+  return `<span class="fkeys" title="Atalhos com uma função selecionada"><kbd>C</kbd> irmão <kbd>⇧C</kbd> filho <kbd>E</kbd> editar <kbd>↑</kbd><kbd>↓</kbd> mover <kbd>⇧↑</kbd><kbd>⇧↓</kbd> início/fim <kbd>←</kbd> paralelo <kbd>→</kbd> sequência/dentro <kbd>⇧←</kbd> fora</span><span class="flegend"><span><i class="lg-fc"></i>função concreta (import node:*)</span><span><i class="lg-fa"></i>função abstrata (IA · state)</span><span><i class="lg-da"></i>dado abstrato (state)</span><span><i class="lg-dot"></i>dado concreto</span><span><i class="lg-sum"></i>composição · camada</span><span><i class="lg-seq"></i>sequência</span><span><i class="lg-if"></i>seleção</span><span class="ftag loop">↻ repetição</span></span>`;
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias eN
@@ -3275,17 +3275,42 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
-/** Mover pelo teclado: ↑/↓ troca com o irmão · ⇧↑/⇧↓ vai para o início/fim dos irmãos · → entra no irmão de cima (último filho) · ← sai para depois do pai. */
+/** Mover pelo teclado: ↑/↓ troca com o irmão · ⇧↑/⇧↓ início/fim · ← paralelo ao irmão anterior · → desfaz o paralelo (ou entra no irmão de cima) · ⇧← sai para depois do pai. */
 function fnKeyMove(u, key, shift) {
   const sibs = kidsPlan(u.parent).filter(k => !k.arch && !isFolder(k) && !isData(k) && k.plan === u.plan), i = sibs.indexOf(u);
   const p = $u(u.parent), canOut = p && !isFolder(p);
   let ok = false, msg = "";
   if (key === "ArrowUp" && i > 0) { ok = moveFn(u.id, shift ? sibs[0].id : sibs[i - 1].id, "before"); msg = shift ? "primeiro irmão" : "subiu"; }
   else if (key === "ArrowDown" && i < sibs.length - 1) { ok = moveFn(u.id, shift ? sibs[sibs.length - 1].id : sibs[i + 1].id, "after"); msg = shift ? "último irmão" : "desceu"; }
+  else if (key === "ArrowRight" && i > 0 && isPar(sibs[i - 1].id, u.id)) { unParallel(u, sibs[i - 1]); ok = true; msg = `volta a vir depois de ${sibs[i - 1].title}`; }
   else if (key === "ArrowRight" && i > 0) { ok = moveFn(u.id, sibs[i - 1].id, "child"); msg = `dentro de ${sibs[i - 1].title}`; }
-  else if (key === "ArrowLeft" && canOut) { ok = moveFn(u.id, p.id, "after"); msg = `fora de ${p.title}`; }
+  else if (key === "ArrowLeft" && shift && canOut) { ok = moveFn(u.id, p.id, "after"); msg = `fora de ${p.title}`; }
+  else if (key === "ArrowLeft" && !shift && i > 0 && !isPar(sibs[i - 1].id, u.id)) { makeParallel(u, sibs[i - 1]); ok = true; msg = `em paralelo com ${sibs[i - 1].title}`; }
   paint();
-  toast(ok ? `${u.title}: ${msg}` : key === "ArrowLeft" ? "Já está no nível de cima" : key === "ArrowRight" ? "Precisa de um irmão acima para entrar nele" : "Já está na ponta", ok ? "move" : "info");
+  toast(ok ? `${u.title}: ${msg}` : key === "ArrowLeft" ? (shift ? "Já está no nível de cima" : i > 0 ? "Já está em paralelo com o irmão anterior" : "Não há irmão anterior para ficar em paralelo") : key === "ArrowRight" ? "Precisa de um irmão acima para entrar nele" : "Já está na ponta", ok ? "move" : "info");
+}
+const isPar = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+/** ← : u passa a rodar no mesmo passo do irmão anterior a (mesmas entradas de sequência; quem vinha depois de u espera os dois). */
+function makeParallel(u, a) {
+  const predsA = DEPS.filter(d => d[1] === a.id).map(d => d[0]);
+  const succU = DEPS.filter(d => d[0] === u.id).map(d => d[1]);
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === u.id) DEPS.splice(i, 1);
+  predsA.forEach(x => DEPS.push([x, u.id]));
+  succU.forEach(b => { if (!DEPS.some(d => d[0] === a.id && d[1] === b)) DEPS.push([a.id, b]); });
+  DEPS.forEach(d => { if (d[0] === a.id && d[1] === u.id) d[1] = "__x"; });
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === "__x") DEPS.splice(i, 1);
+  const group = [a.id, ...PARS.filter(pr => pr.includes(a.id)).map(pr => pr[0] === a.id ? pr[1] : pr[0])];
+  group.forEach(g => { if (g !== u.id && !isPar(g, u.id)) PARS.push([g, u.id]); });
+  cur.sel = u.id;
+}
+/** → num elemento em paralelo: volta a ser sequencial, logo depois do irmão anterior. */
+function unParallel(u, a) {
+  const predsA = new Set(DEPS.filter(d => d[1] === a.id).map(d => d[0]));
+  for (let i = PARS.length - 1; i >= 0; i--) if (PARS[i].includes(u.id)) PARS.splice(i, 1);
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][1] === u.id && predsA.has(DEPS[i][0])) DEPS.splice(i, 1);
+  for (let i = DEPS.length - 1; i >= 0; i--) if (DEPS[i][0] === a.id && DEPS.some(d => d[0] === u.id && d[1] === DEPS[i][1])) DEPS.splice(i, 1);
+  DEPS.push([a.id, u.id]);
+  cur.sel = u.id;
 }
 /** Move a função (com as filhas) para antes, depois ou dentro de outra. */
 function moveFn(id, refId, mode) {
@@ -3791,7 +3816,7 @@ document.addEventListener("keydown", e => {
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
-  // atalhos do Flow com função selecionada: C cria · setas movem (↑↓ irmãos, ⇧↑⇧↓ início/fim, → dentro, ← fora) · E edita
+  // atalhos do Flow com função selecionada: C cria · setas movem (↑↓ irmãos, ⇧↑⇧↓ início/fim, ← paralelo ao irmão anterior, → desfaz paralelo ou entra, ⇧← sai do pai) · E edita
   if (sel && cur.v === "flow" && !isFolder(sel) && !isData(sel) && !mod && !e.altKey) {
     const k = e.key.toLowerCase();
     if (k === "c") { e.preventDefault(); addFnEl(sel.id, e.shiftKey ? "child" : "after"); paint(); return; }

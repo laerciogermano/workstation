@@ -682,7 +682,10 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .fkeys kbd { font: 600 10px var(--mono); min-width: 16px; height: 16px; padding: 0 3px; display: inline-grid; place-items: center; border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 4px; background: var(--paper); color: var(--ink); }
 /* opção B: ações em cima da barra selecionada no canvas */
 .gright .bar-tools { position: absolute; z-index: 5; display: none; align-items: center; gap: 1px; height: 26px; padding: 1px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 7px; box-shadow: var(--shadow); white-space: nowrap; animation: btIn .12s var(--ease); }
-.gright .bar-tools::after { content: ""; position: absolute; left: 10px; bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
+.gright .bar-tools::after { content: ""; position: absolute; left: var(--tip-x, 10px); bottom: -5px; width: 8px; height: 8px; background: var(--paper); border-right: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg); }
+.gantt.flow .grow.grp .car { cursor: pointer; border-radius: 4px; }
+.gantt.flow .grow.grp .car:hover { color: var(--accent); background: var(--panel); }
+.gantt.flow .grow.grp:not(.open) .car svg { transform: rotate(-90deg); }
 .gright .bar-tools .ib { width: 24px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--body); border-radius: 5px; }
 .gright .bar-tools .ib:hover { color: var(--accent); background: var(--panel); }
 .gright .bar-tools .ib.danger:hover { color: var(--fail); background: color-mix(in srgb, var(--fail) 12%, transparent); }
@@ -1459,6 +1462,8 @@ function fnIcon(u) {
 /** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
+/** Sanfona do Flow (coluna Nome): ids de composição fechados — filhos somem da lista e do desenho. */
+const FLOW_CLOSED = new Set();
 function planRoot(plan) { return U.find(u => !u.arch && isFolder(u) && u.plan === plan && !u.parent) || null; }
 /** Dado abstrato = sem valor definido e usado numa camada que não o produz. */
 function dadoIsAbs(name) {
@@ -2029,7 +2034,9 @@ function flowLegend() {
 }
 function flow(s) {
   // sem estado nomeado (◆): só funções e composições; estados = divisórias sN
-  const rows = ganttRows(s.plan).filter(r => !isData(r.u));
+  // sanfona: ancestrais em FLOW_CLOSED escondem a subárvore (lista + SVG)
+  const flowHidden = id => { let p = $u(id)?.parent; while (p && !isFolder($u(p))) { if (FLOW_CLOSED.has(p)) return true; p = $u(p).parent; } return false; };
+  const rows = ganttRows(s.plan).filter(r => !isData(r.u) && !flowHidden(r.u.id));
   // sequência pela ordem das linhas (igual ao layout): cada passo liga no seguinte entre irmãos; ◆ não conta.
   // DEPS antigos podem ficar velhos depois de mover — não servem para desenhar
   const FD = [];
@@ -2103,9 +2110,9 @@ function flow(s) {
   };
   const leftRow = ({ u, d }) => {
     const has = hasK(u), a = agent(u.agent), L = layout[u.id] || { s: 0, e: 0 };
-    const dur = isData(u) ? 0 : L.e - L.s + 1;
-    const lead = has ? `<span class="car">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
-    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}" data-act="fsel" data-id="${u.id}">
+    const open = has && !FLOW_CLOSED.has(u.id);
+    const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : `<span class="dot${isData(u) ? " dia" : ""}"></span>`;
+    return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}" data-act="fsel" data-id="${u.id}">
       <span class="nm" style="padding-left:${d * 18 + (has ? 0 : 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Nome do elemento">` : `<b>${esc(u.title)}</b>`}</span>
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento"><button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho (Tab)">${icon("plus")}</button><button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo (Enter; ⇧Enter = acima)">${icon("between-horizontal-end")}</button><i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
@@ -3342,6 +3349,7 @@ const ACT = {
   "cat-tab": t => { cur.catTab = t.dataset.t; unset("catBlock"); },
   "cat-rm": t => { const c = t.dataset.c; if (inUse(c).length) { cur.catBlock = cur.catBlock === c ? null : c; return; } const i = CAT.findIndex(x => x.id === c); const n = CAT[i].name; CAT.splice(i, 1); toast(`${n} saiu do catálogo`); },
   toggle: t => { const id = t.dataset.id; OPEN.has(id) ? OPEN.delete(id) : OPEN.add(id); },
+  "flow-toggle": t => { const id = t.dataset.id; if (!id) return false; FLOW_CLOSED.has(id) ? FLOW_CLOSED.delete(id) : FLOW_CLOSED.add(id); cur.sel = id; },
   // abrir / fechar todos os accordeons de um plano (projeto): roteiros, ifs e Estados
   // clicar no plano (projeto) troca o Flow para ele; clicar de novo no plano atual abre/fecha
   "proj-sel": t => {
@@ -3571,21 +3579,45 @@ holder.addEventListener("click", e => {
   const t = { dataset: { act: h.act.act, id: h.act.id, n: h.act.n }, closest: q => q === ".gantt.flow" ? holder.querySelector(".gantt.flow") : null };
   const r = ACT[h.act.act]?.(t, e); if (r !== false) paint();
 }, true);
-/** Hover numa task do Flow mostra as ações em cima dela; sair da task e da barra esconde (com folga para alcançar os botões). */
+/** Hover numa task/composição do Flow: menu acima, sempre perto do cursor (eixo X); sair esconde com folga. */
 let barHov = null, barHovT = 0;
-function setBarHov(id) {
-  clearTimeout(barHovT);
-  if (id === barHov) return;
-  holder.querySelectorAll(".bar-tools.hov").forEach(x => x.classList.remove("hov"));
-  barHov = id; if (id) { const t = holder.querySelector(`.bar-tools[data-for="${id}"]`); if (t) { t.classList.add("hov"); lucide.createIcons(); } }
+function placeBarNearCursor(id, clientX) {
+  const t = holder.querySelector(`.bar-tools[data-for="${id}"]`);
+  const gr = holder.querySelector(".gantt.flow .gright");
+  if (!t || !gr || clientX == null) return;
+  const grR = gr.getBoundingClientRect();
+  const sx = grR.width ? gr.offsetWidth / grR.width : 1;
+  const lx = (clientX - grR.left) * sx;
+  const tw = t.offsetWidth || 120;
+  const left = Math.max(4, Math.min(lx - 14, Math.max(4, gr.offsetWidth - tw - 4)));
+  t.style.left = left + "px";
+  t.style.setProperty("--tip-x", Math.max(6, Math.min(tw - 14, lx - left - 4)) + "px");
 }
-holder.addEventListener("mouseover", e => {
-  const bt = e.target.closest?.(".bar-tools"); if (bt) { setBarHov(bt.dataset.for); return; }
-  const g = e.target.closest?.('.gright [data-act="fsel"][data-id]'); if (g) { setBarHov(g.dataset.id); return; }
-  if (barHov && !e.target.closest?.(".fv-cv")) { clearTimeout(barHovT); barHovT = setTimeout(() => setBarHov(null), 250); }
+function setBarHov(id, clientX) {
+  clearTimeout(barHovT);
+  if (id !== barHov) {
+    holder.querySelectorAll(".bar-tools.hov").forEach(x => x.classList.remove("hov"));
+    barHov = id;
+    if (id) { const t = holder.querySelector(`.bar-tools[data-for="${id}"]`); if (t) { t.classList.add("hov"); lucide.createIcons(); } }
+  }
+  if (id && clientX != null) placeBarNearCursor(id, clientX);
+}
+holder.addEventListener("mousemove", e => {
+  const bt = e.target.closest?.(".bar-tools");
+  if (bt) { setBarHov(bt.dataset.for, e.clientX); return; }
+  const g = e.target.closest?.('.gright [data-act="fsel"][data-id], .gright .sv-sumg[data-act="fsel"]');
+  if (g?.dataset?.id) { setBarHov(g.dataset.id, e.clientX); return; }
+  const cv = e.target.closest?.(".fv-cv");
+  if (cv) {
+    const h = flowHit(e);
+    cv.style.cursor = h ? "pointer" : "";
+    cv.title = h?.tip || "";
+    if (h?.act?.act === "fsel") setBarHov(h.act.id, e.clientX);
+    else if (barHov) { clearTimeout(barHovT); barHovT = setTimeout(() => setBarHov(null), 250); }
+    return;
+  }
+  if (barHov && !e.target.closest?.(".bar-tools")) { clearTimeout(barHovT); barHovT = setTimeout(() => setBarHov(null), 250); }
 });
-holder.addEventListener("mousemove", e => { const cv0 = e.target.closest?.(".fv-cv"); if (cv0) { const h = flowHit(e); if (h?.act?.act === "fsel") setBarHov(h.act.id); else if (barHov) { clearTimeout(barHovT); barHovT = setTimeout(() => setBarHov(null), 250); } } });
-holder.addEventListener("mousemove", e => { const cv = e.target.closest?.(".fv-cv"); if (!cv) return; const h = flowHit(e); cv.style.cursor = h ? "pointer" : ""; cv.title = h?.tip || ""; });
 holder.addEventListener("pointerdown", e => {
   if (flowHit(e)) return; // clique em barra/dado no canvas não vira pan
   const canvas = e.target.closest(".zcanvas");

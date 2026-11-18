@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.7 |
+| Versão | 1.8 |
 
 ## IDR — identificador único
 
@@ -71,3 +71,12 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | Função abstrata sem agente (`nag`): borda **tracejada** | borda **sólida**, fill transparente |
 
 **Voltar:** tirar botão `ask-rm` das toolbars; `.sv-fn.nag` / `.fbar.nag` com `stroke-dasharray` / `border-style: dashed`.
+
+## Sanfona Flow + menu perto do cursor
+
+| Antes | Depois |
+|---|---|
+| Seta `.car` na coluna Nome só visual | `flow-toggle` + `FLOW_CLOSED` esconde filhos na lista e no SVG |
+| `bar-tools` fixo em `left: g.x1` | segue o cursor no eixo X (`placeBarNearCursor` + `--tip-x`) |
+
+**Voltar:** remover `FLOW_CLOSED` / `flow-toggle`; `setBarHov` sem `clientX`; `::after` com `left: 10px`.

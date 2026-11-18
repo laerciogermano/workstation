@@ -5,7 +5,7 @@
 | Produto | **Flow.dev** — Flow IDE (Explorar + Flow) |
 | Código | `works/flow-dev` |
 | Fonte de visão | [`../README.md`](../README.md) |
-| Versão | 1.10 |
+| Versão | 1.11 |
 
 ## IDR — identificador único
 
@@ -100,3 +100,12 @@ As setas **não fazem nada** no Flow. Criar e posicionar funções é só pelos 
 | Flow começava com todas as composições abertas | `FLOW_CLOSED` inicia com todas as composições (só pais na coluna Nome) |
 
 **Voltar:** restaurar toggle de `OPEN` no clique do `data-node`; `FLOW_CLOSED = new Set()`.
+
+## Root = uma visualização · senão sem seta
+
+| Antes | Depois |
+|---|---|
+| Flow misturava todos os roots do plano no mesmo eixo sN | `flowRoot`: só a árvore do root ativo (`ganttRows`/`flowLayout` filtrados) |
+| Senão = path tracejado `fback` no canvas | Sem seta; texto `· senão → …` na linha/pill do `if` |
+
+**Voltar:** `ganttRows`/`flowLayout` sem `rootId`; redesenhar bloco `fback`; remover `setFlowRootFrom`.

@@ -1322,9 +1322,13 @@ const CAT = [
   { id: "m5", type: "maquina", name: "node:stream", sub: "Node.js · streams", tasks: ["pipeline", "finished", "Readable", "Writable", "Transform"] },
   { id: "m6", type: "maquina", name: "node:console", sub: "Node.js · console", tasks: ["log", "info", "warn", "error", "debug", "table", "clear"] },
 ];
-/** Tasks do responsável: lib = métodos; arquivo/agente/pessoa = verbos ou nomes no arquivo. */
+/** Tasks do responsável: lib/arquivo = métodos (select); verbo abstrato = texto livre. */
 const agentTasks = id => (agent(id)?.tasks || []).slice();
+/** Concreto = lib Node ou arquivo (métodos). Abstrato = IA / modelo / pessoa / vazio → só texto. */
+const taskIsConcrete = a => !!(a && (a.type === "maquina" || a.type === "arquivo" || a.type === "script"));
 const syncTaskTitle = u => {
+  const a = agent(u.agent);
+  if (!taskIsConcrete(a)) return;
   const ts = agentTasks(u.agent);
   if (!ts.length) return;
   if (!ts.includes(u.title)) u.title = ts[0];
@@ -2096,7 +2100,7 @@ function drawer(s) {
       ${u.arch ? `<span class="tag">arquivada</span>` : ""}<button class="ib" data-act="close-drawer" aria-label="Fechar">${icon("x")}</button></div>
     <div class="side-b">
       ${isData(u) ? `<div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título"></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}${a.tasks?.length ? ` · ${a.tasks.length} tasks` : ""}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>
-      <div class="fld"><label>Task${a?.type === "maquina" ? " · método da lib" : a?.type === "arquivo" ? " · função do arquivo" : a?.type === "modelo" ? " · modelo" : ""}</label>${a && (a.tasks || []).length ? `<select data-task="${u.id}" aria-label="Task">${(a.tasks || []).map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select><p style="font-size:12px;color:var(--muted);margin-top:6px">O nome da etapa é a task cadastrada do responsável${a.type === "maquina" ? " (métodos de " + esc(a.name) + ")" : ""}.</p>` : `<input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Task"><p style="font-size:12px;color:var(--fail);margin-top:6px">Escolha um responsável com tasks cadastradas.</p>`}</div>`}
+      <div class="fld"><label>Task${taskIsConcrete(a) ? (a.type === "maquina" ? " · método da lib" : " · função do arquivo") : " · verbo abstrato"}</label>${taskIsConcrete(a) && (a.tasks || []).length ? `<select data-task="${u.id}" aria-label="Task">${(a.tasks || []).map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select><p style="font-size:12px;color:var(--muted);margin-top:6px">Método / task do responsável concreto${a.type === "maquina" ? " (" + esc(a.name) + ")" : ""}.</p>` : `<input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Task"><p style="font-size:12px;color:var(--muted);margin-top:6px">${taskIsConcrete(a) ? "Este responsável ainda não tem tasks cadastradas." : "Verbo abstrato: texto livre (sem select)."}</p>`}</div>`}
       <div class="fld"><label>Contexto</label><textarea data-edit="ctx" data-id="${u.id}" placeholder="Orçamento, preferências, restrições">${esc(u.ctx || "")}</textarea></div>
       ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : ""}
       ${u.st || u.err ? `<div class="fld"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "wait" ? `<button class="btn pri" data-act="complete" data-id="${u.id}">${icon("check")}Concluir (feito pela pessoa)</button>` : ""}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
@@ -2276,13 +2280,15 @@ function respPick(u) {
 // cor do responsável: Node = verde da marca; agente = cor do modelo (Claude laranja, GPT verde OpenAI); pessoa = azul
 const brandOf = a => !a ? "" : a.type === "maquina" ? "#5FA04E" : a.type === "modelo" ? (a.cor || "") : a.type === "ia" ? (modelOf(AGENT_CFG[a.id]?.model)?.cor || a.cor || "") : a.type === "arquivo" ? "#64748b" : "";
 const brandSt = a => { const c = brandOf(a); return c ? ` style="--brand:${c}"` : ""; };
-/** Responsável da função (não-IA): biblioteca Node, script próprio (função de um módulo), pessoa ou agente. */
+/** Task: select só se responsável concreto (lib/arquivo). Verbo abstrato = texto. */
 function taskPick(u) {
+  const a = agent(u.agent);
+  if (!taskIsConcrete(a)) return `<b>${esc(u.title || "sem task")}</b>`;
   const ts = agentTasks(u.agent);
   if (!ts.length) return `<b>${esc(u.title)}</b>`;
   const ok = ts.includes(u.title);
   const miss = ok ? "" : `<option value="" selected disabled class="task-miss">${esc(u.title || "escolher task…")}</option>`;
-  return `<select class="task-pick" data-task="${u.id}" data-act="noop" aria-label="Task de ${esc(agent(u.agent)?.name || "")}" title="Task cadastrada do responsável (obrigatória)">${miss}${ts.map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  return `<select class="task-pick" data-task="${u.id}" data-act="noop" aria-label="Task de ${esc(a.name)}" title="Método / task do responsável concreto">${miss}${ts.map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
 }
 function respOptgroups(selectedId) {
   ensureLayers();
@@ -2447,7 +2453,7 @@ function flow(s) {
     const resp = has || isData(u) ? `<span class="c-ag muted">—</span>` : `<span class="c-ag">${a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>`;
     const task = isData(u) ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}<b>${esc(u.title)}</b></span>`
       : has ? `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b>${esc(u.title)}</b>`}</span>`
-      : `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}${a ? taskPick(u) : (s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b class="task-miss">${esc(u.title || "sem task")}</b>`)}</span>`;
+      : `<span class="nm" style="padding-left:${ind(u, d) + nest * NEST + 10}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : (taskIsConcrete(a) ? taskPick(u) : `<b${a ? "" : ` class="task-miss"`}>${esc(u.title || "sem task")}</b>`)}</span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}${nest ? ` nest-${nest}` : ""}" data-act="fsel" data-id="${u.id}">${gdA(u, false, nest)}
       ${resp}${task}
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}</div>`;

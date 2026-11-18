@@ -217,3 +217,12 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Cabeçalho Flow “N camadas · abstratos · concretos · contexto completo” | Já removido; limpa `nAbs`/`nConc` mortos e nota T-32 |
 
 **Voltar:** seções Funções/Dados; picker com `script`; tipar só CAT clássico.
+
+## Protótipo · task: select só no concreto
+
+| Antes | Depois |
+|---|---|
+| Qualquer responsável com `tasks[]` → `<select>` na coluna Task | Só **lib / arquivo** (`taskIsConcrete`); IA / modelo / pessoa / vazio → **texto** (verbo abstrato) |
+| `syncTaskTitle` forçava 1ª task em todo responsável | Só sincroniza título em responsável concreto |
+
+**Voltar:** `taskPick` / drawer sempre com select quando há `tasks[]`.

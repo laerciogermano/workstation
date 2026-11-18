@@ -375,7 +375,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .ex-sec-h .n { margin-left: auto; }
 .ex-sec-h .ib { width: 22px; height: 22px; color: var(--muted); }
 .ex-sec-h .ib:hover { color: var(--accent); }
-.node .dado-val { font-size: 10px; color: var(--ok); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+.node .dado-val { font-size: 9.5px; color: var(--ok); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
 .node .dado-val.empty { color: var(--muted); font-style: italic; }
 /* src = Planos + Estados (subseções); Agentes = modelos de IA com prompt pronto */
 .ex-sub { position: relative; }
@@ -430,7 +430,7 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node.ag-d .t { font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 .node.ag-d .k { color: var(--muted); font-size: 11px; margin-right: 4px; }
 .ex-sec-h .n { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0; text-transform: none; }
-.node { height: 26px; display: flex; align-items: center; gap: 4px; padding-right: 12px; cursor: pointer; white-space: nowrap; position: relative; border: 1px solid transparent; user-select: none; }
+.node { height: 22px; display: flex; align-items: center; gap: 4px; padding-right: 12px; cursor: pointer; white-space: nowrap; position: relative; border: 1px solid transparent; user-select: none; }
 .node:hover { background: var(--wash); }
 .node.sel { background: color-mix(in srgb, var(--accent) 13%, var(--panel)); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
 .node.cut { opacity: .5; }
@@ -446,7 +446,9 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .node .fi.dado { color: var(--dado); }
 .node .fi.abs svg, .node .fi.dado.abs svg { fill: currentColor; }
 .node .fi.plan { color: var(--fn); }
-.node .t { font-size: 13px; }
+.node .t { font-size: 12px; }
+.node .t .mono, .node .t code { font-size: 11px; }
+.node .dado-val, .node .meta { font-size: 9.5px; }
 .node .t mark { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit; border-radius: 2px; }
 .node .meta { margin-left: 10px; display: flex; gap: 6px; align-items: center; color: var(--muted); }
 .node .meta svg { width: 13px; height: 13px; }
@@ -2229,17 +2231,18 @@ function flow(s) {
     (headAt[i] || []).forEach(st => disp.push({ st, d: r.d }));
     if (leaf(r.u) && r.u.loop) disp.push({ lp: r.u, d: r.d }); // repetição ganha linha própria, como o if
     if (!s.compacto && leaf(r.u) && newIns(r.u).length) {
-      // saída de A = entrada de B (mesmos dados, linhas vizinhas): uma linha só para os dois
-      let k = disp.length - 1; while (k >= 0 && (disp[k].st || disp[k].lp)) k--; // pula a linha do if: a saída antes do ◇ serve de entrada depois dele
-      const prev = disp[k], same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
-      if (prev && prev.io === "out" && !prev.to && same((prev.u.outs || []).map(o => o[0]), newIns(r.u))) prev.to = r.u;
-      else disp.push({ io: "in", u: r.u, d: r.d });
+      // saída de A = entrada de B (mesmos dados, linhas vizinhas): as mesmas linhas servem aos dois. Um dado por linha.
+      let k = disp.length - 1; while (k >= 0 && (disp[k].st || disp[k].lp)) k--; // pula a linha do if
+      const grp = []; while (k >= 0 && disp[k].io === "out" && (!grp.length || disp[k].u === grp[0].u)) { grp.unshift(disp[k]); k--; }
+      const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+      if (grp.length && !grp[0].to && same(grp.map(g => g.nm), newIns(r.u))) grp.forEach(g => g.to = r.u);
+      else newIns(r.u).forEach((n, j) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j === 0 }));
     }
     disp.push(r);
-    if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) disp.push({ io: "out", u: r.u, d: r.d });
+    if (!s.compacto && leaf(r.u) && (r.u.outs || []).length) r.u.outs.forEach((o, j) => disp.push({ io: "out", u: r.u, d: r.d, nm: o[0], first: j === 0 }));
   });
-  const idx = {}, idxIn = {}, idxOut = {}, idxLoop = {};
-  disp.forEach((r, i) => { if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i; else if (r.io === "in") idxIn[r.u.id] = i; else if (r.io === "out") { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } else idx[r.u.id] = i; });
+  const idx = {}, idxIn = {}, idxOut = {}, idxEnd = {}, idxLoop = {};
+  disp.forEach((r, i) => { if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i; else if (r.io === "in") { if (r.first) idxIn[r.u.id] = i; } else if (r.io === "out") { if (r.first) { idxOut[r.u.id] = i; if (r.to) idxIn[r.to.id] = i; } idxEnd[r.u.id] = i; } else idx[r.u.id] = i; });
   const hasK = u => flowKids(u).length > 0;
   // camada = composição de topo (endereços que se conhecem). Dado de entrada produzido na mesma camada = concreto (□);
   // vindo de fora (state / outra camada) = abstrato (■). Função IA = abstrata (chega pelo state); lib Node = concreta (import).
@@ -2283,9 +2286,9 @@ function flow(s) {
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar (abre a janela de edição)">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho · elemento filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão · abaixo">${icon("between-horizontal-end")}</button>`}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}
       <span class="c-ag">${has || isData(u) ? "" : a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" && !has ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span></div>`;
   };
-  const ioNames = (r) => r.io === "in" ? newIns(r.u) : (r.u.outs || []).map(o => o[0]);
+  const ioNames = (r) => [r.nm];
   /* dado puro (□): um nome por marca — sem “a, b” sob o mesmo ícone; cubo pode resumir a árvore */
-  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`;
+  const ioLeft = r => `<div class="grow fl-cols iorow${s.sel === r.u.id ? " sel" : ""}" data-own="${r.u.id}" data-io="${r.io}">${gdA(r.u, true)}<span class="nm" style="padding-left:${ind(r.u, r.d) + 28}px"><span class="io-k">${!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span><span class="io-l" title="${esc(ioNames(r).join(" · "))}">${ioNames(r).map(n => `<b class="io-d" data-act="reveal-dado" data-n="${esc(n)}">${isCube(n) ? `<svg class="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>` : `<i class="io-sq" aria-label="dado"></i>`}${esc(n)}</b>`).join("")}</span></span><span></span></div>`;
   const lpTxt = u => `for (${u.loop[0]} of ${u.loop[1]})`;
   // senão = anotação na seleção (sem seta longa no canvas — o caminho cruzava barras e não lia)
   const senaoOf = st => {
@@ -2334,20 +2337,8 @@ function flow(s) {
   const tw = (t, px) => Math.ceil(String(t).length * px);
   const pill = (x, y, txt, cls) => `<g class="sv-pill ${cls}"><rect x="${x}" y="${y - 8}" width="${tw(txt, 6.1) + 10}" height="16" rx="3"/><text x="${x + 5}" y="${y + 3.5}">${esc(txt)}</text></g>`;
   const tagsOf = u => u.st === "fail" ? [["fail", "falhou"]] : u.st === "exec" ? [["exec", "executando"]] : u.st === "cancel" ? [["cancel", "cancelada"]] : [];
-  /* cada folha = um □ + um nome; sem “proposta_en, proposta_es” no mesmo texto */
-  const dnames = (x, y, list) => {
-    let h = "", cx = x;
-    (list || []).forEach(n => {
-      const cube = isCube(n);
-      const mk = cube
-        ? `<path fill="var(--paper)" stroke="var(--dado)" stroke-width="1.1" stroke-linejoin="round" d="M${cx + 4} ${y - 5} L${cx + 8} ${y - 2.8} L${cx + 8} ${y + 2.2} L${cx + 4} ${y + 4.5} L${cx} ${y + 2.2} L${cx} ${y - 2.8} Z M${cx} ${y - 2.8} L${cx + 4} ${y - 0.5} L${cx + 8} ${y - 2.8} M${cx + 4} ${y - 0.5} V${y + 4.5}"/>`
-        : `<rect x="${cx}" y="${y - 4}" width="8" height="8" fill="var(--paper)" stroke="var(--dado)" stroke-width="1.1"/>`;
-      h += `<g class="sv-fd${cube ? " tree" : ""}${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${mk}<text class="sv-dn" x="${cx + 11}" y="${y + 3}">${esc(n)}</text><title>${esc(n)}${cube ? " · cubo" : " · folha (□)"}</title></g>`;
-      cx += tw(n, 5.4) + 18;
-    });
-    return h;
-  };
-  const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra && extra.length) { h += dnames(cx, y, extra); cx += extra.reduce((w, n) => w + tw(n, 5.4) + 18, 0); } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
+  const dnames = (x, y, list) => `<text class="sv-dn" x="${x}" y="${y + 3.5}">${list.map((n, i) => `${i ? `<tspan>, </tspan>` : ""}<tspan class="sv-dl${s.estado === n ? " on" : ""}" data-act="reveal-dado" data-n="${esc(n)}">${esc(n)}</tspan>`).join("")}<title>${esc(list.join(", "))}</title></text>`;
+  const after = (x, y, u, extra = "") => { let h = "", cx = x; if (!s.txtIn) { h += `<text class="sv-lbl" x="${cx}" y="${y + 3.5}">${esc(u.title)}</text>`; cx += tw(u.title, 5.4) + 10; } if (extra && extra.length) { h += dnames(cx, y, extra); cx += tw(extra.join(", "), 6.3) + 10; } tagsOf(u).forEach(([k, t]) => { h += pill(cx, y, t, k); cx += tw(t, 6.1) + 16; }); return h; };
   const rowSvg = (r, i) => {
     const y0 = yTop(i), ym = yMid(i);
     if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop");
@@ -2390,29 +2381,27 @@ function flow(s) {
     }
     return `<rect ${at} x="${cx - 4}" y="${cy - 4}" width="8" height="8">${t}</rect>`;
   };
-  const ioMarks = (names, cx, cy, cls, tipSuf) => {
-    const list = names.length ? names : [""];
-    if (list.length === 1 || list.some(isCube)) return ioMarkOne(list[0], cx, cy, cls, `${esc(list[0] || "")} · ${tipSuf}`);
-    return list.map((n, i) => ioMarkOne(n, cx, cy + (i - (list.length - 1) / 2) * 12, cls, `${esc(n)} · ${tipSuf}`)).join("");
-  };
+  const ioMarks = (names, cx, cy, cls, tipSuf) => { const list = names.length ? names : [""]; return ioMarkOne(list.find(isCube) || list[0], cx, cy, cls, `${esc(list.join(", "))} · ${tipSuf}`); };
   rows.forEach(({ u }) => {
     if (!isFn(u)) return;
     const g = geo(u), y = yMid(idx[u.id]);
     const inNames = idxIn[u.id] != null ? newIns(u) : (u.ins || []);
     const inAbs = inNames.length ? inNames.some(n => absData(u, n)) : (u.ins || []).some(n => absData(u, n));
     const inTip = inAbs ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)";
-    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>${ioMarks(inNames, g.ix, yi, `fdot${inAbs ? " a" : ""}`, inTip)}`; }
+    if (idxIn[u.id] != null) { const yi = yMid(idxIn[u.id]); svg += `<path class="fdep" d="M${g.ix} ${yi + 4} V${y} H${g.x1}"/>`; }
     else if ((u.ins || []).length || dstOf.has(u.id)) svg += `<line class="fstub" x1="${g.ix + 4}" y1="${y}" x2="${g.x1}" y2="${y}"/>${ioMarks(u.ins || [], g.ix, y, `fdot${inAbs ? " a" : ""}`, inTip)}`;
-    if (idxOut[u.id] != null) { const yo = yMid(idxOut[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>${ioMarks(u.outs.map(o => o[0]), g.ox, yo, "fdot", "saída")}`; }
+    if (idxOut[u.id] != null) { const yo = yMid(idxEnd[u.id]); svg += `<path class="fdep" d="M${g.x2} ${y} H${g.ox} V${yo - 4}"/>`; }
     else if ((u.outs || []).length || srcOf.has(u.id)) svg += `<line class="fstub" x1="${g.x2}" y1="${y}" x2="${g.ox - 4}" y2="${y}"/>${ioMarks((u.outs || []).map(o => o[0]), g.ox, y, "fdot", "saída concreta")}`;
   });
+  // um □ por linha de dado
+  disp.forEach((r, i) => { if (!r.io) return; const g = geo(r.u), ab = r.io === "in" && absData(r.u, r.nm); svg += ioMarkOne(r.nm, r.io === "in" ? g.ix : g.ox, yMid(i), `fdot${ab ? " a" : ""}`, `${esc(r.nm)} · ${r.io === "in" ? (ab ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)") : "saída"}`); });
   // seleção: ◇ no conector que entra no corpo do if; faixa do corpo; senão volta (recursão, documento item 13)
   const bands = structs.map(st => {
-    const i1 = Math.max(...st.body.map(id => idxOut[id] ?? idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
+    const i1 = Math.max(...st.body.map(id => idxEnd[id] ?? idx[id])), x = geo(rows[st.i0].u).ix, y = yMid(st.hi);
     st.x = x;
     svg += `<path class="fif" d="M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z"><title>if (${esc(st.test)})</title></path>`;
     return `<rect class="sv-band" x="0" y="${yTop(st.hi)}" width="${CW}" height="${(i1 - st.hi + 1) * RH}"/><line class="sv-bandl" x1="1" y1="${yTop(st.hi)}" x2="1" y2="${yTop(i1) + RH}"/>`;
-  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxOut[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
+  }).join("") + Object.keys(idxLoop).map(id => { const a = idxLoop[id], b = idxEnd[id] ?? idx[id]; return `<rect class="sv-band lp" x="0" y="${yTop(a)}" width="${CW}" height="${(b - a + 1) * RH}"/><line class="sv-bandl lp" x1="1" y1="${yTop(a)}" x2="1" y2="${yTop(b) + RH}"/>`; }).join("");
   // senão: sem path tracejado no canvas (anotação no if / coluna Nome)
   const H = disp.length * RH;
   const rootU = rootId ? $u(rootId) : null;

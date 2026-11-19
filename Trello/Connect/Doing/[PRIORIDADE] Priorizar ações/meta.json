@@ -1,0 +1,21 @@
+{
+  "id": "local-connect-priorizar-acoes-miro",
+  "url": null,
+  "list": "Doing",
+  "dateLastActivity": "2026-11-19T11:53:47.000Z",
+  "due": null,
+  "labels": ["Prioridade"],
+  "cover": {
+    "color": "red",
+    "size": "normal",
+    "brightness": "dark",
+    "idAttachment": null,
+    "idUploadedBackground": null
+  },
+  "attachments": [
+    {
+      "name": "Miro",
+      "url": "https://miro.com/app/board/uXjVEMBxgY4=/"
+    }
+  ]
+}

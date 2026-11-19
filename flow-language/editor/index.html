@@ -3510,10 +3510,10 @@ function pyCode(plan) {
 }
 function agentRef(u) { const a = agent(u.agent); return a ? `agents.<span class="f">${a.type}</span>(<span class="s">"${a.name}"</span>)` : "agents.<span class=\"f\">nenhum</span>()"; }
 function exportDlg(s) {
-  const tab = s.expTab || "ir";
+  const tab = ["js", "ts", "py"].includes(s.expTab) ? s.expTab : "js";
   const { orphans, missing } = fopCheck(s.plan);
-  const code = tab === "ir" ? irCode(s.plan) : tab === "js" ? jsCode(s.plan) : tab === "ts" ? tsCode(s.plan) : pyCode(s.plan);
-  const file = { ir: "plano.fop", js: slug(PLANS.find(p => p.id === s.plan).name).replace(/_/g, "-") + ".js", ts: "onboarding-acme.ts", py: "onboarding_acme.py" }[tab];
+  const code = tab === "ts" ? tsCode(s.plan) : tab === "py" ? pyCode(s.plan) : jsCode(s.plan);
+  const file = { js: slug(PLANS.find(p => p.id === s.plan).name).replace(/_/g, "-") + ".js", ts: "onboarding-acme.ts", py: "onboarding_acme.py" }[tab];
   const blocked = missing.length > 0;
   return `<div class="scrim" data-act="scrim"><div class="modal export" role="dialog" aria-label="Exportar">
     <div class="modal-h">${icon("file-code-2")}<h3>Exportar · ${esc(PLANS.find(p => p.id === s.plan).name)}</h3><span class="sp"></span><button class="ib" data-act="close-export">${icon("x")}</button></div>
@@ -3523,10 +3523,9 @@ function exportDlg(s) {
         ${blocked ? `<div class="chk fail">${icon("circle-x")}<div>Contexto incompleto<small>Compilação bloqueada</small></div></div>` : `<div class="chk ok">${icon("circle-check")}<div>Contexto completo</div></div>`}
         ${orphans.map(([n]) => `<div class="chk warn">${icon("triangle-alert")}<div>Saída órfã <span class="mono">${n}</span><small>Exporta com aviso</small></div></div>`).join("")}</div>
       <div class="dest"><h4 style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px">Destino</h4>
-        <button data-act="exp-tab" data-t="ir" class="${tab === "ir" ? "on" : ""}">${icon("braces")}FOP-IR<small>intermediário</small></button>
-        <button data-act="exp-tab" data-t="js" class="${tab === "js" ? "on" : ""}">${icon("file-code")}JavaScript<small>FOP · state</small></button>
-        <button data-act="exp-tab" data-t="ts" class="${tab === "ts" ? "on" : ""}">${icon("file-code")}TypeScript<small>via IR</small></button>
-        <button data-act="exp-tab" data-t="py" class="${tab === "py" ? "on" : ""}">${icon("file-code")}Python<small>via IR</small></button>
+        <button data-act="exp-tab" data-t="js" class="${tab === "js" ? "on" : ""}">${icon("file-code")}JavaScript<small>state</small></button>
+        <button data-act="exp-tab" data-t="ts" class="${tab === "ts" ? "on" : ""}">${icon("file-code")}TypeScript</button>
+        <button data-act="exp-tab" data-t="py" class="${tab === "py" ? "on" : ""}">${icon("file-code")}Python</button>
         <button disabled title="Fora da v1">${icon("file-x")}Go<small>não suportado em v1</small></button></div>
     </div><div class="code"><div class="ch">${icon("file")}<span class="mono">${file}</span><span class="sp"></span><button class="btn" data-act="copy-code">${icon("copy")}Copiar</button><button class="btn pri" data-act="download" data-file="${file}"${blocked ? " disabled" : ""}>${icon("download")}Baixar</button></div><pre data-pre>${code}</pre></div></div>
   </div></div>`;
@@ -3559,7 +3558,7 @@ const SCREENS = {
   "T-37": { s: { v: "flow", plan: "hello", flowRoot: "u200", sel: "u201", termOpen: true }, name: "Hello World + Terminal", us: ["Hello", "Terminal", "node:console"], notes: "Igual ao app :5180 no projeto Hello World: colunas Responsável · Task; lib node:console · task log; Terminal no rodapé; Executar imprime o dado sólido saudacao (Hello, World!) via console.log: a task recebe a entrada e não tem saída." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
-  "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(state), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },
+  "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Exporta JavaScript (function f(state), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },
   "T-50": { s: { v: "catalog", catTab: "ia" }, name: "IAs e bibliotecas", us: ["catálogo"], notes: "Abas IA e Bibliotecas Node.js. Incluir na linha de cima. Conta quantas etapas usam cada agente." },
   "T-51": { s: { v: "catalog", catTab: "maquina", catBlock: "m1" }, name: "Remoção bloqueada", us: ["catálogo"], notes: "Remover biblioteca em uso lista as etapas; troque o responsável antes de remover." },
 };
@@ -4131,7 +4130,7 @@ const ACT = {
     return false;
   },
   "cancel-run": () => { U.filter(u => u.plan === cur.plan && (u.st === "exec" || u.st === "wait")).forEach(u => u.st = "cancel"); toast("Execução cancelada", "ban"); },
-  export: () => { cur.exp = true; cur.expTab = cur.expTab || "ir"; },
+  export: () => { cur.exp = true; cur.expTab = ["js", "ts", "py"].includes(cur.expTab) ? cur.expTab : "js"; },
   "close-export": () => unset("exp"),
   "exp-tab": t => { cur.expTab = t.dataset.t; },
   "flow-go": t => { cur.flowRoot = t.dataset.id; cur.sel = t.dataset.id; unset("drawer"); },

@@ -11,6 +11,7 @@
 - **Responsável, task, entradas e saídas:** colunas do Flow e painel de detalhe.
 - **Seleção (if) e repetição (for):** toolbar flutuante do canvas.
 - **Código ao vivo:** painel à direita — JavaScript · TypeScript · Python · FOP-IR; copiar e baixar. Mostra se o contexto está completo. Recolhe/expande pelo ícone `panel-right` (atalho **N**), no mesmo padrão das notas do protótipo Flow IDE; preferência em `localStorage` (`flow-lang-code`).
+- **Exportar:** só JavaScript · TypeScript · Python (sem FOP-IR).
 
 ## Diferenças para o Flow IDE
 

@@ -561,8 +561,8 @@ const server = createServer(async (req, res) => {
         try {
           const cur = getViewConfig(c.id);
           if (!cur.running) {
-            if ((cur.config?.intervalMs ?? 0) !== 100) {
-              setViewConfig(c.id, { intervalMs: 100, quality: cur.config?.quality ?? 15 });
+            if ((cur.config?.intervalMs ?? 0) !== 20) {
+              setViewConfig(c.id, { intervalMs: 20, quality: cur.config?.quality ?? 15 });
             }
             await startView(c.id);
           }

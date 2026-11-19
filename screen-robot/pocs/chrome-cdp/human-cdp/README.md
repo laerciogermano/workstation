@@ -201,19 +201,19 @@ Meta `.human-cdp.json` atual é preservada no restore. Legado `~/chrome-cdp-back
 
 ```text
 ~/chrome-cdp-view/<cdpId>/
-  config.json     # quality (default 15), intervalMs (100), maxKeep
+  config.json     # quality (default 15), intervalMs (20), maxKeep
   latest.jpg
   frames/*.jpg
 ```
 
 ```js
 import { startView, stopView, setViewConfig, setViewTarget } from './src/index.mjs';
-setViewConfig('meu-cdp', { quality: 12, intervalMs: 100 });
+setViewConfig('meu-cdp', { quality: 12, intervalMs: 20 });
 await startView('meu-cdp'); // CDP precisa estar up
 await setViewTarget('meu-cdp', targetId); // troca aba fotografada
 ```
 
-**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **100 ms**; abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola); **rolagem** no print → `scroll({ x, y, dx, dy, exact: true })` com os mesmos deltas (px). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: restaurar `camera-ui/` + `scroll` sem `x/y/dx/exact` + remover handler `wheel` / `type: scroll` no input.
+**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **20 ms** (mín. 20); abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola); **rolagem** no print → `scroll({ x, y, dx, dy, exact: true })` com os mesmos deltas (px). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: `intervalMs` default/min 100; restaurar `camera-ui/` + `scroll` sem `x/y/dx/exact` + remover handler `wheel` / `type: scroll` no input.
 
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
 

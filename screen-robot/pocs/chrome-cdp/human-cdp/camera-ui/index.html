@@ -250,7 +250,7 @@
           <input id="view-quality" type="number" min="1" max="100" value="15" />
         </label>
         <label>Intervalo (ms)
-          <input id="view-interval" type="number" min="100" max="10000" value="100" />
+          <input id="view-interval" type="number" min="20" max="10000" value="20" />
         </label>
         <label>&nbsp;
           <button type="button" class="secondary" id="view-save-cfg" style="width:100%">Salvar config</button>
@@ -977,7 +977,7 @@
           method: 'PATCH',
           body: JSON.stringify({
             quality: Number($('view-quality').value) || 15,
-            intervalMs: Number($('view-interval').value) || 100,
+            intervalMs: Number($('view-interval').value) || 20,
           }),
         });
         const started = await api(`/api/cdps/${encodeURIComponent(id)}/view/start`, {
@@ -1006,7 +1006,7 @@
 
     function pollMs() {
       const n = Number($('view-interval').value);
-      return Number.isFinite(n) && n >= 100 ? n : 100;
+      return Number.isFinite(n) && n >= 20 ? n : 20;
     }
 
     function startViewPoll() {

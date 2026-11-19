@@ -11,3 +11,4 @@
 | 007 | 2026-11-17 | Snapshot baixar/importar | [007-2026-11-17-snapshot-baixar-importar.md](007-2026-11-17-snapshot-baixar-importar.md) | Baixar `.tar.gz` e Importar na UI de snapshots. |
 | 008 | 2026-11-17 | Controle auto + abas + teclado + mural | [008-2026-11-17-controle-auto-abas-teclado-mural.md](008-2026-11-17-controle-auto-abas-teclado-mural.md) | Visão auto 100 ms; abas/URL; teclado no espelho; página Telas ao vivo. |
 | 009 | 2026-11-19 | Controle: rolagem = mesmo evento | [009-2026-11-19-controle-rolagem-mesmo-evento.md](009-2026-11-19-controle-rolagem-mesmo-evento.md) | Wheel na UI → `scroll` exact com mesmos deltas no CDP. |
+| 010 | 2026-11-19 | Intervalo visão 20 ms | [010-2026-11-19-intervalo-visao-20ms.md](010-2026-11-19-intervalo-visao-20ms.md) | Default/mín. `intervalMs` 100 → 20. |

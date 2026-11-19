@@ -28,7 +28,7 @@ const loops = new Map();
 
 const DEFAULT_CONFIG = {
   quality: 15,
-  intervalMs: 100,
+  intervalMs: 20,
   format: 'jpeg',
   maxKeep: 40,
   scale: 0.35,
@@ -68,7 +68,7 @@ function writeConfig(id, cfg) {
   mkdirSync(viewDir(id), { recursive: true });
   const next = {
     quality: clampInt(cfg.quality, 1, 100, DEFAULT_CONFIG.quality),
-    intervalMs: clampInt(cfg.intervalMs, 100, 10000, DEFAULT_CONFIG.intervalMs),
+    intervalMs: clampInt(cfg.intervalMs, 20, 10000, DEFAULT_CONFIG.intervalMs),
     format: 'jpeg',
     maxKeep: clampInt(cfg.maxKeep, 1, 200, DEFAULT_CONFIG.maxKeep),
     scale: clampFloat(cfg.scale, 0.1, 1, DEFAULT_CONFIG.scale),

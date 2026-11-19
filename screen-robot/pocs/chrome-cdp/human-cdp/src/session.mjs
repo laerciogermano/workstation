@@ -530,29 +530,34 @@ export class HumanCdpSession {
   }
 
   /**
-   * Wheel humano. Antes: arrasta até `selector` (se dado) ou centro da viewport.
+   * Wheel humano. Antes: arrasta até `(x,y)`, `selector` ou centro da viewport.
    * Wheel sempre na posição atual do cursor (nunca teleporta o ponteiro).
-   * @param {{ dy?: number, steps?: number, selector?: string }} [opts]
+   * `steps: 1` (ou `exact: true`) emite **um** mouseWheel com os deltas dados —
+   * espelho do controle UI.
+   * @param {{ dy?: number, dx?: number, steps?: number, selector?: string, x?: number, y?: number, exact?: boolean }} [opts]
    */
-  async scroll({ dy = 400, steps = 12, selector } = {}) {
+  async scroll({ dy = 400, dx = 0, steps = 12, selector, x, y, exact = false } = {}) {
     await this.ensureFocus({ force: true });
-    if (selector) {
+    if (Number.isFinite(x) && Number.isFinite(y)) {
+      await this._moveTo(Number(x), Number(y));
+    } else if (selector) {
       await this.hover(selector);
     } else {
       const mid = await this.evaluate(`({ x: Math.round(innerWidth / 2), y: Math.round(innerHeight / 2) })`);
       await this._moveTo(mid.x + rand(-20, 20), mid.y + rand(-20, 20));
     }
-    await sleep(randInt(40, 90));
-    for (let i = 0; i < steps; i++) {
+    const n = exact ? 1 : Math.max(1, Math.round(Number(steps) || 1));
+    if (!exact && n > 1) await sleep(randInt(40, 90));
+    for (let i = 0; i < n; i++) {
       await this.ensureFocus({ settleMs: 0 });
       await this.send('Input.dispatchMouseEvent', {
         type: 'mouseWheel',
         x: this._cursor.x,
         y: this._cursor.y,
-        deltaX: 0,
-        deltaY: dy / steps,
+        deltaX: dx / n,
+        deltaY: dy / n,
       });
-      await sleep(randInt(20, 45));
+      if (i < n - 1) await sleep(randInt(20, 45));
     }
   }
 

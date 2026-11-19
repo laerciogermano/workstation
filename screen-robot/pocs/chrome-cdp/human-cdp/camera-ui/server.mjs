@@ -516,6 +516,15 @@ const server = createServer(async (req, res) => {
             await page.clickAt(Number(body.x), Number(body.y), {
               clicks: body.clicks || 1,
             });
+          } else if (body.type === 'scroll' || body.type === 'wheel') {
+            await page.scroll({
+              x: Number(body.x),
+              y: Number(body.y),
+              dx: Number(body.deltaX ?? body.dx ?? 0),
+              dy: Number(body.deltaY ?? body.dy ?? 0),
+              steps: 1,
+              exact: true,
+            });
           } else if (body.type === 'type' || body.type === 'key') {
             if (body.selector) {
               await page.type(body.selector, String(body.text || ''), {
@@ -535,7 +544,7 @@ const server = createServer(async (req, res) => {
             });
           } else {
             return json(res, 400, {
-              error: 'type inválido (click|type|key|paste|keydown|press)',
+              error: 'type inválido (click|scroll|wheel|type|key|paste|keydown|press)',
             });
           }
           return json(res, 200, { ok: true, targetId: page._targetId || targetId || null });

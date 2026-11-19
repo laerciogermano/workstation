@@ -213,7 +213,7 @@ await startView('meu-cdp'); // CDP precisa estar up
 await setViewTarget('meu-cdp', targetId); // troca aba fotografada
 ```
 
-**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **100 ms**; abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: restaurar `camera-ui/` + `intervalMs: 1000` / min 250 em `view.mjs`.
+**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **100 ms**; abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola); **rolagem** no print → `scroll({ x, y, dx, dy, exact: true })` com os mesmos deltas (px). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: restaurar `camera-ui/` + `scroll` sem `x/y/dx/exact` + remover handler `wheel` / `type: scroll` no input.
 
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
 
@@ -303,6 +303,8 @@ Scripts CDP crus (`el.click`, `dispatchMouseEvent` sem move) → importam `human
 **Antes → depois (clique):** distância curta podia só âncora sem “arrasto” → `pathToTarget` + `clickAt`: **sempre** trajetória multi-ponto até o alvo antes do press (micro-arco se perto). Regra: [`.cursor/rules/human-cdp-clique-com-trajetoria.mdc`](../../../../.cursor/rules/human-cdp-clique-com-trajetoria.mdc).
 
 **Antes → depois (todas interações):** `hover`/`drag`/`scroll`/`select`/`type` alinhados — `_pointOf` + arrasto obrigatório; `scroll` move ao centro/alvo antes do wheel; `drag` usa `pathToTarget`; `select` tenta clicar a option. Rollback: métodos anteriores em `session.mjs`.
+
+**Antes → depois (scroll espelho):** só `dy`/`steps`/`selector` → também `x`/`y`/`dx`/`exact` (um `mouseWheel` com deltas do operador). Rollback: assinatura antiga sem esses campos.
 
 **Antes → depois (foco):** `ensureFocus` só activate/bringToFront sem checar → agora lê `document.hasFocus()`; se false, traz ao foco e **bloqueia** a operação até true (clique já exige). Rollback: early-return por throttle 120ms sem verificação.
 

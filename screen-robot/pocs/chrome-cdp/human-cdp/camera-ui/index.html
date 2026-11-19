@@ -1050,24 +1050,92 @@
       });
     }
 
-    async function onStageClick(ev) {
-      if (!controlId) return;
-      const img = ev.currentTarget;
+    function stagePoint(ev, img) {
       const rect = img.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
       const nx = (ev.clientX - rect.left) / rect.width;
       const ny = (ev.clientY - rect.top) / rect.height;
       const vw = viewport?.width || img.naturalWidth;
       const vh = viewport?.height || img.naturalHeight;
-      const x = Math.round(nx * vw);
-      const y = Math.round(ny * vh);
+      return {
+        x: Math.round(nx * vw),
+        y: Math.round(ny * vh),
+      };
+    }
+
+    function wheelDeltas(ev) {
+      let dx = Number(ev.deltaX) || 0;
+      let dy = Number(ev.deltaY) || 0;
+      // CDP mouseWheel espera CSS px; converter linhas/páginas.
+      if (ev.deltaMode === 1) {
+        dx *= 16;
+        dy *= 16;
+      } else if (ev.deltaMode === 2) {
+        dx *= viewport?.width || 800;
+        dy *= viewport?.height || 600;
+      }
+      return { deltaX: dx, deltaY: dy };
+    }
+
+    async function onStageClick(ev) {
+      if (!controlId) return;
+      const img = ev.currentTarget;
+      const pt = stagePoint(ev, img);
+      if (!pt) return;
       try {
-        await sendInput({ type: 'click', x, y });
+        await sendInput({ type: 'click', x: pt.x, y: pt.y });
         stageArmed = true;
         $('stage').focus();
-        flash(`clique ${x},${y} · teclado ativo`, 'ok');
+        flash(`clique ${pt.x},${pt.y} · teclado ativo`, 'ok');
       } catch (e) {
         flash(String(e.message || e), 'err');
       }
+    }
+
+    let wheelQueue = null;
+    let wheelBusy = false;
+
+    async function flushWheel() {
+      if (wheelBusy || !wheelQueue || !controlId) return;
+      wheelBusy = true;
+      const payload = wheelQueue;
+      wheelQueue = null;
+      try {
+        await sendInput({
+          type: 'scroll',
+          x: payload.x,
+          y: payload.y,
+          deltaX: payload.deltaX,
+          deltaY: payload.deltaY,
+        });
+        stageArmed = true;
+        $('stage').focus();
+      } catch (e) {
+        flash(String(e.message || e), 'err');
+      } finally {
+        wheelBusy = false;
+        if (wheelQueue) flushWheel();
+      }
+    }
+
+    function onStageWheel(ev) {
+      if (!controlId) return;
+      const img = $('stage').querySelector('img');
+      if (!img) return;
+      ev.preventDefault();
+      const pt = stagePoint(ev, img);
+      if (!pt) return;
+      const { deltaX, deltaY } = wheelDeltas(ev);
+      if (!deltaX && !deltaY) return;
+      if (wheelQueue) {
+        wheelQueue.deltaX += deltaX;
+        wheelQueue.deltaY += deltaY;
+        wheelQueue.x = pt.x;
+        wheelQueue.y = pt.y;
+      } else {
+        wheelQueue = { x: pt.x, y: pt.y, deltaX, deltaY };
+      }
+      flushWheel();
     }
 
     function cdpModifiers(ev) {
@@ -1084,6 +1152,8 @@
       'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
       'Home', 'End', 'PageUp', 'PageDown',
     ]);
+
+    $('stage').addEventListener('wheel', onStageWheel, { passive: false });
 
     $('stage').addEventListener('keydown', async (ev) => {
       if (!controlId || !stageArmed) return;

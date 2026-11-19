@@ -232,7 +232,7 @@
       body: s => { const tab = s.docTab || "flow"; return `<nav class="seg dk-tabs">${[["flow", "Flow"], ["js", "JavaScript"], ["ts", "TypeScript"], ["c", "C"]].map(([k, n]) => `<button data-act="doc-tab" data-t="${k}" aria-current="${k === tab}">${n}</button>`).join("")}</nav>` + code(CODE[tab], tab)
         + H("O que a transpilação preserva")
         + TABLE(["Flow", "JS", "TS", "C"], [["Função (verbo)", "async function", "async function tipada", "função"], ["Dado com campos", "objeto", "interface", "struct"], ["Paralelo", "Promise.all", "Promise.all", "pthread"], ["Repetição", "map / for", "map / for", "for"], ["Seleção / senão ↺", "if / while", "if / while", "if / do while"], ["Abstrato (fora da camada)", "campo do state", "campo de State…", "campo do struct State…"], ["Concreto (mesma camada)", "import", "import", "protótipo + link"], ["Responsável", "objeto no state", "interface injetada", "ponteiro de função"]])
-        + EX("o botão Exportar gera o código a partir do fluxo atual", `<p class="dk-mut" style="margin:0">Exemplo acima: <b>${esc($u(ATIVAR).title)}</b>. No Exportar, o mesmo modelo sai como JavaScript, TypeScript ou Python.</p>`, ["transpilar", "Exportar o fluxo atual"]); } },
+        + EX("o botão Exportar gera o código a partir do fluxo atual", `<p class="dk-mut" style="margin:0">Exemplo acima: <b>${esc($u(ATIVAR).title)}</b>. No Exportar, o mesmo modelo sai como JavaScript.</p>`, ["transpilar", "Exportar o fluxo atual"]); } },
 
     { id: "editar", g: "Do desenho ao código", t: "Editar o fluxo", ic: "mouse-pointer-click",
       lead: "Clique, preencha, execute. Do desenho ao código são quatro passos.",

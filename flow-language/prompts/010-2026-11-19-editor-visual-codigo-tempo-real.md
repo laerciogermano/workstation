@@ -30,5 +30,6 @@ Criar em `flow-language/editor/` um editor visual (mesma interface do Flow IDE: 
 ## O que foi feito
 
 - 1ª versão (interface própria) rejeitada: "ta tudo errado, era pra ter feito identico ao flow ide".
-- [`../editor/`](../editor/README.md): refeito a partir do próprio Flow IDE (`flow-dev/prototipo`), aberto na tela Flow em tela cheia, com painel Código ao vivo (JS/TS/Python/FOP-IR) e botão Novo fluxo; sem Executar/Terminal.
+- [`../editor/`](../editor/README.md): refeito a partir do próprio Flow IDE (`flow-dev/prototipo`), aberto na tela Flow em tela cheia, com painel Código ao vivo (só JavaScript) e botão Novo fluxo; sem Executar/Terminal.
 - Painel Código recolhível (ícone `panel-right` / atalho **N**), no padrão das notas do protótipo; preferência em `localStorage` `flow-lang-code`.
+- Exportar / código ao vivo: só JavaScript (sem FOP-IR, TypeScript, Python).

@@ -129,7 +129,9 @@ td:first-child{width:36%;color:var(--ink-2)}
   </a>
   <nav class="links" aria-label="Principal">
     <a href="#comecar" aria-current="page">Documentação</a>
+    <a href="#casos">Casos de uso</a>
     <a href="flow.html">Vista interativa</a>
+    <a href="flow-novo.html?tema=eternos-black">Editor novo</a>
   </nav>
   <div class="sp"></div>
   <button class="search-btn" id="searchBtn" aria-label="Buscar na documentação">
@@ -283,7 +285,7 @@ function rootFor(snap, cmd, created) {
 }
 
 /* ───────── modelo das páginas ───────── */
-const PAGES = [{ id: "comecar", title: "Começar", intro: true }, { id: "estruturas", title: "Estruturas", custom: true, lead: "Sequência, paralelo, seleção (if), repetição (for), try/catch e composição: como cada uma é criada e como aparece no Flow." }];
+const PAGES = [{ id: "comecar", title: "Começar", intro: true }, { id: "guia", title: "Guia do editor", custom: true, lead: "Gestos, barras de ferramentas, painéis, atalhos e temas das telas de exemplo." }, { id: "estruturas", title: "Estruturas", custom: true, lead: "Sequência, paralelo, seleção (if), repetição (for), try/catch e composição: como cada uma é criada e como aparece no Flow." }, { id: "casos", title: "Casos de uso", custom: true, lead: "Receitas completas com vista e código gerado, e o mapa do objetivo ao comando." }, { id: "codigo", title: "Código gerado", custom: true, lead: "O transpilador Flow → TypeScript: API, regras e exemplo." }, { id: "host", title: "Integração no host", custom: true, lead: "Persistência, permissões, execução, eventos, vistas, testes e desfazer." }];
 const FEAT_PAGE = {};
 GROUPS.forEach(([title, cmds], i) => {
   const m = title.match(/^(§[\d.–]+)\s*(.*)$/), page = { id: "g" + (i + 1), eyebrow: m ? m[1].replace("§", "") : "", title: m ? m[2] : title, lead: GROUP_LEAD[i] ?? "", cmds };
@@ -301,7 +303,7 @@ async function computeAll() {
 
 /* ───────── navegação lateral (tudo numa página: os links rolam até a seção) ───────── */
 function buildSide() {
-  let h = `<h6>Introdução</h6><a class="pg" href="#comecar" data-s="comecar">Começar</a><a class="pg" href="#estruturas" data-s="estruturas">Estruturas</a>`;
+  let h = `<h6>Introdução</h6>${PAGES.filter(x => !x.cmds).map(x => `<a class="pg" href="#${x.id}" data-s="${x.id}">${esc(x.title)}</a>`).join("")}`;
   for (const p of PAGES.filter(x => x.cmds)) {
     h += `<a class="grp" href="#${p.id}" data-s="${p.id}">${esc((p.eyebrow ? p.eyebrow + " · " : "") + p.title)}</a>`;
     h += FEATS.filter(f => f.page === p.id).map(f => `<a href="#${f.id}" data-f="${f.id}">${esc(f.head)}</a>`).join("");
@@ -404,6 +406,264 @@ function structuresHtml() {
   return h;
 }
 
+/* ───────── páginas novas: guia do editor · casos de uso · código gerado · integração no host ───────── */
+const UC_AGENTS = () => [...seed().agents, { id: "a-http", kind: "maquina", name: "node:http", sub: "Lib Node.js", moduleFile: null, modelId: null, prompt: null, photoUrl: null, tasks: FC.DEFAULT_LIB_TASKS["node:http"] }];
+function ucSnap(steps) {
+  let i = 0, snap = { ...EMPTY(), agents: UC_AGENTS(), models: seed().models }; const gen = () => (i++ === 0 ? "fluxo" : "f" + (i - 1));
+  for (const c of steps) { const r = FC.applyModelCommand(snap, c, { newId: gen }); if (!r.ok) throw new Error(c.type + ": " + r.error.message); snap = r.value.snapshot; }
+  return snap;
+}
+const FN = t => ({ type: "createFunction", planId: "p1", title: t });
+const AS = (id, agentId, task) => [{ type: "assignResponsible", id, agentId }, ...(task ? [{ type: "setTask", id, task }] : [])];
+const IO = (id, ins, outs) => [...ins.map(name => ({ type: "addInput", id, name })), ...outs.map(name => ({ type: "addOutput", id, name }))];
+const USECASES = [
+  { id: "u-linear", title: "Pipeline com dados encadeados", quando: "Etapas que se passam resultados, uma depois da outra.",
+    text: "O caso mais comum: cada função declara o que <b>recebe</b> (<code>addInput</code>) e o que <b>entrega</b> (<code>addOutput</code>). O mesmo nome liga a saída de uma à entrada da próxima e o dado aparece no estado em que nasce. Libs <code>node:*</code> são funções concretas; sem responsável, a função é abstrata.",
+    read: ["Barra cheia = concreta (lib), vazada = abstrata (ainda sem responsável).", "Quadrado preenchido = dado criado por uma saída; vazado = entrada que consome.", "O código gerado devolve <code>{ dado }</code> de cada função e repassa ao próximo passo."],
+    steps: [FN("Importar clientes"), mk("fluxo", "Ler planilha"), mk("fluxo", "Limpar linhas"), mk("fluxo", "Gravar resultado"), ...AS("f1", "a-fs", "readFile"), ...AS("f3", "a-fs", "writeFile"), ...IO("f1", [], ["planilha"]), ...IO("f2", ["planilha"], ["linhas"]), ...IO("f3", ["linhas"], [])] },
+  { id: "u-par", title: "Fan-out paralelo e junção", quando: "Consultas independentes que só se encontram no final.",
+    text: "<code>setParallel</code> junta funções vizinhas no mesmo passo: elas partem do mesmo estado e a próxima só começa quando todas terminam. Repita a chamada para incluir mais de duas. O transpilador gera um <code>Promise.all</code>.",
+    read: ["As três barras ocupam a mesma coluna.", "Montar proposta consome as três saídas: a junção é implícita pelos dados.", "No código: uma única desestruturação de <code>Promise.all</code>."],
+    steps: [FN("Montar cotação"), mk("fluxo", "Buscar estoque"), mk("fluxo", "Buscar preço"), mk("fluxo", "Buscar frete"), mk("fluxo", "Montar proposta"), ...AS("f1", "a-http", "get"), ...AS("f2", "a-http", "get"), ...AS("f3", "a-http", "get"), ...IO("f1", [], ["estoque"]), ...IO("f2", [], ["preco"]), ...IO("f3", [], ["frete"]), ...IO("f4", ["estoque", "preco", "frete"], []), { type: "setParallel", a: "f1", b: "f2", on: true }, { type: "setParallel", a: "f2", b: "f3", on: true }] },
+  { id: "u-if", title: "Aprovação com volta (IA + pessoa + if)", quando: "Revisão humana de algo produzido por IA, repetindo até aprovar.",
+    text: "A IA redige, a pessoa revisa e só então publica. <code>setSelection</code> cria o <b>if</b>; <code>setCond</code> define o teste e para qual função o “senão” volta. Misture os três tipos de responsável: IA (abstrata), pessoa (abstrata) e lib (concreta).",
+    read: ["Losango laranja: a decisão. O “senão” volta para Redigir texto.", "IA e pessoa viram <code>agents.ia(...).run</code> e <code>humans.ask</code> no código.", "Troque o Redator por outro agente com <code>assignResponsible</code> sem mexer no resto."],
+    steps: [FN("Publicar artigo"), mk("fluxo", "Redigir texto"), mk("fluxo", "Revisar texto"), mk("fluxo", "Publicar"), ...AS("f1", "a-red"), ...AS("f2", "a-ana"), ...AS("f3", "a-http", "post"), ...IO("f1", [], ["rascunho"]), ...IO("f2", ["rascunho"], ["aprovado"]), ...IO("f3", ["aprovado"], []), { type: "setSelection", id: "f3", on: true }, { type: "setCond", id: "f3", cond: { test: "aprovado", gotoId: "f1" } }] },
+  { id: "u-for", title: "Lote: processar uma lista (for)", quando: "A mesma função para cada item de uma coleção.",
+    text: "<code>setRepetition</code> liga o <b>for</b> numa função folha e <code>setLoopVars</code> escolhe a variável e a coleção. Dentro do laço a variável fica disponível para a função; o que sai dela é visto depois do laço.",
+    read: ["Moldura roxa com ↻ sobre a barra: roda uma vez por item.", "A coleção (<code>faturas</code>) vem de uma saída anterior.", "No código: <code>for (const fatura of faturas) { … }</code>."],
+    steps: [FN("Cobrar faturas"), mk("fluxo", "Listar faturas"), mk("fluxo", "Cobrar fatura"), mk("fluxo", "Registrar resultado"), ...AS("f1", "a-fs", "readFile"), ...IO("f1", [], ["faturas"]), ...IO("f2", ["faturas"], ["resultado"]), ...IO("f3", ["resultado"], []), { type: "setRepetition", id: "f2", on: true }, { type: "setLoopVars", id: "f2", loop: ["fatura", "faturas"] }] },
+  { id: "u-try", title: "Tolerância a falhas (try/catch)", quando: "Uma ou mais etapas podem falhar e existe um plano B.",
+    text: "<code>setCatch</code> aponta a função de tratamento; com <code>through</code>, um único <b>try</b> cobre várias funções seguidas. O tratamento pode ser uma composição (aqui: estornar e avisar o cliente) e não entra na sequência normal.",
+    read: ["Banda verde = o que o try protege; banda vermelha = o catch.", "O passo seguinte do fluxo só começa depois do catch inteiro.", "No código: um <code>try { … } catch (error) { return … }</code> e <code>error</code> chega ao tratamento."],
+    steps: [FN("Cobrar com segurança"), mk("fluxo", "Cobrar cartão"), mk("fluxo", "Enviar recibo"), mk("fluxo", "Estornar cobrança"), mk("f3", "Avisar cliente"), ...AS("f2", "a-ana"), { type: "setCatch", id: "f1", handlerId: "f3", through: "f2" }] },
+  { id: "u-layers", title: "Camadas: composição de composições", quando: "Um processo grande que se divide em áreas, cada uma com os seus passos.",
+    text: "Uma função com filhos é uma <b>composição</b>: a barra-resumo abraça os passos dos filhos e o código gera uma função por camada. Dá para detalhar de cima para baixo: comece abstrato e vá atribuindo responsáveis às folhas.",
+    read: ["Setas ao lado do nome abrem e fecham cada camada.", "Cobrança e Logística são camadas; só as folhas têm responsável.", "No código, Atender pedido chama as camadas; cada camada chama as suas filhas."],
+    steps: [FN("Atender pedido"), mk("fluxo", "Cobrança"), mk("f1", "Autorizar cartão"), mk("f1", "Capturar valor"), mk("fluxo", "Logística"), mk("f4", "Separar itens"), mk("f4", "Despachar"), ...AS("f5", "a-ana")] },
+  { id: "u-data", title: "Dados do estado: objetos e campos", quando: "Modelar o estado antes (ou junto) das funções.",
+    text: "<code>createData</code> cria o dado, <code>addDataChild</code> acrescenta campos (<code>cliente.nome</code>) e o dado pai vira <b>cubo</b>. Uma função pode produzir o objeto inteiro e outra consumir só um campo.",
+    read: ["Quadrados = dados; cubo = dado com campos.", "<code>cliente.email</code> como entrada puxa o campo do objeto produzido antes.", "Valores (<code>upsertData</code>) deixam o dado concreto; sem valor, ele é abstrato."],
+    steps: [{ type: "createData", name: "cliente", dataType: "objeto" }, { type: "addDataChild", parent: "cliente", name: "nome" }, { type: "addDataChild", parent: "cliente", name: "email" }, { type: "upsertData", name: "cliente.nome", value: "Maria" }, FN("Cadastrar cliente"), mk("fluxo", "Ler formulário"), mk("fluxo", "Enviar boas-vindas"), ...IO("f1", [], ["cliente"]), ...IO("f2", ["cliente.email"], [])] },
+  { id: "u-full", title: "Tudo junto: onboarding de cliente", quando: "Um processo real combinando as estruturas e os três tipos de responsável.",
+    text: "Lê o cadastro numa lib, a IA redige a proposta, uma pessoa aprova (if com volta), então traduz para cada idioma (for) enquanto gera o contrato (paralelo) e, no fim, envia protegido por try/catch.",
+    read: ["Cada estrutura mantém o próprio símbolo mesmo aninhada.", "Passe o mouse sobre a barra no editor para ver as ações de cada estrutura.", "Copie o código gerado e implemente as funções abstratas no host."],
+    steps: [FN("Fazer onboarding"), mk("fluxo", "Buscar cliente"), mk("fluxo", "Redigir proposta"), mk("fluxo", "Revisar proposta"), mk("fluxo", "Traduzir"), mk("fluxo", "Gerar contrato"), mk("fluxo", "Enviar pacote"), mk("fluxo", "Avisar falha"),
+      ...AS("f1", "a-http", "get"), ...AS("f2", "a-red"), ...AS("f3", "a-ana"), ...AS("f6", "a-http", "post"),
+      ...IO("f1", [], ["cliente"]), ...IO("f2", ["cliente"], ["rascunho"]), ...IO("f3", ["rascunho"], ["aprovada"]), ...IO("f4", ["aprovada"], ["versoes"]), ...IO("f5", ["aprovada", "cliente"], ["contrato"]), ...IO("f6", ["versoes", "contrato"], ["envio"]),
+      { type: "setParallel", a: "f4", b: "f5", on: true }, { type: "setRepetition", id: "f4", on: true }, { type: "setLoopVars", id: "f4", loop: ["idioma", "idiomas"] },
+      { type: "setSelection", id: "f4", on: true }, { type: "setCond", id: "f4", cond: { test: "aprovada", gotoId: "f2" } }, { type: "setCatch", id: "f6", handlerId: "f7" }] },
+];
+const UC_MAP = [
+  ["Criar um fluxo do zero", ["createFunction", "createChild", "createSibling", "renameFunction"]],
+  ["Reorganizar, copiar, guardar", ["move", "paste", "duplicate", "archive", "unarchive", "removeElements", "patchFunction"]],
+  ["Passos em sequência ou ao mesmo tempo", ["createSibling", "setParallel"]],
+  ["Decidir (if / senão volta)", ["setSelection", "setCond"]],
+  ["Repetir para cada item (for)", ["setRepetition", "setLoopVars"]],
+  ["Tratar falhas (try / catch)", ["setTryCatch", "setCatch"]],
+  ["Ligar funções por dados", ["addInput", "addOutput", "removeInput", "removeOutput"]],
+  ["Modelar o estado", ["createData", "addDataChild", "toggleCube", "upsertData", "clearDataValue"]],
+  ["Dizer quem executa", ["assignResponsible", "setTask", "createPerson", "createAgent", "patchAgent", "removeAgent"]],
+  ["Escolher e configurar a IA", ["createModel", "patchModel", "removeModel"]],
+  ["Agrupar em arquivos", ["createModule", "renameModule", "deleteModule"]],
+  ["Executar e acompanhar", ["runPlan", "cancelRun", "runMachine", "completeStep", "retryStep"]],
+  ["Gerar código", ["exportPlan"]],
+  ["Restringir o que o usuário pode fazer", ["disabled"]],
+];
+function casosHtml() {
+  let h = `<p class="eyebrow">Guia</p><h2 class="sec-title">Casos de uso</h2><p class="lead">Receitas completas: as chamadas, a vista que resulta delas e o código TypeScript que o Flow gera. Cada uma roda no seu navegador com a lib real.</p>`;
+  h += `<h2 class="plain" id="mapa">Mapa: do objetivo ao comando</h2><table><tr><th>Quero…</th><th>Use</th></tr>${UC_MAP.map(([t, cs]) => `<tr><td>${esc(t)}</td><td>${cs.map(c => `<a href="#c-${c}"><code>${c}</code></a>`).join(" ")}</td></tr>`).join("")}</table>`;
+  USECASES.forEach((u, i) => {
+    const snap = ucSnap(u.steps), code = FC.generateTypeScript(snap, { rootId: "fluxo" }).code;
+    h += `<h2 class="feat" id="${u.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span>${esc(u.title)}</h2><p class="desc" style="margin-top:-2px;color:var(--mut)"><i>Quando usar:</i> ${esc(u.quando)}</p><p class="desc">${u.text}</p>`;
+    h += codeBlock(u.steps.map(call).join("\n"), "chamadas");
+    h += tabsHtml(u.id + "-t", [{ label: "Vista", html: `<div data-lazy="case" data-s="${i}"></div>` }, { label: "Código gerado", html: codeBlock(code, "typescript · " + FC.generateTypeScript(snap, { rootId: "fluxo" }).fileName) }]);
+    h += `<ul class="plain">${u.read.map(r => `<li>${r}</li>`).join("")}</ul>`;
+  });
+  return h;
+}
+
+function guiaHtml() {
+  return `<p class="eyebrow">Guia</p><h2 class="sec-title">Guia do editor</h2><p class="lead">Tudo o que dá para fazer com o mouse e o teclado nas telas de exemplo. Cada gesto chama um comando da lib, o mesmo que você usaria por código.</p>
+<div class="callout"><p>Há duas telas: <a href="flow.html"><b>flow.html</b></a> (a vista da lib, <code>mountFlowView</code>, com os 47 comandos do snapshot) e <a href="flow-novo.html?tema=eternos-black"><b>flow-novo.html</b></a> (editor reescrito do zero, modelo em árvore, desfazer/refazer). Os dois mostram o código TypeScript ao lado e aceitam <code>?tema=</code>.</p></div>
+<h2 class="plain" id="g-anatomia">Anatomia da tela</h2>
+<table><tr><th>Área</th><th>O que faz</th></tr>
+<tr><td>Barra do topo</td><td>Seletor de fluxo, <b>Nova função</b>, desfazer/refazer (flow-novo: <kbd>⌘Z</kbd> / <kbd>⇧⌘Z</kbd>), zoom − / + e ajustar, texto dentro da barra, expandir/recolher todas as camadas e tela cheia.</td></tr>
+<tr><td>Tabela <i>Responsável · Task</i></td><td>Uma linha por função, com recuo da hierarquia. Aqui você renomeia, escolhe quem executa e a task.</td></tr>
+<tr><td>Plano (s0 … sN)</td><td>Cada coluna é um estado. Barras = funções; quadrados = dados; losango = if; ↻ = for; bandas = if / for / try / catch.</td></tr>
+<tr><td>Legenda</td><td>Cheia = concreta (lib); vazada = abstrata (IA, pessoa ou sem responsável); quadrado cheio/vazado = dado concreto/abstrato.</td></tr>
+<tr><td>Painel TypeScript</td><td>O código do fluxo em tempo real. Selecionar uma função destaca as suas linhas; <b>Copiar</b> leva o arquivo.</td></tr>
+<tr><td>Painel Chamar comando</td><td>Escolha um comando, edite o payload JSON e execute: o resultado (<code>ok</code> ou erro tipado) aparece embaixo e a vista redesenha.</td></tr></table>
+<h2 class="plain" id="g-funcoes">Criar e editar funções</h2>
+<ul class="plain"><li><b>Nova função</b> (barra): cria um fluxo raiz → <code>createFunction</code> / <code>newFlow</code>.</li><li><b>Filho</b>: cria dentro da função, que vira composição → <code>createChild</code> / <code>addChild</code>.</li><li><b>Irmão</b>: cria ao lado, no mesmo bloco → <code>createSibling</code> / <code>addSibling</code>.</li><li><b>Renomear</b>: clique no nome (tabela ou barra), <kbd>Enter</kbd> confirma, <kbd>Esc</kbd> cancela → <code>renameFunction</code> / <code>rename</code>.</li><li><b>Remover</b>: lixeira; se tiver filhos pede confirmação → <code>removeElements</code> / <code>remove</code>.</li><li><b>Sanfona</b>: a seta ao lado do nome abre e fecha a camada (só visual).</li></ul>
+<h2 class="plain" id="g-estruturas">Aplicar estruturas pela barra de ferramentas</h2>
+<p>Passe o mouse sobre uma barra (ou sobre a etiqueta de um bloco) e a barra de ferramentas aparece acima dela.</p>
+<table><tr><th>Botão</th><th>Efeito</th><th>Comando</th></tr>
+<tr><td>Seleção (losango)</td><td>Cerca a função com um <b>if</b></td><td><code>setSelection</code> / <code>wrap {kind:"if"}</code></td></tr>
+<tr><td>Repetição (↻)</td><td>Cerca com um <b>for</b></td><td><code>setRepetition</code> / <code>wrap {kind:"for"}</code></td></tr>
+<tr><td>Try/catch (escudo)</td><td>Cerca com <b>try</b> e cria a função de tratamento</td><td><code>setTryCatch</code> / <code>wrap {kind:"try"}</code></td></tr>
+<tr><td>Paralelo</td><td>Roda junto da função anterior (ou volta à sequência)</td><td><code>setParallel</code></td></tr>
+<tr><td>Sair do bloco</td><td>Tira esta função e as seguintes de dentro do bloco</td><td><code>exitScope</code></td></tr>
+<tr><td>Incluir / tirar do bloco</td><td>Aumenta ou diminui o escopo em uma função (ou arraste a alça da etiqueta)</td><td><code>setScope</code></td></tr>
+<tr><td>Remover estrutura</td><td>Desfaz o bloco e devolve os filhos</td><td><code>unwrap</code> / <code>setSelection off</code></td></tr></table>
+<p>Clique na etiqueta de um <b>if</b> para editar a condição e o “senão volta para…”; na de um <b>for</b> para a variável e a coleção (<code>setIf</code>, <code>setFor</code>, <code>setCond</code>, <code>setLoopVars</code>).</p>
+<h2 class="plain" id="g-dados">Entradas, saídas e dados</h2>
+<ul class="plain"><li>Passe o mouse na linha de I/O e use <b>+</b> para <b>nova entrada</b> ou <b>nova saída</b>; o <b>×</b> em cada dado remove → <code>addInput</code>, <code>addOutput</code>, <code>removeInput</code>, <code>removeOutput</code>.</li><li>Dar a mesma saída/entrada a duas funções as liga: o dado aparece no estado em que nasce.</li><li>Clicar num dado dispara <code>onDataClick(nome)</code> no host (abra o seu editor de dados).</li><li>O rodapé de cada estado lista os dados novos; a opção <i>todos os dados</i> mostra os acumulados.</li></ul>
+<h2 class="plain" id="g-resp">Responsáveis e tasks</h2>
+<ul class="plain"><li>O seletor da coluna <b>Responsável</b> escolhe pessoa, IA, lib ou arquivo → <code>assignResponsible</code> / <code>assign</code>.</li><li>Com uma <b>lib</b> (concreta) a coluna Task vira um seletor com os métodos dela (<code>readFile</code>, <code>get</code>…) → <code>setTask</code>.</li><li>Com uma <b>IA</b>, a pessoa responsável por ela fica na coluna → <code>setResp</code>.</li><li>Sem responsável a função é abstrata: vem do <code>state</code> e o host a implementa.</li></ul>
+<h2 class="plain" id="g-nav">Zoom, tela cheia e atalhos</h2>
+<table><tr><th>Gesto</th><th>Resultado</th></tr>
+<tr><td>Roda do mouse (tela cheia) / botões − +</td><td>Zoom (25% a 250%)</td></tr><tr><td>Arrastar (tela cheia)</td><td>Mover o plano</td></tr>
+<tr><td><kbd>Esc</kbd></td><td>Sair da tela cheia, fechar diálogo ou cancelar renomear</td></tr>
+<tr><td><kbd>⌘Z</kbd> / <kbd>⇧⌘Z</kbd></td><td>Desfazer / refazer (flow-novo)</td></tr>
+<tr><td><kbd>⌘K</kbd> ou <kbd>/</kbd></td><td>Buscar nesta documentação</td></tr></table>
+<h2 class="plain" id="g-novo">Comandos do flow-novo</h2>
+<p>O editor novo usa um modelo em árvore (função, if, for, try) e um conjunto menor de comandos, todos disponíveis no painel <i>Chamar comando</i>:</p>
+<table><tr><th>Comando</th><th>Payload</th></tr>
+${[["newFlow", "{ title? }"], ["rename", "{ id, title }"], ["addChild", "{ id, title?, catch? }"], ["addSibling", "{ id, title?, before? }"], ["remove", "{ id }"], ["wrap", "{ id, kind: \"if\" | \"for\" | \"try\", test?, v?, coll? }"], ["unwrap", "{ id }"], ["exitScope", "{ id }"], ["setScope", "{ id, count }"], ["setIf", "{ id, test, elseTo? }"], ["setFor", "{ id, v, coll }"], ["addInput · removeInput", "{ id, name }"], ["addOutput · removeOutput", "{ id, name }"], ["assign", "{ id, agent }"], ["setTask", "{ id, task }"], ["setResp", "{ id, resp }"], ["setParallel", "{ id, on }"]].map(([c, p]) => `<tr><td><code>${c}</code></td><td><code>${esc(p)}</code></td></tr>`).join("")}</table>
+<h2 class="plain" id="g-temas">Temas</h2>
+<p>As 12 bolinhas do cabeçalho trocam o tema e o escolhido fica salvo. Para abrir já num tema use <code>?tema=</code>: <a href="flow-novo.html?tema=eternos-black">flow-novo.html?tema=eternos-black</a>, <a href="flow.html?tema=eternos">flow.html?tema=eternos</a>. Nos temas <i>eternos</i> o concreto é branco e o abstrato é preto, e if/for/try ficam em tons de cinza.</p>`;
+}
+
+function codigoHtml() {
+  const snap = ucSnap(USECASES[2].steps), g = FC.generateTypeScript(snap, { rootId: "fluxo" });
+  return `<p class="eyebrow">Guia</p><h2 class="sec-title">Código gerado</h2><p class="lead">O fluxo desenhado é também um programa TypeScript. O transpilador é uma função pura: snapshot entra, texto e mapa de linhas saem.</p>
+<h2 class="plain" id="t-api" style="border:0;padding-top:0">API</h2>
+${codeBlock(`import { generateTypeScript, typeScriptExporter } from "@flow/component";
+
+const { code, map, fileName } = generateTypeScript(flow.snapshot, { rootId });
+// code     → texto do arquivo .ts
+// map      → { [idr]: [linhaInicial, linhaFinal] }  (para destacar a função selecionada)
+// fileName → "publicar-artigo.ts"
+
+// ou pelo contrato de exportação:
+const flow2 = createFlowComponent({ store, exporter: typeScriptExporter });
+const r = await flow2.exportPlan({ planId: "p1", format: "ts" });
+if (r.ok && r.value.kind === "effect") console.log(r.value.output);`, "ts")}
+<table><tr><th>Opção</th><th>Efeito</th></tr><tr><td><code>planId</code></td><td>Plano a exportar (padrão: o primeiro).</td></tr><tr><td><code>rootId</code></td><td>Só este fluxo. Sem ele, exporta todas as raízes do plano.</td></tr></table>
+<h2 class="plain" id="t-regras">Como cada elemento vira código</h2>
+<table><tr><th>No Flow</th><th>No TypeScript</th></tr>
+<tr><td>Fluxo raiz</td><td><code>export async function nome(state)</code> que devolve os dados produzidos</td></tr>
+<tr><td>Sequência</td><td><code>await</code> uma após a outra; <code>{ saida } = await f({ ...state, entrada })</code></td></tr>
+<tr><td>Paralelo</td><td><code>await Promise.all([...])</code> com desestruturação</td></tr>
+<tr><td>Composição</td><td>Uma função por camada que chama as filhas</td></tr>
+<tr><td>if (com “senão volta”)</td><td><code>if (teste) { … } else { return funcaoDeVolta(...) }</code></td></tr>
+<tr><td>for</td><td><code>for (const item of colecao) { … }</code></td></tr>
+<tr><td>try/catch</td><td><code>try { … } catch (error) { return tratamento({ ...state, error }) }</code>; <code>through</code> = um try só para várias chamadas</td></tr>
+<tr><td>Função abstrata (sem responsável)</td><td>Não é declarada: chega pelo <code>state</code> (<code>const { f } = state as Record&lt;string, Fn&gt;</code>)</td></tr>
+<tr><td>Lib <code>node:*</code> (concreta)</td><td><code>import * as node_fs from "node:fs"</code> e <code>node_fs.readFile(...)</code></td></tr>
+<tr><td>Pessoa</td><td><code>humans.ask("Ana", "Revisar", {…})</code> (de <code>@flow/runtime</code>)</td></tr>
+<tr><td>IA</td><td><code>agents.ia("Redator").run("Redigir", {…})</code></td></tr>
+<tr><td>Arquivo / módulo</td><td><code>import * as mod from "./vendas.layer.js"</code></td></tr></table>
+<h2 class="plain" id="t-exemplo">Exemplo completo</h2>
+<p>O fluxo <b>Publicar artigo</b> (caso <a href="#u-if">Aprovação com volta</a>) gera:</p>
+${codeBlock(g.code, "typescript · " + g.fileName)}
+<h2 class="plain" id="t-usar">Como usar o resultado</h2>
+<ul class="plain"><li>Implemente as funções abstratas e passe-as no <code>state</code>: <code>await publicarArtigo({ redigirTexto, revisarTexto, … })</code>.</li><li>Forneça <code>@flow/runtime</code> (<code>humans</code>, <code>agents</code>) com a sua fila de tarefas e o seu cliente de IA.</li><li>Use o <code>map</code> para sincronizar seleção e código: clicar numa barra destaca <code>map[id]</code>.</li><li>Outros formatos (<code>js</code>, <code>py</code>, <code>ir</code>) são do host: injete um <code>Exporter</code> próprio.</li></ul>`;
+}
+
+function hostHtml() {
+  return `<p class="eyebrow">Guia</p><h2 class="sec-title">Integração no host</h2><p class="lead">Como embutir o Flow na sua aplicação: persistência, permissões, execução, eventos e testes. A lib não faz I/O; tudo entra por portas.</p>
+<h2 class="plain" id="h-store" style="border:0;padding-top:0">Persistência (ModelStore)</h2>
+<p>O snapshot é imutável. Qualquer objeto com <code>get()</code> síncrono e <code>set()</code> serve de store.</p>
+${codeBlock(`const localStore = (key, initial) => ({
+  get: () => JSON.parse(localStorage.getItem(key) ?? "null") ?? initial,
+  set: next => localStorage.setItem(key, JSON.stringify(next)),
+});
+
+// servidor: set pode ser assíncrono; a lib espera antes de avisar os ouvintes
+const httpStore = (cache) => ({
+  get: () => cache.snapshot,
+  set: async next => { await fetch("/api/flow", { method: "PUT", body: JSON.stringify(next) }); cache.snapshot = next; },
+});`, "ts")}
+<h2 class="plain" id="h-eventos">Reagir a mudanças</h2>
+${codeBlock(`const stop = flow.subscribe(snapshot => autosave(snapshot));   // após cada comando de modelo aplicado
+stop();                                                         // cancela
+
+const view = mountFlowView(host, flow, {
+  rootId,
+  onSelect: id => painelLateral.mostrar(id),
+  onRootChange: id => history.replaceState(null, "", "#" + id),
+  onDataClick: nome => editorDeDados.abrir(nome),
+  onError: msg => toast(msg),                 // comando negado ou falho
+  confirm: msg => meuDialogo.confirmar(msg),  // remover função com filhos
+  prompt: (msg, valor) => meuDialogo.pedir(msg, valor),
+});`, "ts")}
+<h2 class="plain" id="h-perfis">Permissões e perfis</h2>
+<p><code>disabled</code> recusa o comando com <code>disabled</code> (o contrato permanece); <code>can(tipo)</code> diz se a ação existe para você esconder o botão.</p>
+${codeBlock(`const LEITOR = [...FC.MODEL_COMMAND_TYPES];          // nada de edição
+const EDITOR = ["deleteModule", "removeAgent", "removeModel"];  // não apaga catálogos
+
+const flow = createFlowComponent({ store, disabled: usuario.admin ? [] : EDITOR });
+if (flow.can("removeElements")) mostrarBotaoRemover();
+
+const r = await flow.removeAgent({ id: "a-ana" });
+// → { ok: false, error: { code: "disabled", … } }`, "ts")}
+<h2 class="plain" id="h-exec">Execução e exportação</h2>
+${codeBlock(`const runner = {
+  async runPlan(planId, snap)   { await fila.enfileirar(planId, snap); return ok(undefined); },
+  async cancelRun(planId)       { await fila.cancelar(planId);         return ok(undefined); },
+  async completeStep(id, snap)  { /* a pessoa concluiu a tarefa */     return ok(undefined); },
+  async retryStep(id, snap)     { /* tentar de novo */                  return ok(undefined); },
+  async runMachine(id, snap)    { /* roda a lib da função */            return ok(undefined); },
+};
+const exporter = {
+  async export(planId, format, snap) {
+    return format === "ts" ? typeScriptExporter.export(planId, format, snap) : err("unsupported", "Formato " + format);
+  },
+};
+const flow = createFlowComponent({ store, runner, exporter });
+await flow.runPlan({ planId: "p1" });           // sem runner → { ok: false, error: { code: "unsupported" } }
+const out = await flow.exportPlan({ planId: "p1", format: "ts" });`, "ts")}
+<h2 class="plain" id="h-vistas">Vistas: leitura, várias e tela cheia</h2>
+${codeBlock(`// somente leitura (documentação, relatórios): sem toolbar, zoom/pan nem ações; altura do conteúdo
+mountFlowView(el, flow, { rootId, readonly: true });
+
+// duas vistas do mesmo flow ficam em sincronia (cada comando redesenha as duas)
+const a = mountFlowView(elA, flow, { rootId: "fluxo-a" });
+const b = mountFlowView(elB, flow, { rootId: "fluxo-b", chrome: false });   // sem seletor nem "Nova função"
+
+a.select("f2"); a.fit(); a.fullscreen(true);
+a.setFlags({ compact: true, allStates: true, txtIn: true, indent: false });
+a.setRoot("outro"); a.destroy();`, "ts")}
+<table><tr><th>Flag</th><th>Efeito</th></tr><tr><td><code>compact</code></td><td>Uma linha por task, dados nas pontas da barra</td></tr><tr><td><code>indent</code></td><td>Indenta a coluna Task pela hierarquia</td></tr><tr><td><code>txtIn</code></td><td>Texto dentro da barra</td></tr><tr><td><code>allStates</code></td><td>Todos os dados em cada estado, não só os novos</td></tr></table>
+<h2 class="plain" id="h-headless">Sem DOM: servidor, testes e automações</h2>
+<p>O núcleo é puro. Dá para aplicar comandos, gerar código e até calcular a geometria sem navegador.</p>
+${codeBlock(`import { applyModelCommand, sequentialGen, generateTypeScript, buildScene, DEFAULT_FLAGS, query } from "@flow/component";
+
+const r = applyModelCommand(snapshot, { type: "createChild", refId: "faturar", title: "Emitir recibo" }, { newId: sequentialGen("t") });
+if (!r.ok) throw new Error(r.error.message);
+const proximo = r.value.snapshot;                       // snapshot novo; o anterior não muda
+
+const { code } = generateTypeScript(proximo, { rootId: "vender" });
+const scene = buildScene(proximo, { planId: "p1", rootId: "vender", closed: new Set(), flags: DEFAULT_FLAGS });
+query.children(proximo, "vender");                      // consultas puras sobre o grafo`, "ts")}
+<h2 class="plain" id="h-undo">Desfazer e refazer</h2>
+<p>Como o snapshot é imutável, o histórico é uma pilha de snapshots no store do host.</p>
+${codeBlock(`function historyStore(initial) {
+  const past = [], future = []; let cur = initial;
+  return {
+    get: () => cur,
+    set: next => { past.push(cur); future.length = 0; cur = next; },
+    undo: () => { if (past.length) { future.push(cur); cur = past.pop(); } },
+    redo: () => { if (future.length) { past.push(cur); cur = future.pop(); } },
+  };
+}
+// depois de undo()/redo() redesenhe a vista: view.update()`, "ts")}
+<h2 class="plain" id="h-temas">Temas e aparência</h2>
+<p>A vista lê variáveis CSS do documento (<code>--ink</code>, <code>--paper</code>, <code>--accent</code>, <code>--fn</code>, <code>--dado</code>, <code>--fc-loop</code>, <code>--fc-warn</code>, <code>--fc-ok</code>…). Inclua <code>themes.css</code> e <code>themes.js</code> e use <code>document.documentElement.dataset.tema = "eternos-black"</code>, ou defina as suas variáveis.</p>
+<h2 class="plain" id="h-erros">Tratando erros</h2>
+${codeBlock(`const r = await flow.createChild({ refId: id });
+if (!r.ok) switch (r.error.code) {
+  case "not_found":   /* IDR inexistente */ break;
+  case "invalid":     /* regra de domínio violada */ break;
+  case "conflict":    /* nome repetido ou item em uso */ break;
+  case "disabled":    /* o host proibiu */ break;
+  case "unsupported": /* falta runner ou exporter */ break;
+  case "failed":      /* o adapter ou o store falhou */ break;
+}`, "ts")}`;
+}
+
 /* ───────── seção Começar ───────── */
 function introHtml() {
   return `<p class="eyebrow">Documentação</p><h1>Flow Component</h1>
@@ -457,13 +717,14 @@ function groupHtml(p) {
 }
 function renderAll() {
   const main = $("#main");
-  main.innerHTML = `<section class="sec" id="comecar">${introHtml()}</section><section class="sec" id="estruturas">${structuresHtml()}</section>` + PAGES.filter(x => x.cmds).map(groupHtml).join("");
+  main.innerHTML = `<section class="sec" id="comecar">${introHtml()}</section><section class="sec" id="guia">${guiaHtml()}</section><section class="sec" id="estruturas">${structuresHtml()}</section><section class="sec" id="casos">${casosHtml()}</section><section class="sec" id="codigo">${codigoHtml()}</section><section class="sec" id="host">${hostHtml()}</section>` + PAGES.filter(x => x.cmds).map(groupHtml).join("");
   const cs = getComputedStyle(main), cw = main.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
   io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && e.target.__mount) { e.target.__mount(); io.unobserve(e.target); } }), { rootMargin: "900px 0px" });
   $$("[data-lazy]", main).forEach(el => {
     const kind = el.dataset.lazy;
     if (kind === "seed") lazyView(el, docSeed(), "vender", cw);
     else if (kind === "struct") lazyView(el, structSnap(STRUCTS[+el.dataset.s].steps), "fluxo", cw);
+    else if (kind === "case") lazyView(el, ucSnap(USECASES[+el.dataset.s].steps), "fluxo", cw);
     else {
       const [type, k] = el.dataset.t.replace(/-(\d+)$/, " $1").split(" "), { cs: c, out } = CASES[type][oksOf(type)[+k]];
       const snap = kind === "after" ? out.after : out.before;
@@ -517,7 +778,9 @@ const closeSearch = () => scrim.classList.remove("open");
 function renderHits(q) {
   const n = norm(q).trim(), idx = [{ id: "comecar", t: "Começar", s: "Introdução", k: "primeiros passos instalar contratos result seed vista" }, ...FEATS.map(f => ({ id: f.id, t: f.head, s: f.type, k: f.type + " " + f.group + " " + f.text.replace(/<[^>]+>/g, ""), g: f.group })),
     ...PAGES.slice(1).map(p => ({ id: p.id, t: p.title, s: "Seção", k: p.lead })),
-    ...STRUCTS.map(e => ({ id: e.id, t: e.title, s: "Estruturas", k: e.text.replace(/<[^>]+>/g, "") }))];
+    ...STRUCTS.map(e => ({ id: e.id, t: e.title, s: "Estruturas", k: e.text.replace(/<[^>]+>/g, "") })),
+    ...USECASES.map(e => ({ id: e.id, t: e.title, s: "Casos de uso", k: e.quando + " " + e.text.replace(/<[^>]+>/g, "") })),
+    ...$$("main h2.plain[id]").map(h => ({ id: h.id, t: h.textContent, s: "Guia", k: h.parentElement.textContent.slice(0, 600) }))];
   hits = (n ? idx.filter(x => n.split(/\s+/).every(w => norm(x.t + " " + x.s + " " + x.k).includes(w))).sort((a, b) => (norm(b.t + b.s).includes(n) ? 1 : 0) - (norm(a.t + a.s).includes(n) ? 1 : 0)) : idx.slice(0, 8)).slice(0, 30);
   sel = 0; resEl.innerHTML = hits.length ? hits.map((h, i) => `<li class="${i ? "" : "sel"}"><a href="#${h.id}">${esc(h.t)}${h.g ? `<em>${esc(h.g)}</em>` : ""}<small>${esc(h.s)}</small></a></li>`).join("") : `<div class="none">Nada encontrado para “${esc(q)}”.</div>`;
 }

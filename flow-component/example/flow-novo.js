@@ -16,7 +16,7 @@
       for (let i = 0; i < list.length; i++) {
         const n = list[i];
         if (n.id === id) return { node: n, list, index: i, parent, slot, flow };
-        const sub = n.t === "try" ? visit(n.kids, n, "kids", flow) ?? visit(n.catchKids, n, "catch", flow) : visit(n.kids, n, "kids", flow);
+        const sub = n.t === "try" ? visit(n.kids, n, "kids", flow) ?? visit(n.catchKids, n, "catch", flow) : n.t === "if" ? visit(n.kids, n, "kids", flow) ?? visit(n.elseKids, n, "else", flow) : visit(n.kids, n, "kids", flow);
         if (sub) return sub;
       }
       return null;
@@ -36,7 +36,8 @@
     const l = locate(p, id);
     return !!l && !!l.parent && l.parent.t !== "fn";
   };
-  var kidsOf = (n) => n.t === "try" ? [...n.kids, ...n.catchKids] : n.kids;
+  var kidsOf = (n) => n.t === "try" ? [...n.kids, ...n.catchKids] : n.t === "if" ? [...n.kids, ...n.elseKids] : n.kids;
+  var altKids = (n) => n.t === "try" ? n.catchKids : n.t === "if" ? n.elseKids : null;
   function walk(list, f) {
     for (const n of list) {
       f(n);
@@ -50,6 +51,8 @@
     });
     return out;
   };
+  var isCube = (names) => names.length > 1;
+  var cubeName = (f, side) => `${side === "in" ? "entrada" : "saida"}_${f.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "funcao"}`;
   var slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "fluxo";
   var flowFile = (f) => `${slug(f.title)}.ts`;
   var nextId = (p) => `n${++p.seq}`;
@@ -69,6 +72,10 @@
   var DEFAULT_AGENTS = [
     { id: "http", kind: "maquina", name: "node:http", tasks: ["get", "post", "request", "createServer", "put", "patch", "delete", "head"] },
     { id: "fs", kind: "maquina", name: "node:fs", tasks: ["readFile", "writeFile", "readdir", "mkdir", "rm", "stat"] },
+    { id: "console", kind: "maquina", name: "node:console", tasks: ["log", "info", "warn", "error", "debug", "table"] },
+    { id: "os", kind: "maquina", name: "node:os", tasks: ["hostname", "platform", "arch", "cpus", "totalmem", "freemem", "uptime", "homedir", "tmpdir"] },
+    { id: "path", kind: "maquina", name: "node:path", tasks: ["join", "resolve", "basename", "dirname", "extname", "normalize"] },
+    { id: "crypto", kind: "maquina", name: "node:crypto", tasks: ["randomUUID", "randomBytes", "randomInt", "createHash"] },
     { id: "lia", kind: "ia", name: "Lia", tasks: [] },
     { id: "teo", kind: "ia", name: "Teo", tasks: [] },
     { id: "davi", kind: "ia", name: "Davi", tasks: [] },
@@ -82,23 +89,17 @@
       if (n.t !== "fn") {
         prune(n.kids);
         if (n.t === "try") prune(n.catchKids);
+        if (n.t === "if") prune(n.elseKids);
       } else prune(n.kids);
       if (n.t !== "fn" && n.kids.length === 0) list.splice(i, 1);
     }
   }
-  var fixRefs = (p) => {
-    const alive = /* @__PURE__ */ new Set();
-    for (const f of p.flows) {
-      alive.add(f.id);
-      walk(f.kids, (n) => alive.add(n.id));
-    }
-    for (const f of p.flows) walk(f.kids, (n) => {
-      if (n.t === "if" && n.elseTo && !alive.has(n.elseTo)) n.elseTo = null;
-    });
+  var fixRefs = (_p) => {
+    void _p;
   };
   function blockOf(kind, p, a, inner) {
     const id = nextId(p);
-    if (kind === "if") return { t: "if", id, test: a["test"] ? cleanText(a["test"], "Condi\xE7\xE3o") : "condicao", elseTo: null, kids: [inner] };
+    if (kind === "if") return { t: "if", id, test: a["test"] ? cleanText(a["test"], "Condi\xE7\xE3o") : "condicao", kids: [inner], elseKids: [] };
     if (kind === "for") return { t: "for", id, v: a["v"] ? cleanName(a["v"], "Vari\xE1vel") : "item", coll: a["coll"] ? cleanText(a["coll"], "Cole\xE7\xE3o") : "itens", kids: [inner] };
     return { t: "try", id, kids: [inner], catchKids: [newFn(p, "Tratar erro")] };
   }
@@ -108,6 +109,37 @@
       const f = newFn(p, a["title"] ? cleanText(a["title"], "T\xEDtulo", 80) : "Fazer novo fluxo");
       p.flows.push(f);
       return f.id;
+    },
+    /** Exclui um fluxo inteiro; o projeto sempre mantém pelo menos um. */
+    removeFlow: (p, a) => {
+      const l = need(p, str(a, "id"));
+      if (!isRoot(p, l.node.id)) return fail("invalid", "S\xF3 um fluxo inteiro pode ser exclu\xEDdo");
+      if (p.flows.length <= 1) return fail("invalid", "O projeto precisa de pelo menos um fluxo");
+      p.flows.splice(l.index, 1);
+    },
+    /** Cadastro de responsáveis: lib do Node (com as funções dela), pessoa ou agente de IA. */
+    addAgent: (p, a) => {
+      const kind = str(a, "kind");
+      if (!["maquina", "ia", "pessoa"].includes(kind)) return fail("invalid", `Tipo de respons\xE1vel desconhecido: ${kind}`);
+      const name = cleanText(a["name"], "Nome do respons\xE1vel", 60);
+      if (p.agents.some((x) => x.name.toLowerCase() === name.toLowerCase())) return fail("invalid", `J\xE1 existe um respons\xE1vel chamado ${name}`);
+      const raw = Array.isArray(a["tasks"]) ? a["tasks"] : String(a["tasks"] ?? "").split(","), tasks = [...new Set(raw.map((t) => String(t).trim()).filter(Boolean))];
+      if (kind === "maquina" && !tasks.length) return fail("invalid", "Uma lib precisa de pelo menos uma fun\xE7\xE3o (ex.: gzip, gunzip)");
+      const id = `a${++p.seq}`;
+      p.agents.push({ id, kind, name, tasks: kind === "maquina" ? tasks : [] });
+      return id;
+    },
+    /** Remove o responsável; as funções que o usavam ficam sem responsável. */
+    removeAgent: (p, a) => {
+      const id = str(a, "id");
+      if (!agentOf(p, id)) return fail("not_found", `Respons\xE1vel ${id} n\xE3o existe`);
+      p.agents = p.agents.filter((x) => x.id !== id);
+      for (const f of p.flows) walk([f], (n) => {
+        if (n.t === "fn") {
+          if (n.agent === id) n.agent = null;
+          if (n.resp === id) n.resp = null;
+        }
+      });
     },
     rename: (p, a) => {
       const l = need(p, str(a, "id"));
@@ -119,6 +151,7 @@
       const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? cleanText(a["title"], "Nome", 80) : void 0);
       if (n.t === "fn") n.kids.push(f);
       else if (n.t === "try" && a["catch"]) n.catchKids.unshift(f);
+      else if (n.t === "if" && a["else"]) n.elseKids.unshift(f);
       else n.kids.unshift(f);
       return f.id;
     },
@@ -180,15 +213,26 @@
       const n = need(p, str(a, "id")).node;
       if (n.t !== "if") return fail("invalid", "N\xE3o \xE9 um if");
       n.test = cleanText(a["test"], "Condi\xE7\xE3o");
-      const to = a["elseTo"] ? need(p, str(a, "elseTo")).node : null;
-      if (to && to.t !== "fn") return fail("invalid", "O sen\xE3o volta para uma fun\xE7\xE3o");
-      n.elseTo = to ? to.id : null;
+    },
+    /** Cria o else do if (uma função dentro dele, como o try cria o catch). */
+    addElse: (p, a) => {
+      const n = need(p, str(a, "id")).node;
+      if (n.t !== "if") return fail("invalid", "S\xF3 o if tem else");
+      if (n.elseKids.length) return fail("invalid", "Este if j\xE1 tem else");
+      const f = newFn(p, a["title"] ? cleanText(a["title"], "Nome", 80) : void 0);
+      n.elseKids.push(f);
+      return f.id;
+    },
+    removeElse: (p, a) => {
+      const n = need(p, str(a, "id")).node;
+      if (n.t !== "if") return fail("invalid", "S\xF3 o if tem else");
+      n.elseKids = [];
     },
     addInput: (p, a) => io(p, a, "ins", true),
     removeInput: (p, a) => io(p, a, "ins", false),
     addOutput: (p, a) => io(p, a, "outs", true),
     removeOutput: (p, a) => io(p, a, "outs", false),
-    /** Responsável: lib (concreta), pessoa ou IA (abstrata). Concreta força uma task do catálogo. */
+    /** Responsável: lib (concreta), pessoa ou IA (abstrata). Concreta força uma função do catálogo da lib. */
     assign: (p, a) => {
       const n = need(p, str(a, "id")).node;
       if (n.t !== "fn") return fail("invalid", "S\xF3 fun\xE7\xF5es t\xEAm respons\xE1vel");
@@ -199,9 +243,9 @@
     },
     setTask: (p, a) => {
       const n = need(p, str(a, "id")).node;
-      if (n.t !== "fn") return fail("invalid", "S\xF3 fun\xE7\xF5es t\xEAm task");
-      const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Task", 80);
-      if (ag?.kind === "maquina" && !ag.tasks.includes(t)) return fail("invalid", `Task "${t}" n\xE3o existe em ${ag.name}`);
+      if (n.t !== "fn") return fail("invalid", "S\xF3 fun\xE7\xF5es t\xEAm fun\xE7\xE3o de lib");
+      const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Fun\xE7\xE3o", 80);
+      if (ag?.kind === "maquina" && !ag.tasks.includes(t)) return fail("invalid", `Fun\xE7\xE3o "${t}" n\xE3o existe em ${ag.name}`);
       n.title = t;
     },
     /** Pessoa responsável por uma função de IA. */
@@ -257,6 +301,13 @@
       this.emit();
       return r.created;
     }
+    /** Troca o projeto inteiro (abrir arquivo, reiniciar): zera o histórico. */
+    load(project) {
+      this.past = [];
+      this.future = [];
+      this.project = project;
+      this.emit();
+    }
     get canUndo() {
       return this.past.length > 0;
     }
@@ -281,6 +332,53 @@
       for (const f of this.subs) f();
     }
   };
+  var FORMAT = "flow-novo";
+  var VERSION = 1;
+  var serialize = (p) => JSON.stringify({ format: FORMAT, version: VERSION, project: p }, null, 2);
+  function parseProject(text) {
+    let raw;
+    try {
+      raw = JSON.parse(text);
+    } catch {
+      return fail("invalid", "O arquivo n\xE3o \xE9 um JSON v\xE1lido");
+    }
+    const o = raw;
+    if (o?.format !== FORMAT) return fail("invalid", "Este arquivo n\xE3o \xE9 um projeto do Flow");
+    if (o.version !== VERSION) return fail("invalid", `Vers\xE3o ${String(o.version)} n\xE3o suportada (esperado ${VERSION})`);
+    const pr = o.project;
+    if (!pr || typeof pr.name !== "string" || !Array.isArray(pr.flows) || !Array.isArray(pr.agents)) return fail("invalid", "Projeto sem nome, fluxos ou respons\xE1veis");
+    if (!pr.flows.length) return fail("invalid", "O projeto n\xE3o tem nenhum fluxo");
+    const ids = /* @__PURE__ */ new Set(), strs = (v, what) => Array.isArray(v) && v.every((x) => typeof x === "string") ? v : fail("invalid", `${what} deve ser uma lista de textos`);
+    const agents = pr.agents.map((a) => {
+      if (!a || typeof a.id !== "string" || typeof a.name !== "string" || !["maquina", "ia", "pessoa"].includes(String(a.kind))) return fail("invalid", "Respons\xE1vel inv\xE1lido");
+      if (ids.has(a.id)) return fail("invalid", `Id repetido: ${a.id}`);
+      ids.add(a.id);
+      return { id: a.id, kind: a.kind, name: a.name, tasks: strs(a.tasks ?? [], "tasks") };
+    });
+    const node = (n) => {
+      if (!n || typeof n.id !== "string") return fail("invalid", "Elemento sem id");
+      if (ids.has(n.id)) return fail("invalid", `Id repetido: ${n.id}`);
+      ids.add(n.id);
+      const list = (v) => Array.isArray(v) ? v.map((x) => node(x)) : fail("invalid", `Lista de filhos inv\xE1lida em ${String(n.id)}`);
+      if (n.t === "fn") {
+        if (typeof n.title !== "string") return fail("invalid", `Fun\xE7\xE3o ${n.id} sem nome`);
+        const agent = n.agent == null ? null : String(n.agent), resp = n.resp == null ? null : String(n.resp);
+        if (agent && !agents.some((a) => a.id === agent)) return fail("invalid", `Fun\xE7\xE3o ${n.id} usa um respons\xE1vel que n\xE3o existe`);
+        if (resp && !agents.some((a) => a.id === resp)) return fail("invalid", `Fun\xE7\xE3o ${n.id} usa uma pessoa que n\xE3o existe`);
+        return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par };
+      }
+      if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condicao"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
+      if (n.t === "for") return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "itens"), kids: list(n.kids) };
+      if (n.t === "try") return { t: "try", id: n.id, kids: list(n.kids), catchKids: list(n.catchKids ?? []) };
+      return fail("invalid", `Tipo de elemento desconhecido em ${n.id}`);
+    };
+    const flows = pr.flows.map((f) => {
+      const n = node(f);
+      return n.t === "fn" ? n : fail("invalid", "Todo fluxo come\xE7a numa fun\xE7\xE3o");
+    });
+    const seq = Math.max(0, ...[...ids].map((i) => Number(/(\d+)$/.exec(i)?.[1] ?? 0)));
+    return { name: pr.name, flows, agents, seq: Math.max(seq, Number(pr.seq) || 0) };
+  }
 
   // novo/codegen.ts
   var camel = (s) => {
@@ -288,7 +386,7 @@
     const j = w.map((x, i) => i === 0 ? x.charAt(0).toLowerCase() + x.slice(1) : x.charAt(0).toUpperCase() + x.slice(1)).join("");
     return /^[0-9]/.test(j) ? `_${j}` : j || "fluxo";
   };
-  function generate(p, rootId) {
+  function generate(p, rootId, opts = {}) {
     const loc = locate(p, rootId), flow = loc?.node.t === "fn" ? loc.node : null;
     if (!flow) throw new Error(`Fluxo ${rootId} n\xE3o existe`);
     const fns = flow.kids.length ? fnsOf(flow) : [flow];
@@ -320,7 +418,8 @@
       const ins = f.ins.filter((i) => produced.includes(i) || scope.includes(i));
       const args = `{ ...state${[.../* @__PURE__ */ new Set([...scope.filter((v) => !ins.includes(v)), ...ins])].map((v) => `, ${v}`).join("")}${err ? ", error" : ""} }`;
       const k = kindOf(f), a = agentOf(p, f.agent);
-      return k === "lib" ? `${libVar(a.name)}.${f.title}(${args})` : k === "pessoa" ? `humans.ask(${JSON.stringify(a.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
+      const shown = opts.runnable ? `data(${args})` : args;
+      return k === "lib" ? `call(${libVar(a.name)}, ${JSON.stringify(f.title)}, ${shown})` : k === "pessoa" ? `humans.ask(${JSON.stringify(a.name)}, ${JSON.stringify(f.title)}, ${shown})` : `${nameOf(f)}(${args})`;
     };
     const assign = (f, expr) => f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`;
     const list = (nodes, ind, scope, err) => {
@@ -349,10 +448,9 @@
         } else if (n.t === "if") {
           emit(`${ind}if (${n.test}) {`);
           list(n.kids, ind + "  ", scope, err);
-          const back = n.elseTo ? fnsOf(flow).find((f) => f.id === n.elseTo) ?? (flow.id === n.elseTo ? flow : void 0) : void 0;
-          if (back) {
+          if (n.elseKids.length) {
             emit(`${ind}} else {`);
-            emit(`${ind}  return ${callOf(back, scope, err)};  // sen\xE3o \u2192 ${back.title}`);
+            list(n.elseKids, ind + "  ", scope, err);
           }
           emit(`${ind}}`);
           mark(n.id, a);
@@ -372,19 +470,54 @@
         }
       }
     };
+    const RESERVED = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "typeof", "instanceof", "in", "of", "new", "void", "NaN", "Infinity", "Math", "JSON", "Object", "Array", "Number", "String", "Boolean", "Date", "Set", "Map", "state", "error"]);
+    const idsOf = (expr) => [...expr.replace(/(["'`])(?:\\.|(?!\1).)*\1/g, "").matchAll(/(?<![.\w$])[A-Za-z_$][\w$]*/g)].map((m) => m[0]).filter((w) => !RESERVED.has(w));
+    const inExpr = /* @__PURE__ */ new Set(), fromStateSet = /* @__PURE__ */ new Set();
+    const scan = (nodes, scope) => {
+      for (const n of nodes) {
+        if (n.t === "if") {
+          for (const id of idsOf(n.test)) {
+            if (scope.includes(id)) continue;
+            inExpr.add(id);
+            if (!produced.includes(id)) fromStateSet.add(id);
+          }
+          scan(n.kids, scope);
+          scan(n.elseKids, scope);
+        } else if (n.t === "for") {
+          for (const id of idsOf(n.coll)) {
+            if (scope.includes(id)) continue;
+            inExpr.add(id);
+            if (!produced.includes(id)) fromStateSet.add(id);
+          }
+          scan(n.kids, [...scope, n.v]);
+        } else if (n.t === "try") {
+          scan(n.kids, scope);
+          scan(n.catchKids, scope);
+        } else scan(n.kids, scope);
+      }
+    };
+    scan(flow.kids, []);
+    const fromState = [...fromStateSet].filter((n) => !abstract.includes(n) && n !== "humans");
     emit(`// Gerado por Flow \xB7 fluxo ${JSON.stringify(flow.title)}`);
     for (const l of libs) emit(`import * as ${libVar(l)} from ${JSON.stringify(l)};`);
-    if (hasHumans) emit('import { humans } from "@flow/runtime";');
     if (lines.length > 1) emit("");
     emit("type State = Record<string, unknown>;");
     if (abstract.length) emit("type Fn = (state: State) => Promise<State>;");
+    if (hasHumans) emit("type Humans = { ask: (who: string, what: string, args: State) => Promise<State> };");
+    if (libs.length) {
+      emit("");
+      emit("// chama a fun\xE7\xE3o `task` de uma lib do Node passando o estado; o que ela devolver vira o estado");
+      emit("const call = async (lib: object, task: string, args: State): Promise<State> => ((await (lib as Record<string, Function>)[task]!(args)) ?? {}) as State;");
+    }
     emit("");
     emit(`/** ${flow.title} \xB7 ${flowFile(flow)} */`);
     emit(`export async function ${camel(flow.title)}(state: State): Promise<State> {`);
     const startBody = lines.length + 1;
     if (needed.length) emit(`  // entradas esperadas (de outra camada): ${needed.join(", ")}`);
-    if (abstract.length) emit(`  const { ${abstract.join(", ")} } = state as Record<string, Fn>;  // fun\xE7\xF5es abstratas: v\xEAm do state`);
-    if (produced.length) emit(`  let ${produced.map((o) => `${o}: unknown`).join(", ")};`);
+    if (hasHumans) emit("  const { humans } = state as { humans: Humans };  // pessoas: v\xEAm do state");
+    if (abstract.length) emit(`  const { ${abstract.join(", ")} } = state as Record<${abstract.map((n) => JSON.stringify(n)).join(" | ")}, Fn>;  // fun\xE7\xF5es abstratas: v\xEAm do state`);
+    if (fromState.length) emit(`  const { ${fromState.join(", ")} } = state as Record<string, any>;  // dados lidos nas condi\xE7\xF5es e repeti\xE7\xF5es`);
+    if (produced.length) emit(`  let ${produced.map((o) => `${o}: ${inExpr.has(o) ? "any" : "unknown"}`).join(", ")};`);
     if (flow.kids.length) list(flow.kids, "  ", [], false);
     else {
       const a = lines.length + 1;
@@ -395,10 +528,23 @@
     emit("}");
     map[flow.id] = [startBody, lines.length - 1];
     emit("");
-    emit(`// execu\xE7\xE3o: await ${camel(flow.title)}({ ${needed.join(", ")}${needed.length ? " " : ""}});`);
+    const fnName = camel(flow.title), runFile = `${slug(flow.title)}.mts`, runCommand = `node --experimental-strip-types ${runFile}`;
+    if (opts.runnable) {
+      emit(`// \u2500\u2500 execu\xE7\xE3o local: ${runCommand}  (Node \u2265 22.6; no 23.6+ o flag \xE9 opcional)`);
+      if (abstract.length) {
+        emit("const stubs: Record<string, Fn> = {  // simuladores das fun\xE7\xF5es abstratas (no sistema real v\xEAm do state)");
+        for (const f of fns.filter((x) => kindOf(x) === "abs")) emit(`  ${nameOf(f)}: async state => { console.log("[abstrata] ${nameOf(f)}", data(state)); return {${f.outs.length ? " " : ""}${f.outs.map((o) => `${o}: ${JSON.stringify(`${o} (simulado)`)}`).join(", ")}${f.outs.length ? " " : ""}}; },`);
+        emit("};");
+      }
+      emit('function data(state: State): State { return Object.fromEntries(Object.entries(state).filter(([, v]) => typeof v !== "function")); }');
+      if (hasHumans) emit("const humans: Humans = { ask: async (who, what, args) => { console.log(`[pessoa] ${who}: ${what}`, data(args)); return {}; } };");
+      const given = [...abstract.length ? ["...stubs"] : [], ...hasHumans ? ["humans"] : [], ...needed.map((n) => `${n}: ${JSON.stringify(`${n} (simulado)`)}`)];
+      emit(`const result = await ${fnName}({ ${given.join(", ")} });`);
+      emit('console.log("resultado:", result);');
+    } else emit(`// execu\xE7\xE3o: await ${fnName}({ ${needed.join(", ")}${needed.length ? " " : ""}});`);
     void isComposite;
     void walk;
-    return { code: lines.join("\n") + "\n", map, fileName: flowFile(flow), name: camel(flow.title) };
+    return { code: lines.join("\n") + "\n", map, fileName: flowFile(flow), name: fnName, runFile, runCommand };
   }
 
   // novo/icons.ts
@@ -422,6 +568,10 @@
     grow: ["M5 12h14", "m13 6 6 6-6 6"],
     shrink: ["M19 12H5", "m11 6-6 6 6 6"],
     parallel: ["M8 3v18", "M16 3v18"],
+    branch: ["M6 3v12", "circle:18,6,3", "circle:6,18,3", "M18 9a9 9 0 0 1-9 9"],
+    download: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "m7 10 5 5 5-5", "M12 15V3"],
+    upload: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "m17 8-5-5-5 5", "M12 3v12"],
+    users: ["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "circle:9,7,4", "M22 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"],
     undo: ["M9 14 4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"],
     redo: ["m15 14 5-5-5-5", "M20 9H9.5A5.5 5.5 0 0 0 4 14.5 5.5 5.5 0 0 0 9.5 20H13"],
     text: ["M12 4v16", "M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2", "M9 20h6"],
@@ -520,14 +670,15 @@
             row.e = sp.e;
           }
           let end = next;
-          if (b.t === "try") {
-            const count = place(b.catchKids, depth + 1, 0, false, true), cs = Math.max(step, next - count);
-            const crow = push({ kind: "catch", id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
-            const cend = place(b.catchKids, depth + 1, cs, emit, true);
+          const alt = altKids(b);
+          if (alt && alt.length) {
+            const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
+            const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
+            const cend = place(alt, depth + 1, cs, emit, true);
             if (emit) {
               crow.s = cs;
               crow.e = Math.max(cs, cend - 1);
-              span.set(`${b.id}:catch`, { s: crow.s, e: crow.e });
+              span.set(`${b.id}:${kind}`, { s: crow.s, e: crow.e });
               crow.last = rows.length - 1;
             }
             end = Math.max(next, cend);
@@ -563,14 +714,23 @@
   }
 
   // novo/view.ts
-  var G = { RH: 34, HEAD: 52, OX: 40, W: 130, INS: 28, BH: 22, IND: 14 };
+  var G = { RH: 34, HEAD: 52, OX: 160, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16 };
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
-  var colX = (s) => G.OX + s * G.W;
+  var dataText = (names, max = 24) => {
+    const t = names.join(", ");
+    return t.length > max ? `${t.slice(0, max - 1)}\u2026` : t;
+  };
+  var colX = (s, w = G.W) => G.OX + s * w;
   var rowY = (i) => G.HEAD + i * G.RH;
-  var planWidth = (sc) => colX(sc.nSteps) + 160;
+  var planWidth = (sc, w = G.W) => colX(sc.nSteps, w) + 160;
+  var PAD = 12;
+  var colW = (sc, ui) => ui.txtIn ? Math.max(G.W, ...sc.leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.W;
   var planHeight = (sc) => rowY(sc.rows.length) + 64;
-  var tableWidth = (sc) => 520 + sc.maxDepth * G.IND * 2;
+  var tableWidth = (sc) => {
+    const base = 520 + sc.maxDepth * G.IND * 2;
+    return Math.min(base + 160, Math.max(base, 150 + 14 + Math.max(0, ...sc.rows.filter((r) => r.kind === "io").map(ioWidth))));
+  };
   function toolsFor(p, id, part = "main") {
     const l = locate(p, id);
     if (!l) return [];
@@ -587,20 +747,18 @@
       }
       return out2;
     }
-    const where = n.t === "for" ? "for" : n.t === "if" ? "if" : part === "catch" ? "catch" : "try";
-    const out = [t("addChild", "sibling", `Adicionar filho (dentro do ${where})`, part === "catch" ? { data: { catch: "1" } } : {})];
-    if (part === "main") out.push(t("wrap", "diamond", "Adicionar condi\xE7\xE3o (if) neste bloco", { data: { kind: "if" } }));
+    const where = part === "else" ? "else" : part === "catch" ? "catch" : n.t === "for" ? "for" : n.t === "if" ? "if" : "try";
+    const out = [t("addChild", "sibling", `Adicionar filho (dentro do ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {})];
+    if (part === "main") out.push(t("wrap", "diamond", "Adicionar condi\xE7\xE3o (if) neste bloco", { data: { kind: "if" } }), t("wrap", "repeat", "Adicionar la\xE7o (for) neste bloco", { data: { kind: "for" } }), t("wrap", "shield", "Adicionar try/catch neste bloco", { data: { kind: "try" } }));
+    if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Adicionar else"));
     out.push(t("addSibling", "child", "Adicionar irm\xE3o \xE0 direita (fora do bloco)"));
     if (part === "main") out.push(t("setScope", "grow", "Incluir a pr\xF3xima no bloco", { data: { delta: "1" } }), t("setScope", "shrink", "Tirar a \xFAltima do bloco", { data: { delta: "-1" } }));
-    out.push(t("unwrap", n.t === "for" ? "repeat" : n.t === "if" ? "diamond" : "shield", `Remover ${n.t === "try" ? "try/catch" : n.t === "for" ? "repeti\xE7\xE3o (for)" : "sele\xE7\xE3o (if)"}`, { danger: true }));
+    out.push(part === "else" ? t("removeElse", "trash", "Remover else", { danger: true }) : t("unwrap", "trash", `Remover ${n.t === "try" ? "try/catch" : n.t === "for" ? "repeti\xE7\xE3o (for)" : "sele\xE7\xE3o (if)"}`, { danger: true }));
     return out;
   }
   var toolsHtml = (tools) => tools.map((x) => `<button type="button" class="ib${x.danger ? " danger" : ""}" data-act="${x.act}" data-id="${esc(x.id)}" ${Object.entries(x.data ?? {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(" ")} title="${esc(x.title)}" aria-label="${esc(x.title)}">${icon(x.icon)}</button>`).join("");
-  var blockLabel = (p, n) => {
-    if (n.t === "if") {
-      const to = n.elseTo ? locate(p, n.elseTo)?.node : null;
-      return `if (${n.test})${to && to.t === "fn" ? ` \xB7 sen\xE3o \u2192 ${to.title}` : ""}`;
-    }
+  var blockLabel = (_p, n) => {
+    if (n.t === "if") return `if (${n.test})`;
     if (n.t === "for") return `for (${n.v} of ${n.coll})`;
     return "try";
   };
@@ -631,51 +789,63 @@
   function taskCell(p, r) {
     const f = r.node, a = agentOf(p, f.agent), pad = 10 + r.depth * G.IND * 2;
     const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Fun\xE7\xE3o"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Abrir / fechar filhos">${icon("chevron")}</span><span class="gi">${icon("network")}</span>`;
-    const name = a?.kind === "maquina" && r.leaf ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Task de ${esc(a.name)}">${a.tasks.map((t) => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<b data-act="rename" data-id="${esc(f.id)}" title="Clique para renomear">${esc(f.title || "sem task")}</b>`;
+    const name = a?.kind === "maquina" && r.leaf ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Fun\xE7\xE3o de ${esc(a.name)}">${a.tasks.map((t) => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<b data-act="rename" data-id="${esc(f.id)}" title="Clique para renomear">${esc(f.title || "sem nome")}</b>`;
     const iaTag = a?.kind === "ia" ? `<span class="agent-tag resp-pick">${icon("ia")}<span>${esc(a.name)}</span>${agentSelect(p, f, "agent")}</span>` : "";
     return `<span class="nm" style="padding-left:${pad}px">${lead}${name}${iaTag}${f.par ? '<span class="par-tag" title="Roda junto da anterior">\u2225</span>' : ""}</span>`;
   }
-  function ioCell(r) {
-    const names = (list, kind, id) => list.map((n) => `<span class="io-d"><i class="sq ${kind}"></i>${esc(n)}<button type="button" class="x" data-act="rmIo" data-id="${esc(id)}" data-kind="${kind}" data-name="${esc(n)}" title="Remover ${kind === "in" ? "entrada" : "sa\xEDda"} ${esc(n)}" aria-label="Remover ${esc(n)}">\xD7</button></span>`).join("");
-    const ins = r.ins ?? [], outs = r.outs ?? [], pad = 24 + r.depth * G.IND * 2;
-    const label = ins.length && outs.length ? "entrada \xB7 sa\xEDda" : ins.length ? "entrada" : "sa\xEDda";
-    return `<span class="nm" style="padding-left:${pad}px"><span class="io-k">${label}</span>${names(ins, "in", r.id)}${ins.length && outs.length ? '<span class="io-sep">\u2192</span>' : ""}${names(outs, "out", r.id)}</span>`;
+  function ioSide(f, list, kind) {
+    const trash = (n) => `<button type="button" class="x" data-act="rmIo" data-id="${esc(f.id)}" data-kind="${kind}" data-name="${esc(n)}" title="Remover ${kind === "in" ? "entrada" : "sa\xEDda"} ${esc(n)}" aria-label="Remover ${esc(n)}">${icon("trash")}</button>`;
+    const plus = `<button type="button" class="x plus" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}" title="${list.length ? "Juntar mais um dado (vira cubo)" : "Adicionar dado"}" aria-label="Adicionar dado">${icon("plus")}</button>`;
+    if (!list.length) return "";
+    if (!isCube(list)) return `<span class="io-d"><i class="sq ${kind}"></i>${esc(list[0])}${trash(list[0])}${plus}</span>`;
+    return `<span class="io-d cubed" title="Cubo: ${esc(list.join(", "))}">${cubeSvg("io-cube")}<b>${esc(cubeName(f, kind))}</b><span class="fields">(${list.map((n) => `<span class="fld">${esc(n)}${trash(n)}</span>`).join(", ")})</span>${plus}</span>`;
   }
+  var cubeSvg = (cls) => `<svg class="${cls}" viewBox="0 0 10 11" aria-hidden="true"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/></svg>`;
+  function ioCell(r) {
+    const f = r.node, ins = r.ins ?? [], outs = r.outs ?? [], pad = 24 + r.depth * G.IND * 2;
+    const label = ins.length && outs.length ? "entrada \xB7 sa\xEDda" : ins.length ? "entrada" : "sa\xEDda";
+    return `<span class="nm" style="padding-left:${pad}px"><span class="io-k">${label}</span>${ioSide(f, ins, "in")}${ins.length && outs.length ? '<span class="io-sep">\u2192</span>' : ""}${ioSide(f, outs, "out")}</span>`;
+  }
+  var ioWidth = (r) => {
+    const f = r.node, side = (l, k) => !l.length ? 0 : isCube(l) ? 34 + cubeName(f, k).length * 6.6 + l.join(", ").length * 6.2 + 60 : 36 + l[0].length * 6.6 + 40;
+    return 24 + r.depth * G.IND * 2 + 120 + side(r.ins ?? [], "in") + side(r.outs ?? [], "out") + 28;
+  };
   function renderTable(p, sc, ui) {
     return sc.rows.map((r, i) => {
       const sel = ui.sel === r.id && r.kind !== "io" ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
       if (r.kind === "io") return `<div class="grow iorow" ${base}><span class="c-ag"></span>${ioCell(r)}</div>`;
-      if (r.kind === "block" || r.kind === "catch") {
-        const n = r.node, isCatch = r.kind === "catch", pad = 10 + r.depth * G.IND * 2;
-        const tag = isCatch ? `<span class="trd c">catch</span><b class="mono">se o try falhar</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `<span class="trd">try</span><b class="mono">catch \u2193 ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "tratamento")}</b>`;
-        return `<div class="grow ifrow ${isCatch ? "catchrow" : n.t + "row"}${sel}" ${base} data-part="${isCatch ? "catch" : "main"}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, isCatch ? "catch" : "main"))}</span></div>`;
+      if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
+        const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = 10 + r.depth * G.IND * 2;
+        const tag = r.kind === "catch" ? `<span class="trd c">catch</span><b class="mono">se o try falhar</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">sen\xE3o</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `<span class="trd">try</span><b class="mono">catch \u2193 ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "tratamento")}</b>`;
+        return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
       }
       return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
     }).join("");
   }
   function renderPlan(p, flow, sc, ui) {
-    const W = planWidth(sc), H = planHeight(sc), by = /* @__PURE__ */ new Map();
+    const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc), by = /* @__PURE__ */ new Map();
+    const colX2 = (n) => G.OX + n * cw;
     sc.rows.forEach((r, i) => {
       if (r.kind === "fn" || r.kind === "block") by.set(r.id, i);
     });
     const ym = (i) => rowY(i) + G.RH / 2;
     const out = [], bands = [], over = [];
-    for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX(s)}" y1="${G.HEAD - 8}" x2="${colX(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
+    for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX2(s)}" y1="${G.HEAD - 8}" x2="${colX2(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="0" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
-    const chip = (s, y) => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
+    const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
     const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
     out.push(`<text class="ttl" x="${W / 2}" y="16" text-anchor="middle">${esc(p.name)} \xB7 ${esc(flow.title)}</text>`);
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
-    out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
+    out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     sc.rows.forEach((r, i) => {
-      if (r.kind !== "block" && r.kind !== "catch") return;
-      const n = r.node, x0 = r.depth * G.IND, cls = r.kind === "catch" ? "ca" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+      if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
+      const n = r.node, x0 = r.depth * G.IND, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
       bands.push(`<rect class="band ${cls}" x="${x0}" y="${rowY(i)}" width="${W - x0}" height="${(r.last - i + 1) * G.RH}"/><line class="bandl ${cls}" x1="${x0 + 1}" y1="${rowY(i)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
-      const diamond = r.kind === "block" && n.t === "if", px = colX(r.s) + (diamond ? 11 : 4);
-      const txt = r.kind === "catch" ? "catch \xB7 se o try falhar" : n.t === "for" ? `\u21BB ${blockLabel(p, n)}` : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "tratamento"}` : blockLabel(p, n);
-      const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
-      if (diamond) over.push(`<path class="fif" d="M${colX(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
-      over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
+      const diamond = r.kind === "block" && n.t === "if", px = colX2(r.s) + (diamond ? 11 : 4);
+      const txt = r.kind === "catch" ? "catch \xB7 se o try falhar" : r.kind === "else" ? "else \xB7 sen\xE3o" : n.t === "for" ? `\u21BB ${blockLabel(p, n)}` : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "tratamento"}` : blockLabel(p, n);
+      const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
+      if (diamond) over.push(`<path class="fif" d="M${colX2(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
+      over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
       if (r.kind === "block") over.push(`<rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 7}" y="${ym(i) - 8}" width="7" height="16"><title>Arraste para aumentar ou diminuir o bloco</title></rect>`);
     });
     const produced = /* @__PURE__ */ new Set();
@@ -689,29 +859,29 @@
       if (r.kind !== "fn") return;
       const f = r.node, selC = ui.sel === f.id ? " sel" : "";
       if (!r.leaf) {
-        const x12 = colX(r.s) + 8, x22 = colX(r.e + 1) - 8;
+        const x12 = colX2(r.s) + 8, x22 = colX2(r.e + 1) - 8;
         over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composi\xE7\xE3o = camada</title></g><text class="lbl" x="${x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
         return;
       }
-      const k = fnKind(p, f), x1 = colX(r.s) + G.INS, x2 = colX(r.e + 1) - G.INS;
+      const k = fnKind(p, f), x1 = colX2(r.s) + G.INS, x2 = colX2(r.e + 1) - G.INS;
       const shown = f.title;
       over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
-      if (!ui.txtIn) over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
-      const io2 = ioRow.get(f.id);
-      if (io2 != null) {
-        f.ins.forEach((n, j) => over.push(`<g class="dm"><rect class="${produced.has(n) ? "dot" : "dot a"}" x="${colX(r.s) - 4 + j * 0}" y="${ym(io2) - 4}" width="8" height="8"/><title>${esc(n)} \xB7 ${produced.has(n) ? "entrada concreta (mesma camada)" : "entrada abstrata (state / outra camada)"}</title></g>`));
-        if (f.ins.length) over.push(`<text class="dn" x="${colX(r.s) + 9}" y="${ym(io2) + 3.5}">${esc(f.ins.join(", "))}</text>`);
-        if (f.outs.length) {
-          over.push(`<g class="dm"><rect class="dot" x="${colX(r.e + 1) - 4}" y="${ym(io2) - 4}" width="8" height="8"/><title>${esc(f.outs.join(", "))} \xB7 sa\xEDda</title></g><text class="dn" x="${colX(r.e + 1) + 9}" y="${ym(io2) + 3.5}">${esc(f.outs.join(", "))}</text>`);
-        }
-      }
+      const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
+      if (!ui.txtIn) over.push(`<text class="lbl" x="${colX2(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
+      const io2 = ioRow.get(f.id), inAbs = f.ins.some((n) => !produced.has(n));
+      const mark = (x, list, kind, abs, tip) => !list.length ? "" : isCube(list) ? `<g class="dm"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(`${cubeName(f, kind)}: ${list.join(", ")}`)} \xB7 ${tip}</title></g>` : `<g class="dm"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
+      over.push(mark(colX2(r.s), f.ins, "in", inAbs, inAbs ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)"), mark(colX2(r.e + 1), f.outs, "out", false, "sa\xEDda"));
+      const insLabel = isCube(f.ins) ? cubeName(f, "in") : f.ins[0] ?? "", outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
+      if (f.ins.length) over.push(`<text class="dn in" x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel]))}<title>${esc(f.ins.join(", "))}</title></text>`);
+      if (f.outs.length) over.push(`<text class="dn out" x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+      void io2;
       const ghost = (x, kind, tip) => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
-      if (!f.ins.length) over.push(ghost(colX(r.s), "in", "Adicionar entrada"));
-      if (!f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Adicionar sa\xEDda"));
+      if (!f.ins.length) over.push(ghost(colX2(r.s), "in", "Adicionar entrada"));
+      if (!f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Adicionar sa\xEDda"));
     });
     for (const [a, b] of links(sc)) {
-      const ia = by.get(a.id), ib = by.get(b.id), xo = colX(a.e + 1);
-      out.push(`<path class="dep" d="M${colX(a.e + 1) - G.INS} ${ym(ia)} H${xo} V${ym(ib)} H${colX(b.s) + G.INS}"/>`);
+      const ia = by.get(a.id), ib = by.get(b.id), xo = colX2(a.e + 1);
+      out.push(`<path class="dep" d="M${colX2(a.e + 1) - G.INS} ${ym(ia)} H${xo} V${ym(ib)} H${colX2(b.s) + G.INS}"/>`);
       void outY;
     }
     return `<svg class="plan" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano do fluxo ${esc(flow.title)}"><g class="bands">${bands.join("")}</g>${out.join("")}${over.join("")}</svg>`;
@@ -720,7 +890,7 @@
     const l = locate(p, flowId);
     if (!l || l.node.t !== "fn") throw new Error(`Fluxo ${flowId} n\xE3o existe`);
     const scene = layout(l.node, { closed: ui.closed });
-    return { scene, table: renderTable(p, scene, ui), plan: renderPlan(p, l.node, scene, ui) };
+    return { scene, table: renderTable(p, scene, ui), plan: renderPlan(p, l.node, scene, ui), w: colW(scene, ui) };
   }
 
   // novo/sample.ts
@@ -753,7 +923,9 @@
     io2(get2, ["envio_id"], ["crm_registro"]);
     run({ type: "setParallel", id: gerar, on: true });
     const ifId = run({ type: "wrap", id: traduzir, kind: "if", test: "proposta_aprovada" });
-    run({ type: "setIf", id: ifId, test: "proposta_aprovada", elseTo: redigir });
+    const rej = run({ type: "addElse", id: ifId, title: "rejeitar_proposta" });
+    run({ type: "assign", id: rej, agent: "lia" });
+    run({ type: "addInput", id: rej, name: "proposta_aprovada" });
     run({ type: "setScope", id: ifId, count: 2 });
     const forA = run({ type: "wrap", id: traduzir, kind: "for", v: "idioma", coll: '["en", "es"]' });
     run({ type: "setScope", id: forA, count: 2 });
@@ -774,7 +946,9 @@
     exitScope: (id) => ({ id }),
     setScope: (id) => ({ id, count: 2 }),
     setFor: (id) => ({ id, v: "item", coll: "itens" }),
-    setIf: (id) => ({ id, test: "condicao", elseTo: null }),
+    setIf: (id) => ({ id, test: "condicao" }),
+    addElse: (id) => ({ id }),
+    removeElse: (id) => ({ id }),
     addInput: (id) => ({ id, name: "entrada" }),
     removeInput: (id) => ({ id, name: "entrada" }),
     addOutput: (id) => ({ id, name: "saida" }),
@@ -785,28 +959,28 @@
     setParallel: (id) => ({ id, on: true })
   };
   function mount(host, store, flow) {
-    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: false, flow, zoom: 1 };
-    let tab = "ts", hovT = 0, fitted = false, last = null, gen = null;
+    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
+    let tab = "ts", hovT = 0, fitted = false, auto = true, exec = false, last = null, gen = null;
+    const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
         <span class="fx-t">Flow</span><select id="flowSel" aria-label="Fluxo"></select>
-        <button type="button" id="newFlow" class="btn">${icon("plus")}Nova fun\xE7\xE3o</button><span class="sp"></span>
-        <button type="button" class="ib" id="undo" title="Desfazer (\u2318Z)">${icon("undo")}</button><button type="button" class="ib" id="redo" title="Refazer (\u21E7\u2318Z)">${icon("redo")}</button><i class="vsep"></i>
-        <button type="button" class="ib" id="zout" title="Menos zoom (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Mais zoom (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Ajustar \xE0 tela (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Nome dentro da barra" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="expand" title="Abrir tudo">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Fechar tudo">${icon("collapse")}</button>
+        <button type="button" id="newFlow" class="btn">${icon("plus")}Nova fun\xE7\xE3o</button><button type="button" class="ib danger" id="delFlow" title="Excluir este fluxo" aria-label="Excluir este fluxo">${icon("trash")}</button><span class="sp"></span><span class="hist-inline">${histBtns}</span><i class="vsep"></i>
+                <button type="button" class="ib" id="zout" title="Menos zoom (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Mais zoom (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Ajustar \xE0 tela (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Nome dentro da barra" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="expand" title="Abrir tudo">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Fechar tudo">${icon("collapse")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-hint">roda do mouse = zoom \xB7 arrastar o fundo = mover \xB7 + \u2212 0</div>
       <div class="fx-legend" id="legend">
-        <span><i class="lg fc"></i>fun\xE7\xE3o concreta (lib node:*)</span><span><i class="lg fa"></i>fun\xE7\xE3o abstrata (IA \xB7 state)</span><span><i class="lg da"></i>dado abstrato (state)</span><span><i class="lg dc"></i>dado concreto</span>
-        <span><i class="lg dia"></i>sele\xE7\xE3o (if)</span><span><i class="lg lp">\u21BB</i>repeti\xE7\xE3o (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span>
+        <span><i class="lg fc"></i>fun\xE7\xE3o concreta (lib node:*)</span><span><i class="lg fa"></i>fun\xE7\xE3o abstrata (IA \xB7 state)</span><span><i class="lg da"></i>dado abstrato (state)</span><span><i class="lg dc"></i>dado concreto</span><span><i class="lg cb"></i>cubo (mais de um dado)</span>
+        <span><i class="lg dia"></i>sele\xE7\xE3o (if)</span><span><i class="lg lp">\u21BB</i>repeti\xE7\xE3o (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
       </div>
 
     </section>
     <aside class="side">
       <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="cmd" aria-selected="false">Chamar comando</button><span class="sp"></span><span class="meta" id="meta"></span></div>
-      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">fluxo.ts</span><span class="selname" id="selname"></span><button type="button" id="copy">Copiar</button></div><div class="code" id="code" tabindex="0" aria-label="C\xF3digo TypeScript gerado"></div></section>
+      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">fluxo.ts</span><span class="selname" id="selname"></span><span class="seg" role="group" aria-label="Vers\xE3o do c\xF3digo"><button type="button" data-view="mod" aria-pressed="true" title="M\xF3dulo: exporta a fun\xE7\xE3o do fluxo">m\xF3dulo</button><button type="button" data-view="run" aria-pressed="false" title="Execut\xE1vel: roda direto no Node">execut\xE1vel</button></span><button type="button" id="dl" title="Baixar o arquivo">Baixar</button><button type="button" id="copy">Copiar</button></div><div class="runhint" id="runhint" hidden><code id="runcmd"></code><button type="button" id="cmdcopy">Copiar comando</button></div><div class="code" id="code" tabindex="0" aria-label="C\xF3digo TypeScript gerado"></div></section>
       <section class="pane cmd" id="p-cmd"><label for="cmdSel">Comando</label><select id="cmdSel"></select><label for="payload">Payload (JSON)</label><textarea id="payload" spellcheck="false"></textarea>
         <div class="row"><button type="button" id="run" class="pri">Executar</button><button type="button" id="reset">Reiniciar</button></div><div id="res"></div></section>
     </aside>
@@ -814,6 +988,19 @@
     const $ = (s) => host.querySelector(s);
     const el = { sel: $("#flowSel"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), cmdSel: $("#cmdSel"), payload: $("#payload"), res: $("#res"), zv: $("#zv") };
     el.cmdSel.innerHTML = COMMAND_NAMES.map((c) => `<option>${c}</option>`).join("");
+    const hist = host.ownerDocument.createElement("div");
+    hist.id = "hist";
+    hist.className = "hist";
+    hist.setAttribute("role", "toolbar");
+    hist.setAttribute("aria-label", "Hist\xF3rico");
+    hist.innerHTML = histBtns;
+    const proj = host.ownerDocument.createElement("div");
+    proj.id = "proj";
+    proj.className = "proj";
+    proj.setAttribute("role", "toolbar");
+    proj.setAttribute("aria-label", "Projeto");
+    proj.innerHTML = `<button type="button" class="btn sm" id="agents" title="Cadastrar libs, pessoas e agentes de IA">${icon("users")}Respons\xE1veis</button><button type="button" class="btn sm" id="open" title="Abrir um projeto salvo (.json)">${icon("upload")}Abrir</button><button type="button" class="btn sm" id="save" title="Salvar o projeto (.json)">${icon("download")}Salvar</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
+    host.ownerDocument.querySelector(".topbar")?.append(proj, hist);
     const themes = host.ownerDocument.createElement("div");
     themes.id = "temas";
     host.ownerDocument.querySelector(".topbar")?.append(themes);
@@ -888,23 +1075,21 @@
       const p = P2();
       if (!locate(p, ui.flow)) ui.flow = p.flows[0]?.id ?? ui.flow;
       last = build(p, ui.flow, ui);
-      el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>Respons\xE1vel</span><span>Task</span></div>${last.table}` : "";
+      el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
       el.plan.innerHTML = last.plan;
       const tw0 = tableWidth(last.scene);
       el.table.style.width = tw0 + "px";
       el.table.style.setProperty("--tw", tw0 + "px");
-      const W = tw0 + planWidth(last.scene), H = planHeight(last.scene);
+      const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene);
       el.zoom.style.width = W + "px";
       el.zoom.style.height = H + "px";
-      el.zoom.style.transform = `scale(${ui.zoom})`;
-      el.sizer.style.width = W * ui.zoom + "px";
-      el.sizer.style.height = H * ui.zoom + "px";
-      el.zv.textContent = Math.round(ui.zoom * 100) + "%";
+      applyView();
       el.sel.innerHTML = p.flows.map((f) => `<option value="${f.id}"${f.id === ui.flow ? " selected" : ""}>${esc(f.title)}</option>`).join("");
-      $("#undo").disabled = !store.canUndo;
-      $("#redo").disabled = !store.canRedo;
+      host.ownerDocument.querySelectorAll(".hist-btn").forEach((b) => {
+        b.disabled = b.dataset["hist"] === "undo" ? !store.canUndo : !store.canRedo;
+      });
       $("#txtIn").setAttribute("aria-pressed", String(ui.txtIn));
-      if (!fitted) {
+      if (!fitted || auto) {
         fitted = true;
         fit();
       }
@@ -912,11 +1097,13 @@
     }
     function renderCode() {
       const p = P2();
-      gen = generate(p, ui.flow);
+      gen = generate(p, ui.flow, { runnable: exec });
       const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel ? gen.map[ui.sel] : void 0;
       const hl = (l) => esc(l).replace(/(\/\/.*$)|(&quot;[^&]*?&quot;)|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g, (m, c, s, n2, w, par) => c ? `<span class="tk-c">${c}</span>` : s ? `<span class="tk-s">${s}</span>` : n2 ? `<span class="tk-n">${n2}</span>` : /^(?:const|let|await|async|import|from|export|type|return|if|else|for|of|try|catch|function|as)$/.test(w) ? `<span class="tk-k">${w}</span>${par ?? ""}` : /^(?:State|Promise|Record|unknown|Fn)$/.test(w) ? `<span class="tk-t">${w}</span>${par ?? ""}` : par ? `<span class="tk-f">${w}</span>(` : m);
       el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
-      el.fname.textContent = gen.fileName;
+      el.fname.textContent = exec ? gen.runFile : gen.fileName;
+      $("#runhint").hidden = !exec;
+      $("#runcmd").textContent = gen.runCommand;
       el.meta.textContent = `${lines.length} linhas`;
       const n = ui.sel ? locate(p, ui.sel)?.node : void 0;
       el.selname.textContent = n ? n.t === "fn" ? n.title : n.t : "";
@@ -927,47 +1114,90 @@
       const e = el.code.querySelector(`[data-n="${r[0]}"]`);
       if (e) el.code.scrollTo({ top: Math.max(0, e.offsetTop - 60), behavior: "smooth" });
     };
+    function applyView() {
+      el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`;
+      el.zv.textContent = Math.round(ui.zoom * 100) + "%";
+    }
     function fit() {
       if (!last) return;
-      const W = tableWidth(last.scene) + planWidth(last.scene), k = Math.max(0.3, Math.min(1, (el.scroll.clientWidth - 8) / W));
+      const W = tableWidth(last.scene) + planWidth(last.scene, last.w), H = planHeight(last.scene), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+      const k = Math.max(0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
-      el.zoom.style.transform = `scale(${ui.zoom})`;
-      el.sizer.style.width = W * ui.zoom + "px";
-      el.sizer.style.height = planHeight(last.scene) * ui.zoom + "px";
-      el.zv.textContent = Math.round(ui.zoom * 100) + "%";
+      ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
+      applyView();
     }
     const zoomTo = (k, mx = el.scroll.clientWidth / 2, my = el.scroll.clientHeight / 2) => {
       const old = ui.zoom, next = Math.min(2.5, Math.max(0.2, Math.round(k * 100) / 100));
       if (next === old) return;
-      const cx = (el.scroll.scrollLeft + mx) / old, cy = (el.scroll.scrollTop + my) / old;
+      auto = false;
+      ui.pan = { x: mx - (mx - ui.pan.x) * (next / old), y: my - (my - ui.pan.y) * (next / old) };
       ui.zoom = next;
-      render();
-      el.scroll.scrollLeft = cx * next - mx;
-      el.scroll.scrollTop = cy * next - my;
+      applyView();
     };
     el.scroll.addEventListener("wheel", (e) => {
       e.preventDefault();
       const r = el.scroll.getBoundingClientRect();
       zoomTo(ui.zoom * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 22e-4)), e.clientX - r.left, e.clientY - r.top);
     }, { passive: false });
+    el.scroll.addEventListener("mousedown", (e) => {
+      if (e.button === 1) e.preventDefault();
+    });
     el.scroll.addEventListener("pointerdown", (e) => {
-      if (e.button !== 0 || e.target.closest("[data-act],[data-hover],[data-drag],[data-sel],button,select,input,.ghost,.bar-tools,.fl-tools,.grow")) return;
-      const x0 = e.clientX, y0 = e.clientY, sl = el.scroll.scrollLeft, st = el.scroll.scrollTop;
+      const middle = e.button === 1;
+      if (!middle && (e.button !== 0 || e.target.closest("[data-act],[data-hover],[data-drag],button,select,input,.ghost,.bar-tools,.fl-tools"))) return;
+      if (middle) e.preventDefault();
+      const x0 = e.clientX, y0 = e.clientY, p0 = { ...ui.pan };
       let moved = false;
       const move = (ev) => {
-        if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
+        if (!moved && !middle && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
         moved = true;
+        auto = false;
         el.scroll.classList.add("panning");
-        el.scroll.scrollLeft = sl - (ev.clientX - x0);
-        el.scroll.scrollTop = st - (ev.clientY - y0);
+        ui.pan = { x: p0.x + ev.clientX - x0, y: p0.y + ev.clientY - y0 };
+        applyView();
       };
       const up = () => {
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
         el.scroll.classList.remove("panning");
+        if (moved) {
+          const stop = (ev) => ev.stopPropagation();
+          window.addEventListener("click", stop, { capture: true, once: true });
+          window.setTimeout(() => window.removeEventListener("click", stop, true), 0);
+        }
       };
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
+    });
+    const KIND_NAME = { maquina: "Lib do Node", pessoa: "Pessoa", ia: "Agente de IA" };
+    const agentsDialog = () => modal("Respons\xE1veis", (form, done) => {
+      const draw = () => {
+        form.classList.add("wide");
+        form.innerHTML = `<label>Respons\xE1veis do projeto</label><div class="agl">${P2().agents.map((a) => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` \xB7 ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remover ${esc(a.name)}" aria-label="Remover ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
+        <div class="agadd"><select name="kind" aria-label="Tipo"><option value="maquina">Lib do Node</option><option value="pessoa">Pessoa</option><option value="ia">Agente de IA</option></select><input name="name" placeholder="nome (ex.: node:zlib, Maria, Redator)" aria-label="Nome" spellcheck="false"><input name="tasks" placeholder="fun\xE7\xF5es da lib (ex.: gzip, gunzip)" aria-label="Fun\xE7\xF5es da lib" spellcheck="false"><button type="submit" class="pri">Adicionar</button></div>
+        <div class="row"><button type="button" data-no>Fechar</button></div>`;
+        form.querySelector("[data-no]").addEventListener("click", () => done());
+        form.querySelectorAll("[data-rm-agent]").forEach((b) => b.addEventListener("click", () => {
+          run({ type: "removeAgent", id: b.dataset["rmAgent"] }, false);
+          draw();
+        }));
+        const kind = form.elements.namedItem("kind"), tasks = form.elements.namedItem("tasks");
+        const sync = () => {
+          tasks.hidden = kind.value !== "maquina";
+        };
+        kind.addEventListener("change", sync);
+        sync();
+        form.elements.namedItem("name").focus();
+      };
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const f = new FormData(form);
+        if (run({ type: "addAgent", kind: String(f.get("kind")), name: String(f.get("name") ?? ""), tasks: String(f.get("tasks") ?? "") }, false)) draw();
+      });
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") done();
+      });
+      draw();
     });
     const kids = (id) => {
       const n = locate(P2(), id)?.node;
@@ -980,7 +1210,9 @@
         else ui.closed.add(id);
         render();
       },
-      addChild: (d) => void run({ type: "addChild", id: d["id"], ...d["catch"] ? { catch: true } : {} }),
+      addChild: (d) => void run({ type: "addChild", id: d["id"], ...d["catch"] ? { catch: true } : {}, ...d["else"] ? { else: true } : {} }),
+      addElse: (d) => void run({ type: "addElse", id: d["id"] }),
+      removeElse: (d) => void run({ type: "removeElse", id: d["id"] }, false),
       addSibling: (d) => void run({ type: "addSibling", id: d["id"] }),
       wrap: (d) => void run({ type: "wrap", id: d["id"], kind: d["kind"] }),
       unwrap: (d) => void run({ type: "unwrap", id: d["id"] }, false),
@@ -997,7 +1229,7 @@
         const n = locate(P2(), d["id"])?.node;
         if (!n || n.t !== "fn") return;
         ui.sel = n.id;
-        const v = await ask("Novo nome da task:", n.title);
+        const v = await ask("Novo nome da fun\xE7\xE3o:", n.title);
         if (v) run({ type: "rename", id: n.id, title: v });
         else render();
       },
@@ -1011,22 +1243,7 @@
           if (c) run({ type: "setFor", id, v, coll: c }, false);
         } else if (n.t === "if") {
           const test = await ask("Condi\xE7\xE3o do if (dado testado, ex.: estoque_ok):", n.test);
-          if (!test) return;
-          const names = locate(P2(), id).flow.kids.length ? [] : [], fns = [];
-          void names;
-          const walkF = (list) => {
-            for (const x of list) {
-              if (x.t === "fn") fns.push({ id: x.id, title: x.title });
-              if (x.t === "try") {
-                walkF(x.kids);
-                walkF(x.catchKids);
-              } else walkF(x.kids);
-            }
-          };
-          walkF(locate(P2(), id).flow.kids);
-          const cur = fns.find((f) => f.id === n.elseTo)?.title ?? "";
-          const to = await ask(`Sen\xE3o, voltar para qual fun\xE7\xE3o? (${fns.map((f) => f.title).join(", ")}) \u2014 vazio = nenhuma`, cur);
-          run({ type: "setIf", id, test, elseTo: fns.find((f) => f.title.toLowerCase() === (to ?? "").toLowerCase())?.id ?? null }, false);
+          if (test) run({ type: "setIf", id, test }, false);
         }
       },
       addIo: async (d) => {
@@ -1064,13 +1281,52 @@
       fitted = false;
       render();
     });
+    $("#delFlow").addEventListener("click", async () => {
+      const f = locate(P2(), ui.flow)?.node;
+      if (!f || f.t !== "fn") return;
+      if (!await confirmAsk(`Excluir o fluxo \u201C${f.title}\u201D e tudo dentro dele?`)) return;
+      run({ type: "removeFlow", id: f.id }, false);
+    });
+    proj.querySelector("#save").addEventListener("click", () => {
+      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P2())], { type: "application/json" }));
+      a.href = url;
+      a.download = "projeto-flow.json";
+      host.append(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
+    });
+    const fileIn = host.ownerDocument.getElementById("openFile");
+    proj.querySelector("#open").addEventListener("click", () => fileIn.click());
+    fileIn.addEventListener("change", async () => {
+      const f = fileIn.files?.[0];
+      fileIn.value = "";
+      if (!f) return;
+      try {
+        const p = parseProject(await f.text());
+        store.load(p);
+        ui.flow = p.flows[0].id;
+        ui.sel = null;
+        ui.closed.clear();
+        auto = true;
+        toast(`Projeto \u201C${p.name}\u201D aberto`);
+      } catch (e) {
+        toast(e instanceof FlowError ? e.message : String(e));
+      }
+    });
+    proj.querySelector("#agents").addEventListener("click", () => void agentsDialog());
     $("#newFlow").addEventListener("click", () => void run({ type: "newFlow" }));
-    $("#undo").addEventListener("click", () => store.undo());
-    $("#redo").addEventListener("click", () => store.redo());
+    host.ownerDocument.addEventListener("click", (e) => {
+      const b = e.target.closest(".hist-btn");
+      if (b) {
+        if (b.dataset["hist"] === "undo") store.undo();
+        else store.redo();
+      }
+    });
     $("#zin").addEventListener("click", () => zoomTo(ui.zoom * 1.15));
     $("#zout").addEventListener("click", () => zoomTo(ui.zoom / 1.15));
     $("#fit").addEventListener("click", () => {
-      fitted = false;
+      auto = true;
       render();
     });
     $("#txtIn").addEventListener("click", () => {
@@ -1094,6 +1350,27 @@
       $("#p-ts").classList.toggle("on", tab === "ts");
       $("#p-cmd").classList.toggle("on", tab === "cmd");
     }));
+    host.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
+      exec = b.dataset["view"] === "run";
+      host.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      renderCode();
+    }));
+    $("#dl").addEventListener("click", () => {
+      if (!gen) return;
+      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([gen.code], { type: "text/plain" }));
+      a.href = url;
+      a.download = exec ? gen.runFile : gen.fileName;
+      host.append(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
+    });
+    $("#cmdcopy").addEventListener("click", async () => {
+      await navigator.clipboard?.writeText(gen?.runCommand ?? "").catch(() => {
+      });
+      $("#cmdcopy").textContent = "Copiado";
+      setTimeout(() => $("#cmdcopy").textContent = "Copiar comando", 1200);
+    });
     $("#copy").addEventListener("click", async () => {
       await navigator.clipboard?.writeText(gen?.code ?? "").catch(() => {
       });
@@ -1116,12 +1393,11 @@
     });
     $("#reset").addEventListener("click", () => {
       const s = sampleProject();
-      store.project = s.project;
+      store.load(s.project);
       ui.flow = s.main;
       ui.sel = null;
       ui.closed.clear();
-      fitted = false;
-      render();
+      auto = true;
     });
     host.ownerDocument.addEventListener("keydown", (e) => {
       const tg = e.target;
@@ -1136,7 +1412,7 @@
           return;
         }
         if (e.key === "0") {
-          fitted = false;
+          auto = true;
           render();
           return;
         }
@@ -1189,11 +1465,11 @@
       el.plan.append(guide);
       const at = (ev) => {
         const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
-        return countForStep(p0, last.scene, id, Math.floor((x - G.OX) / G.W));
+        return countForStep(p0, last.scene, id, Math.floor((x - G.OX) / last.w));
       };
       const place = (n2) => {
         const l = locate(p0, id), items = [...l.node.kids, ...l.list.slice(l.index + 1)], last2 = items[n2 - 1], sp = last2 ? last.scene.span.get(last2.id) : void 0;
-        guide.style.left = colX((sp?.e ?? 0) + 1) + "px";
+        guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * last.w + "px";
       };
       let n = at(e);
       place(n);
@@ -1215,11 +1491,32 @@
     render();
     return { store, ui, render, destroy: () => {
       off();
+      hist.remove();
       host.innerHTML = "";
     } };
   }
+  var STORE_KEY = "flow-novo-projeto-v1";
+  function startProject() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) {
+        const p = parseProject(raw);
+        return { project: p, flow: p.flows[0].id };
+      }
+    } catch {
+    }
+    const s = sampleProject();
+    return { project: s.project, flow: s.main };
+  }
   function boot() {
-    const s = sampleProject(), app = mount(document.getElementById("app"), new Store(s.project), s.main);
+    const s = startProject(), store = new Store(s.project), app = mount(document.getElementById("app"), store, s.flow);
+    const save = () => {
+      try {
+        localStorage.setItem(STORE_KEY, serialize(store.project));
+      } catch {
+      }
+    };
+    store.subscribe(save);
     window.flowApp = app;
     return app;
   }

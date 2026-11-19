@@ -1,4 +1,4 @@
-import { type Block, type Fn, type Node } from "./model";
+import { altKids, type Block, type Fn, type Node } from "./model";
 
 /**
  * Cena do Flow: transforma a árvore em LINHAS (tabela) e PASSOS (colunas do plano) — pura, sem DOM.
@@ -6,7 +6,7 @@ import { type Block, type Fn, type Node } from "./model";
  *  - blocos e funções compostas cobrem os passos dos filhos;
  *  - o catch fica em paralelo à última célula do try e o que vem depois só começa após os dois.
  */
-export type RowKind = "fn" | "io" | "block" | "catch";
+export type RowKind = "fn" | "io" | "block" | "catch" | "else";
 export interface Span { s: number; e: number }
 export interface Row {
   kind: RowKind; id: string; node: Node; depth: number; s: number; e: number;
@@ -49,12 +49,13 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
         const next = place(b.kids, depth + 1, step, emit, inCatch), sp: Span = { s: step, e: Math.max(step, next - 1) };
         if (emit) { span.set(b.id, sp); row.s = sp.s; row.e = sp.e; }
         let end = next;
-        if (b.t === "try") {
-          // catch em paralelo à última célula do try: termina junto com ele
-          const count = place(b.catchKids, depth + 1, 0, false, true), cs = Math.max(step, next - count);
-          const crow = push({ kind: "catch", id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
-          const cend = place(b.catchKids, depth + 1, cs, emit, true);
-          if (emit) { crow.s = cs; crow.e = Math.max(cs, cend - 1); span.set(`${b.id}:catch`, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
+        const alt = altKids(b);
+        if (alt && alt.length) {
+          // catch (do try) e else (do if): lista alternativa em paralelo à última célula do bloco, terminando junto com ela
+          const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
+          const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
+          const cend = place(alt, depth + 1, cs, emit, true);
+          if (emit) { crow.s = cs; crow.e = Math.max(cs, cend - 1); span.set(`${b.id}:${kind}`, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
           end = Math.max(next, cend);
         }
         if (emit) row.last = rows.length - 1;

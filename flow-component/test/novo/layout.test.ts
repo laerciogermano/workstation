@@ -47,6 +47,14 @@ describe("cena: linhas e passos", () => {
     const s2 = t.sc(), c2 = s2.rows.find(r => r.kind === "catch")!; expect(c2.s).toBe(s2.span.get(tr)!.s); expect(c2.e).toBe(3); expect(t.names(s2)).toContain("D:4-4");
     expect(s2.rows.findIndex(r => r.kind === "catch")).toBeGreaterThan(s2.rows.findIndex(r => r.id === t.ids[2]));   // linhas do catch vêm depois das do try
   });
+  it("else do if aparece como linha própria, em paralelo à última célula do if (como o catch)", () => {
+    const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); t.run({ type: "addElse", id: i, title: "Senao1" });
+    const s = t.sc(), e = s.rows.find(r => r.kind === "else")!;
+    expect(e).toBeTruthy(); expect(s.span.get(i)).toEqual({ s: 1, e: 2 }); expect(e.e).toBe(2); expect(t.names(s)).toContain("Senao1:2-2"); expect(t.names(s)).toContain("D:3-3");   // termina junto com o if; o próximo vem depois
+    expect(s.rows.findIndex(r => r.kind === "else")).toBeGreaterThan(s.rows.findIndex(r => r.id === t.ids[2])); expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["A", "B", "C", "D"]);   // o else não entra na sequência
+    expect(e.depth).toBe(1); expect(e.last).toBeGreaterThan(s.rows.indexOf(e) - 1);
+  });
+  it("if sem else não gera linha de else", () => { const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); expect(t.sc().rows.some(r => r.kind === "else")).toBe(false); });
   it("funções do catch não entram na sequência (leaves)", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const s = t.sc();
     expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["A", "B", "C", "D"]); expect(tr).toBeTruthy();

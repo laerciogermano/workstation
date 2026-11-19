@@ -41,7 +41,7 @@ const flow = createFlowComponent({ store: memoryStore(snapshot) });
 const view = mountFlowView(document.getElementById("host")!, flow, { rootId });
 ```
 
-Docs: `example/docs.html` (página única: menu lateral + rolagem, busca ⌘K, 12 temas do Flow IDE em bolinhas no header via `?tema=`; seção **Estruturas** com sequência/paralelo/if/for/try-catch/composição; cada funcionalidade: contrato → chamada → Depois/Antes/Mudanças → erros). Exemplos: `example/flow.html` (a vista + **código TypeScript gerado ao vivo** + painel “Chamar comando”). `npm run example:build` empacota a lib.
+Docs: `example/docs.html` (página única: menu lateral + rolagem, busca ⌘K; seções Guia do editor, Casos de uso (8 receitas com vista + código gerado), Código gerado e Integração no host; 12 temas do Flow IDE em bolinhas no header via `?tema=`; seção **Estruturas** com sequência/paralelo/if/for/try-catch/composição; cada funcionalidade: contrato → chamada → Depois/Antes/Mudanças → erros). Exemplos: `example/flow.html` (a vista + **código TypeScript gerado ao vivo** + painel “Chamar comando”). `npm run example:build` empacota a lib.
 
 **Transpilador:** `generateTypeScript(snapshot, { rootId })` devolve `{ code, map, fileName }` — uma função `async (state)` por função do fluxo (composição = camada com `await`/`Promise.all`, `for`, `if` → “senão”, `try/catch` → tratamento; `through` faz um único try cobrir várias funções consecutivas) e o mapa função → linhas; `typeScriptExporter` pluga no `exportPlan`.
 

@@ -17,7 +17,7 @@ export function sampleProject(): { project: Project; main: string; onboarding: s
   run({ type: "setParallel", id: gerar, on: true });
   // if (proposta_aprovada) { for idioma { traduzir ∥ gerar_contrato }; for idioma { post } } senão volta a redigir
   const ifId = run({ type: "wrap", id: traduzir, kind: "if", test: "proposta_aprovada" });
-  run({ type: "setIf", id: ifId, test: "proposta_aprovada", elseTo: redigir });
+  const rej = run({ type: "addElse", id: ifId, title: "rejeitar_proposta" }); run({ type: "assign", id: rej, agent: "lia" }); run({ type: "addInput", id: rej, name: "proposta_aprovada" });
   run({ type: "setScope", id: ifId, count: 2 });
   const forA = run({ type: "wrap", id: traduzir, kind: "for", v: "idioma", coll: '["en", "es"]' });
   run({ type: "setScope", id: forA, count: 2 });

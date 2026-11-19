@@ -2932,7 +2932,7 @@ function zZoomAt(key, canvas, lx, ly, nextZ) {
   st.y = ly - wy * z;
   applyZView(key);
 }
-function zFit(key) {
+function zFit(key, pinTop = false) {
   const canvas = holder.querySelector(`[data-zcanvas="${key}"]`);
   const world = holder.querySelector(`[data-zworld="${key}"]`);
   const st = ZVIEWS[key];
@@ -2943,7 +2943,7 @@ function zFit(key) {
   const z = Math.min(1.15, (canvas.clientWidth - pad) / W, (canvas.clientHeight - pad) / H);
   st.z = Math.max(Z_MIN, Math.min(Z_MAX, z));
   st.x = (canvas.clientWidth - W * st.z) / 2;
-  st.y = Math.max(12, (canvas.clientHeight - H * st.z) / 2);
+  st.y = pinTop ? 12 : Math.max(12, (canvas.clientHeight - H * st.z) / 2);
   applyZView(key);
 }
 function diagram(s) {
@@ -3615,8 +3615,9 @@ function show(spec, push = true) {
 }
 function openT(t) {
   hist.length = 0; player.classList.add("open"); document.body.style.overflow = "hidden"; cur = null; show(specFor(t), false);
-  requestAnimationFrame(() => { fit(); requestAnimationFrame(fit); });
-  setTimeout(fit, 80);
+  const fitOpen = () => { fit(); if (cur?.v === "flow") zFit("flow", true); };
+  requestAnimationFrame(() => { fitOpen(); requestAnimationFrame(fitOpen); });
+  setTimeout(fitOpen, 80);
 }
 function closePlayer() { if (player.classList.contains("full")) toggleFull(false); player.classList.remove("open", "focus"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
 function goBack() { const p = hist.pop(); if (p) { cur = p; paint(false); } }

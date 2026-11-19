@@ -2,7 +2,7 @@
 
 É o **Flow IDE** (cópia do protótipo em [`../../flow-dev/prototipo/`](../../flow-dev/prototipo/)) aberto direto na tela **Flow**, em tela cheia, com um painel **Código** que acompanha o desenho em tempo real. Mesma interface, mesmas ações, mesmo canvas SVG (s0…sN, barras, dados □/■, if, for).
 
-**Abrir:** `open editor/index.html` (sem build, sem servidor).
+**Abrir:** `open editor/index.html` (sem build, sem servidor). Na abertura o Flow já vem ajustado à tela (mesmo zoom do ícone **Ajustar à tela**), com o fluxo no topo.
 
 ## Como usar
 

@@ -1543,5 +1543,61 @@
         "status": "todo"
       }
     ]
+  },
+  "linkedin-human-cdp": {
+    "name": "LinkedIn Human CDP",
+    "blurb": "Lib de operações LinkedIn via human-cdp",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "linkedin-human-cdp-t-0",
+            "title": "Extrair DOM LinkedIn para dentro da lib"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "linkedin-human-cdp-t-visao",
+            "title": "Visão + fachada v0.1"
+          }
+        ]
+      }
+    ],
+    "description": "Lib Node que conecta ao Chrome/CDP e expõe um método por operação de worker LinkedIn (connect, conexões, mensagem, unread, leads), sempre via human-cdp.",
+    "context": "Ops LinkedIn CDP ficam em screen-robot/src/lib/cdp e misturam UI com notifyApi ConnectMax. Falta uma fachada estável de programador (lib) só com métodos de domínio LinkedIn.",
+    "objective": "Ser a API de programador padrão das ações LinkedIn web no lab: createLinkedInHumanCdp + métodos = ops do worker; default notifyApi false.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "done"
+      },
+      {
+        "id": "lib",
+        "title": "Lib v0.1",
+        "status": "done"
+      },
+      {
+        "id": "extracao",
+        "title": "Extração DOM",
+        "status": "todo"
+      },
+      {
+        "id": "migracao-workers",
+        "title": "Migração workers",
+        "status": "todo"
+      }
+    ]
   }
 }

@@ -1,0 +1,21 @@
+{
+  "name": "@works/linkedin-human-cdp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LinkedIn Human CDP — lib de operações LinkedIn via human-cdp (espelho dos workers)",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "example:smoke": "node examples/smoke.mjs",
+    "typecheck": "node --check src/index.js && node --check src/client.js && node --check src/session.js"
+  },
+  "dependencies": {
+    "@screen-robot/human-cdp": "file:../screen-robot/pocs/chrome-cdp/human-cdp"
+  }
+}

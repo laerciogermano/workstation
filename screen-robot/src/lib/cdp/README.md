@@ -1,5 +1,7 @@
 # LinkedIn actions — CDP (espelho AVD)
 
+**Fachada preferida (lib):** [`linkedin-human-cdp`](../../../../linkedin-human-cdp/README.md) — `createLinkedInHumanCdp({ cdpId })` com um método por op abaixo. Este diretório continua sendo a implementação do fluxo UI; a lib faz ponte (`worker-bridge`).
+
 Mesmas interfaces das libs AVD (`src/lib/linkedin-*.js`) para workers, usando Chrome + [`human-cdp`](../../../pocs/chrome-cdp/human-cdp/README.md).
 
 | AVD (`serial`) | CDP (`page` \| `cdpId` \| `cdpUrl`) |

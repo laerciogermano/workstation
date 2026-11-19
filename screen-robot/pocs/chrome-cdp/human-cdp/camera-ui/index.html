@@ -243,6 +243,7 @@
       <div class="url-bar">
         <input id="tab-url" type="url" placeholder="https://…" />
         <button type="button" class="secondary" id="tab-go">Ir</button>
+        <button type="button" class="secondary" id="tab-calib" title="Contador para calibrar intervalo">Calibração</button>
         <button type="button" id="tab-new">Nova aba</button>
       </div>
       <div class="grid3">
@@ -1257,6 +1258,16 @@
         setBusy(true);
         await navigateActive($('tab-url').value.trim());
         flash('navegou', 'ok');
+      } catch (e) { flash(String(e.message || e), 'err'); }
+      finally { setBusy(false); }
+    });
+    $('tab-calib').addEventListener('click', async () => {
+      const url = defaults.calibUrl || 'http://127.0.0.1:18770/calib';
+      $('tab-url').value = url;
+      try {
+        setBusy(true);
+        await navigateActive(url);
+        flash('calibração', 'ok');
       } catch (e) { flash(String(e.message || e), 'err'); }
       finally { setBusy(false); }
     });

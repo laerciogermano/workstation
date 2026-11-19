@@ -213,7 +213,7 @@ await startView('meu-cdp'); // CDP precisa estar up
 await setViewTarget('meu-cdp', targetId); // troca aba fotografada
 ```
 
-**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **20 ms** (mín. 20); abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola); **rolagem** no print → `scroll({ x, y, dx, dy, exact: true })` com os mesmos deltas (px). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. Rollback: `intervalMs` default/min 100; restaurar `camera-ui/` + `scroll` sem `x/y/dx/exact` + remover handler `wheel` / `type: scroll` no input.
+**UI controle:** ao abrir Controlar a visão **já inicia** (sem botão); intervalo default **20 ms** (mín. 20); abas (nova / fechar / Ir URL); clique na tela arma o teclado (digitar, Enter, Backspace, Ctrl/Cmd+V cola); **rolagem** no print → `scroll({ x, y, dx, dy, exact: true })` com os mesmos deltas (px). Página **Telas ao vivo**: grid dos CDPs up → clique abre o modal. **Calibração** (`/calib`): contador rAF + relógio ms para ver o salto entre prints — botão no Controlar. Rollback: `intervalMs` default/min 100; remover `calib.html` / rota `/calib` / botão; restaurar `scroll` antigo.
 
 Campo vídeo já vem com o sample do lab (`omtv/pocs/fake-webcam-cdp/media/testsrc.y4m`, senão `chrome-cdp/media/sample.y4m`). Override: `HUMAN_CDP_DEFAULT_VIDEO=/caminho`.
 

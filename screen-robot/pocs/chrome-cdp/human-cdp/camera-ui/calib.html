@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calibração · visão CDP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #ffffff;
+      --paper-2: #f4f1ea;
+      --ink: #14120f;
+      --body: #44423d;
+      --accent: #e0402b;
+      --line: #e7e3db;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Newsreader, Georgia, serif;
+      color: var(--ink);
+      background: var(--paper);
+      padding: 2rem 1.5rem 3rem;
+    }
+    main { max-width: 42rem; margin: 0 auto; }
+    h1 {
+      font-family: Archivo, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+    }
+    .meta {
+      font-family: Archivo, sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--body);
+      margin: 0 0 1.5rem;
+    }
+    .board {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 1.25rem 1.35rem 1.5rem;
+      background: var(--paper-2);
+    }
+    .label {
+      font-family: Archivo, sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--body);
+      margin: 0 0 0.25rem;
+    }
+    #tick {
+      font-family: Archivo, sans-serif;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(3.5rem, 14vw, 6.5rem);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--accent);
+      margin: 0 0 1rem;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .val {
+      font-family: Archivo, sans-serif;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.15rem;
+      margin: 0;
+    }
+    #bar {
+      margin-top: 1.25rem;
+      height: 10px;
+      border-radius: 6px;
+      background: var(--ink);
+      transform-origin: left center;
+    }
+    code {
+      font-family: Archivo, sans-serif;
+      font-size: 0.85rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.15rem 0.4rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Calibração</h1>
+    <p class="meta">Contador local · compare o salto no print do Controlar</p>
+    <div class="board">
+      <p class="label">Tick (rAF)</p>
+      <p id="tick">0</p>
+      <div class="row">
+        <div>
+          <p class="label">Relógio</p>
+          <p class="val" id="clock">—</p>
+        </div>
+        <div>
+          <p class="label">Elapsed ms</p>
+          <p class="val" id="elapsed">0</p>
+        </div>
+        <div>
+          <p class="label">Hz local</p>
+          <p class="val" id="hz">—</p>
+        </div>
+        <div>
+          <p class="label">Δ último paint</p>
+          <p class="val" id="dt">—</p>
+        </div>
+      </div>
+      <div id="bar"></div>
+    </div>
+    <p class="meta" style="margin-top:1.25rem">Abra no CDP: <code id="url"></code></p>
+  </main>
+  <script>
+    const t0 = performance.now();
+    let tick = 0;
+    let last = t0;
+    let windowStart = t0;
+    let windowCount = 0;
+    const $ = (id) => document.getElementById(id);
+    $('url').textContent = location.href;
+
+    function pad(n, w = 2) {
+      return String(n).padStart(w, '0');
+    }
+
+    function loop(now) {
+      tick += 1;
+      windowCount += 1;
+      const dt = now - last;
+      last = now;
+      const elapsed = now - t0;
+      const d = new Date();
+      $('tick').textContent = String(tick);
+      $('clock').textContent =
+        `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+      $('elapsed').textContent = elapsed.toFixed(0);
+      $('dt').textContent = `${dt.toFixed(1)} ms`;
+      if (now - windowStart >= 1000) {
+        $('hz').textContent = `${windowCount} /s`;
+        windowStart = now;
+        windowCount = 0;
+      }
+      const phase = (elapsed % 1000) / 1000;
+      $('bar').style.transform = `scaleX(${phase})`;
+      $('bar').style.background = phase < 0.5 ? 'var(--accent)' : 'var(--ink)';
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

@@ -59,7 +59,9 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.HUMAN_CDP_CAMERA_UI_PORT || 18770);
 const HTML = readFileSync(join(__dirname, 'index.html'), 'utf8');
+const CALIB_HTML = readFileSync(join(__dirname, 'calib.html'), 'utf8');
 const WORKS = resolve(__dirname, '../../../../..');
+const CALIB_URL = `http://127.0.0.1:${PORT}/calib`;
 
 function defaultVideoPath() {
   const env = String(process.env.HUMAN_CDP_DEFAULT_VIDEO || '').trim();
@@ -169,6 +171,7 @@ function defaultsPayload() {
     backupsDir: snapshotsDir(),
     viewRoot: viewRoot(),
     mediaDir: mediaDir(),
+    calibUrl: CALIB_URL,
   };
 }
 
@@ -177,8 +180,13 @@ const server = createServer(async (req, res) => {
   const path = url.pathname;
   try {
     if (req.method === 'GET' && path === '/') {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
       res.end(HTML);
+      return;
+    }
+    if (req.method === 'GET' && (path === '/calib' || path === '/calibracao')) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      res.end(CALIB_HTML);
       return;
     }
     if (req.method === 'GET' && path === '/api/defaults') {

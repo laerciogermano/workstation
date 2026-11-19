@@ -163,6 +163,7 @@ cd screen-robot/pocs/chrome-cdp/human-cdp && npm run camera-ui
 - **Galeria de mídias** em `~/chrome-cdp-media/` (mais recente primeiro); cada CDP escolhe qual vídeo executa
 - **Snapshots** em `~/chrome-cdp-snapshots/<id>/` (criação já gera um); **Executar** sempre restaura o selecionado (sem manter histórico da sessão)
 - **Controlar**: visão **auto** (intervalo default **20 ms**); abas + URL; clique na tela + teclado direto (colar Ctrl/Cmd+V) + **rolagem** (mesmos deltas → CDP) via human-cdp; prints em `~/chrome-cdp-view/<id>/`
+- **Calibração**: [`http://127.0.0.1:18770/calib`](http://127.0.0.1:18770/calib) — contador para medir salto entre frames da visão
 
 Código: [`../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/`](../screen-robot/pocs/chrome-cdp/human-cdp/camera-ui/).
 

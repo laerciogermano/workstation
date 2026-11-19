@@ -12,3 +12,4 @@
 | 008 | 2026-11-17 | Controle auto + abas + teclado + mural | [008-2026-11-17-controle-auto-abas-teclado-mural.md](008-2026-11-17-controle-auto-abas-teclado-mural.md) | Visão auto 100 ms; abas/URL; teclado no espelho; página Telas ao vivo. |
 | 009 | 2026-11-19 | Controle: rolagem = mesmo evento | [009-2026-11-19-controle-rolagem-mesmo-evento.md](009-2026-11-19-controle-rolagem-mesmo-evento.md) | Wheel na UI → `scroll` exact com mesmos deltas no CDP. |
 | 010 | 2026-11-19 | Intervalo visão 20 ms | [010-2026-11-19-intervalo-visao-20ms.md](010-2026-11-19-intervalo-visao-20ms.md) | Default/mín. `intervalMs` 100 → 20. |
+| 011 | 2026-11-19 | Página calibração contador | [011-2026-11-19-pagina-calibracao-contador.md](011-2026-11-19-pagina-calibracao-contador.md) | `/calib` + botão no Controlar para medir salto dos prints. |

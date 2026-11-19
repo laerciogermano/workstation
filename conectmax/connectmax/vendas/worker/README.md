@@ -53,13 +53,16 @@ cd vendas/worker
 ./scripts/keep-worker.sh ./scripts/start-worker-juliana-cdp.sh   # :9258
 ./scripts/keep-worker.sh ./scripts/start-worker-roberto-cdp.sh   # :9259
 ./scripts/keep-worker.sh ./scripts/start-worker-gabriel-cdp.sh   # :9260
+./scripts/keep-worker.sh ./scripts/start-worker-marina-cdp.sh    # :9224
 # one-shot:
 ./scripts/start-worker-daniela-cdp.sh
 ./scripts/start-worker-thiago-cdp.sh
 ./scripts/start-worker-juliana-cdp.sh
 ./scripts/start-worker-roberto-cdp.sh
 ./scripts/start-worker-gabriel-cdp.sh
+./scripts/start-worker-marina-cdp.sh
 ./scripts/start-worker-matheus-cdp.sh
+
 
 # ou:
 WORKER_RUNTIME=cdp CDP_ID=daniela-hoffmann \
@@ -74,7 +77,10 @@ Daniela/Thiago/Juliana/Roberto/Gabriel: `extrair_leads` + `conectar`. **Antes �
 
 **Antes → depois (Gabriel Rocha 2026-11-05):** sem script → `start-worker-gabriel-cdp.sh` (`CDP_ID=gabriel-rocha` :9260; `AGENT_ID=75f78c88-58bd-4207-b1d3-ae7a2aabb771`). Cadastro via `POST /agentes` + enroll CDP (`serial=cdp:gabriel-rocha`). Rollback: apague o script/agente; remova a linha do keep/one-shot neste README.
 
+**Antes → depois (Marina Costa 2026-11-19):** sem worker → `start-worker-marina-cdp.sh` (`CDP_ID=marina-costa` :9224; `AGENT_ID=d59832cd-92fc-4446-bd9c-a8ac989b9cea`). Cadastro via `POST /agentes` (`marina.costa@clozzy.com.br`) + enroll CDP (`serial=cdp:marina-costa`); procedimentos `extrair_leads` + `conectar`. Rollback: pare o keep/worker; `DELETE /agentes/d59832cd-…`; apague o script e as linhas keep/one-shot neste README.
+
 **Antes → depois (Matheus ConectMax 2026-11-11):** só AVD `start-worker-matheus.sh` (`emulator-5554`) → `start-worker-matheus-cdp.sh` (`CDP_ID=matheus-conectmax` :9267; mesmo `AGENT_ID=ddc7f46c-…`; `SERIAL=cdp:matheus-conectmax`). Rollback: pare o CDP worker; use de novo `./scripts/start-worker-matheus.sh`.
+
 
 ### Host — N slots, troca on-empty
 

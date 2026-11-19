@@ -62,6 +62,7 @@ CDP_ID=… npm run linkedin-extract-leads-cdp -- -n 10 --query 'comprador'
 
 ## Antes → depois
 
+- **Unread sync `no-url` (Matheus 2026-11-19):** scrape usava `.msg-conversation-listitem__link` no `querySelector` do nome → pegava o DIV ancestral com a11y (“O status está off-line Nome … mensagem”) → `resolveProfileUrlByPeerName` não achava cliente → `skipped: no-url` nas 3 unread. Agora: só `participant-names` / `h3` (+ fallback aria “Selecionar conversa com …”) + `cleanUnreadPeerName`. Rollback: recoloque o seletor com `__link` em [`linkedin-unread-messages.js`](linkedin-unread-messages.js).
 - **Enviar mensagem (composer):** (1) sticky topo `y≈27`; (2) clique CDP no hero **não abre** overlay; (3) `page.fill` char-a-char/`textContent` deixava **Enviar disabled**. Sintoma: `não abriu composer / não enviou` (Débora Mendes 2026-11-16). Agora: `openProfileComposer` → `goto /messaging/compose/…`; `fillMessageComposer` → select+Backspace + `Input.insertText` (Enter p/ `\n`). Rollback: clique/`page.fill` em [`linkedin-message.js`](linkedin-message.js) / [`linkedin-dom.js`](linkedin-dom.js).
 - **Persistência após send:** `--cliente-linkedin-id` / `CLIENTE_LINKEDIN_ID` no POST (evita lookup por URL truncada). Rollback: só `profileUrl`.
 - **Debug overlay:** workers e `human-cdp` **só** injetam overlay com `debug: true` explícito; omitido/`false` → sem script de UI (ToS LinkedIn: não alterar aparência). `connectCdp` não herda `meta.debug`. Rollback: herdar meta / `debug: opts.debug` em [`session.js`](session.js) + `registry.mjs`.

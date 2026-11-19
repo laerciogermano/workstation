@@ -36,8 +36,49 @@ function mergeUnreadByName(merged, page) {
   return out;
 }
 
+/**
+ * Nome limpo do card unread.
+ * Antes: `querySelector('…, .msg-conversation-listitem__link')` pegava o DIV
+ * pai (1º no DOM) com a11y ("O status está off-line Nome … mensagem"), e o
+ * sync falhava com `no-url` na API. Depois: só participant-names / h3 / aria.
+ * @param {string} raw
+ */
+export function cleanUnreadPeerName(raw) {
+  let s = String(raw || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!s) return "";
+  const aria = s.match(/^Selecionar conversa com\s+(.+)$/i);
+  if (aria) s = aria[1].trim();
+  s = s
+    .replace(/^O status está (?:off-line|disponível|ausente)\s+/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  // Se ainda veio o bloco a11y inteiro, corta no 1º carimbo de data ("18 de nov.")
+  const cut = s.match(
+    /^(.+?)\s+\d{1,2}\s+de\s+(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\.?/i,
+  );
+  if (cut) s = cut[1].trim();
+  return s;
+}
+
 async function scrapeUnreadList(page) {
   return page.evaluate(`(() => {
+    const clean = (raw) => {
+      let s = String(raw || '').replace(/\\s+/g, ' ').trim();
+      if (!s) return '';
+      const aria = s.match(/^Selecionar conversa com\\s+(.+)$/i);
+      if (aria) s = aria[1].trim();
+      s = s
+        .replace(/^O status está (?:off-line|disponível|ausente)\\s+/i, '')
+        .replace(/\\s+/g, ' ')
+        .trim();
+      const cut = s.match(
+        /^(.+?)\\s+\\d{1,2}\\s+de\\s+(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\\.?/i,
+      );
+      if (cut) s = cut[1].trim();
+      return s;
+    };
     const out = [];
     const items = [
       ...document.querySelectorAll(
@@ -45,14 +86,18 @@ async function scrapeUnreadList(page) {
       ),
     ];
     for (const li of items) {
-      const name =
-        (
-          li.querySelector(
-            '.msg-conversation-listitem__participant-names, .msg-conversation-card__participant-names, h3, .msg-conversation-listitem__link'
-          )?.textContent || ''
-        )
-          .replace(/\\s+/g, ' ')
-          .trim();
+      // NÃO incluir .msg-conversation-listitem__link: é ancestral e vence o h3 no querySelector.
+      const nameEl = li.querySelector(
+        '.msg-conversation-listitem__participant-names, .msg-conversation-card__participant-names, h3.msg-conversation-listitem__participant-names, h3',
+      );
+      let name = clean(nameEl?.textContent || '');
+      if (!name) {
+        const aria =
+          li.getAttribute('aria-label') ||
+          li.querySelector('[aria-label]')?.getAttribute('aria-label') ||
+          '';
+        name = clean(aria);
+      }
       if (!name) continue;
       const message =
         (
@@ -149,7 +194,7 @@ export async function listUnreadMessages(opts) {
 
     await shot(page, opts.outDir, "04-list.png");
     const conversations = merged.slice(0, maxResults).map((row) => ({
-      name: row.name,
+      name: cleanUnreadPeerName(row.name) || row.name,
       message: row.message,
       unreadCount: row.unreadCount,
       time: row.time,
@@ -163,10 +208,12 @@ export async function listUnreadMessages(opts) {
           synced.push({ name: row.name, skipped: "sponsored" });
           continue;
         }
-        const profileUrl = await resolveProfileUrlByPeerName(row.name);
+        const peerName = cleanUnreadPeerName(row.name) || row.name;
+        row.name = peerName;
+        const profileUrl = await resolveProfileUrlByPeerName(peerName);
         if (!profileUrl) {
-          steps.push(`sync:no-url:${row.name}`);
-          synced.push({ name: row.name, skipped: "no-url" });
+          steps.push(`sync:no-url:${peerName}`);
+          synced.push({ name: peerName, skipped: "no-url" });
           continue;
         }
         steps.push(`sync:open:${row.name}`);

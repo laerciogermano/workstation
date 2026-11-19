@@ -52,6 +52,7 @@ export async function patchModel(db: Db, projectId: number, id: string, p: { nam
 }
 export async function deleteModel(db: Db, projectId: number, id: string): Promise<void> {
   const mid = await modelId(db, projectId, id);
+  await clearRefs(db, projectId, "md:" + id);
   const n = (await db.query("select count(*)::int as c from flow.agents where model_id=$1", [mid])).rows[0].c as number;
   if (n) throw conflict(`${n} agente(s) usam este modelo. Troque o modelo deles antes de remover.`);
   await db.query("delete from flow.models where id = $1", [mid]);
@@ -59,15 +60,18 @@ export async function deleteModel(db: Db, projectId: number, id: string): Promis
 
 export async function createModule(db: Db, projectId: number, file?: string): Promise<string> {
   let f = file;
-  if (!f) { let n = ((await db.query("select count(*)::int as c from flow.modules where project_id=$1", [projectId])).rows[0].c as number) + 1; f = `novo-modulo-${n}.layer.js`; while ((await db.query("select 1 from flow.modules where project_id=$1 and file=$2", [projectId, f])).rowCount) f = `novo-modulo-${++n}.layer.js`; }
+  if (!f) { let n = ((await db.query("select count(*)::int as c from flow.modules where project_id=$1", [projectId])).rows[0].c as number) + 1; f = `novo-arquivo-${n}.layer.js`; while ((await db.query("select 1 from flow.modules where project_id=$1 and file=$2", [projectId, f])).rowCount) f = `novo-arquivo-${++n}.layer.js`; }
   const r = await db.query("insert into flow.modules (project_id, file, position) values ($1,$2, coalesce((select max(position)+1 from flow.modules where project_id=$1),0)) on conflict (project_id, file) do nothing returning public_id", [projectId, f]);
-  if (!r.rows[0]) throw conflict("Já existe um módulo com esse nome");
+  if (!r.rows[0]) throw conflict("Já existe um arquivo com esse nome");
   return r.rows[0].public_id;
 }
 export async function renameModule(db: Db, projectId: number, id: string, file: string): Promise<void> {
   const r = await db.query("update flow.modules set file=$3 where project_id=$1 and public_id=$2 and not exists (select 1 from flow.modules where project_id=$1 and file=$3 and public_id<>$2) returning id", [projectId, id, file]);
-  if (!r.rowCount) { if (!(await db.query("select 1 from flow.modules where project_id=$1 and public_id=$2", [projectId, id])).rowCount) throw notFound("Módulo"); throw conflict("Já existe um módulo com esse nome"); }
+  if (!r.rowCount) { if (!(await db.query("select 1 from flow.modules where project_id=$1 and public_id=$2", [projectId, id])).rowCount) throw notFound("Arquivo"); throw conflict("Já existe um arquivo com esse nome"); }
 }
+const clearRefs = (db: Db, projectId: number, ref: string) =>
+  db.query("update flow.elements set agent_ref = case when agent_ref = $2 then null else agent_ref end, resp_ref = case when resp_ref = $2 then null else resp_ref end where project_id = $1 and (agent_ref = $2 or resp_ref = $2)", [projectId, ref]);
 export async function deleteModule(db: Db, projectId: number, id: string): Promise<void> {
+  await clearRefs(db, projectId, "file:" + id);
   await db.query("delete from flow.modules where project_id=$1 and public_id=$2", [projectId, id]);
 }

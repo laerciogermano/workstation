@@ -1,5 +1,5 @@
 import type { ModelCommand } from "../commands";
-import { children, compact, descendants, findEl, fnSiblings, nextPosition, withOrder } from "../graph";
+import { children, compact, descendants, findEl, fnSiblings, isFlowRoot, nextPosition, withOrder } from "../graph";
 import { err, ok, type Result } from "../result";
 import type { FlowElement, Link, LinkKind, Snapshot, Struct } from "../types";
 import { applied, type Op, type OpContext } from "./context";
@@ -84,19 +84,19 @@ export const createFunction: Op<Cmd<"createFunction">> = (s, c, ctx) => {
 };
 
 function createNear(s: Snapshot, refId: string, mode: Mode, title: string | undefined, context: string | undefined, ctx: OpContext): Result<import("../commands").Applied> {
-  // irmão da função de tratamento (catch) fica dentro do catch: vira filha dela (depois da última, ou antes da primeira)
-  const target = findEl(s, refId);
-  if (target && mode !== "child" && s.elements.some(x => !x.archived && x.onError === target.id)) {
-    const first = mode === "before" ? children(s, target.id).find(k => k.kind !== "folder" && !k.archived) : undefined;
-    return createNear(s, first ? first.id : target.id, first ? "before" : "child", title, context, ctx);
-  }
   const ref = findEl(s, refId); if (!ref) return err("not_found", `Elemento ${refId} não existe`);
   if (ref.kind === "data") return err("invalid", "Dado não aceita filhos nem irmãos");
-  if (mode !== "child" && ref.parentId === null) return err("invalid", "A raiz do fluxo não ganha irmão");
+  if (mode !== "child" && isFlowRoot(s, ref)) return err("invalid", "A raiz do fluxo não ganha irmão");
   const t = cleanTitle(title, "Fazer nova função"); if (!t.ok) return t;
   const el = newFunction(ctx.newId(), ref.planId, t.value, context ?? null, 999_999);
   // irmão de uma função coberta por try entra no mesmo bloco try/catch (o `if` já é tratado em linkInto)
-  const inherited = mode !== "child" && ref.onError ? { ...el, onError: ref.onError } : el;
+  // irmão de uma task do catch (a função de tratamento ou irmã dela) entra no catch, em sequência com ela
+  const catchHead = mode === "child" ? undefined : ref.inCatch && findEl(s, ref.inCatch) ? ref.inCatch : s.elements.some(x => !x.archived && x.onError === ref.id) ? ref.id : undefined;
+  // irmão de uma função com `for` pertence ao mesmo for (sem laço próprio); de uma com try, ao mesmo try
+  const leafRef = !children(s, ref.id).some(k => !k.archived && k.kind !== "folder");
+  const loopHead = mode === "child" ? undefined : ref.loop && leafRef ? ref.id : ref.inLoop && findEl(s, ref.inLoop)?.loop ? ref.inLoop : undefined;
+  const loopInh = loopHead ? { inLoop: loopHead } : {};
+  const inherited = catchHead ? { ...el, ...loopInh, inCatch: catchHead } : mode !== "child" && ref.onError ? { ...el, ...loopInh, onError: ref.onError } : { ...el, ...loopInh };
   return applied(linkInto({ ...s, elements: [...s.elements, inherited] }, el.id, ref.id, mode), { created: [el.id] });
 }
 export const createChild: Op<Cmd<"createChild">> = (s, c, ctx) => createNear(s, c.refId, "child", c.title, c.context, ctx);

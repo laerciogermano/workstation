@@ -44,3 +44,28 @@ export async function ensureData(db: Db, projectId: number, name: string, type?:
   }
 }
 export async function touchProject(db: Db, projectId: number): Promise<void> { await db.query("update flow.projects set updated_at = now() where id = $1", [projectId]); }
+
+/** Resolve o responsável: agente do catálogo (agent_id) ou referência virtual `file:`/`md:` (agent_ref). */
+export async function resolveResp(db: Db, projectId: number, ref: string | null | undefined): Promise<{ id: number | null; ref: string | null }> {
+  if (!ref) return { id: null, ref: null };
+  const m = /^(file|md):(.+)$/.exec(ref);
+  if (!m) return { id: await getAgentId(db, projectId, ref), ref: null };
+  const table = m[1] === "file" ? "flow.modules" : "flow.models";
+  const { rows } = await db.query(`select 1 from ${table} where project_id = $1 and public_id = $2`, [projectId, m[2]]);
+  if (!rows[0]) throw badRequest("Responsável não está no projeto");
+  return { id: null, ref };
+}
+/** Tasks do responsável virtual/real (para alinhar o título da etapa). */
+export async function respTasks(db: Db, projectId: number, id: number | null, ref: string | null): Promise<{ kind: string; tasks: string[] } | null> {
+  if (id) { const r = (await db.query("select kind, tasks from flow.agents where id = $1", [id])).rows[0]; return r ? { kind: r.kind, tasks: r.tasks ?? [] } : null; }
+  if (ref?.startsWith("file:")) {
+    const { rows } = await db.query(
+      `select coalesce(e.title, case when a.tasks is not null and cardinality(a.tasks) > 0 then a.tasks[1] else regexp_replace(a.name, '\\(\\)\\s*$', '') end) as t
+         from flow.modules m join flow.module_items mi on mi.module_id = m.id and mi.kind in ('fn','script')
+         left join flow.elements e on e.id = mi.element_id left join flow.agents a on a.id = mi.agent_id
+        where m.project_id = $1 and m.public_id = $2 order by mi.position, mi.id`, [projectId, ref.slice(5)]);
+    return { kind: "arquivo", tasks: [...new Set(rows.map(r => r.t as string).filter(Boolean))] };
+  }
+  if (ref?.startsWith("md:")) return { kind: "modelo", tasks: [] };
+  return null;
+}

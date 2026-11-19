@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode } from "react";
-import { TYPE_INFO, agentTasksOf, type AgentDto, type ElementDto } from "@flow/shared";
+import { RESP_KINDS, TYPE_INFO, agentTasksOf, taskIsConcrete, type AgentDto, type ElementDto } from "@flow/shared";
 import { Icon } from "../../ui/Icon";
 import { brandOf, ST } from "../../ui/parts";
 import { useIde } from "../ide/ide";
@@ -21,7 +21,7 @@ export function FlowView() {
   const [view, setView] = useState({ z: 1, x: 16, y: 16 });
   const canvasRef = useRef<HTMLDivElement>(null), grightRef = useRef<HTMLDivElement>(null);
   const pan = useRef<{ id: number; x: number; y: number; ox: number; oy: number; moved: boolean; soft: boolean } | null>(null);
-  const [hov, setHov] = useState<{ id: string; x: number } | null>(null);
+  const [hov, setHov] = useState<{ id: string; x: number | null } | null>(null);
   const hovT = useRef<number>(0);
   const skipBlur = useRef(false);
 
@@ -88,10 +88,16 @@ export function FlowView() {
   const s0Root = (rootId && layout[rootId] ? layout[rootId]!.s : 0);
   const stepOf = (u: ElementDto) => Math.max(0, ((layout[u.id] || { s: s0Root }).s - s0Root));
   const ind = (u: ElementDto, d: number) => d * 16 + stepOf(u) * 10;
+  const NEST = 16;
+  const doIndent = s.indent !== false; // menu transversal: indentar a coluna Task (padrão ligado)
+  const inIf = (id: string) => structs.some(st => st.body.includes(id));
+  /** Extra de indentação: cabeçalho for/if = 0; corpo (task/io dentro do for ou do if) = +1 por estrutura. */
+  const nestOf = (r: { lp?: ElementDto; st?: unknown; u?: ElementDto }): number => { if (r.lp || r.st) return 0; const u = r.u; if (!u) return 0; return (u.loop && !hasK(u) ? 1 : 0) + (inIf(u.id) ? 1 : 0); };
+  const padL = (u: ElementDto, d: number, nest: number, base = 10) => (doIndent ? ind(u, d) + nest * NEST + base : base);
   const ancs = (u: ElementDto) => { const out: ElementDto[] = []; let p = m.u(u.parentId); while (p && !m.isFolder(p)) { out.unshift(p); if (p.id === rootId) break; p = m.u(p.parentId); } return out; };
   const dOf = (u: ElementDto) => { let d = 0, p = m.u(u.parentId); while (p && !m.isFolder(p) && p.id !== rootId) { d++; p = m.u(p.parentId); } return p && p.id === rootId ? d + 1 : d; };
   const gx = (a: ElementDto) => ind(a, dOf(a)) + 6;
-  const gdA = (u: ElementDto, self = false): ReactNode[] => [...ancs(u).map(gx), ...(self ? [ind(u, dOf(u)) + 13] : [])].map((x, i) => <i key={i} className="fl-g" style={{ left: 14 + x }} aria-hidden="true" />);
+  const gdA = (u: ElementDto, self = false, nest = 0): ReactNode[] => (!doIndent ? [] : [...ancs(u).map(gx), ...(self ? [ind(u, dOf(u)) + nest * NEST + 13] : [])].map((x, i) => <i key={i} className="fl-g" style={{ left: 14 + x }} aria-hidden="true" />));
   const lpTxt = (u: ElementDto) => `for (${u.loop![0]} of ${u.loop![1]})`;
   const senaoOf = (st: { test: string }): string => {
     const hits = rows.map(r => r.u).filter(u => u.cond && u.cond[0] === st.test && m.u(u.cond[1]));
@@ -101,30 +107,29 @@ export function FlowView() {
 
   // ---------- colunas Responsável · Task ----------
   const agentSelect = (u: ElementDto, a: AgentDto | undefined, respMode: boolean) => {
-    const kinds = respMode ? (["ia", "pessoa", "maquina", "script"] as const) : (["script", "maquina", "ia", "pessoa"] as const);
     const cur = respMode ? m.agent(u.respId) : a;
     const fav = cur
       ? <><span className={"fav " + cur.kind} style={brandOf(m, cur) ? ({ "--brand": brandOf(m, cur) } as React.CSSProperties) : undefined} title={`${TYPE_INFO[cur.kind].one}: ${cur.name}`}><Icon n={TYPE_INFO[cur.kind].ic} /></span>{respMode ? <span className="rp-n">{cur.name}</span> : <span className="fav-n">{cur.name}</span>}</>
       : <><span className="fav none" title={respMode ? "Adicionar responsável" : "Sem agente"}><Icon n="plus" /></span>{!respMode && <span className="fav-n" style={{ color: "var(--muted)" }}>sem agente</span>}</>;
     return (
       <span className={"resp-pick" + (cur ? " on" : "")}>{fav}
-        <select aria-label={`Responsável de ${u.title}`} title="Escolher responsável" value={cur?.id ?? ""}
+        <select aria-label={`Responsável de ${u.title}`} title="Responsável: arquivo, lib, pessoa, agente ou modelo" value={cur?.id ?? ""}
           onClick={e => e.stopPropagation()}
           onChange={e => { const v = e.target.value || null; void ide.patchEl(u.id, respMode ? { respId: v } : { agentId: v }); }}>
           <option value="">Selecionar…</option>
-          {kinds.map(k => <optgroup key={k} label={TYPE_INFO[k].n}>{m.agents.filter(c => c.kind === k).map(c => <option key={c.id} value={c.id}>{c.name}{c.moduleFile ? " · " + c.moduleFile : ""}</option>)}</optgroup>)}
+          {RESP_KINDS.map(k => { const list = m.agents.filter(c => c.kind === k); return list.length ? <optgroup key={k} label={TYPE_INFO[k].n}>{list.map(c => <option key={c.id} value={c.id}>{c.name}{c.kind === "modelo" ? " · " + c.sub.split(" · ")[0] : ""}</option>)}</optgroup> : null; })}
         </select>
       </span>
     );
   };
   const taskSelect = (u: ElementDto, a: AgentDto | undefined) => {
-    const ts = agentTasksOf(a);
+    const ts = taskIsConcrete(a) ? agentTasksOf(a) : [];
     if (!ts.length) {
-      return <b title="Clique para renomear" style={{ cursor: "text" }} onClick={e => { e.stopPropagation(); set({ ren: u.id, fresh: null, sel: u.id }); }}>{u.title}</b>;
+      return <b className={a ? undefined : "task-miss"} title="Clique para renomear" style={{ cursor: "text" }} onClick={e => { e.stopPropagation(); set({ ren: u.id, fresh: null, sel: u.id }); }}>{u.title || "sem task"}</b>;
     }
     const ok = ts.includes(u.title);
     return (
-      <select className="task-pick" aria-label={`Task de ${a?.name ?? ""}`} title="Task cadastrada do responsável (obrigatória)"
+      <select className="task-pick" aria-label={`Task de ${a?.name ?? ""}`} title="Método / task do responsável concreto"
         value={ok ? u.title : ""}
         onClick={e => e.stopPropagation()}
         onChange={e => { const v = e.target.value; if (v) void ide.patchEl(u.id, { title: v }); }}>
@@ -134,18 +139,18 @@ export function FlowView() {
     );
   };
   const leftRow = (u: ElementDto, d: number) => {
-    const has = hasK(u), a = m.agent(u.agentId);
+    const has = hasK(u), a = m.agent(u.agentId), nest = nestOf({ u });
     const open = has && !s.flowClosed.has(u.id);
     const editing = s.ren === u.id;
     const lead = has
       ? <><span className="car" title="Abrir / fechar sanfona" onClick={e => { e.stopPropagation(); ide.toggleFlowClosed(u.id); }}><Icon n="chevron-down" /></span><span className="gi"><Icon n="network" /></span></>
-      : <span className="dot" />;
+      : null;
     const resp = has
       ? <span className="c-ag muted">—</span>
       : <span className="c-ag">{a?.kind === "ia" ? agentSelect(u, a, true) : agentSelect(u, a, false)}
           {a?.kind === "maquina" && <button className="code-b" title="Programar" onClick={e => { e.stopPropagation(); set({ mach: u.id, sel: u.id, drawer: null, console: null }); }}><Icon n="code-xml" /></button>}</span>;
     const task = (
-      <span className="nm" style={{ paddingLeft: ind(u, d) + (has ? 0 : 10) }}>
+      <span className="nm" style={{ paddingLeft: padL(u, d, nest, has ? 0 : 10) }}>
         {lead}
         {editing
           ? <input className="fl-ren" defaultValue={u.title} autoFocus aria-label="Task" onClick={e => e.stopPropagation()}
@@ -153,47 +158,64 @@ export function FlowView() {
               onBlur={e => {
                 if (skipBlur.current) { skipBlur.current = false; return; }
                 const v = e.currentTarget.value.trim();
-                const ts = agentTasksOf(a);
+                const ts = taskIsConcrete(a) ? agentTasksOf(a) : [];
                 if (v && ts.length && !ts.includes(v)) { ide.toast("Escolha uma task do catálogo do responsável", "triangle-alert"); void ide.renameCommit(u.id, ""); }
                 else if (v && !ts.length && v !== u.title && !isVerb(v) && !m.isData(u)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); void ide.renameCommit(u.id, ""); }
                 else void ide.renameCommit(u.id, v);
                 set({ sel: null });
               }}
               onKeyDown={e => {
-                if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); const ts = agentTasksOf(a); if (v && ts.length && !ts.includes(v)) { ide.toast("Escolha uma task do catálogo do responsável", "triangle-alert"); return; } if (v && !ts.length && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } skipBlur.current = true; void ide.renameCommit(u.id, v); }
+                if (e.key === "Enter") { e.preventDefault(); const v = e.currentTarget.value.trim(); const ts = taskIsConcrete(a) ? agentTasksOf(a) : []; if (v && ts.length && !ts.includes(v)) { ide.toast("Escolha uma task do catálogo do responsável", "triangle-alert"); return; } if (v && !ts.length && !isVerb(v)) { ide.toast("Função começa com verbo: Comprar…, Enviar…, Fazer…", "triangle-alert"); return; } skipBlur.current = true; void ide.renameCommit(u.id, v); }
                 if (e.key === "Escape") { e.stopPropagation(); skipBlur.current = true; void ide.renameCancel(u.id); }
               }} />
-          : has ? <b>{u.title}</b> : (a ? taskSelect(u, a) : <b className="task-miss">{u.title || "sem task"}</b>)}
+          : has ? <b>{u.title}</b> : taskSelect(u, a)}
       </span>
     );
     return (
-      <div key={"r" + u.id} className={"grow fl-cols" + (s.sel === u.id ? " sel" : "") + (has ? " grp" : "") + (open ? " open" : "")} onClick={() => ide.select(u.id)}>
-        {gdA(u)}
+      <div key={"r" + u.id} className={"grow fl-cols" + (s.sel === u.id ? " sel" : "") + (has ? " grp" : "") + (open ? " open" : "") + (doIndent && nest ? ` nest-${nest}` : "")} onClick={() => ide.select(u.id)}>
+        {gdA(u, false, nest)}
         {resp}{task}
         {!editing && (
           <span className="fl-tools" role="toolbar" aria-label="Ações do elemento">
             {has && <><button className="ib" title={open ? "Fechar filhos" : "Abrir filhos"} onClick={e => { e.stopPropagation(); ide.toggleFlowClosed(u.id); }}><Icon n={open ? "chevrons-down-up" : "chevrons-up-down"} /></button><i className="sep" /></>}
             <button className="ib" title="Editar" onClick={e => { e.stopPropagation(); ide.openDrawer(u.id); }}><Icon n="pencil" /></button><i className="sep" />
             <button className="ib" title="Filho" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "child"); }}><Icon n="plus" /></button>
-            {!m.isTopFn(u) && <button className="ib" title="Irmão" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "after"); }}><Icon n="between-horizontal-end" /></button>}<i className="sep" />
+            {!m.isTopFn(u) && <button className="ib" title="Irmão" onClick={e => { e.stopPropagation(); void ide.addFn(u.id, "after"); }}><Icon n="between-horizontal-end" /></button>}
+            {!has && <><i className="sep" />{inIf(u.id)
+              ? <button className="ib on danger" title="Remover seleção (if)" onClick={e => { e.stopPropagation(); void ide.setStruct(u.id, "if", false); }}><Icon n="trash-2" /></button>
+              : <button className="ib" title="Adicionar seleção (if)" onClick={e => { e.stopPropagation(); void ide.setStruct(u.id, "if", true); }}><Icon n="diamond" /></button>}
+              {u.loop
+                ? <button className="ib on danger" title="Remover repetição (for)" onClick={e => { e.stopPropagation(); void ide.setStruct(u.id, "loop", false); }}><Icon n="trash-2" /></button>
+                : <button className="ib" title="Adicionar repetição (for)" onClick={e => { e.stopPropagation(); void ide.setStruct(u.id, "loop", true); }}><Icon n="repeat" /></button>}</>}<i className="sep" />
             <button className="ib danger" title="Remover" onClick={e => { e.stopPropagation(); ide.askRemove([u.id]); }}><Icon n="trash-2" /></button>
           </span>)}
       </div>);
   };
+  const bidOf = (st: (typeof structs)[number]): string => st.body.find(id => { const x = m.u(id); return x && !m.isData(x); }) ?? st.body[0]!;
   const left = disp.map((r, i) => {
-    if (r.lp) return <div key={"lp" + i} className="grow fl-cols ifrow forrow" title="Repetição (documento FOP, item 13)">{gdA(r.lp)}<span className="c-ag" /><span className="nm" style={{ paddingLeft: ind(r.lp, r.d) + 10 }}><span className="lpd">↻</span><b className="mono">{lpTxt(r.lp)}</b></span></div>;
+    if (r.lp) { const lp = r.lp; return (
+      <div key={"lp" + i} className="grow fl-cols ifrow forrow" onClick={() => ide.select(lp.id)} onMouseEnter={() => onBarEnter("loop:" + lp.id, null)} onMouseLeave={leaveBar}>
+        <span className="c-ag muted">—</span>
+        <span className="nm" style={{ paddingLeft: padL(lp, r.d, 0, 10) }}>{gdA(lp)}<span className="lpd">↻</span><b className="mono">{lpTxt(lp)}</b></span>
+        <span className="fl-tools" role="toolbar" aria-label="Ações da repetição"><button className="ib danger" title="Remover repetição (for)" onClick={e => { e.stopPropagation(); void ide.setStruct(lp.id, "loop", false); }}><Icon n="trash-2" /></button></span>
+      </div>); }
     if (r.io) {
-      const u = r.u!;
+      const u = r.u!, nest = nestOf({ u });
       return (
-        <div key={"io" + i} className={"grow fl-cols iorow" + (s.sel === u.id ? " sel" : "")}>{gdA(u, true)}
+        <div key={"io" + i} className={"grow fl-cols iorow" + (s.sel === u.id ? " sel" : "") + (doIndent && nest ? ` nest-${nest}` : "")}>{gdA(u, true, nest)}
           <span className="c-ag" />
-          <span className="nm" style={{ paddingLeft: ind(u, r.d) + 14 }}>
+          <span className="nm" style={{ paddingLeft: padL(u, r.d, nest, 14) }}>
             <span className="io-k">{!r.first ? "" : r.io === "in" ? "entrada" : r.to ? "entrada · saída" : "saída"}</span>
             <span className="io-l" title={r.nm}><b className="io-d" onClick={() => ide.editDado(r.nm!)}>
               {m.isCube(r.nm!) ? <svg className="io-cube" viewBox="0 0 10 11" aria-label="cubo"><path d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5" /></svg> : <i className="io-sq" aria-label="dado" />}{r.nm}</b></span>
           </span></div>);
     }
-    if (r.st) return <div key={"if" + i} className="grow fl-cols ifrow" title={"Seleção (documento FOP, item 12)" + senaoOf(r.st)}>{gdA(rows[r.st.i0]!.u)}<span className="c-ag" /><span className="nm" style={{ paddingLeft: ind(rows[r.st.i0]!.u, r.d) + 10 }}><span className="ifd" /><b className="mono">if ({r.st.test}){senaoOf(r.st)}</b></span></div>;
+    if (r.st) { const st = r.st, bid = bidOf(st), head = rows[st.i0]?.u; return (
+      <div key={"if" + i} className="grow fl-cols ifrow" onClick={() => ide.select(bid)} onMouseEnter={() => onBarEnter("if:" + bid, null)} onMouseLeave={leaveBar}>
+        <span className="c-ag muted">—</span>
+        <span className="nm" style={{ paddingLeft: padL(head ?? ({ parentId: null } as unknown as ElementDto), r.d, 0, 10) }}>{head && gdA(head)}<span className="ifd" /><b className="mono">if ({st.test}){senaoOf(st)}</b></span>
+        <span className="fl-tools" role="toolbar" aria-label="Ações da seleção"><button className="ib danger" title="Remover seleção (if)" onClick={e => { e.stopPropagation(); void ide.setStruct(bid, "if", false); }}><Icon n="trash-2" /></button></span>
+      </div>); }
     return leftRow(r.u!, r.d);
   });
 
@@ -229,7 +251,10 @@ export function FlowView() {
   const isFn = (u: ElementDto) => !m.isData(u) && !hasK(u);
   const srcOf = new Set(FD.map(d => d[0])), dstOf = new Set(FD.map(d => d[1]));
   const tagsOf = (u: ElementDto): [string, string][] => (u.status === "wait" ? [["wait", "aguardando pessoa"]] : u.status === "fail" ? [["fail", "falhou"]] : u.status === "exec" ? [["exec", "executando"]] : u.status === "cancel" ? [["cancel", "cancelada"]] : []);
-  const pill = (x: number, y: number, txt: string, cls: string, key: string) => <g key={key} className={"sv-pill " + cls}><rect x={x} y={y - 8} width={tw(txt, 6.1) + 10} height={16} rx={3} /><text x={x + 5} y={y + 3.5}>{txt}</text></g>;
+  const pill = (x: number, y: number, txt: string, cls: string, key: string, hit?: { kind: "if" | "loop"; id: string }) => (
+    <g key={key} className={"sv-pill " + cls + (hit ? " struct-hit" : "")} onMouseEnter={hit ? () => onBarEnter(`${hit.kind}:${hit.id}`, null) : undefined}>
+      <rect x={x} y={y - 8} width={tw(txt, 6.1) + 10} height={16} rx={3} /><text x={x + 5} y={y + 3.5}>{txt}</text>
+      <title>{hit ? `${txt} · ${hit.kind === "loop" ? "remover repetição" : "remover seleção"}` : txt}</title></g>);
   const dnames = (x: number, y: number, list: string[], key: string) => (
     <text key={key} className="sv-dn" x={x} y={y + 3.5}>{list.map((n, i) => <tspan key={n}>{i ? <tspan>, </tspan> : null}<tspan className={"sv-dl" + (s.estado === n ? " on" : "")} onClick={() => ide.editDado(n)} style={{ cursor: "pointer" }}>{n}</tspan></tspan>)}<title>{list.join(", ")}</title></text>);
   const after = (x: number, y: number, u: ElementDto, extra: string[] = [], key: string): ReactNode => {
@@ -241,8 +266,8 @@ export function FlowView() {
   };
   const rowSvg = (r: Disp, i: number): ReactNode => {
     const y0 = yTop(i), ym = yMid(i);
-    if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop", "lp" + i);
-    if (r.st) return pill(geo(rows[r.st.i0]!.u).ix + 12, ym, `if (${r.st.test})${senaoOf(r.st)}`, "if", "if" + i);
+    if (r.lp) return pill(geo(r.lp).ix + 12, ym, `↻ ${lpTxt(r.lp)}`, "loop", "lp" + i, { kind: "loop", id: r.lp.id });
+    if (r.st) return pill(geo(rows[r.st.i0]!.u).ix + 12, ym, `if (${r.st.test})${senaoOf(r.st)}`, "if", "if" + i, { kind: "if", id: bidOf(r.st) });
     if (r.io) { const g = geo(r.u!); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, [r.nm!], "io" + i); }
     const u = r.u!, g = geo(u), sel = s.sel === u.id;
     if (hasK(u)) return <g key={"s" + u.id}><g className="sv-sumg" style={{ cursor: "pointer" }} onClick={() => ide.select(u.id)}><rect className={"sv-sum" + (sel ? " sel" : "")} x={g.x1} y={y0 + 12} width={g.x2 - g.x1} height={7} rx={3.5} /><title>{u.title} · composição = camada</title></g>{after(g.ox + 10, ym, u, [], "a")}</g>;
@@ -268,8 +293,11 @@ export function FlowView() {
   rows.forEach(({ u }) => {
     if (!u.loop || !isFn(u)) return;
     const g = geo(u), t = yTop(idx[u.id]!);
-    svgEls.push(<rect key={"fl" + u.id} className="floop" x={g.x1 - 4} y={t + 3} width={g.x2 - g.x1 + 8} height={28} rx={6}><title>for ({u.loop[0]} of {u.loop[1]})</title></rect>);
-    svgEls.push(<path key={"fa" + u.id} className="farc" d={`M${g.x2 - 8} ${t + 3} C${g.x2 - 8} ${t - 5} ${g.x1 + 8} ${t - 5} ${g.x1 + 8} ${t + 1}`} markerEnd="url(#fahl)" />);
+    svgEls.push(
+      <g key={"fl" + u.id} className="floop-hit" onMouseEnter={() => onBarEnter("loop:" + u.id, null)}>
+        <rect className="floop" x={g.x1 - 4} y={t + 3} width={g.x2 - g.x1 + 8} height={28} rx={6} />
+        <path className="farc" d={`M${g.x2 - 8} ${t + 3} C${g.x2 - 8} ${t - 5} ${g.x1 + 8} ${t - 5} ${g.x1 + 8} ${t + 1}`} markerEnd="url(#fahl)" />
+        <title>for ({u.loop[0]} of {u.loop[1]}) · remover repetição</title></g>);
   });
   if (!s.noDeps) FD.filter(([a, b]) => idx[a] != null && idx[b] != null).forEach(([a, b]) => {
     const A = m.u(a)!, B = m.u(b)!, ga = geo(A), gb = geo(B), ra = idxOut[a] ?? idx[a]!, rb = idxIn[b] ?? idx[b]!, y1 = yMid(ra), y2 = yMid(rb);
@@ -298,10 +326,15 @@ export function FlowView() {
   const bandEls: ReactNode[] = [];
   structs.forEach((st, k) => {
     const i1 = Math.max(...st.body.map(id => idxEnd[id] ?? idx[id]!)), x = geo(rows[st.i0]!.u).ix, y = yMid(st.hi);
-    svgEls.push(<path key={"if" + k} className="fif" d={`M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z`}><title>if ({st.test})</title></path>);
-    bandEls.push(<rect key={"b" + k} className="sv-band" x={0} y={yTop(st.hi)} width={CW} height={(i1 - st.hi + 1) * RH} />, <line key={"bl" + k} className="sv-bandl" x1={1} y1={yTop(st.hi)} x2={1} y2={yTop(i1) + RH} />);
+    const bid = bidOf(st);
+    svgEls.push(
+      <g key={"if" + k} className="fif-hit" onMouseEnter={() => onBarEnter("if:" + bid, null)}>
+        <circle className="fif-pad" cx={x} cy={y} r={12} />
+        <path className="fif" d={`M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z`} />
+        <title>if ({st.test}) · remover seleção</title></g>);
+    bandEls.push(<rect key={"b" + k} className="sv-band" onMouseEnter={() => onBarEnter("if:" + bid, null)} x={0} y={yTop(st.hi)} width={CW} height={(i1 - st.hi + 1) * RH} />, <line key={"bl" + k} className="sv-bandl" x1={1} y1={yTop(st.hi)} x2={1} y2={yTop(i1) + RH} />);
   });
-  Object.keys(idxLoop).forEach(id => { const a = idxLoop[id]!, b = idxEnd[id] ?? idx[id]!; bandEls.push(<rect key={"lb" + id} className="sv-band lp" x={0} y={yTop(a)} width={CW} height={(b - a + 1) * RH} />, <line key={"lbl" + id} className="sv-bandl lp" x1={1} y1={yTop(a)} x2={1} y2={yTop(b) + RH} />); });
+  Object.keys(idxLoop).forEach(id => { const a = idxLoop[id]!, b = idxEnd[id] ?? idx[id]!; bandEls.push(<rect key={"lb" + id} className="sv-band lp" onMouseEnter={() => onBarEnter("loop:" + id, null)} x={0} y={yTop(a)} width={CW} height={(b - a + 1) * RH} />, <line key={"lbl" + id} className="sv-bandl lp" x1={1} y1={yTop(a)} x2={1} y2={yTop(b) + RH} />); });
   const H = disp.length * RH, rootU = rootId ? m.u(rootId) : null;
   const pl = (m.plans.find(p => p.id === plan)?.name ?? "") + (rootU ? " · " + rootU.title : "");
   const HH = 52 + Math.max(H, RH) + FOOT, yF = 52 + H, axW = nSteps * W, worldW = LW + CW, worldH = HH;
@@ -311,27 +344,50 @@ export function FlowView() {
     : <rect x={x} y={y} width={8.4} height={8.4} />;
 
   // ações flutuantes na barra (hover)
-  function onBarEnter(id: string, clientX: number) { window.clearTimeout(hovT.current); setHov({ id, x: clientX }); }
+  function onBarEnter(id: string, clientX: number | null) { window.clearTimeout(hovT.current); setHov({ id, x: clientX }); }
   const leaveBar = () => { window.clearTimeout(hovT.current); hovT.current = window.setTimeout(() => setHov(null), 250); };
   const barTools = (() => {
     if (!hov) return null;
+    const sm = /^(if|loop):(.+)$/.exec(hov.id);
+    if (sm) {
+      // losango if / pill / moldura for: toolbar fixa em cima da estrutura (não segue o cursor)
+      const kind = sm[1] as "if" | "loop", id = sm[2]!, u = m.u(id); if (!u) return null;
+      const i = kind === "loop" ? idxLoop[id] : disp.findIndex(r => r.st && bidOf(r.st) === id);
+      if (i == null || i < 0) return null;
+      const anchor = kind === "loop" ? geo(u).ix + 12 : (() => { const st = disp[i]!.st!; return geo(rows[st.i0]!.u).ix; })();
+      return (
+        <div className="bar-tools hov on" role="toolbar" aria-label={kind === "loop" ? "Ações da repetição" : "Ações da seleção"} style={{ left: Math.max(4, anchor - 12), top: Math.max(54, 52 + yTop(i) + 6 - 30) }} onMouseEnter={() => window.clearTimeout(hovT.current)} onMouseLeave={leaveBar}>
+          <button className="ib danger" title={kind === "loop" ? "Remover repetição (for)" : "Remover seleção (if)"} onClick={() => { setHov(null); void ide.setStruct(id, kind, false); }}><Icon n="trash-2" /></button>
+        </div>);
+    }
     const i = idx[hov.id], u = m.u(hov.id); if (i == null || !u) return null;
     const g = geo(u), top = 52 + yTop(i) + (hasK(u) ? 12 : 6) - 30, gr = grightRef.current;
     let left = Math.max(4, g.x1);
-    if (gr) { const r = gr.getBoundingClientRect(), sx = gr.offsetWidth / (r.width || 1); left = Math.max(4, Math.min((hov.x - r.left) * sx - 14, gr.offsetWidth - 130)); }
+    if (gr && hov.x != null) { const r = gr.getBoundingClientRect(), sx = gr.offsetWidth / (r.width || 1); left = Math.max(4, Math.min((hov.x - r.left) * sx - 14, gr.offsetWidth - 130)); }
+    const leaf = !hasK(u);
     return (
       <div className="bar-tools hov on" role="toolbar" aria-label="Ações da task" style={{ left, top: Math.max(54, top) }} onMouseEnter={() => window.clearTimeout(hovT.current)} onMouseLeave={leaveBar}>
         {hasK(u) && <button className="ib" title={s.flowClosed.has(u.id) ? "Abrir filhos" : "Fechar filhos"} onClick={() => ide.toggleFlowClosed(u.id)}><Icon n={s.flowClosed.has(u.id) ? "chevrons-up-down" : "chevrons-down-up"} /></button>}
         <button className="ib" title="Editar" onClick={() => ide.openDrawer(u.id)}><Icon n="pencil" /></button>
         <button className="ib" title="Filho" onClick={() => void ide.addFn(u.id, "child")}><Icon n="plus" /></button>
         {!m.isTopFn(u) && <button className="ib" title="Irmão" onClick={() => void ide.addFn(u.id, "after")}><Icon n="between-horizontal-end" /></button>}
+        {leaf && (inIf(u.id)
+          ? <button className="ib on danger" title="Remover seleção (if)" onClick={() => void ide.setStruct(u.id, "if", false)}><Icon n="trash-2" /></button>
+          : <button className="ib" title="Adicionar seleção (if)" onClick={() => void ide.setStruct(u.id, "if", true)}><Icon n="diamond" /></button>)}
+        {leaf && (u.loop
+          ? <button className="ib on danger" title="Remover repetição (for)" onClick={() => void ide.setStruct(u.id, "loop", false)}><Icon n="trash-2" /></button>
+          : <button className="ib" title="Adicionar repetição (for)" onClick={() => void ide.setStruct(u.id, "loop", true)}><Icon n="repeat" /></button>)}
         <button className="ib danger" title="Remover" onClick={() => ide.askRemove([u.id])}><Icon n="trash-2" /></button>
       </div>);
   })();
+  const edgeB = s.edgeMenu ? m.u(s.edgeMenu.b) : undefined;
+  const edgeHasIf = !!(s.edgeMenu && inIf(s.edgeMenu.b)), edgeHasLoop = !!edgeB?.loop;
   const edgePop = s.edgeMenu && (
     <div className="edge-pop" role="menu" aria-label="Estrutura na sequência" style={{ left: Math.max(4, s.edgeMenu.x - 28), top: Math.max(56, s.edgeMenu.y - 36) }}>
-      <button className="ib" title="Seleção (if)" onClick={async () => { const e = s.edgeMenu!; const t = await ide.call(() => import("../../api/client").then(({ api }) => api.post<string>(ide.pid, "/edge-if", { fromId: e.a, toId: e.b }))); set({ edgeMenu: null }); if (t) ide.toast(`Seleção if (${t})`, "diamond"); }}><Icon n="diamond" /></button>
-      <button className="ib" title="Repetição (for)" onClick={async () => { const e = s.edgeMenu!; await ide.call(() => import("../../api/client").then(({ api }) => api.post(ide.pid, "/edge-loop", { toId: e.b }))); set({ edgeMenu: null }); ide.toast("Repetição adicionada", "repeat"); }}><Icon n="repeat" /></button>
+      <button className={"ib" + (edgeHasIf ? " on danger" : "")} title={edgeHasIf ? "Remover seleção (if)" : "Adicionar seleção (if)"}
+        onClick={async () => { const e = s.edgeMenu!; if (edgeHasIf) { await ide.setStruct(e.b, "if", false); return; } const t = await ide.call(() => import("../../api/client").then(({ api }) => api.post<string>(ide.pid, "/edge-if", { fromId: e.a, toId: e.b }))); set({ edgeMenu: null }); if (t) ide.toast(`Seleção if (${t})`, "diamond"); }}><Icon n={edgeHasIf ? "trash-2" : "diamond"} /></button>
+      <button className={"ib" + (edgeHasLoop ? " on danger" : "")} title={edgeHasLoop ? "Remover repetição (for)" : "Adicionar repetição (for)"}
+        onClick={async () => { const e = s.edgeMenu!; if (edgeHasLoop) { await ide.setStruct(e.b, "loop", false); return; } await ide.call(() => import("../../api/client").then(({ api }) => api.post(ide.pid, "/edge-loop", { toId: e.b }))); set({ edgeMenu: null }); ide.toast("Repetição adicionada", "repeat"); }}><Icon n={edgeHasLoop ? "trash-2" : "repeat"} /></button>
       <button className="ib" title="Fechar" onClick={() => set({ edgeMenu: null })}><Icon n="x" /></button>
     </div>);
 
@@ -382,11 +438,9 @@ export function FlowView() {
 
   return (
     <div className="gantt flow zview">
-      {running.length > 0 && <div className="runbar"><b><Icon n="loader-circle" />Executando {running.length} etapa{running.length > 1 ? "s" : ""}</b><span>{running.map(u => u.title).join(" · ")}</span><span className="sp" /><span>Node executa libs · a IA executa agentes · pessoas são aguardadas.</span><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
+      {running.length > 0 && !waiting.length && <div className="runbar"><b><Icon n="loader-circle" />Executando {running.length} etapa{running.length > 1 ? "s" : ""}</b><span>{running.map(u => u.title).join(" · ")}</span><span className="sp" /><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
       {waiting.length > 0 && <div className="runbar"><b><Icon n="hourglass" />Aguardando {waiting.length} pessoa{waiting.length > 1 ? "s" : ""}</b>{waiting.map(u => <span key={u.id} className="wait-l">{u.title} · {m.agent(u.agentId)?.name}<button className="btn" onClick={() => void ide.complete(u.id)}><Icon n="check" />Concluir</button></span>)}<span className="sp" /><button className="btn" onClick={() => void ide.cancelRun()}><Icon n="square" />Cancelar</button></div>}
       <div className="ztoolbar"><span style={{ fontSize: 12, fontWeight: 600, color: "var(--muted)" }}><Icon n="workflow" /> Flow</span>
-        <button className={"btn ghost" + (s.ctxPanel ? " on" : "")} style={{ height: 26, fontSize: 12 }} title="Contexto e camadas" onClick={() => set({ ctxPanel: !s.ctxPanel })}>
-          <Icon n={missing.length ? "circle-x" : "circle-check"} />{tops.length} camada{tops.length === 1 ? "" : "s"} · {nAbs} abstratos · {nConc} concretos · {missing.length ? "contexto incompleto" : "contexto completo · executável"}</button>
         <div className="dz" role="group" aria-label="Zoom">
           <button className="ib" title="Zoom out" aria-label="Zoom out" onClick={() => { const c = canvasRef.current!; zoomAt(c.clientWidth / 2, c.clientHeight / 2, view.z / 1.15); }}><Icon n="minus" /></button>
           <span className="pct">{Math.round(view.z * 100)}%</span>
@@ -443,6 +497,7 @@ export function FlowView() {
       <nav className="vdock fdock" aria-label="Filtro transversal">
         <button aria-current={!s.compacto} title="Uma linha para entrada, task e saída" aria-label="Por linha" onClick={() => set({ compacto: false })}><Icon n="rows-3" /></button>
         <button aria-current={s.compacto} title="Compacto: dados nas pontas da barra" aria-label="Compacto" onClick={() => set({ compacto: true })}><Icon n="chart-gantt" /></button><i className="fd-sep" />
+        <button aria-pressed={doIndent} aria-current={doIndent} title={doIndent ? "Indentação da Task ligada — clique para alinhar à esquerda" : "Indentação da Task desligada — clique para indentar"} aria-label="Indentar coluna Task" onClick={() => set({ indent: !doIndent })}><Icon n={doIndent ? "indent-increase" : "indent-decrease"} /></button><i className="fd-sep" />
         <button title="Abrir elementos filhos" aria-label="Abrir filhos" onClick={() => { ide.patch(u => { const fc = new Set(u.flowClosed); rows.forEach(r => fc.delete(r.u.id)); m.els.filter(x => rootId && (x.id === rootId || m.isDesc(x.id, rootId))).forEach(x => fc.delete(x.id)); return { flowClosed: fc }; }); ide.toast("Filhos abertos", "chevrons-up-down"); }}><Icon n="chevrons-up-down" /></button>
         <button title="Fechar elementos filhos" aria-label="Fechar filhos" onClick={() => { ide.patch(u => { const fc = new Set(u.flowClosed); m.els.filter(x => !x.archived && !m.isFolder(x) && !m.isData(x) && hasK(x) && (!rootId || x.id === rootId || m.isDesc(x.id, rootId))).forEach(x => fc.add(x.id)); return { flowClosed: fc }; }); ide.toast("Filhos fechados", "chevrons-down-up"); }}><Icon n="chevrons-down-up" /></button><i className="fd-sep" />
         <button aria-pressed={s.txtIn} aria-current={s.txtIn} title="Texto dentro da barra" aria-label="Texto dentro da barra" onClick={() => set({ txtIn: !s.txtIn })}><Icon n="type" /></button><i className="fd-sep" />

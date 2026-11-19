@@ -1,7 +1,7 @@
 import type { PatchElementBody } from "@flow/shared";
 import type { Db } from "../../db/pool";
 import { badRequest } from "../../shared/errors";
-import { descIds, ensureData, getAgentId, getEl, getPlanId, setOrder, siblingIds, type ElRow } from "./elements.repo";
+import { descIds, ensureData, getEl, getPlanId, resolveResp, respTasks, setOrder, siblingIds, type ElRow } from "./elements.repo";
 
 export type Mode = "child" | "after" | "before";
 
@@ -108,9 +108,9 @@ export async function cloneTree(db: Db, projectId: number, srcId: number, parent
   if (titles.has(title)) { title = `${src.title} (cópia)`; let n = 2; while (titles.has(title)) title = `${src.title} (cópia ${n++})`; }
   const pos = (await db.query("select coalesce(max(position)+1,0) as p from flow.elements where project_id=$1 and parent_id is not distinct from $2", [projectId, parentId])).rows[0].p;
   const ins = await db.query(
-    `insert into flow.elements (project_id, plan_id, parent_id, kind, title, context, agent_id, resp_id, status, progress, loop_var, loop_list, cond_test, code, position)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`,
-    [projectId, src.plan_id, parentId, src.kind, title, src.context, src.agent_id, src.resp_id, src.status ? "pendente" : null, null, src.loop_var, src.loop_list, src.cond_test, src.code, pos]);
+    `insert into flow.elements (project_id, plan_id, parent_id, kind, title, context, agent_id, resp_id, agent_ref, resp_ref, status, progress, loop_var, loop_list, cond_test, code, position)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) returning id`,
+    [projectId, src.plan_id, parentId, src.kind, title, src.context, src.agent_id, src.resp_id, src.agent_ref, src.resp_ref, src.status ? "pendente" : null, null, src.loop_var, src.loop_list, src.cond_test, src.code, pos]);
   const nid = ins.rows[0].id as number;
   await db.query("insert into flow.element_ios (element_id, direction, name, ref, position) select $1, direction, name, ref, position from flow.element_ios where element_id = $2", [nid, srcId]);
   const kids = (await db.query("select id from flow.elements where parent_id = $1 order by position, id", [srcId])).rows;
@@ -143,18 +143,18 @@ export async function patchElement(db: Db, projectId: number, id: string, p: Pat
   if (p.context !== undefined) set("context", p.context);
   if (p.code !== undefined) set("code", p.code);
   if (p.archived !== undefined) set("archived", p.archived);
-  if (p.respId !== undefined) set("resp_id", await getAgentId(db, projectId, p.respId));
+  if (p.respId !== undefined) { const r = await resolveResp(db, projectId, p.respId); set("resp_id", r.id); set("resp_ref", r.ref); }
   if (p.agentId !== undefined) {
-    const aid = await getAgentId(db, projectId, p.agentId);
-    set("agent_id", aid);
-    const ag = aid ? (await db.query("select kind, name, tasks from flow.agents where id = $1", [aid])).rows[0] as { kind: string; name: string; tasks: string[] } : null;
-    if (!aid || ag?.kind === "pessoa") { set("status", null); set("error", null); }
+    const r = await resolveResp(db, projectId, p.agentId);
+    set("agent_id", r.id); set("agent_ref", r.ref);
+    const ag = await respTasks(db, projectId, r.id, r.ref);
+    if ((!r.id && !r.ref) || ag?.kind === "pessoa") { set("status", null); set("error", null); }
     else if (!(await db.query("select status from flow.elements where id = $1", [u.id])).rows[0].status) set("status", "pendente");
-    // título = task do catálogo do responsável (lib Node = método)
-    const tasks = (ag?.tasks?.length ? ag.tasks : null) as string[] | null;
-    if (tasks?.length) {
+    // título = task do responsável concreto (lib Node = método · arquivo = função); abstrato (IA/modelo/pessoa) = verbo livre
+    const concrete = ag && ["maquina", "arquivo", "script"].includes(ag.kind);
+    if (concrete && ag.tasks.length) {
       const title = p.title ?? (await db.query("select title from flow.elements where id = $1", [u.id])).rows[0].title as string;
-      if (!tasks.includes(title) && p.title === undefined) set("title", tasks[0]);
+      if (!ag.tasks.includes(title) && p.title === undefined) set("title", ag.tasks[0]);
     }
   }
   if (p.loop !== undefined) { set("loop_var", p.loop?.[0] ?? null); set("loop_list", p.loop?.[1] ?? null); }
@@ -202,4 +202,32 @@ export async function setParallel(db: Db, projectId: number, a: string, b: strin
   const x = await getEl(db, projectId, a), y = await getEl(db, projectId, b);
   if (on) await addLink(db, x.id, y.id, "par");
   else await db.query("delete from flow.links where kind='par' and ((from_id=$1 and to_id=$2) or (from_id=$2 and to_id=$1))", [x.id, y.id]);
+}
+
+/** Seleção (if) / repetição (for) na task folha — liga/desliga (botões da toolbar; a aresta usa edgeIf/edgeLoop). */
+export async function setStruct(db: Db, projectId: number, id: string, kind: "if" | "loop", on: boolean): Promise<void> {
+  const b = await getEl(db, projectId, id);
+  if (b.kind === "data" || b.kind === "folder") throw badRequest("Só em funções");
+  if (on && (await db.query("select 1 from flow.elements where parent_id = $1 and kind = 'file' and not archived limit 1", [b.id])).rowCount) throw badRequest(`${kind === "if" ? "Seleção" : "Repetição"} aplica-se a uma task folha`);
+  if (kind === "loop") {
+    if (on) await edgeLoop(db, projectId, id);
+    else await db.query("update flow.elements set loop_var = null, loop_list = null where id = $1", [b.id]);
+    return;
+  }
+  const st = (await db.query("select s.id from flow.structs s join flow.struct_members m on m.struct_id = s.id where s.project_id = $1 and m.element_id = $2 limit 1", [projectId, b.id])).rows[0];
+  if (!on) {
+    if (!st) throw badRequest("Esta task não está numa seleção");
+    await db.query("update flow.elements set cond_test = null, cond_goto_id = null where id in (select element_id from flow.struct_members where struct_id = $1)", [st.id]);
+    await db.query("delete from flow.structs where id = $1", [st.id]);
+    return;
+  }
+  if (st) return;
+  const first = (await db.query("select name from flow.element_ios where element_id=$1 and direction='in' order by position, id limit 1", [b.id])).rows[0]?.name as string | undefined;
+  const test = first ?? "condicao";
+  const sibs = (await db.query("select id from flow.elements where project_id=$1 and parent_id is not distinct from $2 and plan_id=$3 and kind='file' and not archived order by position, id", [projectId, b.parent_id, b.plan_id])).rows.map(r => r.id as number);
+  const prev = sibs[sibs.indexOf(b.id) - 1];
+  if (prev) await db.query("update flow.elements set cond_test = $2, cond_goto_id = $3 where id = $1", [b.id, test, prev]);
+  const pos = (await db.query("select coalesce(max(position)+1,0) as p from flow.structs where project_id = $1", [projectId])).rows[0].p;
+  const sid = (await db.query("insert into flow.structs (project_id, test, position) values ($1,$2,$3) returning id", [projectId, test, pos])).rows[0].id;
+  await db.query("insert into flow.struct_members (struct_id, element_id, position) values ($1,$2,0)", [sid, b.id]);
 }

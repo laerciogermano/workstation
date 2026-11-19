@@ -1,5 +1,5 @@
 import type { ModelCommand } from "../commands";
-import { descendants, ensureData, findAgent, findEl, flowSiblings, fnSiblings, isConcrete, isLeafFn, nextPosition, respExists } from "../graph";
+import { descendants, ensureData, findAgent, findEl, flowSiblings, fnSiblings, isConcrete, isFlowRoot, isLeafFn, nextPosition, respExists } from "../graph";
 import { err, ok, type Result } from "../result";
 import type { FlowElement, Snapshot } from "../types";
 import { applied, DATA_NAME, text, type Op } from "./context";
@@ -54,7 +54,11 @@ export const setCond: Op<Cmd<"setCond">> = (s, c) => {
   if (c.cond === null) return applied(update(s, c.id, x => ({ ...x, cond: null })));
   const test = dataName(c.cond.test); if (!test.ok) return test;
   if (!findEl(s, c.cond.gotoId)) return err("not_found", `Destino ${c.cond.gotoId} não existe`);
-  return applied({ ...update(s, c.id, x => ({ ...x, cond: [test.value, c.cond!.gotoId] as const })), data: ensureData(s.data, test.value) });
+  // elemento num `if`: o teste e o "senão" valem para a seleção inteira (todos os membros e o rótulo do if)
+  const st = s.structs.find(x => x.body.includes(c.id)), members = new Set(st ? st.body : [c.id]);
+  const elements = s.elements.map(x => (members.has(x.id) ? { ...x, cond: [test.value, c.cond!.gotoId] as const } : x));
+  const structs = st ? s.structs.map(x => (x === st ? { ...x, test: test.value } : x)) : s.structs;
+  return applied({ ...s, elements, structs, data: ensureData(s.data, test.value) });
 };
 export const setLoopVars: Op<Cmd<"setLoopVars">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
@@ -127,6 +131,7 @@ export const setTryCatch: Op<Cmd<"setTryCatch">> = (s, c, ctx) => {
 export const setRepetition: Op<Cmd<"setRepetition">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
   if (!c.on) return applied(update(s, c.id, x => ({ ...x, loop: null })));
+  if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita repetição (for)");
   if (!isLeafFn(s, e.value)) return err("invalid", "Repetição aplica-se a uma task folha");
   return applied(update(s, c.id, x => ({ ...x, loop: x.loop ?? (["item", "lista"] as const) })));
 };
@@ -140,6 +145,7 @@ export const setSelection: Op<Cmd<"setSelection">> = (s, c, ctx) => {
     const members = new Set(st.body);
     return applied({ ...s, elements: s.elements.map(x => (members.has(x.id) ? { ...x, cond: null } : x)), structs: s.structs.filter(x => x.id !== st.id) });
   }
+  if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita seleção (if)");
   if (!isLeafFn(s, e.value)) return err("invalid", "Seleção aplica-se a uma task folha");
   if (st) return applied(s);
   const test = e.value.ins[0] ?? "condicao";

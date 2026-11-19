@@ -83,13 +83,12 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 .fcv .fview .sv-bandl.ca{stroke:var(--fail)}
 .fcv .fview .sv-pill.try rect{fill:color-mix(in srgb,var(--ok) 16%,var(--paper))} .fcv .fview .sv-pill.try text{fill:var(--ok)}
 .fcv .fview .sv-pill.catch rect{fill:color-mix(in srgb,var(--fail) 16%,var(--paper))} .fcv .fview .sv-pill.catch text{fill:var(--fail)}
-.fcv .fview .sv-box{pointer-events:none} .fcv .fview .sv-box line{fill:none;stroke-width:1.4;stroke:currentColor} .fcv .fview .sv-box.if{color:var(--warn)} .fcv .fview .sv-box.lp{color:var(--loop)} .fcv .fview .sv-box.tr{color:var(--ok)} .fcv .fview .sv-box.ca{color:var(--fail)}
 .fcv .fview .sv-bandl{stroke:var(--warn);stroke-width:2} .fcv .fview .sv-bandl.lp{stroke:var(--loop)}
 .fcv .fview .sv-fn{fill:var(--fn)} .fcv .fview .sv-fn.abs{fill:color-mix(in srgb,var(--fn) 8%,var(--paper));stroke:var(--fn);stroke-width:1.5}
 .fcv .fview .sv-fn.nag{fill:transparent;stroke:var(--fn);stroke-width:1.5} .fcv .fview .sv-fn.fail{stroke:var(--fail);stroke-width:2}
 .fcv .fview .sv-fn.sel,.fcv .fview .sv-sum.sel{stroke:var(--ink);stroke-width:2} .fcv .fview .sv-sum{fill:var(--fn)}
 .fcv .fview g[data-act]:hover .sv-fn,.fcv .fview g[data-act]:hover .sv-sum{filter:brightness(1.12)}
-.fcv .fview .sv-fbt{fill:#fff;pointer-events:none} .fcv .fview .sv-fbt.abs,.fcv .fview .sv-fbt.nag{fill:var(--ink)}
+.fcv .fview .sv-fbt{fill:#fff;pointer-events:auto} .fcv .fview .sv-fbt.abs,.fcv .fview .sv-fbt.nag{fill:var(--ink)}
 .fcv .fview .sv-dn{font:500 9px var(--mono);fill:var(--muted)} .fcv .fview .sv-dl{cursor:pointer} .fcv .fview .sv-dl:hover{fill:var(--ink);text-decoration:underline}
 .fcv .fview .sv-pill text{font:600 9px var(--mono)}
 .fcv .fview .sv-pill.if rect{fill:color-mix(in srgb,var(--warn) 18%,var(--paper))} .fcv .fview .sv-pill.if text{fill:var(--warn)}
@@ -106,8 +105,9 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 .fcv .fview .fstub{stroke:#9a9a9a;stroke-width:1.2}
 .fcv .fview .fdot{fill:var(--paper);stroke:var(--dado);stroke-width:1.3;cursor:pointer} .fcv .fview .fdot.a{fill:var(--dado)}
 .fcv .fview .fif{fill:var(--paper);stroke:var(--warn);stroke-width:1.5;pointer-events:none} .fcv .fview .fif-pad{fill:transparent}
+.fcv .fview .io-ghost{cursor:pointer} .fcv .fview .io-ghost .hit{fill:transparent} .fcv .fview .io-ghost .gh{fill:var(--paper);stroke:var(--dado);stroke-width:1.2;opacity:0} .fcv .fview .io-ghost .gp{stroke:var(--dado);stroke-width:1.2;fill:none;opacity:0;pointer-events:none} .fcv .fview .io-ghost:hover .gh,.fcv .fview .io-ghost:hover .gp{opacity:1}
 .fcv .fview .fif-hit,.fcv .fview .floop-hit{cursor:pointer}
-.fcv .fview .floop{fill:transparent;stroke:var(--loop);stroke-width:1.1;stroke-dasharray:3 3}
+.fcv .fview .floop{fill:transparent;stroke:none}
 .fcv .fview .farc{fill:none;stroke:var(--loop);stroke-width:1.3;pointer-events:none}
 .fcv .flfoot{flex:none;display:flex;align-items:center;gap:14px;padding:8px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
 .fcv .flegend{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted);flex-wrap:wrap}

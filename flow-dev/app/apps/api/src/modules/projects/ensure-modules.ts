@@ -23,6 +23,11 @@ export async function ensureModules(db: Db, projectId: number): Promise<void> {
     const outs = (await db.query(
       `select i.name from flow.element_ios i where i.element_id = $1 and i.direction='out'
           and not exists (select 1 from flow.module_items mi join flow.modules m on m.id = mi.module_id where m.project_id = $2 and mi.kind='dado' and mi.data_name = i.name)`, [r.id, projectId])).rows;
-    for (const o of outs) await add("insert into flow.module_items (module_id, kind, data_name, position) values ($1,'dado',$2, coalesce((select max(position)+1 from flow.module_items where module_id=$1),0))", [o.name]);
+    // entrada com valor sólido (ex.: saudacao do Hello World) também mora no arquivo da função
+    const valued = (await db.query(
+      `select i.name from flow.element_ios i join flow.data_defs d on d.project_id = $2 and d.name = i.name
+        where i.element_id = $1 and i.direction='in' and d.value is not null and d.value <> ''
+          and not exists (select 1 from flow.module_items mi join flow.modules m on m.id = mi.module_id where m.project_id = $2 and mi.kind='dado' and mi.data_name = i.name)`, [r.id, projectId])).rows;
+    for (const o of [...outs, ...valued]) await add("insert into flow.module_items (module_id, kind, data_name, position) values ($1,'dado',$2, coalesce((select max(position)+1 from flow.module_items where module_id=$1),0))", [o.name]);
   }
 }

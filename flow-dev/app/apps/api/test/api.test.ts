@@ -82,7 +82,7 @@ describe("auth e autorização", () => {
 
 describe("modelo e mutações", () => {
   it("snapshot do exemplo traz o protótipo inteiro", () => {
-    expect(snap.plans).toHaveLength(2); expect(snap.elements.length).toBeGreaterThan(80); expect(snap.agents.length).toBe(16);
+    expect(snap.plans).toHaveLength(2); expect(snap.elements.length).toBeGreaterThan(80); expect(snap.agents.filter(a => !/^(file|md):/.test(a.id)).length).toBe(16); // catálogo real; arquivos e modelos entram como responsáveis virtuais
     expect(snap.elements.every(e => /^[0-9a-f-]{36}$/.test(e.id))).toBe(true); // IDR uuid
   });
   it("cria filho/irmão, liga na sequência e renomeia sem mudar o IDR", async () => {
@@ -133,11 +133,36 @@ describe("modelo e mutações", () => {
     expect((await post("/data/toggle-cube", { name: "conta_id" })).status).toBe(400); // tem campos
   });
   it("seleção e repetição pela aresta", async () => {
-    const a = find("Coletar dados do cliente"), b = find("Rascunhar proposta");
+    const a = find("get"), b = find("Rascunhar proposta"); // "get" = Coletar dados (task da lib node:http)
     expect((await post("/edge-loop", { toId: b.id })).status).toBe(200);
     expect(snap.elements.find(e => e.id === b.id)!.loop).toEqual(["item", "lista"]);
     const r = await post("/edge-if", { fromId: a.id, toId: b.id });
     expect(r.body.result).toBe("dados_cliente");
+  });
+  it("responsável = arquivo | modelo (virtuais) e task concreta só para arquivo/lib", async () => {
+    const e = find("Rascunhar proposta");
+    const file = snap.agents.find(a => a.kind === "arquivo" && a.tasks.length > 1)!, modelo = snap.agents.find(a => a.kind === "modelo")!;
+    expect(file.id).toMatch(/^file:[0-9a-f-]{36}$/); expect(modelo.id).toMatch(/^md:[0-9a-f-]{36}$/);
+    const up = async (agentId: string | null) => (await agentA.patch(`/api/v1/projects/${pidA}/elements/${e.id}`).send({ agentId })).body.snapshot.elements.find((x: { id: string }) => x.id === e.id);
+    let r = await up(file.id);
+    expect(r.agentId).toBe(file.id); expect(file.tasks).toContain(r.title); // arquivo é concreto: título vira função do arquivo
+    r = await up(modelo.id);
+    expect(r.agentId).toBe(modelo.id); expect(r.status).not.toBeNull(); // modelo é abstrato (executa como IA)
+    expect((await agentA.patch(`/api/v1/projects/${pidA}/elements/${e.id}`).send({ agentId: "file:00000000-0000-0000-0000-000000000000" })).status).toBe(400);
+    expect((await up(null)).agentId).toBeNull();
+  });
+  it("seleção (if) e repetição (for) ligam e desligam pela task", async () => {
+    const e = snap.elements.find(x => x.title === "Escolher loja") ?? find("Enviar lembrete");
+    const on = (kind: string, v: boolean) => post(`/elements/${e.id}/struct`, { kind, on: v });
+    expect((await on("if", true)).status).toBe(200);
+    expect(snap.structs.some(s => s.body.includes(e.id))).toBe(true);
+    expect((await on("if", false)).status).toBe(200);
+    expect(snap.structs.some(s => s.body.includes(e.id))).toBe(false);
+    expect((await on("loop", true)).status).toBe(200);
+    expect(snap.elements.find(x => x.id === e.id)!.loop).toEqual(["item", "lista"]);
+    expect((await on("loop", false)).status).toBe(200);
+    expect(snap.elements.find(x => x.id === e.id)!.loop).toBeNull();
+    expect((await on("if", false)).status).toBe(400); // não estava numa seleção
   });
   it("remove com filhos e não deixa lixo; confirma cascata", async () => {
     const before = snap.elements.length;

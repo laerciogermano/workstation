@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TYPE_INFO, type AgentKind } from "@flow/shared";
+import { TYPE_INFO } from "@flow/shared";
 import { Icon } from "../../ui/Icon";
 import { AgChip } from "../../ui/parts";
 import { api } from "../../api/client";
@@ -13,7 +13,7 @@ export function CatalogView() {
   const [n, setN] = useState(""), [d, setD] = useState("");
   const add = async (e: React.FormEvent) => {
     e.preventDefault(); if (!n.trim()) return;
-    const id = await ide.call(() => api.post<string>(ide.pid, "/agents", { kind: t, name: n.trim(), sub: d.trim(), prompt: t === "ia" ? "" : undefined, moduleFile: t === "script" ? "meu-modulo.layer.js" : undefined }));
+    const id = await ide.call(() => api.post<string>(ide.pid, "/agents", { kind: t, name: n.trim(), sub: d.trim(), prompt: t === "ia" ? "" : undefined }));
     if (id) { setN(""); setD(""); ide.toast(`${n.trim()} entrou no catálogo`, "plus"); }
   };
   const remove = async (id: string) => {
@@ -24,11 +24,11 @@ export function CatalogView() {
   };
   return (
     <div className="cat"><div className="cat-in">
-      <div><h2>Agentes do fluxo</h2><p className="lead">Só IA e bibliotecas Node.js. Atribuir a uma etapa não muda o roteiro — só o executor.</p></div>
+      <div><h2>Catálogo</h2><p className="lead">Agentes, libs Node e pessoas. Arquivos e modelos ficam no Explorar; o responsável da etapa escolhe entre arquivo, lib, pessoa, agente ou modelo.</p></div>
       <nav className="seg" style={{ alignSelf: "flex-start" }}>
-        {(Object.keys(TYPE_INFO) as AgentKind[]).map(k => <button key={k} aria-current={k === t} onClick={() => set({ catTab: k, catBlock: null })}><Icon n={TYPE_INFO[k].ic} />{TYPE_INFO[k].n}<span style={{ color: "var(--muted)", fontWeight: 500 }}>{m.agents.filter(c => c.kind === k).length}</span></button>)}</nav>
+        {(["ia", "maquina", "pessoa"] as const).map(k => <button key={k} aria-current={k === t} onClick={() => set({ catTab: k, catBlock: null })}><Icon n={TYPE_INFO[k].ic} />{TYPE_INFO[k].n}<span style={{ color: "var(--muted)", fontWeight: 500 }}>{m.agents.filter(c => c.kind === k).length}</span></button>)}</nav>
       <form className="cat-add" onSubmit={add}>
-        <input placeholder={t === "ia" ? "Nome do modelo ou agente" : "Biblioteca Node (node:fs, node:http…)"} aria-label="Nome" value={n} onChange={e => setN(e.target.value)} maxLength={120} />
+        <input placeholder={t === "ia" ? "Nome do modelo ou agente" : "Módulo Node (node:fs, node:http…)"} aria-label="Nome" value={n} onChange={e => setN(e.target.value)} maxLength={120} />
         <input placeholder={t === "ia" ? "Fornecedor · uso" : "Pacote / runtime Node.js"} aria-label="Descrição" value={d} onChange={e => setD(e.target.value)} maxLength={200} />
         <button className="btn pri"><Icon n="plus" />Incluir</button></form>
       <div className="ctable"><div className="crow"><span>Nome</span><span>Descrição</span><span>Uso</span><span /></div>

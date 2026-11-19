@@ -11,6 +11,7 @@ export const initials = (name?: string): string => String(name || "?").trim().sp
 
 export function Face({ a, lg }: { a?: AgentDto; lg?: boolean }) {
   if (!a) return <span className="face none" title="Sem responsável"><Icon n="plus" /></span>;
+  if (a.kind === "arquivo" || a.kind === "modelo") return <span className={`ico face-ico ${a.kind}`} title={`${TYPE_INFO[a.kind].one}: ${a.name}`}><Icon n={TYPE_INFO[a.kind].ic} /></span>;
   return (
     <span className={`face ${a.kind}${lg ? " lg" : ""}`} title={`${TYPE_INFO[a.kind].one}: ${a.name}`}>
       {a.photoUrl ? <img src={a.photoUrl} alt="" /> : initials(a.name)}
@@ -29,7 +30,7 @@ export function FnIcon({ m, u }: { m: FlowModel; u: ElementDto }) {
   const tip = ok ? (comp ? "Composição sólida · todas as funções preenchidas" : "Função sólida · responsável definido") : comp ? "Falta preencher: alguma função filha está sem responsável" : "Função abstrata · sem responsável";
   return <span className={"fi plan" + cls} title={tip}><Icon n="circle" /></span>;
 }
-export const brandOf = (m: FlowModel, a?: AgentDto): string => (!a ? "" : a.kind === "maquina" ? "#5FA04E" : a.kind === "ia" ? m.modelOf(a.modelId)?.color ?? "" : "");
+export const brandOf = (m: FlowModel, a?: AgentDto): string => (!a ? "" : a.kind === "maquina" ? "#5FA04E" : a.kind === "modelo" ? m.modelOf(a.modelId)?.color ?? "" : a.kind === "ia" ? m.modelOf(a.modelId)?.color ?? "" : a.kind === "arquivo" ? "#64748b" : "");
 export function Mark({ q, text }: { q: string; text: string }) {
   if (!q) return <>{text}</>;
   const i = text.toLowerCase().indexOf(q);

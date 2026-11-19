@@ -1,0 +1,22 @@
+[keep-worker] watch start-worker-marina-cdp → /Users/laerciogermano/Documents/works/conectmax/connectmax/vendas/worker/./scripts/start-worker-marina-cdp.sh (backoff 5000ms)
+——— 13:03:16 start-worker-marina-cdp (log também em logs/worker-marina-cdp.out) ———
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+19/11/2026 13:03:17 [d59832cd] ——— worker iniciado ———
+19/11/2026 13:03:17 [d59832cd] API http://185.250.37.82
+19/11/2026 13:03:17 [d59832cd] agente d59832cd-92fc-4446-bd9c-a8ac989b9cea · Chrome CDP · perfil=marina-costa · http://127.0.0.1:9224
+19/11/2026 13:03:17 [d59832cd] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+19/11/2026 13:03:17 [d59832cd] cadastrando/atualizando agente na API (enroll)…
+19/11/2026 13:03:17 [d59832cd] enroll OK (já existia) · LinkedIn ok · online
+19/11/2026 13:03:17 [d59832cd] ciclo #1: pedindo job na API…
+19/11/2026 13:03:18 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+19/11/2026 13:03:18 [d59832cd] ciclo #1: peguei job «buscar candidatos» (extrair_leads) prioridade=5 id=2483a4e2-b447-45f6-90af-2d62fc83132e
+19/11/2026 13:03:18 [d59832cd]   payload: máx=5
+19/11/2026 13:03:18 [d59832cd] executando «buscar candidatos» em Chrome CDP (marina-costa)…
+19/11/2026 13:03:18 [spawn] iniciando robô: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 10 --no-shot
+

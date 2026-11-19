@@ -1358,6 +1358,7 @@ function ensureLayers() {
     const add = it => { if (!L) { L = { id: "lx" + LAYERS.length, file, items: [] }; LAYERS.push(L); } L.items.push(it); };
     if (!fnIn.has(u.id)) { add(["fn", u.id]); fnIn.add(u.id); }
     (u.outs || []).forEach(([n]) => { if (!dIn.has(n)) { add(["dado", n]); dIn.add(n); } });
+    (u.ins || []).forEach(n => { if (DATA_VAL[n] != null && !dIn.has(n)) { add(["dado", n]); dIn.add(n); } }); // entrada com valor sólido mora no arquivo
   });
 }
 // Modelos = as IAs (Claude, GPT…). Agentes = “pessoas” de IA com nome, um modelo e um prompt pronto
@@ -1396,7 +1397,7 @@ let LANES = [{ id: "l1", name: "Pessoal" }, { id: "l2", name: "Clientes" }, { id
 const PLANS = [{ id: "padrao", name: "Plano padrão" }, { id: "onb", name: "Onboarding Acme" }, { id: "hello", name: "Hello World" }];
 
 const CODE_HELLO = `// Hello World · node:console
-console.log("Hello, World!");`;
+console.log(entrada.saudacao);`;
 
 const CODE_ENVIO = `// Enviar ao cliente · node:http
 import { http } from "node:http"
@@ -1471,7 +1472,7 @@ let U = [
   { id: "u72", title: "get", parent: "u69", agent: "m1", col: "c1", lane: "l1", st: "pendente", plan: "padrao", ins: ["pedido"], outs: [["apolice", "out/apolice.pdf"]] },
   { id: "d6", kind: "data", title: "Celular pronto", parent: "u2", plan: "padrao", lane: "l1", col: "c1", ins: ["apps", "apolice"] },
   { id: "u200", title: "hello_world", ctx: "Projeto console: Executar imprime no Terminal", parent: "f4", agent: "h4", col: "c2", lane: "l4", plan: "hello" },
-  { id: "u201", title: "log", parent: "u200", agent: "m6", col: "c1", lane: "l4", st: "pendente", s: 0, e: 0, plan: "hello", outs: [["saudacao", "out/saudacao.txt"]], code: CODE_HELLO },
+  { id: "u201", title: "log", parent: "u200", agent: "m6", col: "c1", lane: "l4", st: "pendente", s: 0, e: 0, plan: "hello", ins: ["saudacao"], code: CODE_HELLO },
   { id: "u9", title: "fazer_onboarding", ctx: "Cliente novo, contrato anual, proposta em português, inglês e espanhol", parent: "f2", agent: "a4", col: "c2", lane: "l2", plan: "onb" },
   { id: "u10", title: "get", parent: "u9", agent: "m1", col: "c5", lane: "l2", st: "ok", s: 0, e: 0, plan: "onb", outs: [["dados_cliente", "out/dados_cliente.json"]], code: CODE_COLETA },
   { id: "u11", title: "redigir_proposta", ctx: "Tom direto, preço anual em destaque", parent: "u9", agent: "a1", col: "c5", lane: "l2", st: "ok", s: 1, e: 2, plan: "onb", ins: ["dados_cliente"], outs: [["rascunho", "out/rascunho.md"]] },
@@ -1607,7 +1608,7 @@ function faceOf(a, { lg = false } = {}) {
 }
 function topOf(u) { let x = u; while (x?.parent && !isFolder($u(x.parent))) x = $u(x.parent); return x; }
 /** Valores definidos no state: com valor, o dado deixa de ser abstrato (fica concreto / sólido). */
-const DATA_VAL = {};
+const DATA_VAL = { saudacao: "Hello, World!" };
 /** Dado em árvore (opcional): campos filhos com caminho completo (dados_cliente.nome). Sem filhos = dado simples. */
 const SYNTH_IN = new Set(); // cubos de entrada gerados na visualização (várias entradas = um cubo)
 const DATA_KIDS = {
@@ -1643,7 +1644,7 @@ function fnIcon(u) {
 /** Nome de função = verbo no infinitivo (Comprar celular, Enviar proposta). */
 function isVerbTitle(t) { const w = String(t).trim().split(/\s+/)[0].toLowerCase().replace(/-(se|lo|la|los|las)$/, ""); return /(ar|er|ir|or|ôr)$/.test(w) && w.length > 2; }
 const SEC_CLOSED = new Set();
-const EX_SECS = ["arquivos", "pessoas", "agentes", "modelos"];
+const EX_SECS = ["funcoes", "dados", "arquivos", "pessoas", "agentes", "modelos"];
 /** Mesmos toggles em todas as seções: abrir / fechar os itens filhos da seção (e a própria seção). */
 const secTools = k => `<button class="ib" data-act="sec-expand" data-sec="${k}" title="Abrir os itens filhos">${icon("chevrons-up-down")}</button><button class="ib" data-act="sec-collapse" data-sec="${k}" title="Fechar os itens filhos">${icon("chevrons-down-up")}</button>`;
 /** Chaves de sanfona (OPEN) dos itens com filhos de cada seção. Funções = composições abertas no Flow (FLOW_CLOSED). */
@@ -1730,11 +1731,11 @@ function termLog(html) {
   if (b) { b.innerHTML = TERM.lines.join("<br>"); b.scrollTop = b.scrollHeight; }
 }
 /** Roda o código de verdade quando é JS puro (sem import); devolve as linhas impressas pelo console. */
-function execCode(code) {
+function execCode(code, u) {
   if (/^\s*import\s/m.test(code)) return null;
   const out = [], fmt = a => a.map(x => typeof x === "string" ? x : (() => { try { return JSON.stringify(x); } catch (e) { return String(x); } })()).join(" ");
   const con = { log: (...a) => out.push(esc(fmt(a))), info: (...a) => out.push(esc(fmt(a))), warn: (...a) => out.push(`<span class="wr">${esc(fmt(a))}</span>`), error: (...a) => out.push(`<span class="er">${esc(fmt(a))}</span>`) };
-  try { new Function("console", code)(con); out.push(`<span class="ok">✓ concluída</span>`); }
+  try { const entrada = {}; (u?.ins || []).forEach(n => { entrada[n] = DATA_VAL[n]; }); new Function("console", "entrada", code)(con, entrada); out.push(`<span class="ok">✓ concluída</span>`); }
   catch (e) { out.push(`<span class="er">✗ ${esc(e.name + ": " + e.message)}</span>`); out.failed = true; }
   return out;
 }
@@ -1803,7 +1804,14 @@ function explorer(s) {
     }
   }
 
-  // Dados só aparecem dentro de Arquivos (dadoRow).
+  // Funções = só funções (árvore de composição, sem agrupador de projeto). Dados = lista plana de dados.
+  const fnSecRows = [];
+  PLANS.forEach(p => {
+    planRows = [];
+    walk(null, 1, p.id);
+    fnSecRows.push(...planRows);
+  });
+  const nFuncoes = U.filter(u => !u.arch && !isFolder(u) && !isData(u) && (!u.parent || isFolder($u(u.parent)))).length;
   const catalog = stateCatalog().filter(d => !q || d.name.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
   if (q) hits += catalog.length;
   const dadoRow = (name, lvl) => {
@@ -1862,16 +1870,25 @@ function explorer(s) {
     }).join("");
     return { html: html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma pessoa.</p>`, n: list.length };
   })();
-  const empty = !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
+  const dadoSecRows = catalog.map(d => dadoRow(d.name, 0));
+  const empty = !fnSecRows.length && !dadoSecRows.length && !agentRows.n && !pessoaRows.n && !modelRows.n && !layerRows.n;
   return `<aside class="ex" aria-label="Explorar">
     <div class="ex-h"><b>Explorar</b>
-      <button class="ib" data-act="new-modulo" title="Novo arquivo">${icon("circle-plus")}</button>
+      <button class="ib" data-act="new-file" title="Nova função">${icon("circle-plus")}</button>
       <button class="ib${s.q != null ? " on" : ""}" data-act="search" title="Buscar na árvore">${icon("search")}</button>
       <button class="ib" data-act="expand-all" title="Abrir todas as sanfonas">${icon("chevrons-up-down")}</button>
       <button class="ib" data-act="collapse" title="Fechar todas as sanfonas">${icon("chevrons-down-up")}</button>
     </div>
-    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar arquivos, pessoas, agentes…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
+    ${s.q != null ? `<div class="ex-q">${icon("search")}<input data-q value="${esc(s.q)}" placeholder="Filtrar funções, dados, pessoas…" aria-label="Filtrar">${q ? `<small>${hits} resultado${hits === 1 ? "" : "s"} · caminhos abertos</small>` : ""}</div>` : ""}
     <div class="ex-tree" data-tree><div class="inner">${empty ? `<p style="padding:14px;color:var(--muted)">Nada com “${esc(s.q)}”.</p>` : `
+      <div class="ex-sec${q || !SEC_CLOSED.has("funcoes") ? " open" : ""}" data-sec="funcoes">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="funcoes" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("circle")} Funções<span class="n">${nFuncoes}</span>${secTools("funcoes")}<button class="ib" data-act="new-flow" title="Adicionar fluxo">${icon("plus")}</button></div>
+        ${fnSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhuma função. <button class="btn" data-act="new-flow" style="margin-left:6px;height:24px;font-size:11px">${icon("plus")}Fluxo</button></p>`}
+      </div>
+      <div class="ex-sec${q || !SEC_CLOSED.has("dados") ? " open" : ""}" data-sec="dados">
+        <div class="ex-sec-h" data-act="sec-toggle" data-sec="dados" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("box")} Dados<span class="n">${stateCatalog().length}</span>${secTools("dados")}<button class="ib" data-act="new-dado" title="Adicionar dado">${icon("plus")}</button></div>
+        ${dadoSecRows.join("") || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum dado.</p>`}
+      </div>
       <div class="ex-sec${q || !SEC_CLOSED.has("arquivos") ? " open" : ""}" data-sec="arquivos">
         <div class="ex-sec-h" data-act="sec-toggle" data-sec="arquivos" title="Abrir / fechar"><span class="car">${icon("chevron-right")}</span>${icon("files")} Arquivos<span class="n">${layerRows.n}</span>${secTools("arquivos")}<button class="ib" data-act="new-modulo" title="Adicionar arquivo">${icon("plus")}</button><button class="ib" data-act="new-flow" title="Nova função no Flow">${icon("circle-plus")}</button><button class="ib" data-act="new-dado" title="Novo dado">${icon("box")}</button></div>
         ${layerRows.html || `<p style="padding:8px 14px;color:var(--muted);font-size:12px">Nenhum arquivo. Funções e dados moram dentro de um arquivo.</p>`}
@@ -3490,7 +3507,7 @@ const SCREENS = {
   "T-20": { s: { v: "flow", drawer: "u13", sel: "u13" }, name: "Detalhe", us: ["unidade"], notes: "Painel: Responsável e depois Task (métodos da lib Node). Contexto, UUID, entradas/saídas e atalhos para Flow e Explorar." },
   "T-21": { s: { v: "flow", drawer: "u14", sel: "u14", picker: true }, name: "Atribuir IA ou lib", us: ["agente"], notes: "Escolha agrupada: IAs ou bibliotecas Node.js do catálogo. Trocar o ator não reescreve o roteiro." },
   "T-32": { s: { v: "flow", sel: "u12" }, name: "Flow", us: ["FOP", "gantt-sample"], notes: "Igual ao gantt-sample.png + notação do documento FOP: o eixo é de estados s0, s1, s2… nas divisórias; cada função vai de sN a sN+1 com os dados de entrada □ antes da barra e os de saída □ depois, sobre a divisória; embaixo, cada sN lista os dados daquele estado (árvore = cubo, folha = □). Sequência = conector vertical na divisória; ∥ paralelo; seleção = ◇ no conector + faixa if (corpo) e “senão ↺” voltando à etapa anterior (recursão); repetição = moldura tracejada com arco ↻ (for … of). Abstrato × concreto (itens 6–9, 15): função IA = barra só com borda (abstrata, vem do state), lib Node = barra preenchida (concreta, import); dado de entrada da mesma camada = □ vazado, de fora = ■ sólido; saídas sempre □ concretas; cada composição (camada) mostra à esquerda os ■ dados e ▬ funções abstratos que pede ao state. Tabela Responsável · Task (só funções concretas; abstratas recebem o executor pelo state); cada if tem linha própria com ◇ e condição." },
-  "T-37": { s: { v: "flow", plan: "hello", flowRoot: "u200", sel: "u201", termOpen: true }, name: "Hello World + Terminal", us: ["Hello", "Terminal", "node:console"], notes: "Igual ao app :5180 no projeto Hello World: colunas Responsável · Task; lib node:console · task log; Terminal no rodapé; Executar imprime Hello, World! via console.log." },
+  "T-37": { s: { v: "flow", plan: "hello", flowRoot: "u200", sel: "u201", termOpen: true }, name: "Hello World + Terminal", us: ["Hello", "Terminal", "node:console"], notes: "Igual ao app :5180 no projeto Hello World: colunas Responsável · Task; lib node:console · task log; Terminal no rodapé; Executar imprime o dado sólido saudacao (Hello, World!) via console.log: a task recebe a entrada e não tem saída." },
   "T-36": { s: { v: "flow", sel: "d2", ctxPanel: true }, name: "Contexto e camadas", us: ["FOP", "contexto"], notes: "Toda entrada forma uma camada; camada é unidade substituível. Endereços abstratos (IA vinda do contexto) × concretos (import / node:*). A execução só ocorre quando o contexto está completo." },
   "T-33": { s: { v: "flow", mach: "u15", sel: "u15" }, name: "Programar biblioteca Node", us: ["Node.js"], notes: "Etapa com biblioteca Node abre o editor: módulos node:fs / node:http / node:path…, for e while, entradas e saídas. Executar roda só esta etapa." },
   "T-35": { s: { v: "flow", exp: true, expTab: "js" }, name: "Exportar código", us: ["export"], notes: "Compila o fluxo em FOP-IR e exporta JavaScript no estilo do documento (function f(state), Promise.all, if, recursão, contexto completo), TypeScript ou Python. Destino Go fora da v1." },
@@ -4108,7 +4125,7 @@ function pasteInto(targetId) {
 function runMachine(u) {
   const lines = [`<span class="dim">$ plans run "${esc(u.title)}"</span>`];
   const code = u.code || "";
-  const real = code ? execCode(code) : null;
+  const real = code ? execCode(code, u) : null;
   let failed = false;
   if (real) { lines.push(...real); failed = !!real.failed; }
   else if (code.includes("http.post")) lines.push("→ POST api.acme.com/propostas (en) 201", "enviado en: 201", "→ POST api.acme.com/propostas (es) 201", "enviado es: 201", `<span class="ok">✓ saida.envio_id = "env_7f3a91"</span>`);

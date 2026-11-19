@@ -18,6 +18,9 @@ export const DEFAULT_LIB_TASKS: Record<string, string[]> = {
   "node:console": ["log", "info", "warn", "error", "debug", "table", "clear"],
 };
 
+/** Concreto = lib Node ou arquivo (métodos/funções). Abstrato = IA / modelo / pessoa / vazio → task é só texto (verbo). */
+export const taskIsConcrete = (a: { kind: string } | null | undefined): boolean => !!a && (a.kind === "maquina" || a.kind === "arquivo" || a.kind === "script");
+
 export const agentTasksOf = (a: { name: string; kind: string; tasks?: string[] | null } | null | undefined): string[] => {
   if (!a) return [];
   if (a.tasks?.length) return a.tasks;

@@ -82,18 +82,16 @@ const $ = s => document.querySelector(s);
 mountTemas($("#temas"));
 const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 
-/* ───────── seed enriquecido: lib, IA, for, try/catch ───────── */
-function enriched() {
-  let s = seed(), n = 0; const created = {};
-  const ap = (c, k) => { const r = FC.applyModelCommand(s, c, { newId: () => "x" + (++n) }); if (!r.ok) throw new Error(c.type + ": " + r.error.message); s = r.value.snapshot; if (k) created[k] = r.value.created[0]; };
-  ap({ type: "assignResponsible", id: "cobrar", agentId: "a-fs" });
-  ap({ type: "assignResponsible", id: "faturar", agentId: "a-red" });
-  ap({ type: "addInput", id: "faturar", name: "preco" }); ap({ type: "addOutput", id: "faturar", name: "fatura" });
-  ap({ type: "addInput", id: "entregar", name: "pagamento" });
-  ap({ type: "setRepetition", id: "entregar", on: true }); ap({ type: "setLoopVars", id: "entregar", loop: ["pedido", "pedidos"] });
-  ap({ type: "createChild", refId: "vender", title: "Estornar cobrança" }, "estornar");
-  ap({ type: "setCatch", id: "cobrar", handlerId: created.estornar, through: "entregar" });   // um try cobrindo duas funções
-  return s;
+/* ───────── projeto novo: vazio, só com um fluxo inicial (como "Novo projeto" no IDE) ───────── */
+let ROOT = null;
+function newProject() {
+  const base = seed();
+  let s = { plans: [{ id: "p1", name: "Novo projeto", position: 0 }], elements: [base.elements[0]], links: [], structs: [],
+    agents: base.agents, models: base.models, modules: base.modules, data: [] };   // só o catálogo de responsáveis (lib, pessoa, IA) fica disponível
+  const r = FC.applyModelCommand(s, { type: "createFunction", planId: "p1", title: "Fazer novo fluxo" }, { newId: () => "novo-fluxo" });
+  if (!r.ok) throw new Error(r.error.message);
+  ROOT = r.value.created[0];
+  return r.value.snapshot;
 }
 
 /* ───────── realce TypeScript ───────── */
@@ -111,7 +109,7 @@ function hl(line) {
 let store, flow, view, gen = null, prev = [];
 const codeEl = $("#code");
 function renderCode(flash = true) {
-  const root = view?.rootId ?? "vender";
+  const root = view?.rootId ?? ROOT;
   gen = FC.generateTypeScript(flow.snapshot, { rootId: root });
   const lines = gen.code.replace(/\n$/, "").split("\n"), before = new Map();
   prev.forEach(l => before.set(l, (before.get(l) ?? 0) + 1));
@@ -131,9 +129,9 @@ function scrollToSel() {
 }
 function boot() {
   view?.destroy(); prev = [];
-  store = FC.memoryStore(enriched());
+  store = FC.memoryStore(newProject());
   flow = FC.createFlowComponent({ store, newId: FC.sequentialGen("novo"), exporter: FC.typeScriptExporter });
-  view = FC.mountFlowView($("#host"), flow, { rootId: "vender", onSelect: () => { renderCode(false); scrollToSel(); }, onRootChange: () => { prev = []; renderCode(false); } });
+  view = FC.mountFlowView($("#host"), flow, { rootId: ROOT, onSelect: () => { renderCode(false); scrollToSel(); }, onRootChange: () => { prev = []; renderCode(false); } });
   flow.subscribe(() => renderCode(true));
   renderCode(false);
 }

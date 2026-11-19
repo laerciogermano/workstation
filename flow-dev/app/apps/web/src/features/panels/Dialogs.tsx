@@ -82,6 +82,9 @@ export function ContextMenu() {
           {!m.isTopFn(u) && <It ic="between-horizontal-start" n="Elemento irmão acima" on={() => void ide.addFn(u.id, "before")} />}
           {!m.isTopFn(u) && <It ic="between-horizontal-end" n="Elemento irmão abaixo" on={() => void ide.addFn(u.id, "after")} />}
           <It ic="corner-down-right" n="Elemento filho" on={() => void ide.addFn(u.id, "child")} /><hr /></>}
+        {!m.isFolder(u) && !m.isData(u) && !m.kidsPlan(u.id).some(k => !m.isFolder(k) && !m.isData(k)) && <>
+          {m.structs.some(st => st.body.includes(u.id)) ? <It ic="trash-2" n="Remover seleção (if)" on={() => void ide.setStruct(u.id, "if", false)} /> : <It ic="diamond" n="Adicionar seleção (if)" on={() => void ide.setStruct(u.id, "if", true)} />}
+          {u.loop ? <It ic="trash-2" n="Remover repetição (for)" on={() => void ide.setStruct(u.id, "loop", false)} /> : <It ic="repeat" n="Adicionar repetição (for)" on={() => void ide.setStruct(u.id, "loop", true)} />}<hr /></>}
         {!m.isFolder(u) && <><It ic="workflow" n="Abrir no Flow" on={() => { ide.select(u.id); set({ v: "flow" }); }} /><hr /></>}
         <It ic="trash-2" n="Remover" k="⌫" danger on={() => ide.askRemove([u.id])} /></>}
     </div>

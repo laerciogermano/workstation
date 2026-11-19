@@ -33,6 +33,10 @@ export interface FlowElement {
   readonly cond: readonly [string, string] | null;
   /** try/catch: id da função que trata a falha desta função (ou de toda a composição). Ausente = sem try. */
   readonly onError?: string | null;
+  /** Irmã dentro do catch: id da função de tratamento (cabeça do catch) a que pertence. Ausente = fluxo principal. */
+  readonly inCatch?: string | null;
+  /** Irmã dentro do for: id da função que carrega o laço (cabeça do for). A irmã não tem laço próprio; pertence ao mesmo for. */
+  readonly inLoop?: string | null;
   readonly code: string | null;
   readonly archived: boolean;
   readonly position: number;

@@ -41,7 +41,7 @@ async function executeOne(projectId: number, m: FlowModel, u: ElementDto, ctl?: 
   if (!a) { await setStatus(u.id, "fail", "Sem responsável: atribua uma pessoa, um agente ou uma biblioteca."); return "fail"; }
   if (a.kind === "pessoa") { await setStatus(u.id, "wait"); return "wait"; }
   await setStatus(u.id, "exec");
-  if (a.kind === "ia") {
+  if (a.kind === "ia" || a.kind === "modelo") {
     await sleep(IA_MS);
     if (ctl?.cancelled) return "cancel";
     await setStatus(u.id, "ok"); return "ok";

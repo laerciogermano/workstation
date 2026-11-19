@@ -1,4 +1,4 @@
-import { TYPE_INFO, agentTasksOf, type AgentKind } from "@flow/shared";
+import { RESP_KINDS, TYPE_INFO, agentTasksOf, taskIsConcrete } from "@flow/shared";
 import { Icon } from "../../ui/Icon";
 import { AgChip, StBadge } from "../../ui/parts";
 import { useIde } from "../ide/ide";
@@ -9,11 +9,11 @@ export function Drawer() {
   const u = m.u(s.drawer); if (!u) return null;
   const p = m.u(u.parentId), ks = m.kidsPlan(u.id).filter(k => !m.isFolder(k));
   const a = m.agent(u.agentId);
-  const tasks = agentTasksOf(a);
+  const concrete = taskIsConcrete(a);
+  const tasks = concrete ? agentTasksOf(a) : [];
   const L = m.flowLayout(u.planId).layout[u.id] ?? { s: 0, e: 0 };
   const chk = m.fopCheck(u.planId);
   const from = "Etapa";
-  const kinds: AgentKind[] = ["ia", "pessoa", "maquina", "script"];
   const comp = ks.some(k => !m.isData(k));
   return (
     <aside className="side" aria-label="Detalhe da unidade">
@@ -27,24 +27,24 @@ export function Drawer() {
         ) : (
           <>
             <div className="fld"><span className="l">Responsável</span>
-              <button className="resp" onClick={() => set({ picker: !s.picker })}><AgChip a={a} />{a && <small style={{ color: "var(--muted)" }}>{TYPE_INFO[a.kind].one}{tasks.length ? ` · ${tasks.length} tasks` : ""}</small>}<Icon n="chevron-down" className="chev" /></button>
+              <button className="resp" onClick={() => set({ picker: !s.picker })}><AgChip a={a} />{a && <small style={{ color: "var(--muted)" }}>{TYPE_INFO[a.kind].one}{agentTasksOf(a).length ? ` · ${agentTasksOf(a).length} tasks` : ""}</small>}<Icon n="chevron-down" className="chev" /></button>
               {s.picker && (
                 <div className="picker">
-                  {kinds.map(t => <div key={t}><h5>{TYPE_INFO[t].n}</h5>{m.agents.filter(c => c.kind === t).map(c => <button key={c.id} className={u.agentId === c.id ? "on" : ""} onClick={() => void ide.assign(u.id, c.id)}><AgChip a={c} /><small>{c.sub}</small></button>)}</div>)}
+                  {RESP_KINDS.map(t => m.agents.some(c => c.kind === t) && <div key={t}><h5>{TYPE_INFO[t].n}</h5>{m.agents.filter(c => c.kind === t).map(c => <button key={c.id} className={u.agentId === c.id ? "on" : ""} onClick={() => void ide.assign(u.id, c.id)}><AgChip a={c} /><small>{c.kind === "arquivo" ? "Arquivo" : c.kind === "modelo" ? c.sub.replace(" de IA", "") : c.sub}</small></button>)}</div>)}
                   <button onClick={() => void ide.assign(u.id, null)}><AgChip /></button>
-                  <div className="note">Só quem está no catálogo do projeto. Filhos não herdam o responsável do pai.</div>
+                  <div className="note">Responsável: arquivo, lib, pessoa, agente ou modelo. Filhos não herdam o pai.</div>
                 </div>)}
             </div>
-            <div className="fld"><label>Task{a?.kind === "maquina" ? " · método da lib" : ""}</label>
+            <div className="fld"><label>Task{concrete ? (a?.kind === "maquina" ? " · método da lib" : " · função do arquivo") : " · verbo abstrato"}</label>
               {tasks.length
                 ? <><select key={u.id + u.title + (a?.id ?? "")} value={tasks.includes(u.title) ? u.title : ""} aria-label="Task" onChange={e => { if (e.target.value) void ide.patchEl(u.id, { title: e.target.value }); }}>
                     {!tasks.includes(u.title) && <option value="" disabled>{u.title || "escolher task…"}</option>}
                     {tasks.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
-                  <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>O nome da etapa é a task cadastrada do responsável{a?.kind === "maquina" ? ` (métodos de ${a.name})` : ""}.</p></>
+                  <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>Método / task do responsável concreto{a?.kind === "maquina" ? ` (${a.name})` : ""}.</p></>
                 : <><input key={u.id + u.title} className="ttl" defaultValue={u.title} aria-label="Task"
                     onBlur={e => { const v = e.target.value.trim(); if (!v) { e.target.value = u.title; ide.toast("A task é obrigatória", "triangle-alert"); return; } if (v !== u.title) void ide.patchEl(u.id, { title: v }); }} />
-                  <p style={{ fontSize: 12, color: "var(--fail)", marginTop: 6 }}>Escolha um responsável com tasks cadastradas.</p></>}
+                  <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>{concrete ? "Este responsável ainda não tem tasks cadastradas." : "Verbo abstrato: texto livre (sem select)."}</p></>}
             </div>
           </>
         )}
@@ -63,11 +63,20 @@ export function Drawer() {
             {u.ins.map(n => <div key={"i" + n}><Icon n="arrow-down-to-line" /><button className="dkind" title={m.isCube(n) ? "Cubo (composto) · clique para virar dado simples □" : "Dado simples □ · clique para virar cubo (composto)"} onClick={() => void ide.toggleCube(n)}><Icon n={m.isCube(n) ? "box" : "square"} /></button><span className="mono" style={{ color: "var(--accent)" }}>{n}</span><span className="r">entrada</span></div>)}
             {u.outs.map(([n, ref]) => <div key={"o" + n}><Icon n="arrow-up-from-line" /><button className="dkind" title={m.isCube(n) ? "Cubo (composto) · clique para virar dado simples □" : "Dado simples □ · clique para virar cubo (composto)"} onClick={() => void ide.toggleCube(n)}><Icon n={m.isCube(n) ? "box" : "square"} /></button><span className="mono" style={{ color: "var(--accent)" }}>{n}</span><span className="r mono">{ref}</span></div>)}
           </div></div>)}
-        {!m.isFolder(u) && <div className="fld"><span className="l">Função FOP · {m.isData(u) ? "dado" : comp ? "composição" : a?.kind === "ia" ? "endereço abstrato (IA no contexto)" : a ? "endereço concreto (import)" : "sem agente"}</span><pre className="sig">{m.fopSig(u)}</pre></div>}
+        {!m.isFolder(u) && <div className="fld"><span className="l">Função FOP · {m.isData(u) ? "dado" : comp ? "composição" : a?.kind === "ia" || a?.kind === "modelo" ? "endereço abstrato (IA no contexto)" : a ? "endereço concreto (import)" : "sem agente"}</span><pre className="sig">{m.fopSig(u)}</pre></div>}
         <div className="fld"><span className="l">Hierarquia</span><div className="list-r">
           {p ? <button onClick={() => ide.openDrawer(p.id)}><Icon n="corner-left-up" />{p.title}<span className="r">pai</span></button> : <div style={{ color: "var(--muted)" }}><Icon n="corner-left-up" />Raiz</div>}
           {ks.map(k => <button key={k.id} onClick={() => ide.openDrawer(k.id)}><Icon n="corner-down-right" />{k.title}<span className="r"><AgChip a={m.agent(k.agentId)} short /><StBadge st={k.status} /></span></button>)}
         </div></div>
+        {!m.isFolder(u) && !m.isData(u) && !ks.some(k => !m.isFolder(k) && !m.isData(k)) && (() => {
+          const hasIf = m.structs.some(st => st.body.includes(u.id));
+          return <div className="fld"><span className="l">Estrutura FOP</span><div className="openin">
+            {hasIf ? <button className="btn" title="Remover seleção (if)" onClick={() => void ide.setStruct(u.id, "if", false)}><Icon n="trash-2" />Remover seleção</button>
+              : <button className="btn" title="Adicionar seleção (if)" onClick={() => void ide.setStruct(u.id, "if", true)}><Icon n="diamond" />Seleção (if)</button>}
+            {u.loop ? <button className="btn" title="Remover repetição (for)" onClick={() => void ide.setStruct(u.id, "loop", false)}><Icon n="trash-2" />Remover repetição</button>
+              : <button className="btn" title="Adicionar repetição (for)" onClick={() => void ide.setStruct(u.id, "loop", true)}><Icon n="repeat" />Repetição (for)</button>}</div>
+            {u.loop && <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>for ({u.loop[0]} of {u.loop[1]})</p>}</div>;
+        })()}
         {a?.kind === "maquina" && <button className="btn" style={{ alignSelf: "flex-start" }} onClick={() => set({ mach: u.id, sel: u.id, drawer: null, console: null })}><Icon n="code-xml" />Programar no Flow</button>}
         <div className="fld"><span className="l">Abrir em</span><div className="openin">
           <button className="btn" onClick={() => { ide.select(u.id); set({ v: "flow" }); }}><Icon n="workflow" />Flow</button>

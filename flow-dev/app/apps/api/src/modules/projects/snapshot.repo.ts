@@ -1,4 +1,4 @@
-import type { Snapshot, ElementDto, RunStatus, DataType } from "@flow/shared";
+import { FILE_AGENT, MODEL_AGENT, type Snapshot, type ElementDto, type AgentDto, type RunStatus, type DataType } from "@flow/shared";
 import { pool, type Db } from "../../db/pool";
 import { notFound } from "../../shared/errors";
 
@@ -11,6 +11,27 @@ export async function ownedProject(q: Q, publicId: string, userId: number): Prom
   return rows[0];
 }
 
+/** Responsáveis virtuais: arquivo (`file:<módulo>`; tasks = funções e scripts do arquivo) e modelo (`md:<modelo>`). */
+function virtualAgents(
+  mods: { id: number; public_id: string; file: string }[],
+  itemsBy: Map<number, { kind: "fn" | "dado" | "script"; ref: string }[]>,
+  elements: ElementDto[],
+  agentRows: { public_id: string; name: string; tasks: string[] | null }[],
+  models: { public_id: string; name: string; vendor: string }[],
+): AgentDto[] {
+  const title = new Map(elements.map(e => [e.id, e.title]));
+  const scriptTasks = new Map(agentRows.map(a => [a.public_id, a.tasks?.length ? a.tasks : [a.name.replace(/\(\)\s*$/, "")]]));
+  const files: AgentDto[] = mods.map(m => {
+    const tasks: string[] = [];
+    for (const it of itemsBy.get(m.id) ?? []) {
+      if (it.kind === "fn") { const t = title.get(it.ref); if (t) tasks.push(t); } else if (it.kind === "script") tasks.push(...(scriptTasks.get(it.ref) ?? []));
+    }
+    return { id: FILE_AGENT + m.public_id, kind: "arquivo", name: m.file, sub: "Arquivo · funções e dados", moduleFile: m.file, modelId: null, prompt: null, photoUrl: null, tasks: [...new Set(tasks)] };
+  });
+  const mdls: AgentDto[] = models.map(m => ({ id: MODEL_AGENT + m.public_id, kind: "modelo", name: m.name, sub: `${m.vendor} · modelo de IA`, moduleFile: null, modelId: m.public_id, prompt: null, photoUrl: null, tasks: [] }));
+  return [...files, ...mdls];
+}
+
 /** Monta o Snapshot completo (formato único consumido pelo front). */
 export async function loadSnapshot(q: Q, projectId: number): Promise<Snapshot> {
   const [proj, plans, models, agents, els, ios, links, structs, members, data, mods, items] = await Promise.all([
@@ -20,7 +41,7 @@ export async function loadSnapshot(q: Q, projectId: number): Promise<Snapshot> {
     q.query(`select a.public_id, a.kind, a.name, a.sub, a.module_file, m.public_id as model_id, a.prompt, a.photo_url, a.tasks
              from flow.agents a left join flow.models m on m.id = a.model_id where a.project_id = $1 order by a.id`, [projectId]),
     q.query(`select e.id, e.public_id, pl.public_id as plan_id, par.public_id as parent_id, e.kind, e.title, e.context,
-                    ag.public_id as agent_id, rs.public_id as resp_id, e.status, e.error, e.progress, e.loop_var, e.loop_list,
+                    coalesce(ag.public_id::text, e.agent_ref) as agent_id, coalesce(rs.public_id::text, e.resp_ref) as resp_id, e.status, e.error, e.progress, e.loop_var, e.loop_list,
                     e.cond_test, g.public_id as goto_id, e.code, e.archived, e.position
              from flow.elements e
              join flow.plans pl on pl.id = e.plan_id
@@ -64,7 +85,10 @@ export async function loadSnapshot(q: Q, projectId: number): Promise<Snapshot> {
     elements,
     links: links.rows.map(r => ({ from: r.f, to: r.t, kind: r.kind })),
     structs: structs.rows.map(r => ({ id: r.pid, test: r.test, body: memBy.get(r.id) ?? [] })),
-    agents: agents.rows.map(r => ({ id: r.public_id, kind: r.kind, name: r.name, sub: r.sub, moduleFile: r.module_file, modelId: r.model_id, prompt: r.prompt, photoUrl: r.photo_url, tasks: (r.tasks as string[] | null) ?? [] })),
+    agents: [
+      ...agents.rows.map(r => ({ id: r.public_id, kind: r.kind, name: r.name, sub: r.sub, moduleFile: r.module_file, modelId: r.model_id, prompt: r.prompt, photoUrl: r.photo_url, tasks: (r.tasks as string[] | null) ?? [] })),
+      ...virtualAgents(mods.rows, itemsBy, elements, agents.rows, models.rows),
+    ],
     models: models.rows.map(r => ({ id: r.public_id, name: r.name, api: r.api_id, vendor: r.vendor, color: r.color })),
     modules: mods.rows.map(r => ({ id: r.public_id, file: r.file, items: itemsBy.get(r.id) ?? [] })),
     data: data.rows.map(r => ({ name: r.name, type: r.type as DataType, value: r.value, position: r.position })),

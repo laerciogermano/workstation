@@ -11,14 +11,14 @@ export interface Ui {
   termOpen: boolean; termLines: ConsoleLine[];
   exp: boolean; expTab: "ir" | "js" | "ts" | "py"; ctx: { id: string | null; x: number; y: number } | null; confirm: string[] | null;
   q: string | null; ren: string | null; fresh: string | null; renLy: string | null; renCat: string | null; edgeMenu: { a: string; b: string; x: number; y: number } | null;
-  ctxPanel: boolean; compacto: boolean; txtIn: boolean; dadosTodos: boolean; noDeps: boolean; catTab: "ia" | "pessoa" | "maquina" | "script"; catBlock: string | null; estado: string | null;
+  ctxPanel: boolean; indent: boolean; compacto: boolean; txtIn: boolean; dadosTodos: boolean; noDeps: boolean; catTab: "ia" | "pessoa" | "maquina"; catBlock: string | null; estado: string | null;
   open: Set<string>; flowClosed: Set<string>; secClosed: Set<string>; clip: { mode: "cut" | "copy"; ids: string[] } | null; focusQ: boolean; flash: string | null;
 }
 const initial = (): Ui => ({
   v: "flow", plan: null, flowRoot: null, sel: null, multi: [], drawer: null, picker: false, dadoEdit: null, agCfg: null, mdCfg: null, mach: null, console: null,
   termOpen: false, termLines: [],
   exp: false, expTab: "js", ctx: null, confirm: null, q: null, ren: null, fresh: null, renLy: null, renCat: null, edgeMenu: null,
-  ctxPanel: false, compacto: false, txtIn: false, dadosTodos: false, noDeps: false, catTab: "ia", catBlock: null, estado: null,
+  ctxPanel: false, indent: true, compacto: false, txtIn: false, dadosTodos: false, noDeps: false, catTab: "ia", catBlock: null, estado: null,
   open: new Set(), flowClosed: new Set(), secClosed: new Set(), clip: null, focusQ: false, flash: null,
 });
 
@@ -39,6 +39,7 @@ export interface Ide {
   // dados e catálogo
   saveDado: (name: string, v: { type?: string; value?: string | null; moduleFile?: string }) => Promise<void>; addKid: (parent: string, name: string) => Promise<void>; toggleCube: (name: string) => Promise<void>; newDado: () => Promise<void>;
   // execução e exportação
+  setStruct: (id: string, kind: "if" | "loop", on: boolean) => Promise<void>;
   runPlan: () => Promise<void>; complete: (id: string) => Promise<void>; cancelRun: () => Promise<void>; retry: (id: string) => Promise<void>; runMachine: (id: string, code: string) => Promise<void>; openExport: (tab?: Ui["expTab"]) => void;
   termLog: (lines: ConsoleLine | ConsoleLine[]) => void; clearTerm: () => void; toggleTerm: () => void;
 }
@@ -174,6 +175,14 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
     const r = await call(() => api.post<{ name: string; hostId: string }>(pid, `/plans/${plan}/new-dado`));
     if (r) { set({ dadoEdit: r.name, estado: r.name, sel: r.hostId, drawer: null }); toast(`Dado “${r.name}” — defina o valor para ficar concreto`, "box"); }
   };
+  const setStruct: Ide["setStruct"] = async (id, kind, on) => {
+    const u = U(id); set({ edgeMenu: null });
+    if (on && u && m.kidsPlan(u.id).some(k => !m.isFolder(k) && !m.isData(k))) { toast(`${kind === "if" ? "Seleção" : "Repetição"} aplica-se a uma task folha`, "info"); return; }
+    const test = u?.ins[0] ?? (kind === "if" ? "condicao" : "lista");
+    const r = await call(() => api.post(pid, `/elements/${id}/struct`, { kind, on }));
+    if (r === undefined && !on) { /* erro já tratado em call */ }
+    toast(kind === "if" ? (on ? `Seleção if (${test}) em ${u?.title ?? ""}` : "Seleção removida") : (on ? `Repetição for (item of ${test}) em ${u?.title ?? ""}` : `Repetição removida de ${u?.title ?? ""}`), kind === "if" ? "diamond" : "repeat");
+  };
   const termLog: Ide["termLog"] = lines => {
     const arr = Array.isArray(lines) ? lines : [lines];
     patch(u => ({ termOpen: true, termLines: [...u.termLines, ...arr] }));
@@ -186,7 +195,7 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
     // Executar vale para tudo: Node executa lib (logs no Terminal), IA/pessoa via runner do plano
     const leaves = m.ganttRows(plan).map(r => r.u).filter(u => !m.isData(u) && !m.flowKids(u).length && (!u.status || u.status === "pendente" || u.status === "wait"));
     if (!leaves.length) { toast("Nada a executar. Falhas só voltam com “Tentar de novo”.", "info"); return; }
-    const machines = leaves.filter(u => ["maquina", "script"].includes(m.agent(u.agentId)?.kind ?? ""));
+    const machines = leaves.filter(u => ["maquina", "script", "arquivo"].includes(m.agent(u.agentId)?.kind ?? ""));
     const others = leaves.filter(u => !machines.includes(u));
     try {
       termLog({ kind: "cmd", text: `$ flow run --plano ${m.plans.find(p => p.id === plan)?.name ?? plan}` });
@@ -227,7 +236,7 @@ export function IdeProvider({ pid, children }: { pid: string; children: ReactNod
 
   const ide: Ide = {
     pid, m, s, set, patch, toast, exportData, call, select, openDrawer, closePanels, revealDado, editDado, setFlowRootFrom, openFlowView, activeFlowRoot, toggleOpen, toggleFlowClosed,
-    addFn, newFlow, renameCommit, renameCancel, askRemove, confirmRemove, patchEl, assign, dup, paste, move, saveDado, addKid, toggleCube, newDado, runPlan, complete, cancelRun, retry, runMachine, openExport,
+    addFn, newFlow, renameCommit, renameCancel, askRemove, confirmRemove, patchEl, assign, dup, paste, move, saveDado, addKid, toggleCube, newDado, setStruct, runPlan, complete, cancelRun, retry, runMachine, openExport,
     termLog, clearTerm, toggleTerm,
   };
   return <IdeCtx.Provider value={{ ...ide, exportData }}>{children}<ExportLoader ide={ide} setData={setExportData} /></IdeCtx.Provider>;

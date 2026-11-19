@@ -34,6 +34,8 @@ export interface Disp {
 }
 /** Bloco try/catch visível: cabeçalho, extensão em linhas e função de tratamento. */
 export interface TryBlock { readonly u: FlowElement; /** Última função coberta pelo try (o bloco vai de `u` até `last`). */ readonly last: FlowElement; readonly hi: number; readonly end: number; readonly to: FlowElement; /** Faixa do catch (abaixo do try): cabeçalho e última linha. */ readonly catchHi?: number; readonly catchEnd?: number }
+/** Bloco for visível: cabeçalho e extensão em linhas (cobre as irmãs consecutivas com o mesmo laço). */
+export interface LoopBlock { readonly u: FlowElement; readonly last: FlowElement; readonly hi: number; readonly end: number }
 export type FnKind = "nag" | "abs" | "conc";
 export interface Geo { x1: number; x2: number; ix: number; ox: number }
 
@@ -53,6 +55,7 @@ export interface Scene {
   readonly idxTry: Readonly<Record<string, number>>;
   readonly idxOut: Readonly<Record<string, number>>; readonly idxEnd: Readonly<Record<string, number>>; readonly idxLoop: Readonly<Record<string, number>>;
   readonly tries: readonly TryBlock[];
+  readonly loops: readonly LoopBlock[];
   tryBlockOf(e: FlowElement): FlowElement[];
   prevSibling(e: FlowElement): FlowElement | undefined;
   readonly stShow: readonly (readonly (readonly [string, boolean, number])[])[];
@@ -115,6 +118,8 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   const handlerOf = (e: FlowElement): FlowElement | undefined => { const t = e.onError ? u(e.onError) : undefined; return t && !t.archived ? t : undefined; };
   const catchIds = new Set<string>();
   els.forEach(e => { if (!e.archived) { const h = handlerOf(e); if (h) catchIds.add(h.id); } });
+  const catchMembersOf = (hid: string): FlowElement[] => els.filter(e => !e.archived && e.inCatch === hid && e.kind === "file").sort((a, b) => a.position - b.position);
+  els.forEach(e => { if (!e.archived && e.inCatch && catchIds.has(e.inCatch)) catchIds.add(e.id); });
   // bloco try: irmãs consecutivas do fluxo principal com o mesmo tratamento formam um único try
   const sibsOf = (x: FlowElement): FlowElement[] => els.filter(e => e.parentId === x.parentId && !e.archived && e.kind === "file" && !catchIds.has(e.id));
   const prevSibling = (x: FlowElement): FlowElement | undefined => { const sb = sibsOf(x), i = sb.findIndex(e => e.id === x.id); return i > 0 ? sb[i - 1] : undefined; };
@@ -139,7 +144,8 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   const descOf = (id: string): FlowElement[] => { const out: FlowElement[] = []; const walk = (p: string): void => els.filter(x => x.parentId === p).forEach(k => { out.push(k); walk(k.id); }); walk(id); return out; };
 
   const hidden = (id: string): boolean => { let p = u(id)?.parentId ?? null; while (p && !isFolder(u(p))) { if (closed.has(p)) return true; p = u(p)?.parentId ?? null; } return false; };
-  interface RowEntry { u: FlowElement; d: number; catchFor?: string; catchAfter?: string; lane?: string; laneRoot?: string }
+  const FD: [string, string][] = [];
+  interface RowEntry { u: FlowElement; d: number; catchMember?: string; catchFor?: string; catchAfter?: string; lane?: string; laneRoot?: string }
   const allRows: RowEntry[] = [], seenCatch = new Set<string>();
   type Pending = { x: FlowElement; h: FlowElement; d: number; after: string };
   // faixas catch ficam por último, no fim do bloco que contém o try: o fluxo principal segue contínuo e o catch vem embaixo
@@ -153,7 +159,11 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
     if (!h || seenCatch.has(h.id)) return;
     const blk = tryBlockOf(x), head = blk[0]!, last = blk.at(-1)!;
     // o catch sempre vem logo depois da última função do bloco try; o elemento seguinte do fluxo vem depois do catch
-    if (last.id === x.id) { seenCatch.add(h.id); const own: Pending[] = []; walkOne(h, d, { id: head.id, root: h.id }, head.id, own, last.id); flush(own); }
+    if (last.id === x.id) { seenCatch.add(h.id); const own: Pending[] = []; walkOne(h, d, { id: head.id, root: h.id }, head.id, own, last.id); flush(own);
+      // irmãs do catch: em sequência com a função de tratamento, dentro da mesma faixa
+      let prev = h;
+      catchMembersOf(h.id).forEach(m => { FD.push([prev.id, m.id]); allRows.push({ u: m, d, lane: head.id, laneRoot: m.id, catchMember: head.id, catchFor: head.id, catchAfter: last.id }); const mo: Pending[] = []; flowKids(m).forEach(k => walkOne(k, d + 1, { id: head.id, root: m.id }, undefined, mo)); flush(mo); prev = m; });
+    }
   };
   tops().forEach(t => { const pend: Pending[] = []; walkOne(t, 0, undefined, undefined, pend); flush(pend); });
   const laneHidden = (r: RowEntry): boolean => {
@@ -166,7 +176,6 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   const rows = allRows.filter(r => (r.lane ? !laneHidden(r) : !hidden(r.u.id)));
 
   // ---------- sequência (FD) ----------
-  const FD: [string, string][] = [];
   const seqLink = (list: FlowElement[]): void => {
     const groups: FlowElement[][] = [];
     list.forEach(x => { const g = groups[groups.length - 1]; if (g && g.some(y => isPar(y.id, x.id))) g.push(x); else groups.push([x]); });
@@ -210,22 +219,23 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   };
   let offset = 0;
   tops().forEach(t => { place(t.id, offset); offset += width(t.id); });
-  // try/catch no tempo: catch na coluna seguinte ao fim do try; o próximo da sequência principal vem depois do catch inteiro
-  const catchRows = allRows.filter(r => r.catchFor)
-    .sort((a, b) => (layout[a.catchAfter ?? a.catchFor!]?.e ?? 0) - (layout[b.catchAfter ?? b.catchFor!]?.e ?? 0));
-  catchRows.forEach(r => {
-    const tryE = layout[r.catchAfter ?? r.catchFor!]?.e ?? 0;
-    place(r.u.id, tryE + 1);
-    const catchE = layout[r.u.id]!.e;
-    const oldNext = tryE + 1;
-    const delta = catchE + 1 - oldNext;
+  // try/catch em paralelo: o catch (função de tratamento + irmãs) ocupa os mesmos passos do try e termina junto com a última célula do try;
+  // o próximo da sequência principal só vem depois do try E do catch
+  const groups = new Map<string, RowEntry[]>();
+  allRows.filter(r => r.catchFor).forEach(r => { const k = r.catchFor + ">" + (r.catchAfter ?? ""); (groups.get(k) ?? groups.set(k, []).get(k)!).push(r); });
+  [...groups.values()].sort((a, b) => (layout[a[0]!.catchAfter ?? a[0]!.catchFor!]?.e ?? 0) - (layout[b[0]!.catchAfter ?? b[0]!.catchFor!]?.e ?? 0)).forEach(g => {
+    const tryE = layout[g[0]!.catchAfter ?? g[0]!.catchFor!]?.e ?? 0;
+    const total = g.reduce((n, r) => n + width(r.u.id), 0);
+    let x = Math.max(0, tryE - total + 1);
+    g.forEach(r => { place(r.u.id, x); x = layout[r.u.id]!.e + 1; });
+    const delta = x - 1 - tryE;                                    // quanto o catch passa do fim do try
     if (delta <= 0) return;
-    const skip = new Set([r.u.id, ...descOf(r.u.id).map(x => x.id)]);
+    const skip = new Set(g.flatMap(r => [r.u.id, ...descOf(r.u.id).map(y => y.id)]));
     Object.keys(layout).forEach(id => {
       if (skip.has(id)) return;
       const L = layout[id]!;
-      if (L.s >= oldNext) layout[id] = { s: L.s + delta, e: L.e + delta };
-      else if (L.e >= oldNext) layout[id] = { s: L.s, e: L.e + delta };
+      if (L.s > tryE) layout[id] = { s: L.s + delta, e: L.e + delta };
+      else if (L.e > tryE) layout[id] = { s: L.s, e: L.e + delta };
     });
   });
   const nSteps = Math.max(1, ...Object.values(layout).map(l => l.e + 1), offset > 0 ? offset - 1 : 1);
@@ -258,12 +268,27 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   structs.forEach(st => { (headAt[st.i0] ??= []).push(st); });
   const leaf = (e: FlowElement): boolean => !hasKids(e);
 
+  // for em bloco: a função com o laço é a cabeça; as irmãs consecutivas com `inLoop` = cabeça pertencem ao mesmo for, sem laço próprio
+  const loopHead = (e: FlowElement): boolean => !!e.loop;
+  const loopOf = (e: FlowElement): FlowElement | undefined => { const hd = e.inLoop ? u(e.inLoop) : undefined; return hd && !hd.archived && hd.loop ? hd : undefined; };
+  const loopBlockOf = (e: FlowElement): FlowElement[] => {
+    const sb = sibsOf(e); let i = sb.findIndex(x => x.id === e.id); if (i < 0) return [e];
+    const out = [e]; while (i + 1 < sb.length && sb[i + 1]!.inLoop === e.id) out.push(sb[++i]!); return out;
+  };
   const disp: Disp[] = [];
+  // composição (camada) também tem entradas e saídas: as entradas vêm antes dela, as saídas depois do último descendente
+  const pendingOuts: { u: FlowElement; d: number; lane: string | undefined }[] = [];
+  const flushOuts = (r?: RowEntry): void => {
+    while (pendingOuts.length && (!r || r.d <= pendingOuts.at(-1)!.d || r.lane !== pendingOuts.at(-1)!.lane)) {
+      const p = pendingOuts.pop()!; p.u.outs.forEach((o, j) => disp.push({ io: "out", u: p.u, d: p.d, nm: o[0], first: j === 0 }));
+    }
+  };
   rows.forEach((r, i) => {
-    if (r.catchFor) disp.push({ ca: r.u, from: u(r.catchFor)!, d: r.d });
+    flushOuts(r);
+    if (r.catchFor && !r.catchMember) disp.push({ ca: r.u, from: u(r.catchFor)!, d: r.d });
     if (handlerOf(r.u) && isTryHead(r.u)) disp.push({ tr: r.u, d: r.d });
     (headAt[i] ?? []).forEach(st => disp.push({ st, d: r.d }));
-    if (leaf(r.u) && r.u.loop) disp.push({ lp: r.u, d: r.d });
+    if (r.u.loop && loopHead(r.u)) disp.push({ lp: r.u, d: r.d });
     if (!flags.compact && leaf(r.u) && newIns(r.u).length) {
       let k = disp.length - 1; while (k >= 0 && (disp[k]!.st || disp[k]!.lp || disp[k]!.tr || disp[k]!.ca)) k--;
       const grp: Disp[] = []; while (k >= 0 && disp[k]!.io === "out" && (!grp.length || disp[k]!.u === grp[0]!.u)) { grp.unshift(disp[k]!); k--; }
@@ -271,9 +296,12 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
       if (grp.length && !grp[0]!.to && same(grp.map(g => g.nm!), newIns(r.u))) grp.forEach(g => { g.to = r.u; });
       else newIns(r.u).forEach((n, j) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j === 0 }));
     }
+    if (!flags.compact && !leaf(r.u) && newIns(r.u).length) newIns(r.u).forEach((n, j) => disp.push({ io: "in", u: r.u, d: r.d, nm: n, first: j === 0 }));
     disp.push({ u: r.u, d: r.d, row: true });
+    if (!flags.compact && !leaf(r.u) && r.u.outs.length) pendingOuts.push({ u: r.u, d: r.d, lane: r.lane });
     if (!flags.compact && leaf(r.u) && r.u.outs.length) r.u.outs.forEach((o, j) => disp.push({ io: "out", u: r.u, d: r.d, nm: o[0], first: j === 0 }));
   });
+  flushOuts();
   const idx: Record<string, number> = {}, idxIn: Record<string, number> = {}, idxOut: Record<string, number> = {}, idxEnd: Record<string, number> = {}, idxLoop: Record<string, number> = {}, idxTry: Record<string, number> = {}, idxCa: Record<string, number> = {};
   disp.forEach((r, i) => {
     if (r.ca) idxCa[r.ca.id] = i; else if (r.tr) idxTry[r.tr.id] = i; else if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i;
@@ -289,8 +317,15 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
     const last = Math.max(...[...ids].map(x => idxEnd[x] ?? idx[x] ?? -1));
     const catchHi = idxCa[to.id];
     let catchEnd: number | undefined;
-    if (catchHi != null) { const hs = new Set([to.id, ...descOf(to.id).map(x => x.id)]); catchEnd = Math.max(catchHi, ...[...hs].map(x => idxEnd[x] ?? idx[x] ?? -1)); }
+    if (catchHi != null) { const hs = new Set([to, ...catchMembersOf(to.id)].flatMap(m => [m.id, ...descOf(m.id).map(x => x.id)])); catchEnd = Math.max(catchHi, ...[...hs].map(x => idxEnd[x] ?? idx[x] ?? -1)); }
     tries.push({ u: e, last: members.at(-1)!, hi: idxTry[id]!, end: Math.max(last, idxTry[id]!), to, ...(catchHi != null ? { catchHi, catchEnd: catchEnd! } : {}) });
+  });
+
+  const loops: LoopBlock[] = Object.keys(idxLoop).map(id => {
+    const e = u(id)!, members = loopBlockOf(e);
+    const ids = new Set(members.flatMap(m => [m.id, ...descOf(m.id).map(x => x.id)]));
+    const end = Math.max(idxLoop[id]!, ...[...ids].map(x => idxEnd[x] ?? idx[x] ?? -1));
+    return { u: e, last: members.at(-1)!, hi: idxLoop[id]!, end };
   });
 
   // ---------- dimensões ----------
@@ -308,7 +343,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   };
 
   // ---------- estados s0..sN (rodapé) ----------
-  const fnRows = rows.map(r => r.u).filter(isFn);
+  const fnRows = rows.map(r => r.u).filter(e => isFn(e) || e.ins.length || e.outs.length);
   // só dados que ESTE fluxo usa (entrada/saída das suas funções, ou campos/pai deles); o catálogo do projeto não entra
   const usedNames = uniqNames(fnRows.flatMap(e => [...e.ins, ...e.outs.map(o => o[0])]));
   const related = (n: string): boolean => usedNames.some(x => n === x || n.startsWith(x + ".") || x.startsWith(n + "."));
@@ -343,7 +378,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   const stepOf = (e: FlowElement): number => Math.max(0, (layout[e.id]?.s ?? s0Root) - s0Root);
   const ind = (e: FlowElement, d: number): number => d * 16 + stepOf(e) * 10;
   const inIf = (id: string): boolean => structs.some(st => st.body.includes(id));
-  const nestOf = (r: Disp): number => { if (r.lp || r.st || r.tr || r.ca) return 0; const e = r.u; if (!e) return 0; return (e.loop && !hasKids(e) ? 1 : 0) + (inIf(e.id) ? 1 : 0); };
+  const nestOf = (r: Disp): number => { if (r.lp || r.st || r.tr || r.ca) return 0; const e = r.u; if (!e) return 0; return ((e.loop || loopOf(e)) && !hasKids(e) ? 1 : 0) + (inIf(e.id) ? 1 : 0); };
   const padL = (e: FlowElement, d: number, nest: number, base = 10): number => (flags.indent ? ind(e, d) + nest * NEST + base : base);
   const ancs = (e: FlowElement): FlowElement[] => { const out: FlowElement[] = []; let p = u(e.parentId); while (p && !isFolder(p)) { out.unshift(p); if (p.id === rootId) break; p = u(p.parentId); } return out; };
   const dOf = (e: FlowElement): number => { let d = 0, p = u(e.parentId); while (p && !isFolder(p) && p.id !== rootId) { d++; p = u(p.parentId); } return p && p.id === rootId ? d + 1 : d; };
@@ -359,7 +394,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
 
   return {
     snap, input, rows, disp, structs, layout, nSteps, FD, W, OX, CW, INS, H, HH, yF, FOOT, worldW: LW + CW, worldH: HH, axW: nSteps * W,
-    idx, idxIn, idxOut, idxEnd, idxLoop, idxTry, tries, stShow, planName: (snap.plans.find(p => p.id === planId)?.name ?? "") + (rootId && u(rootId) ? " · " + u(rootId)!.title : ""),
+    idx, idxIn, idxOut, idxEnd, idxLoop, idxTry, tries, loops, stShow, planName: (snap.plans.find(p => p.id === planId)?.name ?? "") + (rootId && u(rootId) ? " · " + u(rootId)!.title : ""),
     u, agent, hasKids, isFn, fnKind, geo, newIns, absData, isCube, dKids, dLeaf, inIf, senaoOf, bidOf, padL, nestOf, guides, tryBlockOf, prevSibling, topsOfPlan: () => planTops(snap, planId),
   };
 }

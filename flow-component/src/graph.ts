@@ -65,11 +65,12 @@ export function ensureData(data: readonly DataDef[], name: string, type: DataTyp
   return [...data, { name, type, value: null, position: data.reduce((m, d) => Math.max(m, d.position + 1), 0) }];
 }
 
-/** Funções de tratamento (alvos de onError): exclusivas do catch, fora da sequência principal. */
+/** Funções de tratamento (alvos de onError) e suas irmãs dentro do catch: exclusivas do catch, fora da sequência principal. */
 export function catchTargets(s: Snapshot): Set<string> {
   const byId = new Map(s.elements.map(e => [e.id, e] as const));
   const out = new Set<string>();
   for (const e of s.elements) if (!e.archived && e.onError) { const h = byId.get(e.onError); if (h && !h.archived) out.add(h.id); }
+  for (const e of s.elements) if (!e.archived && e.inCatch && out.has(e.inCatch)) out.add(e.id);
   return out;
 }
 /** Irmãs do fluxo principal (sem arquivadas nem funções de tratamento), em ordem. */
@@ -77,3 +78,6 @@ export function flowSiblings(s: Snapshot, parentId: string | null): FlowElement[
   const c = catchTargets(s);
   return children(s, parentId).filter(e => e.kind === "file" && !e.archived && !c.has(e.id));
 }
+
+/** Função raiz do fluxo (pai é pasta ou nada): não ganha irmão, `for`, `if` nem remoção pela vista. */
+export const isFlowRoot = (s: Snapshot, e: FlowElement): boolean => !e.parentId || findEl(s, e.parentId)?.kind === "folder";

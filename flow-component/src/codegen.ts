@@ -1,5 +1,5 @@
 import type { ExportFormat } from "./commands";
-import { children } from "./graph";
+import { catchTargets, children } from "./graph";
 import type { Exporter } from "./ports";
 import { err, ok } from "./result";
 import type { Agent, FlowElement, Snapshot } from "./types";
@@ -41,7 +41,7 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
   const S = buildScene(snap, { planId, rootId, closed: new Set(), flags: DEFAULT_FLAGS });
   const byId = new Map(snap.elements.map(e => [e.id, e] as const));
   // função de tratamento (alvo de onError) é exclusiva do catch: não entra na sequência
-  const catchIds = new Set(snap.elements.filter(e => !e.archived && e.onError && byId.get(e.onError) && !byId.get(e.onError)!.archived).map(e => e.onError!));
+  const catchIds = catchTargets(snap);
   const roots = rootId ? [byId.get(rootId)].filter((e): e is FlowElement => !!e) : planTops(snap, planId).filter(t => !catchIds.has(t.id));
   const kidsOf = (e: FlowElement): FlowElement[] => children(snap, e.id).filter(k => k.kind === "file" && !k.archived && k.planId === planId && !catchIds.has(k.id));
   const isComp = (e: FlowElement): boolean => kidsOf(e).length > 0;
@@ -92,7 +92,8 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
 
   const emitLeaf = (e: FlowElement): string[] => {
     const L: string[] = [], outs = uniq(e.outs.map(o => dvar(o[0])));
-    const ins = uniq([...e.ins.map(dvar), ...(e.loop ? [dvar(e.loop[0])] : [])]);
+    const lp = e.loop ?? (e.inLoop ? byId.get(e.inLoop)?.loop : null);
+    const ins = uniq([...e.ins.map(dvar), ...(lp ? [dvar(lp[0])] : [])]);
     L.push(`async function ${nameOf(e)}(state: State): Promise<State> {`);
     if (ins.length) L.push(`  const { ${ins.join(", ")} } = state;`);
     const call = leafCall(e);
@@ -106,7 +107,7 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
 
   /** Chamada de uma filha dentro da camada: `const { a } = await f({ ...state, x })`, com for / try / if.
    *  `inBlock`: o try é de um bloco com várias funções (declara as saídas e envolve o bloco todo), então aqui só atribui. */
-  const emitCall = (x: FlowElement, scope: string[], ind: string, inBlock = false): string[] => {
+  const emitCall = (x: FlowElement, scope: string[], ind: string, inBlock = false, loopVar?: string): string[] => {
     const L: string[] = [], fn = nameOf(x), outs = uniq(x.outs.map(o => dvar(o[0]))), handler = x.onError ? byId.get(x.onError) : undefined;
     const withErr = !inBlock && handler && !handler.archived ? handler : undefined;
     const args = (extra: string[] = []): string => { const n = needsOf(x).filter(v => scope.includes(v)); return `{ ...state${[...n, ...extra].map(v => ", " + v).join("")} }`; };
@@ -114,9 +115,9 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
     const assign = (!!withErr || !!x.loop || inBlock) && outs.length > 0;
     const bind = outs.length ? `{ ${outs.join(", ")} }` : "";
     const core: string[] = [];
-    if (x.loop && !isComp(x)) {
+    if (x.loop && !loopVar) {
       core.push(`for (const ${dvar(x.loop[0])} of ${dvar(x.loop[1])}) {`, `  ${outs.length ? `(${bind} = ` : ""}await ${fn}(${args([dvar(x.loop[0])])})${outs.length ? ")" : ""};`, "}");
-    } else core.push(`${outs.length ? (assign ? `(${bind} = ` : `const ${bind} = `) : ""}await ${fn}(${args()})${assign ? ")" : ""};`);
+    } else core.push(`${outs.length ? (assign ? `(${bind} = ` : `const ${bind} = `) : ""}await ${fn}(${args(loopVar ? [loopVar] : [])})${assign ? ")" : ""};`);
     if (assign && !inBlock) L.push(`let ${outs.map(o => `${o}: unknown`).join(", ")};`);
     if (withErr) {
       need(withErr);
@@ -139,7 +140,7 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
     const any = g.some(k => outsOf(k).length);
     const calls = g.map(k => {
       const fn = nameOf(k), n = needsOf(k).filter(v => scope.includes(v)), a = `{ ...state${n.map(v => ", " + v).join("")}${k.loop ? ", " + dvar(k.loop[0]) : ""} }`;
-      let c = k.loop && !isComp(k) ? `Promise.all(${dvar(k.loop[1])}.map(${dvar(k.loop[0])} => ${fn}(${a}))).then(r => Object.assign({}, ...r) as State)` : `${fn}(${a})`;
+      let c = k.loop ? `Promise.all(${dvar(k.loop[1])}.map(${dvar(k.loop[0])} => ${fn}(${a}))).then(r => Object.assign({}, ...r) as State)` : `${fn}(${a})`;
       const h = !inBlock && k.onError ? byId.get(k.onError) : undefined;
       if (h && !h.archived) { need(h); c += `.catch(error => ${nameOf(h)}({ ...state${scope.map(v => ", " + v).join("")}, error }))`; }
       return c;
@@ -150,6 +151,19 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
     g.forEach(k => outsOf(k).forEach(o => { if (!scope.includes(o)) scope.push(o); }));
     g.filter(k => k.cond).forEach(k => { const back = byId.get(k.cond![1]); if (back) { need(back); L.push(`if (!${dvar(k.cond![0])}) return ${nameOf(back)}({ ...state${scope.map(v => ", " + v).join("")} });  // senão → ${back.title}`); } });
     return L.map(l => ind + l);
+  };
+
+  /** Uma unidade a partir do passo `i` (até `end`): um passo comum, ou um for em bloco — a função com o laço + as irmãs com `inLoop`
+   *  viram um único `for` com todas as chamadas dentro. Devolve as linhas e quantos passos consumiu. */
+  const emitUnit = (steps: FlowElement[][], i: number, end: number, scope: string[], ind: string, inBlock: boolean): { lines: string[]; used: number } => {
+    const g = steps[i]!, ok = (k: FlowElement): boolean => inBlock || !k.onError;
+    const hd = g.length === 1 && g[0]!.loop && ok(g[0]!) ? g[0]! : undefined;
+    const members: FlowElement[] = []; let j = i + 1;
+    if (hd) while (j < end && steps[j]!.length === 1 && steps[j]![0]!.inLoop === hd.id && ok(steps[j]![0]!)) members.push(steps[j++]![0]!);
+    if (!hd || !members.length) return { lines: emitGroup(g, scope, ind, inBlock), used: 1 };
+    const all = [hd, ...members]; all.forEach(k => need(k));
+    const lv = dvar(hd.loop![0]), outsAll = uniq(all.flatMap(k => k.outs.map(o => dvar(o[0]))));
+    return { lines: [...(outsAll.length && !inBlock ? [`${ind}let ${outsAll.map(o => `${o}: unknown`).join(", ")};`] : []), `${ind}for (const ${lv} of ${dvar(hd.loop![1])}) {`, ...all.flatMap(k => emitCall(k, scope, ind + "  ", true, lv)), `${ind}}`], used: j - i };
   };
 
   const emitComp = (e: FlowElement): string[] => {
@@ -167,13 +181,13 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
     flushRun();
     for (let gi = 0; gi < groups.length;) {
       const g = groups[gi]!, B = g.map(k => blockOf.get(k.id)).find(Boolean);
-      if (!B) { L.push(...emitGroup(g, scope, "  ", false)); gi++; continue; }
+      if (!B) { const one = emitUnit(groups, gi, groups.length, scope, "  ", false); L.push(...one.lines); gi += one.used; continue; }
       const ids = new Set(B.map(k => k.id)), gs: FlowElement[][] = []; let seen = 0;
       while (gi < groups.length && seen < B.length) { const gg = groups[gi]!; gs.push(gg); seen += gg.filter(k => ids.has(k.id)).length; gi++; }
       const h = byId.get(B[0]!.onError!); if (!h) continue; need(h);
       const outsAll = uniq(gs.flat().flatMap(k => k.outs.map(o => dvar(o[0])))), before = scope.slice();
       if (outsAll.length) L.push(`  let ${outsAll.map(o => `${o}: unknown`).join(", ")};`);
-      L.push("  try {", ...gs.flatMap(gg => emitGroup(gg, scope, "    ", true)), "  } catch (error) {", `    return ${nameOf(h)}({ ...state${before.map(v => ", " + v).join("")}, error });  // catch → ${h.title}`, "  }");
+      L.push("  try {", ...((): string[] => { const o: string[] = []; for (let q = 0; q < gs.length;) { const u = emitUnit(gs, q, gs.length, scope, "    ", true); o.push(...u.lines); q += u.used; } return o; })(), "  } catch (error) {", `    return ${nameOf(h)}({ ...state${before.map(v => ", " + v).join("")}, error });  // catch → ${h.title}`, "  }");
     }
     L.push(scope.length ? `  return { ${scope.join(", ")} };` : "  return {};", "}");
     return L;
@@ -182,7 +196,7 @@ export function generateTypeScript(snap: Snapshot, opts: CodegenOptions = {}): G
   const emit = (e: FlowElement): void => {
     if (emitted.has(e.id)) return; emitted.add(e.id);
     const body = isComp(e) ? emitComp(e) : emitLeaf(e);
-    const doc = [`/** ${e.title} · ${respLabel(e)}${e.loop ? ` · for (${e.loop[0]} of ${e.loop[1]})` : ""}${e.onError ? " · try/catch" : ""} */`];
+    const doc = [`/** ${e.title} · ${respLabel(e)}${(e.loop ?? (e.inLoop ? byId.get(e.inLoop)?.loop : null)) ? ` · for (${(e.loop ?? byId.get(e.inLoop!)!.loop)![0]} of ${(e.loop ?? byId.get(e.inLoop!)!.loop)![1]})` : ""}${e.onError ? " · try/catch" : ""} */`];
     const exp = roots.some(r => r.id === e.id) ? "export " : "";
     const start = out.length + 1;
     out.push(...doc, exp + body[0], ...body.slice(1), "");

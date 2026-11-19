@@ -5,6 +5,8 @@ import { DATA_TYPES } from "./types";
 const text = (max: number) => z.string().trim().min(1).max(max);
 const dataName = z.string().trim().min(1).max(160).regex(/^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*$/, "Use letras, números e _ (com . para campos filhos)");
 const uuid = z.string().uuid();
+/** Responsável: agente do catálogo (uuid) ou virtual — `file:<módulo>` / `md:<modelo>`. */
+const respRef = z.string().regex(/^((file|md):)?[0-9a-f-]{36}$/i, "Responsável inválido");
 
 export const registerBody = z.object({ email: z.string().trim().toLowerCase().email().max(200), password: z.string().min(8).max(200), name: text(120) });
 export const guestBody = z.object({ key: z.string().uuid().optional() });
@@ -24,8 +26,8 @@ const pair = z.tuple([z.string().trim().min(1).max(160), z.string().trim().min(1
 export const patchElementBody = z.object({
   title: text(200),
   context: z.string().max(2000).nullable(),
-  agentId: uuid.nullable(),
-  respId: uuid.nullable(),
+  agentId: respRef.nullable(),
+  respId: respRef.nullable(),
   code: z.string().max(100_000).nullable(),
   archived: z.boolean(),
   loop: pair.nullable(),
@@ -36,6 +38,7 @@ export const patchElementBody = z.object({
 export const moveElementBody = z.object({ refId: uuid, mode: z.enum(["child", "after", "before"]) });
 export const pasteBody = z.object({ ids: z.array(uuid).min(1).max(100), mode: z.enum(["cut", "copy"]), destId: uuid.nullable() });
 export const edgeIfBody = z.object({ fromId: uuid, toId: uuid });
+export const structBody = z.object({ kind: z.enum(["if", "loop"]), on: z.boolean() });
 export const edgeLoopBody = z.object({ toId: uuid });
 export const parallelBody = z.object({ a: uuid, b: uuid, on: z.boolean() });
 

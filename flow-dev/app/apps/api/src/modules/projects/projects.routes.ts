@@ -2,7 +2,7 @@ import { Router, type Request, type Response } from "express";
 import {
   FlowModel, addDataKidBody, createAgentBody, createElementBody, createModelBody, createModuleBody, createProjectBody, edgeIfBody, edgeLoopBody,
   exportQuery, exportFileName, generate, moveElementBody, parallelBody, pasteBody, patchAgentBody, patchElementBody, patchModelBody, patchModuleBody,
-  renameProjectBody, toggleCubeBody, upsertDataBody, type Snapshot,
+  renameProjectBody, structBody, toggleCubeBody, upsertDataBody, type Snapshot,
 } from "@flow/shared";
 import { pool, withTx, type Db } from "../../db/pool";
 import { ah, parse } from "../../shared/http";
@@ -55,16 +55,17 @@ projectsRouter.post("/", ah(async (req, res) => {
     await db.query("insert into flow.agents (project_id, kind, name, sub, model_id, prompt) values ($1,'ia','Lia','Agente · redação',$2,'Descreva aqui o que este agente faz.')", [p, m]);
     const consoleAg = (await db.query("select id from flow.agents where project_id=$1 and name='node:console'", [p])).rows[0].id as number;
     const helloPlan = (await db.query("insert into flow.plans (project_id, name, position) values ($1,'Hello World',1) returning id", [p])).rows[0].id as number;
-    const hello = (await db.query("insert into flow.elements (project_id, plan_id, kind, title, context, position) values ($1,$2,'file','Hello World','Projeto console: Executar imprime no Terminal',0) returning id", [p, helloPlan])).rows[0].id as number;
+    const hello = (await db.query("insert into flow.elements (project_id, plan_id, kind, title, context, position) values ($1,$2,'file','Hello World','Projeto console: Executar imprime no Terminal o dado sólido de entrada',0) returning id", [p, helloPlan])).rows[0].id as number;
     await db.query(
       `insert into flow.elements (project_id, plan_id, parent_id, kind, title, agent_id, status, code, position)
        values ($1,$2,$3,'file','log',$4,'pendente',$5,0)`,
-      [p, helloPlan, hello, consoleAg, 'console.log("Hello, World!");']);
-    await db.query(
-      `insert into flow.element_ios (element_id, direction, name, ref, position)
-       select id, 'out', 'saudacao', 'out/saudacao.txt', 0 from flow.elements where parent_id = $1 and title = 'log'`, [hello]);
+      [p, helloPlan, hello, consoleAg, "// Hello World · node:console\nconsole.log(entrada.saudacao);"]);
+    // log recebe a entrada `saudacao` (dado sólido) e não tem saída: imprime o valor que compõe o espaço abstrato
+    await db.query("insert into flow.data_defs (project_id, name, type, value, position) values ($1,'saudacao','texto','Hello, World!',0) on conflict do nothing", [p]);
+    await db.query("insert into flow.element_ios (element_id, direction, name, position) select id, 'in', 'saudacao', 0 from flow.elements where parent_id = $1 and title = 'log'", [hello]);
     const root = (await db.query("insert into flow.elements (project_id, plan_id, kind, title, position) values ($1,$2,'folder',$3,0) returning id", [p, plan, req.body.name ?? "Projeto"])).rows[0].id;
     await db.query("insert into flow.elements (project_id, plan_id, parent_id, kind, title, context, position) values ($1,$2,$3,'file','Fazer meu primeiro fluxo','Comece adicionando filhos (+) e dados.',0)", [p, plan, root]);
+    await ensureModules(db, p);
     return p;
   });
   const { rows } = await pool.query("select public_id from flow.projects where id = $1", [id]);
@@ -122,6 +123,10 @@ projectsRouter.post("/:pid/edge-if", ah(async (req, res) => {
 projectsRouter.post("/:pid/edge-loop", ah(async (req, res) => {
   const b = parse(edgeLoopBody, req.body);
   await mutate(req, res, 200, (db, id) => El.edgeLoop(db, id, b.toId));
+}));
+projectsRouter.post("/:pid/elements/:eid/struct", ah(async (req, res) => {
+  const b = parse(structBody, req.body);
+  await mutate(req, res, 200, (db, id) => El.setStruct(db, id, String(req.params.eid), b.kind, b.on));
 }));
 projectsRouter.post("/:pid/parallel", ah(async (req, res) => {
   const b = parse(parallelBody, req.body);
@@ -211,7 +216,7 @@ projectsRouter.post("/:pid/elements/:eid/run-machine", ah(async (req, res) => {
   const { id } = await ownedProject(pool, pid(req), me(req)._id);
   const m = new FlowModel(await loadSnapshot(pool, id));
   const u = m.u(String(req.params.eid));
-  if (!u || !["maquina", "script"].includes(m.agent(u.agentId)?.kind ?? "")) throw notFound("Etapa com biblioteca Node");
+  if (!u || !["maquina", "script", "arquivo"].includes(m.agent(u.agentId)?.kind ?? "")) throw notFound("Etapa com biblioteca Node ou arquivo");
   const code = req.body?.code ?? u.code ?? `// ${u.title} · Node.js\nconsole.log("olá")`;
   if (req.body?.code != null && req.body.code !== u.code) await pool.query("update flow.elements set code = $2 where public_id = $1", [u.id, String(req.body.code).slice(0, 100_000)]);
   await pool.query("update flow.elements set status = 'exec', error = null where public_id = $1", [u.id]);

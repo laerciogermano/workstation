@@ -56,14 +56,14 @@ describe("cena do Flow (layout puro)", () => {
 });
 
 describe("cena: try / catch", () => {
-  it("o catch sai da sequência e fica na coluna seguinte ao fim do try", async () => {
+  it("o catch sai da sequência e fica em paralelo ao try, terminando junto com a última célula do try", async () => {
     const { h, a, b, c, d, scene } = await three();
     await h.run({ type: "setCatch", id: c, handlerId: d });
     const s = scene();
     expect(s.rows.map(r => r.u.id)).toEqual([a, b, c, d]);          // d vem depois de c, mas só como faixa catch
     expect(s.rows.find(r => r.u.id === d)?.catchFor).toBe(c);
     expect(s.FD).toEqual([[b, c]]);                                   // d não participa da sequência principal
-    expect(s.layout[d]!.s).toBe(s.layout[c]!.e + 1);
+    expect(s.layout[d]!.e).toBe(s.layout[c]!.e);
     const t = s.tries.find(x => x.u.id === c)!;
     expect(t.catchHi).toBeGreaterThan(t.end);                          // faixa catch abaixo do bloco try
     expect(s.disp[t.catchHi!]!.ca?.id).toBe(d);
@@ -83,7 +83,7 @@ describe("cena: try / catch", () => {
     const s = scene(), t = s.tries.find(x => x.u.id === c)!;
     expect(t.catchEnd! - t.catchHi!).toBeGreaterThanOrEqual(2);
   });
-  it("o passo seguinte ao try/catch começa depois do catch (ex.: Faturar depois de sN do catch)", async () => {
+  it("o passo seguinte ao try/catch só começa depois do try e do catch (ex.: Faturar)", async () => {
     const { h, a, b, c, d, scene } = await three();
     const e = (await h.run({ type: "createChild", refId: a, title: "Estornar" })).created[0]!;
     await h.run({ type: "createChild", refId: e, title: "A" });
@@ -92,8 +92,8 @@ describe("cena: try / catch", () => {
     await h.run({ type: "setCatch", id: c, handlerId: e });
     const s = scene();
     expect(s.FD.filter(([x, y]) => [b, c, d].includes(x) && [b, c, d].includes(y))).toEqual([[b, c], [c, d]]);
-    expect(s.layout[e]!.s).toBe(s.layout[c]!.e + 1);
-    expect(s.layout[d]!.s).toBe(s.layout[e]!.e + 1);
+    expect(s.layout[e]!.e).toBeGreaterThanOrEqual(s.layout[c]!.e);   // catch em paralelo: nunca termina antes do try aqui
+    expect(s.layout[d]!.s).toBe(Math.max(s.layout[c]!.e, s.layout[e]!.e) + 1);
     expect(s.layout[a]!.e).toBe(s.layout[d]!.e);
   });
 });
@@ -144,13 +144,84 @@ describe("cena: irmão criado dentro de um bloco", () => {
 });
 
 describe("cena: irmão de uma task do catch", () => {
-  it("irmão da função de tratamento fica dentro do catch", async () => {
+  it("irmão da função de tratamento é irmão (mesmo pai), dentro da faixa catch e em sequência com ela", async () => {
     const { h, c, d, scene } = await three();
     await h.run({ type: "setCatch", id: c, handlerId: d });
     const e = (await h.run({ type: "createSibling", refId: d, position: "after", title: "Notificar" })).created[0]!;
     const s = scene();
-    expect(s.u(e)!.parentId).toBe(d);
+    expect(s.u(e)!.parentId).toBe(s.u(d)!.parentId);                // irmão, não filho
     const t = s.tries.find(x => x.u.id === c)!;
-    expect(t.catchEnd!).toBeGreaterThanOrEqual(s.idx[e]!);          // dentro da faixa catch
+    expect(s.idx[e]!).toBeGreaterThan(t.catchHi!);
+    expect(s.idx[e]!).toBeLessThanOrEqual(t.catchEnd!);             // dentro da faixa catch
+    expect(s.layout[e]!.s).toBe(s.layout[d]!.e + 1);                // depois do tratamento, na sequência
+    expect(s.FD).toContainEqual([d, e]);
+    expect(s.rows.map(r => r.u.id)).toContain(e);
+  });
+  it("irmão de uma irmã do catch continua no mesmo catch", async () => {
+    const { h, c, d, scene } = await three();
+    await h.run({ type: "setCatch", id: c, handlerId: d });
+    const e = (await h.run({ type: "createSibling", refId: d, position: "after" })).created[0]!;
+    const f = (await h.run({ type: "createSibling", refId: e, position: "after" })).created[0]!;
+    const s = scene(), t = s.tries.find(x => x.u.id === c)!;
+    expect(s.idx[f]!).toBeLessThanOrEqual(t.catchEnd!);
+    expect(s.layout[f]!.s).toBe(s.layout[e]!.e + 1);
+  });
+});
+
+describe("cena: irmão criado dentro de um for", () => {
+  it("o irmão pertence ao for do irmão, sem laço próprio", async () => {
+    const { h, b, scene } = await three();
+    await h.run({ type: "setRepetition", id: b, on: true });
+    const e = (await h.run({ type: "createSibling", refId: b, position: "after", title: "Extra" })).created[0]!;
+    const f = (await h.run({ type: "createSibling", refId: e, position: "after", title: "Outro" })).created[0]!;
+    const s = scene();
+    expect(s.u(e)!.loop).toBeNull();                                // não cria for próprio
+    expect(s.u(e)!.inLoop).toBe(b);
+    expect(s.u(f)!.inLoop).toBe(b);                                 // irmão de membro continua no mesmo for
+    expect(s.loops).toHaveLength(1);
+    expect(s.loops[0]!.u.id).toBe(b);
+    expect(s.loops[0]!.last.id).toBe(f);
+    expect(s.loops[0]!.end).toBeGreaterThanOrEqual(s.idx[f]!);
+  });
+});
+
+describe("cena: filho criado dentro de uma função com for", () => {
+  it("o for continua depois de criar um filho (a função vira camada e o for envolve ela e os filhos)", async () => {
+    const { h, b, scene } = await three();
+    await h.run({ type: "setRepetition", id: b, on: true });
+    const k = (await h.run({ type: "createChild", refId: b, title: "Filho" })).created[0]!;
+    const s = scene();
+    expect(s.u(b)!.loop).not.toBeNull();
+    expect(s.loops).toHaveLength(1);
+    expect(s.loops[0]!.u.id).toBe(b);
+    expect(s.loops[0]!.end).toBeGreaterThanOrEqual(s.idx[k]!);      // a caixa cobre o filho
+  });
+});
+
+describe("fluxo raiz", () => {
+  it("não ganha irmão, for nem if", async () => {
+    const { h, a } = await three();
+    await expect(h.run({ type: "createSibling", refId: a, position: "after" })).rejects.toThrow();
+    await expect(h.run({ type: "setRepetition", id: a, on: true })).rejects.toThrow();
+    await expect(h.run({ type: "setSelection", id: a, on: true })).rejects.toThrow();
+  });
+});
+
+describe("editar if e for", () => {
+  it("setCond num membro do if muda o teste e o senão da seleção inteira", async () => {
+    const { h, a, b, c, scene } = await three();
+    void a;
+    await h.run({ type: "setSelection", id: c, on: true });
+    await h.run({ type: "setCond", id: c, cond: { test: "estoque_ok", gotoId: b } });
+    const s = scene();
+    expect(s.structs[0]!.test).toBe("estoque_ok");
+    expect(s.u(c)!.cond).toEqual(["estoque_ok", b]);
+    expect(s.senaoOf(s.structs[0]!)).toContain("Cobrar");
+  });
+  it("setLoopVars edita variável e coleção", async () => {
+    const { h, b, scene } = await three();
+    await h.run({ type: "setRepetition", id: b, on: true });
+    await h.run({ type: "setLoopVars", id: b, loop: ["linha", "linhas"] });
+    expect(scene().u(b)!.loop).toEqual(["linha", "linhas"]);
   });
 });

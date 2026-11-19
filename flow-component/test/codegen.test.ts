@@ -34,6 +34,26 @@ describe("transpilador Flow → TypeScript", () => {
     expect(code).toContain("let itens: unknown;");
     expect(code).toMatch(/\(\{ itens \} = await separarItens\(\{ \.\.\.state, pedido, item \}\)\);/);
   });
+  it("irmão criado dentro do for roda dentro do mesmo for", async () => {
+    const { h, ids, gen } = await base();
+    await h.run({ type: "setRepetition", id: ids.s, on: true }); await h.run({ type: "setLoopVars", id: ids.s, loop: ["item", "pedidos"] });
+    const x = (await h.run({ type: "createSibling", refId: ids.s, position: "after", title: "Embalar item" })).created[0]!;
+    const { code } = gen(); const lines = code.split("\n");
+    const a = lines.findIndex(l => l.includes("for (const item of pedidos) {")), b = lines.findIndex(l => l.includes("await embalarItem(")), end = lines.findIndex((l, i) => i > a && l === "  }");
+    expect(a).toBeGreaterThan(-1);
+    expect(b).toBeGreaterThan(a); expect(b).toBeLessThan(end);      // a chamada está dentro do for, não depois
+    expect(code.match(/for \(const item of pedidos\)/g)).toHaveLength(1);
+    void x;
+  });
+  it("irmão no for que está dentro de um try roda dentro do for, dentro do try", async () => {
+    const { h, ids, gen } = await base();
+    await h.run({ type: "setRepetition", id: ids.s, on: true }); await h.run({ type: "setLoopVars", id: ids.s, loop: ["item", "pedidos"] });
+    await h.run({ type: "setTryCatch", id: ids.r, on: true, through: ids.e });
+    await h.run({ type: "createSibling", refId: ids.s, position: "after", title: "Embalar item" });
+    const lines = gen().code.split("\n");
+    const t = lines.findIndex(l => l.includes("try {")), f = lines.findIndex(l => l.includes("for (const item of pedidos)")), b = lines.findIndex(l => l.includes("await embalarItem(")), fe = lines.findIndex((l, i) => i > f && l === "    }"), c = lines.findIndex(l => l.includes("} catch"));
+    expect(t).toBeLessThan(f); expect(b).toBeGreaterThan(f); expect(b).toBeLessThan(fe); expect(fe).toBeLessThan(c);
+  });
   it("if volta ao 'senão'; try/catch desvia para o tratamento", async () => {
     const { h, ids, gen } = await base();
     await h.run({ type: "addInput", id: ids.s, name: "estoque_ok" });

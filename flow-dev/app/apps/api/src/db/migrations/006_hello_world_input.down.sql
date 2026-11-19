@@ -1,0 +1,1 @@
+-- sem reversão automática (dados do usuário)

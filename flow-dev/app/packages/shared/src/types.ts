@@ -1,5 +1,6 @@
 /** Tipos do domínio Flow (contrato único entre API e web). Nomes de código em inglês; rótulos de UI ficam no front. */
-export type AgentKind = "ia" | "pessoa" | "maquina" | "script";
+/** Responsável = arquivo | lib (maquina) | pessoa | agente (ia) | modelo. `script` só existe dentro de um arquivo. `arquivo`/`modelo` são virtuais: ids `file:<módulo>` e `md:<modelo>`. */
+export type AgentKind = "ia" | "pessoa" | "maquina" | "script" | "arquivo" | "modelo";
 export type ElementKind = "folder" | "file" | "data";
 export type RunStatus = "pendente" | "exec" | "ok" | "fail" | "cancel" | "wait";
 export type DataType = "texto" | "numero" | "inteiro" | "booleano" | "data" | "lista" | "objeto" | "arquivo";
@@ -58,8 +59,13 @@ export const DTYPE_N: Record<DataType, string> = {
   texto: "Texto", numero: "Número", inteiro: "Inteiro", booleano: "Booleano", data: "Data", lista: "Lista", objeto: "Objeto", arquivo: "Arquivo",
 };
 export const TYPE_INFO: Record<AgentKind, { n: string; one: string; ic: string }> = {
-  ia: { n: "Agentes", one: "Agente", ic: "user-round-cog" },
+  arquivo: { n: "Arquivos", one: "Arquivo", ic: "file-code-2" },
+  maquina: { n: "Libs Node.js", one: "Lib", ic: "package" },
   pessoa: { n: "Pessoas", one: "Pessoa", ic: "user-round" },
-  maquina: { n: "Bibliotecas Node.js", one: "Biblioteca", ic: "package" },
-  script: { n: "Scripts (meus módulos)", one: "Script", ic: "file-code-2" },
+  ia: { n: "Agentes", one: "Agente", ic: "user-round-cog" },
+  modelo: { n: "Modelos", one: "Modelo", ic: "bot" },
+  script: { n: "Scripts", one: "Script", ic: "file-code-2" }, // interno ao arquivo — não entra no picker de responsável
 };
+/** Tipos que podem ser responsável de uma etapa (ordem do seletor). */
+export const RESP_KINDS: AgentKind[] = ["arquivo", "maquina", "pessoa", "ia", "modelo"];
+export const FILE_AGENT = "file:", MODEL_AGENT = "md:";

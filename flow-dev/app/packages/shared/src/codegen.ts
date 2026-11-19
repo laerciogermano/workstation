@@ -36,7 +36,7 @@ export function jsCode(m: FlowModel, plan: string): string {
     const B: string[] = [], kids = m.flowKids(g), lv = kids.flatMap(k => leavesOf(m, k));
     const mine = new Set(lv.flatMap(x => x.outs.map(o => o[0])));
     const need = [...new Set(lv.filter(x => !m.isData(x)).flatMap(x => x.ins).filter(n => !mine.has(n)))];
-    const ias = [...new Set(lv.map(x => m.agent(x.agentId)).filter(a => a?.kind === "ia").map(a => camel(a!.name)))];
+    const ias = [...new Set(lv.map(x => m.agent(x.agentId)).filter(a => (a?.kind === "ia" || a?.kind === "modelo")).map(a => camel(a!.name)))];
     B.push(`export async function ${camel(g.title)}(state) {`);
     if (need.length || ias.length) B.push(`  const { ${[...need, ...ias].join(", ")} } = state;  // endereços abstratos: outra camada`);
     stepsOf(m, kids, plan).forEach(([, items]) => {

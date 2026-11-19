@@ -75,7 +75,7 @@ export class FlowModel {
   }
   /** Função preenchida = folha com responsável; composição = todas as filhas preenchidas. */
   fnFilled(u: ElementDto): boolean { const ks = this.kids(u.id).filter(k => !this.isData(k)); return ks.length ? ks.every(k => this.fnFilled(k)) : !!this.agent(u.agentId); }
-  fnKind(u: ElementDto): "nag" | "abs" | "conc" { const a = this.agent(u.agentId); return !a ? "nag" : a.kind === "ia" ? "abs" : "conc"; }
+  fnKind(u: ElementDto): "nag" | "abs" | "conc" { const a = this.agent(u.agentId); if (!a) return "nag"; if (a.kind === "ia" || a.kind === "modelo") return "abs"; if (a.kind === "maquina" || a.kind === "arquivo" || a.kind === "script") return "conc"; return "abs"; }
 
   // ---------- dados ----------
   dKids = (name: string): string[] => this.synthKids.get(name) ?? this.kidsOfData.get(name) ?? [];
@@ -176,10 +176,10 @@ export class FlowModel {
     if (this.isData(u)) return `const ${slug(u.title)} = { ${u.ins.join(", ")} };  // dado`;
     const a = this.agent(u.agentId), ks = this.flowKids(u).filter(x => !this.isData(x));
     const L: string[] = [];
-    if (a?.kind === "maquina" && !ks.length) L.push(`import ${a.name.replace("node:", "")} from "${a.name}";  // concreto`);
+    if ((a?.kind === "maquina" || a?.kind === "arquivo") && !ks.length) L.push(`import ${a.kind === "arquivo" ? "* as " + camel(a.name.replace(/\.js$/, "")) : a.name.replace("node:", "")} from "${a.kind === "arquivo" ? "./" + a.name : a.name}";  // concreto`);
     L.push(`export default async function ${camel(u.title)}(state) {`);
-    const take = [...u.ins, ...(a?.kind === "ia" && !ks.length ? [camel(a.name)] : [])];
-    if (take.length) L.push(`  const { ${take.join(", ")} } = state;${a?.kind === "ia" && !ks.length ? `  // ${camel(a.name)} = abstrato` : ""}`);
+    const take = [...u.ins, ...((a?.kind === "ia" || a?.kind === "modelo") && !ks.length ? [camel(a.name)] : [])];
+    if (take.length) L.push(`  const { ${take.join(", ")} } = state;${(a?.kind === "ia" || a?.kind === "modelo") && !ks.length ? `  // ${camel(a.name)} = abstrato` : ""}`);
     if (ks.length) {
       const { layout } = this.flowLayout(u.planId);
       const steps: Record<number, ElementDto[]> = {}; ks.forEach(x => (steps[layout[x.id]?.s ?? 0] ||= []).push(x));

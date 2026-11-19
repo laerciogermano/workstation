@@ -236,3 +236,20 @@ As setas **não fazem nada** no Flow. Criar, posicionar e editar funções é s�
 | Indentação hierárquica + guias sempre ligadas | Botão no menu transversal (`indent-task`): liga/desliga recuo e guias (`s.indent`, padrão ligado) |
 
 **Voltar:** remover botão e sempre usar `ind()`/`gdA()`.
+
+## App (:5180) · paridade com o protótipo
+
+| Antes (app) | Depois (app = protótipo) |
+|---|---|
+| Responsável: IA / pessoa / lib / script | **arquivo · lib · pessoa · agente · modelo**. Arquivo e modelo são responsáveis virtuais (`file:<módulo>` / `md:<modelo>`, colunas `agent_ref`/`resp_ref`, migration 005); tasks do arquivo = funções/scripts dele |
+| Task sempre `<select>` se há `tasks[]` | Select só em **lib / arquivo** (`taskIsConcrete`); IA, modelo, pessoa e vazio → verbo abstrato em texto |
+| Explorar: Funções · Dados · Arquivos · Pessoas · Agentes · Modelos | Só **Arquivos · Pessoas · Agentes · Modelos**; dados e funções moram dentro do arquivo (Arquivos ganha `+` arquivo, função no Flow e dado) |
+| if/for só pela aresta; sem remover | `POST /elements/:id/struct {kind: if|loop, on}`; botões adicionar/remover em `fl-tools`, `bar-tools`, menu de contexto, drawer e edge-pop; hover no ◇, pill, moldura do for e linhas `if`/`for` mostra a lixeira |
+| Dot na coluna Task, sem recuo de for/if, sem toggle | Sem dot; corpo de for/if recua +1 nível (`NEST`); botão **Indentar coluna Task** no menu transversal |
+| Cabeçalho Flow com “N camadas · abstratos · concretos” | Só “Flow” + zoom |
+| Catálogo “Agentes do fluxo” (4 abas) | “Catálogo” com Agentes · Libs Node.js · Pessoas |
+| Executar: só lib/script via Node | Também **arquivo**; **modelo** executa como IA |
+
+**Pendente:** o seed demo (`prototype-seed.json`) ainda é o antigo (títulos em verbo); `scripts/extract-seed.mjs` já aponta para o intervalo atual, mas regenerar exige reescrever `apps/api/test/api.test.ts`.
+
+**Voltar:** migration 005 down; `AgentKind` sem `arquivo`/`modelo`; reverter Explorer/FlowView/Drawer.

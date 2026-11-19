@@ -1,13 +1,13 @@
 # Flow Component — Visão
 
-**O quê:** lib front-end de **interfaces e comandos** para operar o grafo Flow.  
-**Como:** criar função, entrada, saída, filho, irmão — cada comando é opção de operar no host.  
-**Para quem:** editores e hosts (Flow Language, Flow.dev, Plans e outros).
+**O quê:** lib front-end com **todas as interfaces** das operações do Flow IDE.  
+**Como:** comandos tipados (função, I/O, dados, composição, responsável, run, export…); o host opta por operar.  
+**Para quem:** Flow.dev e outros hosts do grafo Flow.
 
-**PRD:** [`docs/prd.md`](docs/prd.md)
+**PRD:** [`docs/prd.md`](docs/prd.md) (inventário + lacunas vs v0.1)
 
 ## Relação
 
 ```text
-FOP → Flow Language → Flow Component ← Flow.dev / Plans
+FOP → Flow Language → Flow Component ← Flow.dev / hosts
 ```

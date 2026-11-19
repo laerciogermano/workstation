@@ -2,7 +2,8 @@ import type { Agent, FlowElement, Snapshot, Struct } from "../types";
 import { FILE_AGENT, MODEL_AGENT } from "../types";
 
 /** Geometria da vista Flow (porta pura do FlowView do Flow IDE): sem DOM, testável. */
-export const LW = 440, RH = 34, TAIL = 440, HEAD = 52;
+/** `LW` = largura mínima do painel esquerdo (Responsável + Task); cresce com a indentação. */
+export const LW = 440, AG_W = 148, RH = 34, TAIL = 440, HEAD = 52;
 export const NEST = 16;
 
 export interface ViewFlags {
@@ -49,6 +50,8 @@ export interface Scene {
   readonly nSteps: number;
   readonly FD: readonly (readonly [string, string])[];
   readonly W: number; readonly OX: number; readonly CW: number; readonly INS: number;
+  /** Largura do painel esquerdo (Responsável + Task); ≥ `LW`, cresce com indentação/títulos. */
+  readonly leftW: number;
   readonly H: number; readonly HH: number; readonly yF: number; readonly FOOT: number;
   readonly worldW: number; readonly worldH: number; readonly axW: number;
   readonly idx: Readonly<Record<string, number>>; readonly idxIn: Readonly<Record<string, number>>;
@@ -392,8 +395,27 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   };
   const bidOf = (st: StructRow): string => st.body[0]!;
 
+  // painel esquerdo cresce com a indentação (hierarquia + degrau do passo) e o título mais largo
+  const COL_GAP = 6, ROW_CHROME = 88;
+  let maxTask = 140;
+  disp.forEach(r => {
+    const e = r.ca ?? r.tr ?? r.lp ?? (r.st ? rows[r.st.i0]?.u : undefined) ?? r.u;
+    if (!e) return;
+    const nest = nestOf(r);
+    const base = r.io ? 14 : (r.row && hasKids(e) ? 0 : 10);
+    const pad = padL(e, r.d, nest, base);
+    const label = r.io ? String(r.nm ?? "")
+      : r.lp ? `↻ for (${e.loop?.[0] ?? "?"} of ${e.loop?.[1] ?? "?"})`
+      : r.ca ? "catch · se o try falhar"
+      : r.tr ? `try · catch ↓ ${handlerOf(e)?.title ?? "?"}`
+      : r.st ? `if (${r.st.test})${senaoOf(r.st)}`
+      : e.title;
+    maxTask = Math.max(maxTask, pad + tw(label, 7.2) + (r.io ? 70 : ROW_CHROME));
+  });
+  const leftW = Math.max(LW, AG_W + COL_GAP + maxTask);
+
   return {
-    snap, input, rows, disp, structs, layout, nSteps, FD, W, OX, CW, INS, H, HH, yF, FOOT, worldW: LW + CW, worldH: HH, axW: nSteps * W,
+    snap, input, rows, disp, structs, layout, nSteps, FD, W, OX, CW, INS, leftW, H, HH, yF, FOOT, worldW: leftW + CW, worldH: HH, axW: nSteps * W,
     idx, idxIn, idxOut, idxEnd, idxLoop, idxTry, tries, loops, stShow, planName: (snap.plans.find(p => p.id === planId)?.name ?? "") + (rootId && u(rootId) ? " · " + u(rootId)!.title : ""),
     u, agent, hasKids, isFn, fnKind, geo, newIns, absData, isCube, dKids, dLeaf, inIf, senaoOf, bidOf, padL, nestOf, guides, tryBlockOf, prevSibling, topsOfPlan: () => planTops(snap, planId),
   };

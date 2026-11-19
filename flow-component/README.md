@@ -33,7 +33,7 @@ if (r.ok) r.value.created;                                      // IDRs novos
 | Portas | `src/ports.ts` | `ModelStore`, `Runner`, `Exporter` injetáveis |
 | Fachada | `src/component.ts` | uma função por comando (`flow.createChild(...)`, tipo `FlowApi`), `execute`, `can`, comandos desabilitáveis, erros tipados (`Result`) |
 
-**Vista (front-end):** `mountFlowView(elemento, flow, opts)` desenha a vista Flow do IDE (tabela Responsável · Task + plano cartesiano com estados s0..sN, barras, if/for/paralelo, dados) e opera **só pelos comandos**; botão de **tela cheia** em toda vista (`view.fullscreen()`; Esc sai; nas vistas `readonly` liberam zoom e pan); cada `flow.execute` redesenha. Geometria pura em `src/view/scene.ts` (`buildScene`, testável sem DOM); renderer DOM/SVG em `src/view/flow-view.ts`, sem dependências.
+**Vista (front-end):** `mountFlowView(elemento, flow, opts)` desenha a vista Flow do IDE (tabela Responsável · Task + plano cartesiano com estados s0..sN, barras, if/for/paralelo, dados) e opera **só pelos comandos**; botão de **tela cheia** em toda vista (`view.fullscreen()`; Esc sai; nas vistas `readonly` liberam zoom e pan); cada `flow.execute` redesenha. A coluna Task (`scene.leftW`) cresce com a indentação (hierarquia + degrau do passo). Geometria pura em `src/view/scene.ts` (`buildScene`, testável sem DOM); renderer DOM/SVG em `src/view/flow-view.ts`, sem dependências.
 
 ```ts
 import { createFlowComponent, memoryStore, mountFlowView } from "@flow/component";

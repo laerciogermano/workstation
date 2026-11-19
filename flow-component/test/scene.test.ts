@@ -20,6 +20,15 @@ describe("cena do Flow (layout puro)", () => {
     expect(s.nSteps).toBe(3);
     expect(s.FD).toEqual([[b, c], [c, d]]);
   });
+  it("a coluna Task (leftW) cresce com a indentação / degrau dos passos", async () => {
+    const h = harness();
+    const root = (await h.run({ type: "createFunction", planId: "p1", title: "Raiz" })).created[0]!;
+    const shallow = buildScene(h.s, { planId: "p1", rootId: root, closed: new Set(), flags: DEFAULT_FLAGS }).leftW;
+    for (let i = 0; i < 16; i++) await h.run({ type: "createChild", refId: root, title: `Fazer nova função ${i}` });
+    const wide = buildScene(h.s, { planId: "p1", rootId: root, closed: new Set(), flags: DEFAULT_FLAGS });
+    expect(wide.leftW).toBeGreaterThan(shallow);
+    expect(wide.worldW).toBe(wide.leftW + wide.CW);
+  });
   it("paralelo divide o mesmo passo", async () => {
     const { h, b, c, d, scene } = await three();
     await h.run({ type: "setParallel", a: c, b: d, on: true });

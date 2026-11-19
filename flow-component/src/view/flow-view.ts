@@ -5,7 +5,7 @@ import { FILE_AGENT, MODEL_AGENT } from "../types";
 import { isFlowRoot } from "../graph";
 import { h, sv, type Child } from "./dom";
 import { icon, KIND_ICON, KIND_LABEL, KIND_ONE } from "./icons";
-import { buildScene, DEFAULT_FLAGS, HEAD, LW, RH, textWidth as tw, type Disp, type Scene, type StructRow, type ViewFlags } from "./scene";
+import { buildScene, DEFAULT_FLAGS, HEAD, RH, textWidth as tw, type Disp, type Scene, type StructRow, type ViewFlags } from "./scene";
 import { FLOW_CSS } from "./style";
 
 export interface FlowViewOptions {
@@ -218,7 +218,7 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     S.disp.forEach((r, i) => left.append(leftRowFor(S, snap, r, i)));
     const right = h("div", { class: "gright" });
     right.append(buildSvg(S, right));
-    return h("div", { class: "gtable", style: { gridTemplateColumns: `${LW}px ${S.CW}px`, width: S.worldW + "px" } }, left, right);
+    return h("div", { class: "gtable", style: { gridTemplateColumns: `${S.leftW}px ${S.CW}px`, width: S.worldW + "px" } }, left, right);
   }
 
   const guideEls = (S: Scene, u: FlowElement, self: boolean, nest: number): Node[] => S.guides(u, self, nest).map(x => h("i", { class: "fl-g", style: { left: 14 + x + "px" }, "aria-hidden": "true" }));

@@ -2337,7 +2337,7 @@ const brandSt = a => { const c = brandOf(a); return c ? ` style="--brand:${c}"` 
 /** Task: select só se responsável concreto (lib/arquivo). Verbo abstrato = texto. */
 function taskPick(u) {
   const a = agent(u.agent);
-  if (!taskIsConcrete(a)) return `<b>${esc(u.title || "sem task")}</b>`;
+  if (!taskIsConcrete(a)) return `<b>${esc(u.title || "sem function")}</b>`;
   const ts = agentTasks(u.agent);
   if (!ts.length) return `<b>${esc(u.title)}</b>`;
   const ok = ts.includes(u.title);
@@ -2519,7 +2519,7 @@ function flow(s) {
       ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Function">`
       : (a?.type === "maquina" && taskIsConcrete(a) && (a.tasks || []).length
         ? taskPick(u)
-        : `<b data-act="rename" data-id="${u.id}" title="Clique para alterar"${a || has ? "" : ` class="task-miss"`}>${esc(u.title || "sem task")}</b>`);
+        : `<b data-act="rename" data-id="${u.id}" title="Clique para alterar"${a || has ? "" : ` class="task-miss"`}>${esc(u.title || "sem function")}</b>`);
     const task = isData(u) ? `<span class="nm" style="padding-left:${padL(u, d, nest, 10)}px">${lead}<b>${esc(u.title)}</b></span>`
       : has ? `<span class="nm" style="padding-left:${padL(u, d, nest, 0)}px">${lead}${taskName}</span>`
       : `<span class="nm" style="padding-left:${padL(u, d, nest, 10)}px">${lead}${taskName}</span>`;
@@ -3707,7 +3707,7 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
-/** UC-01: novo fluxo = nome visível, uma barra `main`, responsável arquivo `main`. */
+/** UC-01: novo fluxo = nome visível, uma barra `main`, source arquivo `main`. */
 function createUc01Flow(planId) {
   const plan = planId || cur?.plan || PLANS[0].id;
   const root = planRoot(plan);
@@ -4493,7 +4493,7 @@ let saved = "cobalto"; try { saved = localStorage.getItem("tema-flow-dev-v2") ||
 setTema(TEMAS.some(t => t.id === saved) ? saved : "cobalto");
 try { if (localStorage.getItem("flow-dev-notes") === "0") player.classList.add("notes-off"); } catch (e) {}
 syncNotesToggle();
-// Flow Language: abre direto no Flow (UC-01: arquivo main · task main)
+// Flow Language: abre direto no Flow (UC-01: source main · function main)
 const bootUc01 = createUc01Flow("hello");
 SCREENS["T-EDITOR"] = { s: { v: "flow", plan: bootUc01.plan, flowRoot: bootUc01.id, sel: bootUc01.id }, name: "Editor", us: [], notes: "" };
 closePlayer = function () {};

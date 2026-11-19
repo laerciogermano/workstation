@@ -21,6 +21,14 @@ Repo: https://github.com/laerciogermano/flow-oriented-programming
 
 ---
 
+## Requisitos (canônico)
+
+| Artefato | Arquivo | Papel | Status |
+|----------|---------|-------|--------|
+| Requisitos / casos de uso | [`requisitos.md`](requisitos.md) | UC + regras + imagens; base p/ Flow IDE / Plans | Em construção |
+| Imagens dos UCs | [`requisitos/img/`](requisitos/img/README.md) | Prints e refs visuais por UC | Em construção |
+| Editor / protótipo vivo | [`../editor/`](../editor/README.md) | Manipulação visual ↔ código | Ativo |
+
 ## Esteira de produto
 
 | Artefato | Arquivo | Papel | Status |
@@ -31,8 +39,8 @@ Repo: https://github.com/laerciogermano/flow-oriented-programming
 | Telas | `screens.md` | Superfícies de UI | A produzir |
 | Screens BDD | `screens-bdd.md` | BDD por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI | A produzir |
-| Protótipo | `prototype.html` | Validação visual | A produzir |
+| Protótipo | `prototype.html` | Validação visual | A produzir (editor cobre o vivo) |
 
 ## Próximos passos
 
-→ `functionalities.md` a partir da [visão](../README.md) e de [`../epics.md`](../epics.md)
+→ Preencher [`requisitos.md`](requisitos.md) com os UCs enviados no chat · depois `functionalities.md` a partir da [visão](../README.md) e de [`../epics.md`](../epics.md)

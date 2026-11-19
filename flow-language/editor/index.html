@@ -750,6 +750,15 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .resp-pick select:hover { border-color: var(--muted); }
 .fav.none { background: none; border: 1px dashed var(--line-2); color: var(--muted); box-shadow: none; }
 .fav-n { font-size: 11px; color: var(--body); overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* UC-01: nome do arquivo responsável clicável (fora do select transparente) */
+.resp-file { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.resp-file .resp-ico { position: relative; flex: none; display: inline-flex; }
+.resp-file .resp-ico select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.resp-file .fav-n { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
+.resp-file .fav-n:hover { background: var(--panel); }
+.gantt.flow .grow .nm b[data-act="rename"] { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
+.gantt.flow .grow .nm b[data-act="rename"]:hover { background: var(--panel); }
+.resp-file input.fl-ren { width: 88px; height: 22px; border: 1px solid var(--accent); border-radius: 5px; padding: 0 6px; font: 11px/1 var(--mono); color: var(--ink); background: var(--paper); outline: none; }
 .fh-top { height: 26px; display:flex; align-items:center; justify-content:center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--body); border-bottom: 1px solid var(--line); }
 .fh-top span { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; }
 .fh-top .okc { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
@@ -2347,6 +2356,13 @@ function respOptgroups(selectedId) {
 }
 function agentPick(u) {
   const a = agent(u.agent);
+  // UC-01: responsável arquivo — ícone troca o responsável; nome abre alteração ao clicar
+  if (a?.type === "arquivo" && a.layerId) {
+    const nm = cur.renLy === a.layerId
+      ? `<input class="fl-ren" data-ren-ly="${a.layerId}" data-act="noop" value="${esc(a.name)}" aria-label="Nome do arquivo">`
+      : `<span class="fav-n" data-act="ren-ly" data-id="${a.layerId}" title="Clique para alterar">${esc(a.name)}</span>`;
+    return `<span class="resp-file"><span class="resp-ico"><span class="fav arquivo"${brandSt(a)} title="Arquivo: ${esc(a.name)}">${icon("file-code-2")}</span><select data-agent="${u.id}" data-act="noop" aria-label="Trocar responsável de ${esc(u.title)}" title="Trocar responsável"><option value=""></option>${respOptgroups(u.agent)}</select></span>${nm}</span>`;
+  }
   return `<span class="resp-pick${a ? " on" : ""}">${avatar(u.agent)}<select data-agent="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Responsável: arquivo, lib, pessoa, agente ou modelo"><option value=""${a ? "" : " selected"}>Selecionar…</option>${respOptgroups(u.agent)}</select></span>`;
 }
 function avatar(id) {
@@ -2498,9 +2514,15 @@ function flow(s) {
     const open = has && !FLOW_CLOSED.has(u.id);
     const lead = has ? `<span class="car" data-act="flow-toggle" data-id="${u.id}" title="Abrir / fechar sanfona">${icon("chevron-down")}</span><span class="gi">${icon("network")}</span>` : "";
     const resp = has || isData(u) ? `<span class="c-ag muted">—</span>` : `<span class="c-ag">${a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>`;
+    // UC-01: clicar no nome da task abre alteração (arquivo = texto; lib Node mantém select de método)
+    const taskName = s.ren === u.id
+      ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">`
+      : (a?.type === "maquina" && taskIsConcrete(a) && (a.tasks || []).length
+        ? taskPick(u)
+        : `<b data-act="rename" data-id="${u.id}" title="Clique para alterar"${a || has ? "" : ` class="task-miss"`}>${esc(u.title || "sem task")}</b>`);
     const task = isData(u) ? `<span class="nm" style="padding-left:${padL(u, d, nest, 10)}px">${lead}<b>${esc(u.title)}</b></span>`
-      : has ? `<span class="nm" style="padding-left:${padL(u, d, nest, 0)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : `<b>${esc(u.title)}</b>`}</span>`
-      : `<span class="nm" style="padding-left:${padL(u, d, nest, 10)}px">${lead}${s.ren === u.id ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">` : (taskIsConcrete(a) ? taskPick(u) : `<b${a ? "" : ` class="task-miss"`}>${esc(u.title || "sem task")}</b>`)}</span>`;
+      : has ? `<span class="nm" style="padding-left:${padL(u, d, nest, 0)}px">${lead}${taskName}</span>`
+      : `<span class="nm" style="padding-left:${padL(u, d, nest, 10)}px">${lead}${taskName}</span>`;
     return `<div class="grow fl-cols${s.sel === u.id ? " sel" : ""}${has ? " grp" : ""}${open ? " open" : ""}${doIndent && nest ? ` nest-${nest}` : ""}" data-act="fsel" data-id="${u.id}">${gdA(u, false, nest)}
       ${resp}${task}
       ${isData(u) || s.ren === u.id ? "" : `<span class="fl-tools" role="toolbar" aria-label="Ações do elemento">${has ? `<button class="ib" data-act="flow-toggle" data-id="${u.id}" title="${open ? "Fechar filhos" : "Abrir filhos"}">${icon(open ? "chevrons-down-up" : "chevrons-up-down")}</button><i class="sep"></i>` : ""}<button class="ib" data-act="drawer" data-id="${u.id}" title="Editar">${icon("pencil")}</button><i class="sep"></i><button class="ib" data-act="fn-child" data-id="${u.id}" title="Filho">${icon("plus")}</button>${isTopFn(u) ? "" : `<button class="ib" data-act="fn-after" data-id="${u.id}" title="Irmão">${icon("between-horizontal-end")}</button>`}${!has && !isData(u) ? `<i class="sep"></i>${STRUCTS.some(st => st.body.includes(u.id)) ? `<button class="ib on danger" data-act="rm-if" data-id="${u.id}" title="Remover seleção (if)">${icon("trash-2")}</button>` : `<button class="ib" data-act="fn-if" data-id="${u.id}" title="Adicionar seleção (if)">${icon("diamond")}</button>`}${u.loop ? `<button class="ib on danger" data-act="rm-loop" data-id="${u.id}" title="Remover repetição (for)">${icon("trash-2")}</button>` : `<button class="ib" data-act="fn-loop" data-id="${u.id}" title="Adicionar repetição (for)">${icon("repeat")}</button>`}` : ""}<i class="sep"></i><button class="ib danger" data-act="ask-rm" data-id="${u.id}" title="Remover">${icon("trash-2")}</button></span>`}</div>`;
@@ -3685,6 +3707,31 @@ function addFnEl(refId, mode) {
   cur.sel = u.id; cur.ren = u.id; cur.fresh = u.id;
   return u;
 }
+/** UC-01: novo fluxo = nome visível, uma barra `main`, responsável arquivo `main`. */
+function createUc01Flow(planId) {
+  const plan = planId || cur?.plan || PLANS[0].id;
+  const root = planRoot(plan);
+  const lane = root?.lane || LANES[0].id;
+  ensureLayers();
+  let L = LAYERS.find(l => l.file === "main");
+  if (!L) {
+    L = { id: "lv" + (++seq), file: "main", items: [] };
+    LAYERS.push(L);
+  }
+  const agentId = "file:" + L.id;
+  const u = create(root?.id || null, "file", "main", { plan, lane, col: COLS[0].id, agent: agentId, ctx: "Novo fluxo" });
+  if (!L.items.some(([k, v]) => k === "fn" && v === u.id)) L.items.push(["fn", u.id]);
+  if (root) OPEN.add(root.id);
+  OPEN.add("ly:" + L.id);
+  SEC_CLOSED.delete("arquivos");
+  if (cur) {
+    unset("drawer", "ctx", "dadoEdit", "ren", "fresh", "renLy", "renCat");
+    cur.sel = u.id;
+    cur.plan = plan;
+    cur.flowRoot = u.id;
+  }
+  return u;
+}
 const isPar = (a, b) => PARS.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
 /** Move a função (com as filhas) para antes, depois ou dentro de outra. */
 function moveFn(id, refId, mode) {
@@ -3871,13 +3918,8 @@ const ACT = {
   },
   "dado-clear": t => { delete DATA_VAL[t.dataset.n]; toast(`${t.dataset.n}: sem valor · abstrato`, "eraser"); },
   "new-flow": () => {
-    const plan = cur.plan || PLANS[0].id;
-    const root = planRoot(plan);
-    const lane = root?.lane || LANES[0].id;
-    const u = create(root?.id || null, "file", "Fazer novo fluxo", { plan, lane, col: COLS[0].id, ctx: "Fluxo adicionado no Explorar" });
-    if (root) OPEN.add(root.id);
-    cur.sel = u.id; cur.drawer = u.id; cur.plan = plan; cur.flowRoot = u.id;
-    toast(`Fluxo “${u.title}”`, "workflow");
+    const u = createUc01Flow(cur.plan || PLANS[0].id);
+    toast(`Fluxo “${u.title}” · arquivo main`, "workflow");
   },
   "new-dado": () => {
     const plan = cur.plan || PLANS[0].id;
@@ -3942,7 +3984,7 @@ const ACT = {
   search: () => { if (cur.q != null) unset("q"); else { cur.q = ""; cur.focusQ = true; } },
   "new-file": t => { const base = t.dataset.id || cur.sel; const p = $u(base); cur.newn = { parent: p ? (isFolder(p) || kids(p.id).length ? p.id : p.parent) : null, kind: "file" }; unset("ctx", "q"); if (cur.newn.parent) OPEN.add(cur.newn.parent); },
   "new-folder": t => { const base = t.dataset.id || cur.sel; const p = $u(base); cur.newn = { parent: p ? (isFolder(p) ? p.id : p.parent) : null, kind: "folder" }; unset("ctx", "q"); if (cur.newn.parent) OPEN.add(cur.newn.parent); },
-  rename: t => { cur.ren = t.dataset.id; unset("ctx"); },
+  rename: t => { cur.ren = t.dataset.id || cur.sel; unset("ctx", "renLy", "renCat", "fresh"); },
   dup: t => { const u = $u(t.dataset.id); const c = cloneTree(u.id, u.parent); cur.sel = c.id; unset("ctx"); toast(`Duplicado como “${c.title}”, com UUIDs novos`); },
   cut: t => { CLIP = { mode: "cut", ids: [t.dataset.id] }; unset("ctx"); toast("Recortado. Cole no destino com ⌘V", "scissors"); },
   copy: t => { CLIP = { mode: "copy", ids: [t.dataset.id] }; unset("ctx"); toast("Copiado", "copy"); },
@@ -4451,8 +4493,9 @@ let saved = "cobalto"; try { saved = localStorage.getItem("tema-flow-dev-v2") ||
 setTema(TEMAS.some(t => t.id === saved) ? saved : "cobalto");
 try { if (localStorage.getItem("flow-dev-notes") === "0") player.classList.add("notes-off"); } catch (e) {}
 syncNotesToggle();
-// Flow Language: abre direto no Flow IDE (tela cheia), sem galeria
-SCREENS["T-EDITOR"] = { s: { v: "flow", plan: "hello", flowRoot: "u200", sel: "u201" }, name: "Editor", us: [], notes: "" };
+// Flow Language: abre direto no Flow (UC-01: arquivo main · task main)
+const bootUc01 = createUc01Flow("hello");
+SCREENS["T-EDITOR"] = { s: { v: "flow", plan: bootUc01.plan, flowRoot: bootUc01.id, sel: bootUc01.id }, name: "Editor", us: [], notes: "" };
 closePlayer = function () {};
 player.classList.add("full", "notes-off");
 openT("T-EDITOR");

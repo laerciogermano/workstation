@@ -5,7 +5,7 @@
 **Para onde:** exporta para qualquer linguagem; **neste momento: JavaScript e Python**.
 
 Pré-requisito do [`flow/`](../flow/).  
-**Editor funcional:** [`editor/`](editor/README.md) · Épicos: [`epics.md`](epics.md) · Docs: [`docs/`](docs/) · Prompts: [`prompts/`](prompts/) · Config IA: [`config/config-ia.md`](config/config-ia.md)
+**Editor funcional:** [`editor/`](editor/README.md) · Requisitos: [`docs/requisitos.md`](docs/requisitos.md) · Épicos: [`epics.md`](epics.md) · Docs: [`docs/`](docs/README.md) · Prompts: [`prompts/`](prompts/) · Config IA: [`config/config-ia.md`](config/config-ia.md)
 
 Fundamentos: [Flow-Oriented Programming](docs/laerciogermano_flow-oriented-programming.pdf) · [Teoria sistêmica (Medium)](docs/Systemic%20Ontological%20Metaphysical%20Philosophical%20Theory%20-%20Laércio%20Germano%20-%20Medium.pdf)
 

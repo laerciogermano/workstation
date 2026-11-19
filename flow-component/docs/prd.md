@@ -4,8 +4,8 @@
 |---|---|
 | Produto | **Flow Component** — lib front-end de interfaces/comandos do Flow IDE |
 | Código | `works/flow-component` |
-| Status | rascunho v0.2 (2026-11-19) |
-| Fonte de inventário | [`flow-dev` visão](../../flow-dev/README.md) · [`flow-dev/docs/prd.md`](../../flow-dev/docs/prd.md) · `Ide` + `contracts.ts` + `FlowView` / Explorer |
+| Status | rascunho v0.3 (2026-11-19) |
+| Fonte de inventário | [`flow-dev` visão](../../flow-dev/README.md) · [`flow-dev/docs/prd.md`](../../flow-dev/docs/prd.md) · `Ide` + `contracts.ts` + FlowView / Explorer / proto · auditoria de capacidades 2026-11-19 |
 | Relacionados | [`flow-language`](../../flow-language/README.md) · [`flow`](../../flow/README.md) |
 
 ---
@@ -46,28 +46,32 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 |-----------|--------|---------------|
 | `createFunction` / `newFlow` | Função raiz (fluxo) | `newFlow`, Explorer “Nova função” |
 | `createChild` | Filho sob pai | `addFn(…, "child")` |
-| `createSibling` | Irmão (`after` / `before`) | `addFn(…, "after"\|"before")` |
-| `renameFunction` | Altera rótulo (IDR fixo) | `renameCommit` / clique no nome |
-| `removeElements` | Remove por IDR(s) | `askRemove` / `elements-remove` |
+| `createSibling` | Irmão (`after` / `before`) | `addFn` · ctx `fn-before` |
+| `renameFunction` | Altera rótulo (IDR fixo; regra verbo se abstrato) | `renameCommit` |
+| `removeElements` | Remove por IDR(s) (+ confirm c/ filhos) | `askRemove` / `elements-remove` |
 | `duplicate` | Cópia com novos IDRs | `dup` |
-| `move` | Reparent / reordenar | `move` · `moveElementBody` |
+| `archive` / `unarchive` | Arquiva elemento | `patch` `archived` · Drawer |
+| `move` | Reparent / reordenar | `move` · API; UI via cut/paste |
 | `cut` / `copy` / `paste` | Clipboard do grafo | `clip` + `paste` |
-| `patchFunction` | title, context, code, archived, ins, outs, loop, cond, agent | `patchEl` · `patchElementBody` |
-| `setSelection` (`if`) | Liga/desliga seleção | `setStruct(id, "if", on)` · edge-if |
-| `setRepetition` (`loop`) | Liga/desliga `for` | `setStruct(id, "loop", on)` · edge-loop |
-| `setParallel` | Liga/desliga paralelo entre nós | `parallelBody` |
-| `openFlowRoot` | Define raiz visível do Flow | `setFlowRootFrom` / `openFlowView` |
+| `patchFunction` | title, context, code, ins, outs, loop, cond, agent | `patchEl` · `patchElementBody` |
+| `setSelection` (`if`) | Liga/desliga seleção | `setStruct` · edge-if · `rm-if` |
+| `setRepetition` (`loop`) | Liga/desliga `for` | `setStruct` · edge-loop · `rm-loop` |
+| `setParallel` | Liga/desliga paralelo | `POST /parallel` (**API sem botão** no app) |
+| `openFlowRoot` | Raiz visível do Flow | `setFlowRootFrom` / `openFlowView` |
+| `openInFlow` / `revealInExplorer` | Navegar entre vistas | ContextMenu / Drawer |
+| `copyIdr` / `copyPath` | Clipboard de identidade/caminho | Drawer / ContextMenu |
 
-### 5.2 Entrada / saída — *must*
+### 5.2 Entrada / saída — *must* (contrato; UI atual é parcial)
+
+**Nota (auditoria):** não há botão “criar entrada/saída” no proto/app. I/O é propriedade `ins`/`outs` do elemento + catálogo de **dados**. A lib **expõe** mutações de porta; o host decide a UI.
 
 | Interface | Efeito | Evidência IDE |
 |-----------|--------|---------------|
-| `addInput` | Porta de entrada (nome de dado) | `patch` `ins` |
-| `removeInput` | Remove entrada | `patch` `ins` |
-| `addOutput` | Porta de saída (nome + path) | `patch` `outs` |
-| `removeOutput` | Remove saída | `patch` `outs` |
-| `setCond` | Condição `if` (test + goto) | `cond` em `patchElementBody` |
-| `setLoopVars` | Variável / coleção do `for` | `loop` em `patchElementBody` |
+| `addInput` / `removeInput` | Mutar `ins` | `patchElementBody.ins` (**sem form dedicado**) |
+| `addOutput` / `removeOutput` | Mutar `outs` | `patchElementBody.outs` (**sem form dedicado**) |
+| `setCond` | Condição `if` (test + goto) | `cond` no patch |
+| `setLoopVars` | Variável / coleção do `for` | `loop` no patch |
+| listar I/O (leitura) | Drawer “Estado (entradas e saídas)” | Drawer read-only |
 
 ### 5.3 Dados (estado / □ / cubo) — *must*
 
@@ -75,25 +79,29 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 |-----------|--------|---------------|
 | `createData` | Novo dado no catálogo | `newDado` |
 | `upsertData` | Tipo, valor, módulo | `saveDado` · `upsertDataBody` |
-| `addDataChild` | Campo filho (árvore) | `addKid` · `addDataKidBody` |
-| `toggleCube` | Folha □ ↔ cubo composto | `toggleCube` |
-| `revealData` / `editData` | Foco / painel do dado | `revealDado` / `editDado` |
+| `clearDataValue` | Valor vazio → abstrato | proto `dado-clear` / painel |
+| `addDataChild` | Campo filho (árvore) | `addKid` |
+| `toggleCube` | Folha □ ↔ cubo | `toggleCube` |
+| `revealData` / `editData` | Foco / painel | `revealDado` / `editDado` |
 
 ### 5.4 Responsável · Task · catálogo — *must*
 
 | Interface | Efeito | Evidência IDE |
 |-----------|--------|---------------|
-| `assignResponsible` | Liga agente/arquivo/modelo à função | `assign` · `agentId`/`respId` |
-| `setTask` | Task/método (select concreto ou verbo) | `renameCommit` + `taskIsConcrete` |
-| `createAgent` / `patchAgent` | Catálogo IA · pessoa · lib · script | `createAgentBody` / `patchAgentBody` |
-| `createModel` / `patchModel` | Modelo LLM | `createModelBody` / `patchModelBody` |
+| `assignResponsible` / clear | Liga ou limpa responsável | `assign` · picker null |
+| `setTask` | Select concreto (lib/arquivo) ou verbo livre | `taskIsConcrete` |
+| `createAgent` / `patchAgent` / `removeAgent` | Catálogo (bloqueio se em uso) | AgentPanel / `cat-rm` |
+| `createModel` / `patchModel` / `removeModel` | Modelo LLM | ModelPanel |
+| `createPerson` | Pessoa no Explorar | `new-pessoa` |
 
 ### 5.5 Arquivos / módulos (Explorar) — *must*
 
 | Interface | Efeito | Evidência IDE |
 |-----------|--------|---------------|
-| `createModule` / `renameModule` | Arquivo `.js` no Explorar | `createModuleBody` / `patchModuleBody` |
-| `listModules` / itens do módulo | Funções e dados sob arquivo | Explorer + snapshot `modules` |
+| `createModule` / `renameModule` | Arquivo `.js` | `createModuleBody` |
+| `deleteModule` | Apaga módulo | `DELETE /modules/:mid` (**API sem UI**) |
+| `listModules` / itens | Funções e dados sob arquivo | Explorer |
+| `searchTree` | Filtrar árvore | Explorar ⌘K / `q` |
 
 ### 5.6 Execução — *must* (contrato; runtime pode ser adapter do host)
 
@@ -111,55 +119,46 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 |-----------|--------|---------------|
 | `exportPlan` | IR · JS · TS · Py | `openExport` / `exportPlan` |
 
-### 5.8 Seleção e UI de comando — *should* (estado de host, contrato estável)
+### 5.8 Seleção e UI de comando — *should*
 
 | Interface | Efeito |
 |-----------|--------|
 | `select` / multi-select | Seleção por IDR |
 | `openDrawer` / fechar painéis | Editar detalhe |
-| `toggleKids` / abrir·fechar todos filhos | Sanfona Flow |
-| `toggleIndent` | Indentação coluna Task |
+| `toggleKids` / abrir·fechar todos | Sanfona Flow |
+| `toggleIndent` · `toggleIoCompact` · `toggleTxtIn` · `toggleDadosTodos` | Preferências de vista Flow |
+| `zoom` / `pan` / `fit` | Viewport (host pode implementar; contrato opcional) |
 | `toggleTerminal` / `termLog` / `clearTerm` | Terminal |
+| `editMachineCode` | Código da etapa no MachPanel |
 
 ### 5.9 Fora da lib (host / plataforma)
 
-Auth, CRUD de projeto SaaS, tema visual, pan/zoom puro de viewport, toast, persistência HTTP — o host implementa; a lib não os exige. A lib **não** substitui Board/Gantt/Copiloto (fora do Flow IDE).
+Auth, CRUD de projeto SaaS, tema, toast, persistência HTTP, player T-xx do proto, Board/Gantt/Copiloto — host. A lib **não** os exige.
 
 ---
 
-## 6. Lacunas vs rascunho v0.1
+## 6. Lacunas
 
-O v0.1 listava só **5** criações. Para cobrir o Flow IDE, **faltam** (ainda não no escopo must anterior):
+### 6.1 Vs rascunho v0.1 (só 5 criações)
 
-### Crítico (modelo / edição)
+Coberto no v0.1: criar função · entrada · saída · filho · irmão.
 
-- Renomear · remover · duplicar · mover · cut/copy/paste
-- `patchFunction` (context, code, archived)
-- Seleção `if` / repetição `for` (toggle + edge) · paralelo
-- Remover entrada/saída · `setCond` · `setLoopVars`
-- Dados: criar, upsert (tipo/valor), filho, toggle cubo, reveal/edit
-- Atribuir responsável · set task
-- CRUD agente / modelo
-- Módulos / arquivo no Explorar
-- `newFlow` (raiz) além de “criar função” genérico
-- Abrir raiz do Flow (`flowRoot`)
+**Faltava para paridade Flow IDE:** rename · remove · archive · dup · move · cut/copy/paste · if/for/edge · paralelo · patch · dados (CRUD + clear + kid + cubo) · assign/clear responsável · task · CRUD agente/pessoa/modelo · módulos (+ delete) · search · openInFlow/reveal · copyIdr/path · run/cancel/complete/retry/runMachine · export · vista (sanfona, indent, terminal, …).
 
-### Execução e export
+### 6.2 Achados da auditoria (produto vs contrato)
 
-- `runPlan` · `cancelRun` · `completeStep` · `retryStep` · `runMachine`
-- `exportPlan` (IR/JS/TS/Py)
+| Achado | Implicação na lib |
+|--------|-------------------|
+| Sem botão “criar entrada/saída” | `addInput`/`addOutput` são **API must**; UI é escolha do host (não inventar botão obrigatório) |
+| `setParallel` só na API | Interface must; UI opcional |
+| `deleteModule` só na API | Interface must; UI opcional |
+| `move` sem botão dedicado | Cut/paste cobre; `move` permanece no contrato |
+| Sequência liga/desliga no conector | Só visão/docs — **não** must até haver evidência de op |
+| Setas mover / atalhos C·Tab·E | Removidos no PRD Flow.dev — **fora** |
 
-### UI opcional (should)
+### 6.3 Contradição v0.1 corrigida
 
-- select / drawer / sanfona filhos / indent / terminal
-
-### Já coberto no v0.1
-
-- Criar função · criar entrada · criar saída · criar filho · criar irmão
-
-### Contradição corrigida
-
-v0.1 punha Explorar, responsáveis, export e runtime em **não-objetivos**. Isso **impedia** cobrir o Flow IDE. v0.2: essas operações entram como **interfaces must**; só chrome de plataforma fica fora.
+Explorar / responsáveis / run / export eram não-objetivos; isso impedia cobrir o IDE. Desde v0.2+: **interfaces must**; chrome de plataforma fora.
 
 ---
 
@@ -197,9 +196,9 @@ FOP → Flow Language
 
 | Antes | Depois |
 |-------|--------|
-| 5 operações de criação | Inventário completo alinhado ao Flow IDE |
-| Explorar / agentes / run / export fora | Interfaces must; chrome fica no host |
-| Semântica só em `Ide` | Contrato reutilizável na lib |
+| 5 operações de criação | Inventário §5 alinhado ao Flow IDE + auditoria |
+| Entrada/saída como se fossem botões UI | Contrato de `ins`/`outs`; UI parcial no produto |
+| Explorar / run / export fora | Interfaces must; chrome no host |
 
 **Voltar:** escopo v0.1 (só as 5 criações).
 

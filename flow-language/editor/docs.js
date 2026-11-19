@@ -232,7 +232,7 @@
       body: s => { const tab = s.docTab || "flow"; return `<nav class="seg dk-tabs">${[["flow", "Flow"], ["js", "JavaScript"], ["ts", "TypeScript"], ["c", "C"]].map(([k, n]) => `<button data-act="doc-tab" data-t="${k}" aria-current="${k === tab}">${n}</button>`).join("")}</nav>` + code(CODE[tab], tab)
         + H("O que a transpilação preserva")
         + TABLE(["Flow", "JS", "TS", "C"], [["Função (verbo)", "async function", "async function tipada", "função"], ["Dado com campos", "objeto", "interface", "struct"], ["Paralelo", "Promise.all", "Promise.all", "pthread"], ["Repetição", "map / for", "map / for", "for"], ["Seleção / senão ↺", "if / while", "if / while", "if / do while"], ["Abstrato (fora da camada)", "campo do state", "campo de State…", "campo do struct State…"], ["Concreto (mesma camada)", "import", "import", "protótipo + link"], ["Responsável", "objeto no state", "interface injetada", "ponteiro de função"]])
-        + EX("o botão Exportar gera o código a partir do fluxo atual", `<p class="dk-mut" style="margin:0">Exemplo acima: <b>${esc($u(ATIVAR).title)}</b>. No Exportar, o mesmo modelo sai como JavaScript.</p>`, ["transpilar", "Exportar o fluxo atual"]); } },
+        + EX("o painel Código mostra o JavaScript do fluxo atual", `<p class="dk-mut" style="margin:0">Exemplo acima: <b>${esc($u(ATIVAR).title)}</b>. O painel Código à direita acompanha o desenho em JavaScript.</p>`, ["transpilar", "Ver código ao vivo"]); } },
 
     { id: "editar", g: "Do desenho ao código", t: "Editar o fluxo", ic: "mouse-pointer-click",
       lead: "Clique, preencha, execute. Do desenho ao código são quatro passos.",
@@ -389,7 +389,7 @@ SaidaAtivar ativar_cliente(StateAtivar *state) {
     estados: () => { openFlow(ROOT); goFlow("u15", { dadosTodos: true }); },
     camadas: () => { openFlow(ROOT); goFlow("d2", { ctxPanel: true, flowRoot: ROOT }); },
     modulos: () => { goFlow(null); SEC_CLOSED.delete("arquivos"); ensureLayers(); LAYERS.slice(0, 2).forEach(l => OPEN.add("ly:" + l.id)); setTimeout(() => holder.querySelector('.ex [data-sec="arquivos"]')?.scrollIntoView({ block: "start" }), 40); },
-    transpilar: () => { goFlow(null, { exp: true, expTab: "js" }); },
+    transpilar: () => { goFlow(null, {}); try { if (!CODE.open) { toggleCode(true); } } catch (e) {} },
     editar: () => { openFlow(ROOT); goFlow("u11"); },
   };
 

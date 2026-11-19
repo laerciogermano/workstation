@@ -1279,11 +1279,6 @@ body { overflow: hidden; }
 .body.code-off .live .live-h { height: auto; padding: 10px 0 0; justify-content: center; }
 .body.code-off .live .live-h > :not(.code-tog) { display: none; }
 .body.code-off .live .code-tog { margin-left: 0; }
-.body .bar { grid-template-columns: auto minmax(0, 1fr) auto; }
-.ftabs { display: flex; gap: 4px; overflow-x: auto; min-width: 0; }
-.ftabs button { border: 1px solid var(--line-2); background: var(--paper); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 500; white-space: nowrap; color: var(--body); }
-.ftabs button:hover { background: var(--wash); }
-.ftabs button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .live { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
 .live-h { height: 40px; display: flex; align-items: center; gap: 2px; padding: 0 8px 0 14px; flex: none; }
 .live-h b { font-weight: 600; font-size: 13px; }
@@ -1747,7 +1742,6 @@ function win(s) {
     </header>
     <div class="body ${CODE.open ? "code-on" : "code-off"}">
       <section class="content">
-        ${s.v === "catalog" ? catBar(s) : bar(s)}
         <div class="viewport">${s.v === "catalog" ? catalog(s) : flow(s)}
           ${s.drawer ? drawer(s) : ""}${s.agCfg ? agentPanel(s) : ""}${s.mdCfg ? modelPanel(s) : ""}${s.dadoEdit ? dadoPanel(s) : ""}
         </div>
@@ -1991,19 +1985,6 @@ function projAll(plan, openAll) {
 }
 function newRow(nn, lvl) {
   return `<div class="node sel" style="padding-left:${8 + Math.min(lvl, 14) * 14}px"><span class="car"></span><span class="fi${nn.kind === "folder" ? " folder" : ""}">${icon(nn.kind === "folder" ? "folder" : "file-text")}</span><input data-newn placeholder="${nn.kind === "folder" ? "Nome da pasta" : "Título do arquivo"}" aria-label="Título"></div>`;
-}
-
-// ----- barra superior da área de conteúdo -----
-function bar(s) {
-  const sel = s.sel && $u(s.sel);
-  const crumb = sel ? path(sel.id).map((p, i, a) => i === a.length - 1 ? `<b>${esc(p)}</b>` : `<span>${esc(p)}</span>${icon("chevron-right")}`).join("") : `<b>Flow IDE</b>`;
-  const acts = `<button class="btn" data-act="flow-new-top">${icon("circle-plus")}Novo fluxo</button><button class="btn pri" data-act="export">${icon("file-code-2")}Exportar</button>`;
-  const tops = planTops(s.plan), root = activeFlowRoot(s);
-  const tabs = `<div class="ftabs">${tops.map(t => `<button data-act="flow-go" data-id="${t.id}" class="${t.id === root ? "on" : ""}" title="${esc(t.title)}">${esc(t.title)}</button>`).join("")}</div>`;
-  return `<div class="bar"><div class="crumb"><b>Fluxos</b></div>${tabs}<div class="acts">${acts}</div></div>`;
-}
-function catBar() {
-  return `<div class="bar"><div class="crumb"><span>Configurações</span>${icon("chevron-right")}<b>IAs e bibliotecas Node.js</b></div><div class="acts"></div></div>`;
 }
 
 // ----- Board -----
@@ -4064,7 +4045,6 @@ const ACT = {
   "close-export": () => unset("exp"),
   "flow-go": t => { cur.flowRoot = t.dataset.id; cur.sel = t.dataset.id; unset("drawer"); },
   "code-toggle": () => { toggleCode(); },
-  "flow-new-top": t => ACT["new-flow"](t),
   "copy-code": () => { const pre = holder.querySelector("[data-pre]"); if (!pre) return; navigator.clipboard?.writeText(pre.textContent).catch(() => {}); toast("Código copiado", "copy"); },
   download: t => { const blob = new Blob([holder.querySelector("[data-pre]").textContent], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = t.dataset.file; a.click(); URL.revokeObjectURL(a.href); toast(`${t.dataset.file} baixado`, "download"); },
   mach: t => { const u = $u(t.dataset.id); view("flow", { mach: u.id, sel: u.id, fm: "ordem", plan: u.plan }); },

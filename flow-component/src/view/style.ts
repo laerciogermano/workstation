@@ -43,15 +43,12 @@ position:relative;display:flex;flex-direction:column;height:100%;min-height:420p
 .fcv .io-d{display:inline-flex;align-items:center;gap:4px;font:500 10.5px var(--mono);color:var(--body);cursor:pointer}
 .fcv .io-sq{width:7px;height:7px;border:1.2px solid var(--dado);background:var(--paper);display:inline-block}
 .fcv .io-cube{width:9px;height:10px;fill:var(--paper);stroke:var(--dado);stroke-width:1}
+.fcv .fn-dot{width:14px;height:14px;border-radius:50%;flex:none;border:1.5px solid var(--fn);background:var(--paper);margin-right:2px} .fcv .fn-dot.conc{background:var(--fn)}
 .fcv .fav{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--paper);border:1.5px solid var(--t-ia);color:var(--t-ia)} .fcv .fav svg{width:12px;height:12px}
 .fcv .fav.maquina{border-color:var(--ok);color:var(--ok)} .fcv .fav.pessoa{border-color:var(--t-pessoa);color:var(--t-pessoa)}
 .fcv .fav.arquivo{border-color:#64748b;color:#64748b} .fcv .fav.none{background:none;border:1px dashed var(--line-2);color:var(--muted)}
 .fcv .resp-pick{position:relative;display:inline-flex;align-items:center;gap:6px;min-width:0;cursor:pointer;max-width:100%}
 .fcv .resp-pick select{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
-.fcv .resp-pick.vazio{position:relative;display:block;flex:none;width:100%;height:24px;overflow:hidden}
-.fcv .resp-pick.vazio select{position:absolute;inset:0;opacity:1;width:100%;height:24px;padding:0 22px 0 8px;border:1px dashed var(--accent);border-radius:6px;color:var(--accent);font-size:11px;font-weight:500;appearance:none;-webkit-appearance:none;cursor:pointer;text-overflow:ellipsis;
-background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-image:linear-gradient(45deg,transparent 50%,var(--accent) 50%),linear-gradient(135deg,var(--accent) 50%,transparent 50%);background-position:right 11px top 10px,right 7px top 10px;background-size:4px 4px;background-repeat:no-repeat}
-.fcv .resp-pick.vazio select:hover,.fcv .resp-pick.vazio select:focus{border-style:solid;outline:none}
 .fcv .rp-n,.fcv .fav-n{font-size:11px;color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fcv .task-pick{appearance:none;border:1px solid var(--line-2);background:var(--paper);border-radius:5px;height:24px;padding:0 22px 0 7px;font:12px/1 var(--mono);color:var(--ink);max-width:100%;cursor:pointer}
 .fcv .task-miss{color:var(--fail)}
@@ -75,11 +72,11 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 .fcv .fview .sv-chip text{font:600 9px var(--mono);fill:var(--ink);text-anchor:middle}
 .fcv .fview .sv-los{fill:var(--paper);stroke:var(--muted);stroke-width:1.3} .fcv .fview .sv-ax{stroke:var(--muted);stroke-width:1.3}
 .fcv .fview .sv-selr{fill:color-mix(in srgb,var(--ink) 6%,transparent)}
-.fcv .fview .sv-band{fill:color-mix(in srgb,var(--warn) 7%,transparent);stroke:none}
-.fcv .fview .sv-band.lp{fill:color-mix(in srgb,var(--loop) 7%,transparent);stroke:none}
-.fcv .fview .sv-band.tr{fill:color-mix(in srgb,var(--ok) 5%,transparent);stroke:none}
+.fcv .fview .sv-band{fill:color-mix(in srgb,var(--warn) 7%,transparent);stroke:color-mix(in srgb,var(--warn) 45%,transparent);stroke-dasharray:3 3}
+.fcv .fview .sv-band.lp{fill:color-mix(in srgb,var(--loop) 7%,transparent);stroke:color-mix(in srgb,var(--loop) 45%,transparent);stroke-dasharray:3 3}
+.fcv .fview .sv-band.tr{fill:color-mix(in srgb,var(--ok) 5%,transparent);stroke:color-mix(in srgb,var(--ok) 45%,transparent);stroke-dasharray:3 3}
 .fcv .fview .sv-bandl.tr{stroke:var(--ok)}
-.fcv .fview .sv-band.ca{fill:color-mix(in srgb,var(--fail) 5%,transparent);stroke:none}
+.fcv .fview .sv-band.ca{fill:color-mix(in srgb,var(--fail) 5%,transparent);stroke:color-mix(in srgb,var(--fail) 45%,transparent);stroke-dasharray:3 3}
 .fcv .fview .sv-bandl.ca{stroke:var(--fail)}
 .fcv .fview .sv-pill.try rect{fill:color-mix(in srgb,var(--ok) 16%,var(--paper))} .fcv .fview .sv-pill.try text{fill:var(--ok)}
 .fcv .fview .sv-pill.catch rect{fill:color-mix(in srgb,var(--fail) 16%,var(--paper))} .fcv .fview .sv-pill.catch text{fill:var(--fail)}
@@ -106,6 +103,7 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 .fcv .fview .fdot{fill:var(--paper);stroke:var(--dado);stroke-width:1.3;cursor:pointer} .fcv .fview .fdot.a{fill:var(--dado)}
 .fcv .fview .fif{fill:var(--paper);stroke:var(--warn);stroke-width:1.5;pointer-events:none} .fcv .fview .fif-pad{fill:transparent}
 .fcv .fview .io-ghost{cursor:pointer} .fcv .fview .io-ghost .hit{fill:transparent} .fcv .fview .io-ghost .gh{fill:var(--paper);stroke:var(--dado);stroke-width:1.2;opacity:0} .fcv .fview .io-ghost .gp{stroke:var(--dado);stroke-width:1.2;fill:none;opacity:0;pointer-events:none} .fcv .fview .io-ghost:hover .gh,.fcv .fview .io-ghost:hover .gp{opacity:1}
+.fcv .fview .pill-handle{fill:var(--ink);opacity:0;cursor:ew-resize} .fcv .fview .pill-handle:hover{opacity:.28}
 .fcv .fview .fif-hit,.fcv .fview .floop-hit{cursor:pointer}
 .fcv .fview .floop{fill:transparent;stroke:none}
 .fcv .fview .farc{fill:none;stroke:var(--loop);stroke-width:1.3;pointer-events:none}
@@ -144,7 +142,7 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 :root[data-tema="eternos"] .fcv .grow.sel{background:rgba(0,0,0,.07);box-shadow:inset 0 -1px 0 rgba(0,0,0,.25),inset 0 1px 0 rgba(0,0,0,.25)}
 :root[data-tema="eternos"] .fcv .grow.ifrow{background:rgba(0,0,0,.035)}
 :root[data-tema="eternos-black"] .fcv .fview .sv-fn{fill:#fff;stroke:#fff;stroke-width:1.5} :root[data-tema="eternos-black"] .fcv .fview .sv-fn.abs{fill:#000;stroke:#f2f2f2}
-:root[data-tema="eternos-black"] .fcv .fview .sv-fn.nag{fill:transparent} :root[data-tema="eternos-black"] .fcv .fview .sv-fbt{fill:#0b0b0b} :root[data-tema="eternos-black"] .fcv .fview .sv-fbt.abs{fill:#f2f2f2}
+:root[data-tema="eternos-black"] .fcv .fview .sv-fn.nag{fill:transparent} :root[data-tema="eternos-black"] .fcv .fview .sv-fbt{fill:#0b0b0b} :root[data-tema="eternos-black"] .fcv .fview .sv-fbt.abs,:root[data-tema="eternos-black"] .fcv .fview .sv-fbt.nag{fill:#f2f2f2}
 :root[data-tema="eternos-black"] .fcv .fview .sv-selr{fill:rgba(255,255,255,.08)} :root[data-tema="eternos-black"] .fcv .fview .sv-band:not(.tr):not(.ca){fill:rgba(255,255,255,.04)}
 :root[data-tema="eternos-black"] .fcv .fview .fdot{fill:#fff;stroke:#fff} :root[data-tema="eternos-black"] .fcv .fview path.fdot{stroke:#0b0b0b} :root[data-tema="eternos-black"] .fcv .fview .fdot.a{fill:#000;stroke:#f2f2f2}
 :root[data-tema="eternos-black"] .fcv .fview .sv-fd rect,:root[data-tema="eternos-black"] .fcv .fview .sv-fd path{fill:#fff;stroke:#fff}
@@ -155,7 +153,7 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 :root[data-tema="eternos-black"] .fcv .fav.none{background:none;border:1px dashed var(--line-2);color:var(--muted)}
 :root[data-tema="eternos-black"] .fcv .grow.sel{background:rgba(255,255,255,.08)} :root[data-tema="eternos-black"] .fcv .grow.ifrow,:root[data-tema="eternos-black"] .fcv .grow.forrow{background:rgba(255,255,255,.04)}
 :root[data-tema="tablet-black"] .fcv .fview .sv-fn{fill:#5b8cff;stroke:#5b8cff;stroke-width:1.5} :root[data-tema="tablet-black"] .fcv .fview .sv-fn.abs{fill:color-mix(in srgb,#5b8cff 14%,#0b0b0b);stroke:#5b8cff}
-:root[data-tema="tablet-black"] .fcv .fview .sv-fn.nag{fill:transparent;stroke:#5b8cff} :root[data-tema="tablet-black"] .fcv .fview .sv-fbt{fill:#0b0b0b} :root[data-tema="tablet-black"] .fcv .fview .sv-fbt.abs{fill:#dbe7ff}
+:root[data-tema="tablet-black"] .fcv .fview .sv-fn.nag{fill:transparent;stroke:#5b8cff} :root[data-tema="tablet-black"] .fcv .fview .sv-fbt{fill:#0b0b0b} :root[data-tema="tablet-black"] .fcv .fview .sv-fbt.abs,:root[data-tema="tablet-black"] .fcv .fview .sv-fbt.nag{fill:#dbe7ff}
 :root[data-tema="tablet-black"] .fcv .fview .sv-selr{fill:rgba(91,140,255,.12)} :root[data-tema="tablet-black"] .fcv .fview .sv-band:not(.tr):not(.ca){fill:rgba(255,255,255,.04)}
 :root[data-tema="tablet-black"] .fcv .fview .fdot{fill:#0b0b0b;stroke:#a855f7} :root[data-tema="tablet-black"] .fcv .fview .fdot.a{fill:#5b8cff;stroke:#5b8cff}
 :root[data-tema="tablet-black"] .fcv .fview .sv-fd rect,:root[data-tema="tablet-black"] .fcv .fview .sv-fd path{fill:#0b0b0b;stroke:#a855f7}
@@ -166,4 +164,12 @@ background-color:color-mix(in srgb,var(--accent) 6%,var(--paper));background-ima
 :root[data-tema="tablet-black"] .fcv .fav.ia{border-color:#a855f7;color:#e9d5ff} :root[data-tema="tablet-black"] .fcv .fav.pessoa{border-color:#5b8cff;color:#dbe7ff}
 :root[data-tema="tablet-black"] .fcv .fav.none{background:none;border:1px dashed var(--line-2);color:var(--muted)}
 :root[data-tema="tablet-black"] .fcv .grow.sel{background:rgba(91,140,255,.12)} :root[data-tema="tablet-black"] .fcv .grow.ifrow,:root[data-tema="tablet-black"] .fcv .grow.forrow{background:rgba(255,255,255,.04)}
+.fcv{position:relative}
+.fcv .fc-dlg{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:rgba(0,0,0,.35)}
+.fcv .fc-dlg form{width:min(360px,86%);display:flex;flex-direction:column;gap:8px;padding:14px;background:var(--paper);border:1px solid var(--line-2);border-radius:8px;box-shadow:var(--shadow)}
+.fcv .fc-dlg label{font-size:12px;font-weight:600;color:var(--ink)}
+.fcv .fc-dlg input{font:13px var(--mono);padding:7px 9px;border:1px solid var(--line-2);border-radius:6px;background:var(--paper);color:var(--ink)} .fcv .fc-dlg input:focus{outline:none;border-color:var(--accent)}
+.fcv .fc-dlg .row{display:flex;gap:8px;justify-content:flex-end}
+.fcv .fc-dlg button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--line-2);border-radius:6px;background:var(--paper);color:var(--ink);cursor:pointer}
+.fcv .fc-dlg button.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 `;

@@ -75,8 +75,7 @@
     </section>
   </aside>
 </div>
-<script src="flow-component.js"></script>
-<script src="cases.js"></script>
+<script>for (const f of ["flow-component.js", "cases.js"]) document.write(`<script src="${f}?v=${Date.now()}"><\/script>`);   // sem cache: sempre a versão recém-compilada</script>
 <script>
 const $ = s => document.querySelector(s);
 mountTemas($("#temas"));
@@ -88,10 +87,37 @@ function newProject() {
   const base = seed();
   let s = { plans: [{ id: "p1", name: "Novo projeto", position: 0 }], elements: [base.elements[0]], links: [], structs: [],
     agents: base.agents, models: base.models, modules: base.modules, data: [] };   // só o catálogo de responsáveis (lib, pessoa, IA) fica disponível
-  const r = FC.applyModelCommand(s, { type: "createFunction", planId: "p1", title: "Fazer novo fluxo" }, { newId: () => "novo-fluxo" });
-  if (!r.ok) throw new Error(r.error.message);
-  ROOT = r.value.created[0];
-  return r.value.snapshot;
+  let n = 0; const opts = { newId: () => "novo-" + (++n) };
+  const run = cmd => { const r = FC.applyModelCommand(s, cmd, opts); if (!r.ok) throw new Error(cmd.type + ": " + r.error.message); s = r.value.snapshot; return r.value.created[0]; };
+  /* fluxo 1: "main" = o projeto novo (um único elemento, sem filhos) */
+  const raiz = run({ type: "createFunction", planId: "p1", title: "main" });
+  ROOT = raiz;
+  /* fluxo 2: "fazer_onboarding" = o exemplo T-01 do Flow IDE (responsáveis, for, if, paralelo) */
+  const http = run({ type: "createAgent", kind: "maquina", name: "node:http", sub: "Node.js · requisições HTTP", tasks: ["get", "post", "request", "createServer", "put", "patch", "delete", "head"] });
+  const lia = run({ type: "createAgent", kind: "ia", name: "Lia", sub: "Agente · redação de propostas" });
+  const teo = run({ type: "createAgent", kind: "ia", name: "Teo", sub: "Agente · tradução" });
+  const davi = run({ type: "createAgent", kind: "ia", name: "Davi", sub: "Agente · revisão e aprovação" });
+  const onb = run({ type: "createFunction", planId: "p1", title: "fazer_onboarding" });
+  const f = t => run({ type: "createChild", refId: onb, title: t });
+  const get = f("get"), redigir = f("redigir_proposta"), revisar = f("revisar_proposta"), traduzir = f("traduzir"),
+    gerar = f("gerar_contrato"), post = f("post"), get2 = f("get");
+  run({ type: "assignResponsible", id: get, agentId: http, task: "get" });
+  run({ type: "assignResponsible", id: redigir, agentId: lia }); run({ type: "assignResponsible", id: revisar, agentId: davi });
+  run({ type: "assignResponsible", id: traduzir, agentId: teo }); run({ type: "assignResponsible", id: gerar, agentId: lia });
+  run({ type: "assignResponsible", id: post, agentId: http, task: "post" }); run({ type: "assignResponsible", id: get2, agentId: http, task: "get" });
+  run({ type: "addOutput", id: get, name: "dados_cliente" });
+  run({ type: "addInput", id: redigir, name: "dados_cliente" }); run({ type: "addOutput", id: redigir, name: "rascunho" });
+  run({ type: "addInput", id: revisar, name: "rascunho" }); run({ type: "addOutput", id: revisar, name: "proposta_aprovada" });
+  run({ type: "addInput", id: traduzir, name: "proposta_aprovada" }); run({ type: "addOutput", id: traduzir, name: "propostas" });
+  run({ type: "addInput", id: gerar, name: "proposta_aprovada" }); run({ type: "addInput", id: gerar, name: "dados_cliente" }); run({ type: "addOutput", id: gerar, name: "pacote_contrato" });
+  run({ type: "addInput", id: post, name: "propostas" }); run({ type: "addInput", id: post, name: "pacote_contrato" }); run({ type: "addOutput", id: post, name: "envio_id" });
+  run({ type: "addInput", id: get2, name: "envio_id" }); run({ type: "addOutput", id: get2, name: "crm_registro" });
+  /* revisar → if (proposta_aprovada) senão volta a redigir; traduzir (for idioma) em paralelo com gerar_contrato */
+  run({ type: "setSelection", id: traduzir, on: true }); run({ type: "setCond", id: traduzir, cond: { test: "proposta_aprovada", gotoId: redigir } });
+  run({ type: "setRepetition", id: traduzir, on: true }); run({ type: "setLoopVars", id: traduzir, loop: ["idioma", '["en", "es"]'] });
+  run({ type: "setParallel", a: traduzir, b: gerar, on: true });
+  run({ type: "setRepetition", id: post, on: true }); run({ type: "setLoopVars", id: post, loop: ["idioma", '["en", "es"]'] });
+  return s;
 }
 
 /* ───────── realce TypeScript ───────── */

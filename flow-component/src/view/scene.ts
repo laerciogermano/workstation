@@ -1,5 +1,6 @@
 import type { Agent, FlowElement, Snapshot, Struct } from "../types";
 import { FILE_AGENT, MODEL_AGENT } from "../types";
+import { loopsOf } from "../graph";
 
 /** Geometria da vista Flow (porta pura do FlowView do Flow IDE): sem DOM, testável. */
 /** `LW` = largura mínima do painel esquerdo (Responsável + Task); cresce com a indentação. */
@@ -27,16 +28,20 @@ export interface SceneInput {
   readonly tail?: number;
 }
 
-export interface StructRow extends Struct { readonly i0: number; hi: number }
+export interface StructRow extends Struct { readonly i0: number; hi: number; /** Última linha do if (cobre também os filhos das funções do corpo, em várias camadas). */ end: number }
 /** Linha exibida (tabela e SVG compartilham o mesmo índice). */
 export interface Disp {
   st?: StructRow; lp?: FlowElement; tr?: FlowElement; ca?: FlowElement; from?: FlowElement; io?: "in" | "out"; u?: FlowElement;
   d: number; nm?: string; first?: boolean; to?: FlowElement; row?: boolean;
+  /** Nível de recuo extra (ifs/for aninhados): cada bloco de fora empurra o de dentro. */
+  nest?: number;
+  /** Qual for da função (0 = externo; 1.. = aninhados) quando `lp`. */
+  li?: number;
 }
 /** Bloco try/catch visível: cabeçalho, extensão em linhas e função de tratamento. */
 export interface TryBlock { readonly u: FlowElement; /** Última função coberta pelo try (o bloco vai de `u` até `last`). */ readonly last: FlowElement; readonly hi: number; readonly end: number; readonly to: FlowElement; /** Faixa do catch (abaixo do try): cabeçalho e última linha. */ readonly catchHi?: number; readonly catchEnd?: number }
 /** Bloco for visível: cabeçalho e extensão em linhas (cobre as irmãs consecutivas com o mesmo laço). */
-export interface LoopBlock { readonly u: FlowElement; readonly last: FlowElement; readonly hi: number; readonly end: number }
+export interface LoopBlock { readonly li: number; readonly u: FlowElement; readonly last: FlowElement; readonly hi: number; readonly end: number }
 export type FnKind = "nag" | "abs" | "conc";
 export interface Geo { x1: number; x2: number; ix: number; ox: number }
 
@@ -265,7 +270,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
 
   // ---------- estruturas (if) e linhas exibidas ----------
   const rIdx: Record<string, number> = {}; rows.forEach((r, i) => { rIdx[r.u.id] = i; });
-  const structs: StructRow[] = snap.structs.map(st => ({ ...st, body: st.body.filter(id => rIdx[id] != null), i0: 0, hi: 0 })).filter(st => st.body.length)
+  const structs: StructRow[] = snap.structs.map(st => ({ ...st, body: st.body.filter(id => rIdx[id] != null), i0: 0, hi: 0, end: 0 })).filter(st => st.body.length)
     .map(st => ({ ...st, i0: Math.min(...st.body.map(id => rIdx[id]!)) }));
   const headAt: Record<number, StructRow[]> = {};
   structs.forEach(st => { (headAt[st.i0] ??= []).push(st); });
@@ -290,8 +295,17 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
     flushOuts(r);
     if (r.catchFor && !r.catchMember) disp.push({ ca: r.u, from: u(r.catchFor)!, d: r.d });
     if (handlerOf(r.u) && isTryHead(r.u)) disp.push({ tr: r.u, d: r.d });
-    (headAt[i] ?? []).forEach(st => disp.push({ st, d: r.d }));
-    if (r.u.loop && loopHead(r.u)) disp.push({ lp: r.u, d: r.d });
+    // ifs que começam aqui (maiores primeiro). O de fora vem antes do for; os aninhados (dentro do for) depois dele
+    const heads = [...(headAt[i] ?? [])].sort((a, b) => b.body.length - a.body.length);
+    const hasOuter = structs.some(st => st.i0 < i && st.body.includes(r.u.id));
+    // if criado depois do for fica dentro dele (embaixo da tag); criado antes, fica de fora (em cima). Sem a marca: o primeiro de fora, os outros dentro
+    const inside = (st: StructRow, k: number): boolean => st.afterLoop ?? (hasOuter || k > 0);
+    const pre = heads.filter((st, k) => !inside(st, k)), post = heads.filter((st, k) => inside(st, k));
+    let lvl = structs.filter(st => st.i0 < i && st.body.includes(r.u.id)).length;
+    pre.forEach(st => disp.push({ st, d: r.d, nest: lvl++ }));
+    if (r.u.loop && loopHead(r.u)) disp.push({ lp: r.u, d: r.d, nest: lvl++, li: 0 });
+    post.forEach(st => disp.push({ st, d: r.d, nest: lvl++ }));
+    if (loopHead(r.u)) (r.u.loopsIn ?? []).forEach((_, k) => disp.push({ lp: r.u, d: r.d, nest: lvl++, li: k + 1 }));
     if (!flags.compact && leaf(r.u) && newIns(r.u).length) {
       let k = disp.length - 1; while (k >= 0 && (disp[k]!.st || disp[k]!.lp || disp[k]!.tr || disp[k]!.ca)) k--;
       const grp: Disp[] = []; while (k >= 0 && disp[k]!.io === "out" && (!grp.length || disp[k]!.u === grp[0]!.u)) { grp.unshift(disp[k]!); k--; }
@@ -307,7 +321,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   flushOuts();
   const idx: Record<string, number> = {}, idxIn: Record<string, number> = {}, idxOut: Record<string, number> = {}, idxEnd: Record<string, number> = {}, idxLoop: Record<string, number> = {}, idxTry: Record<string, number> = {}, idxCa: Record<string, number> = {};
   disp.forEach((r, i) => {
-    if (r.ca) idxCa[r.ca.id] = i; else if (r.tr) idxTry[r.tr.id] = i; else if (r.lp) idxLoop[r.lp.id] = i; else if (r.st) r.st.hi = i;
+    if (r.ca) idxCa[r.ca.id] = i; else if (r.tr) idxTry[r.tr.id] = i; else if (r.lp) idxLoop[r.li ? `${r.lp.id}#${r.li}` : r.lp.id] = i; else if (r.st) r.st.hi = i;
     else if (r.io === "in") { if (r.first) idxIn[r.u!.id] = i; }
     else if (r.io === "out") { if (r.first) { idxOut[r.u!.id] = i; if (r.to) idxIn[r.to.id] = i; } idxEnd[r.u!.id] = i; }
     else idx[r.u!.id] = i;
@@ -324,11 +338,13 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
     tries.push({ u: e, last: members.at(-1)!, hi: idxTry[id]!, end: Math.max(last, idxTry[id]!), to, ...(catchHi != null ? { catchHi, catchEnd: catchEnd! } : {}) });
   });
 
-  const loops: LoopBlock[] = Object.keys(idxLoop).map(id => {
-    const e = u(id)!, members = loopBlockOf(e);
+  structs.forEach(st => { const ids = new Set(st.body.flatMap(id => [id, ...descOf(id).map(x => x.id)])); st.end = Math.max(st.hi, ...[...ids].map(x => idxEnd[x] ?? idx[x] ?? -1)); });
+  const loops: LoopBlock[] = Object.keys(idxLoop).map(key => {
+    const [id, li] = key.split("#") as [string, string | undefined];
+    const e = u(id)!, members = li ? [e] : loopBlockOf(e);
     const ids = new Set(members.flatMap(m => [m.id, ...descOf(m.id).map(x => x.id)]));
-    const end = Math.max(idxLoop[id]!, ...[...ids].map(x => idxEnd[x] ?? idx[x] ?? -1));
-    return { u: e, last: members.at(-1)!, hi: idxLoop[id]!, end };
+    const end = Math.max(idxLoop[key]!, ...[...ids].map(x => idxEnd[x] ?? idx[x] ?? -1));
+    return { u: e, last: members.at(-1)!, hi: idxLoop[key]!, end, li: li ? Number(li) : 0 };
   });
 
   // ---------- dimensões ----------
@@ -381,14 +397,16 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
   const stepOf = (e: FlowElement): number => Math.max(0, (layout[e.id]?.s ?? s0Root) - s0Root);
   const ind = (e: FlowElement, d: number): number => d * 16 + stepOf(e) * 10;
   const inIf = (id: string): boolean => structs.some(st => st.body.includes(id));
-  const nestOf = (r: Disp): number => { if (r.lp || r.st || r.tr || r.ca) return 0; const e = r.u; if (!e) return 0; return ((e.loop || loopOf(e)) && !hasKids(e) ? 1 : 0) + (inIf(e.id) ? 1 : 0); };
+  const nestOf = (r: Disp): number => { if (r.lp || r.st) return r.nest ?? 0; if (r.tr || r.ca) return 0; const e = r.u; if (!e) return 0; return ((loopsOf(e).length + (e.loop ? 0 : loopOf(e) ? 1 : 0)) && !hasKids(e) ? Math.max(1, loopsOf(e).length) : 0) + structs.filter(st => st.body.includes(e.id)).length; };
   const padL = (e: FlowElement, d: number, nest: number, base = 10): number => (flags.indent ? ind(e, d) + nest * NEST + base : base);
   const ancs = (e: FlowElement): FlowElement[] => { const out: FlowElement[] = []; let p = u(e.parentId); while (p && !isFolder(p)) { out.unshift(p); if (p.id === rootId) break; p = u(p.parentId); } return out; };
   const dOf = (e: FlowElement): number => { let d = 0, p = u(e.parentId); while (p && !isFolder(p) && p.id !== rootId) { d++; p = u(p.parentId); } return p && p.id === rootId ? d + 1 : d; };
   const guides = (e: FlowElement, self: boolean, nest: number): number[] =>
     !flags.indent ? [] : [...ancs(e).map(a => ind(a, dOf(a)) + 6), ...(self ? [ind(e, dOf(e)) + nest * NEST + 13] : [])];
 
-  const senaoOf = (st: { test: string }): string => {
+  const senaoOf = (st: { test: string; goto?: string }): string => {
+    const own = st.goto ? u(st.goto) : undefined;
+    if (own) return ` · senão → ${own.title}`;
     const hits = rows.map(r => r.u).filter(x => x.cond && x.cond[0] === st.test && u(x.cond[1]));
     const uniq = [...new Map(hits.map(x => u(x.cond![1])!).map(t => [t.id, t] as const)).values()];
     return uniq.length ? ` · senão → ${uniq.map(t => t.title).join(", ")}` : "";
@@ -405,7 +423,7 @@ export function buildScene(snap: Snapshot, input: SceneInput): Scene {
     const base = r.io ? 14 : (r.row && hasKids(e) ? 0 : 10);
     const pad = padL(e, r.d, nest, base);
     const label = r.io ? String(r.nm ?? "")
-      : r.lp ? `↻ for (${e.loop?.[0] ?? "?"} of ${e.loop?.[1] ?? "?"})`
+      : r.lp ? (() => { const l = loopsOf(e)[r.li ?? 0]; return `↻ for (${l?.[0] ?? "?"} of ${l?.[1] ?? "?"})`; })()
       : r.ca ? "catch · se o try falhar"
       : r.tr ? `try · catch ↓ ${handlerOf(e)?.title ?? "?"}`
       : r.st ? `if (${r.st.test})${senaoOf(r.st)}`

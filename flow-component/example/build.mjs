@@ -9,6 +9,9 @@ await build({
   bundle: true, format: "iife", globalName: "FlowComponent", target: "es2022", minify: false, logLevel: "info",
 });
 
+// versão nova (do zero): novo/ → example/flow-novo.js
+await build({ entryPoints: [join(root, "novo/app.ts")], outfile: join(root, "example/flow-novo.js"), bundle: true, format: "iife", target: "es2022", minify: false, logLevel: "info" });
+
 const src = readFileSync(join(root, "src/commands.ts"), "utf8");
 const clean = t => t.replace(/readonly /g, "").replace(/\s+/g, " ").trim();
 const contracts = {};

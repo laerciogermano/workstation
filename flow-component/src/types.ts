@@ -29,6 +29,8 @@ export interface FlowElement {
   readonly progress: number | null;
   /** [variável, coleção] do `for`. */
   readonly loop: readonly [string, string] | null;
+  /** Laços aninhados dentro de `loop` (do mais externo para o mais interno). Só vale com `loop` ligado. */
+  readonly loopsIn?: readonly (readonly [string, string])[];
   /** [dado testado, id da função para onde volta] do `if`. */
   readonly cond: readonly [string, string] | null;
   /** try/catch: id da função que trata a falha desta função (ou de toda a composição). Ausente = sem try. */
@@ -45,7 +47,9 @@ export interface FlowElement {
   readonly outs: readonly (readonly [string, string])[];
 }
 export interface Link { readonly from: string; readonly to: string; readonly kind: LinkKind }
-export interface Struct { readonly id: string; readonly test: string; readonly body: readonly string[] }
+/** `if`: teste, membros e o "senão" (função para onde o fluxo volta). Uma função pode estar em vários ifs (aninhados). */
+export interface Struct { readonly id: string; readonly test: string; readonly body: readonly string[]; readonly goto?: string;
+  /** Criado quando a função já tinha `for`: o if fica dentro do for (embaixo da tag), em cima do elemento. Ausente: o if de fora (antes do for). */ readonly afterLoop?: boolean }
 export interface Agent {
   readonly id: string;
   readonly kind: AgentKind;

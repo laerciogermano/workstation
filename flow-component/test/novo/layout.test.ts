@@ -1,0 +1,63 @@
+import { describe, expect, it } from "vitest";
+import { layout, links } from "../../novo/layout";
+import { apply, DEFAULT_AGENTS, emptyProject, locate, type Command, type Fn, type Project } from "../../novo/model";
+
+function base(n = 4) {
+  let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
+  const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
+  const root = run({ type: "newFlow", title: "R" });
+  const ids = Array.from({ length: n }, (_, i) => run({ type: "addChild", id: root, title: "ABCDEFGH"[i]! }));
+  const sc = (closed: string[] = []) => layout(locate(p, root)!.node as Fn, { closed: new Set(closed) });
+  const names = (s: ReturnType<typeof sc>) => s.rows.filter(r => r.kind === "fn").map(r => `${(r.node as Fn).title}:${r.s}-${r.e}`);
+  return { run, root, ids, sc, names, get p(): Project { return p; } };
+}
+
+describe("cena: linhas e passos", () => {
+  it("fluxo de um elemento só: um passo, sem filhos", () => {
+    let p = emptyProject("T"); const r = apply(p, { type: "newFlow", title: "main" }); p = r.project; const s = layout(p.flows[0]!);
+    expect(s.nSteps).toBe(1); expect(s.rows.map(x => x.kind)).toEqual(["fn"]); expect(s.rows[0]!.leaf).toBe(true); expect(s.leaves).toHaveLength(1);
+  });
+  it("filhos em sequência ocupam passos consecutivos; a composição cobre todos", () => {
+    const t = base(), s = t.sc(); expect(t.names(s)).toEqual(["R:0-3", "A:0-0", "B:1-1", "C:2-2", "D:3-3"]); expect(s.nSteps).toBe(4);
+    expect(s.span.get(t.root)).toEqual({ s: 0, e: 3 }); expect(s.rows[0]!.last).toBe(4);
+  });
+  it("linha de entradas/saídas aparece abaixo da função que tem dados", () => {
+    const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" });
+    const s = t.sc(); expect(s.rows.map(r => r.kind)).toEqual(["fn", "fn", "io", "fn", "fn", "fn"]); const io = s.rows[2]!; expect(io).toMatchObject({ ins: ["x"], outs: ["y"] });
+  });
+  it("funções em paralelo dividem o mesmo passo; o seguinte vem depois", () => {
+    const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true }); expect(t.names(t.sc())).toEqual(["R:0-2", "A:0-0", "B:0-0", "C:1-1", "D:2-2"]);
+  });
+  it("bloco cobre os passos dos filhos e fica na linha do cabeçalho", () => {
+    const t = base(); const b = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "setScope", id: b, count: 2 });
+    const s = t.sc(), row = s.rows.find(r => r.id === b)!; expect(row).toMatchObject({ kind: "block", s: 1, e: 2, depth: 1 }); expect(row.last).toBe(s.rows.findIndex(r => r.id === t.ids[2]));
+    expect(t.names(s)).toContain("B:1-1"); expect(s.rows.find(r => r.id === t.ids[1])!.depth).toBe(2); expect(s.maxDepth).toBe(2);
+  });
+  it("if e for aninhados indentam e cobrem os mesmos passos", () => {
+    const t = base(); const f = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }), i = t.run({ type: "wrap", id: f, kind: "if" });
+    const s = t.sc(); expect(s.rows.find(r => r.id === i)!.depth).toBe(1); expect(s.rows.find(r => r.id === f)!.depth).toBe(2); expect(s.span.get(i)).toEqual(s.span.get(f));
+  });
+  it("catch fica em paralelo à última célula do try e o próximo só começa depois", () => {
+    const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "setScope", id: tr, count: 2 });
+    const s = t.sc(), c = s.rows.find(r => r.kind === "catch")!;
+    expect(s.span.get(tr)).toEqual({ s: 1, e: 2 }); expect(c.e).toBe(2);                                // termina junto com o try
+    expect(t.names(s).find(x => x.startsWith("Tratar erro"))).toBe("Tratar erro:2-2"); expect(t.names(s)).toContain("D:3-3");
+    // catch maior que o try: começa junto com ele e o próximo só vem depois dos dois
+    t.run({ type: "addChild", id: tr, catch: true, title: "c1" }); t.run({ type: "addChild", id: tr, catch: true, title: "c0" });
+    const s2 = t.sc(), c2 = s2.rows.find(r => r.kind === "catch")!; expect(c2.s).toBe(s2.span.get(tr)!.s); expect(c2.e).toBe(3); expect(t.names(s2)).toContain("D:4-4");
+    expect(s2.rows.findIndex(r => r.kind === "catch")).toBeGreaterThan(s2.rows.findIndex(r => r.id === t.ids[2]));   // linhas do catch vêm depois das do try
+  });
+  it("funções do catch não entram na sequência (leaves)", () => {
+    const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const s = t.sc();
+    expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["A", "B", "C", "D"]); expect(tr).toBeTruthy();
+  });
+  it("composição fechada some com os filhos mas mantém o passo", () => {
+    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); t.run({ type: "addChild", id: t.ids[1]!, title: "B2" });
+    const open = t.sc(), shut = t.sc([t.ids[1]!]); expect(open.rows.length).toBe(shut.rows.length + 2); expect(shut.rows.find(r => r.id === t.ids[1])!.closed).toBe(true);
+    expect(shut.span.get(t.ids[1]!)).toEqual({ s: 1, e: 2 }); expect(shut.nSteps).toBe(open.nSteps);
+  });
+  it("links: B liga a A quando começa no passo seguinte; paralelas ligam as duas ao seguinte", () => {
+    const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true });
+    const l = links(t.sc()).map(([a, b]) => `${(a.node as Fn).title}>${(b.node as Fn).title}`); expect(l).toEqual(["A>C", "B>C", "C>D"]);
+  });
+});

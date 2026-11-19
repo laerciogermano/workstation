@@ -60,10 +60,38 @@ describe("transpilador Flow → TypeScript", () => {
     await h.run({ type: "setCond", id: ids.s, cond: { test: "estoque_ok", gotoId: ids.r } });
     await h.run({ type: "setCatch", id: ids.s, handlerId: ids.e });
     const { code } = gen();
-    expect(code).toContain("if (!estoque_ok) return receberPedido(");
+    expect(code).toContain("if (estoque_ok) {");                         // a função só roda se o teste passa
+    expect(code).toMatch(/\} else \{\n\s+return receberPedido\(.*\/\/ senão → Receber pedido/);
     expect(code).toContain("try {");
     expect(code).toMatch(/\} catch \(error\) \{\n\s+return enviarPedido\(\{ \.\.\.state.*error \}\);  \/\/ catch → Enviar pedido/);
     expect(code).not.toMatch(/await enviarPedido\(/); // o tratamento só roda no catch, nunca na sequência
+  });
+  it("if sem 'senão' (primeira função) também protege a chamada; if → for → if aninha os blocos", async () => {
+    const { h, ids, gen } = await base();
+    await h.run({ type: "setSelection", id: ids.r, on: true });
+    await h.run({ type: "setRepetition", id: ids.r, on: true }); await h.run({ type: "setLoopVars", id: ids.r, loop: ["item", "pedidos"] });
+    await h.run({ type: "setSelection", id: ids.r, on: true });
+    const lines = gen().code.split("\n"), at = (re: RegExp, from = 0): number => lines.findIndex((l, i) => i >= from && re.test(l));
+    const a = at(/^\s*if \(condicao\) \{/), f = at(/for \(const item of pedidos\)/, a), b = at(/^\s*if \(condicao_2\) \{/, f), c = at(/await receberPedido\(/, b);
+    expect(a).toBeGreaterThan(-1); expect(f).toBeGreaterThan(a); expect(b).toBeGreaterThan(f); expect(c).toBeGreaterThan(b);
+  });
+  it("for dentro de for gera laços aninhados com as duas variáveis", async () => {
+    const { h, ids, gen } = await base();
+    await h.run({ type: "setRepetition", id: ids.s, on: true }); await h.run({ type: "setLoopVars", id: ids.s, loop: ["pedido", "pedidos"] });
+    await h.run({ type: "setRepetition", id: ids.s, on: true }); await h.run({ type: "setLoopVars", id: ids.s, loop: ["linha", "linhas"], index: 1 });
+    const { code } = gen();
+    expect(code.indexOf("for (const pedido of pedidos)")).toBeGreaterThan(-1);
+    expect(code.indexOf("for (const linha of linhas)")).toBeGreaterThan(code.indexOf("for (const pedido of pedidos)"));
+    expect(code).toMatch(/await separarItens\(\{ \.\.\.state, pedido, pedido, linha \}\)|await separarItens\(\{ \.\.\.state(, \w+)*, pedido(, \w+)*, linha/);
+  });
+  it("tasks que compartilham os mesmos ifs ficam dentro dos mesmos blocos if (sem repetir)", async () => {
+    const { h, ids, gen } = await base();
+    await h.run({ type: "setSelection", id: ids.s, on: true }); await h.run({ type: "setSelection", id: ids.s, on: true });
+    await h.run({ type: "createSibling", refId: ids.s, position: "after", title: "Embalar" });
+    const { code } = gen(), body = code.slice(code.indexOf("export async function"), code.indexOf("\n}\n"));
+    expect(body.match(/if \(\w+\) \{/g)).toHaveLength(2);           // dois ifs, uma vez cada, para as duas tasks
+    const a = body.indexOf("if (condicao) {"), s1 = body.indexOf("await separarItens("), s2 = body.indexOf("await Embalar(");
+    expect(a).toBeGreaterThan(-1); expect(s1).toBeGreaterThan(a); expect(s2).toBeGreaterThan(s1);
   });
   it("responsáveis viram imports e chamadas; sem responsável vira TODO", async () => {
     const { h, ids, gen } = await base();
@@ -74,12 +102,23 @@ describe("transpilador Flow → TypeScript", () => {
     expect(code).toContain('import * as node_fs from "node:fs";');
     expect(code).toContain('import { humans } from "@flow/runtime";');
     expect(code).toContain('humans.ask("Ana", "Enviar pedido"');
-    expect(code).toContain("// TODO: defina o responsável");
+    expect(code).not.toContain("// TODO: defina o responsável");   // sem responsável = abstrata: não tem corpo
+  });
+  it("função sem responsável é abstrata: não é declarada, chega pelo state e é só chamada pelo nome", async () => {
+    const { gen } = await base(); const { code } = gen();
+    expect(code).toContain("type Fn = (state: State) => Promise<State>;");
+    expect(code).toMatch(/const \{ receberPedido, separarItens, enviarPedido \} = state as Record<string, Fn>;/);
+    expect(code).toMatch(/await receberPedido\(\{ \.\.\.state \}\)/);
+    expect(code).not.toMatch(/async function receberPedido/);          // não define quem faz
+    expect(code).not.toMatch(/\w+\.receberPedido\(/);                  // nem informa quem (sem prefixo)
   });
   it("mapa de linhas aponta cada função gerada", async () => {
-    const { ids, gen } = await base(); const g = gen(); const lines = g.code.split("\n");
+    const { h, ids, gen } = await base();
+    const lib = (await h.run({ type: "createAgent", kind: "maquina", name: "node:fs" })).created[0]!;
+    await h.run({ type: "assignResponsible", id: ids.s, agentId: lib });          // com responsável a função é concreta e tem corpo
+    const g = gen(); const lines = g.code.split("\n");
     const [a, b] = g.map[ids.s]!;
-    expect(lines[a! - 1]).toContain("/** Separar itens");
+    expect(lines[a! - 1]).toContain("node:fs");
     expect(lines[b! - 1]).toBe("}");
     expect(g.fileName).toBe("atender-pedido.ts");
   });

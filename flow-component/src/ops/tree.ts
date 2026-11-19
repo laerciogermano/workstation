@@ -83,7 +83,7 @@ export const createFunction: Op<Cmd<"createFunction">> = (s, c, ctx) => {
   return applied({ ...s, elements: [...s.elements, el] }, { created: [el.id] });
 };
 
-function createNear(s: Snapshot, refId: string, mode: Mode, title: string | undefined, context: string | undefined, ctx: OpContext): Result<import("../commands").Applied> {
+function createNear(s: Snapshot, refId: string, mode: Mode, title: string | undefined, context: string | undefined, ctx: OpContext, structId?: string, loopFirst?: boolean, outside?: boolean): Result<import("../commands").Applied> {
   const ref = findEl(s, refId); if (!ref) return err("not_found", `Elemento ${refId} não existe`);
   if (ref.kind === "data") return err("invalid", "Dado não aceita filhos nem irmãos");
   if (mode !== "child" && isFlowRoot(s, ref)) return err("invalid", "A raiz do fluxo não ganha irmão");
@@ -91,16 +91,30 @@ function createNear(s: Snapshot, refId: string, mode: Mode, title: string | unde
   const el = newFunction(ctx.newId(), ref.planId, t.value, context ?? null, 999_999);
   // irmão de uma função coberta por try entra no mesmo bloco try/catch (o `if` já é tratado em linkInto)
   // irmão de uma task do catch (a função de tratamento ou irmã dela) entra no catch, em sequência com ela
-  const catchHead = mode === "child" ? undefined : ref.inCatch && findEl(s, ref.inCatch) ? ref.inCatch : s.elements.some(x => !x.archived && x.onError === ref.id) ? ref.id : undefined;
+  const catchHead = mode === "child" || outside ? undefined : ref.inCatch && findEl(s, ref.inCatch) ? ref.inCatch : s.elements.some(x => !x.archived && x.onError === ref.id) ? ref.id : undefined;
   // irmão de uma função com `for` pertence ao mesmo for (sem laço próprio); de uma com try, ao mesmo try
   const leafRef = !children(s, ref.id).some(k => !k.archived && k.kind !== "folder");
-  const loopHead = mode === "child" ? undefined : ref.loop && leafRef ? ref.id : ref.inLoop && findEl(s, ref.inLoop)?.loop ? ref.inLoop : undefined;
+  const loopHead = mode !== "after" || outside ? undefined : ref.loop && leafRef ? ref.id : ref.inLoop && findEl(s, ref.inLoop)?.loop ? ref.inLoop : undefined;
   const loopInh = loopHead ? { inLoop: loopHead } : {};
-  const inherited = catchHead ? { ...el, ...loopInh, inCatch: catchHead } : mode !== "child" && ref.onError ? { ...el, ...loopInh, onError: ref.onError } : { ...el, ...loopInh };
-  return applied(linkInto({ ...s, elements: [...s.elements, inherited] }, el.id, ref.id, mode), { created: [el.id] });
+  const inherited = catchHead ? { ...el, ...loopInh, inCatch: catchHead } : mode !== "child" && ref.onError && !outside ? { ...el, ...loopInh, onError: ref.onError } : { ...el, ...loopInh };
+  const target = structId ? s.structs.find(x => x.id === structId) : undefined;
+  // if de fora do alvo: corpo maior que o dele (ou igual, criado antes: ifs de mesmo corpo se aninham na ordem de criação)
+  const isOuterOf = (x0: Struct, t: Struct): boolean => { const x = s.structs.find(y => y.id === x0.id); return !!x && t.body.every(id => x.body.includes(id)) && (x.body.length > t.body.length || s.structs.indexOf(x) < s.structs.indexOf(t)); };
+  if (structId && !target) return err("not_found", `Seleção ${structId} não existe`);
+  let next = linkInto({ ...s, elements: [...s.elements, inherited] }, el.id, ref.id, mode);
+  // filho de um if: entra nesse if e nos que o contêm, mas não nos ifs aninhados dentro dele
+  if (target) next = { ...next, structs: next.structs.map(x => (x.body.includes(el.id) && (outside ? (x.id === target.id || !isOuterOf(x, target)) : (x.id !== target.id && !isOuterOf(x, target))) ? { ...x, body: x.body.filter(id => id !== el.id) } : x)) };
+  // primeiro do for: o novo item assume o laço e a função de antes passa a ser membro dele (como no if, entra já na primeira posição)
+  if (loopFirst && mode === "before" && ref.loop) {
+    // o novo item assume só o for de fora; os for aninhados (se houver) ficam com a função, que segue dentro dele
+    const inner = ref.loopsIn ?? [];
+    const rest = inner.length ? { loop: inner[0]!, loopsIn: inner.slice(1) } : { loop: null, loopsIn: [] };
+    next = { ...next, elements: next.elements.map(x => (x.id === el.id ? { ...x, loop: ref.loop, loopsIn: [] } : x.id === ref.id ? { ...x, ...rest, inLoop: el.id } : x.inLoop === ref.id ? { ...x, inLoop: el.id } : x)) };
+  }
+  return applied(next, { created: [el.id] });
 }
 export const createChild: Op<Cmd<"createChild">> = (s, c, ctx) => createNear(s, c.refId, "child", c.title, c.context, ctx);
-export const createSibling: Op<Cmd<"createSibling">> = (s, c, ctx) => createNear(s, c.refId, c.position, c.title, c.context, ctx);
+export const createSibling: Op<Cmd<"createSibling">> = (s, c, ctx) => createNear(s, c.refId, c.position, c.title, c.context, ctx, c.structId, c.loopFirst, c.outside);
 
 // ---------- rename / archive ----------
 export const renameFunction: Op<Cmd<"renameFunction">> = (s, c) => {

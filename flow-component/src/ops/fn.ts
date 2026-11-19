@@ -1,7 +1,7 @@
 import type { ModelCommand } from "../commands";
-import { descendants, ensureData, findAgent, findEl, flowSiblings, fnSiblings, isConcrete, isFlowRoot, isLeafFn, nextPosition, respExists } from "../graph";
+import { children, descendants, ensureData, findAgent, findEl, flowSiblings, fnSiblings, isConcrete, isFlowRoot, isLeafFn, loopsOf, nextPosition, respExists } from "../graph";
 import { err, ok, type Result } from "../result";
-import type { FlowElement, Snapshot } from "../types";
+import type { FlowElement, Snapshot, Struct } from "../types";
 import { applied, DATA_NAME, text, type Op } from "./context";
 import { newFunction, removeElements } from "./tree";
 
@@ -49,23 +49,33 @@ export const removeOutput: Op<Cmd<"removeOutput">> = (s, c) => {
 };
 
 // ---------- cond (if) / loop (for) ----------
+/** O if mais interno: o de menor corpo (empate: o criado por último). */
+const innermost = (list: readonly Struct[]): Struct | undefined => list.reduce<Struct | undefined>((b, x) => (!b || x.body.length <= b.body.length ? x : b), undefined);
 export const setCond: Op<Cmd<"setCond">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
   if (c.cond === null) return applied(update(s, c.id, x => ({ ...x, cond: null })));
   const test = dataName(c.cond.test); if (!test.ok) return test;
   if (!findEl(s, c.cond.gotoId)) return err("not_found", `Destino ${c.cond.gotoId} não existe`);
-  // elemento num `if`: o teste e o "senão" valem para a seleção inteira (todos os membros e o rótulo do if)
-  const st = s.structs.find(x => x.body.includes(c.id)), members = new Set(st ? st.body : [c.id]);
-  const elements = s.elements.map(x => (members.has(x.id) ? { ...x, cond: [test.value, c.cond!.gotoId] as const } : x));
-  const structs = st ? s.structs.map(x => (x === st ? { ...x, test: test.value } : x)) : s.structs;
+  // num `if`: o teste e o "senão" valem para a seleção inteira (o if indicado, ou o mais interno que contém a função)
+  const mine = s.structs.filter(x => x.body.includes(c.id)), st = (c.structId ? mine.find(x => x.id === c.structId) : innermost(mine));
+  if (c.structId && !st) return err("not_found", `Seleção ${c.structId} não contém esta função`);
+  const members = new Set(st ? st.body : [c.id]), old = st?.test;
+  const elements = s.elements.map(x => (members.has(x.id) && (!st || !x.cond || x.cond[0] === old) ? { ...x, cond: [test.value, c.cond!.gotoId] as const } : x));
+  const structs = st ? s.structs.map(x => (x === st ? { ...x, test: test.value, goto: c.cond!.gotoId } : x)) : s.structs;
   return applied({ ...s, elements, structs, data: ensureData(s.data, test.value) });
 };
+/** Troca a lista de laços da função (externo + aninhados). */
+const withLoops = (s: Snapshot, id: string, list: readonly (readonly [string, string])[]): Snapshot =>
+  update(s, id, x => ({ ...x, loop: list[0] ?? null, loopsIn: list.slice(1) }));
 export const setLoopVars: Op<Cmd<"setLoopVars">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
-  if (c.loop === null) return applied(update(s, c.id, x => ({ ...x, loop: null })));
+  const list = [...loopsOf(e.value)], at = c.index ?? 0;
+  if (c.loop === null) { if (at >= list.length) return applied(s); list.splice(at, 1); return applied(withLoops(s, c.id, list)); }
   const v = text("Variável", c.loop[0], 160), l = text("Coleção", c.loop[1], 160);
   if (!v.ok) return v; if (!l.ok) return l;
-  return applied(update(s, c.id, x => ({ ...x, loop: [v.value, l.value] as const })));
+  if (at > list.length) return err("invalid", "Índice de for inexistente");
+  list[at] = [v.value, l.value] as const;
+  return applied(withLoops(s, c.id, list));
 };
 
 // ---------- try / catch ----------
@@ -96,6 +106,7 @@ export const setCatch: Op<Cmd<"setCatch">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
   const range = tryRange(s, e.value, c.through); if (!range.ok) return range;
   if (c.handlerId === null) return applied(setOnError(s, range.value.map(x => x.id), null));
+  if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita try/catch");
   const hd = findEl(s, c.handlerId);
   if (!hd || hd.kind !== "file") return err("not_found", `Função ${c.handlerId} não existe`);
   if (range.value.some(m => m.id === hd.id || descendants(s, m.id).some(d => d.id === hd.id))) return err("invalid", "O tratamento não pode estar dentro do próprio try");
@@ -121,6 +132,7 @@ export const setTryCatch: Op<Cmd<"setTryCatch">> = (s, c, ctx) => {
       && !cleared.elements.some(x => x.parentId === h.id);
     return pristine ? removeElements(cleared, { type: "removeElements", ids: [h.id] }, ctx) : applied(cleared);
   }
+  if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita try/catch");
   const range = tryRange(s, e.value, c.through); if (!range.ok) return range;
   if (e.value.onError) return c.through ? applied(setOnError(s, range.value.map(x => x.id), e.value.onError)) : applied(s); // estende o bloco
   const h = { ...newFunction(ctx.newId(), e.value.planId, "Tratar falha", CATCH_CONTEXT, nextPosition(s, e.value.parentId)), parentId: e.value.parentId };
@@ -130,29 +142,124 @@ export const setTryCatch: Op<Cmd<"setTryCatch">> = (s, c, ctx) => {
 /** `for` liga/desliga numa função folha. */
 export const setRepetition: Op<Cmd<"setRepetition">> = (s, c) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
-  if (!c.on) return applied(update(s, c.id, x => ({ ...x, loop: null })));
+  const list = [...loopsOf(e.value)];
+  if (!c.on) { if (!list.length) return applied(s); list.splice(c.index ?? list.length - 1, 1); return applied(withLoops(s, c.id, list)); }
   if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita repetição (for)");
-  if (!isLeafFn(s, e.value)) return err("invalid", "Repetição aplica-se a uma task folha");
-  return applied(update(s, c.id, x => ({ ...x, loop: x.loop ?? (["item", "lista"] as const) })));
+  if (!isLeafFn(s, e.value) && !list.length) return err("invalid", "Repetição aplica-se a uma task folha");
+  // já tem for → adiciona outro, aninhado (nomes novos, para não repetir os de fora)
+  const used = new Set(list.flatMap(l => [l[0], l[1]])); let n = list.length + 1, v = list.length ? `item_${n}` : "item", col = list.length ? `lista_${n}` : "lista";
+  while (used.has(v) || used.has(col)) { n++; v = `item_${n}`; col = `lista_${n}`; }
+  return applied(withLoops(s, c.id, [...list, [v, col] as const]));
 };
 
 /** `if` liga/desliga: o corpo guarda os membros; ligar volta para a função anterior. */
 export const setSelection: Op<Cmd<"setSelection">> = (s, c, ctx) => {
   const e = needFn(s, c.id); if (!e.ok) return e;
-  const st = s.structs.find(x => x.body.includes(c.id));
+  const mine = s.structs.filter(x => x.body.includes(c.id));
   if (!c.on) {
+    const st = c.structId ? mine.find(x => x.id === c.structId) : innermost(mine);
     if (!st) return err("invalid", "Esta task não está numa seleção");
-    const members = new Set(st.body);
-    return applied({ ...s, elements: s.elements.map(x => (members.has(x.id) ? { ...x, cond: null } : x)), structs: s.structs.filter(x => x.id !== st.id) });
+    const structs = s.structs.filter(x => x.id !== st.id);
+    // quem continua em outro if ganha o teste/senão desse if; quem não, fica sem cond
+    const elements = s.elements.map(x => {
+      if (!st.body.includes(x.id)) return x;
+      const rest = structs.find(y => y.body.includes(x.id));
+      return { ...x, cond: rest ? ([rest.test, rest.goto ?? x.cond?.[1] ?? ""] as const) : null };
+    });
+    return applied({ ...s, elements, structs });
   }
   if (isFlowRoot(s, e.value)) return err("invalid", "O fluxo raiz não aceita seleção (if)");
   if (!isLeafFn(s, e.value)) return err("invalid", "Seleção aplica-se a uma task folha");
-  if (st) return applied(s);
-  const test = e.value.ins[0] ?? "condicao";
+  // já está num if → cria outro, aninhado (teste novo, para não repetir o do if de fora)
+  const used = new Set(mine.map(x => x.test));
+  let test = e.value.ins.find(n => !used.has(n)) ?? "condicao"; for (let n = 2; used.has(test); n++) test = `condicao_${n}`;
   const sibs = fnSiblings(s, e.value.parentId, e.value.id).filter(x => x.planId === e.value.planId);
   const prev = [...sibs].reverse().find(x => x.position < e.value.position);
-  const elements = prev ? s.elements.map(x => (x.id === c.id ? { ...x, cond: [test, prev.id] as const } : x)) : s.elements;
-  return applied({ ...s, elements, structs: [...s.structs, { id: ctx.newId(), test, body: [c.id] }], data: ensureData(s.data, test) });
+  const goto = prev?.id ?? e.value.cond?.[1];
+  const elements = prev && !e.value.cond ? s.elements.map(x => (x.id === c.id ? { ...x, cond: [test, prev.id] as const } : x)) : s.elements;
+  return applied({ ...s, elements, structs: [...s.structs, { id: ctx.newId(), test, body: [c.id], ...(goto ? { goto } : {}), ...(loopsOf(e.value).length ? { afterLoop: true } : {}) }], data: ensureData(s.data, test) });
+};
+
+// ---------- sair do escopo ----------
+/**
+ * A função e tudo o que vem depois dela (para a direita) no bloco saem do escopo — `for`, `if` ou `try`.
+ * for: as irmãs que pertencem ao laço (`inLoop`) deixam de pertencer; se for a função do laço, o for é desfeito.
+ * if: saem do corpo do if (o if some se esvaziar). try: deixam de ser cobertas (se for a primeira, o try é desfeito).
+ */
+export const exitScope: Op<Cmd<"exitScope">> = (s, c, ctx) => {
+  const e = needFn(s, c.id); if (!e.ok) return e;
+  const sibs = children(s, e.value.parentId).filter(x => x.kind === "file" && !x.archived);
+  const from = new Set(sibs.slice(Math.max(0, sibs.findIndex(x => x.id === c.id))).map(x => x.id));
+  if (c.scope === "loop") {
+    const head = e.value.loop ? e.value : findEl(s, e.value.inLoop ?? "");
+    if (!head?.loop) return err("invalid", "Esta função não está num for");
+    const own = head.id === c.id, gone = (x: FlowElement): boolean => x.inLoop === head.id && (own || from.has(x.id));
+    let cur: Snapshot = { ...s, elements: s.elements.map(x => (gone(x) ? { ...x, inLoop: null } : x)) };
+    if (own) cur = withLoops(cur, head.id, loopsOf(head).slice(1));
+    return applied(cur);
+  }
+  if (c.scope === "if") {
+    const mine = s.structs.filter(x => x.body.includes(c.id)), st = c.structId ? mine.find(x => x.id === c.structId) : innermost(mine);
+    if (!st) return err("invalid", "Esta função não está num if");
+    const leaving = new Set(st.body.filter(id => from.has(id)));
+    const structs = s.structs.map(x => (x.id === st.id ? { ...x, body: x.body.filter(id => !leaving.has(id)) } : x)).filter(x => x.body.length > 0);
+    const elements = s.elements.map(x => {
+      if (!leaving.has(x.id)) return x;
+      const rest = structs.find(y => y.body.includes(x.id));
+      return { ...x, cond: rest ? ([rest.test, rest.goto ?? x.cond?.[1] ?? ""] as const) : null };
+    });
+    return applied({ ...s, elements, structs });
+  }
+  if (c.scope === "catch") {
+    const head = e.value.inCatch; if (!head) return err("invalid", "Esta função não é uma irmã dentro do catch (a função de tratamento fica)");
+    const mem = s.elements.filter(x => !x.archived && x.inCatch === head).sort((p, q) => p.position - q.position), at = mem.findIndex(x => x.id === c.id);
+    const gone = new Set(mem.slice(Math.max(0, at)).map(x => x.id));
+    return applied({ ...s, elements: s.elements.map(x => (gone.has(x.id) ? { ...x, inCatch: null } : x)) });
+  }
+  if (!e.value.onError) return err("invalid", "Esta função não está num try");
+  const blk = tryBlock(s, e.value), at = blk.findIndex(x => x.id === c.id);
+  if (at <= 0) return setTryCatch(s, { type: "setTryCatch", id: c.id, on: false }, ctx);
+  return applied(setOnError(s, blk.slice(at).map(x => x.id), null));
+};
+
+/**
+ * Puxar a tag do bloco: as irmãs seguintes, até `toId`, passam a fazer parte do for / if / try (viram filhas do bloco).
+ * `id` é a função que abre o bloco (a do laço, o primeiro membro do if, o primeiro do try).
+ */
+export const extendScope: Op<Cmd<"extendScope">> = (s, c, ctx) => {
+  void ctx;
+  const e = needFn(s, c.id); if (!e.ok) return e;
+  const sibs = flowSiblings(s, e.value.parentId), pos = (id: string): number => sibs.findIndex(x => x.id === id);
+  const to = pos(c.toId); if (to < 0) return err("invalid", "`toId` deve ser uma irmã no fluxo principal");
+  if (c.scope === "loop") {
+    const head = e.value.loop ? e.value : findEl(s, e.value.inLoop ?? "");
+    if (!head?.loop) return err("invalid", "Esta função não está num for");
+    const members = sibs.filter(x => x.id === head.id || x.inLoop === head.id), last = Math.max(...members.map(x => pos(x.id)));
+    if (to <= last) return applied(s);
+    const add = new Set(sibs.slice(last + 1, to + 1).map(x => x.id));
+    return applied({ ...s, elements: s.elements.map(x => (add.has(x.id) ? { ...x, inLoop: head.id } : x)) });
+  }
+  if (c.scope === "if") {
+    const mine = s.structs.filter(x => x.body.includes(c.id)), st = c.structId ? mine.find(x => x.id === c.structId) : innermost(mine);
+    if (!st) return err("invalid", "Esta função não está num if");
+    const last = Math.max(...st.body.map(pos));
+    if (to <= last) return applied(s);
+    const add = sibs.slice(last + 1, to + 1).map(x => x.id);
+    const structs = s.structs.map(x => (x.id === st.id ? { ...x, body: [...x.body, ...add] } : x));
+    const elements = s.elements.map(x => (add.includes(x.id) && !x.cond && st.goto ? { ...x, cond: [st.test, st.goto] as const } : x));
+    return applied({ ...s, elements, structs });
+  }
+  if (c.scope === "catch") {
+    // `id` = a função de tratamento: as irmãs depois do try, até `toId`, passam a fazer parte do catch (em sequência com ela)
+    const tryEls = s.elements.filter(x => !x.archived && x.onError === c.id);
+    if (!tryEls.length) return err("invalid", "Esta função não trata nenhum try");
+    const last = Math.max(...tryEls.map(x => pos(x.id)));
+    if (to <= last) return applied(s);
+    const add = new Set(sibs.slice(last + 1, to + 1).map(x => x.id));
+    return applied({ ...s, elements: s.elements.map(x => (add.has(x.id) ? { ...x, inCatch: c.id } : x)) });
+  }
+  if (!e.value.onError) return err("invalid", "Esta função não está num try");
+  return setCatch(s, { type: "setCatch", id: tryBlock(s, e.value)[0]!.id, handlerId: e.value.onError, through: c.toId }, ctx);
 };
 
 // ---------- patch / responsável / task ----------

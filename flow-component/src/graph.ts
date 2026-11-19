@@ -81,3 +81,6 @@ export function flowSiblings(s: Snapshot, parentId: string | null): FlowElement[
 
 /** Função raiz do fluxo (pai é pasta ou nada): não ganha irmão, `for`, `if` nem remoção pela vista. */
 export const isFlowRoot = (s: Snapshot, e: FlowElement): boolean => !e.parentId || findEl(s, e.parentId)?.kind === "folder";
+
+/** Laços da função, do mais externo para o mais interno. */
+export const loopsOf = (e: FlowElement): readonly (readonly [string, string])[] => (e.loop ? [e.loop, ...(e.loopsIn ?? [])] : []);

@@ -14,7 +14,7 @@ const handlers: Handlers = {
   createFunction: tree.createFunction, createChild: tree.createChild, createSibling: tree.createSibling,
   renameFunction: tree.renameFunction, removeElements: tree.removeElements, duplicate: tree.duplicate,
   archive: tree.archive, unarchive: tree.unarchive, move: tree.move, paste: tree.paste,
-  patchFunction: fn.patchFunction, setSelection: fn.setSelection, setRepetition: fn.setRepetition, setParallel: tree.setParallel, setTryCatch: fn.setTryCatch, setCatch: fn.setCatch,
+  patchFunction: fn.patchFunction, setSelection: fn.setSelection, setRepetition: fn.setRepetition, setParallel: tree.setParallel, exitScope: fn.exitScope, extendScope: fn.extendScope, setTryCatch: fn.setTryCatch, setCatch: fn.setCatch,
   addInput: fn.addInput, removeInput: fn.removeInput, addOutput: fn.addOutput, removeOutput: fn.removeOutput,
   setCond: fn.setCond, setLoopVars: fn.setLoopVars,
   createData: data.createData, upsertData: data.upsertData, clearDataValue: data.clearDataValue, addDataChild: data.addDataChild, toggleCube: data.toggleCube,

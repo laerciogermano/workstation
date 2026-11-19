@@ -2,9 +2,11 @@ import type { Command } from "../commands";
 import type { FlowComponent } from "../component";
 import type { Agent, AgentKind, FlowElement, Snapshot } from "../types";
 import { FILE_AGENT, MODEL_AGENT } from "../types";
-import { isFlowRoot } from "../graph";
+import { flowFileName } from "../codegen";
+import { flowSiblings, isFlowRoot, loopsOf } from "../graph";
 import { h, sv, type Child } from "./dom";
 import { icon, KIND_ICON, KIND_LABEL, KIND_ONE } from "./icons";
+import { addChildCmd, addIfCmds, addSiblingOutsideCmd, blockOf, type BlockKind } from "./blocks";
 import { buildScene, DEFAULT_FLAGS, HEAD, RH, textWidth as tw, type Disp, type Scene, type StructRow, type ViewFlags } from "./scene";
 import { FLOW_CSS } from "./style";
 
@@ -17,7 +19,7 @@ export interface FlowViewOptions {
   /** Confirma remoção de função com filhos (padrão: `window.confirm`). */
   readonly confirm?: (message: string) => boolean;
   /** Pede um texto (nome da entrada/saída; padrão: `window.prompt`). Devolve null ao cancelar. */
-  readonly prompt?: (message: string, initial?: string) => string | null;
+  readonly prompt?: (message: string, initial?: string) => string | null | Promise<string | null>;
   readonly onSelect?: (id: string | null) => void;
   /** O fluxo exibido mudou (troca no seletor ou criação de um novo). */
   readonly onRootChange?: (rootId: string | null) => void;
@@ -69,7 +71,17 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
   };
   const chrome = opts.chrome ?? true;
   const ro = !!opts.readonly;
-  const promptFn = opts.prompt ?? ((m: string, d = "") => (typeof window !== "undefined" ? window.prompt(m, d) : null));
+  /** Pergunta de uma linha, dentro da própria vista (o prompt() do navegador pode ser bloqueado e some em iframes). */
+  const promptFn = opts.prompt ?? ((m: string, d = ""): Promise<string | null> => new Promise(res => {
+    root.querySelector(".fc-dlg")?.remove();
+    const input = h("input", { type: "text", value: d, spellcheck: "false", "aria-label": m }) as HTMLInputElement;
+    const done = (v: string | null): void => { dlg.remove(); res(v); };
+    const dlg = h("div", { class: "fc-dlg", role: "dialog", "aria-label": m, onClick: (e: Event) => { if (e.target === dlg) done(null); } },
+      h("form", { onSubmit: (e: Event) => { e.preventDefault(); done(input.value); }, onKeyDown: (e: KeyboardEvent) => { if (e.key === "Escape") done(null); } },
+        h("label", null, m), input,
+        h("div", { class: "row" }, h("button", { type: "button", onClick: () => done(null) }, "Cancelar"), h("button", { type: "submit", class: "pri" }, "OK"))));
+    root.append(dlg); input.focus(); input.select();
+  }));
   const confirmFn = opts.confirm ?? ((m: string) => (typeof window !== "undefined" ? window.confirm(m) : true));
   let scene: Scene | null = null;
   let hovT = 0;
@@ -228,7 +240,7 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     const cur = S.agent(respMode ? u.respId : u.agentId);
     const fav = cur
       ? [h("span", { class: "fav " + cur.kind, title: `${KIND_ONE[cur.kind] ?? ""}: ${cur.name}` }, icon(KIND_ICON[kindOk(cur.kind)]!)), h("span", { class: respMode ? "rp-n" : "fav-n" }, cur.name)]
-      : [h("span", { class: "fav none", title: respMode ? "Adicionar responsável" : "Sem agente" }, icon("plus")), respMode ? null : h("span", { class: "fav-n", style: { color: "var(--muted)" } }, "sem agente")];
+      : [h("span", { class: "fav none", title: "Escolher responsável" }, icon("plus")), respMode ? null : h("span", { class: "fav-n", style: { color: "var(--muted)" } }, "sem agente")];
     const by = kindsWithAgents(snap);
     const select = h("select", {
       "aria-label": `Responsável de ${u.title}`, title: "Responsável: arquivo, lib, pessoa, agente ou modelo",
@@ -238,7 +250,7 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
       RESP_KINDS.map(k => { const list = by.get(k) ?? []; return list.length ? h("optgroup", { label: KIND_LABEL[k] }, list.map(c => h("option", { value: c.id, ...(cur?.id === c.id ? { selected: "" } : {}) }, c.name))) : null; }));
     select.value = cur?.id ?? "";
     // toda função precisa de responsável: sem ele, o seletor fica visível e ativo na própria célula
-    if (!cur) return h("span", { class: "resp-pick vazio" }, select);
+    if (!cur) return h("span", { class: "resp-pick" }, ...fav, select);
     return h("span", { class: "resp-pick on" }, ...fav, select);
   }
 
@@ -279,29 +291,47 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
   const renameFn = (id: string): void => { st.ren = id; st.sel = id; opts.onSelect?.(id); draw(); };
   const S0 = (): Scene => scene!;
   /** Edita o for: variável e coleção. */
-  const editLoop = async (id: string): Promise<void> => {
-    const e = S0().u(id); if (!e?.loop) return;
-    const v = promptFn("Variável do for (cada item):", e.loop[0])?.trim(); if (!v) return;
-    const l = promptFn("Coleção percorrida:", e.loop[1])?.trim(); if (!l) return;
-    await run({ type: "setLoopVars", id, loop: [v, l] });
+  const editLoop = async (id: string, li = 0): Promise<void> => {
+    const e = S0().u(id), cur = e ? loopsOf(e)[li] : undefined; if (!cur) return;
+    const v = (await promptFn("Variável do for (cada item):", cur[0]))?.trim(); if (!v) return;
+    const l = (await promptFn("Coleção percorrida:", cur[1]))?.trim(); if (!l) return;
+    await run({ type: "setLoopVars", id, loop: [v, l], index: li });
   };
   /** Edita o if: o dado testado e a função para onde o fluxo volta no "senão". */
-  const editIf = async (id: string): Promise<void> => {
-    const S = S0(), s = S.structs.find(x => x.body.includes(id)); if (!s) return;
+  const editIf = async (id: string, structId?: string): Promise<void> => {
+    const S = S0(), s = S.structs.find(x => (structId ? x.id === structId : x.body.includes(id))); if (!s) return;
     const cur = S.u(S.u(s.body[0]!)?.cond?.[1] ?? null);
-    const test = promptFn("Condição do if (dado testado, ex.: estoque_ok):", s.test)?.trim(); if (!test) return;
+    const test = (await promptFn("Condição do if (dado testado, ex.: estoque_ok):", s.test))?.trim(); if (!test) return;
     const opts2 = S.snap.elements.filter(x => x.kind === "file" && !x.archived && x.planId === S.u(id)!.planId && !s.body.includes(x.id));
-    const nm = promptFn(`Senão, voltar para qual função? (${opts2.map(x => x.title).join(", ")})`, cur?.title ?? "")?.trim(); if (!nm) return;
+    const nm = (await promptFn(`Senão, voltar para qual função? (${opts2.map(x => x.title).join(", ")})`, cur?.title ?? ""))?.trim(); if (!nm) return;
     const to = opts2.find(x => x.title.toLowerCase() === nm.toLowerCase()) ?? cur; if (!to) return;
-    await run({ type: "setCond", id: s.body[0]!, cond: { test, gotoId: to.id } });
+    await run({ type: "setCond", id: s.body[0]!, cond: { test, gotoId: to.id }, structId: s.id });
   };
   const addIo = async (u: FlowElement, kind: "Input" | "Output"): Promise<void> => {
-    const nm = promptFn(kind === "Input" ? "Nome da nova entrada:" : "Nome da nova saída:"); const name = nm?.trim(); if (!name) return;
+    const nm = await promptFn(kind === "Input" ? "Nome da nova entrada:" : "Nome da nova saída:"); const name = nm?.trim(); if (!name) return;
     await run(kind === "Input" ? { type: "addInput", id: u.id, name } : { type: "addOutput", id: u.id, name });
+  };
+  /** Sair do escopo: esta função e as seguintes (para a direita) deixam o for / if / try em que estão. */
+  const scopeTools = (S: Scene, u: FlowElement): HTMLElement[] => {
+    const out: HTMLElement[] = [];
+    const inIfs = S.structs.filter(x => x.body.includes(u.id)), inner = inIfs.reduce<typeof inIfs[number] | undefined>((b, x) => (!b || x.body.length <= b.body.length ? x : b), undefined);
+    if (inner) out.push(ib("Sair do if (esta e as seguintes)", "log-out", () => void run({ type: "exitScope", id: u.id, scope: "if", structId: inner.id })));
+    if (u.loop || (u.inLoop && S.u(u.inLoop)?.loop)) out.push(ib("Sair do for (esta e as seguintes)", "log-out", () => void run({ type: "exitScope", id: u.id, scope: "loop" })));
+    if (u.onError) out.push(ib("Sair do try (esta e as seguintes)", "log-out", () => void run({ type: "exitScope", id: u.id, scope: "try" })));
+    return out;
+  };
+  /** Opções comuns às tags de bloco (if / for / try / catch): todas vêm de `blocks.ts`, então valem igual para os quatro. */
+  const blockTools = (S: Scene, kind: BlockKind, head: FlowElement, structId?: string): HTMLElement[] => {
+    const blk = blockOf(S, kind, head, structId), where = { if: "if", loop: "for", try: "try", catch: "catch" }[kind];
+    return [
+      ib(`Adicionar filho (dentro do ${where})`, "sibling-add", () => void run(addChildCmd(blk))),
+      ib("Adicionar condição (if) neste bloco", "diamond", () => void (async () => { for (const c of addIfCmds(blk)) if (await run(c)) break; })()),
+      ib("Adicionar irmão à direita (fora do bloco)", "child-add", () => void run(addSiblingOutsideCmd(blk))),
+    ];
   };
   const tryTools = (S: Scene, u: FlowElement): HTMLElement[] => {
     const blk = S.tryBlockOf(u), prev = S.prevSibling(u);
-    if (u.onError) return [ib(blk.length > 1 ? "Tirar do try (as outras continuam)" : "Remover try/catch", "trash-2", () => void (blk.length > 1 ? run({ type: "setCatch", id: u.id, handlerId: null }) : run({ type: "setTryCatch", id: u.id, on: false })), "on danger")];
+    if (u.onError) return [ib(blk.length > 1 ? "Tirar do try (as outras continuam)" : "Remover try/catch", "shield-alert", () => void (blk.length > 1 ? run({ type: "setCatch", id: u.id, handlerId: null }) : run({ type: "setTryCatch", id: u.id, on: false })), "on danger")];
     const add = ib("Adicionar try/catch", "shield-alert", () => void run({ type: "setTryCatch", id: u.id, on: true }));
     return prev?.onError ? [ib("Incluir no try da função anterior", "shield-plus", () => void run({ type: "setCatch", id: S.tryBlockOf(prev)[0]!.id, handlerId: prev.onError!, through: u.id })), add] : [add];
   };
@@ -315,18 +345,18 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     await run({ type: "removeElements", ids: [u.id] });
   };
   const ib = (title: string, ic: string, on: () => void, cls = ""): HTMLButtonElement => h("button", { class: ("ib " + cls).trim(), type: "button", title, "aria-label": title, onClick: (e: Event) => { e.stopPropagation(); on(); } }, icon(ic));
-  const setStruct = (id: string, kind: "if" | "loop", on: boolean): Promise<string | undefined> => run(kind === "if" ? { type: "setSelection", id, on } : { type: "setRepetition", id, on });
+  const setStruct = (id: string, kind: "if" | "loop", on: boolean, structId?: string): Promise<string | undefined> => run(kind === "if" ? { type: "setSelection", id, on, ...(structId ? { structId } : {}) } : { type: "setRepetition", id, on, ...(structId != null ? { index: Number(structId) } : {}) });
 
   function leftRowFor(S: Scene, snap: Snapshot, r: Disp, i: number): HTMLElement {
     if (r.lp) { const lp = r.lp; return h("div", { class: "grow fl-cols ifrow forrow", onClick: () => select(lp.id) },
-      h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: S.padL(lp, r.d, 0, 10) + "px" } }, ...guideEls(S, lp, false, 0), h("span", { class: "lpd" }, "↻"), h("b", { class: "mono", title: "Clique para editar o for", style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); void editLoop(lp.id); } }, `for (${lp.loop![0]} of ${lp.loop![1]})`)),
-      h("span", { class: "fl-tools", role: "toolbar" }, ib("Remover repetição (for)", "trash-2", () => void setStruct(lp.id, "loop", false), "danger"))); }
+      h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: S.padL(lp, r.d, r.nest ?? 0, 10) + "px" } }, ...guideEls(S, lp, false, r.nest ?? 0), h("span", { class: "lpd" }, "↻"), h("b", { class: "mono", title: "Clique para editar o for", style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); void editLoop(lp.id, r.li ?? 0); } }, `for (${loopsOf(lp)[r.li ?? 0]?.[0]} of ${loopsOf(lp)[r.li ?? 0]?.[1]})`)),
+      h("span", { class: "fl-tools", role: "toolbar" }, ...blockTools(S, "loop", lp), ib("Remover repetição (for)", "repeat", () => void setStruct(lp.id, "loop", false, String(r.li ?? 0)), "danger"))); }
     if (r.ca) { const ca = r.ca, from = r.from!; return h("div", { class: "grow fl-cols ifrow catchrow", onClick: () => select(ca.id) },
       h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: S.padL(ca, r.d, 0, 10) + "px" } }, ...guideEls(S, ca, false, 0), h("span", { class: "trd c" }, "catch"), h("b", { class: "mono", title: failTip(S, from) }, failLabel())),
-      h("span", { class: "fl-tools", role: "toolbar" }, ib("Remover try/catch", "trash-2", () => void run({ type: "setTryCatch", id: from.id, on: false }), "danger"))); }
+      h("span", { class: "fl-tools", role: "toolbar" }, ...blockTools(S, "catch", ca), ib("Remover try/catch", "shield-alert", () => void run({ type: "setTryCatch", id: from.id, on: false }), "danger"))); }
     if (r.tr) { const tr = r.tr, to = S.u(tr.onError); return h("div", { class: "grow fl-cols ifrow tryrow", onClick: () => select(tr.id) },
       h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: S.padL(tr, r.d, 0, 10) + "px" } }, ...guideEls(S, tr, false, 0), h("span", { class: "trd" }, "try"), h("b", { class: "mono" }, `catch ↓ ${to?.title ?? "?"}`)),
-      h("span", { class: "fl-tools", role: "toolbar" }, ib("Remover try/catch", "trash-2", () => void run({ type: "setTryCatch", id: tr.id, on: false }), "danger"))); }
+      h("span", { class: "fl-tools", role: "toolbar" }, ...blockTools(S, "try", tr), ib("Remover try/catch", "shield-alert", () => void run({ type: "setTryCatch", id: tr.id, on: false }), "danger"))); }
     if (r.io) {
       const u = r.u!, nest = S.nestOf({ u, d: r.d });
       const mark = S.isCube(r.nm!) ? sv("svg", { class: "io-cube", viewBox: "0 0 10 11" }, sv("path", { d: "M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5" })) : h("i", { class: "io-sq" });
@@ -335,13 +365,15 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
           h("b", { class: "io-d", title: r.nm, onClick: () => opts.onDataClick?.(r.nm!) }, mark, r.nm)));
     }
     if (r.st) { const s = r.st, bid = S.bidOf(s), head = S.rows[s.i0]?.u; return h("div", { class: "grow fl-cols ifrow", onClick: () => select(bid) },
-      h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: (head ? S.padL(head, r.d, 0, 10) : 10) + "px" } }, ...(head ? guideEls(S, head, false, 0) : []), h("span", { class: "ifd" }), h("b", { class: "mono", title: "Clique para editar o if", style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); void editIf(bid); } }, `if (${s.test})${S.senaoOf(s)}`)),
-      h("span", { class: "fl-tools", role: "toolbar" }, ib("Remover seleção (if)", "trash-2", () => void setStruct(bid, "if", false), "danger"))); }
+      h("span", { class: "c-ag muted" }), h("span", { class: "nm", style: { paddingLeft: (head ? S.padL(head, r.d, r.nest ?? 0, 10) : 10) + "px" } }, ...(head ? guideEls(S, head, false, r.nest ?? 0) : []), h("span", { class: "ifd" }), h("b", { class: "mono", title: "Clique para editar o if", style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); void editIf(bid, s.id); } }, `if (${s.test})${S.senaoOf(s)}`)),
+      h("span", { class: "fl-tools", role: "toolbar" }, ...blockTools(S, "if", S.u(bid)!, s.id), ib("Remover seleção (if)", "diamond", () => void setStruct(bid, "if", false, s.id), "danger"))); }
     void i;
     const u = r.u!, has = S.hasKids(u), a = S.agent(u.agentId), nest = S.nestOf({ u, d: r.d }), open = has && !st.closed.has(u.id);
     const toggle = (): void => { if (st.closed.has(u.id)) st.closed.delete(u.id); else st.closed.add(u.id); draw(); };
-    const lead = has ? [h("span", { class: "car", title: "Abrir / fechar sanfona", onClick: (e: Event) => { e.stopPropagation(); toggle(); } }, icon("chevron-down")), h("span", { class: "gi" }, icon("network"))] : [];
-    const resp = has ? h("span", { class: "c-ag muted" }, "—") : h("span", { class: "c-ag" }, respPick(S, snap, u, a?.kind === "ia"));
+    const lead = has ? [h("span", { class: "car", title: "Abrir / fechar sanfona", onClick: (e: Event) => { e.stopPropagation(); toggle(); } }, icon("chevron-down")), h("span", { class: "gi" }, icon("network"))] : [h("span", { class: "fn-dot " + S.fnKind(u), title: "Função" })];
+    // a função raiz do fluxo tem sempre como responsável o arquivo em que ela mora (derivado do título, o mesmo do código gerado)
+    const resp = isRoot(S, u) ? h("span", { class: "c-ag", title: "Responsável: o arquivo deste fluxo" }, h("span", { class: "fav arquivo" }, icon("file-code-2")), h("span", { class: "rp-n" }, flowFileName(u.title)))
+      : has ? h("span", { class: "c-ag muted" }, "—") : h("span", { class: "c-ag" }, respPick(S, snap, u, a?.kind === "ia"));
     const editing = st.ren === u.id;
     return h("div", { class: "grow fl-cols" + (st.sel === u.id ? " sel" : "") + (has ? " grp" : "") + (open ? " open" : ""), onClick: () => select(u.id) },
       ...guideEls(S, u, false, nest), resp,
@@ -351,9 +383,10 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
         ib("Adicionar filho (dentro desta função)", "sibling-add", () => void run({ type: "createChild", refId: u.id })),
         u.parentId && S.u(u.parentId)?.kind !== "folder" ? ib("Adicionar irmão (ao lado, no mesmo nível)", "child-add", () => void run({ type: "createSibling", refId: u.id, position: "after" })) : null,
         has || isRoot(S, u) ? null : [h("i", { class: "sep" }),
-          S.inIf(u.id) ? ib("Remover seleção (if)", "trash-2", () => void setStruct(u.id, "if", false), "on danger") : ib("Adicionar seleção (if)", "diamond", () => void setStruct(u.id, "if", true)),
-          u.loop ? ib("Remover repetição (for)", "trash-2", () => void setStruct(u.id, "loop", false), "on danger") : ib("Adicionar repetição (for)", "repeat", () => void setStruct(u.id, "loop", true))],
-        h("i", { class: "sep" }), ...tryTools(S, u),
+          ib("Adicionar seleção (if)", "diamond", () => void setStruct(u.id, "if", true)),
+          ib("Adicionar repetição (for)", "repeat", () => void setStruct(u.id, "loop", true))],
+        ...(scopeTools(S, u).length ? [h("i", { class: "sep" }), ...scopeTools(S, u)] : []),
+        ...(isRoot(S, u) ? [] : [h("i", { class: "sep" }), ...tryTools(S, u)]),
         isRoot(S, u) ? null : [h("i", { class: "sep" }), ib("Remover", "trash-2", () => void askRemove(S, u), "danger")]));
   }
 
@@ -369,8 +402,36 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
       return sv("rect", { ...common, x: cx - 4, y: cy - 4, width: 8, height: 8 }, sv("title", null, tip));
     };
     const ioMarks = (names: string[], cx: number, cy: number, cls: string, tip: string): SVGElement => { const list = names.length ? names : [""]; return dmark(list.find(n => S.isCube(n)) ?? list[0]!, cx, cy, cls, `${list.join(", ")} · ${tip}`); };
-    const pill = (x: number, y: number, txt: string, cls: string, onEnter?: () => void, tip?: string, onClick?: () => void): SVGElement =>
-      sv("g", { class: "sv-pill " + cls, onMouseEnter: onEnter, ...(onClick ? { style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); onClick(); } } : {}) }, sv("rect", { x, y: y - 8, width: tw(txt, 6.1) + 10, height: 16 }), sv("text", { x: x + 5, y: y + 3.5 }, txt), sv("title", null, tip ?? txt));
+    // largura da tag: cobre todas as células dos filhos do bloco (do começo da primeira ao fim da última), como um teto
+    const spanOf = (a: number, b: number): [number, number] => {
+      let x1 = Infinity, x2 = -Infinity;
+      for (let k = a; k <= b; k++) { const e = disp[k]?.u; if (!e) continue; const g = S.geo(e); x1 = Math.min(x1, g.ix); x2 = Math.max(x2, g.ox); }
+      return x1 === Infinity ? [0, 0] : [x1, x2];
+    };
+    // puxar a tag: arrastar a ponta direita estende o bloco; as irmãs cobertas passam a ser filhas dele
+    const withHandle = (g: SVGElement, px: number, w: number, ym: number, onDrop: (x: number) => void, minW = w): SVGElement => {
+      const handle = sv("rect", { class: "pill-handle", x: px + w - 7, y: ym - 8, width: 7, height: 16, onPointerDown: (e: PointerEvent) => {
+        if (ro) return; e.preventDefault(); e.stopPropagation();
+        const svgEl = (e.target as SVGElement).ownerSVGElement!, rc = svgEl.getBoundingClientRect(), k = CW / (rc.width || 1), bar = g.querySelector("rect")!;
+        const at = (ev: PointerEvent): number => (ev.clientX - rc.left) * k;
+        const move = (ev: PointerEvent): void => { const nw = Math.max(minW, at(ev) - px); bar.setAttribute("width", String(nw)); handle.setAttribute("x", String(px + nw - 7)); };
+        const up = (ev: PointerEvent): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); onDrop(at(ev)); draw(); };
+        window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
+      } }, sv("title", null, "Arraste para cobrir mais células: elas passam a ser filhas deste bloco"));
+      return sv("g", null, g, handle);
+    };
+    /** Soltar a ponta da tag em `x`: a última irmã (depois do bloco) cuja coluna começa antes de `x` é o fim do novo bloco. */
+    const dropExtend = (head: FlowElement, scope: "loop" | "if" | "try" | "catch", members: readonly string[], x: number, structId?: string, extAfter: readonly string[] = members): void => {
+      const sibs = flowSiblings(S.snap, head.parentId), lastAt = Math.max(...extAfter.map(id => sibs.findIndex(y => y.id === id)));
+      const to = sibs.slice(lastAt + 1).filter(y => S.geo(y).ix < x).at(-1);
+      if (to) { void run({ type: "extendScope", id: head.id, scope, toId: to.id, ...(structId ? { structId } : {}) }); return; }
+      // encolher: a primeira função (depois da que abre o bloco) cuja coluna começa depois do ponto solto sai, com as seguintes
+      const ordered = [...members].map(id => S.u(id)).filter((e): e is FlowElement => !!e).sort((p, q) => p.position - q.position);
+      const out = ordered.slice(1).find(e => S.geo(e).ix >= x); if (!out) return;
+      void run({ type: "exitScope", id: out.id, scope, ...(structId ? { structId } : {}) });
+    };
+    const pill = (x: number, y: number, txt: string, cls: string, onEnter?: () => void, tip?: string, onClick?: () => void, w = 0): SVGElement =>
+      sv("g", { class: "sv-pill " + cls, onMouseEnter: onEnter, ...(onClick ? { style: { cursor: "pointer" }, onClick: (e: Event) => { e.stopPropagation(); onClick(); } } : {}) }, sv("rect", { x, y: y - 8, width: Math.max(tw(txt, 6.1) + 10, w), height: 16 }), sv("text", { x: x + 5, y: y + 3.5 }, txt), sv("title", null, tip ?? txt));
     const dnames = (x: number, y: number, list: string[]): SVGElement =>
       sv("text", { class: "sv-dn", x, y: y + 3.5 }, ...list.map((n, i) => sv("tspan", null, i ? ", " : "", sv("tspan", { class: "sv-dl", onClick: () => opts.onDataClick?.(n) }, n))), sv("title", null, list.join(", ")));
     const tagsOf = (u: FlowElement): [string, string][] => (u.status === "wait" ? [["wait", "aguardando pessoa"]] : u.status === "fail" ? [["fail", "falhou"]] : u.status === "exec" ? [["exec", "executando"]] : u.status === "cancel" ? [["cancel", "cancelada"]] : []);
@@ -381,32 +442,35 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
       tagsOf(u).forEach(([k, t]) => { out.push(pill(cx, y, t, k)); cx += tw(t, 6.1) + 16; });
       return sv("g", null, ...out);
     };
-    const showBar = (id: string | null, kind: "fn" | "if" | "loop" | "try", anchorX: number, y: number): void => {
+    const showBar = (id: string | null, kind: "fn" | "if" | "loop" | "try" | "catch", anchorX: number, y: number, structId?: string): void => {
       if (ro) return;
-      const cur = right.querySelector<HTMLElement>(".bar-tools"), key = kind + ":" + id;
+      const cur = right.querySelector<HTMLElement>(".bar-tools"), key = kind + ":" + id + ":" + (structId ?? "");
       window.clearTimeout(hovT);
       // já há um menu: o mesmo alvo só o mantém; outro alvo só o troca depois de um instante, para dar tempo de o mouse chegar ao menu
       if (cur?.dataset["key"] === key) return;
-      if (cur) { hovT = window.setTimeout(() => renderBar(id, kind, anchorX, y), 350); return; }
-      renderBar(id, kind, anchorX, y);
+      if (cur) { hovT = window.setTimeout(() => renderBar(id, kind, anchorX, y, structId), 350); return; }
+      renderBar(id, kind, anchorX, y, structId);
     };
-    const renderBar = (id: string | null, kind: "fn" | "if" | "loop" | "try", anchorX: number, y: number): void => {
+    const renderBar = (id: string | null, kind: "fn" | "if" | "loop" | "try" | "catch", anchorX: number, y: number, structId?: string): void => {
       window.clearTimeout(hovT); right.querySelector(".bar-tools")?.remove();
       const u = id ? S.u(id) : undefined; if (!u) return;
       let tools: HTMLElement;
-      if (kind === "try") tools = h("div", { class: "bar-tools", role: "toolbar" }, ib("Remover try/catch", "trash-2", () => void run({ type: "setTryCatch", id: u.id, on: false }), "danger"));
-      else if (kind !== "fn") tools = h("div", { class: "bar-tools", role: "toolbar" }, ib(kind === "loop" ? "Remover repetição (for)" : "Remover seleção (if)", "trash-2", () => { void setStruct(u.id, kind, false); }, "danger"));
+      if (kind === "try" || kind === "catch") { const from = kind === "catch" ? S.snap.elements.find(y => !y.archived && y.onError === u.id) ?? u : u;
+        tools = h("div", { class: "bar-tools", role: "toolbar" }, ...blockTools(S, kind, u), ib("Remover try/catch", "shield-alert", () => void run({ type: "setTryCatch", id: from.id, on: false }), "danger")); }
+      else if (kind !== "fn") tools = h("div", { class: "bar-tools", role: "toolbar" }, ...blockTools(S, kind, u, structId), ib(kind === "loop" ? "Remover repetição (for)" : "Remover seleção (if)", kind === "loop" ? "repeat" : "diamond", () => { void setStruct(u.id, kind, false, structId); }, "danger"));
       else {
         const leaf = !S.hasKids(u);
         tools = h("div", { class: "bar-tools", role: "toolbar", "aria-label": "Ações da task" },
           S.hasKids(u) ? ib(st.closed.has(u.id) ? "Abrir filhos" : "Fechar filhos", st.closed.has(u.id) ? "chevrons-up-down" : "chevrons-down-up", () => { if (st.closed.has(u.id)) st.closed.delete(u.id); else st.closed.add(u.id); draw(); }) : null,
           ib("Adicionar filho (dentro desta função)", "sibling-add", () => void run({ type: "createChild", refId: u.id })),
           S.u(u.parentId)?.kind !== "folder" && u.parentId ? ib("Adicionar irmão (ao lado, no mesmo nível)", "child-add", () => void run({ type: "createSibling", refId: u.id, position: "after" })) : null,
-          leaf && !isRoot(S, u) ? (S.inIf(u.id) ? ib("Remover seleção (if)", "trash-2", () => void setStruct(u.id, "if", false), "on danger") : ib("Adicionar seleção (if)", "diamond", () => void setStruct(u.id, "if", true))) : null,
-          leaf && !isRoot(S, u) ? (u.loop ? ib("Remover repetição (for)", "trash-2", () => void setStruct(u.id, "loop", false), "on danger") : ib("Adicionar repetição (for)", "repeat", () => void setStruct(u.id, "loop", true))) : null,
+          leaf && !isRoot(S, u) ? ib("Adicionar seleção (if)", "diamond", () => void setStruct(u.id, "if", true)) : null,
+          ...scopeTools(S, u),
+          leaf && !isRoot(S, u) ? ib("Adicionar repetição (for)", "repeat", () => void setStruct(u.id, "loop", true)) : null,
+          ...(isRoot(S, u) ? [] : tryTools(S, u)),
           isRoot(S, u) ? null : ib("Remover", "trash-2", () => void askRemove(S, u), "danger"));
       }
-      tools.dataset["key"] = kind + ":" + id;
+      tools.dataset["key"] = kind + ":" + id + ":" + (structId ?? "");
       tools.style.left = Math.max(4, anchorX) + "px"; tools.style.top = Math.max(2, HEAD + y - 30) + "px";
       tools.addEventListener("mouseenter", () => window.clearTimeout(hovT)); tools.addEventListener("mouseleave", leaveBar);
       right.append(tools);
@@ -453,12 +517,12 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     disp.forEach((r, i) => { if (!r.io) return; const g = S.geo(r.u!), ab = r.io === "in" && S.absData(r.u!, r.nm!); els.push(dmark(r.nm!, r.io === "in" ? g.ix : g.ox, yMid(i), "fdot" + (ab ? " a" : ""), `${r.nm} · ${r.io === "in" ? (ab ? "entrada abstrata (state / outra camada)" : "entrada concreta (mesma camada)") : "saída"}`)); });
     // if: losango + banda
     structs.forEach((s: StructRow) => {
-      const i1 = Math.max(...s.body.map(id => S.idxEnd[id] ?? S.idx[id]!)), x = S.geo(rows[s.i0]!.u).ix, y = yMid(s.hi), bid = S.bidOf(s);
-      els.push(sv("g", { class: "fif-hit", onMouseEnter: () => showBar(bid, "if", x - 12, yTop(s.hi) + 6) }, sv("circle", { class: "fif-pad", cx: x, cy: y, r: 12 }),
+      const i1 = s.end, x = S.geo(rows[s.i0]!.u).ix, y = yMid(s.hi), bid = S.bidOf(s);
+      els.push(sv("g", { class: "fif-hit", onMouseEnter: () => showBar(bid, "if", x - 12, yTop(s.hi) + 6, s.id) }, sv("circle", { class: "fif-pad", cx: x, cy: y, r: 12 }),
         sv("path", { class: "fif", d: `M${x} ${y - 6} L${x + 6} ${y} L${x} ${y + 6} L${x - 6} ${y}Z` }), sv("title", null, `if (${s.test}) · remover seleção`)));
-      bands.push(sv("rect", { class: "sv-band", x: 0, y: yTop(s.hi), width: CW, height: (i1 - s.hi + 1) * RH }), sv("line", { class: "sv-bandl", x1: 1, y1: yTop(s.hi), x2: 1, y2: yTop(i1) + RH }));
+      { const o = (disp[s.hi]?.nest ?? 0) * 14; bands.push(sv("rect", { class: "sv-band", x: o, y: yTop(s.hi), width: CW - o, height: (i1 - s.hi + 1) * RH }), sv("line", { class: "sv-bandl", x1: o + 1, y1: yTop(s.hi), x2: o + 1, y2: yTop(i1) + RH })); }
     });
-    S.loops.forEach(({ hi: a, end: b }) => { bands.push(sv("rect", { class: "sv-band lp", x: 0, y: yTop(a), width: CW, height: (b - a + 1) * RH }), sv("line", { class: "sv-bandl lp", x1: 1, y1: yTop(a), x2: 1, y2: yTop(b) + RH })); });
+    S.loops.forEach(({ hi: a, end: b }) => { const o = (disp[a]?.nest ?? 0) * 14; bands.push(sv("rect", { class: "sv-band lp", x: o, y: yTop(a), width: CW - o, height: (b - a + 1) * RH }), sv("line", { class: "sv-bandl lp", x1: o + 1, y1: yTop(a), x2: o + 1, y2: yTop(b) + RH })); });
 
     // try/catch: só rótulo e fundo (bandas); sem seta
     S.tries.forEach(t => {
@@ -470,10 +534,10 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     // barras / pills
     const rowSvg = (r: Disp, i: number): SVGElement | null => {
       const y0 = yTop(i), ym = yMid(i);
-      if (r.ca) { const ca = r.ca, from = r.from!; return pill(S.geo(ca).ix + 12, ym, `catch · ${failLabel()}`, "catch", () => showBar(from.id, "try", S.geo(ca).ix, y0 + 6), failTip(S, from)); }
-      if (r.tr) { const tr = r.tr, to = S.u(tr.onError); return pill(S.geo(tr).ix + 12, ym, `try · catch ↓ ${to?.title ?? "?"}`, "try", () => showBar(tr.id, "try", S.geo(tr).ix, y0 + 6)); }
-      if (r.lp) { const lp = r.lp; return pill(S.geo(lp).ix + 12, ym, `↻ for (${lp.loop![0]} of ${lp.loop![1]})`, "loop", () => showBar(lp.id, "loop", S.geo(lp).ix, y0 + 6), "Clique para editar o for", () => void editLoop(lp.id)); }
-      if (r.st) { const s = r.st; return pill(S.geo(rows[s.i0]!.u).ix + 12, ym, `if (${s.test})${S.senaoOf(s)}`, "if", () => showBar(S.bidOf(s), "if", S.geo(rows[s.i0]!.u).ix, y0 + 6), "Clique para editar o if", () => void editIf(S.bidOf(s))); }
+      if (r.ca) { const ca = r.ca, from = r.from!; const t = S.tries.find(x => x.catchHi === i), [x1, x2] = t?.catchEnd != null ? spanOf(i, t.catchEnd) : [S.geo(ca).ix, S.geo(ca).ox]; const txt = `catch · ${failLabel()}`, w = Math.max(tw(txt, 6.1) + 10, x2 - x1); return withHandle(pill(x1, ym, txt, "catch", () => showBar(ca.id, "catch", S.geo(ca).ix, y0 + 6), failTip(S, from), undefined, x2 - x1), x1, w, ym, x => dropExtend(ca, "catch", [ca.id, ...S.snap.elements.filter(y => !y.archived && y.inCatch === ca.id).map(y => y.id)], x, undefined, S.tryBlockOf(from).map(y => y.id)), tw(txt, 6.1) + 10); }
+      if (r.tr) { const tr = r.tr, to = S.u(tr.onError); const t = S.tries.find(x => x.hi === i), [x1, x2] = t ? spanOf(i, t.end) : [S.geo(tr).ix, S.geo(tr).ox]; const w = Math.max(tw(`try · catch ↓ ${to?.title ?? "?"}`, 6.1) + 10, x2 - x1); return withHandle(pill(x1, ym, `try · catch ↓ ${to?.title ?? "?"}`, "try", () => showBar(tr.id, "try", S.geo(tr).ix, y0 + 6), undefined, undefined, x2 - x1), x1, w, ym, x => dropExtend(tr, "try", S.tryBlockOf(tr).map(y => y.id), x), tw(`try · catch ↓ ${to?.title ?? "?"}`, 6.1) + 10); }
+      if (r.lp) { const lp = r.lp; const l = S.loops.find(x => x.hi === i), [x1, x2] = l ? spanOf(i, l.end) : [S.geo(lp).ix, S.geo(lp).ox], px = x1 + (r.nest ?? 0) * 14; const txt = `↻ for (${loopsOf(lp)[r.li ?? 0]?.[0]} of ${loopsOf(lp)[r.li ?? 0]?.[1]})`, w = Math.max(tw(txt, 6.1) + 10, x2 - px); return withHandle(pill(px, ym, txt, "loop", () => showBar(lp.id, "loop", S.geo(lp).ix, y0 + 6, String(r.li ?? 0)), "Clique para editar o for", () => void editLoop(lp.id, r.li ?? 0), x2 - px), px, w, ym, x => dropExtend(lp, "loop", S.snap.elements.filter(y => !y.archived && (y.id === lp.id || y.inLoop === lp.id)).map(y => y.id), x), tw(txt, 6.1) + 10); }
+      if (r.st) { const s = r.st; const [x0, x2] = spanOf(i, s.end), x1 = x0 + 11; const txt = `if (${s.test})${S.senaoOf(s)}`, w = Math.max(tw(txt, 6.1) + 10, x2 - x1); return withHandle(pill(x1, ym, txt, "if", () => showBar(S.bidOf(s), "if", S.geo(rows[s.i0]!.u).ix, y0 + 6, s.id), "Clique para editar o if", () => void editIf(S.bidOf(s), s.id), x2 - x1), x1, w, ym, x => dropExtend(S.u(S.bidOf(s))!, "if", s.body, x, s.id), tw(txt, 6.1) + 10); }
       if (r.io) { const g = S.geo(r.u!); return dnames((r.io === "in" ? g.ix : g.ox) + 9, ym, [r.nm!]); }
       const u = r.u!, g = S.geo(u), sel = st.sel === u.id;
       if (S.hasKids(u)) return sv("g", null, sv("g", { "data-act": "", style: { cursor: "pointer" }, onClick: () => select(u.id), onMouseEnter: () => showBar(u.id, "fn", g.x1, y0 + 12) },
@@ -516,8 +580,8 @@ export function mountFlowView(container: HTMLElement, flow: FlowComponent, opts:
     void a;
     const close = (): void => { pop.remove(); };
     const pop = h("div", { class: "edge-pop", role: "menu", "aria-label": "Estrutura na sequência", style: { left: Math.max(4, x - 28) + "px", top: Math.max(56, y - 36) + "px" } },
-      ib(hasIf ? "Remover seleção (if)" : "Adicionar seleção (if)", hasIf ? "trash-2" : "diamond", () => { close(); void setStruct(b, "if", !hasIf); }, hasIf ? "on danger" : ""),
-      ib(hasLoop ? "Remover repetição (for)" : "Adicionar repetição (for)", hasLoop ? "trash-2" : "repeat", () => { close(); void setStruct(b, "loop", !hasLoop); }, hasLoop ? "on danger" : ""),
+      ib(hasIf ? "Remover seleção (if)" : "Adicionar seleção (if)", "diamond", () => { close(); void setStruct(b, "if", !hasIf); }, hasIf ? "on danger" : ""),
+      ib(hasLoop ? "Remover repetição (for)" : "Adicionar repetição (for)", "repeat", () => { close(); void setStruct(b, "loop", !hasLoop); }, hasLoop ? "on danger" : ""),
       ib("Fechar", "x", close));
     right.append(pop);
   }

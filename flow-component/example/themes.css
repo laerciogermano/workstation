@@ -1,0 +1,111 @@
+/* Temas do Flow IDE: tokens copiados de flow-dev/app/apps/web/src/styles/flow.css */
+:root {
+  --accent: #d4432a; --accent-2: #b93720; --on-accent: #ffffff;
+  --ink: #1e2025; --body: #4b505a; --muted: #7b818c; --line: #e7e4de; --line-2: #d9d5cd;
+  --paper: #ffffff; --panel: #f8f6f2; --wash: #f1eee8; --stage: #e8e5df; --bezel: #cfcbc2;
+  --ok: #1f7a4d; --run: #2a62a8; --warn: #a76400; --fail: #c2352b; --idle: #8a8f98;
+  --t-pessoa: #2f6aa3; --t-ia: #9b4fa0; --t-maquina: #3f6f55;
+  --shadow: 0 1px 0 rgba(30,32,37,.04), 0 1px 3px rgba(30,32,37,.08);
+  --font: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: light;
+  --fn: #2563eb; --dado: #dc2626; /* FOP: função = azul (cobalto); quadrados e cubos (dados) = vermelho */
+}
+:root[data-tema="eternos"] {
+  /* Eternos Mutáveis: mundo material (estado, concreto) = branco · mundo abstrato = preto · dourado do livro nas estruturas */
+  --accent: #0b0b0b; --accent-2: #2a2a2a; --on-accent: #f6f6f6;
+  --ink: #0b0b0b; --body: #444444; --muted: #8a8a8a; --line: #dddddd; --line-2: #c8c8c8;
+  --paper: #ffffff; --panel: #f5f5f5; --wash: #ececec; --stage: #e2e2e2; --bezel: #a6a6a6; /* fundo branco, cinzas neutros */
+  --ok: #8a6a1f; --run: #0b0b0b; --warn: #a8802a; --fail: #8a2a1f; --idle: #8a8a8a;
+  --t-pessoa: #0b0b0b; --t-ia: #0b0b0b; --t-maquina: #0b0b0b;
+  --fn: #0b0b0b; --dado: #0b0b0b;
+}
+:root[data-tema="eternos-black"] {
+  /* Eternos Mutáveis Black: mesmo sentido (material/concreto = branco · abstrato = preto) sobre fundo preto */
+  --accent: #f2f2f2; --accent-2: #d8d8d8; --on-accent: #0b0b0b;
+  --ink: #f2f2f2; --body: #c4c4c4; --muted: #8a8a8a; --line: #262626; --line-2: #3a3a3a;
+  --paper: #0b0b0b; --panel: #121212; --wash: #1c1c1c; --stage: #050505; --bezel: #3a3a3a;
+  --ok: #c9a24a; --run: #f2f2f2; --warn: #c9a24a; --fail: #e2735f; --idle: #8a8a8a;
+  --t-pessoa: #f2f2f2; --t-ia: #f2f2f2; --t-maquina: #f2f2f2;
+  --fn: #f2f2f2; --dado: #f2f2f2;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-tema="tablet-black"] {
+  --accent: #5b8cff; --accent-2: #7aa2ff; --on-accent: #0a0a0a;
+  --ink: #f2f2f2; --body: #c4c4c4; --muted: #8a8a8a; --line: #262626; --line-2: #3a3a3a;
+  --paper: #0b0b0b; --panel: #121212; --wash: #1c1c1c; --stage: #050505; --bezel: #3a3a3a;
+  --ok: #52a943; --run: #5b8cff; --warn: #c9a24a; --fail: #e2735f; --idle: #8a8a8a;
+  --t-pessoa: #5b8cff; --t-ia: #a855f7; --t-maquina: #52a943;
+  --fn: #5b8cff; --dado: #a855f7;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-tema="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; --stage: #e4e9ea; --bezel: #c9d1d2; }
+:root[data-tema="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --stage: #e5e7f0; --bezel: #c9cddd; --t-ia: #a2458e; }
+:root[data-tema="cobalto"] { --accent: #2563eb; --accent-2: #1d4ed8; --line: #dbe4f3; --line-2: #c9d6ea; --panel: #f3f6fc; --wash: #eaf0fa; --stage: #e2e9f4; --bezel: #b8c7de; --run: #2563eb; --t-pessoa: #2563eb; }
+:root[data-tema="musgo"] { --accent: #3f8f3a; --accent-2: #2f6f2c; --line: #dde8db; --line-2: #c9d8c6; --panel: #f3f7f2; --wash: #e9f0e7; --stage: #dde8db; --bezel: #b7cbb4; --ok: #3f8f3a; --t-maquina: #3f8f3a; }
+:root[data-tema="ardosia"] {
+  --accent: #f08b4c; --accent-2: #f6a06a; --on-accent: #1d2430;
+  --ink: #eef1f5; --body: #c4cbd6; --muted: #8e98a8; --line: #364051; --line-2: #435067;
+  --paper: #232a36; --panel: #1e2430; --wash: #2b3341; --stage: #2f3746; --bezel: #46516a;
+  --ok: #5cc98d; --run: #6ea4ec; --warn: #e5ac4d; --fail: #f07a6e; --idle: #95a0b0;
+  --t-pessoa: #79aee6; --t-ia: #d59ad8; --t-maquina: #7fc29c;
+  --shadow: 0 1px 3px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+:root[data-tema="gantt"] {
+  --accent: #4981f6; --accent-2: #3e6ed4; --on-accent: #0a0a0a;
+  --ink: #f2f2f2; --body: #b8b8b8; --muted: #7a7a7a; --line: #2a2a2a; --line-2: #353535;
+  --paper: #121212; --panel: #181818; --wash: #1e1e1e; --stage: #0a0a0a; --bezel: #3a3a3a;
+  --ok: #52a943; --run: #4981f6; --warn: #d4a017; --fail: #e25555; --idle: #6e6e6e;
+  --t-pessoa: #4981f6; --t-ia: #7aa2ff; --t-maquina: #52a943;
+  --shadow: 0 1px 3px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+:root[data-tema="noite"] {
+  --accent: #5b8cff; --accent-2: #7aa2ff; --on-accent: #0a0a0a;
+  --ink: #f5f5f5; --body: #b0b0b0; --muted: #777; --line: #222; --line-2: #2e2e2e;
+  --paper: #000; --panel: #0d0d0d; --wash: #141414; --stage: #000; --bezel: #333;
+  --ok: #61c24f; --run: #5b8cff; --warn: #e0b040; --fail: #ff6b6b; --idle: #666;
+  --t-pessoa: #5b8cff; --t-ia: #a78bfa; --t-maquina: #61c24f;
+  --shadow: 0 1px 3px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+:root[data-tema="graphite"] {
+  --accent: #61c24f; --accent-2: #7ed96b; --on-accent: #0a0a0a;
+  --ink: #ececec; --body: #b3b3b3; --muted: #7d7d7d; --line: #2c2c2c; --line-2: #3a3a3a;
+  --paper: #1a1a1a; --panel: #202020; --wash: #262626; --stage: #111; --bezel: #444;
+  --ok: #61c24f; --run: #4981f6; --warn: #e0b040; --fail: #e25555; --idle: #6e6e6e;
+  --t-pessoa: #4981f6; --t-ia: #c084fc; --t-maquina: #61c24f;
+  --shadow: 0 1px 3px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+
+/* ───── tokens derivados para as páginas de exemplo (a partir dos tokens do IDE) ───── */
+:root {
+  --bg: var(--paper); --bg-soft: var(--panel); --bg-hover: var(--wash); --line-strong: var(--line-2); --ink-2: var(--body); --mut: var(--muted);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--paper));
+  --ok-bg: color-mix(in srgb, var(--ok) 14%, var(--paper)); --er: var(--fail); --er-bg: color-mix(in srgb, var(--fail) 12%, var(--paper));
+  --add: var(--ok); --add-bg: var(--ok-bg); --chg: var(--warn); --chg-bg: color-mix(in srgb, var(--warn) 15%, var(--paper)); --del: var(--fail); --del-bg: var(--er-bg);
+  --code-bg: var(--panel); --tk-c: var(--muted); --tk-s: var(--ok); --tk-k: var(--t-ia); --tk-f: var(--run); --tk-n: var(--warn); --tk-p: var(--ink);
+  /* a vista Flow lê estes tokens */
+  --fc-paper: var(--paper); --fc-ink: var(--ink); --fc-body: var(--body); --fc-muted: var(--muted); --fc-line: var(--line); --fc-line-2: var(--line-2);
+  --fc-panel: var(--panel); --fc-wash: var(--wash); --fc-accent: var(--accent); --fc-fn: var(--fn); --fc-dado: var(--dado); --fc-warn: var(--warn);
+  --fc-ok: var(--ok); --fc-run: var(--run); --fc-fail: var(--fail); --fc-ia: var(--t-ia); --fc-pessoa: var(--t-pessoa); --fc-loop: #7c3aed;
+}
+:root[data-tema="ardosia"], :root[data-tema="gantt"], :root[data-tema="noite"], :root[data-tema="graphite"] { --fc-loop: #b794f6; }
+:root[data-tema="indigo"] { --fc-loop: #c026d3; }
+:root[data-tema="eternos"] { --fc-loop: #444444; --fc-warn: #0b0b0b; --fc-ok: #444444; }   /* Flow sem dourado: if, senão e repetição em preto/cinza */
+:root[data-tema="eternos-black"] { --fc-loop: #c4c4c4; --fc-warn: #f2f2f2; --fc-ok: #c4c4c4; }
+:root[data-tema="tablet-black"] { --fc-loop: #22d3ee; }
+
+/* ───── seletor de temas: bolinhas redondas (como na barra do Flow IDE) ───── */
+.tb-temas { display: flex; align-items: center; gap: 4px; }
+.tb-temas button { width: 16px; height: 16px; border-radius: 50%; padding: 0; border: 1.5px solid var(--paper); box-shadow: 0 0 0 1px var(--line-2); position: relative; cursor: pointer; flex: none; background: none; }
+.tb-temas button:hover { box-shadow: 0 0 0 1.5px var(--muted); }
+.tb-temas button[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--ink); }
+.tb-temas button span { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.tb-temas button i { display: block; }

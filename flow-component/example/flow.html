@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow Component · Vista interativa</title>
+<link rel="stylesheet" href="themes.css">
+<script src="themes.js"></script>
+<style>
+  :root{--bg:var(--wash);--card:var(--paper);--line2:var(--line-2);--gut:var(--muted);--tk-t:var(--run);--tk-f:var(--warn);--hl:color-mix(in srgb,var(--accent) 14%,var(--paper));--flash:color-mix(in srgb,var(--ok) 22%,var(--paper))}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:13px/1.45 "IBM Plex Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column}
+  .topbar{flex:none;display:flex;align-items:center;gap:14px;height:44px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--card)}
+  .topbar a.back{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px 0 8px;border:1px solid var(--line2);border-radius:7px;color:var(--ink);text-decoration:none;font-weight:500}
+  .topbar a.back:hover{border-color:var(--accent);color:var(--accent)} .topbar a.back svg{width:14px;height:14px}
+  .topbar .ttl{font-weight:600} .topbar .sub{color:var(--mut)} .topbar .sp{flex:1}
+  .topbar .tb-temas{margin-left:auto}
+  .app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,520px);gap:12px;height:auto;padding:12px}
+  #host{min-width:0;height:100%}
+  aside{display:flex;flex-direction:column;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tabs{display:flex;align-items:center;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
+  .tabs button{position:relative;height:38px;padding:0 12px;border:0;background:none;color:var(--mut);font:inherit;font-weight:500;cursor:pointer}
+  .tabs button:hover{color:var(--ink)} .tabs button[aria-selected="true"]{color:var(--ink)}
+  .tabs button[aria-selected="true"]::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
+  .tabs .sp{flex:1} .tabs .meta{font:11px ui-monospace,Menlo,monospace;color:var(--mut);padding-right:6px}
+  .pane{flex:1;min-height:0;display:none;flex-direction:column} .pane.on{display:flex}
+  .fhead{display:flex;align-items:center;gap:10px;height:34px;padding:0 6px 0 14px;border-bottom:1px solid var(--line);font:500 12px ui-monospace,Menlo,monospace;color:var(--mut);flex:none}
+  .fhead .ts{font:700 9px ui-monospace,Menlo,monospace;color:var(--on-accent);background:var(--run);border-radius:3px;padding:2px 4px}
+  .fhead .sel{margin-left:auto;color:var(--ink)} .fhead button{height:24px;border:0;background:none;border-radius:6px;padding:0 8px;color:var(--mut);cursor:pointer;font:inherit;font-size:12px}
+  .fhead button:hover{background:var(--wash);color:var(--ink)}
+  .code{flex:1;min-height:0;overflow:auto;background:var(--code-bg);padding:10px 0 24px;font:12.5px/1.65 ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;tab-size:2}
+  .ln{display:flex;min-width:max-content} .ln .g{flex:none;width:44px;padding-right:12px;text-align:right;color:var(--gut);user-select:none}
+  .ln .t{white-space:pre;padding-right:20px} .ln.hl{background:var(--hl)} .ln.hl .g{color:var(--ink)} .ln.fl{animation:fl 1.1s ease-out}
+  @keyframes fl{from{background:var(--flash)}to{background:transparent}}
+  .tk-c{color:var(--tk-c);font-style:italic}.tk-s{color:var(--tk-s)}.tk-k{color:var(--tk-k)}.tk-t{color:var(--tk-t)}.tk-f{color:var(--tk-f)}.tk-n{color:var(--tk-n)}
+  .pane.cmd{padding:12px;overflow:auto;gap:8px}
+  .cmd label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+  .cmd select,.cmd textarea,.cmd button{font:inherit;width:100%}
+  .cmd textarea{height:170px;font:12px/1.5 ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:6px;padding:8px;resize:vertical;background:var(--card)}
+  .cmd select{border:1px solid var(--line2);border-radius:6px;padding:6px;background:var(--card)}
+  .cmd .row{display:flex;gap:8px} .cmd .row button{flex:1}
+  .cmd button{border:1px solid var(--line2);background:var(--card);border-radius:6px;padding:7px;cursor:pointer}
+  .cmd button:hover{border-color:var(--accent);color:var(--accent)} .cmd button.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)} .cmd button.pri:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .ok{color:var(--ok);font-weight:600}.er{color:var(--fail);font-weight:600}
+  pre.res{margin:0;padding:8px;background:var(--panel);border-radius:6px;white-space:pre-wrap;word-break:break-word;font:11.5px/1.5 ui-monospace,Menlo,monospace;max-height:220px;overflow:auto}
+  .hint{color:var(--mut);font-size:12px}
+  @media (max-width:980px){.app{grid-template-columns:1fr;grid-template-rows:60% 40%}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="back" href="docs.html" title="Voltar para a documentação"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Documentação</a>
+  <span class="ttl">Vista interativa</span><span class="sub">monte o fluxo e veja o TypeScript gerado</span>
+  <div id="temas"></div>
+</header>
+<div class="app">
+  <div id="host"></div>
+  <aside>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-p="code">TypeScript</button>
+      <button role="tab" aria-selected="false" data-p="cmd">Chamar comando</button>
+      <span class="sp"></span><span class="meta" id="meta"></span>
+    </div>
+    <section class="pane on" id="p-code">
+      <div class="fhead"><span class="ts">TS</span><span id="fname">fluxo.ts</span><span class="sel" id="selname"></span><button id="copy" type="button">Copiar</button></div>
+      <div class="code" id="code" tabindex="0" aria-label="Código TypeScript gerado"></div>
+    </section>
+    <section class="pane cmd" id="p-cmd">
+      <label for="sel">Comando</label><select id="sel"></select>
+      <label for="payload">Payload (JSON)</label><textarea id="payload" spellcheck="false"></textarea>
+      <div class="row"><button id="run" class="pri" type="button">Executar</button><button id="reset" type="button">Reiniciar</button></div>
+      <div id="res"></div>
+      <p class="hint">O resultado aparece na vista e o código ao lado é regerado a cada comando.</p>
+    </section>
+  </aside>
+</div>
+<script src="flow-component.js"></script>
+<script src="cases.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+mountTemas($("#temas"));
+const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+/* ───────── seed enriquecido: lib, IA, for, try/catch ───────── */
+function enriched() {
+  let s = seed(), n = 0; const created = {};
+  const ap = (c, k) => { const r = FC.applyModelCommand(s, c, { newId: () => "x" + (++n) }); if (!r.ok) throw new Error(c.type + ": " + r.error.message); s = r.value.snapshot; if (k) created[k] = r.value.created[0]; };
+  ap({ type: "assignResponsible", id: "cobrar", agentId: "a-fs" });
+  ap({ type: "assignResponsible", id: "faturar", agentId: "a-red" });
+  ap({ type: "addInput", id: "faturar", name: "preco" }); ap({ type: "addOutput", id: "faturar", name: "fatura" });
+  ap({ type: "addInput", id: "entregar", name: "pagamento" });
+  ap({ type: "setRepetition", id: "entregar", on: true }); ap({ type: "setLoopVars", id: "entregar", loop: ["pedido", "pedidos"] });
+  ap({ type: "createChild", refId: "vender", title: "Estornar cobrança" }, "estornar");
+  ap({ type: "setCatch", id: "cobrar", handlerId: created.estornar, through: "entregar" });   // um try cobrindo duas funções
+  return s;
+}
+
+/* ───────── realce TypeScript ───────── */
+const KW = /^(?:const|let|await|async|import|from|export|type|return|if|for|of|try|catch|function|as|new)$/;
+const TY = /^(?:State|Promise|Record|unknown|string)$/;
+function hl(line) {
+  return esc(line).replace(/(\/\/.*$)|(&quot;[^&]*?&quot;|"(?:[^"\\]|\\.)*")|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g, (m, c, s, n, w, p) => {
+    if (c) return `<span class="tk-c">${c}</span>`; if (s) return `<span class="tk-s">${s}</span>`; if (n) return `<span class="tk-n">${n}</span>`;
+    if (KW.test(w)) return `<span class="tk-k">${w}</span>` + (p ?? ""); if (TY.test(w)) return `<span class="tk-t">${w}</span>` + (p ?? "");
+    return p ? `<span class="tk-f">${w}</span>(` : w;
+  });
+}
+
+/* ───────── componente + vista + código ───────── */
+let store, flow, view, gen = null, prev = [];
+const codeEl = $("#code");
+function renderCode(flash = true) {
+  const root = view?.rootId ?? "vender";
+  gen = FC.generateTypeScript(flow.snapshot, { rootId: root });
+  const lines = gen.code.replace(/\n$/, "").split("\n"), before = new Map();
+  prev.forEach(l => before.set(l, (before.get(l) ?? 0) + 1));
+  const sel = view?.selected, range = sel && gen.map[sel];
+  codeEl.innerHTML = lines.map((l, i) => {
+    const isNew = flash && prev.length && !(before.get(l) > 0); if (before.get(l) > 0) before.set(l, before.get(l) - 1);
+    const inSel = range && i + 1 >= range[0] && i + 1 <= range[1];
+    return `<div class="ln${inSel ? " hl" : ""}${isNew ? " fl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`;
+  }).join("");
+  prev = lines;
+  $("#fname").textContent = gen.fileName; $("#meta").textContent = `${lines.length} linhas`;
+  const t = sel && flow.snapshot.elements.find(e => e.id === sel); $("#selname").textContent = t ? t.title : "";
+}
+function scrollToSel() {
+  const sel = view?.selected, r = sel && gen?.map[sel]; if (!r) return;
+  const el = codeEl.querySelector(`[data-n="${r[0]}"]`); if (el) codeEl.scrollTo({ top: Math.max(0, el.offsetTop - 60), behavior: "smooth" });
+}
+function boot() {
+  view?.destroy(); prev = [];
+  store = FC.memoryStore(enriched());
+  flow = FC.createFlowComponent({ store, newId: FC.sequentialGen("novo"), exporter: FC.typeScriptExporter });
+  view = FC.mountFlowView($("#host"), flow, { rootId: "vender", onSelect: () => { renderCode(false); scrollToSel(); }, onRootChange: () => { prev = []; renderCode(false); } });
+  flow.subscribe(() => renderCode(true));
+  renderCode(false);
+}
+boot();
+$("#copy").onclick = async () => { await navigator.clipboard?.writeText(gen.code).catch(() => {}); $("#copy").textContent = "Copiado"; setTimeout(() => $("#copy").textContent = "Copiar", 1200); };
+
+/* ───────── abas ───────── */
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + b.dataset.p));
+});
+
+/* ───────── chamar comando ───────── */
+const sel = $("#sel"), pl = $("#payload"), flat = [];
+GROUPS.forEach(([g, cmds]) => { const og = document.createElement("optgroup"); og.label = g; cmds.forEach(([t, cases]) => cases.forEach(c => { if (/^(runPlan|cancelRun|completeStep|retryStep|runMachine|exportPlan|disabled)$/.test(t)) return; const o = document.createElement("option"); o.value = flat.push(c) - 1; o.textContent = `${t} — ${c.label}`; og.append(o); })); if (og.children.length) sel.append(og); });
+const load = () => { pl.value = JSON.stringify(flat[sel.value].cmd, null, 2); }; sel.onchange = load; load();
+$("#run").onclick = async () => {
+  let cmd; try { cmd = JSON.parse(pl.value); } catch (e) { $("#res").innerHTML = `<span class="er">JSON inválido</span> ${esc(e.message)}`; return; }
+  const r = await flow.execute(cmd);
+  $("#res").innerHTML = r.ok ? `<span class="ok">OK</span><pre class="res">${esc(JSON.stringify({ created: r.value.created, removed: r.value.removed }, null, 2))}</pre>` : `<span class="er">ERRO · ${r.error.code}</span><pre class="res">${esc(r.error.message)}</pre>`;
+};
+$("#reset").onclick = () => { boot(); $("#res").innerHTML = ""; };
+</script>
+</body>
+</html>

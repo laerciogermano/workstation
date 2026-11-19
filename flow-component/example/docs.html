@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow Component · Documentação</title>
+<link rel="stylesheet" href="themes.css">
+<script src="themes.js"></script>
+<style>
+/* ───────── base ───────── */
+*{box-sizing:border-box} html{scroll-padding-top:84px;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;transition:background .15s,color .15s}
+code,pre,kbd{font:12.5px/1.6 ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline;text-underline-offset:3px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ───────── header ───────── */
+header.top{position:sticky;top:0;z-index:30;height:56px;display:flex;align-items:center;gap:20px;padding:0 20px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:600;letter-spacing:-.01em;text-decoration:none!important}
+.brand svg{width:22px;height:22px;color:var(--accent)} .brand .ver{font:500 11px ui-monospace,Menlo,monospace;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+nav.links{display:flex;gap:2px;margin-left:8px} nav.links a{color:var(--mut);padding:6px 10px;border-radius:6px;font-size:14px;text-decoration:none}
+nav.links a:hover{color:var(--ink);background:var(--bg-hover)} nav.links a[aria-current]{color:var(--ink)}
+.sp{flex:1}
+.search-btn{display:flex;align-items:center;gap:10px;height:34px;min-width:260px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg-soft);color:var(--mut);font-size:13.5px}
+.search-btn:hover{border-color:var(--line-strong);color:var(--ink-2)} .search-btn svg{width:15px;height:15px;flex:none}
+.search-btn .t{flex:1;text-align:left} kbd{font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--bg);color:var(--mut)}
+.menu-btn{display:none;border:1px solid var(--line);background:var(--bg);width:34px;height:34px;border-radius:8px}
+
+header.top .tb-temas{margin-left:2px;padding:0 4px}
+.side a.grp{display:block;margin:18px 0 4px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.side a.grp:hover,.side a.grp.on{color:var(--accent);background:none}
+.sec+.sec{margin-top:80px;padding-top:44px;border-top:1px solid var(--line)}
+h2.sec-title{margin:0 0 10px;font-size:32px;line-height:1.15;letter-spacing:-.025em;font-weight:650}
+h2.feat:first-of-type{margin-top:36px}
+@media (max-width:900px){header.top .tb-temas{display:none}}
+/* ───────── layout 3 colunas ───────── */
+.shell{display:grid;grid-template-columns:268px minmax(0,1fr) 220px;max-width:1380px;margin:0 auto}
+aside.side{position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto;padding:22px 14px 40px 20px;border-right:1px solid var(--line);font-size:13.5px}
+aside.toc{position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto;padding:30px 20px 40px 8px;font-size:13px}
+.side h6{margin:20px 0 6px;padding:0 8px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)} .side h6:first-child{margin-top:0}
+.side a{display:block;padding:4px 8px;margin:1px 0;border-radius:6px;color:var(--ink-2);text-decoration:none;line-height:1.45}
+.side a:hover{background:var(--bg-hover);color:var(--ink)} .side a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.side a.pg{font-weight:500;color:var(--ink)} .side a.pg.on{color:var(--accent)}
+.side .sub{margin:2px 0 6px 10px;padding-left:8px;border-left:1px solid var(--line)}
+.toc h6{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--ink)}
+.toc a{display:block;padding:3px 0 3px 12px;border-left:1px solid var(--line);color:var(--mut);text-decoration:none;line-height:1.4} .toc a:hover{color:var(--ink)}
+.toc a.on{border-left-color:var(--accent);color:var(--ink)}
+main{min-width:0;padding:34px 48px 80px;max-width:860px}
+@media (max-width:1180px){.shell{grid-template-columns:260px minmax(0,1fr)} aside.toc{display:none}}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr} main{padding:24px 20px 60px} .menu-btn{display:grid;place-items:center} nav.links{display:none} .search-btn{min-width:0} .search-btn .t,.search-btn kbd{display:none}
+  aside.side{position:fixed;inset:56px auto 0 0;width:290px;z-index:25;background:var(--bg);transform:translateX(-100%);transition:transform .18s} body.nav-open aside.side{transform:none;box-shadow:var(--shadow)}
+}
+
+/* ───────── conteúdo ───────── */
+.crumbs{display:flex;gap:8px;align-items:center;margin:0 0 14px;font-size:13px;color:var(--mut)} .crumbs a{color:var(--mut)} .crumbs svg{width:11px;height:11px}
+h1{margin:0 0 10px;font-size:34px;line-height:1.15;letter-spacing:-.025em;font-weight:650}
+.lead{margin:0 0 28px;font-size:17px;line-height:1.6;color:var(--ink-2);max-width:62ch}
+h2.feat{display:flex;align-items:baseline;gap:12px;margin:56px 0 8px;padding-top:28px;border-top:1px solid var(--line);font-size:22px;line-height:1.25;letter-spacing:-.015em;font-weight:620}
+h2.feat:first-of-type{margin-top:36px}
+h2.feat .n{font:500 12px ui-monospace,Menlo,monospace;color:var(--mut);min-width:22px}
+h2.feat code.t{margin-left:auto;font-size:12px;font-weight:400;color:var(--mut);background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+h2.plain{margin:44px 0 10px;font-size:21px;letter-spacing:-.015em;font-weight:620;padding-top:24px;border-top:1px solid var(--line)}
+h3{margin:28px 0 8px;font-size:16px;font-weight:620}
+p{margin:0 0 14px;color:var(--ink-2)} p.desc{max-width:66ch} ul.plain{margin:0 0 16px;padding-left:20px;color:var(--ink-2)} ul.plain li{margin:4px 0}
+:not(pre)>code{background:var(--bg-soft);border:1px solid var(--line);border-radius:5px;padding:.08em .35em;font-size:.88em;color:var(--ink)}
+.callout{display:flex;gap:12px;margin:0 0 18px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:var(--bg-soft);font-size:14px;color:var(--ink-2)}
+.callout b{color:var(--ink)} .callout p{margin:0}
+.eyebrow{margin:0 0 8px;font:600 12px ui-monospace,Menlo,monospace;color:var(--accent);letter-spacing:.02em}
+
+.code{margin:0 0 14px;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);overflow:hidden}
+.code>.hd{display:flex;align-items:center;gap:8px;height:34px;padding:0 6px 0 14px;border-bottom:1px solid var(--line);font:500 12px ui-monospace,Menlo,monospace;color:var(--mut)}
+.code>.hd .cp{margin-left:auto;display:flex;align-items:center;gap:6px;height:24px;padding:0 8px;border:0;background:none;border-radius:6px;color:var(--mut);font-size:12px}
+.code>.hd .cp:hover{background:var(--bg-hover);color:var(--ink)} .code>.hd .cp svg{width:13px;height:13px}
+.code pre{margin:0;padding:12px 16px;overflow:auto;color:var(--tk-p);white-space:pre} .code.wrap pre{white-space:pre-wrap;word-break:break-word}
+.tk-c{color:var(--tk-c);font-style:italic} .tk-s{color:var(--tk-s)} .tk-k{color:var(--tk-k)} .tk-f{color:var(--tk-f)} .tk-n{color:var(--tk-n)}
+
+.case{margin:0 0 22px}
+.case>.ch{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+.case>.ch h3{margin:0;font-size:14.5px;font-weight:600}
+.pill{font:600 11px ui-monospace,Menlo,monospace;padding:1px 8px;border-radius:99px;border:1px solid transparent}
+.pill.ok{color:var(--ok);background:var(--ok-bg)} .pill.er{color:var(--er);background:var(--er-bg)} .pill.ef{color:var(--accent);background:var(--accent-soft)}
+.tabs{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.tabs>.tl{display:flex;gap:2px;padding:0 6px;border-bottom:1px solid var(--line);background:var(--bg-soft)}
+.tabs>.tl button{position:relative;height:36px;padding:0 12px;border:0;background:none;color:var(--mut);font-size:13px;font-weight:500}
+.tabs>.tl button:hover{color:var(--ink)} .tabs>.tl button[aria-selected="true"]{color:var(--ink)}
+.tabs>.tl button[aria-selected="true"]::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
+.tabs>.tl .cnt{margin-left:6px;font-size:11px;color:var(--mut)}
+.tabs>.tp{padding:0} .tabs>.tp[hidden]{display:none}
+.tabs .view{margin:0;border:0;border-radius:0}
+.tabs .fcv{border:0;border-radius:0}
+ul.diff{list-style:none;margin:0;padding:10px;font:12.5px/1.65 ui-monospace,"SF Mono",Menlo,monospace}
+ul.diff li{padding:2px 10px;border-radius:5px;margin:2px 0;word-break:break-word} ul.diff .a{background:var(--add-bg);color:var(--add)} ul.diff .c{background:var(--chg-bg);color:var(--chg)} ul.diff .d{background:var(--del-bg);color:var(--del)}
+.empty-d{padding:16px;color:var(--mut);font-size:13.5px}
+details.errs{margin:0 0 6px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+details.errs>summary{padding:10px 14px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:8px;background:var(--bg-soft)}
+details.errs>summary::-webkit-details-marker{display:none} details.errs>summary::before{content:"";width:6px;height:6px;border-right:1.5px solid var(--mut);border-bottom:1.5px solid var(--mut);transform:rotate(-45deg);transition:transform .15s;margin-right:4px}
+details.errs[open]>summary::before{transform:rotate(45deg)} details.errs>summary .cnt{color:var(--mut);font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:13.5px} th,td{padding:9px 14px;text-align:left;vertical-align:top;border-top:1px solid var(--line)} th{font-size:12px;font-weight:600;color:var(--mut);background:var(--bg)}
+td:first-child{width:36%;color:var(--ink-2)}
+.errc{font:600 11px ui-monospace,Menlo,monospace;color:var(--er);background:var(--er-bg);padding:1px 7px;border-radius:99px;margin-right:6px;white-space:nowrap}
+.view{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--fc-paper)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:64px;padding-top:24px;border-top:1px solid var(--line)}
+.pager a{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink)} .pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager small{display:block;color:var(--mut);font-size:12px;margin-bottom:2px} .pager a.nx{text-align:right;grid-column:2} .pager b{font-weight:600}
+.srcnote{margin-top:48px;font-size:12.5px;color:var(--mut)}
+
+/* ───────── busca (⌘K) ───────── */
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(8,8,12,.5);display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.scrim.open{display:flex}
+.palette{width:min(620px,92vw);background:var(--bg);border:1px solid var(--line-strong);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.palette .in{display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--line)} .palette .in svg{width:17px;height:17px;color:var(--mut)}
+.palette input{flex:1;height:52px;border:0;background:none;color:var(--ink);font:inherit;font-size:16px;outline:none}
+.palette ul{list-style:none;margin:0;padding:6px;max-height:min(52vh,420px);overflow:auto}
+.palette li a{display:flex;align-items:baseline;gap:10px;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none}
+.palette li a small{color:var(--mut);font-size:12px;margin-left:auto;font-family:ui-monospace,Menlo,monospace} .palette li a em{font-style:normal;color:var(--mut);font-size:12.5px}
+.palette li.sel a{background:var(--accent-soft);color:var(--ink)}
+.palette .ft{display:flex;gap:16px;padding:9px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)} .palette .none{padding:28px;text-align:center;color:var(--mut)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="menu-btn" id="menuBtn" aria-label="Abrir navegação"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="#comecar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="9" width="8" height="6" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/><path d="M7 9v3h6M17 15v3h-6"/></svg>
+    Flow Component <span class="ver">v0.1</span>
+  </a>
+  <nav class="links" aria-label="Principal">
+    <a href="#comecar" aria-current="page">Documentação</a>
+    <a href="flow.html">Vista interativa</a>
+  </nav>
+  <div class="sp"></div>
+  <button class="search-btn" id="searchBtn" aria-label="Buscar na documentação">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <span class="t">Buscar na documentação</span><kbd id="kbdHint">Ctrl K</kbd>
+  </button>
+  <div id="temas"></div>
+</header>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Navegação"></aside>
+  <main id="main"></main>
+  <aside class="toc" id="toc" aria-label="Nesta página"></aside>
+</div>
+
+<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-label="Busca">
+  <div class="palette">
+    <div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Buscar funcionalidade, comando ou erro…" autocomplete="off" spellcheck="false"><kbd>Esc</kbd></div>
+    <ul id="results"></ul>
+    <div class="ft"><span><kbd>↑</kbd> <kbd>↓</kbd> navegar</span><span><kbd>↵</kbd> abrir</span></div>
+  </div>
+</div>
+
+<script src="flow-component.js"></script>
+<script src="cases.js"></script>
+<script src="contracts.js"></script>
+<script>
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const IC = {
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+};
+
+/* ───────── temas do Flow IDE (bolinhas) ───────── */
+mountTemas($("#temas"));
+if (/Mac|iPhone|iPad/.test(navigator.platform)) $("#kbdHint").textContent = "⌘ K";
+
+/* ───────── destaque de sintaxe (TS enxuto) ───────── */
+const KW = /^(?:const|let|await|async|import|from|export|type|interface|if|else|return|true|false|null|undefined|new|function)$/;
+function hl(code) {
+  return esc(code).replace(/(\/\/[^\n]*)|(&quot;(?:[^&\\]|&(?!quot;)|\\.)*?&quot;|`[^`]*`)|(\bflow\.(?:\w+))|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_]\w*\b)/g, (m, c, s, f, n, w) => {
+    if (c) return `<span class="tk-c">${c}</span>`; if (s) return `<span class="tk-s">${s}</span>`;
+    if (f) return `flow.<span class="tk-f">${f.slice(5)}</span>`; if (n) return `<span class="tk-n">${n}</span>`;
+    return KW.test(w) ? `<span class="tk-k">${w}</span>` : w;
+  });
+}
+const codeBlock = (code, label = "ts") => `<div class="code${label === "contrato" ? " wrap" : ""}"><div class="hd"><span>${esc(label)}</span><button class="cp" type="button" aria-label="Copiar código">${IC.copy}<span>Copiar</span></button></div><pre><code>${hl(code)}</code></pre></div>`;
+document.addEventListener("click", e => {
+  const b = e.target.closest(".cp"); if (!b) return;
+  const text = b.closest(".code").querySelector("code").textContent;
+  navigator.clipboard?.writeText(text).catch(() => {}); const lab = b.querySelector("span"), ic = b.querySelector("svg");
+  lab.textContent = "Copiado"; ic.outerHTML = IC.check; setTimeout(() => { lab.textContent = "Copiar"; b.querySelector("svg").outerHTML = IC.copy; }, 1400);
+});
+
+/* ───────── conteúdo por funcionalidade ───────── */
+const DOC = {
+  createFunction: ["Criar uma função raiz", "Cria uma função sob a raiz do plano. É o ponto de partida de um fluxo."],
+  createChild: ["Criar um filho", "A função ganha um filho no fim da lista, ligado em sequência ao último irmão. Com isso ela passa a ser uma composição (camada)."],
+  createSibling: ["Criar um irmão", "Insere ao lado de uma função e religa a sequência no meio: a → novo → b."],
+  renameFunction: ["Renomear uma função", "Altera só o rótulo. O IDR não muda."],
+  removeElements: ["Remover funções", "Remove a função e todos os descendentes e costura a sequência: a → x → b vira a → b. Estruturas que ficam vazias somem."],
+  duplicate: ["Duplicar", "Copia a subárvore inteira (I/O, for, if, código) com IDRs novos. O título ganha “(cópia)” quando já existe entre os irmãos."],
+  archive: ["Arquivar", "Tira o elemento da vista e do corpo de qualquer if, sem apagar."],
+  unarchive: ["Desarquivar", "O elemento volta à vista."],
+  move: ["Mover", "Move a subárvore para antes, depois ou dentro de outra função e religa a sequência nos dois lugares. Não entra em si mesma."],
+  paste: ["Recortar, copiar e colar", "O clipboard é do host; o comando carrega os ids. <code>cut</code> move, <code>copy</code> clona com IDRs novos."],
+  patchFunction: ["Alterar vários campos", "Título, contexto, código, responsável, entradas, saídas, <code>for</code> e <code>if</code> em um só comando."],
+  setSelection: ["Seleção (if)", "Numa função folha: cria o if com o teste na primeira entrada (ou <code>condicao</code>) e “senão” voltando à função anterior."],
+  setRepetition: ["Repetição (for)", "Numa função folha: liga <code>for (item of lista)</code> ou desliga."],
+  setParallel: ["Paralelo", "Duas funções passam a dividir o mesmo passo (estado) da sequência."],
+  setTryCatch: ["Try / catch", "Liga ou desliga o tratamento de falha de uma função (ou de toda a composição). Ao ligar, cria a função <b>Tratar falha</b>, exclusiva do catch: ela sai da sequência e aparece <b>abaixo</b> do try. Ao desligar, ela é removida se ainda estiver intocada. Com <code>through</code>, um <b>único</b> try cobre várias funções consecutivas (de <code>id</code> até <code>through</code>), com um só catch. Chamar de novo com <code>through</code> estende o bloco; desligar por qualquer membro limpa o bloco inteiro. Para usar outra função como tratamento, veja <code>setCatch</code>."],
+  addInput: ["Adicionar entrada", "Cria a entrada e o dado, se ainda não existir. Idempotente."],
+  removeInput: ["Remover entrada", ""],
+  addOutput: ["Adicionar saída", "Cria a saída (referência padrão <code>out/&lt;nome&gt;.json</code>) e o dado."],
+  removeOutput: ["Remover saída", ""],
+  setCond: ["Condição do if", "Dado testado e função para onde volta (senão)."],
+  setLoopVars: ["Variável e coleção do for", ""],
+  setCatch: ["Função de tratamento (catch)", "Define qual função (ou composição, com vários passos) trata a falha. Ela vira o fluxo catch, desenhado abaixo do try e, no eixo do tempo, na coluna seguinte ao fim do try — o passo seguinte da sequência principal só começa depois do catch. Não pode estar dentro do próprio try. <code>through</code> faz o mesmo try cobrir várias funções consecutivas. <code>null</code> tira as funções do try (só as de <code>id</code> até <code>through</code>) e devolve o tratamento à sequência quando ninguém mais o usa."],
+  createData: ["Criar dado", "Novo dado no catálogo (quadrado; vira cubo quando ganha campos)."],
+  upsertData: ["Criar ou alterar dado", "Tipo, valor e arquivo. Dado com valor é <b>concreto</b>; sem valor é <b>abstrato</b> (state)."],
+  clearDataValue: ["Limpar valor", "O dado volta a ser abstrato."],
+  addDataChild: ["Adicionar campo filho", "A folha vira cubo (objeto) ao ganhar o primeiro campo."],
+  toggleCube: ["Alternar folha e cubo", "Folha vira cubo; cubo só volta a folha sem filhos."],
+  assignResponsible: ["Atribuir responsável", "Arquivo, lib, pessoa, agente ou modelo. Pessoa zera o status; lib com tasks ajusta o título para uma task válida."],
+  setTask: ["Escolher a task", "Responsável concreto: precisa estar no catálogo dele. Abstrato (IA, pessoa, modelo): verbo livre."],
+  createAgent: ["Criar agente", "IA herda o primeiro modelo; lib Node vem com as tasks padrão."],
+  createPerson: ["Criar pessoa", ""],
+  patchAgent: ["Alterar agente", "Nome, subtítulo, modelo, prompt, foto e tasks."],
+  removeAgent: ["Remover agente", "Bloqueado enquanto alguma função o usar."],
+  createModel: ["Criar modelo de IA", ""], patchModel: ["Alterar modelo", ""],
+  removeModel: ["Remover modelo", "Bloqueado se algum agente o usar."],
+  createModule: ["Criar arquivo", "Sem nome, gera <code>novo-arquivo-N.layer.js</code>."],
+  renameModule: ["Renomear arquivo", ""],
+  deleteModule: ["Apagar arquivo", "Limpa o responsável das funções que o usavam."],
+  runPlan: ["Executar o plano", "Contrato; o runtime é um <code>Runner</code> injetado pelo host."],
+  cancelRun: ["Cancelar a execução", ""], completeStep: ["Concluir etapa (pessoa)", ""], retryStep: ["Retentar etapa", ""], runMachine: ["Rodar etapa máquina", ""],
+  exportPlan: ["Exportar o plano", "IR, JS, TS ou Py, via <code>Exporter</code> injetado."],
+  disabled: ["Desabilitar um comando", "O contrato permanece; o host recusa a execução com o código <code>disabled</code>."],
+};
+const GROUP_LEAD = [
+  "Criar, renomear, mover, duplicar e remover funções; estruturas if, for, try/catch e paralelo.",
+  "Entradas e saídas de uma função, e as variáveis de condição e repetição.",
+  "Dados do estado: quadrados, cubos, valores concretos e abstratos.",
+  "Quem executa cada função: pessoa, lib, agente, modelo ou arquivo.",
+  "Arquivos do projeto e os módulos que agrupam funções e dados.",
+  "Execução e exportação. O contrato é da lib; o runtime é do host.",
+  "Como o host decide o que expor, sem alterar o contrato.",
+];
+const TEXT_CMDS = new Set(["runPlan", "cancelRun", "completeStep", "retryStep", "runMachine", "exportPlan"]);
+
+/* ───────── execução dos casos (mesmo núcleo da lib) ───────── */
+const mockRunner = { async runPlan() { return FC.ok(undefined); }, async cancelRun() { return FC.ok(undefined); }, async completeStep() { return FC.ok(undefined); }, async retryStep() { return FC.ok(undefined); }, async runMachine() { return FC.ok(undefined); } };
+const mockExporter = { async export(p, f, snap) {
+  const fns = snap.elements.filter(e => e.kind === "file" && !e.archived && e.parentId !== null);
+  const nm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9]+(.)?/g, (_, c) => (c || "").toUpperCase()).replace(/^./, s => s.toLowerCase());
+  if (f === "ir") return FC.ok(JSON.stringify(fns.map(x => ({ id: x.id, title: x.title, ins: x.ins })), null, 2));
+  if (f === "py") return FC.ok(fns.map(x => `async def ${nm(x.title)}(state):\n    ...`).join("\n\n"));
+  return FC.ok(fns.map(x => `export async function ${nm(x.title)}(state${f === "ts" ? ": State" : ""}) { /* ... */ }`).join("\n"));
+} };
+const docSeed = () => FC.applyModelCommand(seed(), { type: "addInput", id: "faturar", name: "preco" }, { newId: FC.sequentialGen("d") }).value.snapshot;
+async function runCase(cs) {
+  const store = FC.memoryStore(docSeed());
+  const flow = FC.createFlowComponent({ store, newId: FC.sequentialGen("novo"), ...(cs.noAdapters ? {} : { runner: mockRunner, exporter: mockExporter }), ...(cs.disabled ? { disabled: cs.disabled } : {}) });
+  for (const p of cs.pre ?? []) { const a = FC.applyModelCommand(store.get(), p, { newId: FC.sequentialGen("pre") }); if (a.ok) store.set(a.value.snapshot); }
+  const before = store.get(), res = await flow.execute(cs.cmd);
+  return { before, after: store.get(), res };
+}
+const js = v => Array.isArray(v) ? "[" + v.map(js).join(", ") + "]" : v && typeof v === "object" ? "{ " + Object.entries(v).map(([k, x]) => `${k}: ${js(x)}`).join(", ") + " }" : JSON.stringify(v);
+const call = c => { const { type, ...rest } = c; return `await flow.${type}(${Object.keys(rest).length ? js(rest) : ""});`; };
+const short = v => { const s = JSON.stringify(v) ?? "ausente"; return s.length > 80 ? s.slice(0, 77) + "…" : s; };
+function diff(a, b) {
+  const L = [], by = (arr, k) => new Map(arr.map(x => [x[k], x]));
+  for (const [col, key, lab] of [["elements", "id", e => e.title], ["agents", "id", e => e.name], ["models", "id", e => e.name], ["modules", "id", e => e.file], ["data", "name", d => d.name], ["structs", "id", s => "if " + s.test]]) {
+    const A = by(a[col], key), B = by(b[col], key);
+    for (const [k, v] of B) { if (!A.has(k)) { L.push(["a", `+ ${col}: ${lab(v)}  (${k})`]); continue; } const o = A.get(k), ch = Object.keys(v).filter(f => JSON.stringify(o[f]) !== JSON.stringify(v[f])); if (ch.length) L.push(["c", `~ ${col}: ${lab(v)} — ` + ch.map(f => `${f} ${short(o[f])} → ${short(v[f])}`).join("; ")]); }
+    for (const [k, v] of A) if (!B.has(k)) L.push(["d", `− ${col}: ${lab(v)}  (${k})`]);
+  }
+  const key = l => `${l.kind}:${l.from}>${l.to}`, LA = new Set(a.links.map(key)), LB = new Set(b.links.map(key));
+  for (const k of LB) if (!LA.has(k)) L.push(["a", `+ link ${k}`]); for (const k of LA) if (!LB.has(k)) L.push(["d", `− link ${k}`]);
+  return L;
+}
+function rootFor(snap, cmd, created) {
+  const ids = [created?.[0], cmd.id, cmd.refId, cmd.a, cmd.ids?.[0], cmd.destId, cmd.cond?.gotoId].filter(Boolean);
+  const tops = snap.elements.filter(e => e.kind === "file" && !e.archived && e.planId === "p1" && (!e.parentId || snap.elements.find(p => p.id === e.parentId)?.kind === "folder"));
+  const topOf = id => { let e = snap.elements.find(x => x.id === id); while (e && e.parentId && snap.elements.find(p => p.id === e.parentId)?.kind !== "folder") e = snap.elements.find(x => x.id === e.parentId); return e?.id; };
+  for (const id of ids) { const t = topOf(id); if (t && tops.some(x => x.id === t)) return t; }
+  return tops.find(t => t.id === "vender")?.id ?? tops[0]?.id ?? null;
+}
+
+/* ───────── modelo das páginas ───────── */
+const PAGES = [{ id: "comecar", title: "Começar", intro: true }, { id: "estruturas", title: "Estruturas", custom: true, lead: "Sequência, paralelo, seleção (if), repetição (for), try/catch e composição: como cada uma é criada e como aparece no Flow." }];
+const FEAT_PAGE = {};
+GROUPS.forEach(([title, cmds], i) => {
+  const m = title.match(/^(§[\d.–]+)\s*(.*)$/), page = { id: "g" + (i + 1), eyebrow: m ? m[1].replace("§", "") : "", title: m ? m[2] : title, lead: GROUP_LEAD[i] ?? "", cmds };
+  PAGES.push(page); cmds.forEach(([type]) => { FEAT_PAGE["c-" + type] = page.id; });
+});
+let CASES = null, FEATS = [];
+async function computeAll() {
+  CASES = {}; let n = 0;
+  for (const p of PAGES.filter(x => x.cmds)) for (const [type, cases] of p.cmds) {
+    const res = []; for (const cs of cases) res.push({ cs, out: await runCase(cs) });
+    const [head, text] = DOC[type] ?? [type, ""];
+    CASES[type] = res; FEATS.push({ type, id: "c-" + type, n: ++n, head, text, page: p.id, group: p.title });
+  }
+}
+
+/* ───────── navegação lateral (tudo numa página: os links rolam até a seção) ───────── */
+function buildSide() {
+  let h = `<h6>Introdução</h6><a class="pg" href="#comecar" data-s="comecar">Começar</a><a class="pg" href="#estruturas" data-s="estruturas">Estruturas</a>`;
+  for (const p of PAGES.filter(x => x.cmds)) {
+    h += `<a class="grp" href="#${p.id}" data-s="${p.id}">${esc((p.eyebrow ? p.eyebrow + " · " : "") + p.title)}</a>`;
+    h += FEATS.filter(f => f.page === p.id).map(f => `<a href="#${f.id}" data-f="${f.id}">${esc(f.head)}</a>`).join("");
+  }
+  $("#side").innerHTML = h;
+}
+
+/* ───────── vistas: altura reservada de antemão + montagem ao se aproximar ───────── */
+let io = null;
+function viewHeight(snap, rootId, cw) {
+  const S = FC.buildScene(snap, { planId: snap.plans[0].id, rootId, closed: new Set(), flags: FC.DEFAULT_FLAGS, tail: 230 });
+  const z = Math.max(0.55, Math.min(1.15, (cw - 56) / S.worldW));
+  return Math.ceil(S.worldH * z + 32);
+}
+function lazyView(host, snap, rootId, cw) {
+  host.className = "view"; host.style.minHeight = viewHeight(snap, rootId, cw) + "px";
+  host.__mount = () => { if (host.__done) return; host.__done = true; const flow = FC.createFlowComponent({ store: FC.memoryStore(snap) }); FC.mountFlowView(host, flow, { rootId, readonly: true }); };
+  return host;
+}
+function tabsHtml(id, items) {
+  return `<div class="tabs" data-t="${id}"><div class="tl" role="tablist">${items.map((t, i) => `<button role="tab" aria-selected="${i === 0}" data-i="${i}">${esc(t.label)}${t.count != null ? `<span class="cnt">${t.count}</span>` : ""}</button>`).join("")}</div>${items.map((t, i) => `<div class="tp" role="tabpanel" data-i="${i}" ${i ? "hidden" : ""}>${t.html}</div>`).join("")}</div>`;
+}
+
+function featureHtml(f) {
+  const res = CASES[f.type], type = f.type, kind = TEXT_CMDS.has(type) ? "effect" : "model";
+  const oks = res.filter(r => r.out.res.ok), errs = res.filter(r => !r.out.res.ok);
+  let h = `<h2 class="feat" id="${f.id}"><span class="n">${String(f.n).padStart(2, "0")}</span>${esc(f.head)}<code class="t">${type}</code></h2>`;
+  const SEE = { setSelection: "e-if", setRepetition: "e-for", setParallel: "e-par", createChild: "e-nest", setCond: "e-if", setLoopVars: "e-for", setTryCatch: "e-try2", setCatch: "e-try2" };
+  if (f.text) h += `<p class="desc">${f.text}${SEE[type] ? ` Veja <a href="#${SEE[type]}">Estruturas › ${esc(STRUCTS.find(x => x.id === SEE[type]).title)}</a>.` : ""}</p>`;
+  if (CONTRACTS[type]) {
+    const c = CONTRACTS[type], optional = c === "{}" || !/(^\{ |; )\w+: /.test(c);
+    h += codeBlock(`flow.${type}(input${optional ? "?" : ""}: ${c}): Promise<Result<${kind === "effect" ? "EffectOutcome" : "ModelOutcome"}>>`, "contrato");
+  }
+  oks.forEach(({ cs, out }, k) => {
+    const v = out.res.value;
+    const note = v.kind === "model" && (v.created.length || v.removed.length) ? `\n// → ${[v.created.length ? "created: " + JSON.stringify(v.created) : "", v.removed.length ? "removed: " + JSON.stringify(v.removed) : ""].filter(Boolean).join("  ")}` : "";
+    h += `<div class="case"><div class="ch"><h3>${esc(cs.label)}</h3><span class="pill ${v.kind === "effect" ? "ef" : "ok"}">${v.kind === "effect" ? "effect" : "ok"}</span></div>${codeBlock(call(cs.cmd) + note, "chamada")}`;
+    if (v.kind === "effect") h += v.output ? codeBlock(v.output, "saída") : `<p class="desc" style="color:var(--mut)">Concluído sem saída: o efeito acontece no adapter do host.</p>`;
+    else {
+      const d = diff(out.before, out.after), tid = `${type}-${k}`;
+      const items = [
+        { label: "Depois", html: `<div data-lazy="after" data-t="${tid}"></div>` },
+        { label: "Antes", html: `<div data-lazy="before" data-t="${tid}"></div>` },
+        { label: "Mudanças", count: d.length, html: d.length ? `<ul class="diff">${d.map(([c, t]) => `<li class="${c}">${esc(t)}</li>`).join("")}</ul>` : `<div class="empty-d">Sem mudança no modelo.</div>` },
+      ];
+      h += tabsHtml(tid, items);
+    }
+    h += `</div>`;
+  });
+  if (type === "disabled") errs.forEach(({ cs, out }) => { h += `<div class="case"><div class="ch"><h3>${esc(cs.label)}</h3><span class="pill er">${out.res.error.code}</span></div>${codeBlock(call(cs.cmd) + `\n// → { ok: false, error: { code: "${out.res.error.code}" } }`, "chamada")}<p class="desc">${esc(out.res.error.message)}</p></div>`; });
+  else if (errs.length) h += `<details class="errs"><summary>Erros possíveis <span class="cnt">${errs.length}</span></summary><table><tr><th>Chamada</th><th>Resultado</th></tr>${errs.map(({ cs, out }) => `<tr><td>${esc(cs.label)}</td><td><span class="errc">${out.res.error.code}</span>${esc(out.res.error.message)}</td></tr>`).join("")}</table></details>`;
+  return h;
+}
+
+/* ───────── página Estruturas ───────── */
+const EMPTY = () => ({ plans: [{ id: "p1", name: "Pedidos", position: 0 }], elements: [{ id: "root", planId: "p1", parentId: null, kind: "folder", title: "Raiz", context: null, agentId: null, respId: null, status: null, error: null, progress: null, loop: null, cond: null, code: null, archived: false, position: 0, ins: [], outs: [] }], links: [], structs: [], agents: [], models: [], modules: [], data: [] });
+const SID = ["fluxo", "f1", "f2", "f3", "f4", "f5", "f6", "f7"];
+function structSnap(steps) {
+  let i = 0, snap = EMPTY(); const gen = () => SID[i++] ?? "x" + i;
+  for (const c of steps) { const r = FC.applyModelCommand(snap, c, { newId: gen }); if (!r.ok) throw new Error(c.type + ": " + r.error.message); snap = r.value.snapshot; }
+  return snap;
+}
+const mk = (id, title) => ({ type: "createChild", refId: id, title });
+const HEAD = [{ type: "createFunction", planId: "p1", title: "Atender pedido" }, mk("fluxo", "Receber pedido"), mk("fluxo", "Separar itens"), mk("fluxo", "Enviar pedido")];
+const STRUCTS = [
+  { id: "e-seq", title: "Sequência", text: "Funções irmãs são executadas na ordem em que foram criadas: cada uma ocupa o passo seguinte (s0, s1, s2…). O conector em L liga a saída de uma à entrada da próxima, e a composição vira a barra-resumo no topo.",
+    read: ["Barra cheia: função concreta. Barra vazada: função abstrata.", "Quadrado vermelho: dado. Preenchido: abstrato (vem do state); vazado: concreto.", "Cada divisória vertical é um estado s<i>N</i>; o rodapé mostra os dados novos de cada um."],
+    steps: [...HEAD, { type: "addOutput", id: "f1", name: "pedido" }, { type: "addInput", id: "f2", name: "pedido" }, { type: "addOutput", id: "f2", name: "itens" }, { type: "addInput", id: "f3", name: "itens" }] },
+  { id: "e-par", title: "Paralelo", text: "<code>setParallel</code> junta duas funções no mesmo passo. Elas partem da mesma saída anterior e a próxima função só começa depois das duas.",
+    read: ["As duas barras ficam na mesma coluna (mesmo estado).", "O passo seguinte depende de todas as funções do grupo."],
+    steps: [{ type: "createFunction", planId: "p1", title: "Atender pedido" }, mk("fluxo", "Receber pedido"), mk("fluxo", "Cobrar pagamento"), mk("fluxo", "Separar itens"), mk("fluxo", "Enviar pedido"), { type: "setParallel", a: "f2", b: "f3", on: true }] },
+  { id: "e-if", title: "Seleção (if)", text: "<code>setSelection</code> numa função folha cria um <b>if</b>: o teste é a primeira entrada da função e o “senão” volta para a função anterior. A função passa a pertencer ao corpo do if.",
+    read: ["Linha laranja com <code>if (teste) · senão → função</code> abre o bloco.", "Losango laranja no conector: onde a decisão acontece.", "Banda tracejada: o corpo do if (as funções que só rodam se o teste for verdadeiro)."],
+    steps: [...HEAD, { type: "addInput", id: "f2", name: "estoque_ok" }, { type: "setSelection", id: "f2", on: true }, { type: "setCond", id: "f2", cond: { test: "estoque_ok", gotoId: "f1" } }] },
+  { id: "e-for", title: "Repetição (for)", text: "<code>setRepetition</code> numa função folha liga <code>for (item of lista)</code>. Use <code>setLoopVars</code> para trocar a variável e a coleção.",
+    read: ["Linha roxa com <code>↻ for (variável of coleção)</code> abre o bloco, no mesmo padrão do if.", "Moldura tracejada com seta em arco sobre a barra: a função roda uma vez por item.", "Banda roxa tracejada: o corpo do for (como a banda laranja do if)."],
+    steps: [...HEAD, { type: "setRepetition", id: "f2", on: true }, { type: "setLoopVars", id: "f2", loop: ["item", "itens_do_pedido"] }] },
+  { id: "e-try", title: "Try / catch", text: "O fluxo <b>try</b> fica em cima e o fluxo <b>catch</b> logo abaixo. <code>setCatch</code> escolhe a função (ou composição, com vários passos) que trata a falha; <code>setTryCatch</code> cria uma. A função de tratamento é exclusiva do catch: não entra na sequência normal. No tempo: o catch começa na coluna seguinte ao fim do try; o próximo passo da sequência principal (ex.: Faturar) só começa depois do catch inteiro. Vale para uma função, para várias funções consecutivas ou para uma composição inteira.",
+    read: ["Linha <b>verde</b> <code>try · catch ↓ função</code> abre o fluxo try; a banda verde tracejada cobre tudo o que ele protege.", "Logo depois da última função do try, a linha <b>vermelha</b> <code>catch · se o try falhar</code> abre o fluxo catch, com a sua própria banda vermelha.", "O tratamento não pode estar dentro do próprio try."],
+    steps: [{ type: "createFunction", planId: "p1", title: "Atender pedido" }, mk("fluxo", "Receber pedido"), mk("fluxo", "Cobrar pagamento"), mk("fluxo", "Enviar pedido"), mk("fluxo", "Estornar cobrança"), mk("f4", "Registrar falha"), mk("f4", "Avisar cliente"), { type: "setCatch", id: "f2", handlerId: "f4" }] },
+  { id: "e-try2", title: "Try com várias funções", text: "Um único <b>try</b> pode englobar mais de uma chamada. Com <code>through</code>, as funções consecutivas de <code>id</code> até <code>through</code> viram um bloco só: um cabeçalho, uma banda que cobre todas, e <b>um</b> catch. No código gerado, é um único <code>try { … } catch</code> em volta das chamadas. Se qualquer uma falhar, o fluxo vai para o tratamento.",
+    read: ["Um só cabeçalho <code>try</code> e uma só banda verde abraçam as funções cobertas.", "O catch (vermelho) começa depois da última função do bloco.", "<code>setCatch</code> com <code>handlerId: null</code> tira uma função do bloco; <code>setTryCatch</code> com <code>on: false</code> limpa o bloco inteiro."],
+    steps: [{ type: "createFunction", planId: "p1", title: "Atender pedido" }, mk("fluxo", "Receber pedido"), mk("fluxo", "Cobrar pagamento"), mk("fluxo", "Separar itens"), mk("fluxo", "Enviar pedido"), mk("fluxo", "Estornar cobrança"), { type: "addOutput", id: "f2", name: "pagamento" }, { type: "addInput", id: "f3", name: "pagamento" }, { type: "setCatch", id: "f2", handlerId: "f5", through: "f3" }] },
+  { id: "e-nest", title: "Composição", text: "Uma função com filhos é uma <b>composição</b> (camada). Ela é desenhada como barra-resumo e abraça os passos dos filhos. Composições podem ter composições dentro.",
+    read: ["Seta ao lado do nome abre e fecha a sanfona.", "Barra fina e cheia: a composição; ocupa do primeiro ao último passo dos filhos.", "Recuo na coluna Task mostra a hierarquia."],
+    steps: [...HEAD, mk("f2", "Embalar item"), mk("f2", "Etiquetar item")] },
+  { id: "e-mix", title: "Combinadas", text: "As estruturas se combinam: um for dentro de uma composição, um try/catch protegendo a composição inteira, um if no passo final e funções paralelas ao mesmo tempo.",
+    read: ["Cada estrutura mantém o próprio símbolo, mesmo aninhada.", "O recuo cresce um nível por estrutura aberta."],
+    steps: [...HEAD, mk("f2", "Embalar item"), mk("f2", "Etiquetar item"), mk("fluxo", "Registrar falha"), { type: "setParallel", a: "f4", b: "f5", on: true }, { type: "setRepetition", id: "f4", on: true }, { type: "addInput", id: "f3", name: "embalado" }, { type: "setSelection", id: "f3", on: true }, { type: "setCatch", id: "f2", handlerId: "f6" }] },
+];
+function structuresHtml() {
+  let h = `<p class="eyebrow">Fundamentos</p><h2 class="sec-title">Estruturas</h2><p class="lead">${STRUCTS.length ? "Sequência, paralelo, seleção (if), repetição (for), try/catch e composição. Cada exemplo mostra as chamadas e a vista Flow que resulta delas." : ""}</p>`;
+  h += `<div class="callout"><p>Tudo aqui é montado com os mesmos comandos das outras seções. Use o botão no canto de cada desenho para ver em tela cheia.</p></div>`;
+  STRUCTS.forEach((e, i) => {
+    h += `<h2 class="feat" id="${e.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span>${esc(e.title)}</h2><p class="desc">${e.text}</p>`;
+    h += codeBlock(e.steps.map(call).join("\n"), "chamadas");
+    h += `<div class="tabs"><div data-lazy="struct" data-s="${i}"></div></div>`;
+    h += `<ul class="plain">${e.read.map(r => `<li>${r}</li>`).join("")}</ul>`;
+  });
+  return h;
+}
+
+/* ───────── seção Começar ───────── */
+function introHtml() {
+  return `<p class="eyebrow">Documentação</p><h1>Flow Component</h1>
+<p class="lead">Biblioteca front-end com todas as operações do Flow IDE como funções tipadas sobre o grafo, e a vista Flow que desenha o resultado. O host decide o que expor.</p>
+<h2 class="plain" id="primeiros-passos" style="margin-top:0;border:0;padding-top:0">Primeiros passos</h2>
+${codeBlock(`import { createFlowComponent, memoryStore, mountFlowView } from "@flow/component";
+
+const flow = createFlowComponent({
+  store: memoryStore(snapshot),   // ModelStore: get() / set()
+  runner, exporter,               // opcionais (portas do host)
+  disabled: ["deleteModule"],     // o contrato fica; a execução é recusada
+});
+
+mountFlowView(document.getElementById("host"), flow);   // a vista Flow
+
+const r = await flow.createChild({ refId: "faturar", title: "Emitir recibo" });
+if (r.ok) r.value.created;   // IDRs novos
+else r.error;                // { code: "not_found", message: "…" }`, "ts")}
+<p>Cada comando é uma função: <code>flow.createChild(...)</code>. A forma genérica <code>flow.execute({ type: "createChild", … })</code> continua disponível. Toda chamada devolve um <code>Result</code>; erros esperados nunca lançam exceção.</p>
+<div class="callout"><p><b>Referência por IDR.</b> O título é só rótulo. Cada exemplo desta documentação roda o código real da biblioteca no seu navegador, sobre o mesmo estado de partida.</p></div>
+<h2 class="plain" id="contratos">Contratos comuns</h2>
+${codeBlock(`type Result<T> = { ok: true; value: T } | { ok: false; error: { code: ErrorCode; message: string } };
+type ErrorCode = "not_found" | "invalid" | "conflict" | "disabled" | "unsupported" | "failed";
+
+// comandos de modelo (§5.1–5.5)
+type ModelOutcome  = { kind: "model"; snapshot: Snapshot; created: string[]; removed: string[] };
+// comandos de execução e exportação (§5.6–5.7)
+type EffectOutcome = { kind: "effect"; output: string | null };
+
+${FUNCTION_PATCH}`, "tipos")}
+<table><tr><th>Código</th><th>Quando</th></tr>
+<tr><td><span class="errc">not_found</span></td><td>IDR ou nome inexistente.</td></tr><tr><td><span class="errc">invalid</span></td><td>Payload ou estado inválido para a operação.</td></tr>
+<tr><td><span class="errc">conflict</span></td><td>Colisão de nome ou item em uso.</td></tr><tr><td><span class="errc">disabled</span></td><td>O host desabilitou o comando.</td></tr>
+<tr><td><span class="errc">unsupported</span></td><td>Falta o adapter (<code>Runner</code> ou <code>Exporter</code>).</td></tr><tr><td><span class="errc">failed</span></td><td>O adapter ou o store falhou.</td></tr></table>
+<h2 class="plain" id="seed">Estado de partida</h2>
+<p>O fluxo <b>Vender produto</b> é uma composição com <i>Cobrar cliente → Entregar pedido → Faturar</i>, ao lado de <i>Notificar cliente</i>. Responsáveis: Ana (pessoa), node:fs (lib) e Redator (IA). Os exemplos partem sempre deste estado.</p>
+<div class="tabs" style="padding:0"><div data-lazy="seed"></div></div>
+<h2 class="plain" id="vista">A vista Flow</h2>
+<p><code>mountFlowView(elemento, flow)</code> desenha a tabela Responsável · Task e o plano com os estados s0…sN. Qualquer chamada em <code>flow</code> redesenha a vista. Todo desenho desta documentação tem o botão de tela cheia no canto superior direito; lá, a roda dá zoom e arrastar move. Os 12 temas do Flow IDE (bolinhas no topo) valem também para a vista.</p>
+${codeBlock(`const view = mountFlowView(host, flow, { rootId, flags: { compact: false } });
+view.fullscreen(true);   // tela cheia por código
+view.select(id);         // seleciona uma função
+view.setFlags({ txtIn: true });
+view.destroy();`, "ts")}`;
+}
+
+/* ───────── documento único ───────── */
+function groupHtml(p) {
+  const feats = FEATS.filter(f => f.page === p.id);
+  return `<section class="sec" id="${p.id}"><p class="eyebrow">${esc(p.eyebrow ? "§" + p.eyebrow : "")}</p><h2 class="sec-title">${esc(p.title)}</h2><p class="lead">${esc(p.lead)}</p>${feats.map(featureHtml).join("")}</section>`;
+}
+function renderAll() {
+  const main = $("#main");
+  main.innerHTML = `<section class="sec" id="comecar">${introHtml()}</section><section class="sec" id="estruturas">${structuresHtml()}</section>` + PAGES.filter(x => x.cmds).map(groupHtml).join("");
+  const cs = getComputedStyle(main), cw = main.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
+  io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && e.target.__mount) { e.target.__mount(); io.unobserve(e.target); } }), { rootMargin: "900px 0px" });
+  $$("[data-lazy]", main).forEach(el => {
+    const kind = el.dataset.lazy;
+    if (kind === "seed") lazyView(el, docSeed(), "vender", cw);
+    else if (kind === "struct") lazyView(el, structSnap(STRUCTS[+el.dataset.s].steps), "fluxo", cw);
+    else {
+      const [type, k] = el.dataset.t.replace(/-(\d+)$/, " $1").split(" "), { cs: c, out } = CASES[type][oksOf(type)[+k]];
+      const snap = kind === "after" ? out.after : out.before;
+      lazyView(el, snap, rootFor(snap, c.cmd, kind === "after" ? out.res.value.created : []), cw);
+    }
+    if (!el.closest(".tp[hidden]")) io.observe(el);
+  });
+  // abas: a vista de um painel escondido monta ao abrir
+  $$(".tabs[data-t]", main).forEach(t => t.addEventListener("click", e => {
+    const b = e.target.closest("[role=tab]"); if (!b) return;
+    $$("[role=tab]", t).forEach(x => x.setAttribute("aria-selected", String(x === b))); $$(".tp", t).forEach(x => x.hidden = x.dataset.i !== b.dataset.i);
+    $$(".tp:not([hidden]) [data-lazy]", t).forEach(el => el.__mount?.());
+  }));
+}
+const oksOf = type => CASES[type].map((r, i) => r.out.res.ok ? i : -1).filter(i => i >= 0);
+
+/* ───────── scrollspy: seção atual, "Nesta página" e item ativo do menu ───────── */
+let curSec = null;
+function buildToc(sec) {
+  const heads = $$("h2[id]:not(.sec-title)", sec), toc = $("#toc");
+  toc.innerHTML = heads.length ? `<h6>Nesta página</h6>` + heads.map(h => `<a href="#${h.id}" data-h="${h.id}">${esc(h.querySelector(".n") ? h.childNodes[1].textContent : h.textContent)}</a>`).join("") : "";
+}
+function spy() {
+  const secs = $$("main .sec"); if (!secs.length) return;
+  const y = 100; let sec = secs[0];
+  for (const s of secs) if (s.getBoundingClientRect().top <= y + 8) sec = s;
+  if (sec !== curSec) { curSec = sec; buildToc(sec); }
+  let head = null; for (const h of $$("h2[id]:not(.sec-title)", sec)) if (h.getBoundingClientRect().top <= y + 8) head = h;
+  $$("#toc a").forEach(a => a.classList.toggle("on", !!head && a.dataset.h === head.id));
+  const side = $("#side"), hasF = head && side.querySelector(`[data-f="${head.id}"]`);
+  let active = null;
+  $$("a", side).forEach(a => { const on = hasF ? a.dataset.f === head.id : a.dataset.s === sec.id; a.classList.toggle("on", on); if (on) active = a; });
+  if (active) { const r = active.getBoundingClientRect(), sr = side.getBoundingClientRect(); if (r.top < sr.top + 40 || r.bottom > sr.bottom - 40) side.scrollTop += r.top - sr.top - sr.height / 2; }
+}
+// atualiza o menu ao rolar: imediato (no máx. a cada 60ms) + um disparo final para pegar a posição de repouso
+let spyAt = 0, spyTimer = 0;
+addEventListener("scroll", () => {
+  const now = performance.now();
+  if (now - spyAt > 60) { spyAt = now; spy(); }
+  clearTimeout(spyTimer); spyTimer = setTimeout(spy, 90);
+}, { passive: true, capture: true });
+addEventListener("resize", () => spy());
+addEventListener("hashchange", () => setTimeout(spy, 60));
+addEventListener("load", () => spy());
+$("#side").addEventListener("click", e => { if (e.target.closest("a")) document.body.classList.remove("nav-open"); });
+
+/* ───────── busca ───────── */
+const scrim = $("#scrim"), qEl = $("#q"), resEl = $("#results"); let sel = 0, hits = [];
+function openSearch() { scrim.classList.add("open"); qEl.value = ""; renderHits(""); setTimeout(() => qEl.focus(), 0); }
+const closeSearch = () => scrim.classList.remove("open");
+function renderHits(q) {
+  const n = norm(q).trim(), idx = [{ id: "comecar", t: "Começar", s: "Introdução", k: "primeiros passos instalar contratos result seed vista" }, ...FEATS.map(f => ({ id: f.id, t: f.head, s: f.type, k: f.type + " " + f.group + " " + f.text.replace(/<[^>]+>/g, ""), g: f.group })),
+    ...PAGES.slice(1).map(p => ({ id: p.id, t: p.title, s: "Seção", k: p.lead })),
+    ...STRUCTS.map(e => ({ id: e.id, t: e.title, s: "Estruturas", k: e.text.replace(/<[^>]+>/g, "") }))];
+  hits = (n ? idx.filter(x => n.split(/\s+/).every(w => norm(x.t + " " + x.s + " " + x.k).includes(w))).sort((a, b) => (norm(b.t + b.s).includes(n) ? 1 : 0) - (norm(a.t + a.s).includes(n) ? 1 : 0)) : idx.slice(0, 8)).slice(0, 30);
+  sel = 0; resEl.innerHTML = hits.length ? hits.map((h, i) => `<li class="${i ? "" : "sel"}"><a href="#${h.id}">${esc(h.t)}${h.g ? `<em>${esc(h.g)}</em>` : ""}<small>${esc(h.s)}</small></a></li>`).join("") : `<div class="none">Nada encontrado para “${esc(q)}”.</div>`;
+}
+qEl.addEventListener("input", () => renderHits(qEl.value));
+qEl.addEventListener("keydown", e => {
+  const lis = $$("li", resEl); if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + lis.length) % (lis.length || 1); lis.forEach((l, i) => l.classList.toggle("sel", i === sel)); lis[sel]?.scrollIntoView({ block: "nearest" }); }
+  if (e.key === "Enter" && hits[sel]) { location.hash = hits[sel].id; closeSearch(); }
+});
+resEl.addEventListener("click", e => { if (e.target.closest("a")) closeSearch(); });
+scrim.addEventListener("click", e => { if (e.target === scrim) closeSearch(); });
+$("#searchBtn").onclick = openSearch; $("#menuBtn").onclick = () => document.body.classList.toggle("nav-open");
+document.addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); scrim.classList.contains("open") ? closeSearch() : openSearch(); }
+  else if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
+  else if (e.key === "Escape") closeSearch();
+});
+
+computeAll().then(() => {
+  buildSide(); renderAll(); spy();
+  // se a URL já aponta para uma seção, leva até ela (as alturas das vistas já estão reservadas)
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id) { const go = () => document.getElementById(id)?.scrollIntoView(); requestAnimationFrame(go); setTimeout(go, 400); }
+});
+</script>
+</body>
+</html>

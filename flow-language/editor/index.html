@@ -1720,7 +1720,7 @@ function dadoIsAbs(name) {
 }
 function agChip(id, short) {
   const a = agent(id);
-  if (!a) return `<span class="ag none"><span class="ico">${icon("plus")}</span>${short ? "" : "Sem responsável"}</span>`;
+  if (!a) return `<span class="ag none"><span class="ico">${icon("plus")}</span>${short ? "" : "Sem source"}</span>`;
   return `<span class="ag ${a.type}" title="${TYPES[a.type]?.one || ""}: ${esc(a.name)}">${faceOf(a)}${short ? "" : esc(a.name)}</span>`;
 }
 const inUse = cid => U.filter(u => u.agent === cid && !u.arch);
@@ -2146,14 +2146,14 @@ function drawer(s) {
     const modelos = MODELS.map(m => { const id = "md:" + m.id; return `<button data-act="assign" data-id="${u.id}" data-c="${id}" class="${u.agent === id ? "on" : ""}"><span class="ag modelo"><span class="ico">${icon("bot")}</span>${esc(m.name)}</span><small>${esc(m.vendor)} · modelo</small></button>`; }).join("");
     return `<div class="picker">${blk("Arquivos", files)}${blk("Libs Node.js", libs)}${blk("Pessoas", pessoas)}${blk("Agentes", agentes)}${blk("Modelos", modelos)}
       <button data-act="assign" data-id="${u.id}" data-c="">${agChip(null)}</button>
-      <div class="note">Responsável: arquivo, lib, pessoa, agente ou modelo. Filhos não herdam o pai.</div></div>`;
+      <div class="note">Source: arquivo, lib, pessoa, agente ou modelo. Filhos não herdam o pai.</div></div>`;
   })() : "";
   return `<aside class="side" aria-label="Detalhe da unidade">
     <div class="side-h"><span class="k">${icon(isFolder(u) ? "folder" : "file-text")}${VOCAB[from === "catalog" ? "flow" : from] || "Etapa"}<button class="uid" data-act="copy-uuid" data-id="${u.id}" title="Copiar UUID">${u.uuid.slice(0, 13)}… ${icon("copy")}</button></span><span class="sp"></span>
       ${u.arch ? `<span class="tag">arquivada</span>` : ""}<button class="ib" data-act="close-drawer" aria-label="Fechar">${icon("x")}</button></div>
     <div class="side-b">
-      ${isData(u) ? `<div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título"></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}${a.tasks?.length ? ` · ${a.tasks.length} tasks` : ""}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>
-      <div class="fld"><label>Task${taskIsConcrete(a) ? (a.type === "maquina" ? " · método da lib" : " · função do arquivo") : " · verbo abstrato"}</label>${taskIsConcrete(a) && (a.tasks || []).length ? `<select data-task="${u.id}" aria-label="Task">${(a.tasks || []).map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select><p style="font-size:12px;color:var(--muted);margin-top:6px">Método / task do responsável concreto${a.type === "maquina" ? " (" + esc(a.name) + ")" : ""}.</p>` : `<input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Task"><p style="font-size:12px;color:var(--muted);margin-top:6px">${taskIsConcrete(a) ? "Este responsável ainda não tem tasks cadastradas." : "Verbo abstrato: texto livre (sem select)."}</p>`}</div>`}
+      ${isData(u) ? `<div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título"></div>` : `<div class="fld"><span class="l">Source</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}${a.tasks?.length ? ` · ${a.tasks.length} tasks` : ""}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>
+      <div class="fld"><label>Function${taskIsConcrete(a) ? (a.type === "maquina" ? " · método da lib" : " · função do arquivo") : " · verbo abstrato"}</label>${taskIsConcrete(a) && (a.tasks || []).length ? `<select data-task="${u.id}" aria-label="Function">${(a.tasks || []).map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select><p style="font-size:12px;color:var(--muted);margin-top:6px">Método / function do source concreto${a.type === "maquina" ? " (" + esc(a.name) + ")" : ""}.</p>` : `<input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Function"><p style="font-size:12px;color:var(--muted);margin-top:6px">${taskIsConcrete(a) ? "Este source ainda não tem functions cadastradas." : "Verbo abstrato: texto livre (sem select)."}</p>`}</div>`}
       <div class="fld"><label>Contexto</label><textarea data-edit="ctx" data-id="${u.id}" placeholder="Orçamento, preferências, restrições">${esc(u.ctx || "")}</textarea></div>
       ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : ""}
       ${u.st || u.err ? `<div class="fld"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "wait" ? `<button class="btn pri" data-act="complete" data-id="${u.id}">${icon("check")}Concluir (feito pela pessoa)</button>` : ""}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
@@ -2299,7 +2299,7 @@ function gantt(s) {
   return `<div class="gantt zview">${runbarHtml(s)}${zoomToolbar("gantt", "Gantt", "chart-gantt")}
     <div class="zcanvas" data-zcanvas="gantt"><div class="zworld" data-zworld="gantt" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${NDAYS * W}px;width:${worldW}px">
-        <div class="gleft"><div class="ghead"><div class="gl-cols"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : s.plan === "hello" ? "Tarefas · Hello World" : "Tarefas · Plano padrão"}</span><span>Responsável</span><span style="text-align:right">Dur.</span></div></div>${left}</div>
+        <div class="gleft"><div class="ghead"><div class="gl-cols"><span>${s.plan === "onb" ? "Tarefas · Onboarding Acme" : s.plan === "hello" ? "Tarefas · Hello World" : "Tarefas · Plano padrão"}</span><span>Source</span><span style="text-align:right">Dur.</span></div></div>${left}</div>
         <div class="gright"><div class="ghead"><div class="gdays">${days.map((d, i) => `<div class="${d.wk ? "wk" : ""}${i === TODAY ? " today" : ""}" style="width:${W}px">${W >= 34 ? d.wd : d.wd[0]}<b class="num">${d.dn}</b></div>`).join("")}</div></div>
           <div class="gbg">${days.map(d => `<div class="${d.wk ? "wk" : ""}" style="width:${W}px"></div>`).join("")}</div>
           <div class="gtoday" style="left:${TODAY * W + W / 2}px"></div>
@@ -2329,7 +2329,7 @@ function ring(p, c, st) {
 // função abstrata: o responsável é escolhido (vem pelo state) — agente de IA, biblioteca Node ou pessoa
 function respPick(u) {
   const r = agent(u.resp);
-  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}"${brandSt(r)}>${icon(TYPES[r.type]?.ic || "file-code-2")}</span>` : `<span class="fav none" title="Adicionar responsável">${icon("plus")}</span>`}${r ? `<span class="rp-n">${esc(r.name)}</span>` : ""}<select data-resp="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Responsável: arquivo, lib, pessoa, agente ou modelo"><option value=""${r ? "" : " selected"}>Selecionar…</option>${respOptgroups(u.resp)}</select></span>`;
+  return `<span class="resp-pick${r ? " on" : ""}">${r ? `<span class="fav ${r.type}"${brandSt(r)}>${icon(TYPES[r.type]?.ic || "file-code-2")}</span>` : `<span class="fav none" title="Adicionar source">${icon("plus")}</span>`}${r ? `<span class="rp-n">${esc(r.name)}</span>` : ""}<select data-resp="${u.id}" data-act="noop" aria-label="Source de ${esc(u.title)}" title="Source: arquivo, lib, pessoa, agente ou modelo"><option value=""${r ? "" : " selected"}>Selecionar…</option>${respOptgroups(u.resp)}</select></span>`;
 }
 // cor do responsável: Node = verde da marca; agente = cor do modelo (Claude laranja, GPT verde OpenAI); pessoa = azul
 const brandOf = a => !a ? "" : a.type === "maquina" ? "#5FA04E" : a.type === "modelo" ? (a.cor || "") : a.type === "ia" ? (modelOf(AGENT_CFG[a.id]?.model)?.cor || a.cor || "") : a.type === "arquivo" ? "#64748b" : "";
@@ -2342,7 +2342,7 @@ function taskPick(u) {
   if (!ts.length) return `<b>${esc(u.title)}</b>`;
   const ok = ts.includes(u.title);
   const miss = ok ? "" : `<option value="" selected disabled class="task-miss">${esc(u.title || "escolher task…")}</option>`;
-  return `<select class="task-pick" data-task="${u.id}" data-act="noop" aria-label="Task de ${esc(a.name)}" title="Método / task do responsável concreto">${miss}${ts.map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  return `<select class="task-pick" data-task="${u.id}" data-act="noop" aria-label="Function de ${esc(a.name)}" title="Método / function do source concreto">${miss}${ts.map(t => `<option value="${esc(t)}"${t === u.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
 }
 function respOptgroups(selectedId) {
   ensureLayers();
@@ -2361,9 +2361,9 @@ function agentPick(u) {
     const nm = cur.renLy === a.layerId
       ? `<input class="fl-ren" data-ren-ly="${a.layerId}" data-act="noop" value="${esc(a.name)}" aria-label="Nome do arquivo">`
       : `<span class="fav-n" data-act="ren-ly" data-id="${a.layerId}" title="Clique para alterar">${esc(a.name)}</span>`;
-    return `<span class="resp-file"><span class="resp-ico"><span class="fav arquivo"${brandSt(a)} title="Arquivo: ${esc(a.name)}">${icon("file-code-2")}</span><select data-agent="${u.id}" data-act="noop" aria-label="Trocar responsável de ${esc(u.title)}" title="Trocar responsável"><option value=""></option>${respOptgroups(u.agent)}</select></span>${nm}</span>`;
+    return `<span class="resp-file"><span class="resp-ico"><span class="fav arquivo"${brandSt(a)} title="Arquivo: ${esc(a.name)}">${icon("file-code-2")}</span><select data-agent="${u.id}" data-act="noop" aria-label="Trocar source de ${esc(u.title)}" title="Trocar source"><option value=""></option>${respOptgroups(u.agent)}</select></span>${nm}</span>`;
   }
-  return `<span class="resp-pick${a ? " on" : ""}">${avatar(u.agent)}<select data-agent="${u.id}" data-act="noop" aria-label="Responsável de ${esc(u.title)}" title="Responsável: arquivo, lib, pessoa, agente ou modelo"><option value=""${a ? "" : " selected"}>Selecionar…</option>${respOptgroups(u.agent)}</select></span>`;
+  return `<span class="resp-pick${a ? " on" : ""}">${avatar(u.agent)}<select data-agent="${u.id}" data-act="noop" aria-label="Source de ${esc(u.title)}" title="Source: arquivo, lib, pessoa, agente ou modelo"><option value=""${a ? "" : " selected"}>Selecionar…</option>${respOptgroups(u.agent)}</select></span>`;
 }
 function avatar(id) {
   const a = agent(id);
@@ -2516,7 +2516,7 @@ function flow(s) {
     const resp = has || isData(u) ? `<span class="c-ag muted">—</span>` : `<span class="c-ag">${a?.type === "ia" ? respPick(u) : agentPick(u)}${a?.type === "maquina" ? `<button class="code-b" data-act="mach" data-id="${u.id}" title="Programar">${icon("code-xml")}</button>` : ""}</span>`;
     // UC-01: clicar no nome da task abre alteração (arquivo = texto; lib Node mantém select de método)
     const taskName = s.ren === u.id
-      ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Task">`
+      ? `<input class="fl-ren" data-ren="${u.id}" data-act="noop" value="${esc(u.title)}" aria-label="Function">`
       : (a?.type === "maquina" && taskIsConcrete(a) && (a.tasks || []).length
         ? taskPick(u)
         : `<b data-act="rename" data-id="${u.id}" title="Clique para alterar"${a || has ? "" : ` class="task-miss"`}>${esc(u.title || "sem task")}</b>`);
@@ -2670,7 +2670,7 @@ function flow(s) {
   return `<div class="gantt flow zview">${runbarHtml(s)}${toolbar}
     <div class="gmain"><div class="zcanvas" data-zcanvas="flow"><div class="zworld" data-zworld="flow" style="width:${worldW}px;height:${worldH}px">
       <div class="gtable" style="grid-template-columns:${LW}px ${CW}px;width:${worldW}px">
-        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Responsável</span><span>Task</span></div></div>${left}</div>
+        <div class="gleft"><div class="ghead fhead"><div class="fl-cols"><span>Source</span><span>Function</span></div></div>${left}</div>
         <div class="gright">${(() => {
           const xs = i => OX + i * W, yF = 52 + H, axW = nSteps * W;
           const head = `<text class="sv-title" x="${OX + axW / 2}" y="17">${esc(pl)}</text><line class="sv-hl" x1="${OX}" y1="26" x2="${OX + axW}" y2="26"/><line class="sv-hl" x1="0" y1="52" x2="${CW}" y2="52"/>`
@@ -2719,7 +2719,7 @@ function flow(s) {
       </div>
     </div></div>${s.ctxPanel ? fopPanel(s) : ""}</div>
     <div class="flfoot">${flowLegend()}</div>
-    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, task e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="indent-task" aria-pressed="${s.indent !== false}" aria-current="${s.indent !== false}" title="${s.indent !== false ? "Indentação da Task ligada — clique para alinhar à esquerda" : "Indentação da Task desligada — clique para indentar"}" aria-label="Indentar coluna Task">${icon(s.indent !== false ? "indent-increase" : "indent-decrease")}</button><i class="fd-sep"></i><button data-act="flow-kids" data-m="open" title="Abrir elementos filhos" aria-label="Abrir filhos">${icon("chevrons-up-down")}</button><button data-act="flow-kids" data-m="close" title="Fechar elementos filhos" aria-label="Fechar filhos">${icon("chevrons-down-up")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
+    <nav class="vdock fdock" aria-label="Filtro transversal"><button data-act="io-modo" data-m="linhas" aria-current="${!s.compacto}" title="Uma linha para entrada, function e saída" aria-label="Por linha">${icon("rows-3")}</button><button data-act="io-modo" data-m="compacto" aria-current="${!!s.compacto}" title="Compacto: dados nas pontas da barra" aria-label="Compacto">${icon("chart-gantt")}</button><i class="fd-sep"></i><button data-act="indent-task" aria-pressed="${s.indent !== false}" aria-current="${s.indent !== false}" title="${s.indent !== false ? "Indentação da Function ligada — clique para alinhar à esquerda" : "Indentação da Function desligada — clique para indentar"}" aria-label="Indentar coluna Function">${icon(s.indent !== false ? "indent-increase" : "indent-decrease")}</button><i class="fd-sep"></i><button data-act="flow-kids" data-m="open" title="Abrir elementos filhos" aria-label="Abrir filhos">${icon("chevrons-up-down")}</button><button data-act="flow-kids" data-m="close" title="Fechar elementos filhos" aria-label="Fechar filhos">${icon("chevrons-down-up")}</button><i class="fd-sep"></i><button data-act="render" data-m="svg" aria-current="${(s.render || "svg") === "svg"}" title="Renderizar em SVG" aria-label="SVG">${icon("spline")}</button><button data-act="render" data-m="html" aria-current="${s.render === "html"}" title="Renderizar em HTML (div/span)" aria-label="HTML">${icon("code-xml")}</button><button data-act="render" data-m="canvas" aria-current="${s.render === "canvas"}" title="Renderizar em Canvas 2D" aria-label="Canvas">${icon("paintbrush")}</button><i class="fd-sep"></i><button data-act="txt-in" aria-pressed="${!!s.txtIn}" aria-current="${!!s.txtIn}" title="Texto dentro da barra" aria-label="Texto dentro da barra">${icon("type")}</button><i class="fd-sep"></i><button data-act="dados-modo" data-m="todos" aria-current="${!!s.dadosTodos}" title="Todos os dados de cada estado" aria-label="Todos os dados">${icon("layers")}</button><button data-act="dados-modo" data-m="novos" aria-current="${!s.dadosTodos}" title="Só os dados novos de cada estado" aria-label="Só os novos">${icon("list-plus")}</button></nav>
     ${s.mach ? machPanel(s) : ""}</div>`;
 }
 function fopCheck(plan) {
@@ -4046,7 +4046,7 @@ const ACT = {
   tsel: t => { cur.sel = t.dataset.id; },
   "close-drawer": () => unset("drawer", "picker", "from", "dadoEdit"),
   picker: () => { cur.picker = !cur.picker; },
-  assign: t => { const u = $u(t.dataset.id); u.agent = t.dataset.c || undefined; const a = agent(u.agent); if (!a || a.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); unset("picker"); toast(u.agent ? `${a.name} · ${u.title}` : "Sem responsável"); },
+  assign: t => { const u = $u(t.dataset.id); u.agent = t.dataset.c || undefined; const a = agent(u.agent); if (!a || a.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); unset("picker"); toast(u.agent ? `${a.name} · ${u.title}` : "Sem source"); },
   archive: t => { const u = $u(t.dataset.id); u.arch = !u.arch; toast(u.arch ? "Arquivada. Fica fora das visões até desarquivar." : "Desarquivada", "archive"); if (u.arch) { unset("drawer"); cur.sel = null; } },
   "copy-uuid": t => { navigator.clipboard?.writeText($u(t.dataset.id).uuid).catch(() => {}); toast("UUID copiado", "copy"); },
   complete: t => { const u = $u(t.dataset.id); if (!u) return; u.st = "ok"; delete u.err; termLog(`<span class="ok">✓ ${esc(u.title)}: concluída pela pessoa</span>`); toast(`${u.title}: concluída pela pessoa`, "check"); },
@@ -4314,10 +4314,10 @@ holder.addEventListener("change", e => {
   }
   if (t.matches("[data-plan]")) { cur.plan = t.value; cur.flowRoot = planTops(t.value)[0]?.id || null; unset("mach", "drawer"); paint(); return; }
   if (t.matches("[data-model]")) { (AGENT_CFG[t.dataset.model] = AGENT_CFG[t.dataset.model] || {}).model = t.value; toast(`${agent(t.dataset.model).name} agora usa ${modelOf(t.value).name}`, "sparkles"); paint(); return; }
-  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); toast(r ? `${r.name} · ${u.title}` : "Responsável removido", r ? (TYPES[r.type]?.ic || "user-round") : "user-round"); paint(); return; }
+  if (t.matches("[data-agent]")) { const u = $u(t.dataset.agent); u.agent = t.value || undefined; const r = agent(u.agent); if (!r || r.type === "pessoa") delete u.st; else if (!u.st) u.st = "pendente"; syncTaskTitle(u); toast(r ? `${r.name} · ${u.title}` : "Source removido", r ? (TYPES[r.type]?.ic || "user-round") : "user-round"); paint(); return; }
   if (t.matches("[data-task]")) { const u = $u(t.dataset.task); if (!u || !t.value) return; u.title = t.value; toast(`${agent(u.agent)?.name || "—"} · ${u.title}`, "circle-check"); paint(); return; }
   if (t.matches("[data-dado-type]")) { DATA_TYPE[t.dataset.dadoType] = t.value; toast(`${t.dataset.dadoType}: ${DTYPE_N[t.value]}`, "box"); paint(); return; }
-  if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: responsável ${r.name}` : "Responsável removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }
+  if (t.matches("[data-resp]")) { const u = $u(t.dataset.resp); u.resp = t.value || null; const r = agent(u.resp); toast(r ? `${u.title}: source ${r.name}` : "Source removido", TYPES[r?.type]?.ic || "user-round"); paint(); return; }
   if (t.dataset.estateTitle) {
     const u = $u(t.dataset.estateTitle); if (!u) return;
     const v = t.value.trim();

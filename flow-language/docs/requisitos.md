@@ -6,6 +6,8 @@
 
 Imagens: [`requisitos/img/`](requisitos/img/).
 
+**Vocabulário UI:** coluna **Source** (antes Responsável) · coluna **Function** (antes Task).
+
 ---
 
 ## Como usar
@@ -36,33 +38,33 @@ Imagens: [`requisitos/img/`](requisitos/img/).
 | Elemento | Regra |
 |----------|--------|
 | Fluxo | Exibido **com nome** (identificação do fluxo na vista) |
-| Task | **Exatamente uma** task, representada por **uma barra** no canvas; nome sempre **`main`** |
-| Responsável | Tipo **arquivo**, nome sempre **`main`** |
+| Function | **Exatamente uma** function, representada por **uma barra** no canvas; nome sempre **`main`** |
+| Source | Tipo **arquivo**, nome sempre **`main`** |
 | Edição do nome | **Clicar no nome** abre alteração (renomear / editar inline) |
 
 #### Referência visual
 
-![UC-01 — novo fluxo: nome, uma barra de task, responsável tipo arquivo](requisitos/img/uc-01-novo-fluxo.png)
+![UC-01 — novo fluxo: nome, uma barra, source tipo arquivo](requisitos/img/uc-01-novo-fluxo.png)
 
 Wireframe de referência (layout; nomes de exemplo no desenho ≠ default obrigatório):
 
-- Colunas **Responsável** · **Task**
+- Colunas **Source** · **Function**
 - Uma barra com estados `s0` / `s1`
 - Título do fluxo acima da barra
-- **Default obrigatório ao criar:** arquivo responsável = `main` · task = `main`
+- **Default obrigatório ao criar:** source arquivo = `main` · function = `main`
 
 #### Aceite
 
 - [x] Novo fluxo → nome visível
-- [x] Uma única barra de task chamada **`main`**
-- [x] Responsável = tipo arquivo chamado **`main`**
+- [x] Uma única barra de function chamada **`main`**
+- [x] Source = tipo arquivo chamado **`main`**
 - [x] Clicar no nome → abre para alteração
 
 #### Protótipo
 
 | Artefato | Nota |
 |----------|------|
-| [`../editor/`](../editor/README.md) | `createUc01Flow` / `new-flow`: arquivo `main` + task `main`; clique no nome (task ou arquivo) renomeia |
+| [`../editor/`](../editor/README.md) | `createUc01Flow` / `new-flow`: source `main` + function `main`; clique no nome renomeia; colunas Source · Function |
 
 ---
 

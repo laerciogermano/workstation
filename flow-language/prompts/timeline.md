@@ -21,3 +21,6 @@ Como registrar: [`README.md`](README.md).
 | 013 | 2026-11-19 | UC-01 — responsável e task = main | [013-2026-11-19-uc01-main-main.md](013-2026-11-19-uc01-main-main.md) | Ao criar novo fluxo: arquivo responsável `main` e task `main`. |
 | 014 | 2026-11-19 | UC-01 — clicar no nome para alterar | [014-2026-11-19-uc01-clicar-nome-editar.md](014-2026-11-19-uc01-clicar-nome-editar.md) | Clicar no nome abre modo de alteração (renomear). |
 | 015 | 2026-11-19 | Aplicar UC-01 no editor | [015-2026-11-19-aplicar-uc01-editor.md](015-2026-11-19-aplicar-uc01-editor.md) | Editor: novo fluxo = main/main; clique no nome renomeia; boot no estado UC-01. |
+| 016 | 2026-11-19 | Responsável → Source | [016-2026-11-19-responsavel-vira-source.md](016-2026-11-19-responsavel-vira-source.md) | Rótulo/coluna Responsável passa a Source. |
+| 017 | 2026-11-19 | Task → Flow | [017-2026-11-19-task-vira-flow.md](017-2026-11-19-task-vira-flow.md) | Rótulo/coluna Task passa a Flow. |
+| 018 | 2026-11-19 | Flow → Function | [018-2026-11-19-flow-vira-function.md](018-2026-11-19-flow-vira-function.md) | Coluna passa a Function (não Flow). |

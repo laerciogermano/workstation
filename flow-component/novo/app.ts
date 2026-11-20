@@ -242,7 +242,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   function applyView(): void { el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`; el.zv.textContent = Math.round(ui.zoom * 100) + "%"; }
   function fit(): void {
     if (!last) return; const W = multi?.W ?? tableWidth(last.scene, P()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData, P()), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-    const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, FIT_WIDTH ? 1 : (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
+    const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(FIT_WIDTH ? 2.5 : 1, (cw - 16) / W, FIT_WIDTH ? Number.POSITIVE_INFINITY : (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // ?fit=w amplia até a largura; em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
   }
   /** Zoom ancorado: o ponto sob (mx, my) (px da área da vista) continua no mesmo lugar. */
   const zoomTo = (k: number, mx = el.scroll.clientWidth / 2, my = el.scroll.clientHeight / 2): void => {
@@ -723,7 +723,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   return { store, ui, render, reset, destroy: () => { running?.stop(); off(); tip.remove(); host.innerHTML = ""; } };
 }
 
-/** `?fit=w` (docs incorporada): escala só pela largura; quem hospeda ajusta a altura do iframe ao conteúdo. */
+/** `?fit=w` (docs incorporada): escala só pela largura, ampliando além de 100% se couber; quem hospeda ajusta a altura do iframe ao conteúdo. Antes: teto 100% (gráficos pequenos com folga). */
 const FIT_WIDTH = typeof location !== "undefined" && new URLSearchParams(location.search).get("fit") === "w";
 const STORE_KEY = "flow-novo-projeto-v1";
 /** Chaves do editor no localStorage (reset do Explorer apaga todas). */

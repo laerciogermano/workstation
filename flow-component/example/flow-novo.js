@@ -2947,7 +2947,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     function fit() {
       if (!last) return;
       const W = multi?.W ?? tableWidth(last.scene, P2()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData, P2()), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-      const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, FIT_WIDTH ? 1 : (ch - 16) / H));
+      const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(FIT_WIDTH ? 2.5 : 1, (cw - 16) / W, FIT_WIDTH ? Number.POSITIVE_INFINITY : (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
       applyView();

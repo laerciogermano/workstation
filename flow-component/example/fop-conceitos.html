@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>FOP · Conceitos, passo a passo</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="themes.css">
+<script>window.TEMA_PADRAO = "eternos-black";</script>
+<script src="themes.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  body{margin:0;background:var(--paper,#0b0b0b);color:var(--body,#d6d6d6);font:14px/1.6 var(--font,system-ui,-apple-system,"Segoe UI",sans-serif)}
+  a{color:var(--accent,#5b8cff);text-decoration:none}a:hover{text-decoration:underline}
+  code,kbd,pre{font-family:var(--mono,ui-monospace,SFMono-Regular,Menlo,monospace)}
+  code{font-size:.88em;background:var(--wash,#1a1a1a);border:1px solid var(--line,#262626);border-radius:4px;padding:0 5px;color:var(--ink,#fff)}
+  kbd{font-size:.8em;background:var(--panel,#141414);border:1px solid var(--line-2,#333);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink,#fff)}
+  pre{background:var(--panel,#111);border:1px solid var(--line,#262626);border-radius:6px;padding:12px 14px;overflow:auto;font-size:12px;line-height:1.55;color:var(--ink,#eee);max-width:920px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;height:44px;padding:0 20px;background:var(--paper,#0b0b0b);border-bottom:1px solid var(--line,#262626);font-size:12px}
+  .top b{color:var(--ink,#fff)}.top .sp{flex:1}.top span{color:var(--muted,#8a8a8a)}
+  .top a.open{border:1px solid var(--line-2,#333);border-radius:6px;padding:4px 10px;color:var(--ink,#fff)}.top a.open:hover{border-color:var(--accent,#5b8cff);text-decoration:none}
+  .wrap{display:grid;grid-template-columns:230px minmax(0,1fr);max-width:none;margin:0}
+  nav{position:sticky;top:44px;align-self:start;height:calc(100vh - 44px);overflow:auto;padding:18px 12px 40px 18px;border-right:1px solid var(--line,#262626);font-size:12.5px}
+  nav a{display:block;padding:2px 8px;border-radius:5px;color:var(--body,#ccc)}nav a:hover{background:var(--wash,#1a1a1a);color:var(--ink,#fff);text-decoration:none}
+  nav a b{display:inline-block;width:20px;color:var(--muted,#8a8a8a);font:600 11px var(--mono,monospace)}
+  main{padding:28px 36px 100px;min-width:0}
+  h1{margin:0 0 4px;font-size:26px;letter-spacing:-.01em;color:var(--ink,#fff)}
+  .sub{margin:0 0 6px;color:var(--muted,#8a8a8a)}
+  h2{margin:42px 0 8px;padding-top:16px;border-top:1px solid var(--line,#262626);font-size:18px;color:var(--ink,#fff)}
+  h2 .n{display:inline-block;min-width:30px;color:var(--muted,#8a8a8a);font:600 13px var(--mono,monospace)}
+  h3{margin:20px 0 4px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#9a9a9a)}
+  p,li{max-width:840px}p{margin:6px 0}li{margin:2px 0}ul,ol{margin:6px 0;padding-left:22px}
+  table{border-collapse:collapse;width:100%;margin:8px 0 14px;font-size:13px}
+  th,td{text-align:left;vertical-align:top;padding:5px 10px;border-bottom:1px solid var(--line,#262626)}
+  th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#8a8a8a);border-bottom:1px solid var(--line-2,#333)}
+  td:first-child{white-space:nowrap}
+  .note{border-left:3px solid var(--line-2,#444);background:var(--panel,#111);padding:6px 12px;margin:10px 0;max-width:840px;font-size:13px}
+  .note.warn{border-left-color:#e0a030}
+  .sym{display:inline-block;vertical-align:-2px;margin-right:5px}
+  .fc{width:18px;height:10px;border-radius:5px;background:var(--ink,#fff)}.fa{width:18px;height:10px;border-radius:5px;border:1.5px solid var(--ink,#fff)}
+  .dc{width:9px;height:9px;background:var(--ink,#fff)}.da{width:9px;height:9px;border:1.5px solid var(--ink,#fff)}
+  .dia{width:9px;height:9px;border:1.5px solid var(--ink,#fff);transform:rotate(45deg)}
+  figure{margin:10px 0 16px;max-width:none}
+  figure .fop{display:block;width:100%;border:1px solid var(--line-2,#333);border-radius:8px;background:var(--paper,#0b0b0b)}
+  figcaption{margin-top:5px;font-size:12px;color:var(--muted,#8a8a8a)}
+  .two{display:block}.two figure{margin:10px 0 16px}
+  @media(max-width:860px){.wrap{display:block}nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line,#262626)}main{padding:20px 16px 80px}.two{grid-template-columns:1fr}}
+  h2 small{display:block;margin:2px 0 0 30px;font:400 12px var(--font,system-ui);color:var(--muted,#8a8a8a);font-style:italic}
+  section.c p{margin:4px 0 8px}
+  section.c figure{margin:12px 0 18px;max-width:none}
+  section.c figure .fop{height:220px;transition:height .15s;width:100%}
+  section.c pre{margin:6px 0 0;max-width:none}
+  q{color:var(--ink,#fff)}
+  .quote{border-left:3px solid var(--line-2,#444);padding:2px 12px;margin:12px 0;color:var(--muted,#9a9a9a);font-style:italic}
+</style>
+</head>
+<body>
+<header class="top"><b>FOP</b><span>Conceitos, passo a passo</span><span class="sp"></span><a href="fop-docs.html">Manual de referência</a><a class="open" href="flow-novo.html">Abrir o editor</a></header>
+<div class="wrap">
+<nav>
+  <a href="#intro"><b>·</b>Introdução</a><a href="#ler"><b>·</b>Como ler as figuras</a>
+  <a href="#c1"><b>1</b>Um fluxo de execução é feito de dados e f…</a><a href="#c2"><b>2</b>Dado é uma unidade de informação</a><a href="#c3"><b>3</b>Um estado pode ter n dados</a><a href="#c4"><b>4</b>Função é uma unidade de mudança de estado</a><a href="#c5"><b>5</b>Uma função tem n endereços de entrada e n…</a><a href="#c6"><b>6</b>Funções e dados podem ter endereços concr…</a><a href="#c7"><b>7</b>Funções e dados podem ter endereços abstr…</a><a href="#c8"><b>8</b>Uma função recebe endereços abstratos de …</a><a href="#c9"><b>9</b>Uma função devolve endereços concretos de…</a><a href="#c10"><b>10</b>Funções podem conter outras funções em se…</a><a href="#c11"><b>11</b>Funções podem conter outras funções em pa…</a><a href="#c12"><b>12</b>Funções podem conter estruturas de seleção</a><a href="#c13"><b>13</b>Funções podem ter estruturas de repetição</a><a href="#c14"><b>14</b>Endereços que se conhecem fazem parte da …</a><a href="#c15"><b>15</b>Endereços que não se conhecem estão em ca…</a><a href="#c16"><b>16</b>A entrada forma uma camada de contexto</a><a href="#c17"><b>17</b>Uma camada é uma unidade substituível</a><a href="#c18"><b>18</b>Camadas diferentes podem ser combinadas e…</a><a href="#c19"><b>19</b>A execução do fluxo acontece quando a cam…</a><a href="#c20"><b>20</b>Uma camada com contexto completo equivale…</a>
+  <a href="#completo"><b>·</b>Exemplo completo</a>
+</nav>
+<main>
+<h1>Flow-Oriented Programming</h1>
+<p class="sub">Os 20 conceitos, um por um — cada figura é o próprio editor FOP</p>
+<p class="sub">"Everything flows, except flow" - Heraclitus · Licença <a href="/LICENSE" rel="license">MIT</a> · <a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></p>
+
+<h2 id="intro"><span class="n">·</span>Introdução</h2>
+<div class="quote">"Nothing is permanent, except change." – Heraclitus, c. 535 – c. 475 BCE</div>
+<p>O Flow é um paradigma visual para desenvolvimento orientado a serviços. Ele busca o <b>desacoplamento em nível de serviço</b> em todas as chamadas, de modo que cada componente seja uma <b>camada substituível</b>, com uma linguagem onipresente e representações visuais concretas. Desenhado para software, os princípios valem para qualquer área.</p>
+<p>No mundo real, objetos interagem por leis físicas comuns e podem ser trocados por outros que cumpram função equivalente. No software tradicional, muitos comportamentos não são compatíveis com esse desacoplamento — por exemplo, não dá para injetar uma função assíncrona onde se espera uma síncrona. No Flow tudo é homogêneo: <b>entradas são injeção de dependência e vice-versa</b>, então parâmetros são camadas — comportamento e/ou dado — substituíveis.</p>
+<div class="quote">"A picture is worth a thousand words." – Confucius, 552–479 BCE</div>
+<p>Cada parte elementar do software também vira uma <b>figura</b>. Esta página percorre os 20 conceitos do <a href="https://github.com/laerciogermano/flow-oriented-programming">repositório de referência</a> no mesmo formato — título, figura, código — mas com a visualização do editor FOP: as figuras abaixo são o editor incorporado (<code>flow-novo.html?fit=w&amp;demo=&lt;id&gt;</code>, só leitura, não grava nada no navegador).</p>
+
+<h2 id="ler"><span class="n">·</span>Como ler as figuras</h2>
+<table>
+<tr><th>Figura</th><th>Significado</th></tr>
+<tr><td><span class="sym dc"></span>quadrado cheio</td><td>dado <b>concreto</b>: tem valor ou é produzido por função concreta</td></tr>
+<tr><td><span class="sym da"></span>quadrado vazado</td><td>dado <b>abstrato</b>: só o nome; vem de fora</td></tr>
+<tr><td><span class="sym fc"></span>barra cheia</td><td>função <b>concreta</b>: lib do navegador ou arquivo</td></tr>
+<tr><td><span class="sym fa"></span>barra vazada</td><td>função <b>abstrata</b>: sem executor (IA, pessoa ou nenhum)</td></tr>
+<tr><td>faixa fina azul</td><td>composição: função que contém outras funções (camada)</td></tr>
+<tr><td>cubo</td><td>mais de um dado na mesma entrada ou saída (objeto)</td></tr>
+<tr><td><span class="sym dia"></span>faixa <code>if</code> · ↻ faixa <code>for</code></td><td>seleção · repetição</td></tr>
+<tr><td><code>s0…sN</code></td><td><b>estados</b>: as colunas do plano. Abaixo de cada um, os dados que existem naquele ponto. Uma função leva <code>sK</code> a <code>sK+1</code></td></tr>
+<tr><td>tabela à esquerda</td><td><i>Source</i> (quem executa) e <i>Function</i> (nome e hierarquia)</td></tr>
+</table>
+
+<section class="c" id="c1"><h2><span class="n">1</span>Um fluxo de execução é feito de dados e funções<small>A flow of execution consists of data and functions.</small></h2><p>O fluxo mais simples tem um <b>dado</b> (quadrado) e uma <b>função</b> (barra arredondada). A função fica na linha, o dado aparece no estado em que existe.</p><figure><iframe class="fop" data-demo="c01" title="c01" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c01"></iframe><figcaption>dado <code>a</code> e função <code>f</code></figcaption><pre><code>const a;
+function f(context){}</code></pre></figure></section>
+<section class="c" id="c2"><h2><span class="n">2</span>Dado é uma unidade de informação<small>Data is a unit of information.</small></h2><p>O dado é o quadrado. <b>Vazado</b> = abstrato (ninguém no fluxo o produz: vem de fora). <b>Cheio</b> = concreto (tem valor ou é produzido por uma função concreta).</p><figure><iframe class="fop" data-demo="c02a" title="c02a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c02a"></iframe><figcaption>dado abstrato — quadrado vazado</figcaption><pre><code>const a;</code></pre></figure><figure><iframe class="fop" data-demo="c02b" title="c02b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c02b"></iframe><figcaption>dado concreto — quadrado cheio, com valor</figcaption><pre><code>const a = &quot;texto&quot;;</code></pre></figure></section>
+<section class="c" id="c3"><h2><span class="n">3</span>Um estado pode ter n dados<small>A state can have n data.</small></h2><p>O estado é a coluna <code>s0…sN</code>; abaixo dele ficam os dados que existem ali. Dois dados podem entrar juntos num estado, ou nascer de funções diferentes no mesmo estado.</p><figure><iframe class="fop" data-demo="c03a" title="c03a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c03a"></iframe><figcaption><code>a</code> e <code>b</code> no mesmo estado</figcaption><pre><code>const a, b;</code></pre></figure><figure><iframe class="fop" data-demo="c03b" title="c03b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c03b"></iframe><figcaption><code>a</code> e <code>b</code> produzidos em paralelo, no mesmo estado</figcaption><pre><code>const a;
+const b;</code></pre></figure></section>
+<section class="c" id="c4"><h2><span class="n">4</span>Função é uma unidade de mudança de estado<small>A function is a unit of state change.</small></h2><p>A barra arredondada é a mudança: antes dela vale o estado <code>s0</code>, depois dela o <code>s1</code>. Aqui a função devolve <code>a</code>.</p><figure><iframe class="fop" data-demo="c04" title="c04" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c04"></iframe><figcaption><code>f</code> leva <code>s0</code> a <code>s1</code>, criando <code>a</code></figcaption><pre><code>function f(context){
+  return &quot;a&quot;;
+}</code></pre></figure></section>
+<section class="c" id="c5"><h2><span class="n">5</span>Uma função tem n endereços de entrada e n de saída<small>A function can have n input addresses and n output addresses.</small></h2><p>Entrada fica à esquerda da barra, saída à direita. Mais de um dado na mesma ponta vira um <b>cubo</b> (um objeto com campos).</p><figure><iframe class="fop" data-demo="c05a" title="c05a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c05a"></iframe><figcaption>sem entrada e sem saída</figcaption><pre><code>function f(context) { }</code></pre></figure><figure><iframe class="fop" data-demo="c05b" title="c05b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c05b"></iframe><figcaption>uma entrada</figcaption><pre><code>function f(context) {
+  const { a } = context;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c05c" title="c05c" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c05c"></iframe><figcaption>uma entrada e uma saída (o mesmo dado)</figcaption><pre><code>function f(context) {
+  const { a } = context;
+  return a;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c05a" title="c05a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c05a"></iframe><figcaption>sem saída: <code>return;</code> não devolve nada — a mesma figura da primeira variante</figcaption><pre><code>function f(context) {
+  return;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c05e" title="c05e" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c05e"></iframe><figcaption>n entradas e n saídas — cubos</figcaption><pre><code>function f(context) {
+  const { a, b, c } = context;
+  return { a, b, c };
+}</code></pre></figure></section>
+<section class="c" id="c6"><h2><span class="n">6</span>Funções e dados podem ter endereços concretos<small>Functions and data can have concrete addresses.</small></h2><p>Endereço concreto = existe de fato no fluxo: a função tem executor (lib do navegador ou arquivo) e o dado tem valor. É a <b>barra cheia</b> e o <b>quadrado cheio</b>.</p><figure><iframe class="fop" data-demo="c06a" title="c06a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c06a"></iframe><figcaption>função concreta (<code>crypto.randomUUID</code>) produzindo o dado concreto <code>uuid</code></figcaption><pre><code>const uuid = crypto.randomUUID();</code></pre></figure><figure><iframe class="fop" data-demo="c06b" title="c06b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c06b"></iframe><figcaption>dado concreto <code>a</code> lido por uma função concreta (<code>console.log</code>)</figcaption><pre><code>const a = &quot;texto&quot;;
+console.log(a);</code></pre></figure></section>
+<section class="c" id="c7"><h2><span class="n">7</span>Funções e dados podem ter endereços abstratos<small>Functions and data can have abstract addresses.</small></h2><p>Endereço abstrato = só o nome, sem executor nem valor: <b>barra vazada</b> e <b>quadrado vazado</b>. Pode ser preenchido por uma IA, uma pessoa, ou quem chamar o fluxo.</p><figure><iframe class="fop" data-demo="c07a" title="c07a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c07a"></iframe><figcaption>dado abstrato <code>a</code></figcaption><pre><code>function f(context) {
+  const { a } = context;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c07b" title="c07b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c07b"></iframe><figcaption>função abstrata <code>f1</code>, sem Source</figcaption><pre><code>function f(context) {
+  const { f1 } = context;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c07c" title="c07c" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c07c"></iframe><figcaption>funções abstratas com responsável: <code>f1</code> é uma IA e <code>f2</code> é uma pessoa</figcaption><pre><code>function f(context) {
+  const { f1, f2 } = context;
+}</code></pre></figure></section>
+<section class="c" id="c8"><h2><span class="n">8</span>Uma função recebe endereços abstratos de dados e funções como entrada<small>A function can receive abstract addresses of data and functions as input.</small></h2><p>Entrada é injeção de dependência: tanto o dado quanto a função chegam pelo <code>context</code>. Em ambos os casos o endereço é abstrato (vazado).</p><figure><iframe class="fop" data-demo="c08a" title="c08a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c08a"></iframe><figcaption>entra um dado abstrato</figcaption><pre><code>function f(context) {
+  const { a } = context;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c08b" title="c08b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c08b"></iframe><figcaption>entra uma função abstrata</figcaption><pre><code>function f(context) {
+  const { f1 } = context;
+}</code></pre></figure></section>
+<section class="c" id="c9"><h2><span class="n">9</span>Uma função devolve endereços concretos de dados e funções como saída<small>A function can return concrete addresses of data and functions as output.</small></h2><p>A saída é o que a função entrega ao estado seguinte: um dado ou o endereço de outra função.</p><figure><iframe class="fop" data-demo="c09a" title="c09a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c09a"></iframe><figcaption>devolve um dado</figcaption><pre><code>function f(context) {
+  return &quot;&quot;;
+}</code></pre></figure><figure><iframe class="fop" data-demo="c09b" title="c09b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c09b"></iframe><figcaption>devolve uma função (<code>f1</code> sai no estado seguinte)</figcaption><pre><code>function f(context) {
+  return function () { }
+}</code></pre></figure></section>
+<section class="c" id="c10"><h2><span class="n">10</span>Funções podem conter outras funções em sequência<small>Functions can contain other sequential functions.</small></h2><p>A função <code>f</code> vira uma <b>faixa</b> (composição) e as filhas ocupam estados consecutivos: <code>f2</code> só começa quando <code>f1</code> termina.</p><figure><iframe class="fop" data-demo="c10" title="c10" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c10"></iframe><figcaption><code>f1</code> em <code>s0→s1</code>, depois <code>f2</code> em <code>s1→s2</code></figcaption><pre><code>async function f(context) {
+  await f1({ ...context });
+  await f2({ ...context });
+}</code></pre></figure></section>
+<section class="c" id="c11"><h2><span class="n">11</span>Funções podem conter outras funções em paralelo<small>Functions can contain other parallel functions.</small></h2><p>Em paralelo as filhas ocupam o <b>mesmo</b> estado: as duas barras ficam na mesma coluna.</p><figure><iframe class="fop" data-demo="c11" title="c11" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c11"></iframe><figcaption><code>f1</code> e <code>f2</code> juntas, <code>s0→s1</code></figcaption><pre><code>async function f(context) {
+  await Promise.all([
+    f1({ ...context }),
+    f2({ ...context }),
+  ]);
+}</code></pre></figure></section>
+<section class="c" id="c12"><h2><span class="n">12</span>Funções podem conter estruturas de seleção<small>Functions can contain selection structures.</small></h2><p>A seleção é a faixa <b>if</b> (triângulo amarelo). O que está dentro só roda quando a condição é verdadeira.</p><figure><iframe class="fop" data-demo="c12" title="c12" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c12"></iframe><figcaption><code>f2</code> só roda se <code>a</code></figcaption><pre><code>async function f(context) {
+  const a = await f1({ ...context });
+  if (a) {
+    await f2({ ...context, a });
+  }
+}</code></pre></figure></section>
+<section class="c" id="c13"><h2><span class="n">13</span>Funções podem ter estruturas de repetição<small>Functions can have loop structures.</small></h2><p>A repetição é a faixa <b>for</b> (↻). O corpo roda uma vez por item; a variável do <code>for</code> (<code>item</code>) vale só ali dentro.</p><figure><iframe class="fop" data-demo="c13" title="c13" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c13"></iframe><figcaption><code>f1</code> roda uma vez para cada <code>item</code> de <code>itens</code></figcaption><pre><code>async function f(context) {
+  const { a } = context;
+  const a = await f1({ ...context });
+  await f({ ...context, a });
+}</code></pre></figure><div class="note">O PDF escreve a repetição como a função chamando a si mesma. O editor desenha a repetição com o bloco <code>for … of</code>, e o código gerado usa <code>for</code>.</div></section>
+<section class="c" id="c14"><h2><span class="n">14</span>Endereços que se conhecem fazem parte da mesma camada<small>Addresses that know each other are part of the same layer.</small></h2><p>Quando tudo o que <code>f</code> usa é importado (<code>f1</code> e <code>f2</code> são arquivos, <code>a</code> tem valor), nada vem de fora: só há <b>barras e quadrados cheios</b>. As funções <code>f1.ts</code> e <code>f2.ts</code> aparecem ao lado.</p><figure><iframe class="fop" data-demo="c14" title="c14" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c14"></iframe><figcaption><code>f1</code>, <code>f2</code> e <code>a</code> são conhecidos por <code>f</code> — uma camada só</figcaption><pre><code>import f1 from &#x27;./f1&#x27;;
+import f2 from &#x27;./f2&#x27;;
+import a  from &#x27;./a&#x27;;
+
+export default async function f(context) {
+  const [b, c] = await Promise.all([
+    f1({ ...context, a }),
+    f2({ ...context, a }),
+  ]);
+  if (b &amp;&amp; c) {
+    return f({ ...context, a });
+  }
+  return c;
+}</code></pre></figure><div class="note">A chamada recursiva <code>f({ ...context, a })</code> do PDF aparece aqui como um passo <code>g</code> dentro do <code>if</code>.</div></section>
+<section class="c" id="c15"><h2><span class="n">15</span>Endereços que não se conhecem estão em camadas diferentes<small>Addresses that do not know each other are in different layers.</small></h2><p>Agora <code>a</code> e <code>f2</code> <b>não são importados</b>: chegam pelo <code>context</code>. Ficam <b>vazados</b> (abstratos); só <code>f1</code> é conhecida (cheia). Cada endereço abstrato é uma fronteira entre camadas.</p><figure><iframe class="fop" data-demo="c15" title="c15" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c15"></iframe><figcaption><code>f1</code> é concreta; <code>a</code> e <code>f2</code> vêm de outra camada</figcaption><pre><code>import f1 from &#x27;./f1&#x27;;
+
+export default async function f(context) {
+  const { a, f2 } = context;
+  const [b, c] = await Promise.all([
+    f1({ ...context, a }),
+    f2({ ...context, a }),
+  ]);
+  if (b &amp;&amp; c) {
+    return f({ ...context, a, f2 });
+  }
+  return c;
+}</code></pre></figure></section>
+<section class="c" id="c16"><h2><span class="n">16</span>A entrada forma uma camada de contexto<small>Input forms a context layer.</small></h2><p>Tudo o que a função pede e não conhece — os quadrados e barras vazados da esquerda — forma o <b>contexto</b>: a camada que falta para completar o fluxo.</p><figure><iframe class="fop" data-demo="c16" title="c16" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c16"></iframe><figcaption>contexto de <code>f</code>: o dado <code>a</code> (entrada) e a função <code>f2</code> (passo abstrato)</figcaption><pre><code>const { a, f2 } = context;</code></pre></figure></section>
+<section class="c" id="c17"><h2><span class="n">17</span>Uma camada é uma unidade substituível<small>A layer is a replaceable unit.</small></h2><p>Como a camada é só um endereço, qualquer coisa com o mesmo contrato a substitui. À esquerda <code>f2</code> é abstrata; à direita ela foi trocada por uma função concreta (<code>Math.round</code>) e <code>a</code> ganhou valor.</p><figure><iframe class="fop" data-demo="c17a" title="c17a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c17a"></iframe><figcaption>antes: <code>f2</code> abstrata</figcaption><pre><code>f({ a, f2: () =&gt; {} })</code></pre></figure><figure><iframe class="fop" data-demo="c17b" title="c17b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c17b"></iframe><figcaption>depois: <code>f2</code> trocada por <code>Math.round</code>, <code>a = 2.5</code></figcaption><pre><code>f({ a: 2.5, f2: Math.round })</code></pre></figure></section>
+<section class="c" id="c18"><h2><span class="n">18</span>Camadas diferentes podem ser combinadas em novas camadas<small>Different layers can be combined to form new layers.</small></h2><p>A camada A pede <code>a</code>; a camada B entrega <code>a</code>. Juntas formam a camada <code>AB</code>, em que <code>a</code> já é um quadrado cheio.</p><figure><iframe class="fop" data-demo="c18a" title="c18a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c18a"></iframe><figcaption>camada A: pede <code>a</code> e tem <code>f2</code> abstrata</figcaption><pre><code>const A = (context) =&gt; f(context);</code></pre></figure><figure><iframe class="fop" data-demo="c18b" title="c18b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c18b"></iframe><figcaption>camada B: entrega <code>a</code></figcaption><pre><code>const B = { a: 2.5 };</code></pre></figure><figure><iframe class="fop" data-demo="c18c" title="c18c" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c18c"></iframe><figcaption>camada A + B combinadas</figcaption><pre><code>const AB = (context) =&gt; A({ ...B, ...context });</code></pre></figure></section>
+<section class="c" id="c19"><h2><span class="n">19</span>A execução do fluxo acontece quando a camada está completa<small>The flow execution occurs when the layer is complete.</small></h2><p>Enquanto houver endereço vazado, o fluxo não executa. Quando tudo é cheio, ele roda de <code>s0</code> a <code>sN</code>.</p><figure><iframe class="fop" data-demo="c19a" title="c19a" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c19a"></iframe><figcaption>incompleta: <code>a</code> e <code>f2</code> abstratos — não executa</figcaption><pre><code>// faltam a e f2</code></pre></figure><figure><iframe class="fop" data-demo="c19b" title="c19b" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c19b"></iframe><figcaption>completa: tudo concreto — executa</figcaption><pre><code>import f1 from &#x27;./f1&#x27;;
+await f({
+  a: &#x27;&#x27;,
+  f2: () =&gt; {}
+});</code></pre></figure></section>
+<section class="c" id="c20"><h2><span class="n">20</span>Uma camada com contexto completo equivale a um novo contexto para outra camada<small>A layer with a complete context is equivalent to a new context for another layer.</small></h2><p>O resultado de uma camada completa (<code>c</code>) é só um dado a mais: serve de entrada de outra camada (<code>g</code>), e assim camadas se encadeiam.</p><figure><iframe class="fop" data-demo="c20" title="c20" loading="lazy" style="height:220px" src="flow-novo.html?fit=w&amp;demo=c20"></iframe><figcaption>o fluxo completo entrega <code>c</code>, que alimenta <code>g</code></figcaption><pre><code>export default async function f(context) {
+  const { a, f2 } = context;
+  const [b, c] = await Promise.all([
+    f1({ ...context, a }),
+    f2({ ...context, a }),
+  ]);
+  if (b &amp;&amp; c) {
+    return f({ ...context, a, f2 });
+  }
+  return c;
+}</code></pre></figure></section>
+
+<h2 id="completo"><span class="n">·</span>Exemplo completo</h2>
+<p>Todos os conceitos juntos: funções abstratas executadas por IA e pessoa, repetição, paralelo e composição.</p>
+<section class="c"><figure><iframe class="fop" data-demo="onboarding" title="onboarding" loading="lazy" style="height:520px" src="flow-novo.html?fit=w&amp;demo=onboarding"></iframe><figcaption>fazerOnboardingDaAcme</figcaption></figure></section>
+<p>Quer montar o seu? <a href="flow-novo.html">Abra o editor</a> · detalhes de comandos, modelo e código gerado no <a href="fop-docs.html">Manual de referência</a>.</p>
+</main>
+</div>
+<script>
+// Cada figura é o editor em um iframe do mesmo site: ajusta a altura ao conteúdo (com altura fixa como reserva).
+(function () {
+  function fit(f) {
+    try {
+      var d = f.contentDocument, z = d.getElementById("zoom"), sc = d.getElementById("scroll");
+      var W = parseFloat(z.style.width), H = parseFloat(z.style.height);
+      if (!W || !H) return;
+      var k = Math.min(2.5, (sc.clientWidth - 16) / W);
+      var fx = d.querySelector(".fx"), h = Math.ceil(H * k + 16 + (fx.offsetHeight - sc.clientHeight)) + 4;   // mesma conta do fit() do editor (?fit=w pode ampliar) + o que sobra em volta
+      if (Math.abs(h - f.offsetHeight) > 1) { f.style.height = h + "px"; if (f.contentWindow.flowApp) f.contentWindow.flowApp.render(); }
+    } catch (e) { /* origem diferente: fica a altura fixa */ }
+  }
+  document.querySelectorAll("iframe.fop[data-demo]").forEach(function (f) {
+    f.addEventListener("load", function () { fit(f); [150, 400, 1200].forEach(function (t) { setTimeout(function () { fit(f); }, t); }); });
+  });
+  window.addEventListener("resize", function () { document.querySelectorAll("iframe.fop[data-demo]").forEach(fit); });
+})();
+</script>
+</body>
+</html>

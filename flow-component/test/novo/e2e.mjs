@@ -331,7 +331,7 @@ test("página inicial é Files (todos os arquivos); Sources não fica mais no to
   assert.equal(await ev(`document.getElementById("flowName").textContent`), "Files"); assert.ok((await ev(`document.querySelectorAll(".mcol").length`)) >= 2, "arquivos lado a lado");
   assert.equal(await ev(`[...document.querySelectorAll(".mcol-t")].every(h=>!!h.querySelector("svg"))`), true, "ícone de arquivo em cada arquivo"); assert.equal(await ev(`[...document.querySelectorAll(".blk-t")].every(h=>!!h.querySelector(".fn-dot"))`), true, "círculo em cada função");
   assert.equal(await ev(`!!document.querySelector(".topbar #agents")`), false, "sem Sources no header"); assert.equal(await ev(`!!document.querySelector(".explorer #agents, #explorer #agents")`), true);
-  assert.equal(await ev(`document.querySelector(".topbar .logo")?.textContent.trim()`), "Flow Language", "marca Flow Language no header"); assert.equal(await ev(`!!document.querySelector(".explorer .ex-logo, .ex-head svg.ex-logo")`), false, "logo fora do Explorer");
+  assert.equal(await ev(`document.querySelector(".topbar .logo")?.textContent.trim()`), "Flow", "marca Flow no header"); assert.equal(await ev(`!!document.querySelector(".explorer .ex-logo, .ex-head svg.ex-logo")`), false, "logo fora do Explorer");
   await ev(`document.querySelector(".ex-fn")?.click()`); await wait(150);
 });
 test("mobile: telas estreitas empilham Explorer, fluxo e código, sem rolagem horizontal da página", async () => {

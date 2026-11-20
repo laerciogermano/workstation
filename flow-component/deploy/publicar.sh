@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publica example/ em https://fop.laerciogermano.com (Flow Language · URL limpa /)
+# Publica example/ em https://fop.laerciogermano.com (Flow · URL limpa /)
 # Uso: SSHPASS='senha Contabo 185' bash deploy/publicar.sh
 set -euo pipefail
 : "${SSHPASS:?defina SSHPASS com a senha do Contabo 185}"

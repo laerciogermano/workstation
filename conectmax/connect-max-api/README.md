@@ -18,7 +18,7 @@ API publicada que expõe os **GETs de leitura** do [Portal do Franqueado](https:
 | Porta | `127.0.0.1:4182` |
 
 Auth: `Authorization: Bearer <API_KEY>` ou `X-API-Key: <API_KEY>`.  
-`/health` é público.
+Públicos: `/health`, `/docs`, `/openapi.json`, `/openapi.yaml`. Demais rotas exigem chave (no Swagger: **Authorize**).
 
 ## Local
 

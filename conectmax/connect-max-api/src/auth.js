@@ -1,6 +1,12 @@
 import { timingSafeEqual } from 'node:crypto';
 
-const PUBLIC_PATHS = new Set(['/health']);
+/** Docs/spec públicas (Swagger no browser); dados continuam com API key. */
+const PUBLIC_PATHS = new Set([
+  '/health',
+  '/docs',
+  '/openapi.json',
+  '/openapi.yaml',
+]);
 
 function expectedKey() {
   const key = process.env.API_KEY || '';

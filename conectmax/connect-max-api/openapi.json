@@ -71,6 +71,72 @@
         }
       }
     },
+    "/docs": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "UI Swagger",
+        "operationId": "getDocs",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "HTML Swagger UI",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Spec OpenAPI (JSON)",
+        "operationId": "getOpenApiJson",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.yaml": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Spec OpenAPI (YAML)",
+        "operationId": "getOpenApiYaml",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3 YAML",
+            "content": {
+              "text/yaml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog": {
       "get": {
         "tags": [
@@ -106,48 +172,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CatalogResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/openapi.json": {
-      "get": {
-        "tags": [
-          "meta"
-        ],
-        "summary": "Spec OpenAPI (JSON)",
-        "operationId": "getOpenApi",
-        "responses": {
-          "200": {
-            "description": "OpenAPI 3",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/docs": {
-      "get": {
-        "tags": [
-          "meta"
-        ],
-        "summary": "UI Swagger",
-        "operationId": "getDocs",
-        "responses": {
-          "200": {
-            "description": "HTML Swagger UI",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
                 }
               }
             }

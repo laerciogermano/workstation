@@ -2031,7 +2031,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
   // novo/app.ts
   function mount(host, store, flow) {
     const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-    let fileCodeText = null, fileView = "*", multi = null, tab = "ts", hovT = 0, fitted = false, auto = true, last = null, gen = null;
+    const SHOW_CODE = false;
+    let fileCodeText = null, fileView = "*", multi = null, tab = SHOW_CODE ? "ts" : "term", hovT = 0, fitted = false, auto = true, last = null, gen = null;
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
@@ -2051,9 +2052,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span></div>
-      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
+      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
@@ -3020,6 +3021,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       render();
     });
     const showTab = (name) => {
+      if (!SHOW_CODE) name = "term";
       tab = name;
       host.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x.dataset["tab"] === name)));
       host.querySelectorAll(".pane").forEach((pn) => pn.classList.toggle("on", pn.id === `p-${name}`));

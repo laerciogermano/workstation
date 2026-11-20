@@ -17,7 +17,8 @@ export interface App { store: Store; ui: Ui & { flow: string; zoom: number; pan:
 
 export function mount(host: HTMLElement, store: Store, flow: string): App {
   const ui: App["ui"] = { closed: new Set<string>(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-  let fileCodeText: string | null = null, fileView: string | null = "*", multi: { W: number; H: number } | null = null, tab: "ts" | "term" = "ts", hovT = 0, fitted = false, auto = true, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
+  const SHOW_CODE = false;   // por enquanto só Terminal; true volta a aba TypeScript
+  let fileCodeText: string | null = null, fileView: string | null = "*", multi: { W: number; H: number } | null = null, tab: "ts" | "term" = SHOW_CODE ? "ts" : "term", hovT = 0, fitted = false, auto = true, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
   const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
@@ -37,9 +38,9 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span></div>
-      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
+      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
   const $ = <T extends HTMLElement = HTMLElement>(s: string): T => host.querySelector(s) as T;
@@ -495,7 +496,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   $("#dataAll").addEventListener("click", () => { ui.allData = !ui.allData; $("#dataAll").title = ui.allData ? "States: showing all available data (click for only the new ones)" : "States: showing only the new data (click for all available)"; render(); });
   $("#expand").addEventListener("click", () => { (ui.closed as Set<string>).clear(); render(); });
   $("#collapse").addEventListener("click", () => { const f = locate(P(), ui.flow)?.node; if (f?.t === "fn") { const mark = (list: readonly Node[]): void => list.forEach(n => { if (n.t === "fn" && n.kids.length) (ui.closed as Set<string>).add(n.id); mark(kidsOf(n)); }); mark(f.kids); if (f.kids.length) (ui.closed as Set<string>).add(f.id); } auto = true; render(); });   // recolhe as funções com filhos (também dentro de if/for/try) e a própria função do fluxo
-  const showTab = (name: "ts" | "term"): void => { tab = name; host.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String((x as HTMLElement).dataset["tab"] === name))); host.querySelectorAll(".pane").forEach(pn => pn.classList.toggle("on", pn.id === `p-${name}`)); };
+  const showTab = (name: "ts" | "term"): void => { if (!SHOW_CODE) name = "term"; tab = name; host.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String((x as HTMLElement).dataset["tab"] === name))); host.querySelectorAll(".pane").forEach(pn => pn.classList.toggle("on", pn.id === `p-${name}`)); };
   host.querySelectorAll<HTMLElement>("[data-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset["tab"] as "ts" | "term")));
   $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
   $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });

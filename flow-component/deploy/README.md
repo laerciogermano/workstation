@@ -17,11 +17,7 @@
 
 **Antes → depois (chip sN de baixo):** quadro sN + losango embaixo → losango em cima e quadro embaixo. Rollback: `chip(s, bot)` sem `diaAbove`.
 
-**Antes → depois (I/O vazio / estados):** marca `input_<fn>`/`output_<fn>` no diagrama sem espelho no rodapé (só alguns casos: composição/raiz) → toda abstrata sem I/O (folha inclusive) entra em `statesByStep` + `Project`. Rollback: em `statesByStep` voltar `(!r.leaf || isRoot)`.
-
-**Antes → depois (I/O vazio / raiz):** 1ª ordem sem `ins`/`outs` ficava sem marca → cubo vazio clicável (`editData` com `start: true`); cubos também no rodapé. Rollback: `ioMarks` exigir `list.length`; `editData` sem `{ start: true }`.
-
-**Antes → depois (estados composição):** cubo `input_<fn>` / `output_<fn>` da composição sem I/O só no diagrama → também no rodapé de estados (`statesByStep` + `Project`). Rollback: tirar o ramo `!r.leaf && !ins/outs` em `view.ts`.
+**Antes → depois (I/O padrão):** abstrata sem I/O mostrava cubo `input_`/`output_` inventado → volta ao fantasma `+` (`addIo`); estados só com dado declarado. Rollback: `showIn/Out = length || !lib` + ramo de cubo vazio em `statesByStep`.
 
 **Antes → depois (nomes / explorer):** `+` em `src` criava `newFlow` (função/arquivo ambíguo); títulos livres (“New flow”, espaços). Agora: `src`+ = arquivo; arquivo+ = função lowerCamelCase; unicidade de abstratas na criação; dado≠função no mesmo fluxo; rename de abstrata funde referência. Rollback: handlers `newFlow`/`rename`/`addChild` e o clique `data-exnew`/`data-exadd` no commit anterior.
 

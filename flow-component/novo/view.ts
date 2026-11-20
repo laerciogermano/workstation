@@ -62,8 +62,8 @@ export function objectFields(expr: string): string[] | null {
   const p = objectPairs(expr); return p && p.map(x => x.name);
 }
 export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
-export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, StateItem[]> {
-  // composição (não-folha) também entra: as entradas/saídas da camada aparecem no rodapé como as marcas no diagrama
+export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, StateItem[]> {
+  // só dados declarados (entrada com valor, saída, entrada abstrata de fora) — sem inventar input_/output_ vazios
   const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
   for (const r of sc.rows) {
     if (r.kind !== "fn") continue; const f = r.node as Fn;
@@ -75,11 +75,6 @@ export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, S
       add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
     }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
-    // I/O vazio ([] = cubo state): toda marca do diagrama (`input_<fn>` / `output_<fn>`) também no rodapé — raiz, composição e folha abstrata
-    if (p && !contractOf(p, f)) {
-      if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
-      if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
-    }
   }
   // dados abstratos (entradas de fora: as do flow, das composições e das folhas que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
   const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") (r.node as Fn).outs.forEach(o => made.add(o));
@@ -315,28 +310,26 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   const produced = new Set<string>(); sc.leaves.forEach(l => (l.node as Fn).outs.forEach(o => produced.add(o)));
   /** Entradas e saídas de uma função (marca, linha até a barra, nome do dado e fantasma de adicionar): funções comuns e a função de primeira ordem. */
   const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
-    // entradas / saídas (marcas na linha de dados) e fantasmas
-    // o quadrado do dado fica EXATAMENTE onde a caixa fantasma aparece: na linha da função, sobre a coluna de entrada / saída;
-    // o nome do dado fica na linha de dados logo abaixo
+    // I/O só aparece quando declarado; sem I/O = fantasma (+) para adicionar (função nasce sem entrada nem retorno)
     const lib = !!contractOf(p, f), inAbs = f.ins.some(n => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
-    // [] = cubo (state/{}); 1 nome = quadrado; 2+ ou valor objeto = cubo
     const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => {
+      if (!list.length) return "";
       const asCube = isCube(list) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? ""));
-      const title = !list.length ? `${cubeName(f, kind)} (state)` : asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!;
+      const title = asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!;
       return asCube
         ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} · ${tip}</title></g>`
         : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0]!)} · ${tip}</title></g>`;
     };
-    // [] = cubo de state (clicável para declarar I/O); lib void não inventa saída; concreto com contrato só o que o contrato manda
-    const showIn = f.ins.length > 0 || !lib, showOut = f.outs.length > 0 || !lib;
-    if (showIn) over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-    if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
-    const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
-    if (showIn) over.push(mark(colX(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
-    if (showOut) over.push(mark(colX(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
-    const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-    if (showIn) over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
-    if (showOut) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
+    if (f.ins.length) over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
+    if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
+    if (f.ins.length) over.push(mark(colX(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
+    if (f.outs.length) over.push(mark(colX(r.e + 1), f.outs, "out", false, "output"));
+    const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
+    if (f.ins.length) over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
+    if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+    const ghost = (x: number, kind: "in" | "out", tip: string): string => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
+    if (!lib && !f.ins.length) over.push(ghost(colX(r.s), "in", "Add input"));
+    if (!lib && !f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Add output"));
   };
   const barX = new Map<string, { x1: number; x2: number }>();   // onde a barra de cada função começa e termina (as ligações saem e chegam nela)
   sc.rows.forEach((r, i) => {
@@ -344,7 +337,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
     /** X do nome à direita: depois da marca + rótulo de saída, para não cair em cima do retorno. */
     const lblAfterOuts = (fr: Fn): number => {
-      if (contractOf(p, fr) && !fr.outs.length) return colX(r.e + 1) + 10;   // lib void: sem rótulo de saída
+      if (!fr.outs.length) return colX(r.e + 1) + 10;   // sem saída (abstrata vazia ou lib void): nome colado na coluna
       const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
       return colX(r.e + 1) + 10 + G.GAP - 10 + tw(outsTxt, 6.2) + 36;
     };

@@ -94,7 +94,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Nome da 1ª ordem:** centrado em cima da barra-resumo (`text-anchor=middle`), não à direita das saídas. Compostas internas continuam à direita. **Voltar:** `lblAfterOuts` também na raiz.
 
-**I/O da 1ª ordem (e de qualquer abstrata):** sem `ins`/`outs` → cubo vazio clicável (`editData` com `start: true` já abre um `input`/`output` para salvar). Aparece no diagrama e no rodapé de estados (`input_<fn>` / `output_<fn>`) — raiz, composição e **folha**. **Antes:** só composição (e depois só raiz+composição) no rodapé; folhas com marca no diagrama sumiam embaixo. **Voltar:** em `statesByStep` restringir ao `!r.leaf || isRoot`; em `ioMarks`/`editData` o caminho inverso anterior.
+**I/O padrão:** função nova nasce sem entrada nem retorno (`ins`/`outs` `[]`). No diagrama: fantasma `+` (`addIo`); só há marca/rótulo/`states` depois de declarar. **Antes:** `[]` virava cubo `input_<fn>`/`output_<fn>` inventado. **Voltar:** `showIn/Out = length || !lib` e ramo de I/O vazio em `statesByStep`.
 
 **Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas: título lowerCamelCase, único na criação; renomear para um nome já usado funde a referência (`renameFnTitleInFlow`). Dado e função não podem compartilhar o mesmo nome no fluxo. Libs (contrato) podem repetir o nome da task (vários `log`); rename de lib não propaga. **Voltar:** `cleanText` livre + rename só no nó local + sem checagem dado/função.
 

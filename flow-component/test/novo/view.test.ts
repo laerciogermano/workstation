@@ -128,24 +128,28 @@ describe("plano (SVG)", () => {
     t.run({ type: "addInput", id: t.ids[2]!, name: "x" }); t.run({ type: "addInput", id: t.ids[2]!, name: "y" }); expect((t.view().plan.match(/class="dep"/g) ?? []).length).toBe(2);
   });
 
-  it("[] = cubo (state) nas folhas e na 1ª ordem (clicável para declarar I/O); sem fantasmas", () => {
-    const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(0);
-    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(10);   // 4 folhas × in+out + raiz in+out
-    expect(t.view().plan).toContain(`data-act="editData" data-id="${t.root}" data-side="in"`);
-    expect(t.view().plan).toContain(`data-act="editData" data-id="${t.root}" data-side="out"`);
+  it("função sem I/O: só fantasmas (+) para adicionar; não inventa input_/output_", () => {
+    const t = base();
+    expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(10);   // 4 folhas × in+out + raiz in+out
+    expect(t.view().plan).not.toContain("input_"); expect(t.view().plan).not.toContain("output_");
+    expect(t.view().plan).toContain(`data-act="addIo" data-id="${t.root}" data-kind="in"`);
+    expect(t.view().plan).toContain(`data-act="addIo" data-id="${t.root}" data-kind="out"`);
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
-    const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"'); expect(p).not.toContain('data-act="addIo"');
+    const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"');
+    expect(p).toContain(`data-act="addIo" data-id="${t.ids[0]}" data-kind="in"`);   // ainda sem entrada em fa
   });
   it("lib void (console.log) não inventa output_*: sem marca nem rótulo de saída", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" });
     const p = t.view().plan;
     expect(p).not.toContain("output_log"); expect(p).not.toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`);
+    expect(p).not.toContain(`data-act="addIo" data-id="${t.ids[0]}" data-kind="out"`);   // contrato void: sem fantasma de saída
     expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="in"`); expect(p).toContain(">text<");
   });
-  it("1ª ordem com I/O declarado troca o cubo vazio pelos nomes", () => {
+  it("1ª ordem com I/O declarado mostra os nomes (e some o fantasma daquele lado)", () => {
     const t = base();
     t.run({ type: "addInput", id: t.root, name: "x" }); t.run({ type: "addOutput", id: t.root, name: "y" });
     const p = t.view().plan; expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="in"`); expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="out"`); expect(p).toContain(">x<"); expect(p).toContain(">y<");
+    expect(p).not.toContain(`data-act="addIo" data-id="${t.root}"`);
   });
   it("blocos: banda tracejada, etiqueta, alça e triângulo do if; catch com X; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
@@ -203,7 +207,7 @@ describe("quadrado do dado", () => {
   it("estados embaixo do plano: só os novos de cada passo, ou todos os disponíveis (os antigos ficam esmaecidos)", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "r1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "r2" });
     const news = (t.view().plan.match(/class="stt"/g) ?? []).length, all = t.view({ allData: true }).plan;
-    expect(news).toBe(10);   // r1 + r2 + cubos vazios (raiz + folhas sem aquele lado)
+    expect(news).toBe(2);   // só r1 + r2 (sem inventar I/O vazio)
     expect((all.match(/class="stt/g) ?? []).length).toBeGreaterThan(news); expect(all).toContain('class="stt old"');
   });
   it("dado inicializado com valor aparece nos estados: objeto vira cubo com os campos indentados embaixo", async () => {
@@ -348,7 +352,7 @@ describe("estados embaixo das colunas e título do plano", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "p" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" });
     const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_fb", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
     const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1);
-    expect((plan.match(/class="scube"/g) ?? []).length).toBe(9);   // output_fb + I/O vazios (raiz + folhas)
+    expect((plan.match(/class="scube"/g) ?? []).length).toBe(1);   // só output_fb
     expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
     expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 70);
   });
@@ -357,9 +361,10 @@ describe("estados embaixo das colunas e título do plano", () => {
     const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 70 + 2 * STATE_ROW + PLAN_PAD_BOTTOM);
   });
   it("sem dados não há estados embaixo", () => {
-    const t = base(); expect(statesByStep(t.view().scene).size).toBe(0);   // sem Project: só dados declarados
-    expect(statesByStep(t.view().scene, false, t.p).size).toBeGreaterThan(0);   // com Project: cubos vazios da raiz
-    expect(t.view().plan).not.toContain("sdot"); expect(t.view().plan).toContain("scube");
+    const t = base(); expect(statesByStep(t.view().scene).size).toBe(0);
+    expect(statesByStep(t.view().scene, false, t.p).size).toBe(0);
+    expect(t.view().plan).not.toContain("sdot"); expect(t.view().plan).not.toContain("scube");
+    expect(t.view().plan).toContain('class="ghost"');   // só fantasmas para declarar I/O
   });
   it("entrada com literal (text = false) aparece embaixo no estado do passo", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "false" });
@@ -372,17 +377,11 @@ describe("estados embaixo das colunas e título do plano", () => {
     expect(m.get(1)!.find(x => x.name === "y")).toMatchObject({ name: "y", abs: true, side: "in", owner: t.ids[1] });
     expect(t.view().plan).toContain('class="sdot a"');
   });
-  it("composição sem I/O declarado: o cubo input_/output_ da marca também aparece nos estados", () => {
+  it("sem I/O declarado: fantasma (+) no diagrama e nada inventado nos estados", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "rename", id: t.ids[1]!, title: "fazerBenchmarking" });
-    const m = statesByStep(t.view().scene, false, t.p), names = [...m.values()].flat().map(x => x.name);
-    expect(names).toContain("input_fazerbenchmarking"); expect(names).toContain("output_fazerbenchmarking");
-    expect(t.view().plan).toContain("input_fazerbenchmarking"); expect(t.view().plan).toContain('class="scube"');
-  });
-  it("folha abstrata sem I/O: input_/output_ da marca também aparece nos estados (não só na raiz/composição)", () => {
-    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "newFunction" });
     const names = [...statesByStep(t.view().scene, false, t.p).values()].flat().map(x => x.name);
-    expect(names).toContain("input_newfunction"); expect(names).toContain("output_newfunction");
-    expect(t.view().plan).toContain("input_newfunction"); expect(t.view().plan).toContain("output_newfunction");
+    expect(names).not.toContain("input_fazerbenchmarking"); expect(names).not.toContain("output_fazerbenchmarking");
+    expect(t.view().plan).toContain(`data-act="addIo" data-id="${t.ids[1]}"`); expect(t.view().plan).not.toContain("input_fazerbenchmarking");
   });
 });
 

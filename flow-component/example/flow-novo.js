@@ -1778,7 +1778,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     });
   }
   var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
-  function statesByStep(sc, all = false, p) {
+  function statesByStep(sc, all = false, _p) {
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
       const list = m.get(col) ?? [];
       if (list.some((x) => x.name === it.name)) return;
@@ -1791,15 +1791,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       for (const i of f.ins) {
         const e = f.args?.[i]?.trim();
         if (!e || isDataRef(e)) continue;
-        const pairs = objectPairs(e), fields = pairs?.map((p2) => p2.name) ?? null;
-        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p2) => p2.value != null).map((p2) => [p2.name, p2.value])) : void 0;
+        const pairs = objectPairs(e), fields = pairs?.map((p) => p.name) ?? null;
+        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) : void 0;
         add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
       }
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
-      if (p && !contractOf(p, f)) {
-        if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
-        if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
-      }
     }
     const made = /* @__PURE__ */ new Set();
     for (const r of sc.rows) if (r.kind === "fn") r.node.outs.forEach((o) => made.add(o));
@@ -2021,26 +2017,28 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const ioMarks = (f, r, i, x1, x2) => {
       const lib3 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
       const mark = (x, list, kind, abs, tip) => {
+        if (!list.length) return "";
         const asCube = isCube(list) || kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]] ?? "");
-        const title = !list.length ? `${cubeName(f, kind)} (state)` : asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0];
+        const title = asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0];
         return asCube ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       };
-      const showIn = f.ins.length > 0 || !lib3, showOut = f.outs.length > 0 || !lib3;
-      if (showIn) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-      if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
-      const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
-      if (showIn) over.push(mark(colX2(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
-      if (showOut) over.push(mark(colX2(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
-      const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-      if (showIn) over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
-      if (showOut) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
+      if (f.ins.length) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
+      if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
+      if (f.ins.length) over.push(mark(colX2(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
+      if (f.outs.length) over.push(mark(colX2(r.e + 1), f.outs, "out", false, "output"));
+      const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
+      if (f.ins.length) over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
+      if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+      const ghost = (x, kind, tip) => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
+      if (!lib3 && !f.ins.length) over.push(ghost(colX2(r.s), "in", "Add input"));
+      if (!lib3 && !f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Add output"));
     };
     const barX = /* @__PURE__ */ new Map();
     sc.rows.forEach((r, i) => {
       if (r.kind !== "fn") return;
       const f = r.node, selC = ui.sel === f.id ? " sel" : "";
       const lblAfterOuts = (fr) => {
-        if (contractOf(p, fr) && !fr.outs.length) return colX2(r.e + 1) + 10;
+        if (!fr.outs.length) return colX2(r.e + 1) + 10;
         const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
         return colX2(r.e + 1) + 10 + G.GAP - 10 + tw(outsTxt, 6.2) + 36;
       };

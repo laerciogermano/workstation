@@ -25,7 +25,8 @@ Relacionados: **ConnectMax** (agente LinkedIn / vendas) neste repo em [`connectm
 | [**Processos**](processos/README.md) | Operação, fluxos e padrões internos |
 | [**Financeiro**](financeiro/README.md) | Contas, crédito, faturamento; TecnoSpeed PlugNotas + SPED XML |
 | [**Extratos**](extratos/README.md) | Extratos bancários (Inter CSV) |
-| [**Portal API**](portal-api/README.md) | Login no portal franqueado + `GET /faturas` |
+| [**Connect Max API**](connect-max-api/README.md) | GETs do portal franqueado (Contabo + API key) — https://connect-max-api.laerciogermano.com |
+| [**Portal API**](portal-api/README.md) | Lab local (sem auth) — base dos parsers |
 | [**Comercial**](comercial/README.md) | Vendas, carteira e relacionamento B2B |
 | [**Produtos**](produtos/README.md) | Portfólio e categorias de oferta |
 

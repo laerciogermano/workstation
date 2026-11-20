@@ -1,0 +1,19 @@
+{
+  "name": "connect-max-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Connect Max API — GETs do portal franqueado Conect com API key",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "openapi:json": "node scripts/yaml-to-json.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pg": "^8.23.1",
+    "yaml": "^2.9.1"
+  }
+}

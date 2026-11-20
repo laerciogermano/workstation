@@ -1,0 +1,15 @@
+[Unit]
+Description=Connect Max API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/connect-max-api
+EnvironmentFile=/srv/connect-max-api/.env
+ExecStart=/usr/bin/node src/index.js
+Restart=on-failure
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

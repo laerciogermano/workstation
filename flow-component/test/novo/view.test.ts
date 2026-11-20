@@ -360,8 +360,14 @@ describe("estados embaixo das colunas e título do plano", () => {
   });
   it("entrada de uma composição (função com filhas) aparece no estado embaixo", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
-    const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("y");
+    const m = statesByStep(t.view().scene, false, t.p); expect([...m.values()].flat().map(x => x.name)).toContain("y");
     expect(m.get(1)).toMatchObject([{ name: "y", abs: true, side: "in", owner: t.ids[1] }]); expect(t.view().plan).toContain('class="sdot a"');
+  });
+  it("composição sem I/O declarado: o cubo input_/output_ da marca também aparece nos estados", () => {
+    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "rename", id: t.ids[1]!, title: "fazerBenchmarking" });
+    const m = statesByStep(t.view().scene, false, t.p), names = [...m.values()].flat().map(x => x.name);
+    expect(names).toContain("input_fazerbenchmarking"); expect(names).toContain("output_fazerbenchmarking");
+    expect(t.view().plan).toContain("input_fazerbenchmarking"); expect(t.view().plan).toContain('class="scube"');
   });
 });
 

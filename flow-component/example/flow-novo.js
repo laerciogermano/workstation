@@ -1778,7 +1778,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     });
   }
   var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
-  function statesByStep(sc, all = false) {
+  function statesByStep(sc, all = false, p) {
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
       const list = m.get(col) ?? [];
       if (list.some((x) => x.name === it.name)) return;
@@ -1791,11 +1791,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
       for (const i of f.ins) {
         const e = f.args?.[i]?.trim();
         if (!e || isDataRef(e)) continue;
-        const pairs = objectPairs(e), fields = pairs?.map((p) => p.name) ?? null;
-        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) : void 0;
+        const pairs = objectPairs(e), fields = pairs?.map((p2) => p2.name) ?? null;
+        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p2) => p2.value != null).map((p2) => [p2.name, p2.value])) : void 0;
         add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
       }
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
+      if (p && !r.leaf && !isRoot(p, f.id) && !contractOf(p, f)) {
+        if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
+        if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
+      }
     }
     const made = /* @__PURE__ */ new Set();
     for (const r of sc.rows) if (r.kind === "fn") r.node.outs.forEach((o) => made.add(o));
@@ -1818,7 +1822,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return out;
   }
   var STATE_ROW = 15;
-  var planHeight = (sc, all = false) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
+  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW;
   var TABLE_CHROME = 18 + 120 + 14;
   function tableWidth(sc, p) {
     let need2 = 90;
@@ -1961,7 +1965,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }).join("");
   }
   function renderPlan(p, flow, sc, ui) {
-    const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = /* @__PURE__ */ new Map();
+    const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData, p), by = /* @__PURE__ */ new Map();
     const colX2 = (n) => gutter + G.OX + n * cw;
     sc.rows.forEach((r, i) => {
       if (r.kind === "fn" || r.kind === "block") by.set(r.id, i);
@@ -1973,7 +1977,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
     const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
-    for (const [col, items] of statesByStep(sc, ui.allData)) {
+    for (const [col, items] of statesByStep(sc, ui.allData, p)) {
       let row = 0;
       for (const it of items) {
         const y = bot + 34 + row++ * STATE_ROW;
@@ -2496,7 +2500,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
           const first = fns.map((f) => build(p, f.id, ui)), minW = Math.max(...first.map((b) => b.w)), tw2 = Math.max(...first.map((b) => tableWidth(b.scene, p)));
           let W2 = 0, H2 = 0;
           const html = fns.map((f) => {
-            const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData);
+            const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData, p);
             W2 = Math.max(W2, tw2 + planWidth(b.scene, b.w));
             H2 += h + 34;
             return `<div class="blk${ui.sel === f.id ? " on" : ""}" data-fid="${f.id}"><div class="blk-t"><span class="fn-dot ${fnKind(p, f)}"></span>${esc(f.title)}</div><div class="blk-r" style="height:${h}px"><div class="gtable" style="width:${tw2}px;--tw:${tw2}px"><div class="ghead"><span>source</span><span>function</span></div>${b.table}</div><div class="gplan">${b.plan}</div></div></div>`;
@@ -2536,7 +2540,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const tw0 = tableWidth(last.scene, P2());
         el.table.style.width = tw0 + "px";
         el.table.style.setProperty("--tw", tw0 + "px");
-        const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData);
+        const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData, P2());
         el.zoom.style.width = W + "px";
         el.zoom.style.height = H + "px";
         applyView();
@@ -2722,7 +2726,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }
     function fit() {
       if (!last) return;
-      const W = multi?.W ?? tableWidth(last.scene, P2()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+      const W = multi?.W ?? tableWidth(last.scene, P2()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData, P2()), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
       const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };

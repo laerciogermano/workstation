@@ -117,7 +117,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       // todas as funções de um arquivo com as mesmas colunas: a maior tabela e a maior coluna do plano valem para todas (se uma cresce, todas crescem)
       const stack = (fns: Fn[]): { html: string; W: number; H: number } => {
         const first = fns.map(f => build(p, f.id, ui)), minW = Math.max(...first.map(b => b.w)), tw = Math.max(...first.map(b => tableWidth(b.scene, p))); let W = 0, H = 0;
-        const html = fns.map(f => { const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData); W = Math.max(W, tw + planWidth(b.scene, b.w)); H += h + 34;
+        const html = fns.map(f => { const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData, p); W = Math.max(W, tw + planWidth(b.scene, b.w)); H += h + 34;
           return `<div class="blk${ui.sel === f.id ? " on" : ""}" data-fid="${f.id}"><div class="blk-t"><span class="fn-dot ${fnKind(p, f)}"></span>${esc(f.title)}</div><div class="blk-r" style="height:${h}px"><div class="gtable" style="width:${tw}px;--tw:${tw}px"><div class="ghead"><span>source</span><span>function</span></div>${b.table}</div><div class="gplan">${b.plan}</div></div></div>`; }).join("");
         return { html, W, H };
       };
@@ -132,7 +132,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
     el.plan.innerHTML = last.plan;
     const tw0 = tableWidth(last.scene, P()); el.table.style.width = tw0 + "px"; (el.table.style as CSSStyleDeclaration).setProperty("--tw", tw0 + "px");
-    const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData);
+    const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData, P());
     el.zoom.style.width = W + "px"; el.zoom.style.height = H + "px"; applyView();
     }
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), fl = locate(p, ui.flow)?.flow;   // cabeçalho: arquivo › função em foco (sem função em foco na vista de arquivo / Files: só o arquivo)
@@ -225,7 +225,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   /** Posição e escala da vista (a "câmera"): arrastar o fundo mexe no pan, a roda mexe no zoom. */
   function applyView(): void { el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`; el.zv.textContent = Math.round(ui.zoom * 100) + "%"; }
   function fit(): void {
-    if (!last) return; const W = multi?.W ?? tableWidth(last.scene, P()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+    if (!last) return; const W = multi?.W ?? tableWidth(last.scene, P()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData, P()), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
     const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
   }
   /** Zoom ancorado: o ponto sob (mx, my) (px da área da vista) continua no mesmo lugar. */

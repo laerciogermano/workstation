@@ -62,7 +62,7 @@ export function objectFields(expr: string): string[] | null {
   const p = objectPairs(expr); return p && p.map(x => x.name);
 }
 export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
-export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
+export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, StateItem[]> {
   // composição (não-folha) também entra: as entradas/saídas da camada aparecem no rodapé como as marcas no diagrama
   const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
   for (const r of sc.rows) {
@@ -75,6 +75,11 @@ export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
       add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
     }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
+    // composição com I/O vazio ([] = cubo state): mesma marca do diagrama (`input_<fn>` / `output_<fn>`) no rodapé
+    if (p && !r.leaf && !isRoot(p, f.id) && !contractOf(p, f)) {
+      if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
+      if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
+    }
   }
   // dados abstratos (entradas de fora: as do flow, das composições e das folhas que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
   const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") (r.node as Fn).outs.forEach(o => made.add(o));
@@ -92,7 +97,7 @@ export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
   return out;
 }
 export const STATE_ROW = 15;
-export const planHeight = (sc: Scene, all = false): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
+export const planHeight = (sc: Scene, all = false, p?: Project): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW;
 /** Chrome fixo da tabela: padding esquerdo 18 + coluna Source 120 + padding direito 14. */
 const TABLE_CHROME = 18 + 120 + 14;
 /** A tabela cresce com o aninhamento (padding por depth) para o texto não invadir o plano. */
@@ -245,7 +250,7 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
 
 // ───────────────────────── plano (direita, SVG) ─────────────────────────
 export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
-  const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = new Map<string, number>();
+  const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData, p), by = new Map<string, number>();
   const colX = (n: number): number => gutter + G.OX + n * cw;
   sc.rows.forEach((r, i) => { if (r.kind === "fn" || r.kind === "block") by.set(r.id, i); });
   const ym = (i: number): number => rowY(i) + G.RH / 2;
@@ -257,7 +262,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
   for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
   // os estados embaixo de cada coluna (como no Flow IDE): um quadrado (ou cubo) e o nome do dado que chega ali
-  for (const [col, items] of statesByStep(sc, ui.allData)) {
+  for (const [col, items] of statesByStep(sc, ui.allData, p)) {
     let row = 0;
     for (const it of items) {
       const y = bot + 34 + row++ * STATE_ROW;

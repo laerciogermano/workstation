@@ -6,6 +6,8 @@
 
 **PRD:** [`docs/prd.md`](docs/prd.md) (inventário + lacunas vs v0.1)
 
+**FOP (flow-novo) público:** https://fop.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
+
 ## Relação
 
 ```text

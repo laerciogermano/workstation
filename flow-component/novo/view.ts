@@ -123,10 +123,10 @@ export const CODE_MIN = 300, CODE_DEFAULT = 480, CODE_MAX_RATIO = 0.7;
 /** Largura do painel de código dentro de [mínimo, 70% da área], para o fluxo nunca sumir. */
 export const clampCodeWidth = (w: number, total: number): number => Math.round(Math.min(Math.max(Number.isFinite(w) ? w : CODE_DEFAULT, CODE_MIN), Math.max(CODE_MIN, total * CODE_MAX_RATIO)));
 export interface Prefs { codeW: number; codeOpen: boolean }
-export const DEFAULT_PREFS: Prefs = { codeW: CODE_DEFAULT, codeOpen: true };
+export const DEFAULT_PREFS: Prefs = { codeW: CODE_DEFAULT, codeOpen: false };
 /** Lê as preferências salvas (qualquer coisa fora do formato volta ao padrão). */
 export function parsePrefs(raw: string | null): Prefs {
-  try { const o = JSON.parse(raw ?? "null") as Partial<Prefs> | null; return { codeW: typeof o?.codeW === "number" && Number.isFinite(o.codeW) ? o.codeW : CODE_DEFAULT, codeOpen: typeof o?.codeOpen === "boolean" ? o.codeOpen : true }; } catch { return { ...DEFAULT_PREFS }; }
+  try { const o = JSON.parse(raw ?? "null") as Partial<Prefs> | null; return { codeW: typeof o?.codeW === "number" && Number.isFinite(o.codeW) ? o.codeW : CODE_DEFAULT, codeOpen: typeof o?.codeOpen === "boolean" ? o.codeOpen : false }; } catch { return { ...DEFAULT_PREFS }; }
 }
 
 // ───────────────────────── ferramentas (regras ÚNICAS, usadas pela tabela e pelo plano) ─────────────────────────

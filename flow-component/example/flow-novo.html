@@ -42,18 +42,24 @@
   .topbar .epigraph{font:500 11px var(--font);color:var(--muted);line-height:1.3}
   .topbar .epigraph em{font-style:normal;color:var(--body)}
   .topbar .docs-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}.topbar .docs-link:hover{color:var(--ink);background:var(--wash)}
-  .site-foot{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;padding:8px 16px calc(8px + var(--safe-b));border-top:1px solid var(--line);background:var(--paper);color:var(--muted);font:500 11px/1.4 var(--font);text-align:center}
+  .site-foot{flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 16px calc(8px + var(--safe-b));border-top:1px solid var(--line);background:var(--paper);color:var(--muted);font:500 11px/1.4 var(--font);text-align:center}
+  .site-foot .foot-meta{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px}
   .site-foot a{color:var(--body);text-decoration:none;border-bottom:1px solid var(--line-2)}.site-foot a:hover{color:var(--ink);border-color:var(--ink)}
   .site-foot .sep{color:var(--line-2);user-select:none}
-  .embed .topbar,.embed .site-foot,.embed .explorer,.embed #exSplitter,.embed .side,.embed #splitter,.embed .fx-bar,.embed .fx-legend{display:none!important}.embed .app{grid-template-columns:minmax(0,1fr)!important;padding:0!important}.embed .fx{border:0;border-radius:0}
+  .site-foot .fx-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;color:var(--body);font-size:10.5px}
+  .site-foot .fx-legend span{display:inline-flex;align-items:center;gap:6px}
+  .embed .topbar,.embed .site-foot,.embed .explorer,.embed #exSplitter,.embed .side,.embed #splitter,.embed .fx-bar{display:none!important}.embed .app{grid-template-columns:minmax(0,1fr)!important;padding:0!important}.embed .fx{border:0;border-radius:0}
   #app{flex:1;min-height:0;display:flex}
   /* terminal embaixo do fluxo; explorer à esquerda em altura total */
   .app{--codew:220px;--exw:232px;flex:1;min-height:0;display:grid;grid-template-columns:var(--exw) 12px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 10px var(--codew);grid-template-areas:"ex exs fx" "ex exs hs" "ex exs side";gap:0;padding:12px;position:relative}
   .app>.explorer{grid-area:ex}.app>#exSplitter{grid-area:exs}.app>.fx{grid-area:fx;min-height:0}.app>#splitter{grid-area:hs}.app>.side{grid-area:side;min-height:0}
-  .app.code-off{grid-template-rows:minmax(0,1fr);grid-template-areas:"ex exs fx"}
+  /* terminal minimizado: só a faixa do header (toggle à direita) */
+  .app.code-off{grid-template-rows:minmax(0,1fr) 34px;grid-template-areas:"ex exs fx" "ex exs side"}
   .app.ex-off{grid-template-columns:minmax(0,1fr);grid-template-areas:"fx" "hs" "side"}
-  .app.ex-off.code-off{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);grid-template-areas:"fx"}
-  .app.code-off .side,.app.code-off #splitter,.app.ex-off .explorer,.app.ex-off #exSplitter{display:none}
+  .app.ex-off.code-off{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) 34px;grid-template-areas:"fx" "side"}
+  .app.code-off #splitter,.app.ex-off .explorer,.app.ex-off #exSplitter{display:none}
+  .app.code-off .side .tabs,.app.code-off .side #p-ts,.app.code-off .side .tbody,.app.code-off .side .tbtn{display:none}
+  .app.code-off .side{min-height:0;overflow:hidden}
   .app.resizing{user-select:none}.app.resizing .fx,.app.resizing .side{pointer-events:none}
   .splitter{position:relative;cursor:col-resize;touch-action:none;outline:none;z-index:4}.splitter[hidden]{display:none}
   .splitter i{position:absolute;left:5px;top:0;bottom:0;width:2px;border-radius:2px;background:transparent;transition:background .12s,left .12s,width .12s,top .12s,height .12s}
@@ -68,8 +74,8 @@
   .ex-head .ib{width:28px;height:28px}
   .ex-tree{flex:1;min-height:0;overflow:auto;padding:2px 0 12px;scrollbar-width:thin}
   .ex-sec-h.sel{background:color-mix(in srgb,var(--accent) 13%,var(--panel));color:var(--ink)}.ex-sec-h:hover{background:var(--wash)}.ex-sec-h{display:flex;align-items:center;gap:7px;height:28px;padding:0 12px 0 14px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);cursor:pointer;user-select:none}
-  .ex-sec-h .ex-reset{margin-left:auto;width:20px;height:20px;border:0;background:none;border-radius:5px;display:grid;place-items:center;color:var(--muted);cursor:pointer;padding:0}.ex-sec-h .ex-reset:hover{background:var(--wash);color:var(--ink)}.ex-sec-h .ex-reset+.n{margin-left:4px}
-  .ex-sec-h .ex-car{margin-left:-8px}.ex-sec-h .ic{width:13px;height:13px}.ex-sec-h .n{margin-left:auto;font-variant-numeric:tabular-nums}
+  .ex-sec-h .ex-new,.ex-sec-h .ex-reset{width:20px;height:20px;border:0;background:none;border-radius:5px;display:grid;place-items:center;color:var(--muted);cursor:pointer;padding:0}.ex-sec-h .ex-new{margin-left:auto}.ex-sec-h .ex-new:hover,.ex-sec-h .ex-reset:hover{background:var(--wash);color:var(--ink)}.ex-sec-h .ex-reset+.n{margin-left:4px}
+  .ex-sec-h .ex-car{margin-left:-8px}.ex-sec-h .ic{width:13px;height:13px}.ex-sec-h .n{font-variant-numeric:tabular-nums}
   .ex-row{position:relative;display:flex;align-items:center;gap:4px;height:22px;padding:0 12px 0 calc(6px + (var(--lv,1) - 1) * 14px);border:1px solid transparent;font-size:12px;color:var(--body);cursor:pointer;white-space:nowrap;user-select:none}
   .ex-row:hover{background:var(--wash)}.ex-row.sel{background:color-mix(in srgb,var(--accent) 13%,var(--panel));border-color:color-mix(in srgb,var(--accent) 35%,transparent);color:var(--ink)}.ex-row.cur .ex-n{color:var(--ink)}.ex-file .ex-n{font-weight:600}
   .ex-car{display:grid;place-items:center;width:16px;flex:none;color:var(--muted)}.ex-car .ic{width:14px;height:14px;transition:transform .15s}.ex-car.shut .ic{transform:rotate(-90deg)}.ex-car.none{visibility:hidden}
@@ -176,15 +182,14 @@
   .guide{position:absolute;top:52px;bottom:0;width:0;border-left:2px dashed var(--accent);pointer-events:none;z-index:5}
   .guide.h{top:0;bottom:auto;left:0;right:0;width:auto;height:0;border-left:0;border-top:2px dashed var(--accent)}
 
-  .fx-legend{flex:none;display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 16px;border-top:1px solid var(--line);color:var(--body);font-size:10.5px}
-  .fx-legend span{display:inline-flex;align-items:center;gap:6px}.lg{display:inline-block;width:16px;height:9px;border-radius:5px}
+  .lg{display:inline-block;width:16px;height:9px;border-radius:5px}
   .lg.fc{background:var(--f-conc);border:1.5px solid var(--f-conc-s)}.lg.fa{background:var(--f-abs);border:1.5px solid var(--f-abs-s)}
   .lg.cb{width:10px;height:11px;border-radius:0;background:var(--d-conc);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}.lg.dc{width:8px;height:8px;border-radius:0;background:var(--d-conc)}.lg.da{width:8px;height:8px;border-radius:0;border:1.3px solid var(--d-conc)}
   .lg.dia{width:8px;height:8px;border-radius:0;border:1.5px solid var(--wrn);transform:rotate(45deg)}.lg.lp{width:auto;height:auto;color:var(--loop);font-weight:700}
   .lg.el{width:9px;height:9px;border-radius:2px;border:1.5px dashed var(--wrn)}
   .lg.tr{width:9px;height:10px;border-radius:2px 2px 40% 40%;border:1.5px solid var(--okc);background:transparent}
   .lg.ca{width:0;height:0;border:none;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid var(--fail);background:transparent;border-radius:0}
-  .fx-dock{position:absolute;right:14px;bottom:44px;display:flex;gap:2px;padding:3px;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;box-shadow:var(--shadow)}
+  .fx-dock{position:absolute;right:14px;bottom:14px;display:flex;gap:2px;padding:3px;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;box-shadow:var(--shadow)}
 
   .side{display:flex;flex-direction:column;min-height:0;background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden}
   .tabs{display:flex;align-items:center;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
@@ -210,8 +215,10 @@
 
   .ib[hidden]{display:none}
   .ib.run .ic{fill:currentColor;stroke-width:1.5}.ib.run.on{color:var(--fail)}
-  .pane.term{padding:0}.thead{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px 0 14px;border-bottom:1px solid var(--line);flex:none}.tstat{font:500 12px var(--mono);color:var(--muted)}.tstat.busy{color:var(--ok)}.thead button.tbtn{display:inline-flex;align-items:center;gap:6px}.thead button.tbtn .ic{width:13px;height:13px}
-  .thead button{height:24px;border:1px solid var(--line-2);background:var(--paper);border-radius:6px;padding:0 10px;cursor:pointer;font-size:12px}.thead button:hover{border-color:var(--accent);color:var(--accent)}
+  .pane.term{padding:0}.thead{display:flex;align-items:center;gap:8px;height:34px;padding:0 6px 0 14px;border-bottom:1px solid var(--line);flex:none}.tstat{font:500 12px var(--mono);color:var(--muted)}.tstat.busy{color:var(--ok)}.thead button.tbtn{display:inline-flex;align-items:center;gap:6px}.thead button.tbtn .ic{width:13px;height:13px}
+  .thead button.tbtn{height:24px;border:1px solid var(--line-2);background:var(--paper);border-radius:6px;padding:0 10px;cursor:pointer;font-size:12px}.thead button.tbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .thead #codeToggle{width:28px;height:28px;margin-left:2px;color:var(--muted)}.thead #codeToggle .ic{width:14px;height:14px;transition:transform .15s}.thead #codeToggle.open .ic{transform:rotate(180deg)}.thead #codeToggle:hover{color:var(--ink);background:var(--wash)}
+  .app.code-off .side .thead{border-bottom:0}
   .tbody{flex:1;min-height:0;overflow:auto;background:var(--code-bg);padding:8px 0 16px;font:12.5px/1.6 ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace}.tline{display:flex;gap:10px;padding:1px 14px;white-space:pre-wrap;word-break:break-word}.tline .tt{flex:none;width:58px;text-align:right;color:var(--muted)}.tline pre{margin:0;font:inherit;white-space:pre-wrap}
   .tline.system{color:var(--muted)}.tline.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent)}.tline.error{color:var(--fail);background:color-mix(in srgb,var(--fail) 8%,transparent)}.tline.debug,.tline.info{color:var(--body)}.tline.table pre{line-height:1.25}
   .dlg{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgba(0,0,0,.35)}
@@ -240,8 +247,8 @@
     .explorer{flex:none;max-height:210px}.app.ex-off .explorer{display:none}
     .fx{flex:none;height:58vh;min-height:280px}
     .fx-bar{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none}.fx-bar>*{flex:none}
-    .fx-legend{display:none}.fx-bar .ib{width:36px;height:34px}.fx-bar .ib .ic{width:17px;height:17px}.fx-dock{bottom:12px}
-    .side{flex:none;height:36vh;min-height:200px;order:3}.app.code-off .side{display:none}
+    .fx-bar .ib{width:36px;height:34px}.fx-bar .ib .ic{width:17px;height:17px}.fx-dock{bottom:12px}
+    .side{flex:none;height:36vh;min-height:200px;order:3}.app.code-off .side{height:34px;min-height:34px}
     .dlg form,.dlg form.wide{width:min(94%,560px);max-height:92%;overflow:auto}
   }
 </style>
@@ -249,7 +256,13 @@
 <body>
 <header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="ver" title="Version 0.1" aria-label="Version 0.1">0.1</span><span class="beta" title="Under development" aria-label="Prototype — under development">prototype</span></span><span class="epigraph">"Everything flows, except flow" - Heraclitus</span></span></span><span class="sp"></span></header>
 <div id="app"></div>
-<footer class="site-foot"><span>FOP</span><span class="sep">·</span><a href="/LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></footer>
+<footer class="site-foot">
+  <div class="fx-legend" id="legend" aria-label="Legend">
+    <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>object</span>
+    <span><i class="lg dia"></i>selection</span><span><i class="lg lp">↻</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span>
+  </div>
+  <div class="foot-meta"><span>FOP</span><span class="sep">·</span><a href="/LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></div>
+</footer>
 <script>document.write(`<script src="flow-novo.js?v=${Date.now()}"><\/script>`);</script>
 <script>
 if ("serviceWorker" in navigator) {

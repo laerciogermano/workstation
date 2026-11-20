@@ -158,11 +158,12 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <table>
 <tr><th>Área</th><th>Conteúdo</th></tr>
 <tr><td>Cabeçalho</td><td>título, <b>Docs</b>, <b>Open</b>, <b>Export</b></td></tr>
-<tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> nova função, <b>Sources</b>, recolher tudo</td></tr>
+<tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> em <code>src</code> cria função/arquivo novo; <b>+</b> no arquivo adiciona nele; <b>Sources</b> e recolher no cabeçalho</td></tr>
 <tr><td>Barra do diagrama</td><td>Explorer on/off, fluxo em foco, <b>Run</b>, undo/redo, zoom (20–250%), fit, nome dentro da barra, estados todos/novos, expandir/recolher, código on/off</td></tr>
 <tr><td>Tabela <i>Source · Function</i></td><td>uma linha por função; recuo = profundidade</td></tr>
 <tr><td>Diagrama</td><td>barras, dados, blocos, ligações em <code>s0…sN</code></td></tr>
-<tr><td>Painel direito</td><td>aba <b>TypeScript</b> (código, <b>Download</b>, <b>Copy</b>) e <b>Terminal</b>; divisória arrastável (duplo clique = largura padrão)</td></tr>
+<tr><td>Terminal</td><td>painel inferior; toggle no header (direita); default minimizado; <kbd>Ctrl+\</kbd> / Run reabrem; divisória arrastável</td></tr>
+<tr><td>Footer</td><td>legenda (abstract/concrete, dados, selection, repetition, try, catch) + FOP · MIT · contato</td></tr>
 </table>
 <h3>Menu de opções</h3>
 <p>Aparece acima da barra/etiqueta sob o mouse e à direita da linha da tabela. A largura da tabela reserva espaço para ele (<code>tableWidth</code>).</p>
@@ -341,7 +342,7 @@ export const wrappers: Record&lt;string, Fn&gt; = {
 <table>
 <tr><th>Chave <code>localStorage</code></th><th>Conteúdo</th></tr>
 <tr><td><code>flow-novo-projeto-v1</code></td><td>projeto (gravado a cada mudança)</td></tr>
-<tr><td><code>flow-novo-ui-v1</code> · <code>flow-novo-explorer-v1</code></td><td>largura e estado dos painéis</td></tr>
+<tr><td><code>flow-novo-ui-v2</code> · <code>flow-novo-explorer-v1</code></td><td>altura/estado do terminal (default fechado) e do Explorer</td></tr>
 <tr><td><code>tema-flow-component-v1</code></td><td>tema</td></tr>
 </table>
 <pre><code>{ "format": "flow-novo", "version": 1,

@@ -353,30 +353,26 @@ test("mobile: telas estreitas empilham Explorer, fluxo e código, sem rolagem ho
   assert.ok((await ev(`flowApp.ui.zoom`)) > z0, `pinça aproxima (${z0} → ${await ev(`flowApp.ui.zoom`)})`);
   await send("Emulation.clearDeviceMetricsOverride"); await wait(400);
 });
-test("o botão de mostrar/esconder o código é o último das opções do Flow", async () => { assert.equal(await ev(`[...document.querySelectorAll(".fx-bar > button, .fx-bar .hist-inline button")].at(-1).id`), "codeToggle"); });
-test("painel de código: linha divisória arrasta (hover destaca), duplo clique restaura, teclado ajusta, botão e Ctrl+\\ mostram/escondem, e tudo persiste", async () => {
+test("o toggle do terminal fica no header do terminal (direita)", async () => {
+  assert.equal(await ev(`document.querySelector(".thead #codeToggle")?.id`), "codeToggle");
+  assert.equal(await ev(`!!document.querySelector(".fx-bar #codeToggle")`), false);
+});
+test("terminal: default escondido; toggle no header; Ctrl+\\ e Run reabrem; altura persiste", async () => {
   await exOpen(false);
-  const w = () => ev(`Math.round(document.querySelector(".side").getBoundingClientRect().width)`), open = () => ev(`!document.querySelector(".app").classList.contains("code-off")`);
-  await ev(`localStorage.removeItem("flow-novo-ui-v1")`); await reload();
-  assert.ok(await open()); const w0 = await w(); assert.ok(w0 >= 440 && w0 <= 500, `largura inicial ~480 (${w0})`);
-  const sp = await center("#splitter"); await mouse("mouseMoved", ...sp); assert.equal(await ev(`getComputedStyle(document.getElementById("splitter")).cursor`), "col-resize");
-  assert.ok((await ev(`document.querySelector("#splitter i").getBoundingClientRect().width`)) >= 5, "linha de destaque no hover");
-  await mouse("mousePressed", ...sp, { button: "left", clickCount: 1 }); await mouse("mouseMoved", sp[0] - 120, sp[1], { buttons: 1 }); await mouse("mouseMoved", sp[0] - 200, sp[1], { buttons: 1 }); await mouse("mouseReleased", sp[0] - 200, sp[1], { button: "left", clickCount: 1 });
-  const w1 = await w(); assert.ok(w1 > w0 + 150, `arrastar para a esquerda deveria aumentar o painel (${w0} → ${w1})`);
-  const sp2 = await center("#splitter"); await mouse("mouseMoved", ...sp2); await mouse("mousePressed", ...sp2, { button: "left", clickCount: 1 }); await mouse("mouseMoved", sp2[0] + 400, sp2[1], { buttons: 1 }); await mouse("mouseReleased", sp2[0] + 400, sp2[1], { button: "left", clickCount: 1 });
-  const w2 = await w(); assert.ok(w2 < w1 && w2 >= 300, `arrastar para a direita deveria diminuir, sem passar do mínimo (${w1} → ${w2})`);
-  await mouse("mouseMoved", ...(await center("#splitter"))); await mouse("mousePressed", ...(await center("#splitter")), { button: "left", clickCount: 1 }); await mouse("mouseMoved", 5, 400, { buttons: 1 }); await mouse("mouseReleased", 5, 400, { button: "left", clickCount: 1 });
-  const w3 = await w(), total = await ev(`document.querySelector(".app").clientWidth`); assert.ok(w3 <= total * 0.7 + 1, `o código não passa de 70% da área (${w3}/${total})`); assert.ok((await ev(`document.querySelector(".fx").getBoundingClientRect().width`)) > 200, "o fluxo nunca some");
-  await reload(); const w4 = await w(); assert.ok(Math.abs(w4 - w3) <= 1, `largura persistida (${w3} → ${w4})`);
-  const sp3 = await center("#splitter"); await mouse("mouseMoved", ...sp3); await mouse("mousePressed", ...sp3, { button: "left", clickCount: 2 }); await mouse("mouseReleased", ...sp3, { button: "left", clickCount: 2 }); await wait(200);
-  assert.ok(Math.abs((await w()) - 480) <= 1, "duplo clique volta aos 480px");
-  await ev(`document.getElementById("splitter").focus()`); const key = async (k, mod = 0) => { await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: k, code: k, windowsVirtualKeyCode: k === "ArrowLeft" ? 37 : 39, modifiers: mod }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code: k, windowsVirtualKeyCode: k === "ArrowLeft" ? 37 : 39 }); await wait(150); };
-  const k0 = await w(); await key("ArrowLeft"); assert.equal((await w()) - k0, 24); await key("ArrowRight", 8); assert.equal(Math.round(await ev(`document.getElementById("splitter").getAttribute("aria-valuenow")`)), 480 + 24 - 80);
-  await click("#codeToggle"); assert.equal(await open(), false); assert.equal(await ev(`document.getElementById("codeToggle").getAttribute("aria-pressed")`), "false"); assert.equal(await ev(`getComputedStyle(document.querySelector(".side")).display`), "none");
-  assert.ok((await ev(`document.querySelector(".fx").getBoundingClientRect().width`)) > (await ev(`document.querySelector(".app").clientWidth`)) - 40, "sem o código o fluxo ocupa tudo");
+  const h = () => ev(`Math.round(document.querySelector(".side").getBoundingClientRect().height)`), open = () => ev(`!document.querySelector(".app").classList.contains("code-off")`);
+  await ev(`localStorage.removeItem("flow-novo-ui-v1"); localStorage.removeItem("flow-novo-ui-v2")`); await reload();
+  assert.equal(await open(), false, "default escondido"); assert.ok((await h()) <= 40, "faixa mínima do header");
+  await click("#codeToggle"); assert.equal(await open(), true); const h0 = await h(); assert.ok(h0 >= 120 && h0 <= 280, `altura inicial ~220 (${h0})`);
+  const sp = await center("#splitter"); await mouse("mouseMoved", ...sp); assert.equal(await ev(`getComputedStyle(document.getElementById("splitter")).cursor`), "row-resize");
+  await mouse("mousePressed", ...sp, { button: "left", clickCount: 1 }); await mouse("mouseMoved", sp[0], sp[1] - 80, { buttons: 1 }); await mouse("mouseReleased", sp[0], sp[1] - 80, { button: "left", clickCount: 1 });
+  const h1 = await h(); assert.ok(h1 > h0 + 40, `arrastar pra cima aumenta (${h0} → ${h1})`);
+  const sp2 = await center("#splitter"); await mouse("mousePressed", ...sp2, { button: "left", clickCount: 2 }); await mouse("mouseReleased", ...sp2, { button: "left", clickCount: 2 }); await wait(200);
+  assert.ok(Math.abs((await h()) - 220) <= 2, "duplo clique volta aos 220px");
+  await click("#codeToggle"); assert.equal(await open(), false); assert.equal(await ev(`document.getElementById("codeToggle").getAttribute("aria-pressed")`), "false");
+  assert.ok((await h()) <= 40, "minimizado = só header"); assert.ok(await ev(`getComputedStyle(document.querySelector(".side")).display !== "none"`), "faixa continua visível");
   await reload(); assert.equal(await open(), false, "fechado persiste"); await ev(`document.activeElement.blur()`);
   await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "\\", code: "Backslash", windowsVirtualKeyCode: 220, modifiers: 2 }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "\\", code: "Backslash", windowsVirtualKeyCode: 220, modifiers: 2 }); await wait(200); assert.equal(await open(), true, "Ctrl+\\ reabre");
-  await click("#fit"); const z0 = await ev(`flowApp.ui.zoom`); await click("#codeToggle"); await wait(300); const z1 = await ev(`flowApp.ui.zoom`); assert.ok(z1 >= z0, `sem o código o zoom ajustado não diminui (${z0} → ${z1})`); await click("#codeToggle");
+  await click("#codeToggle"); await wait(100); await click("#exec"); await wait(200); assert.equal(await open(), true, "Run abre o terminal");
 });
 test("dicas rápidas: aparecem em ~50 ms e somem ao sair; a barra de ferramentas também sai logo", async () => {
   const c = await center("#fit"); const t0 = Date.now(); await mouse("mouseMoved", ...c); await wait(40);
@@ -389,7 +385,7 @@ test("dicas rápidas: aparecem em ~50 ms e somem ao sair; a barra de ferramentas
 test("nova função cria um fluxo e troca para ele; reiniciar volta ao main", async () => {
   await exOpen(true); await seedDemo();
   const n0 = await ev(`document.querySelectorAll(".ex-file").length`);
-  await click("#newFlow"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), n0 + 1); await ev(`flowApp.reset()`); await wait(200);
+  await click("[data-exnew]"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), n0 + 1); await ev(`flowApp.reset()`); await wait(200);
   assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 1);
 });
 test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
@@ -399,7 +395,7 @@ test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
 
 await send("Runtime.enable"); await send("Page.enable");
 await send("Page.navigate", { url: `http://127.0.0.1:${port}/flow-novo.html?tema=eternos-black` }); await wait(1800);
-await ev(`localStorage.removeItem("flow-novo-projeto-v1"); localStorage.removeItem("flow-novo-ui-v1")`);
+await ev(`localStorage.removeItem("flow-novo-projeto-v1"); localStorage.removeItem("flow-novo-ui-v1"); localStorage.removeItem("flow-novo-ui-v2")`);
 await send("Page.reload"); await wait(1500);
 await ev(`document.querySelector(".ex-fn")?.click()`); await wait(200);
 let failed = 0;

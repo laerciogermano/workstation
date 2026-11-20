@@ -381,8 +381,8 @@ describe("painel de código: largura e preferências", () => {
     expect(clampCodeWidth(480.4, 1400)).toBe(480);
   });
   it("parsePrefs: lê o salvo, completa o que faltar e volta ao padrão quando estiver estragado", () => {
-    expect(parsePrefs(JSON.stringify({ codeW: 640, codeOpen: false }))).toEqual({ codeW: 640, codeOpen: false }); expect(parsePrefs(JSON.stringify({ codeW: 700 }))).toEqual({ codeW: 700, codeOpen: true });
-    expect(parsePrefs(null)).toEqual({ codeW: CODE_DEFAULT, codeOpen: true }); expect(parsePrefs("{ quebrado")).toEqual({ codeW: CODE_DEFAULT, codeOpen: true }); expect(parsePrefs(JSON.stringify({ codeW: "x", codeOpen: 1 }))).toEqual({ codeW: CODE_DEFAULT, codeOpen: true });
+    expect(parsePrefs(JSON.stringify({ codeW: 640, codeOpen: true }))).toEqual({ codeW: 640, codeOpen: true }); expect(parsePrefs(JSON.stringify({ codeW: 700 }))).toEqual({ codeW: 700, codeOpen: false });
+    expect(parsePrefs(null)).toEqual({ codeW: CODE_DEFAULT, codeOpen: false }); expect(parsePrefs("{ quebrado")).toEqual({ codeW: CODE_DEFAULT, codeOpen: false }); expect(parsePrefs(JSON.stringify({ codeW: "x", codeOpen: 1 }))).toEqual({ codeW: CODE_DEFAULT, codeOpen: false });
   });
 });
 

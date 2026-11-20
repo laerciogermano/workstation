@@ -1570,11 +1570,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return Math.round(TABLE_CHROME + need2);
   }
   var CODE_DEFAULT = 480;
-  var DEFAULT_PREFS = { codeW: CODE_DEFAULT, codeOpen: true };
+  var DEFAULT_PREFS = { codeW: CODE_DEFAULT, codeOpen: false };
   function parsePrefs(raw) {
     try {
       const o = JSON.parse(raw ?? "null");
-      return { codeW: typeof o?.codeW === "number" && Number.isFinite(o.codeW) ? o.codeW : CODE_DEFAULT, codeOpen: typeof o?.codeOpen === "boolean" ? o.codeOpen : true };
+      return { codeW: typeof o?.codeW === "number" && Number.isFinite(o.codeW) ? o.codeW : CODE_DEFAULT, codeOpen: typeof o?.codeOpen === "boolean" ? o.codeOpen : false };
     } catch {
       return { ...DEFAULT_PREFS };
     }
@@ -2040,20 +2040,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
         <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-pressed="true" aria-label="Explorer">${icon("panel-left")}</button><span class="fx-t" id="flowName">Flow</span><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="true" aria-label="Terminal panel">${icon("panel-right")}</button>
+                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
-      <div class="fx-legend" id="legend">
-        <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>object</span>
-        <span><i class="lg dia"></i>selection</span><span><i class="lg lp">\u21BB</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
-      </div>
-
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
       <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
       <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("chevron")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
@@ -3159,7 +3154,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       hd.addEventListener("pointerup", up);
       hd.addEventListener("pointercancel", up);
     });
-    const app = host.querySelector(".app"), splitter = $("#splitter"), PREFS_KEY = "flow-novo-ui-v1";
+    const app = host.querySelector(".app"), splitter = $("#splitter"), PREFS_KEY = "flow-novo-ui-v2";
     let prefs = parsePrefs((() => {
       try {
         return localStorage.getItem(PREFS_KEY);
@@ -3175,7 +3170,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       prefs.codeW = clampTermH(prefs.codeW);
       app.style.setProperty("--codew", prefs.codeW + "px");
       app.classList.toggle("code-off", !prefs.codeOpen);
-      $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen));
+      const tog = $("#codeToggle");
+      tog.setAttribute("aria-pressed", String(prefs.codeOpen));
+      tog.title = prefs.codeOpen ? "Hide the terminal (Ctrl+\\)" : "Show the terminal (Ctrl+\\)";
+      tog.setAttribute("aria-label", prefs.codeOpen ? "Hide terminal" : "Show terminal");
+      tog.innerHTML = icon("chevron");
+      tog.classList.toggle("open", prefs.codeOpen);
       splitter.setAttribute("aria-valuenow", String(prefs.codeW));
       splitter.setAttribute("aria-valuemin", String(TERM_MIN));
       splitter.hidden = !prefs.codeOpen;

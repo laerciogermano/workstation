@@ -92,6 +92,8 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. **Antes:** em paralelo à última célula. **Voltar:** `cs = max(step, next - count)` no layout.
 
+**Nome da 1ª ordem:** centrado em cima da barra-resumo (`text-anchor=middle`), não à direita das saídas. Compostas internas continuam à direita. **Voltar:** `lblAfterOuts` também na raiz.
+
 ### 5.4 Responsável · Task · catálogo — *must*
 
 | Interface | Efeito | Evidência IDE |

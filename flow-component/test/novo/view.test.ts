@@ -210,11 +210,13 @@ describe("quadrado do dado", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "result" }); const p = t.view({ txtIn: false }).plan;
     const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>A</)![1]); expect(lbl).toBeGreaterThan(colX(1, G.WS) + G.GAP + "result".length * 5.6);
   });
-  it("função de primeira ordem: o nome fica depois do rótulo de saída (não em cima do retorno)", () => {
+  it("função de primeira ordem: o nome fica centrado em cima da barra (não à direita)", () => {
     const t = base(); t.run({ type: "addOutput", id: t.root, name: "report" });
-    const p = t.view().plan, outX = Number(p.match(/<text class="dn out"[^>]*x="([\d.]+)"/)![1]);
-    const lbl = Number(p.match(new RegExp(`<text class="lbl" x="([\\d.]+)"[^>]*>${t.p.flows[0]!.title}<`))![1]);
-    expect(lbl).toBeGreaterThan(outX + "report".length * 6.2);
+    const p = t.view().plan, g = planGutter(t.view().scene);
+    const m = p.match(new RegExp(`<text class="lbl" x="([\\d.]+)" y="([\\d.]+)" text-anchor="middle"[^>]*>${t.p.flows[0]!.title}<`))!;
+    expect(m).toBeTruthy();
+    const x1 = colX(0, G.W, g) + 21, x2 = colX(t.view().scene.nSteps, G.W, g) - 21;
+    expect(Number(m[1])).toBeCloseTo((x1 + x2) / 2, 5); expect(Number(m[2])).toBeLessThan(rowY(0) + G.RH / 2);
   });
   it("entrada cujo dado alguém produz = quadrado cheio; vinda de fora = vazado; saída sempre cheia", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "de_fora" });

@@ -216,7 +216,7 @@ describe("quadrado do dado", () => {
     const m = p.match(new RegExp(`<text class="lbl" x="([\\d.]+)" y="([\\d.]+)" text-anchor="middle"[^>]*>${t.p.flows[0]!.title}<`))!;
     expect(m).toBeTruthy();
     const x1 = colX(0, G.W, g) + 21, x2 = colX(t.view().scene.nSteps, G.W, g) - 21;
-    expect(Number(m[1])).toBeCloseTo((x1 + x2) / 2, 5); expect(Number(m[2])).toBeLessThan(rowY(0) + G.RH / 2);
+    expect(Number(m[1])).toBeCloseTo((x1 + x2) / 2, 5); expect(Number(m[2])).toBe(rowY(0) + G.RH / 2 - 22);
   });
   it("entrada cujo dado alguém produz = quadrado cheio; vinda de fora = vazado; saída sempre cheia", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "de_fora" });

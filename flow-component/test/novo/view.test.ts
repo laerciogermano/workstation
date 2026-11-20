@@ -128,9 +128,10 @@ describe("plano (SVG)", () => {
     t.run({ type: "addInput", id: t.ids[2]!, name: "x" }); t.run({ type: "addInput", id: t.ids[2]!, name: "y" }); expect((t.view().plan.match(/class="dep"/g) ?? []).length).toBe(2);
   });
 
-  it("[] = cubo (state); um dado = quadrado (concreto ou abstrato vazado); sem fantasmas", () => {
+  it("[] = cubo (state) nas funções internas; 1ª ordem sem I/O não inventa marcas; sem fantasmas", () => {
     const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(0);
-    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(10);   // cada função (raiz + 4) tem in+out vazios = cubos de state
+    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(8);   // 4 folhas × in+out; raiz sem I/O = sem cubo
+    expect(t.view().plan).not.toContain("input_r"); expect(t.view().plan).not.toContain("output_r");
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
     const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"'); expect(p).not.toContain('data-act="addIo"');
   });
@@ -139,6 +140,11 @@ describe("plano (SVG)", () => {
     const p = t.view().plan;
     expect(p).not.toContain("output_log"); expect(p).not.toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`);
     expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="in"`); expect(p).toContain(">text<");
+  });
+  it("1ª ordem só mostra I/O quando declarado", () => {
+    const t = base(); expect(t.view().plan).not.toMatch(new RegExp(`data-act="editData" data-id="${t.root}"`));
+    t.run({ type: "addInput", id: t.root, name: "x" }); t.run({ type: "addOutput", id: t.root, name: "y" });
+    const p = t.view().plan; expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="in"`); expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="out"`); expect(p).toContain(">x<"); expect(p).toContain(">y<");
   });
   it("blocos: banda tracejada, etiqueta, alça e triângulo do if; catch com X; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });

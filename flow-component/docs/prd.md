@@ -94,6 +94,8 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Nome da 1ª ordem:** centrado em cima da barra-resumo (`text-anchor=middle`), não à direita das saídas. Compostas internas continuam à direita. **Voltar:** `lblAfterOuts` também na raiz.
 
+**I/O da 1ª ordem:** sem `ins`/`outs` declarados → sem marca (não inventa `input_main`/`output_main`). Só aparece quando houver nome. **Antes:** `[]` virava cubo também na raiz.
+
 ### 5.4 Responsável · Task · catálogo — *must*
 
 | Interface | Efeito | Evidência IDE |

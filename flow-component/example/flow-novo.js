@@ -1891,14 +1891,14 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const title = !list.length ? `${cubeName(f, kind)} (state)` : asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0];
         return asCube ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       };
-      over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-      const showOut = !lib3 || f.outs.length > 0;
+      const root = isRoot(p, f.id), showIn = f.ins.length > 0 || !root && !lib3, showOut = f.outs.length > 0 || !root && !lib3;
+      if (showIn) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
       if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
       const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
-      over.push(mark(colX2(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
+      if (showIn) over.push(mark(colX2(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
       if (showOut) over.push(mark(colX2(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
       const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-      over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
+      if (showIn) over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
       if (showOut) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
     };
     const barX = /* @__PURE__ */ new Map();

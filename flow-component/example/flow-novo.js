@@ -2918,7 +2918,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     function fit() {
       if (!last) return;
       const W = multi?.W ?? tableWidth(last.scene, P2()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData, P2()), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-      const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
+      const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, FIT_WIDTH ? 1 : (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
       applyView();
@@ -3060,10 +3060,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       form.classList.add("wide");
       const fresh2 = names.map(() => false), orig = [...names];
       const nameEditable = (i) => editable || side === "out" && i === 0 || side === "in" && names.length === 1;
-      const canAdd = () => editable && names.length >= 1;
+      const canAdd = () => editable && (!withValue || names.length > 1);
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
-        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state). One input: a single data or an object (type object + Add child)." : "One output: a single data this function produces."}${!withValue && canAdd() ? " Add child adds one more field (it becomes an object)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -3379,17 +3379,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const v = await editInline(n.outs[0] ?? "", "Output data name");
         if (v) run({ type: "renameData", id: n.id, to: v }, false);
       },
-      // caixa fantasma: entrada abre a caixa só com select e valor (o nome é automático); saída é criada na hora, só tem nome
+      // fantasma: entrada e saída abrem o mesmo editor (um dado; Add child na saída vira objeto)
       addIo: async (d) => {
         const n = locate(P2(), d["id"])?.node;
         if (n?.t !== "fn") return;
-        if (d["kind"] === "in") {
-          await dataEditor(n, "in", { start: true });
-          return;
-        }
-        let i = 2, name = "output";
-        while (n.outs.includes(name)) name = `output${i++}`;
-        run({ type: "setData", id: n.id, side: "out", names: [...n.outs, name] }, false);
+        await dataEditor(n, d["kind"] === "out" ? "out" : "in", { start: true });
       },
       /** Clicar no texto do dado (função comum, um dado só) renomeia. */
       renameData: async (d) => {
@@ -3898,6 +3892,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       host.innerHTML = "";
     } };
   }
+  var FIT_WIDTH = typeof location !== "undefined" && new URLSearchParams(location.search).get("fit") === "w";
   var STORE_KEY = "flow-novo-projeto-v1";
   var FLOW_STORAGE_KEYS = [STORE_KEY, "flow-novo-ui-v2", "flow-novo-explorer-v1"];
   function startProject() {

@@ -45,8 +45,9 @@ test("ghost input: hovering and clicking opens the box and adds the input (marke
   await click(".ghost[data-kind=in]"); assert.ok(await ev(`!!document.querySelector(".dlg")`)); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); await ev(`document.querySelector(".dlg input[data-k=value]").focus()`); await type("pedido");
   assert.equal(await ev(`!!document.querySelector(".dlg")`), false); assert.ok(await ev(`!!document.querySelector(".plan .dm[data-side=in]")`), "square appears where the ghost was"); assert.equal(await ev(`document.querySelectorAll(".iorow").length`), 0, "no input/output rows anymore"); assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /input = "pedido"/);
 });
-test("ghost output creates the output at once (automatic name); the data box removes it with the trash", async () => {
-  await click(".ghost[data-kind=out]"); assert.equal(await ev(`!!document.querySelector(".dlg")`), false, "no box: an output only has a name"); assert.match(await code(), /let output: unknown/);
+test("ghost output opens the box (one data, like input); Save creates it; trash clears it", async () => {
+  await click(".ghost[data-kind=out]"); assert.ok(await ev(`!!document.querySelector(".dlg")`), "box like input"); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "output"); assert.ok(await ev(`!!document.querySelector(".dlg [data-newrow]")`), "Add child → object");
+  await click(".dlg button.pri"); await wait(150); assert.match(await code(), /let output: unknown/);
   await click(".plan .dm[data-side=out]"); assert.ok(await ev(`!!document.querySelector(".dlg [data-del]")`), "box with trash"); await click(".dlg [data-del]"); await click(".dlg button.pri"); await wait(150); assert.doesNotMatch(await code(), /let output/); assert.equal(await ev(`!!document.querySelector(".dlg")`), false);
 });
 

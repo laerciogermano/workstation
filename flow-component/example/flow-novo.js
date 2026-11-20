@@ -1602,7 +1602,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Add else"));
     out.push(t("addSibling", "child", "Add sibling to the right (outside the block)"));
     if (part === "main") out.push(t("setScope", "grow", "Include the next one in the block", { data: { delta: "1" } }), t("setScope", "shrink", "Take the last one out of the block", { data: { delta: "-1" } }));
-    out.push(part === "else" ? t("removeElse", "trash", "Remove else", { danger: true }) : t("unwrap", "trash", `Remove ${n.t === "try" ? "try/catch" : n.t === "for" ? "repetition (for)" : "selection (if)"}`, { danger: true }));
+    out.push(part === "else" ? t("removeElse", "trash", "Remove else", { danger: true }) : t("remove", "trash", `Remove ${n.t === "try" ? "try/catch" : n.t === "for" ? "repetition (for)" : "selection (if)"} and everything inside`, { danger: true }));
     return out;
   }
   var toolsHtml = (tools) => tools.map((x) => `<button type="button" class="ib${x.danger ? " danger" : ""}" data-act="${x.act}" data-id="${esc(x.id)}" ${Object.entries(x.data ?? {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(" ")} title="${esc(x.title)}" aria-label="${esc(x.title)}">${icon(x.icon)}</button>`).join("");
@@ -2819,7 +2819,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
       setScope: (d) => void run({ type: "setScope", id: d["id"], count: kids(d["id"]) + Number(d["delta"]) }, false),
       remove: async (d) => {
         const l = locate(P2(), d["id"]);
-        if (l && innerFns(l.node) > 1 && !await confirmAsk(`Remove \u201C${l.node.t === "fn" ? l.node.title : l.node.t}\u201D and everything inside it?`)) return;
+        if (!l) return;
+        const label = l.node.t === "fn" ? l.node.title : l.node.t === "try" ? "try/catch" : l.node.t;
+        if (innerFns(l.node) > 0 && !await confirmAsk(`Remove \u201C${label}\u201D and everything inside it?`)) return;
         if (ui.sel === d["id"]) ui.sel = null;
         run({ type: "remove", id: d["id"] }, false);
       },

@@ -505,7 +505,8 @@ function guiaHtml() {
 <tr><td>Paralelo</td><td>Roda junto da função anterior (ou volta à sequência)</td><td><code>setParallel</code></td></tr>
 <tr><td>Sair do bloco</td><td>Tira esta função e as seguintes de dentro do bloco</td><td><code>exitScope</code></td></tr>
 <tr><td>Incluir / tirar do bloco</td><td>Aumenta ou diminui o escopo em uma função (ou arraste a alça da etiqueta)</td><td><code>setScope</code></td></tr>
-<tr><td>Remover estrutura</td><td>Desfaz o bloco e devolve os filhos</td><td><code>unwrap</code> / <code>setSelection off</code></td></tr></table>
+<tr><td>Remover estrutura</td><td>Apaga o bloco e tudo dentro (filhos aninhados)</td><td><code>remove</code></td></tr>
+<tr><td>Desfazer estrutura</td><td>Devolve os filhos à lista de fora (comando de modelo)</td><td><code>unwrap</code></td></tr></table>
 <p>Clique na etiqueta de um <b>if</b> para editar a condição e o “senão volta para…”; na de um <b>for</b> para a variável e a coleção (<code>setIf</code>, <code>setFor</code>, <code>setCond</code>, <code>setLoopVars</code>).</p>
 <h2 class="plain" id="g-dados">Entradas, saídas e dados</h2>
 <ul class="plain"><li>Passe o mouse na linha de I/O e use <b>+</b> para <b>nova entrada</b> ou <b>nova saída</b>; o <b>×</b> em cada dado remove → <code>addInput</code>, <code>addOutput</code>, <code>removeInput</code>, <code>removeOutput</code>.</li><li>Dar a mesma saída/entrada a duas funções as liga: o dado aparece no estado em que nasce.</li><li>Clicar num dado dispara <code>onDataClick(nome)</code> no host (abra o seu editor de dados).</li><li>O rodapé de cada estado lista os dados novos; a opção <i>todos os dados</i> mostra os acumulados.</li></ul>

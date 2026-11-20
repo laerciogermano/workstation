@@ -34,18 +34,27 @@ describe("ferramentas: regras únicas dos blocos", () => {
   it("paralelo só é oferecido quando há função irmã anterior", () => { const t = base(); expect(acts(t, t.ids[0]!)).not.toContain("parallel"); expect(acts(t, t.ids[1]!)).toContain("parallel"); });
   it.each(["if", "for", "try"] as const)("bloco %s: as MESMAS ações (filho, condição, irmão à direita, incluir, tirar, remover)", kind => {
     const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind }); const tools = toolsFor(t.p, b);
-    expect(tools.map(x => x.act)).toEqual(kind === "if" ? ["addChild", "wrap", "wrap", "wrap", "addElse", "addSibling", "setScope", "setScope", "unwrap"] : ["addChild", "wrap", "wrap", "wrap", "addSibling", "setScope", "setScope", "unwrap"]);
+    expect(tools.map(x => x.act)).toEqual(kind === "if" ? ["addChild", "wrap", "wrap", "wrap", "addElse", "addSibling", "setScope", "setScope", "remove"] : ["addChild", "wrap", "wrap", "wrap", "addSibling", "setScope", "setScope", "remove"]);
     expect(tools.filter(x => x.act === "wrap").map(x => x.data!["kind"])).toEqual(["if", "for", "try"]);   // todo bloco aceita condição, laço e try/catch expect(tools.at(-1)!.danger).toBe(true);
     expect(tools[0]!.title).toContain(kind === "try" ? "try" : kind);
+    expect(tools.at(-1)).toMatchObject({ act: "remove", danger: true }); expect(tools.at(-1)!.title).toMatch(/everything inside/);
   });
   it("else: filho (no else), irmão à direita e remover o else; if sem else oferece 'Add else' e some quando existe", () => {
     const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" });
     expect(toolsFor(t.p, i).some(x => x.act === "addElse")).toBe(true); t.run({ type: "addElse", id: i }); expect(toolsFor(t.p, i).some(x => x.act === "addElse")).toBe(false);
     const e = toolsFor(t.p, i, "else"); expect(e.map(x => x.act)).toEqual(["addChild", "addSibling", "removeElse"]); expect(e[0]).toMatchObject({ data: { else: "1" } }); expect(e[0]!.title).toContain("else"); expect(e.at(-1)).toMatchObject({ icon: "trash", danger: true });
   });
-  it("catch: filho (no catch), irmão à direita e remover; sem incluir/tirar", () => {
+  it("catch: filho (no catch), irmão à direita e remover o try inteiro (com tudo dentro)", () => {
     const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }), c = toolsFor(t.p, b, "catch");
-    expect(c.map(x => x.act)).toEqual(["addChild", "addSibling", "unwrap"]); expect(c[0]).toMatchObject({ data: { catch: "1" } }); expect(c[0]!.title).toContain("catch");
+    expect(c.map(x => x.act)).toEqual(["addChild", "addSibling", "remove"]); expect(c[0]).toMatchObject({ data: { catch: "1" } }); expect(c[0]!.title).toContain("catch");
+  });
+  it("remover o bloco maior apaga if/for/try aninhados e as funções de dentro", () => {
+    const t = base(), outer = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" });
+    const mid = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" });
+    const inner = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" });
+    t.run({ type: "remove", id: outer });
+    expect(locate(t.p, outer)).toBeNull(); expect(locate(t.p, mid)).toBeNull(); expect(locate(t.p, inner)).toBeNull(); expect(locate(t.p, t.ids[1]!)).toBeNull();
+    expect(t.view().scene.rows.some(r => r.id === t.ids[0]!)).toBe(true);
   });
   it("toolsHtml gera botões acessíveis com data-*; id desconhecido não gera nada", () => {
     const t = base(), h = toolsHtml(toolsFor(t.p, t.ids[0]!)); expect(h).toContain('data-act="addChild"'); expect(h).toContain('aria-label="Add child'); expect(h).toContain('data-kind="if"'); expect(h).toContain("danger");
@@ -56,10 +65,11 @@ describe("ferramentas: regras únicas dos blocos", () => {
 describe("remover: sempre o mesmo ícone de lixeira", () => {
   it("função, if, for, try, catch e data usam a lixeira (e só ela é usada para remover)", () => {
     const t = base(); const ids = { i: t.run({ type: "wrap", id: t.ids[0]!, kind: "if" }), f: t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }), y: t.run({ type: "wrap", id: t.ids[2]!, kind: "try" }) };
-    const rem = [...toolsFor(t.p, t.ids[0]!), ...toolsFor(t.p, ids.i), ...toolsFor(t.p, ids.f), ...toolsFor(t.p, ids.y), ...toolsFor(t.p, ids.y, "catch")].filter(x => x.act === "remove" || x.act === "unwrap");
+    const rem = [...toolsFor(t.p, t.ids[0]!), ...toolsFor(t.p, ids.i), ...toolsFor(t.p, ids.f), ...toolsFor(t.p, ids.y), ...toolsFor(t.p, ids.y, "catch")].filter(x => x.act === "remove");
     expect(rem.length).toBe(5); expect(new Set(rem.map(x => x.icon))).toEqual(new Set(["trash"])); expect(rem.every(x => x.danger)).toBe(true);
-    // nenhum outro botão usa a lixeira
-    expect([...toolsFor(t.p, ids.i), ...toolsFor(t.p, t.ids[3]!)].filter(x => x.icon === "trash").every(x => x.act === "remove" || x.act === "unwrap")).toBe(true);
+    // nenhum outro botão usa a lixeira; bloco não oferece mais unwrap na UI
+    expect([...toolsFor(t.p, ids.i), ...toolsFor(t.p, t.ids[3]!)].filter(x => x.icon === "trash").every(x => x.act === "remove")).toBe(true);
+    expect(toolsFor(t.p, ids.i).some(x => x.act === "unwrap")).toBe(false);
   });
   it("o botão de remover um dado (caixa do quadrado) também é a lixeira", async () => {
     const { icon } = await import("../../novo/icons"); expect(icon("trash")).toContain("M3 6h18");   // a mesma lixeira usada em todos os botões de remover

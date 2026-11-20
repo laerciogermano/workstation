@@ -137,7 +137,8 @@ export function toolsFor(p: Project, id: string, part: "main" | "catch" | "else"
   if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Add else"));
   out.push(t("addSibling", "child", "Add sibling to the right (outside the block)"));
   if (part === "main") out.push(t("setScope", "grow", "Include the next one in the block", { data: { delta: "1" } }), t("setScope", "shrink", "Take the last one out of the block", { data: { delta: "-1" } }));
-  out.push(part === "else" ? t("removeElse", "trash", "Remove else", { danger: true }) : t("unwrap", "trash", `Remove ${n.t === "try" ? "try/catch" : n.t === "for" ? "repetition (for)" : "selection (if)"}`, { danger: true }));
+  // lixeira = remove a subárvore inteira (if/for/try + todos os filhos aninhados); unwrap fica só no modelo
+  out.push(part === "else" ? t("removeElse", "trash", "Remove else", { danger: true }) : t("remove", "trash", `Remove ${n.t === "try" ? "try/catch" : n.t === "for" ? "repetition (for)" : "selection (if)"} and everything inside`, { danger: true }));
   return out;
 }
 export const toolsHtml = (tools: Tool[]): string => tools.map(x => `<button type="button" class="ib${x.danger ? " danger" : ""}" data-act="${x.act}" data-id="${esc(x.id)}" ${Object.entries(x.data ?? {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(" ")} title="${esc(x.title)}" aria-label="${esc(x.title)}">${icon(x.icon)}</button>`).join("");

@@ -416,7 +416,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     exitScope: d => void run({ type: "exitScope", id: d["id"]! }),
     parallel: d => void run({ type: "setParallel", id: d["id"]!, on: d["on"] === "true" }),
     setScope: d => void run({ type: "setScope", id: d["id"]!, count: kids(d["id"]!) + Number(d["delta"]) }, false),
-    remove: async d => { const l = locate(P(), d["id"]!); if (l && innerFns(l.node) > 1 && !(await confirmAsk(`Remove “${l.node.t === "fn" ? l.node.title : l.node.t}” and everything inside it?`))) return; if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false); },
+    remove: async d => {
+      const l = locate(P(), d["id"]!); if (!l) return;
+      const label = l.node.t === "fn" ? l.node.title : l.node.t === "try" ? "try/catch" : l.node.t;
+      if (innerFns(l.node) > 0 && !(await confirmAsk(`Remove “${label}” and everything inside it?`))) return;
+      if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false);
+    },
     rename: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; ui.sel = n.id; const v = await editInline(n.title, "Function name"); if (v) run({ type: "rename", id: n.id, title: v }); else render(); },
     editBlock: async d => {
       const id = d["id"]!, n = locate(P(), id)?.node; if (!n) return;

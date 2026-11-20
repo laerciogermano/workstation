@@ -173,7 +173,8 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <tr><td>∥</td><td><code>setParallel</code></td><td>só com função anterior</td></tr>
 <tr><td>Sair do bloco</td><td><code>exitScope</code></td><td>esta e as seguintes</td></tr>
 <tr><td>Incluir / tirar</td><td><code>setScope</code></td><td>ou arrastar a alça da etiqueta</td></tr>
-<tr><td>Remover estrutura</td><td><code>unwrap</code></td><td>devolve as filhas</td></tr>
+<tr><td>Remover estrutura</td><td><code>remove</code></td><td>apaga o bloco e tudo dentro (if/for/try aninhados)</td></tr>
+<tr><td>Desfazer estrutura (modelo)</td><td><code>unwrap</code></td><td>devolve as filhas à lista de fora (sem UI)</td></tr>
 <tr><td>Lixeira</td><td><code>remove</code></td><td>confirma se há filhas</td></tr>
 </table>
 <p>A raiz oferece só <i>Filho</i> e abrir/fechar.</p>

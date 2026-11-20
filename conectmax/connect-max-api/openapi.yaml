@@ -3,7 +3,7 @@ info:
   title: Connect Max API
   description: |
     API que autentica no Portal do Franqueado
-    (`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON.
+    (`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON. Isolada em ConnectMax Campinas (franquia 9); teto EXTRACT_LIMIT=100 por resposta (sem query/paginação).
 
     Autenticação de aplicação: `Authorization: Bearer <API_KEY>` ou `X-API-Key`.
     `/health` é público. Demais rotas exigem a chave.
@@ -142,9 +142,6 @@ paths:
         - $ref: '#/components/parameters/dataFinal'
         - $ref: '#/components/parameters/from'
         - $ref: '#/components/parameters/to'
-        - name: franquia_id
-          in: query
-          schema: { type: integer, default: 9 }
         - name: status
           in: query
           schema: { type: string }
@@ -166,9 +163,6 @@ paths:
         - $ref: '#/components/parameters/dataFinal'
         - $ref: '#/components/parameters/from'
         - $ref: '#/components/parameters/to'
-        - name: franquia_id
-          in: query
-          schema: { type: integer, default: 9 }
         - name: status
           in: query
           schema: { type: string }
@@ -190,9 +184,6 @@ paths:
         - $ref: '#/components/parameters/dataFinal'
         - $ref: '#/components/parameters/from'
         - $ref: '#/components/parameters/to'
-        - name: franquia_id
-          in: query
-          schema: { type: integer, default: 9 }
         - name: status
           in: query
           schema: { type: string }
@@ -214,9 +205,6 @@ paths:
         - $ref: '#/components/parameters/dataFinal'
         - $ref: '#/components/parameters/from'
         - $ref: '#/components/parameters/to'
-        - name: franquia_id
-          in: query
-          schema: { type: integer, default: 9 }
         - name: status
           in: query
           schema: { type: string }
@@ -236,9 +224,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/dataInicial'
         - $ref: '#/components/parameters/dataFinal'
-        - name: franquia_id
-          in: query
-          schema: { type: integer, default: 9 }
       responses:
         '200':
           description: Lista
@@ -430,12 +415,6 @@ paths:
             type: string
             enum: ['0', '1', 'true', 'false']
           description: "1 = inclui linhas de produto (POST produtos.php) por pedido"
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            minimum: 1
-          description: Com itens=1, quantos pedidos enriquecer (do início da lista)
         - $ref: '#/components/parameters/refresh'
       responses:
         '200':

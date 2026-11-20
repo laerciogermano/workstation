@@ -20,6 +20,7 @@ import { parsePedidoDetalheHtml } from './parse-pedido-detalhe.js';
 import { parsePedidoItensHtml } from './parse-pedido-itens.js';
 import { getContatoCached, setContatoCached } from './contato-cache.js';
 import {
+  assertCampinasPedido,
   dbAtrasados,
   dbClientes,
   dbFaturamentoLinhas,
@@ -31,6 +32,13 @@ import {
   dbPedidos,
   dbVendedores,
 } from './db-dashboard.js';
+import { EXTRACT_LIMIT, capExtract } from './extract-limit.js';
+import {
+  LOCKED_FRANQUIA_ID,
+  LOCKED_FRANQUIA_NOME,
+  forcePortalFranquia,
+  stripClientFranquia,
+} from './franquia.js';
 
 const PORT = Number(process.env.PORT || 4182);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -136,12 +144,12 @@ function sumField(items, field = 'valor') {
 
 async function listPaginated(page, q, extraQuery, parse) {
   const range = dateRange(q);
-  const query = {
+  const query = forcePortalFranquia({
     ...range,
     ...extraQuery,
     status: q.status_portal || undefined,
     id_vendedor: q.id_vendedor || undefined,
-  };
+  });
   const currentPage = q.current_page ? Number(q.current_page) : undefined;
   const { html, pages } = await fetchPageHtmlPaginated(page, query, {
     forceLogin: forceLogin(q),
@@ -165,10 +173,7 @@ async function fetchPedidoItens(pedidoId, opts = {}) {
 }
 
 async function fetchPedidoDetalhe(id, opts = {}) {
-  const pedidoId = Number(id);
-  if (!Number.isFinite(pedidoId) || pedidoId <= 0) {
-    throw new Error('id de pedido inválido');
-  }
+  const pedidoId = await assertCampinasPedido(id);
   const wantItens = opts.itens !== false;
   if (!opts.skipCache) {
     const cached = getContatoCached(pedidoId);
@@ -191,16 +196,11 @@ async function fetchPedidoDetalhe(id, opts = {}) {
 }
 
 async function enrichPedidosComItens(items, opts = {}) {
-  const limit = Number(opts.limit) > 0 ? Number(opts.limit) : items.length;
+  const capped = capExtract(items);
   let fetched = 0;
   let cacheHits = 0;
   const out = [];
-  for (let i = 0; i < items.length; i++) {
-    const p = items[i];
-    if (i >= limit) {
-      out.push(p);
-      continue;
-    }
+  for (const p of capped) {
     try {
       const d = await fetchPedidoDetalhe(p.id, { ...opts, itens: true });
       if (d._cache) cacheHits += 1;
@@ -224,16 +224,17 @@ async function enrichPedidosComItens(items, opts = {}) {
   }
   return {
     items: out,
-    itensMeta: { pedidosComItens: Math.min(limit, items.length), fetched, cacheHits },
+    itensMeta: { pedidosComItens: out.length, fetched, cacheHits },
   };
 }
 
 async function enrichFaturasComContato(items, opts = {}) {
+  const capped = capExtract(items);
   const ids = [
     ...new Set(
-      items.map((f) => f.pedido).filter((n) => Number.isFinite(Number(n))),
+      capped.map((f) => f.pedido).filter((n) => Number.isFinite(Number(n))),
     ),
-  ];
+  ].slice(0, EXTRACT_LIMIT);
   const byPedido = new Map();
   let fetched = 0;
   let cacheHits = 0;
@@ -247,7 +248,7 @@ async function enrichFaturasComContato(items, opts = {}) {
       byPedido.set(Number(id), { error: String(err?.message || err) });
     }
   }
-  const enriched = items.map((f) => {
+  const enriched = capped.map((f) => {
     const d = f.pedido ? byPedido.get(Number(f.pedido)) : null;
     if (!d || d.error) {
       return {
@@ -274,7 +275,7 @@ async function enrichFaturasComContato(items, opts = {}) {
 const server = createServer(async (req, res) => {
   try {
     const path = (req.url || '/').split('?')[0];
-    const q = parseQuery(req.url || '');
+    const q = stripClientFranquia(parseQuery(req.url || ''));
 
     if (req.method === 'OPTIONS') {
       res.writeHead(204, CORS);
@@ -371,10 +372,13 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'contasareceber',
-        { ...range, status: q.status_portal || undefined },
+        forcePortalFranquia({
+          ...range,
+          status: q.status_portal || undefined,
+        }),
         { forceLogin: forceLogin(q) },
       );
-      let items = filterStatus(parseFaturasHtml(html), q.status);
+      let items = capExtract(filterStatus(parseFaturasHtml(html), q.status));
       let contatos = undefined;
       if (q.contato === '1' || q.contato === 'true') {
         const enriched = await enrichFaturasComContato(items, {
@@ -416,7 +420,7 @@ const server = createServer(async (req, res) => {
         {},
         parseOrcamentosHtml,
       );
-      const items = filterStatus(raw, q.status);
+      const items = capExtract(filterStatus(raw, q.status));
       return sendJson(res, 200, {
         fonte: 'portal franqueado · orcamentos',
         dataInicial: range.data_inicial,
@@ -436,13 +440,11 @@ const server = createServer(async (req, res) => {
         {},
         parsePedidosHtml,
       );
-      let items = filterStatus(raw, q.status);
+      let items = capExtract(filterStatus(raw, q.status));
       let itensMeta = undefined;
       if (q.itens === '1' || q.itens === 'true') {
-        const limit = q.limit ? Number(q.limit) : items.length;
         const enriched = await enrichPedidosComItens(items, {
           forceLogin: forceLogin(q),
-          limit,
         });
         items = enriched.items;
         itensMeta = enriched.itensMeta;
@@ -470,7 +472,7 @@ const server = createServer(async (req, res) => {
         },
         parseNotasFiscaisHtml,
       );
-      const items = filterStatus(raw, q.status);
+      const items = capExtract(filterStatus(raw, q.status));
       return sendJson(res, 200, {
         fonte: 'portal franqueado · notas_fiscais',
         dataInicial: range.data_inicial,
@@ -487,37 +489,36 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const page = await fetchPageHtml(
         'faturamento',
-        {
+        forcePortalFranquia({
           ...range,
           id_vendedor: q.id_vendedor || undefined,
-        },
+        }),
         { forceLogin: forceLogin(q) },
       );
       const porVendedorHtml = parseFaturamentoHtml(page.html);
-      const idFranqueado =
-        page.html.match(/id_franqueado=(\d+)/)?.[1] ||
-        page.html.match(/name=["']id_franqueado[^"']*["'][^>]*value=["'](\d+)["']/i)?.[1] ||
-        '9';
       const excel = await fetchAjax(
         '/franqueado/ajax/faturamento/relatorio_excel.php',
-        {
-          id_franqueado: idFranqueado,
+        forcePortalFranquia({
           page: 'faturamento',
           data_inicial: range.data_inicial,
           data_final: range.data_final,
           id_vendedor: q.id_vendedor || undefined,
-        },
+        }),
       );
       const parsed = parseFaturamentoExcel(excel.body);
+      const porVendedor = capExtract(
+        parsed.porVendedor.length ? parsed.porVendedor : porVendedorHtml,
+      );
+      const detalhe = capExtract(parsed.detalhe);
       return sendJson(res, 200, {
         fonte: 'portal franqueado · faturamento',
         dataInicial: range.data_inicial,
         dataFinal: range.data_final,
-        totalVendedores: (parsed.porVendedor.length || porVendedorHtml.length),
-        totalDetalhe: parsed.detalhe.length,
-        totalValor: sumField(parsed.detalhe, 'total'),
-        porVendedor: parsed.porVendedor.length ? parsed.porVendedor : porVendedorHtml,
-        detalhe: parsed.detalhe,
+        totalVendedores: porVendedor.length,
+        totalDetalhe: detalhe.length,
+        totalValor: sumField(detalhe, 'total'),
+        porVendedor,
+        detalhe,
       });
     }
 
@@ -525,7 +526,7 @@ const server = createServer(async (req, res) => {
       const data = q.data || q.mes || undefined;
       const { html } = await fetchPageHtml(
         'fluxo_previsto',
-        data ? { data } : {},
+        forcePortalFranquia(data ? { data } : {}),
         { forceLogin: forceLogin(q) },
       );
       const fluxo = parseFluxoPrevistoHtml(html);
@@ -539,10 +540,13 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'chamados',
-        { ...range, status: q.status_portal || q.status || undefined },
+        forcePortalFranquia({
+          ...range,
+          status: q.status_portal || q.status || undefined,
+        }),
         { forceLogin: forceLogin(q) },
       );
-      const items = parseChamadosHtml(html);
+      const items = capExtract(parseChamadosHtml(html));
       return sendJson(res, 200, {
         fonte: 'portal franqueado · chamados',
         dataInicial: range.data_inicial,
@@ -557,10 +561,10 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'notificacoes',
-        range,
+        forcePortalFranquia(range),
         { forceLogin: forceLogin(q) },
       );
-      const items = parseNotificacoesHtml(html);
+      const items = capExtract(parseNotificacoesHtml(html));
       return sendJson(res, 200, {
         fonte: 'portal franqueado · notificacoes',
         dataInicial: range.data_inicial,
@@ -573,6 +577,10 @@ const server = createServer(async (req, res) => {
     sendJson(res, 404, { error: 'not found', routes: IMPLEMENTED });
   } catch (err) {
     console.error(err);
+    const status = Number(err?.status) || 500;
+    if (status === 400 || status === 403) {
+      return sendJson(res, status, { error: String(err.message || err) });
+    }
     sendJson(res, 500, { error: 'internal error' });
   }
 });
@@ -587,5 +595,8 @@ process.on('SIGINT', shutdown);
 
 server.listen(PORT, HOST, () => {
   console.log(`${SERVICE} http://${HOST}:${PORT}`);
+  console.log(
+    `franquia=${LOCKED_FRANQUIA_ID} (${LOCKED_FRANQUIA_NOME}) extractLimit=${EXTRACT_LIMIT}`,
+  );
   console.log(IMPLEMENTED.join('  '));
 });

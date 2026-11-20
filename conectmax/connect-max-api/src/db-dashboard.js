@@ -1,10 +1,13 @@
 import { query } from './db.js';
+import { capExtract } from './extract-limit.js';
+import {
+  LOCKED_FRANQUIA_ID,
+  LOCKED_FRANQUIA_NOME,
+  lockedFranquiaId,
+} from './franquia.js';
 
-const DEFAULT_FRANQUIA = 9;
-
-function franquiaId(q) {
-  const n = Number(q.franquia_id || q.franquia || DEFAULT_FRANQUIA);
-  return Number.isFinite(n) && n > 0 ? n : DEFAULT_FRANQUIA;
+function franquiaId(_q) {
+  return lockedFranquiaId();
 }
 
 export function parseBrDate(s) {
@@ -54,6 +57,7 @@ async function metaFranquia(fid) {
 }
 
 function wrapList(fid, meta, range, listKey, valueField, items, fonte) {
+  const capped = capExtract(items);
   return {
     fonte,
     franquiaId: fid,
@@ -61,10 +65,10 @@ function wrapList(fid, meta, range, listKey, valueField, items, fonte) {
     syncedAt: meta?.synced_at || null,
     dataInicial: range.data_inicial,
     dataFinal: range.data_final,
-    total: items.length,
-    totalValor: sumField(items, valueField),
-    porStatus: porStatus(items),
-    [listKey]: items,
+    total: capped.length,
+    totalValor: sumField(capped, valueField),
+    porStatus: porStatus(capped),
+    [listKey]: capped,
   };
 }
 
@@ -236,11 +240,12 @@ export async function dbVendedores(q) {
      ORDER BY nome`,
     [fid],
   );
+  const vendedores = capExtract(rows);
   return {
     fonte: 'postgres · portal_franqueado.vendedor',
     franquiaId: fid,
-    total: rows.length,
-    vendedores: rows,
+    total: vendedores.length,
+    vendedores,
   };
 }
 
@@ -253,11 +258,12 @@ export async function dbClientes(q) {
      ORDER BY nome`,
     [fid],
   );
+  const clientes = capExtract(rows);
   return {
     fonte: 'postgres · portal_franqueado.cliente',
     franquiaId: fid,
-    total: rows.length,
-    clientes: rows,
+    total: clientes.length,
+    clientes,
   };
 }
 
@@ -277,12 +283,13 @@ export async function dbPedidoItens(q) {
      ORDER BY seq`,
     [fid, pedidoId],
   );
+  const itens = capExtract(rows);
   return {
     fonte: 'postgres · portal_franqueado.pedido_item',
     franquiaId: fid,
     pedidoId,
-    total: rows.length,
-    itens: rows,
+    total: itens.length,
+    itens,
   };
 }
 
@@ -303,7 +310,9 @@ export async function dbFaturamentoLinhas(q, range) {
     data: r.data,
     total: r.total,
   }));
-  items = items.filter((x) => inRange(x.data, range.data_inicial, range.data_final));
+  items = capExtract(
+    items.filter((x) => inRange(x.data, range.data_inicial, range.data_final)),
+  );
   return {
     fonte: 'postgres · portal_franqueado.faturamento_linha',
     franquiaId: fid,
@@ -315,8 +324,34 @@ export async function dbFaturamentoLinhas(q, range) {
   };
 }
 
+export async function assertCampinasPedido(pedidoId) {
+  const fid = lockedFranquiaId();
+  const id = Number(pedidoId);
+  if (!Number.isFinite(id) || id <= 0) {
+    const err = new Error('id de pedido inválido');
+    err.status = 400;
+    throw err;
+  }
+  const { rows } = await query(
+    `SELECT id FROM portal_franqueado.pedido
+     WHERE franquia_id = $1 AND id = $2
+     LIMIT 1`,
+    [fid, id],
+  );
+  if (!rows.length) {
+    const err = new Error(
+      `pedido fora da franquia ${LOCKED_FRANQUIA_NOME} (${fid})`,
+    );
+    err.status = 403;
+    throw err;
+  }
+  return id;
+}
+
 export async function dbHealth() {
-  const { rows } = await query(`
+  const fid = lockedFranquiaId();
+  const { rows } = await query(
+    `
     SELECT f.id,
       COALESCE(f.nome, f.razao_social) AS nome,
       f.razao_social,
@@ -331,11 +366,17 @@ export async function dbHealth() {
       (SELECT count(*)::int FROM portal_franqueado.conta_receber r WHERE r.franquia_id=f.id) AS contas,
       (SELECT count(*)::int FROM portal_franqueado.faturamento_linha l WHERE l.franquia_id=f.id) AS faturamento_linhas
     FROM portal_franqueado.franquia f
-    ORDER BY f.id
-  `);
+    WHERE f.id = $1
+  `,
+    [fid],
+  );
   return {
     ok: true,
     fonte: 'postgres · portal_franqueado (normalizado)',
+    franquiaTravada: {
+      id: LOCKED_FRANQUIA_ID,
+      nome: LOCKED_FRANQUIA_NOME,
+    },
     franquias: rows,
   };
 }

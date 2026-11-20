@@ -331,25 +331,17 @@
   <header>
     <div class="brand">
       <h1>ConectMax · Dashboard financeiro</h1>
-      <p>Funil via Postgres Contabo · <code>/db/*</code> · Orçamento → Pedido → NF → Contas → Atrasados</p>
+      <p>Funil via Postgres Contabo · <code>/db/*</code> · só ConnectMax Campinas · Orçamento → Pedido → NF → Contas → Atrasados</p>
     </div>
     <form class="filters" id="filters">
       <label>Franquia
-        <select id="franquia" required>
-          <option value="">Carregando…</option>
-        </select>
+        <input type="text" value="Campinas (#9)" disabled />
       </label>
       <label>De
         <input type="date" id="from" required />
       </label>
       <label>Até
         <input type="date" id="to" required />
-      </label>
-      <label>Páginas
-        <select id="all">
-          <option value="0" selected>1ª página (rápido)</option>
-          <option value="1">Todas</option>
-        </select>
       </label>
       <button type="submit" id="btnLoad">Atualizar</button>
       <button type="button" class="ghost" id="btnDocs">/docs</button>
@@ -474,13 +466,12 @@
     ];
 
     const FETCH_TIMEOUT_MS = 90000;
-    const DEFAULT_FRANQUIA = 9;
+    const LOCKED_FRANQUIA = { id: 9, nome: 'Campinas' };
     const state = {
       active: 'orcamentos',
       statusFilter: null,
       data: {},
       loadGen: 0,
-      franquias: [],
     };
 
     function pad(n) { return String(n).padStart(2, '0'); }
@@ -502,59 +493,18 @@
       if (/quitada|aprovado|faturado|enviado/.test(s) && !/rejeitado/.test(s)) return 'ok';
       return '';
     }
-    function selectedFranquiaId() {
-      return document.getElementById('franquia').value || String(DEFAULT_FRANQUIA);
-    }
-
     function selectedFranquiaLabel() {
-      const sel = document.getElementById('franquia');
-      const opt = sel.selectedOptions[0];
-      return opt ? opt.textContent : `Franquia ${selectedFranquiaId()}`;
-    }
-
-    function syncUrlFranquia() {
-      const url = new URL(window.location.href);
-      url.searchParams.set('franquia_id', selectedFranquiaId());
-      history.replaceState(null, '', url);
+      return `${LOCKED_FRANQUIA.nome} (#${LOCKED_FRANQUIA.id})`;
     }
 
     function qs() {
       const from = document.getElementById('from').value;
       const to = document.getElementById('to').value;
-      const all = document.getElementById('all').value;
       const p = new URLSearchParams({
         data_inicial: toBrDate(from),
         data_final: toBrDate(to),
-        all,
-        franquia_id: selectedFranquiaId(),
       });
       return p.toString();
-    }
-
-    async function loadFranquias() {
-      const sel = document.getElementById('franquia');
-      const urlFranquia = new URLSearchParams(window.location.search).get('franquia_id');
-      const res = await fetch('/db/health', { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-      if (!res.ok) throw new Error(`Franquias: HTTP ${res.status}`);
-      const json = await res.json();
-      const rows = json.franquias || [];
-      state.franquias = rows;
-      if (!rows.length) {
-        sel.innerHTML = `<option value="${DEFAULT_FRANQUIA}">#${DEFAULT_FRANQUIA} (sem sync)</option>`;
-        return;
-      }
-      sel.innerHTML = rows.map((f) => {
-        const nome = f.nome || f.razao_social || 'sem nome';
-        const extra = f.pedidos != null ? ` · ${f.pedidos} ped.` : '';
-        return `<option value="${f.id}">#${f.id} · ${esc(nome)}${extra}</option>`;
-      }).join('');
-      const preferred = Number(urlFranquia) || DEFAULT_FRANQUIA;
-      if (rows.some((f) => Number(f.id) === preferred)) {
-        sel.value = String(preferred);
-      } else {
-        sel.value = String(rows[0].id);
-      }
-      syncUrlFranquia();
     }
 
     async function fetchStage(stage) {
@@ -748,11 +698,6 @@
       document.getElementById('to').value = toInputDate(to);
       document.getElementById('filters').addEventListener('submit', (e) => {
         e.preventDefault();
-        syncUrlFranquia();
-        load();
-      });
-      document.getElementById('franquia').addEventListener('change', () => {
-        syncUrlFranquia();
         load();
       });
       document.getElementById('btnDocs').addEventListener('click', () => {
@@ -760,8 +705,6 @@
       });
       renderFunnel();
       try {
-        setStatus('loading', 'Carregando franquias…');
-        await loadFranquias();
         await load();
       } catch (err) {
         setStatus('error', String(err.message || err));

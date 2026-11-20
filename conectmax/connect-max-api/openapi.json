@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Connect Max API",
-    "description": "API que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON.\n\nAutenticação de aplicação: `Authorization: Bearer <API_KEY>` ou `X-API-Key`.\n`/health` é público. Demais rotas exigem a chave.\n\nDashboard financeiro (funil): `GET /dashboard` — dados via Postgres Contabo\n(`GET /db/*`). GETs sem `/db` batem no portal HTML ao vivo.\n",
+    "description": "API que autentica no Portal do Franqueado\n(`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON. Isolada em ConnectMax Campinas (franquia 9); teto EXTRACT_LIMIT=100 por resposta (sem query/paginação).\n\nAutenticação de aplicação: `Authorization: Bearer <API_KEY>` ou `X-API-Key`.\n`/health` é público. Demais rotas exigem a chave.\n\nDashboard financeiro (funil): `GET /dashboard` — dados via Postgres Contabo\n(`GET /db/*`). GETs sem `/db` batem no portal HTML ao vivo.\n",
     "version": "1.0.0",
     "contact": {
       "name": "Connect Max",
@@ -222,14 +222,6 @@
             "$ref": "#/components/parameters/to"
           },
           {
-            "name": "franquia_id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 9
-            }
-          },
-          {
             "name": "status",
             "in": "query",
             "schema": {
@@ -270,14 +262,6 @@
           },
           {
             "$ref": "#/components/parameters/to"
-          },
-          {
-            "name": "franquia_id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 9
-            }
           },
           {
             "name": "status",
@@ -322,14 +306,6 @@
             "$ref": "#/components/parameters/to"
           },
           {
-            "name": "franquia_id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 9
-            }
-          },
-          {
             "name": "status",
             "in": "query",
             "schema": {
@@ -372,14 +348,6 @@
             "$ref": "#/components/parameters/to"
           },
           {
-            "name": "franquia_id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 9
-            }
-          },
-          {
             "name": "status",
             "in": "query",
             "schema": {
@@ -414,14 +382,6 @@
           },
           {
             "$ref": "#/components/parameters/dataFinal"
-          },
-          {
-            "name": "franquia_id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 9
-            }
           }
         ],
         "responses": {
@@ -759,15 +719,6 @@
               ]
             },
             "description": "1 = inclui linhas de produto (POST produtos.php) por pedido"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "description": "Com itens=1, quantos pedidos enriquecer (do início da lista)"
           },
           {
             "$ref": "#/components/parameters/refresh"

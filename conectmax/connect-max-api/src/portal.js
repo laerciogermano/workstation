@@ -2,6 +2,7 @@ import { homedir } from 'node:os';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { isLoginPage, maxCurrentPage } from './html-utils.js';
+import { forcePortalFranquia } from './franquia.js';
 
 const BASE = 'https://franqueado.conectmax.com';
 const CONFIG_DIR =
@@ -118,9 +119,10 @@ async function readHtml(res) {
  */
 export async function fetchPageHtml(page, query = {}, opts = {}) {
   let cookie = await ensureCookie(opts.forceLogin);
+  const safeQuery = forcePortalFranquia(query);
   const url = new URL(`${BASE}/franqueado/`);
   url.searchParams.set('page', page);
-  for (const [k, v] of Object.entries(query)) {
+  for (const [k, v] of Object.entries(safeQuery)) {
     if (v === undefined || v === null || v === '') continue;
     url.searchParams.set(k, String(v));
   }
@@ -144,7 +146,8 @@ export async function fetchPageHtml(page, query = {}, opts = {}) {
  * @param {{ forceLogin?: boolean, all?: boolean, currentPage?: number }} [opts]
  */
 export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
-  const q = { ...query };
+  const base = forcePortalFranquia(query);
+  const q = { ...base };
   if (opts.currentPage) q.current_page = opts.currentPage;
   const first = await fetchPageHtml(page, q, opts);
   if (!opts.all) return { pages: [first.html], ...first };
@@ -152,7 +155,7 @@ export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
   const last = maxCurrentPage(first.html);
   const pages = [first.html];
   for (let p = 2; p <= last; p++) {
-    const next = await fetchPageHtml(page, { ...query, current_page: p }, {
+    const next = await fetchPageHtml(page, { ...base, current_page: p }, {
       forceLogin: false,
     });
     pages.push(next.html);
@@ -166,18 +169,19 @@ export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
  */
 export async function fetchAjax(pathRel, query = {}, opts = {}) {
   let cookie = await ensureCookie(opts.forceLogin);
+  const safeQuery = forcePortalFranquia(query);
   const method = (opts.method || 'GET').toUpperCase();
   const url = new URL(pathRel.startsWith('http') ? pathRel : `${BASE}${pathRel}`);
   /** @type {RequestInit} */
   const init = { headers: { Cookie: cookie }, redirect: 'follow', method };
   if (method === 'GET') {
-    for (const [k, v] of Object.entries(query)) {
+    for (const [k, v] of Object.entries(safeQuery)) {
       if (v === undefined || v === null || v === '') continue;
       url.searchParams.set(k, String(v));
     }
   } else {
     const body = new URLSearchParams();
-    for (const [k, v] of Object.entries(query)) {
+    for (const [k, v] of Object.entries(safeQuery)) {
       if (v === undefined || v === null || v === '') continue;
       body.set(k, String(v));
     }

@@ -33,7 +33,7 @@ export const CATALOG = {
       filtros: ['id_pedido', 'action'],
       status: [],
       exportGet: [],
-      nota: 'Contato + itens (POST ajax/pedidos/produtos.php). Lista: GET /pedidos?itens=1&limit=N',
+      nota: 'Contato + itens (POST ajax/pedidos/produtos.php). Lista: GET /pedidos?itens=1 (teto EXTRACT_LIMIT; só Campinas)',
       apiLocal: { method: 'GET', path: '/pedidos/:id', status: 'ok' },
     },
     {

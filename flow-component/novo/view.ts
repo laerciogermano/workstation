@@ -67,10 +67,12 @@ export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
 }
 export const STATE_ROW = 15;
 export const planHeight = (sc: Scene, all = false): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
-/** A tabela cresce para a linha de dados caber, mas até um limite (o que passar vira reticências; a lista completa fica no tooltip). */
+/** Chrome fixo da tabela: padding esquerdo 18 + coluna Source 120 + padding direito 14. */
+const TABLE_CHROME = 18 + 120 + 14;
+/** A tabela cresce com o aninhamento (padding por depth) para o texto não invadir o plano. */
 export function tableWidth(sc: Scene, p: Project): number {
-  // 134 = coluna Source (120) + margens; o resto é o que a coluna Function precisa para o texto (nunca encolhe abaixo disso)
-  let need = 0;
+  // coluna Function: indent (depth×IND×2, igual ao CSS) + texto + folga do menu hover
+  let need = 90;
   for (const r of sc.rows) {
     const pad = 10 + r.depth * G.IND * 2; let w: number;
     if (r.kind === "fn") {
@@ -85,7 +87,9 @@ export function tableWidth(sc: Scene, p: Project): number {
     const part = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main", menu = toolsFor(p, r.id, part).length * 25 + 12 + 24;
     need = Math.max(need, w + menu);
   }
-  return Math.round(Math.max(138 + 90, 138 + need));
+  // piso extra pelo maxDepth: mesmo com rótulos curtos, cada nível de aninhamento empurra a coluna
+  need = Math.max(need, 90 + sc.maxDepth * G.IND * 2 + 48);
+  return Math.round(TABLE_CHROME + need);
 }
 
 // ───────────────────────── painel de código (largura e abrir/fechar, como nas IDEs) ─────────────────────────

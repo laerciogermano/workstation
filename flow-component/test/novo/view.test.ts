@@ -243,6 +243,21 @@ describe("o valor aparece ao lado do dado de entrada", () => {
   });
 });
 
+describe("tabela: largura acompanha o aninhamento", () => {
+  it("cada nível de if aumenta tableWidth (não engole o plano)", () => {
+    const t = base();
+    const w0 = tableWidth(t.view().scene, t.p);
+    let cur = t.ids[1]!;
+    for (let i = 0; i < 8; i++) {
+      const bif = t.run({ type: "wrap", id: cur, kind: "if" });
+      cur = t.run({ type: "addChild", id: bif, title: `n${i}` });
+    }
+    const wDeep = tableWidth(t.view().scene, t.p);
+    expect(t.view().scene.maxDepth).toBeGreaterThanOrEqual(8);
+    expect(wDeep).toBeGreaterThan(w0 + 8 * G.IND * 2);
+  });
+});
+
 describe("modo text: barra na largura do text, com padding", () => {
   it("colW cresce com o nome mais comprido e só no modo text", () => {
     const t = base(); expect(colW(t.view().scene, { txtIn: false })).toBe(G.WS); expect(colW(t.view().scene, { txtIn: true })).toBe(G.W);

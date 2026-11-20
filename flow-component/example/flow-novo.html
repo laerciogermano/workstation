@@ -81,7 +81,7 @@
   .fx-zoom{display:flex;transform-origin:0 0;position:absolute;left:0;top:0}
   .multi{display:flex;flex-direction:column}.multi.row{flex-direction:row;gap:28px;align-items:flex-start}.mcol{flex:none;display:flex;flex-direction:column;border:1px solid var(--line-2);border-radius:8px;overflow:hidden}.mcol-t .ic{width:15px;height:15px;color:var(--muted);flex:none}.mcol-t{height:34px;display:flex;align-items:center;gap:8px;padding:0 18px;font:700 12px var(--mono);color:var(--ink);background:var(--wash);border-bottom:1px solid var(--line-2)}.multi[hidden]{display:none}.blk.on .blk-t{background:color-mix(in srgb,var(--accent) 14%,var(--panel));box-shadow:inset 3px 0 0 var(--accent)}.blk{cursor:default}
   .blk-t{height:34px;display:flex;align-items:center;gap:8px;padding:0 18px;font:600 12px var(--mono);color:var(--ink);background:var(--panel);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line)}.blk-r{display:flex}
-  .gtable{flex:none;position:relative;border-right:1px solid var(--line-2)}
+  .gtable{flex:none;position:relative;border-right:1px solid var(--line-2);overflow:hidden} /* largura sobe com depth; sem vazar por cima do plano */
   .gplan{flex:none;position:relative}
   .ghead{display:grid;grid-template-columns:120px 1fr;align-items:end;height:52px;padding:0 14px 8px 18px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .grow{position:relative;display:grid;grid-template-columns:120px 1fr;align-items:center;height:34px;padding:0 14px 0 18px;border-bottom:1px solid var(--line);cursor:default}

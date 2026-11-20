@@ -1539,8 +1539,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
   }
   var STATE_ROW = 15;
   var planHeight = (sc, all = false) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
+  var TABLE_CHROME = 18 + 120 + 14;
   function tableWidth(sc, p) {
-    let need2 = 0;
+    let need2 = 90;
     for (const r of sc.rows) {
       const pad = 10 + r.depth * G.IND * 2;
       let w;
@@ -1555,7 +1556,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const part = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main", menu = toolsFor(p, r.id, part).length * 25 + 12 + 24;
       need2 = Math.max(need2, w + menu);
     }
-    return Math.round(Math.max(138 + 90, 138 + need2));
+    need2 = Math.max(need2, 90 + sc.maxDepth * G.IND * 2 + 48);
+    return Math.round(TABLE_CHROME + need2);
   }
   var CODE_MIN = 300;
   var CODE_DEFAULT = 480;

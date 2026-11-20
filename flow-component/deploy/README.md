@@ -1,9 +1,9 @@
 # Deploy — fop.laerciogermano.com
 
-**URL:** https://fop.laerciogermano.com/ → `flow-novo.html?tema=eternos-black`  
+**URL:** https://fop.laerciogermano.com/ → Flow Language (`flow-novo.html?tema=eternos-black`)  
 **Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop`  
 **DNS:** Hostinger (zona `laerciogermano.com`) · A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)  
-**Conteúdo:** [`../example/`](../example/) (editor Flow · FOP)
+**Conteúdo:** [`../example/`](../example/) · marca: logo no header + **Flow Language** (regra [`.cursor/rules/fop-flow-language.mdc`](../../../.cursor/rules/fop-flow-language.mdc))
 
 > Pedido: **só FOP** em `fop.lesgermano.com`. `lesgermano.com` não está na conta Hostinger Germano. Publicado em `fop.laerciogermano.com`. nginx também lista `fop.lesgermano.com` se o domínio for registrado depois.
 

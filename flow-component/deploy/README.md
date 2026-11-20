@@ -23,6 +23,8 @@
 
 **Antes → depois (nome = ref):** renomear entrada para nome já usado fazia `renameDatumInFlow` (mudava todos) → agora rebind local + limpa valor; saída pode igualar entrada. Rollback: sempre `renameDatumInFlow` em `renameIo`/`setData`/`renameData`.
 
+**Antes → depois (modal out = in):** saída tinha só nome + Add child top-level → mesmo `dataEditor` da entrada (tipo/valor/objeto); objeto na out vira `outs` = campos. Rollback: `withValue = side === "in"`.
+
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.
 
 **Antes → depois (nome = referência / init):** entrada com literal (`text = "…"`) não contava como produção → quem usava o mesmo nome ficava vazado e nos estados como “de fora”. Agora init entra em `produced`/`made`/`dataLinks`. Rollback: só `outs` nesses conjuntos.

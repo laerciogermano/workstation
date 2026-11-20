@@ -3079,26 +3079,34 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return `${sel}${val}${kids2}`;
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
-      const lib3 = !!contractOf(P2(), n), editable = !lib3, withValue = side === "in";
-      const names = opts.names ? [...opts.names] : [...side === "in" ? n.ins : n.outs];
-      if (opts.start && !names.length) {
-        const base = side === "in" ? "input" : "output";
-        names.push(base);
+      const lib3 = !!contractOf(P2(), n), editable = !lib3, isIn = side === "in";
+      const names = [];
+      const drafts = [];
+      if (opts.names) {
+        names.push(...opts.names);
+        drafts.push(...names.map((nm) => isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()));
+      } else if (side === "out" && n.outs.length > 1) {
+        names.push(cubeName(n, "out"));
+        drafts.push({ type: "object", value: "", fields: n.outs.map((name) => ({ name, draft: emptyDraft() })) });
+      } else {
+        names.push(...isIn ? n.ins : n.outs);
+        if (opts.start && !names.length) names.push(isIn ? "input" : "output");
+        drafts.push(...names.map((nm) => isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()));
       }
-      const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id), files = withValue ? fileOrigins(n) : [];
+      const refs = refNames(n), states = statesFor(P2(), n.id), files = isIn ? fileOrigins(n) : [];
       form.classList.add("wide");
       const fresh2 = names.map(() => false), orig = [...names];
-      const nameEditable = (i) => editable || side === "out" && i === 0 || side === "in" && names.length === 1;
-      const canAdd = () => editable && (!withValue || names.length > 1);
+      const nameEditable = (i) => editable || side === "out" && i === 0 || isIn && names.length === 1;
+      const canAdd = () => editable && names.length > 1;
       const knownNames = () => {
         const f = locate(P2(), n.id)?.flow;
         return f ? [...dataNamesInFlow(f)] : [.../* @__PURE__ */ new Set([...refs, ...states.map((s) => s.name)])];
       };
-      const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
+      const title = () => drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(names[0] && names.length === 1 ? names[0] : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         const known = knownNames();
-        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name." : "One output: a single data this function produces. Same name as an input = the same data."}${!withValue && canAdd() ? " Add child adds one more field (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
+        form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh2[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i], String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map((r) => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
@@ -3109,7 +3117,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (k === "pname") {
           const i = Number(t.dataset["i"]), nm = t.value.trim();
           names[i] = nm;
-          if (withValue && nm && nm !== orig[i] && knownNames().includes(nm)) {
+          if (nm && nm !== orig[i] && knownNames().includes(nm)) {
             Object.assign(drafts[i], emptyDraft());
             draw();
           }
@@ -3137,7 +3145,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
           if (t.value.startsWith("state:")) {
             const sn = t.value.slice(6), i = Number(path.split("/")[0]);
             Object.assign(hit.d, emptyDraft("ref"), { value: sn });
-            if (side === "in" && names.length === 1 && nameEditable(i)) names[i] = sn;
+            if (names.length === 1 && nameEditable(i)) names[i] = sn;
           } else if (t.value.startsWith("from:")) {
             const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
             const prod = fileDataProducer(P2(), file, name);
@@ -3194,20 +3202,32 @@ ${given.map((g) => `  ${g},`).join("\n")}
         });
         try {
           const known = new Set(knownNames());
-          const values = withValue ? drafts.map((d, i) => {
+          if (side === "out") {
+            const d0 = drafts[0];
+            let outNames;
+            if (d0?.type === "object") outNames = d0.fields.map((f) => f.name.trim()).filter(Boolean);
+            else outNames = names.map((nm) => nm.trim()).filter(Boolean);
+            if (!editable) {
+              if (n.outs.length === 1 && outNames[0] && outNames[0] !== n.outs[0]) store.dispatch({ type: "renameData", id: n.id, side: "out", to: outNames[0] });
+              else if (n.outs.length !== 1) toast("This function\u2019s outputs come from the lib contract");
+            } else run({ type: "setData", id: n.id, side: "out", names: outNames }, false);
+            done();
+            return;
+          }
+          const values = drafts.map((d, i) => {
             const nm = names[i];
             if (nm && nm !== orig[i] && known.has(nm)) return "";
             return buildArg(d);
-          }) : [];
-          if (!editable && names[0] && orig[0] && names[0] !== orig[0] && (side === "out" || names.length === 1)) store.dispatch({ type: "renameData", id: n.id, side, to: names[0] });
+          });
+          if (!editable && names[0] && orig[0] && names[0] !== orig[0] && names.length === 1) store.dispatch({ type: "renameData", id: n.id, side: "in", to: names[0] });
           if (editable) {
             const keep = names.map((nm, i) => [nm, values[i] ?? ""]).filter(([nm]) => nm);
-            run({ type: "setData", id: n.id, side, names: keep.map((k) => k[0]), values: keep.map((k) => k[1]) }, false);
+            run({ type: "setData", id: n.id, side: "in", names: keep.map((k) => k[0]), values: keep.map((k) => k[1]) }, false);
           } else {
             const cur = locate(P2(), n.id)?.node;
-            const keys = cur && cur.t === "fn" ? side === "in" ? cur.ins : cur.outs : names;
+            const keys = cur && cur.t === "fn" ? cur.ins : names;
             keys.forEach((nm, i) => {
-              if (side === "in") run({ type: "setArg", id: n.id, name: nm, value: values[i] }, false);
+              run({ type: "setArg", id: n.id, name: nm, value: values[i] }, false);
             });
           }
           done();

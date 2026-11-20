@@ -45,10 +45,12 @@ test("ghost input: hovering and clicking opens the box and adds the input (marke
   await click(".ghost[data-kind=in]"); assert.ok(await ev(`!!document.querySelector(".dlg")`)); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); await ev(`document.querySelector(".dlg input[data-k=value]").focus()`); await type("pedido");
   assert.equal(await ev(`!!document.querySelector(".dlg")`), false); assert.ok(await ev(`!!document.querySelector(".plan .dm[data-side=in]")`), "square appears where the ghost was"); assert.equal(await ev(`document.querySelectorAll(".iorow").length`), 0, "no input/output rows anymore"); assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /input = "pedido"/);
 });
-test("ghost output opens the box (one data, like input); Save creates it; trash clears it", async () => {
-  await click(".ghost[data-kind=out]"); assert.ok(await ev(`!!document.querySelector(".dlg")`), "box like input"); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "output"); assert.ok(await ev(`!!document.querySelector(".dlg [data-newrow]")`), "Add child → object");
+test("ghost output opens the same box as input (name + type + value); Save creates it; type remove clears it", async () => {
+  const set = (q, v) => ev(`(()=>{const e=document.querySelector(${JSON.stringify(q)});e.value=${JSON.stringify(v)};e.dispatchEvent(new Event("change",{bubbles:true}))})()`);
+  await click(".ghost[data-kind=out]"); assert.ok(await ev(`!!document.querySelector(".dlg")`), "box like input"); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "output");
+  assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "type"); assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no top-level Add child (use type object)");
   await click(".dlg button.pri"); await wait(150); assert.match(await code(), /let output: unknown/);
-  await click(".plan .dm[data-side=out]"); assert.ok(await ev(`!!document.querySelector(".dlg [data-del]")`), "box with trash"); await click(".dlg [data-del]"); await click(".dlg button.pri"); await wait(150); assert.doesNotMatch(await code(), /let output/); assert.equal(await ev(`!!document.querySelector(".dlg")`), false);
+  await click(".plan .dm[data-side=out]"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`)); await set(".dlg select[data-k=type]", "__remove"); await wait(150); assert.doesNotMatch(await code(), /let output/); assert.equal(await ev(`!!document.querySelector(".dlg")`), false);
 });
 
 test("Esc cancels the box; clicking the function text renames it", async () => {
@@ -75,13 +77,15 @@ test("nome do dado na altura do quadrado: entradas à esquerda dele, saídas à 
     return ins.length>0&&outs.length>0&&ins.every(t=>sq.some(s=>Math.abs(cy(t)-cy(s))<4&&t.right<=s.left+1&&s.left-t.right<30*z))&&outs.every(t=>sq.some(s=>Math.abs(cy(t)-cy(s))<4&&t.left>=s.right-1&&t.left-s.right<30*z))})()`);
   assert.ok(ok, "entradas devem ficar à esquerda e saídas à direita do quadrado, na mesma altura");
 });
-test("one data is a square; Add child in its box makes it a cube at the same spot", async () => {
+test("one data is a square; type object + Add child makes it a cube at the same spot", async () => {
+  const set = (q, v) => ev(`(()=>{const e=document.querySelector(${JSON.stringify(q)});e.value=${JSON.stringify(v)};e.dispatchEvent(new Event("change",{bubbles:true}))})()`);
   await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];a.ui.flow=f.id;document.querySelector('.ex-file[data-flow="'+f.id+'"]').click();const z=a.store.dispatch({type:"addChild",id:f.id,title:"z"});a.store.dispatch({type:"addOutput",id:z,name:"unico"})})()`); await wait(250);
   const cubes0 = await ev(`document.querySelectorAll(".plan .cube").length`);
   const sel = `.plan .dm[data-side=out][data-id="${await ev(`flowApp.store.project.flows[1].kids.at(-1).id`)}"]`;
-  await click(sel); assert.equal(await ev(`document.querySelectorAll(".dlg .param").length`), 1); assert.ok(await ev(`!!document.querySelector(".dlg [data-newrow]")`), "the data box has Add child"); await click(".dlg [data-newrow]");
-  assert.equal(await ev(`document.querySelectorAll(".dlg .param").length`), 2); await click(".dlg button.pri"); await wait(200);
-  assert.equal(await ev(`document.querySelectorAll(".plan .cube").length`), cubes0 + 1, "the pair becomes a cube"); assert.equal(await ev(`!!document.querySelector(".dlg")`), false);
+  await click(sel); assert.equal(await ev(`document.querySelectorAll(".dlg .param").length`), 1); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "same modal as input");
+  await set(".dlg select[data-k=type]", "object"); assert.ok(await ev(`!!document.querySelector(".dlg .addkid")`), "object has Add child"); await click(".dlg .addkid"); await click(".dlg .addkid");
+  await set('.dlg .argf:nth-of-type(1) input[data-k=name]', "a"); await set('.dlg .argf:nth-of-type(2) input[data-k=name]', "b"); await click(".dlg button.pri"); await wait(200);
+  assert.equal(await ev(`document.querySelectorAll(".plan .cube").length`), cubes0 + 1, "fields become a cube"); assert.equal(await ev(`!!document.querySelector(".dlg")`), false);
 });
 test("condition box of the if: selects with the context states, every operator, AND / OR rows; code follows", async () => {
   const set = (q, v) => ev(`(()=>{const e=document.querySelector(${JSON.stringify(q)});e.value=${JSON.stringify(v)};e.dispatchEvent(new Event("change",{bubbles:true}))})()`);

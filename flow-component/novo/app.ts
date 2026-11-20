@@ -329,25 +329,31 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     return `${sel}${val}${kids}`;
   };
   /**
-   * A caixa de um dado (clicar no marcador). Função de LIB: os nomes vêm do contrato; cada entrada tem TIPO e VALOR. Função ABSTRATA: os mesmos
-   * campos de valor (tipo, valor, estados do contexto, objeto com filhos) e, além disso, os nomes são editáveis, dá para remover e "Add child".
-   * Saídas só têm nome. Tudo é rascunho até o "Save" do diálogo.
+   * Mesmo modal para entrada e saída: nome + tipo/origem + valor (objeto = filhos via Add child).
+   * Entrada grava args; saída só os nomes (objeto → um out por campo). Lib: nomes do contrato; out única renomeável.
    */
   const dataEditor = (n: Fn, side: "in" | "out", opts: { names?: string[]; start?: boolean } = {}): Promise<void> => modal<void>(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
-    const lib = !!contractOf(P(), n), editable = !lib, withValue = side === "in";
-    const names: string[] = opts.names ? [...opts.names] : [...(side === "in" ? n.ins : n.outs)]; if (opts.start && !names.length) { const base = side === "in" ? "input" : "output"; names.push(base); }   // dado novo: nome automático (renomeia-se clicando no texto do dado)
-    const drafts: ArgDraft[] = names.map(nm => (withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft())), refs = refNames(n), states = statesFor(P(), n.id), files = withValue ? fileOrigins(n) : []; form.classList.add("wide");
-    // nome do dado: editável sempre que for o parâmetro único (dado puro ou objeto) ou saída única de lib; multi-campo de contrato de lib fica fixo
-    const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];   // orig: nome de cada linha ao abrir ("" = linha nova)
-    const nameEditable = (i: number): boolean => editable || (side === "out" && i === 0) || (side === "in" && names.length === 1);
-    // entrada: um parâmetro (dado ou type=object com filhos); saída: uma saída (dado ou Add child → objeto/cubo)
-    const canAdd = (): boolean => editable && (!withValue || names.length > 1);
+    const lib = !!contractOf(P(), n), editable = !lib, isIn = side === "in";
+    const names: string[] = []; const drafts: ArgDraft[] = [];
+    if (opts.names) { names.push(...opts.names); drafts.push(...names.map(nm => (isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()))); }
+    else if (side === "out" && n.outs.length > 1) {
+      names.push(cubeName(n, "out"));
+      drafts.push({ type: "object", value: "", fields: n.outs.map(name => ({ name, draft: emptyDraft() })) });
+    } else {
+      names.push(...(isIn ? n.ins : n.outs));
+      if (opts.start && !names.length) names.push(isIn ? "input" : "output");
+      drafts.push(...names.map(nm => (isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft())));
+    }
+    const refs = refNames(n), states = statesFor(P(), n.id), files = isIn ? fileOrigins(n) : []; form.classList.add("wide");
+    const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];
+    const nameEditable = (i: number): boolean => editable || (side === "out" && i === 0) || (isIn && names.length === 1);
+    const canAdd = (): boolean => editable && names.length > 1;   // top-level só em cubo multi-nome; objeto = type object + Add child
     const knownNames = (): string[] => { const f = locate(P(), n.id)?.flow; return f ? [...dataNamesInFlow(f)] : [...new Set([...refs, ...states.map(s => s.name)])]; };
-    const title = (): string => (names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`);
+    const title = (): string => (drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(names[0] && names.length === 1 ? names[0]! : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
       const known = knownNames();
-      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name." : "One output: a single data this function produces. Same name as an input = the same data."}${!withValue && canAdd() ? " Add child adds one more field (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || (withValue && drafts[i]!.type === "object") ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i]!, String(i), states, 0, editable, files) : ""}</div>`).join("")}
+      form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i]!.type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i]!, String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map(r => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
       form.querySelector("[data-no]")!.addEventListener("click", () => done());
@@ -356,23 +362,21 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       const t = e.target as HTMLInputElement | HTMLSelectElement, path = t.dataset["path"], k = t.dataset["k"]; if (!k) return;
       if (k === "pname") {
         const i = Number(t.dataset["i"]), nm = t.value.trim(); names[i] = nm;
-        // nome já usado → referência (limpa literal); não precisa do select Type/origin
-        if (withValue && nm && nm !== orig[i] && knownNames().includes(nm)) { Object.assign(drafts[i]!, emptyDraft()); draw(); }
+        if (nm && nm !== orig[i] && knownNames().includes(nm)) { Object.assign(drafts[i]!, emptyDraft()); draw(); }
         return;
       }
       if (!path) return; const hit = draftAt(drafts, path);
       if (k === "name" && hit.field) hit.field.name = t.value; else if (k === "value" && hit.d) hit.d.value = t.value;
       else if (k === "type" && hit.d) {
-        if (t.value === "__remove") {   // "remove this data" no select de tipo (função comum): tira a linha; se era a única, aplica na hora
+        if (t.value === "__remove") {
           const i = Number(path.split("/")[0]); names.splice(i, 1); drafts.splice(i, 1); fresh.splice(i, 1); orig.splice(i, 1);
           if (!names.length) { run({ type: "setData", id: n.id, side, names: [], values: [] }, false); done(); return; } draw(); return;
         }
         if (t.value.startsWith("state:")) {
           const sn = t.value.slice(6), i = Number(path.split("/")[0]);
           Object.assign(hit.d, emptyDraft("ref"), { value: sn });
-          // parâmetro único: a referência no flow acompanha o estado (text → timestamp)
-          if (side === "in" && names.length === 1 && nameEditable(i)) names[i] = sn;
-        } else if (t.value.startsWith("from:")) {   // import de out de outro arquivo
+          if (names.length === 1 && nameEditable(i)) names[i] = sn;
+        } else if (t.value.startsWith("from:")) {
           const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
           const prod = fileDataProducer(P(), file, name);
           if (prod && prod.ins.some(i => !(prod.args?.[i]?.trim()))) toast(`“${prod.title}” still has abstract inputs; the generated call will use {}.`);
@@ -395,11 +399,21 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       e.preventDefault(); form.querySelectorAll<HTMLInputElement>("input[data-k]").forEach(i => { const k = i.dataset["k"]; if (k === "pname") { names[Number(i.dataset["i"])] = i.value.trim(); return; } const hit = draftAt(drafts, i.dataset["path"]!); if (k === "value" && hit.d) hit.d.value = i.value; if (k === "name" && hit.field) hit.field.name = i.value; });
       try {
         const known = new Set(knownNames());
-        // nome já existente na entrada → valor vazio (referência); setData/renameData cuidam do bind
-        const values = withValue ? drafts.map((d, i) => { const nm = names[i]!; if (nm && nm !== orig[i] && known.has(nm)) return ""; return buildArg(d); }) : [];
-        if (!editable && names[0] && orig[0] && names[0] !== orig[0] && (side === "out" || names.length === 1)) store.dispatch({ type: "renameData", id: n.id, side, to: names[0] });
-        if (editable) { const keep = names.map((nm, i) => [nm, values[i] ?? ""] as const).filter(([nm]) => nm); run({ type: "setData", id: n.id, side, names: keep.map(k => k[0]), values: keep.map(k => k[1]) }, false); }
-        else { const cur = locate(P(), n.id)?.node as Fn | undefined; const keys = cur && cur.t === "fn" ? (side === "in" ? cur.ins : cur.outs) : names; keys.forEach((nm, i) => { if (side === "in") run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); }); }
+        if (side === "out") {
+          // objeto → outs = campos; dado puro → um nome (valor da saída não grava em args)
+          const d0 = drafts[0]; let outNames: string[];
+          if (d0?.type === "object") outNames = d0.fields.map(f => f.name.trim()).filter(Boolean);
+          else outNames = names.map(nm => nm.trim()).filter(Boolean);
+          if (!editable) {
+            if (n.outs.length === 1 && outNames[0] && outNames[0] !== n.outs[0]) store.dispatch({ type: "renameData", id: n.id, side: "out", to: outNames[0] });
+            else if (n.outs.length !== 1) toast("This function’s outputs come from the lib contract");
+          } else run({ type: "setData", id: n.id, side: "out", names: outNames }, false);
+          done(); return;
+        }
+        const values = drafts.map((d, i) => { const nm = names[i]!; if (nm && nm !== orig[i] && known.has(nm)) return ""; return buildArg(d); });
+        if (!editable && names[0] && orig[0] && names[0] !== orig[0] && names.length === 1) store.dispatch({ type: "renameData", id: n.id, side: "in", to: names[0] });
+        if (editable) { const keep = names.map((nm, i) => [nm, values[i] ?? ""] as const).filter(([nm]) => nm); run({ type: "setData", id: n.id, side: "in", names: keep.map(k => k[0]), values: keep.map(k => k[1]) }, false); }
+        else { const cur = locate(P(), n.id)?.node as Fn | undefined; const keys = cur && cur.t === "fn" ? cur.ins : names; keys.forEach((nm, i) => { run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); }); }
         done();
       } catch (err) { toast(err instanceof Error ? err.message : String(err)); }
     });

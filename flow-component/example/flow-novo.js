@@ -195,15 +195,6 @@
     visit(flow.kids);
     return found;
   }
-  function resolveDataEdit(p, id, side, name) {
-    const loc = locate(p, id);
-    if (!loc || loc.node.t !== "fn") return { id, side };
-    const n = loc.node, key = name?.trim() || (side === "in" ? n.ins.length === 1 ? n.ins[0] : "" : n.outs.length === 1 ? n.outs[0] : "");
-    if (!key) return { id, side };
-    const origin = originPort(loc.flow, key);
-    if (!origin || origin.id === id && origin.side === side) return { id, side };
-    return origin;
-  }
   function renamePortLocal(n, side, from, to, clearValue = false) {
     if (from === to) return;
     const key = side === "out" ? "outs" : "ins";
@@ -1930,11 +1921,22 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }
     for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
     if (!all) return m;
+    const consumerAt = (col, name) => {
+      for (const r of sc.rows) {
+        if (r.kind !== "fn" || !r.leaf || r.s !== col) continue;
+        const f = r.node;
+        if (f.ins.includes(name) && !initsName(f, name)) return { id: f.id, side: "in" };
+      }
+      return null;
+    };
     const cols = [...m.keys()].sort((x, y) => x - y), out = /* @__PURE__ */ new Map();
     let acc = [];
     for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
       const fresh2 = (m.get(c) ?? []).map((it) => inheritCube(it, cubes)), names = new Set(fresh2.map((i) => i.name));
-      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...inheritCube(i, cubes), old: true })), ...fresh2];
+      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...inheritCube(i, cubes), old: true })), ...fresh2].map((it) => {
+        const cons = consumerAt(c, it.name);
+        return cons ? { ...it, owner: cons.id, side: cons.side } : it;
+      });
       if (acc.length) out.set(c, acc);
     }
     return out;
@@ -3162,20 +3164,32 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids2}`;
       return `${sel}${val}${kids2}`;
     };
+    const draftForIn = (fn, nm) => {
+      const local = fn.args?.[nm]?.trim() ?? "";
+      if (local) return inferArg(local);
+      const loc = locate(P2(), fn.id);
+      if (!loc) return emptyDraft();
+      const origin = originPort(loc.flow, nm);
+      if (!origin || origin.side !== "in" || origin.id === fn.id) return emptyDraft();
+      const on = locate(P2(), origin.id)?.node;
+      if (on?.t !== "fn") return emptyDraft();
+      const ov = on.args?.[nm]?.trim() ?? "";
+      return ov ? inferArg(ov) : emptyDraft();
+    };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
       const lib3 = !!contractOf(P2(), n), editable = !lib3, isIn = side === "in";
       const names = [];
       const drafts = [];
       if (opts.names) {
         names.push(...opts.names);
-        drafts.push(...names.map((nm) => isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()));
+        drafts.push(...names.map((nm) => isIn ? draftForIn(n, nm) : emptyDraft()));
       } else if (side === "out" && n.outs.length > 1) {
         names.push(cubeName(n, "out"));
         drafts.push({ type: "object", value: "", fields: n.outs.map((name) => ({ name, draft: emptyDraft() })) });
       } else {
         names.push(...isIn ? n.ins : n.outs);
         if (opts.start && !names.length) names.push(isIn ? "input" : "output");
-        drafts.push(...names.map((nm) => isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()));
+        drafts.push(...names.map((nm) => isIn ? draftForIn(n, nm) : emptyDraft()));
       }
       const refs = refNames(n), states = statesFor(P2(), n.id), files = isIn ? fileOrigins(n) : [];
       form.classList.add("wide");
@@ -3189,7 +3203,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const title = () => drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(names[0] && names.length === 1 ? names[0] : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         const known = knownNames();
-        form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Renaming the origin updates every reference; renaming a reference unlinks it (new name) or points it at another existing data. Data and function names stay unique in the flow.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+        form.innerHTML = `<label>${title()}</label><p class="hint">Origin (left/first): save updates every reference. Reference (right): save changes only this port \u2014 rename unlinks; editing the value keeps a local copy.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh2[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i], String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map((r) => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -3298,10 +3312,19 @@ ${given.map((g) => `  ${g},`).join("\n")}
             done();
             return;
           }
+          const loc = locate(P2(), n.id);
           const values = drafts.map((d, i) => {
-            const nm = names[i];
-            if (nm && nm !== orig[i] && known.has(nm)) return "";
-            return buildArg(d);
+            const nm = names[i], from = orig[i];
+            if (nm && nm !== from && known.has(nm)) return "";
+            const v = buildArg(d);
+            if (loc && nm === from && !n.args?.[from]?.trim() && from) {
+              const origin = originPort(loc.flow, from);
+              if (origin && origin.side === "in" && origin.id !== n.id) {
+                const on = locate(P2(), origin.id)?.node;
+                if (on?.t === "fn" && (on.args?.[from]?.trim() ?? "") === v) return "";
+              }
+            }
+            return v;
           });
           if (!editable && names[0] && orig[0] && names[0] !== orig[0] && names.length === 1) store.dispatch({ type: "renameData", id: n.id, side: "in", to: names[0] });
           if (editable) {
@@ -3499,10 +3522,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
         else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
       },
       editData: async (d) => {
-        const hit = resolveDataEdit(P2(), d["id"], d["side"] === "out" ? "out" : "in", d["name"]);
-        const n = locate(P2(), hit.id)?.node;
+        const n = locate(P2(), d["id"])?.node;
         if (!n || n.t !== "fn") return;
-        const side = hit.side, list = side === "in" ? n.ins : n.outs;
+        const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
         if (contractOf(P2(), n)) {
           if (side === "in") await dataEditor(n, "in");
           else if (list.length) await dataEditor(n, "out");

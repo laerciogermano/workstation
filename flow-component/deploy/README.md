@@ -27,7 +27,7 @@
 
 **Antes → depois (mesmo nome herda cubo):** pin/estado de quem só referencia o nome ficava quadrado → `cubeInfoByName` + herança no pin (`ioMarks`) e nos estados. Rollback: `asCube` só com `isCube(list)` / literal `{` local.
 
-**Antes → depois (mesmo editor):** clique na referência abria modal local (tipo text vazio) → `resolveDataEdit` abre o `dataEditor` da origem; estado também `data-act=editData`. Rollback: `editData` sempre no `id` clicado.
+**Antes → depois (esquerda/direita):** `resolveDataEdit` mandava todo clique para a origem → editar a direita mudava a esquerda. Agora: edita o porto clicado; origem propaga nome; referência só local (draft herda só na UI; save sem mudança não materializa). Estado em coluna do consumidor aponta `owner` para ele. Rollback: redirect no `editData`.
 
 **Antes → depois (modal out = in):** saída tinha só nome + Add child top-level → mesmo `dataEditor` da entrada (tipo/valor/objeto); objeto na out vira `outs` = campos. Rollback: `withValue = side === "in"`.
 

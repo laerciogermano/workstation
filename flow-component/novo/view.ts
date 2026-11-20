@@ -110,10 +110,21 @@ export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, 
   for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
   if (!all) return m;
   // todos os disponíveis: cada estado repete o que já existia (um nome produzido de novo substitui o antigo)
+  // se uma função neste passo só referencia o nome, o clique no estado edita esse porto (direita), não a origem
+  const consumerAt = (col: number, name: string): { id: string; side: "in" | "out" } | null => {
+    for (const r of sc.rows) {
+      if (r.kind !== "fn" || !r.leaf || r.s !== col) continue; const f = r.node as Fn;
+      if (f.ins.includes(name) && !initsName(f, name)) return { id: f.id, side: "in" };
+    }
+    return null;
+  };
   const cols = [...m.keys()].sort((x, y) => x - y), out = new Map<number, StateItem[]>(); let acc: StateItem[] = [];
   for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
     const fresh = (m.get(c) ?? []).map(it => inheritCube(it, cubes)), names = new Set(fresh.map(i => i.name));
-    acc = [...acc.filter(i => !names.has(i.name)).map(i => ({ ...inheritCube(i, cubes), old: true })), ...fresh]; if (acc.length) out.set(c, acc);
+    acc = [...acc.filter(i => !names.has(i.name)).map(i => ({ ...inheritCube(i, cubes), old: true })), ...fresh].map(it => {
+      const cons = consumerAt(c, it.name); return cons ? { ...it, owner: cons.id, side: cons.side } : it;
+    });
+    if (acc.length) out.set(c, acc);
   }
   return out;
 }

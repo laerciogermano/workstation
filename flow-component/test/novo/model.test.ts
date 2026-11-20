@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, resolveDataEdit, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
+import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, resolveDataOrigin, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
 
 /** Projeto de teste: raiz "root" com filhos a, b, c, d (todos folhas). */
 function base() {
@@ -336,16 +336,25 @@ describe("nome = referência no fluxo", () => {
     expect((locate(t.p, t.c)!.node as Fn).title).toBe("log"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
     t.run({ type: "rename", id: t.c, title: "info" }); expect((locate(t.p, t.c)!.node as Fn).title).toBe("info"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
   });
-  it("mesmo nome = mesmo editor: clique na referência resolve para a origem (objeto)", () => {
+  it("esquerda (origem) propaga; direita (referência) só muda o porto local", () => {
     const t = base();
-    t.run({ type: "addInput", id: t.a, name: "input" }); t.run({ type: "setArg", id: t.a, name: "input", value: '{ field1: "sdfdsfdsf" }' });
-    t.run({ type: "addOutput", id: t.a, name: "output" }); t.run({ type: "addInput", id: t.b, name: "input" });
-    expect(resolveDataEdit(t.p, t.b, "in")).toEqual({ id: t.a, side: "in" });
-    expect(resolveDataEdit(t.p, t.b, "in", "input")).toEqual({ id: t.a, side: "in" });
-    expect(resolveDataEdit(t.p, t.a, "in")).toEqual({ id: t.a, side: "in" });
-    expect(resolveDataEdit(t.p, t.a, "out")).toEqual({ id: t.a, side: "out" });
-    const origin = locate(t.p, resolveDataEdit(t.p, t.b, "in").id)!.node as Fn;
-    expect(origin.args?.input).toMatch(/^\s*\{/); expect(origin.args?.input).toContain("field1");
+    t.run({ type: "addInput", id: t.a, name: "teste" }); t.run({ type: "setArg", id: t.a, name: "teste", value: '{ field1: "aaa" }' });
+    t.run({ type: "addOutput", id: t.a, name: "output" }); t.run({ type: "addInput", id: t.b, name: "teste" });
+    expect(resolveDataOrigin(t.p, t.b, "in")).toEqual({ id: t.a, side: "in" });
+    // direita: renomeia só o filho
+    t.run({ type: "renameIo", id: t.b, side: "in", from: "teste", to: "outro" });
+    expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["teste"], args: { teste: '{ field1: "aaa" }' } });
+    expect((locate(t.p, t.b)!.node as Fn).ins).toEqual(["outro"]);
+    // esquerda: propaga o nome a todos
+    t.run({ type: "addInput", id: t.c, name: "teste" });
+    t.run({ type: "renameIo", id: t.a, side: "in", from: "teste", to: "base" });
+    expect((locate(t.p, t.a)!.node as Fn).ins).toEqual(["base"]);
+    expect((locate(t.p, t.c)!.node as Fn).ins).toEqual(["base"]);
+    expect((locate(t.p, t.b)!.node as Fn).ins).toEqual(["outro"]);   // já desvinculado
+    // direita: valor local não altera a origem
+    t.run({ type: "setArg", id: t.b, name: "outro", value: '{ field1: "bbb" }' });
+    expect((locate(t.p, t.a)!.node as Fn).args?.base).toBe('{ field1: "aaa" }');
+    expect((locate(t.p, t.b)!.node as Fn).args?.outro).toBe('{ field1: "bbb" }');
   });
 });
 

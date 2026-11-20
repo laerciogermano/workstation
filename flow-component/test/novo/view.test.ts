@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { icon } from "../../novo/icons";
 import { layout } from "../../novo/layout";
-import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, resolveDataEdit, type Command, type Fn, type Project } from "../../novo/model";
+import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, resolveDataOrigin, type Command, type Fn, type Project } from "../../novo/model";
 import { sampleProject } from "../../novo/sample";
 import { countForRow, countForStep } from "../../novo/scope";
 import { build, planHeight, PLAN_PAD_BOTTOM, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planGutter, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
@@ -262,9 +262,10 @@ describe("quadrado do dado", () => {
     const inputAt1 = at1.find(x => x.name === "input");
     expect(inputAt1).toMatchObject({ cube: true, fields: ["field1"] });
     expect(p).toContain('class="scube"'); expect((p.match(/class="scube"/g) ?? []).length).toBeGreaterThanOrEqual(2);
-    // clique no pin/estado da referência → mesma origem (modal do objeto)
-    expect(resolveDataEdit(t.p, t.ids[1]!, "in")).toEqual({ id: t.ids[0]!, side: "in" });
-    expect(resolveDataEdit(t.p, t.ids[1]!, "in", "input")).toEqual({ id: t.ids[0]!, side: "in" });
+    expect(resolveDataOrigin(t.p, t.ids[1]!, "in")).toEqual({ id: t.ids[0]!, side: "in" });
+    // estado em s1: dono = consumidor (direita), não a origem
+    const st1 = statesByStep(t.view().scene, true, t.p).get(1)?.find(x => x.name === "input");
+    expect(st1).toMatchObject({ owner: t.ids[1]!, side: "in", cube: true });
   });
 });
 

@@ -1,7 +1,7 @@
 import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft, type ArgType } from "./args";
 import { buildCond, COND_OPS, emptyClause, inferCond, JOINERS, needsRight, type CondDraft, type CondOp, type Joiner } from "./cond";
 import { runInWorker, type LogLevel, type Running } from "./runner";
-import { contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, resolveDataEdit, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
+import { contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, originPort, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
@@ -328,21 +328,29 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids}`;
     return `${sel}${val}${kids}`;
   };
+  /** Draft da entrada: valor local, ou (só exibição) o da origem quando este porto só referencia o nome. */
+  const draftForIn = (fn: Fn, nm: string): ArgDraft => {
+    const local = fn.args?.[nm]?.trim() ?? ""; if (local) return inferArg(local);
+    const loc = locate(P(), fn.id); if (!loc) return emptyDraft();
+    const origin = originPort(loc.flow, nm); if (!origin || origin.side !== "in" || origin.id === fn.id) return emptyDraft();
+    const on = locate(P(), origin.id)?.node; if (on?.t !== "fn") return emptyDraft();
+    const ov = on.args?.[nm]?.trim() ?? ""; return ov ? inferArg(ov) : emptyDraft();
+  };
   /**
    * Mesmo modal para entrada e saída: nome + tipo/origem + valor (objeto = filhos via Add child).
-   * Entrada grava args; saída só os nomes (objeto → um out por campo). Lib: nomes do contrato; out única renomeável.
+   * Origem: salvar propaga o nome. Referência: salvar só neste porto (desvincula ou valor local).
    */
   const dataEditor = (n: Fn, side: "in" | "out", opts: { names?: string[]; start?: boolean } = {}): Promise<void> => modal<void>(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
     const lib = !!contractOf(P(), n), editable = !lib, isIn = side === "in";
     const names: string[] = []; const drafts: ArgDraft[] = [];
-    if (opts.names) { names.push(...opts.names); drafts.push(...names.map(nm => (isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft()))); }
+    if (opts.names) { names.push(...opts.names); drafts.push(...names.map(nm => (isIn ? draftForIn(n, nm) : emptyDraft()))); }
     else if (side === "out" && n.outs.length > 1) {
       names.push(cubeName(n, "out"));
       drafts.push({ type: "object", value: "", fields: n.outs.map(name => ({ name, draft: emptyDraft() })) });
     } else {
       names.push(...(isIn ? n.ins : n.outs));
       if (opts.start && !names.length) names.push(isIn ? "input" : "output");
-      drafts.push(...names.map(nm => (isIn ? inferArg(n.args?.[nm] ?? "") : emptyDraft())));
+      drafts.push(...names.map(nm => (isIn ? draftForIn(n, nm) : emptyDraft())));
     }
     const refs = refNames(n), states = statesFor(P(), n.id), files = isIn ? fileOrigins(n) : []; form.classList.add("wide");
     const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];
@@ -352,7 +360,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const title = (): string => (drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(names[0] && names.length === 1 ? names[0]! : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
       const known = knownNames();
-      form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Renaming the origin updates every reference; renaming a reference unlinks it (new name) or points it at another existing data. Data and function names stay unique in the flow.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+      form.innerHTML = `<label>${title()}</label><p class="hint">Origin (left/first): save updates every reference. Reference (right): save changes only this port — rename unlinks; editing the value keeps a local copy.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i]!.type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i]!, String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map(r => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -410,7 +418,19 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
           } else run({ type: "setData", id: n.id, side: "out", names: outNames }, false);
           done(); return;
         }
-        const values = drafts.map((d, i) => { const nm = names[i]!; if (nm && nm !== orig[i] && known.has(nm)) return ""; return buildArg(d); });
+        const loc = locate(P(), n.id);
+        const values = drafts.map((d, i) => {
+          const nm = names[i]!, from = orig[i]!; if (nm && nm !== from && known.has(nm)) return "";
+          const v = buildArg(d);
+          // referência pura: se o draft ainda é o da origem e o nome não mudou, não materializa valor local
+          if (loc && nm === from && !(n.args?.[from]?.trim()) && from) {
+            const origin = originPort(loc.flow, from);
+            if (origin && origin.side === "in" && origin.id !== n.id) {
+              const on = locate(P(), origin.id)?.node; if (on?.t === "fn" && (on.args?.[from]?.trim() ?? "") === v) return "";
+            }
+          }
+          return v;
+        });
         if (!editable && names[0] && orig[0] && names[0] !== orig[0] && names.length === 1) store.dispatch({ type: "renameData", id: n.id, side: "in", to: names[0] });
         if (editable) { const keep = names.map((nm, i) => [nm, values[i] ?? ""] as const).filter(([nm]) => nm); run({ type: "setData", id: n.id, side: "in", names: keep.map(k => k[0]), values: keep.map(k => k[1]) }, false); }
         else { const cur = locate(P(), n.id)?.node as Fn | undefined; const keys = cur && cur.t === "fn" ? cur.ins : names; keys.forEach((nm, i) => { run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); }); }
@@ -505,11 +525,11 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
     },
     editData: async d => {
-      const hit = resolveDataEdit(P(), d["id"]!, d["side"] === "out" ? "out" : "in", d["name"]);
-      const n = locate(P(), hit.id)?.node; if (!n || n.t !== "fn") return;
-      const side = hit.side, list = side === "in" ? n.ins : n.outs;
+      // edita o porto clicado: origem propaga no save; referência só muda este porto
+      const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return;
+      const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
       if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length) await dataEditor(n, "out"); else toast("This function’s outputs come from the lib contract"); return; }
-      await dataEditor(n, side, list.length ? {} : { start: true });   // I/O vazio: já abre com um dado (`input`/`output`) para conseguir salvar
+      await dataEditor(n, side, list.length ? {} : { start: true });
     },
     removeIo: d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; run({ type: d["side"] === "out" ? "removeOutput" : "removeInput", id: n.id, name: d["name"]! }, false); },
     renameOut: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const v = await editInline(n.outs[0] ?? "", "Output data name"); if (v) run({ type: "renameData", id: n.id, to: v }, false); },

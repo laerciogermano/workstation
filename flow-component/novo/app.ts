@@ -151,7 +151,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), files = new Map<string, Fn[]>(); for (const f of p.flows) { const k = flowFile(f); files.set(k, [...(files.get(k) ?? []), f]); }
     const curFile = (() => { const r = locate(p, ui.flow)?.flow; return r ? flowFile(r) : ""; })();
     const secOpen = !exClosed.has("sec:files");
-    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset to the initial setup and clear saved data (localStorage)" aria-label="Reset and clear storage">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
       const fid = "f:" + file, open = !exClosed.has(fid);
       const body = open ? fns.map(fn => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
       return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0]!.id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -176,7 +176,14 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       let n = 1, title = "newFunction"; while (taken.has(title)) title = `newFunction${++n}`;
       run({ type: "newFlow", title, file }); return;
     }
-    if (t.closest("[data-exreset]")) { void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then(ok => { if (!ok) return; exClosed.clear(); fileView = "*"; fitted = false; reset(); render(); }); return; }
+    if (t.closest("[data-exreset]")) {
+      void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then(ok => {
+        if (!ok) return;
+        try { for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k); } catch { /* privado / bloqueado */ }
+        host.ownerDocument.defaultView?.location.reload();
+      });
+      return;
+    }
     const delFile = t.closest<HTMLElement>("[data-exdelfile]");
     if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); const total = P().flows.filter(f => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0); void (total > 1 ? confirmAsk(`Remove the file “${file}” and its ${total} function(s)?`) : Promise.resolve(true)).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }
     const del = t.closest<HTMLElement>("[data-exdel]"); if (del) { void delFlow(del.dataset["exdel"]!); return; }
@@ -528,7 +535,10 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
     $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });
   }
-  const reset = (): void => { const s = sampleProject(); store.load(s.project); ui.flow = s.main; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; };
+  const reset = (): void => {
+    try { for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k); } catch { /* privado / bloqueado */ }
+    host.ownerDocument.defaultView?.location.reload();
+  };
   host.ownerDocument.addEventListener("keydown", e => {
     const tg = e.target as HTMLElement; if (/input|textarea|select/i.test(tg.tagName)) return;
     if (!e.metaKey && !e.ctrlKey && !e.altKey) { if (e.key === "+" || e.key === "=") { zoomTo(ui.zoom * 1.15); return; } if (e.key === "-") { zoomTo(ui.zoom / 1.15); return; } if (e.key === "0") { auto = true; render(); return; } }
@@ -684,6 +694,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
 }
 
 const STORE_KEY = "flow-novo-projeto-v1";
+/** Chaves do editor no localStorage (reset do Explorer apaga todas). */
+const FLOW_STORAGE_KEYS = [STORE_KEY, "flow-novo-ui-v2", "flow-novo-explorer-v1"] as const;
 /** Abre o projeto salvo no navegador (se houver e for válido); senão, o exemplo. */
 function startProject(): { project: Project; flow: string } {
   try { const raw = localStorage.getItem(STORE_KEY); if (raw) { const p = parseProject(raw); const rest = p.flows.filter(f => !(f.file === "samples.ts" && SAMPLE_TITLES.includes(f.title))); if (rest.length && rest.length < p.flows.length) p.flows = rest;   /* os samples já foram o padrão: saem do que ficou salvo */ return { project: p, flow: p.flows[0]!.id }; } } catch { /* salvo corrompido: volta ao exemplo */ }

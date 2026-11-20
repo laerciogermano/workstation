@@ -2587,7 +2587,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return r ? flowFile(r) : "";
       })();
       const secOpen = !exClosed.has("sec:files");
-      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset to the initial setup and clear saved data (localStorage)" aria-label="Reset and clear storage">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
         const fid = "f:" + file, open = !exClosed.has(fid);
         const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
         return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -2631,13 +2631,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return;
       }
       if (t.closest("[data-exreset]")) {
-        void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then((ok) => {
+        void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then((ok) => {
           if (!ok) return;
-          exClosed.clear();
-          fileView = "*";
-          fitted = false;
-          reset();
-          render();
+          try {
+            for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k);
+          } catch {
+          }
+          host.ownerDocument.defaultView?.location.reload();
         });
         return;
       }
@@ -3331,12 +3331,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       });
     }
     const reset = () => {
-      const s = sampleProject();
-      store.load(s.project);
-      ui.flow = s.main;
-      ui.sel = null;
-      ui.closed.clear();
-      auto = true;
+      try {
+        for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k);
+      } catch {
+      }
+      host.ownerDocument.defaultView?.location.reload();
     };
     host.ownerDocument.addEventListener("keydown", (e) => {
       const tg = e.target;
@@ -3723,6 +3722,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     } };
   }
   var STORE_KEY = "flow-novo-projeto-v1";
+  var FLOW_STORAGE_KEYS = [STORE_KEY, "flow-novo-ui-v2", "flow-novo-explorer-v1"];
   function startProject() {
     try {
       const raw = localStorage.getItem(STORE_KEY);

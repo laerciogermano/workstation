@@ -523,7 +523,7 @@ function guiaHtml() {
 <table><tr><th>Comando</th><th>Payload</th></tr>
 ${[["newFlow", "{ title? }"], ["rename", "{ id, title }"], ["addChild", "{ id, title?, catch? }"], ["addSibling", "{ id, title?, before? }"], ["remove", "{ id }"], ["wrap", "{ id, kind: \"if\" | \"for\" | \"try\", test?, v?, coll? }"], ["unwrap", "{ id }"], ["exitScope", "{ id }"], ["setScope", "{ id, count }"], ["setIf", "{ id, test, elseTo? }"], ["setFor", "{ id, v, coll }"], ["addInput · removeInput", "{ id, name }"], ["addOutput · removeOutput", "{ id, name }"], ["assign", "{ id, agent }"], ["setTask", "{ id, task }"], ["setResp", "{ id, resp }"], ["setParallel", "{ id, on }"]].map(([c, p]) => `<tr><td><code>${c}</code></td><td><code>${esc(p)}</code></td></tr>`).join("")}</table>
 <h2 class="plain" id="g-temas">Temas</h2>
-<p>As 12 bolinhas do cabeçalho trocam o tema e o escolhido fica salvo. Para abrir já num tema use <code>?tema=</code>: <a href="flow-novo.html?tema=eternos-black">flow-novo.html?tema=eternos-black</a>, <a href="flow.html?tema=eternos">flow.html?tema=eternos</a>. Nos temas <i>eternos</i>: função azul, dado vermelho; if âmbar, for violeta, try verde.</p>`;
+<p>As 12 bolinhas do cabeçalho trocam o tema e o escolhido fica salvo. Para abrir já num tema use <code>?tema=</code>: <a href="flow-novo.html?tema=eternos-black">flow-novo.html?tema=eternos-black</a>, <a href="flow.html?tema=eternos">flow.html?tema=eternos</a>. Nos temas <i>eternos</i>: função lilás, dado vermelho; if âmbar, for ciano (ciclo), try verde.</p>`;
 }
 
 function codigoHtml() {

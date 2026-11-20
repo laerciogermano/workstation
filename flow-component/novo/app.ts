@@ -336,8 +336,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
           const i = Number(path.split("/")[0]); names.splice(i, 1); drafts.splice(i, 1); fresh.splice(i, 1); orig.splice(i, 1);
           if (!names.length) { run({ type: "setData", id: n.id, side, names: [], values: [] }, false); done(); return; } draw(); return;
         }
-        if (t.value.startsWith("state:")) Object.assign(hit.d, emptyDraft("ref"), { value: t.value.slice(6) });   // um estado do contexto
-        else if (t.value.startsWith("from:")) {   // import de out de outro arquivo
+        if (t.value.startsWith("state:")) {
+          const sn = t.value.slice(6), i = Number(path.split("/")[0]);
+          Object.assign(hit.d, emptyDraft("ref"), { value: sn });
+          // parâmetro único: a referência no flow acompanha o estado (text → timestamp)
+          if (side === "in" && names.length === 1 && nameEditable(i)) names[i] = sn;
+        } else if (t.value.startsWith("from:")) {   // import de out de outro arquivo
           const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
           const prod = fileDataProducer(P(), file, name);
           if (prod && prod.ins.some(i => !(prod.args?.[i]?.trim()))) toast(`“${prod.title}” still has abstract inputs; the generated call will use {}.`);

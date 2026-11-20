@@ -134,6 +134,12 @@ describe("plano (SVG)", () => {
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
     const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"'); expect(p).not.toContain('data-act="addIo"');
   });
+  it("lib void (console.log) não inventa output_*: sem marca nem rótulo de saída", () => {
+    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" });
+    const p = t.view().plan;
+    expect(p).not.toContain("output_log"); expect(p).not.toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`);
+    expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="in"`); expect(p).toContain(">text<");
+  });
   it("blocos: banda tracejada, etiqueta, alça e triângulo do if; catch com X; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
     const p = t.view().plan; for (const c of ["bande if", "bande lp", "bande tr", "bande ca"]) expect(p).toContain(c); expect(p).toContain('class="fif"'); expect(p).toContain("data-drag="); expect(p).toContain("catch · if the try fails");

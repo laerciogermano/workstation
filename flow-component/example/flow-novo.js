@@ -1892,20 +1892,23 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return asCube ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       };
       over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-      over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
+      const showOut = !lib3 || f.outs.length > 0;
+      if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
       const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
-      over.push(mark(colX2(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX2(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
+      over.push(mark(colX2(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
+      if (showOut) over.push(mark(colX2(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
       const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
       over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
-      over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
+      if (showOut) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
     };
     const barX = /* @__PURE__ */ new Map();
     sc.rows.forEach((r, i) => {
       if (r.kind !== "fn") return;
       const f = r.node, selC = ui.sel === f.id ? " sel" : "";
       const lblAfterOuts = (fr) => {
+        if (contractOf(p, fr) && !fr.outs.length) return colX2(r.e + 1) + 10;
         const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
-        return colX2(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
+        return colX2(r.e + 1) + 10 + G.GAP - 10 + tw(outsTxt, 6.2) + 36;
       };
       if (!r.leaf) {
         const inset = 21, x12 = colX2(r.s) + inset, x22 = colX2(r.e + 1) - inset;
@@ -2769,8 +2772,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
             draw();
             return;
           }
-          if (t.value.startsWith("state:")) Object.assign(hit.d, emptyDraft("ref"), { value: t.value.slice(6) });
-          else if (t.value.startsWith("from:")) {
+          if (t.value.startsWith("state:")) {
+            const sn = t.value.slice(6), i = Number(path.split("/")[0]);
+            Object.assign(hit.d, emptyDraft("ref"), { value: sn });
+            if (side === "in" && names.length === 1 && nameEditable(i)) names[i] = sn;
+          } else if (t.value.startsWith("from:")) {
             const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
             const prod = fileDataProducer(P2(), file, name);
             if (prod && prod.ins.some((i) => !prod.args?.[i]?.trim())) toast(`\u201C${prod.title}\u201D still has abstract inputs; the generated call will use {}.`);

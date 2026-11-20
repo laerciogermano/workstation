@@ -88,7 +88,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Quadrado vs cubo (alinhado ao TS):** `ins`/`outs` `[]` → cubo (state/`{}`); um nome → quadrado; 2+ → cubo. O código gerado sempre troca `state`, então o vazio também é caixa. **Antes:** `[]` sem marca + fantasma `+`. **Voltar:** `isCube = length > 1` e fantasmas em `ioMarks`.
 
-**Um parâmetro por função:** a entrada é um só dado (puro) ou um objeto (campos via type object / Add child). Em lib com 1 entrada, o nome é a referência no flow (`renameData` side `in`: ex. `text` → `input`); o wrapper lê esse nome do state. **Antes:** nome do contrato fixo no diálogo.
+**Um parâmetro por função:** a entrada é um só dado (puro) ou um objeto (campos via type object / Add child). Em lib com 1 entrada, o nome é a referência no flow (`renameData` side `in`: ex. `text` → `input`); ao escolher um estado no Type/origin o nome acompanha. Lib void (`outs: []` no contrato, ex. `log`) **não** mostra marca/rótulo de saída. **Antes:** nome fixo; void ganhava `output_*` cubo.
 
 **Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. **Antes:** em paralelo à última célula. **Voltar:** `cs = max(step, next - count)` no layout.
 

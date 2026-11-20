@@ -315,14 +315,16 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     };
     // a linha que liga o dado à função: da marca da entrada até a barra, e da barra até a marca da saída
     over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-    over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
-    // sem nomes declarados ([]): ainda assim há state — cubo abstrato; lib void também mostra cubo de saída
+    // lib void (ex. console.log): sem saída — não inventa output_*; funções comuns com [] ainda têm cubo de state
+    const showOut = !lib || f.outs.length > 0;
+    if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
     const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
-    over.push(mark(colX(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
+    over.push(mark(colX(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
+    if (showOut) over.push(mark(colX(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
     // nome do dado na MESMA altura do marcador; cubo (incl. []) mostra o nome do cubo
     const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
     over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
-    over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
+    if (showOut) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
   };
   const barX = new Map<string, { x1: number; x2: number }>();   // onde a barra de cada função começa e termina (as ligações saem e chegam nela)
   sc.rows.forEach((r, i) => {
@@ -330,8 +332,9 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
     /** X do nome à direita: depois da marca + rótulo de saída, para não cair em cima do retorno. */
     const lblAfterOuts = (fr: Fn): number => {
+      if (contractOf(p, fr) && !fr.outs.length) return colX(r.e + 1) + 10;   // lib void: sem rótulo de saída
       const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
-      return colX(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
+      return colX(r.e + 1) + 10 + G.GAP - 10 + tw(outsTxt, 6.2) + 36;
     };
     if (!r.leaf) {
       const inset = 21, x1 = colX(r.s) + inset, x2 = colX(r.e + 1) - inset;   // mesmo recuo em toda composição: a barra pai nunca é menor que a filha (igual quando cobrem os mesmos estados) e nunca maior que ela por recuo

@@ -83,7 +83,7 @@ position:relative;display:flex;flex-direction:column;height:100%;min-height:420p
 .fcv .fview .sv-bandl{stroke:var(--warn);stroke-width:2} .fcv .fview .sv-bandl.lp{stroke:var(--loop)}
 .fcv .fview .sv-fn{fill:var(--fn)} .fcv .fview .sv-fn.abs{fill:color-mix(in srgb,var(--fn) 8%,var(--paper));stroke:var(--fn);stroke-width:1.5}
 .fcv .fview .sv-fn.nag{fill:transparent;stroke:var(--fn);stroke-width:1.5} .fcv .fview .sv-fn.fail{stroke:var(--fail);stroke-width:2}
-.fcv .fview .sv-fn.sel,.fcv .fview .sv-sum.sel{stroke:var(--ink);stroke-width:2} .fcv .fview .sv-sum{fill:var(--fn)}
+.fcv .fview .sv-fn.sel,.fcv .fview .sv-sum.sel{stroke:var(--fn);stroke-width:2} .fcv .fview .sv-fn.abs.sel,.fcv .fview .sv-fn.nag.sel{stroke:var(--fn)} .fcv .fview .sv-sum{fill:var(--fn)}
 .fcv .fview g[data-act]:hover .sv-fn,.fcv .fview g[data-act]:hover .sv-sum{filter:brightness(1.12)}
 .fcv .fview .sv-fbt{fill:#fff;pointer-events:auto} .fcv .fview .sv-fbt.abs,.fcv .fview .sv-fbt.nag{fill:var(--ink)}
 .fcv .fview .sv-dn{font:500 9px var(--mono);fill:var(--muted)} .fcv .fview .sv-dl{cursor:pointer} .fcv .fview .sv-dl:hover{fill:var(--ink);text-decoration:underline}

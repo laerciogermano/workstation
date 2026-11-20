@@ -20,16 +20,16 @@
   --paper: #ffffff; --panel: #f5f5f5; --wash: #ececec; --stage: #e2e2e2; --bezel: #a6a6a6; /* fundo branco, cinzas neutros */
   --ok: #8a6a1f; --run: #0b0b0b; --warn: #a8802a; --fail: #8a2a1f; --idle: #8a8a8a;
   --t-pessoa: #0b0b0b; --t-ia: #0b0b0b; --t-maquina: #0b0b0b;
-  --fn: #7c6bf0; --dado: #dc2626; /* função lilás · dado vermelho */
+  --fn: #2563eb; --dado: #dc2626; /* função azul · dado vermelho */
 }
 :root[data-tema="eternos-black"] {
-  /* Eternos Mutáveis Black: fundo preto; função lilás · dado vermelho */
+  /* Eternos Mutáveis Black: fundo preto; função azul · dado vermelho */
   --accent: #f2f2f2; --accent-2: #d8d8d8; --on-accent: #0b0b0b;
   --ink: #f2f2f2; --body: #c4c4c4; --muted: #8a8a8a; --line: #262626; --line-2: #3a3a3a;
   --paper: #0b0b0b; --panel: #121212; --wash: #1c1c1c; --stage: #050505; --bezel: #3a3a3a;
   --ok: #c9a24a; --run: #f2f2f2; --warn: #c9a24a; --fail: #e2735f; --idle: #8a8a8a;
   --t-pessoa: #f2f2f2; --t-ia: #f2f2f2; --t-maquina: #f2f2f2;
-  --fn: #a78bfa; --dado: #f07167;
+  --fn: #5b8cff; --dado: #f07167;
   --shadow: 0 1px 3px rgba(0,0,0,.6);
   color-scheme: dark;
 }
@@ -98,8 +98,8 @@
 }
 :root[data-tema="ardosia"], :root[data-tema="gantt"], :root[data-tema="noite"], :root[data-tema="graphite"] { --fc-loop: #b794f6; }
 :root[data-tema="indigo"] { --fc-loop: #c026d3; }
-:root[data-tema="eternos"] { --fc-warn: #c9891a; --fc-loop: #0e9aa7; --fc-ok: #2f8f5b; }   /* if âmbar · for ciano (ciclo) · try verde */
-:root[data-tema="eternos-black"] { --fc-warn: #e8b84a; --fc-loop: #2dd4bf; --fc-ok: #6bcf8e; }
+:root[data-tema="eternos"] { --fc-warn: #c9891a; --fc-loop: #6d28d9; --fc-ok: #2f8f5b; }   /* if âmbar · for violeta · try verde */
+:root[data-tema="eternos-black"] { --fc-warn: #e8b84a; --fc-loop: #a78bfa; --fc-ok: #6bcf8e; }
 :root[data-tema="tablet-black"] { --fc-loop: #22d3ee; }
 
 /* ───── seletor de temas: bolinhas redondas (como na barra do Flow IDE) ───── */

@@ -505,7 +505,19 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   $("#txtIn").addEventListener("click", () => { ui.txtIn = !ui.txtIn; render(); });
   $("#dataAll").addEventListener("click", () => { ui.allData = !ui.allData; $("#dataAll").title = ui.allData ? "States: showing all available data (click for only the new ones)" : "States: showing only the new data (click for all available)"; render(); });
   $("#expand").addEventListener("click", () => { (ui.closed as Set<string>).clear(); render(); });
-  $("#collapse").addEventListener("click", () => { const f = locate(P(), ui.flow)?.node; if (f?.t === "fn") { const mark = (list: readonly Node[]): void => list.forEach(n => { if (n.t === "fn" && n.kids.length) (ui.closed as Set<string>).add(n.id); mark(kidsOf(n)); }); mark(f.kids); if (f.kids.length) (ui.closed as Set<string>).add(f.id); } auto = true; render(); });   // recolhe as funções com filhos (também dentro de if/for/try) e a própria função do fluxo
+  $("#collapse").addEventListener("click", () => { const f = locate(P(), ui.flow)?.node; if (f?.t === "fn") {
+    const mark = (list: readonly Node[]): void => list.forEach(n => {
+      if (n.t === "fn" && n.kids.length) (ui.closed as Set<string>).add(n.id);
+      else if (n.t !== "fn") {
+        const alt = n.t === "try" ? n.catchKids : n.t === "if" ? n.elseKids : [];
+        if (n.kids.length || alt.length) (ui.closed as Set<string>).add(n.id);
+        if (n.t === "try" && n.catchKids.length) (ui.closed as Set<string>).add(`${n.id}:catch`);
+        if (n.t === "if" && n.elseKids.length) (ui.closed as Set<string>).add(`${n.id}:else`);
+      }
+      mark(kidsOf(n));
+    });
+    mark(f.kids); if (f.kids.length) (ui.closed as Set<string>).add(f.id);
+  } auto = true; render(); });   // recolhe funções compostas e blocos (if/for/try/catch/else)
   const showTab = (name: "ts" | "term"): void => {
     if (!SHOW_CODE) name = "term";
     tab = name;

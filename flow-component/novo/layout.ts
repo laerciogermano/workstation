@@ -43,18 +43,24 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
         }
       } else {
         prev = null; const b: Block = n;
-        const row = push({ kind: "block", id: b.id, node: b, depth, s: step, e: step, leaf: false, closed: false });
-        const next = place(b.kids, depth + 1, step, emit, inCatch), sp: Span = { s: step, e: Math.max(step, next - 1) };
+        const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
+        const row = push({ kind: "block", id: b.id, node: b, depth, s: step, e: step, leaf: !canClose, closed: isClosed });
+        // fechado: filhos (e catch/else) somem da tabela, mas o passo/span permanece
+        const next = place(b.kids, depth + 1, step, emit && !isClosed, inCatch), sp: Span = { s: step, e: Math.max(step, next - 1) };
         if (emit) { span.set(b.id, sp); row.s = sp.s; row.e = sp.e; }
         let end = next;
-        const alt = altKids(b);
         if (alt && alt.length) {
           // catch (do try) e else (do if): lista alternativa em paralelo à última célula do bloco, terminando junto com ela
-          const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
-          const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
-          const cend = place(alt, depth + 1, cs, emit, true);
-          if (emit) { crow.s = cs; crow.e = Math.max(cs, cend - 1); span.set(`${b.id}:${kind}`, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
-          end = Math.max(next, cend);
+          const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
+          const count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
+          if (isClosed) {
+            const cend = place(alt, depth + 1, cs, false, true); end = Math.max(next, cend);
+          } else {
+            const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: altClosed });
+            const cend = place(alt, depth + 1, cs, emit && !altClosed, true);
+            if (emit) { crow.s = cs; crow.e = Math.max(cs, cend - 1); span.set(altKey, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
+            end = Math.max(next, cend);
+          }
         }
         if (emit) row.last = rows.length - 1;
         step = Math.max(step, end);

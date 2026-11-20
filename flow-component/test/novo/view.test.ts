@@ -32,21 +32,22 @@ describe("ferramentas: regras únicas dos blocos", () => {
     const b = t.run({ type: "wrap", id: t.ids[2]!, kind: "if" }); expect(toolsFor(t.p, b).filter(x => x.icon === "trash")).toHaveLength(1); expect(toolsFor(t.p, b, "else").filter(x => x.icon === "trash")).toHaveLength(1);
   });
   it("paralelo só é oferecido quando há função irmã anterior", () => { const t = base(); expect(acts(t, t.ids[0]!)).not.toContain("parallel"); expect(acts(t, t.ids[1]!)).toContain("parallel"); });
-  it.each(["if", "for", "try"] as const)("bloco %s: as MESMAS ações (filho, condição, irmão à direita, incluir, tirar, remover)", kind => {
+  it.each(["if", "for", "try"] as const)("bloco %s: as MESMAS ações (toggle, filho, condição, irmão à direita, incluir, tirar, remover)", kind => {
     const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind }); const tools = toolsFor(t.p, b);
-    expect(tools.map(x => x.act)).toEqual(kind === "if" ? ["addChild", "wrap", "wrap", "wrap", "addElse", "addSibling", "setScope", "setScope", "remove"] : ["addChild", "wrap", "wrap", "wrap", "addSibling", "setScope", "setScope", "remove"]);
+    expect(tools.map(x => x.act)).toEqual(kind === "if" ? ["toggle", "addChild", "wrap", "wrap", "wrap", "addElse", "addSibling", "setScope", "setScope", "remove"] : ["toggle", "addChild", "wrap", "wrap", "wrap", "addSibling", "setScope", "setScope", "remove"]);
     expect(tools.filter(x => x.act === "wrap").map(x => x.data!["kind"])).toEqual(["if", "for", "try"]);   // todo bloco aceita condição, laço e try/catch expect(tools.at(-1)!.danger).toBe(true);
-    expect(tools[0]!.title).toContain(kind === "try" ? "try" : kind);
+    expect(tools[0]).toMatchObject({ act: "toggle", icon: "chevron" });
+    expect(tools.find(x => x.act === "addChild")!.title).toContain(kind === "try" ? "try" : kind);
     expect(tools.at(-1)).toMatchObject({ act: "remove", danger: true }); expect(tools.at(-1)!.title).toMatch(/everything inside/);
   });
   it("else: filho (no else), irmão à direita e remover o else; if sem else oferece 'Add else' e some quando existe", () => {
     const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" });
     expect(toolsFor(t.p, i).some(x => x.act === "addElse")).toBe(true); t.run({ type: "addElse", id: i }); expect(toolsFor(t.p, i).some(x => x.act === "addElse")).toBe(false);
-    const e = toolsFor(t.p, i, "else"); expect(e.map(x => x.act)).toEqual(["addChild", "addSibling", "removeElse"]); expect(e[0]).toMatchObject({ data: { else: "1" } }); expect(e[0]!.title).toContain("else"); expect(e.at(-1)).toMatchObject({ icon: "trash", danger: true });
+    const e = toolsFor(t.p, i, "else"); expect(e.map(x => x.act)).toEqual(["toggle", "addChild", "addSibling", "removeElse"]); expect(e.find(x => x.act === "addChild")).toMatchObject({ data: { else: "1" } }); expect(e.find(x => x.act === "addChild")!.title).toContain("else"); expect(e.at(-1)).toMatchObject({ icon: "trash", danger: true });
   });
   it("catch: filho (no catch), irmão à direita e remover o try inteiro (com tudo dentro)", () => {
     const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }), c = toolsFor(t.p, b, "catch");
-    expect(c.map(x => x.act)).toEqual(["addChild", "addSibling", "remove"]); expect(c[0]).toMatchObject({ data: { catch: "1" } }); expect(c[0]!.title).toContain("catch");
+    expect(c.map(x => x.act)).toEqual(["toggle", "addChild", "addSibling", "remove"]); expect(c.find(x => x.act === "addChild")).toMatchObject({ data: { catch: "1" } }); expect(c.find(x => x.act === "addChild")!.title).toContain("catch");
   });
   it("remover o bloco maior apaga if/for/try aninhados e as funções de dentro", () => {
     const t = base(), outer = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" });
@@ -97,6 +98,7 @@ describe("tabela", () => {
     t.run({ type: "wrap", id: t.ids[1]!, kind: "for", v: "x", coll: "xs" }); t.run({ type: "wrap", id: t.ids[3]!, kind: "try" });
     const h = t.view().table; expect(h).toContain("if (ok)"); expect(h).toContain('class="trd e">else'); expect(h).toContain("elserow"); expect(h).toContain("for (x of xs)"); expect(h).toContain("try · catch"); expect(h).toContain('class="trd c">catch'); expect(h).toContain("if the try fails");
     for (const k of ["ifrow", "forrow", "tryrow", "catchrow"]) expect(h).toContain(k); expect(h).toMatch(/padding-left:\d+px/); expect(h).not.toContain('class="rails"');
+    expect(h).toContain('data-act="toggle"'); expect(h).toContain("class=\"car\"");   // chevron de collapse na coluna esquerda dos blocos
   });
   it("a tabela não tem linhas de input/output; só a linha escolhida fica marcada", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); const h = t.view({ sel: t.ids[0]! }).table;

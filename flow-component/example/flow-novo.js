@@ -1539,26 +1539,32 @@ ${given.map((g) => `  ${g},`).join("\n")}
         } else {
           prev = null;
           const b = n2;
-          const row = push({ kind: "block", id: b.id, node: b, depth, s: step2, e: step2, leaf: false, closed: false });
-          const next = place(b.kids, depth + 1, step2, emit, inCatch), sp = { s: step2, e: Math.max(step2, next - 1) };
+          const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
+          const row = push({ kind: "block", id: b.id, node: b, depth, s: step2, e: step2, leaf: !canClose, closed: isClosed });
+          const next = place(b.kids, depth + 1, step2, emit && !isClosed, inCatch), sp = { s: step2, e: Math.max(step2, next - 1) };
           if (emit) {
             span.set(b.id, sp);
             row.s = sp.s;
             row.e = sp.e;
           }
           let end = next;
-          const alt = altKids(b);
           if (alt && alt.length) {
-            const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step2, next - count);
-            const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
-            const cend = place(alt, depth + 1, cs, emit, true);
-            if (emit) {
-              crow.s = cs;
-              crow.e = Math.max(cs, cend - 1);
-              span.set(`${b.id}:${kind}`, { s: crow.s, e: crow.e });
-              crow.last = rows.length - 1;
+            const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
+            const count = place(alt, depth + 1, 0, false, true), cs = Math.max(step2, next - count);
+            if (isClosed) {
+              const cend = place(alt, depth + 1, cs, false, true);
+              end = Math.max(next, cend);
+            } else {
+              const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: altClosed });
+              const cend = place(alt, depth + 1, cs, emit && !altClosed, true);
+              if (emit) {
+                crow.s = cs;
+                crow.e = Math.max(cs, cend - 1);
+                span.set(altKey, { s: crow.s, e: crow.e });
+                crow.last = rows.length - 1;
+              }
+              end = Math.max(next, cend);
             }
-            end = Math.max(next, cend);
           }
           if (emit) row.last = rows.length - 1;
           step2 = Math.max(step2, end);
@@ -1732,7 +1738,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return out2;
     }
     const where = part === "else" ? "else" : part === "catch" ? "catch" : n.t === "for" ? "for" : n.t === "if" ? "if" : "try";
-    const out = [t("addChild", "sibling", `Add child (inside the ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {})];
+    const altList = part === "catch" ? n.catchKids : part === "else" ? n.elseKids : null;
+    const canToggle = part === "main" ? n.kids.length > 0 || !!altKids(n)?.length : altList.length > 0;
+    const out = [];
+    if (canToggle) out.push({ act: "toggle", id: part === "main" ? id : `${id}:${part}`, icon: "chevron", title: `Open / close the ${where}` });
+    out.push(t("addChild", "sibling", `Add child (inside the ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {}));
     if (part === "main") out.push(t("wrap", "diamond", "Add condition (if) to this block", { data: { kind: "if" } }), t("wrap", "repeat", "Add loop (for) to this block", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch to this block", { data: { kind: "try" } }));
     if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Add else"));
     out.push(t("addSibling", "child", "Add sibling to the right (outside the block)"));
@@ -1806,8 +1816,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
       if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
         const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
+        const closeKey = part === "main" ? r.id : `${r.id}:${part}`;
+        const lead = r.leaf ? "" : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(closeKey)}" title="Open / close">${icon("chevron")}</span>`;
         const tag = r.kind === "catch" ? `${icon("shield", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
-        return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
+        return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${lead}${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
       }
       return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
     }).join("");
@@ -3124,6 +3136,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (f?.t === "fn") {
         const mark = (list) => list.forEach((n) => {
           if (n.t === "fn" && n.kids.length) ui.closed.add(n.id);
+          else if (n.t !== "fn") {
+            const alt = n.t === "try" ? n.catchKids : n.t === "if" ? n.elseKids : [];
+            if (n.kids.length || alt.length) ui.closed.add(n.id);
+            if (n.t === "try" && n.catchKids.length) ui.closed.add(`${n.id}:catch`);
+            if (n.t === "if" && n.elseKids.length) ui.closed.add(`${n.id}:else`);
+          }
           mark(kidsOf(n));
         });
         mark(f.kids);

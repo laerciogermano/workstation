@@ -64,6 +64,13 @@ describe("cena: linhas e passos", () => {
     const open = t.sc(), shut = t.sc([t.ids[1]!]); expect(open.rows.length).toBe(shut.rows.length + 2); expect(shut.rows.find(r => r.id === t.ids[1])!.closed).toBe(true);
     expect(shut.span.get(t.ids[1]!)).toEqual({ s: 1, e: 2 }); expect(shut.nSteps).toBe(open.nSteps);
   });
+  it("bloco (if/for/try) fechado some com os filhos e mantém o passo; catch fecha à parte", () => {
+    const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" });
+    const open = t.sc(), shut = t.sc([tr]); expect(shut.rows.find(r => r.id === tr && r.kind === "block")!.closed).toBe(true);
+    expect(shut.rows.some(r => r.kind === "catch")).toBe(false); expect(open.rows.some(r => r.kind === "catch")).toBe(true);
+    expect(shut.nSteps).toBe(open.nSteps);
+    const onlyCatch = t.sc([`${tr}:catch`]); expect(onlyCatch.rows.find(r => r.kind === "catch")!.closed).toBe(true);
+  });
   it("links: B liga a A quando começa no passo seguinte; paralelas ligam as duas ao seguinte", () => {
     const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true });
     const l = links(t.sc()).map(([a, b]) => `${(a.node as Fn).title}>${(b.node as Fn).title}`); expect(l).toEqual(["A>C", "B>C", "C>D"]);

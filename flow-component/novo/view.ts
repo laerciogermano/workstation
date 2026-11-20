@@ -1,5 +1,5 @@
 import { icon, KIND_ICON } from "./icons";
-import { agentOf, contractOf, filesOf, hasContract, cubeName, flowFile, insideBlock, isCube, isRoot, locate, objectSources, type Agent, type Fn, type Node, type Project } from "./model";
+import { agentOf, altKids, contractOf, filesOf, hasContract, cubeName, flowFile, insideBlock, isCube, isRoot, locate, objectSources, type Agent, type Block, type Fn, type IfB, type Node, type Project, type TryB } from "./model";
 import { exprIdents, isDataRef } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
@@ -158,7 +158,11 @@ export function toolsFor(p: Project, id: string, part: "main" | "catch" | "else"
     return out;
   }
   const where = part === "else" ? "else" : part === "catch" ? "catch" : n.t === "for" ? "for" : n.t === "if" ? "if" : "try";
-  const out: Tool[] = [t("addChild", "sibling", `Add child (inside the ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {})];
+  const altList = part === "catch" ? (n as TryB).catchKids : part === "else" ? (n as IfB).elseKids : null;
+  const canToggle = part === "main" ? n.kids.length > 0 || !!(altKids(n as Block)?.length) : altList!.length > 0;
+  const out: Tool[] = [];
+  if (canToggle) out.push({ act: "toggle", id: part === "main" ? id : `${id}:${part}`, icon: "chevron", title: `Open / close the ${where}` });
+  out.push(t("addChild", "sibling", `Add child (inside the ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {}));
   if (part === "main") out.push(t("wrap", "diamond", "Add condition (if) to this block", { data: { kind: "if" } }), t("wrap", "repeat", "Add loop (for) to this block", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch to this block", { data: { kind: "try" } }));
   if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Add else"));
   out.push(t("addSibling", "child", "Add sibling to the right (outside the block)"));
@@ -229,10 +233,12 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
     const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
     if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
       const n = r.node as Exclude<Node, Fn>, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
+      const closeKey = part === "main" ? r.id : `${r.id}:${part}`;
+      const lead = r.leaf ? "" : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(closeKey)}" title="Open / close">${icon("chevron")}</span>`;
       const tag = r.kind === "catch" ? `${icon("shield", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
         : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">↻</span><b class="mono">${esc(blockLabel(p, n))}</b>`
         : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
-      return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
+      return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${lead}${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
     }
     return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
   }).join("");

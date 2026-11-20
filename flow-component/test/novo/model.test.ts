@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
+import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, resolveDataEdit, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
 
 /** Projeto de teste: raiz "root" com filhos a, b, c, d (todos folhas). */
 function base() {
@@ -335,6 +335,17 @@ describe("nome = referência no fluxo", () => {
     t.run({ type: "assign", id: t.c, agent: "console" }); t.run({ type: "assign", id: t.d, agent: "console" });
     expect((locate(t.p, t.c)!.node as Fn).title).toBe("log"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
     t.run({ type: "rename", id: t.c, title: "info" }); expect((locate(t.p, t.c)!.node as Fn).title).toBe("info"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
+  });
+  it("mesmo nome = mesmo editor: clique na referência resolve para a origem (objeto)", () => {
+    const t = base();
+    t.run({ type: "addInput", id: t.a, name: "input" }); t.run({ type: "setArg", id: t.a, name: "input", value: '{ field1: "sdfdsfdsf" }' });
+    t.run({ type: "addOutput", id: t.a, name: "output" }); t.run({ type: "addInput", id: t.b, name: "input" });
+    expect(resolveDataEdit(t.p, t.b, "in")).toEqual({ id: t.a, side: "in" });
+    expect(resolveDataEdit(t.p, t.b, "in", "input")).toEqual({ id: t.a, side: "in" });
+    expect(resolveDataEdit(t.p, t.a, "in")).toEqual({ id: t.a, side: "in" });
+    expect(resolveDataEdit(t.p, t.a, "out")).toEqual({ id: t.a, side: "out" });
+    const origin = locate(t.p, resolveDataEdit(t.p, t.b, "in").id)!.node as Fn;
+    expect(origin.args?.input).toMatch(/^\s*\{/); expect(origin.args?.input).toContain("field1");
   });
 });
 

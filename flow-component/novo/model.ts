@@ -194,6 +194,18 @@ export function originPort(flow: Fn, name: string): { id: string; side: "in" | "
   };
   visit(flow.kids); return found;
 }
+/**
+ * Mesma referência = mesmo editor: clique num porto/estado resolve para a origem do nome.
+ * Porto com um só nome que só referencia → origem; senão mantém o alvo clicado.
+ */
+export function resolveDataEdit(p: Project, id: string, side: "in" | "out", name?: string): { id: string; side: "in" | "out" } {
+  const loc = locate(p, id); if (!loc || loc.node.t !== "fn") return { id, side };
+  const n = loc.node, key = name?.trim() || (side === "in" ? (n.ins.length === 1 ? n.ins[0] : "") : (n.outs.length === 1 ? n.outs[0] : ""));
+  if (!key) return { id, side };
+  const origin = originPort(loc.flow, key);
+  if (!origin || (origin.id === id && origin.side === side)) return { id, side };
+  return origin;
+}
 /** Renomeia só este porto (filho): desvincula do pai; não propaga. */
 export function renamePortLocal(n: Fn, side: "in" | "out", from: string, to: string, clearValue = false): void {
   if (from === to) return;

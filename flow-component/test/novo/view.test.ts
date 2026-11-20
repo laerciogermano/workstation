@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { icon } from "../../novo/icons";
 import { layout } from "../../novo/layout";
-import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, type Command, type Fn, type Project } from "../../novo/model";
+import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, resolveDataEdit, type Command, type Fn, type Project } from "../../novo/model";
 import { sampleProject } from "../../novo/sample";
 import { countForRow, countForStep } from "../../novo/scope";
 import { build, planHeight, PLAN_PAD_BOTTOM, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planGutter, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
@@ -255,13 +255,16 @@ describe("quadrado do dado", () => {
     t.run({ type: "addOutput", id: t.ids[0]!, name: "output" });
     t.run({ type: "addInput", id: t.ids[1]!, name: "input" });
     const p = t.view({ allData: true }).plan;
-    const markA = p.match(new RegExp(`data-act="editData" data-id="${t.ids[0]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
-    const markB = p.match(new RegExp(`data-act="editData" data-id="${t.ids[1]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
+    const markA = p.match(new RegExp(`<g class="dm" data-act="editData" data-id="${t.ids[0]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
+    const markB = p.match(new RegExp(`<g class="dm" data-act="editData" data-id="${t.ids[1]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
     expect(markA).toContain('class="cube'); expect(markB).toContain('class="cube'); expect(markB).not.toContain('class="dot');
     const at1 = statesByStep(t.view().scene, true, t.p).get(1) ?? [];
     const inputAt1 = at1.find(x => x.name === "input");
     expect(inputAt1).toMatchObject({ cube: true, fields: ["field1"] });
     expect(p).toContain('class="scube"'); expect((p.match(/class="scube"/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    // clique no pin/estado da referência → mesma origem (modal do objeto)
+    expect(resolveDataEdit(t.p, t.ids[1]!, "in")).toEqual({ id: t.ids[0]!, side: "in" });
+    expect(resolveDataEdit(t.p, t.ids[1]!, "in", "input")).toEqual({ id: t.ids[0]!, side: "in" });
   });
 });
 

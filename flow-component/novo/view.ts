@@ -160,13 +160,12 @@ export function parsePrefs(raw: string | null): Prefs {
 // ───────────────────────── ferramentas (regras ÚNICAS, usadas pela tabela e pelo plano) ─────────────────────────
 export interface Tool { act: string; id: string; icon: string; title: string; danger?: boolean; data?: Record<string, string> }
 
-/** Menu de um dado listado nos estados: renomear / remover (função comum), editar (entrada de lib) ou renomear a saída (lib). */
+/** Menu de um dado listado nos estados: mesma modal de edição da origem (mesmo nome = mesma referência). */
 export function stateTools(p: Project, owner: string, side: "in" | "out", name: string): Tool[] {
   const n = locate(p, owner)?.node; if (!n || n.t !== "fn") return [];
   const t = (act: string, icon: string, title: string, extra: Partial<Tool> = {}): Tool => ({ act, id: owner, icon, title, data: { side, name }, ...extra });
-  if (!name) return [t("editData", "pencil", "Edit the data")];
-  if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "pencil", "Set the value")];
-  return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
+  if (contractOf(p, n) && side === "out" && name) return [t("renameOut", "text", "Rename the data")];
+  return [t("editData", "pencil", "Edit the data"), ...(contractOf(p, n) ? [] : [t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })])];
 }
 
 /** Botões de um nó. Os blocos (if · for · try · catch) compartilham as mesmas ações; só mudam os rótulos. */
@@ -292,7 +291,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     let row = 0;
     for (const it of items) {
       const y = bot + 34 + row++ * STATE_ROW;
-      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-act="editData" data-id="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.name)}" data-sthover="${esc(it.owner)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
       // o cubo mostra os campos (com valor, se houver) logo abaixo, indentados
       if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld]; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`); }
     }

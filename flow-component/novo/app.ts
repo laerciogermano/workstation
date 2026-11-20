@@ -1,7 +1,7 @@
 import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft, type ArgType } from "./args";
 import { buildCond, COND_OPS, emptyClause, inferCond, JOINERS, needsRight, type CondDraft, type CondOp, type Joiner } from "./cond";
 import { runInWorker, type LogLevel, type Running } from "./runner";
-import { contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
+import { contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, resolveDataEdit, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
@@ -505,7 +505,9 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
     },
     editData: async d => {
-      const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
+      const hit = resolveDataEdit(P(), d["id"]!, d["side"] === "out" ? "out" : "in", d["name"]);
+      const n = locate(P(), hit.id)?.node; if (!n || n.t !== "fn") return;
+      const side = hit.side, list = side === "in" ? n.ins : n.outs;
       if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length) await dataEditor(n, "out"); else toast("This function’s outputs come from the lib contract"); return; }
       await dataEditor(n, side, list.length ? {} : { start: true });   // I/O vazio: já abre com um dado (`input`/`output`) para conseguir salvar
     },

@@ -195,6 +195,15 @@
     visit(flow.kids);
     return found;
   }
+  function resolveDataEdit(p, id, side, name) {
+    const loc = locate(p, id);
+    if (!loc || loc.node.t !== "fn") return { id, side };
+    const n = loc.node, key = name?.trim() || (side === "in" ? n.ins.length === 1 ? n.ins[0] : "" : n.outs.length === 1 ? n.outs[0] : "");
+    if (!key) return { id, side };
+    const origin = originPort(loc.flow, key);
+    if (!origin || origin.id === id && origin.side === side) return { id, side };
+    return origin;
+  }
   function renamePortLocal(n, side, from, to, clearValue = false) {
     if (from === to) return;
     const key = side === "out" ? "outs" : "ins";
@@ -1967,9 +1976,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const n = locate(p, owner)?.node;
     if (!n || n.t !== "fn") return [];
     const t = (act, icon2, title, extra = {}) => ({ act, id: owner, icon: icon2, title, data: { side, name }, ...extra });
-    if (!name) return [t("editData", "pencil", "Edit the data")];
-    if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "pencil", "Set the value")];
-    return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
+    if (contractOf(p, n) && side === "out" && name) return [t("renameOut", "text", "Rename the data")];
+    return [t("editData", "pencil", "Edit the data"), ...contractOf(p, n) ? [] : [t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })]];
   }
   function toolsFor(p, id, part = "main") {
     const l = locate(p, id);
@@ -2093,7 +2101,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       let row = 0;
       for (const it of items) {
         const y = bot + 34 + row++ * STATE_ROW;
-        out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+        out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-act="editData" data-id="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.name)}" data-sthover="${esc(it.owner)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
         if (it.cube) for (const fld of it.fields) {
           const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld];
           out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX2(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX2(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`);
@@ -3491,9 +3499,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
         else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
       },
       editData: async (d) => {
-        const n = locate(P2(), d["id"])?.node;
+        const hit = resolveDataEdit(P2(), d["id"], d["side"] === "out" ? "out" : "in", d["name"]);
+        const n = locate(P2(), hit.id)?.node;
         if (!n || n.t !== "fn") return;
-        const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
+        const side = hit.side, list = side === "in" ? n.ins : n.outs;
         if (contractOf(P2(), n)) {
           if (side === "in") await dataEditor(n, "in");
           else if (list.length) await dataEditor(n, "out");

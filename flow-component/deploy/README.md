@@ -27,6 +27,8 @@
 
 **Antes → depois (mesmo nome herda cubo):** pin/estado de quem só referencia o nome ficava quadrado → `cubeInfoByName` + herança no pin (`ioMarks`) e nos estados. Rollback: `asCube` só com `isCube(list)` / literal `{` local.
 
+**Antes → depois (mesmo editor):** clique na referência abria modal local (tipo text vazio) → `resolveDataEdit` abre o `dataEditor` da origem; estado também `data-act=editData`. Rollback: `editData` sempre no `id` clicado.
+
 **Antes → depois (modal out = in):** saída tinha só nome + Add child top-level → mesmo `dataEditor` da entrada (tipo/valor/objeto); objeto na out vira `outs` = campos. Rollback: `withValue = side === "in"`.
 
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.

@@ -283,10 +283,11 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const x = depth * G.IND + 0.5;
     bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
   };
-  // composição (pai), incl. 1ª ordem: faixa lateral sobre as linhas dos filhos (todo o escopo)
+  // funções: folha = traço na própria linha; composição (incl. 1ª ordem) = traço cobrindo os filhos
   sc.rows.forEach((r, i) => {
-    if (r.kind !== "fn" || r.leaf || r.last <= i) return;
-    rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
+    if (r.kind !== "fn") return;
+    if (r.leaf) { rail("co", r.depth, rowY(i), G.RH); return; }
+    if (r.last > i) rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
   });
   // bandas dos blocos + etiquetas (pills)
   sc.rows.forEach((r, i) => {

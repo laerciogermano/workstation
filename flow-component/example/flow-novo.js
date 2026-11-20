@@ -2003,8 +2003,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
     };
     sc.rows.forEach((r, i) => {
-      if (r.kind !== "fn" || r.leaf || r.last <= i) return;
-      rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
+      if (r.kind !== "fn") return;
+      if (r.leaf) {
+        rail("co", r.depth, rowY(i), G.RH);
+        return;
+      }
+      if (r.last > i) rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
     });
     sc.rows.forEach((r, i) => {
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
@@ -2382,10 +2386,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
       c05c: mk((run, r) => {
         ins(run, r, ["a"]);
         outs(run, r, ["a"]);
-      }),
-      c05d: mk((run, r) => {
-        ins(run, r, ["a"]);
-        outs(run, r, ["b"]);
       }),
       c05e: mk((run, r) => {
         ins(run, r, ["a", "b", "c"]);

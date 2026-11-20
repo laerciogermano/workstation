@@ -157,6 +157,7 @@ describe("plano (SVG)", () => {
     expect((p.match(/data-act="editBlock"/g) ?? []).length).toBe(2); expect(p).toContain('class="flp"'); expect(p).toContain('class="ftr"'); expect(p).toContain('class="fca"'); expect(p).toContain(">for (item of items)<"); expect(p).not.toContain("↻ for (");
     expect(p).toMatch(new RegExp(`<line class="bande if" x1="${G.IND}\\.5"`));   // if no depth 1 (0 = 1ª ordem)
     expect(p).toMatch(/<line class="bande co" x1="0\.5"/);   // 1ª ordem cobre o escopo na divisória
+    expect((p.match(/class="bande co"/g) ?? []).length).toBeGreaterThan(1);   // folhas também têm traço
   });
   it("etiqueta do if começa depois do triângulo e cobre os passos do bloco", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); const v = t.view(), g = planGutter(v.scene);

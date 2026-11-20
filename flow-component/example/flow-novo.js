@@ -2030,8 +2030,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
   // novo/app.ts
   function mount(host, store, flow) {
     const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-    const SHOW_CODE = false;
-    let fileCodeText = null, fileView = "*", multi = null, tab = SHOW_CODE ? "ts" : "term", hovT = 0, fitted = false, auto = true, last = null, gen = null;
+    let fileCodeText = null, fileView = "*", multi = null, hovT = 0, fitted = false, auto = true, last = null, gen = null;
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
@@ -2046,9 +2045,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
-      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("chevron")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <section class="pane" id="p-ts" hidden><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term on" id="p-term"><div class="thead"><span class="tstat" id="tstat">Terminal</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
@@ -2067,13 +2065,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
     multiEl.hidden = true;
     el.zoom.append(multiEl);
     multiEl.addEventListener("click", multiClick);
-    const proj = host.ownerDocument.createElement("div");
-    proj.id = "proj";
-    proj.className = "proj";
-    proj.setAttribute("role", "toolbar");
-    proj.setAttribute("aria-label", "Project");
-    proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open an exported project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Export the project (.json)">${icon("download")}Export</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
-    host.ownerDocument.querySelector(".topbar")?.append(proj);
     const themes = host.ownerDocument.createElement("div");
     themes.id = "temas";
     host.ownerDocument.querySelector(".topbar")?.append(themes);
@@ -2951,33 +2942,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (innerFns(f) > 1 && !await confirmAsk(`Delete the flow \u201C${f.title}\u201D and everything inside it?`)) return;
       run({ type: "removeFlow", id: f.id }, false);
     };
-    proj.querySelector("#save").addEventListener("click", () => {
-      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P2())], { type: "application/json" }));
-      a.href = url;
-      a.download = "flow-project.json";
-      host.append(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
-    });
-    const fileIn = host.ownerDocument.getElementById("openFile");
-    proj.querySelector("#open").addEventListener("click", () => fileIn.click());
-    fileIn.addEventListener("change", async () => {
-      const f = fileIn.files?.[0];
-      fileIn.value = "";
-      if (!f) return;
-      try {
-        const p = parseProject(await f.text());
-        store.load(p);
-        ui.flow = p.flows[0].id;
-        ui.sel = null;
-        ui.closed.clear();
-        auto = true;
-        toast(`Project \u201C${p.name}\u201D opened`);
-      } catch (e) {
-        toast(e instanceof FlowError ? e.message : String(e));
-      }
-    });
     $("#agents").addEventListener("click", () => void agentsDialog());
     host.ownerDocument.addEventListener("click", (e) => {
       const b = e.target.closest(".hist-btn");
@@ -3018,13 +2982,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
       auto = true;
       render();
     });
-    const showTab = (name) => {
-      if (!SHOW_CODE) name = "term";
-      tab = name;
-      host.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x.dataset["tab"] === name)));
-      host.querySelectorAll(".pane").forEach((pn) => pn.classList.toggle("on", pn.id === `p-${name}`));
-    };
-    host.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset["tab"])));
     $("#dl").addEventListener("click", () => {
       if (!gen) return;
       const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" }));
@@ -3174,7 +3131,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       tog.setAttribute("aria-pressed", String(prefs.codeOpen));
       tog.title = prefs.codeOpen ? "Hide the terminal (Ctrl+\\)" : "Show the terminal (Ctrl+\\)";
       tog.setAttribute("aria-label", prefs.codeOpen ? "Hide terminal" : "Show terminal");
-      tog.innerHTML = icon("chevron");
+      tog.innerHTML = icon("terminal");
       tog.classList.toggle("open", prefs.codeOpen);
       splitter.setAttribute("aria-valuenow", String(prefs.codeW));
       splitter.setAttribute("aria-valuemin", String(TERM_MIN));
@@ -3352,7 +3309,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
         prefs.codeOpen = true;
         applyPrefs();
       }
-      showTab("term");
       tbody.innerHTML = "";
       let code;
       try {
@@ -3384,7 +3340,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     $("#tRun").addEventListener("click", runFlow);
     $("#tClear").addEventListener("click", () => {
       tbody.innerHTML = "";
-      if (!running) tstat.textContent = "ready";
+      if (!running) tstat.textContent = "Terminal";
     });
     host.ownerDocument.addEventListener("keydown", (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -3425,7 +3381,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return { store, ui, render, reset, destroy: () => {
       running?.stop();
       off();
-      proj.remove();
       tip.remove();
       host.innerHTML = "";
     } };

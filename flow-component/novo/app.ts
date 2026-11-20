@@ -17,8 +17,7 @@ export interface App { store: Store; ui: Ui & { flow: string; zoom: number; pan:
 
 export function mount(host: HTMLElement, store: Store, flow: string): App {
   const ui: App["ui"] = { closed: new Set<string>(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-  const SHOW_CODE = false;   // por enquanto só Terminal; true volta a aba TypeScript
-  let fileCodeText: string | null = null, fileView: string | null = "*", multi: { W: number; H: number } | null = null, tab: "ts" | "term" = SHOW_CODE ? "ts" : "term", hovT = 0, fitted = false, auto = true, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
+  let fileCodeText: string | null = null, fileView: string | null = "*", multi: { W: number; H: number } | null = null, hovT = 0, fitted = false, auto = true, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
   const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
@@ -33,9 +32,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
-      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("chevron")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <section class="pane" id="p-ts" hidden><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term on" id="p-term"><div class="thead"><span class="tstat" id="tstat">Terminal</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
   const $ = <T extends HTMLElement = HTMLElement>(s: string): T => host.querySelector(s) as T;
@@ -46,9 +44,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   };
   const multiEl = host.ownerDocument.createElement("div"); multiEl.className = "multi"; multiEl.hidden = true; el.zoom.append(multiEl); multiEl.addEventListener("click", multiClick);
   // desfazer / refazer: só ao lado das opções do cabeçalho do Flow (nunca nas dicas dos componentes nem no topo da página)
-  const proj = host.ownerDocument.createElement("div"); proj.id = "proj"; proj.className = "proj"; proj.setAttribute("role", "toolbar"); proj.setAttribute("aria-label", "Project");
-  proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open an exported project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Export the project (.json)">${icon("download")}Export</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
-  host.ownerDocument.querySelector(".topbar")?.append(proj);
   const themes = host.ownerDocument.createElement("div"); themes.id = "temas"; host.ownerDocument.querySelector(".topbar")?.append(themes); themes.hidden = true;   // seletor de temas escondido (o tema ainda vem de ?tema= ou do salvo)
 
   // ───────── diálogos e avisos dentro da própria vista (prompt() do navegador pode ser bloqueado) ─────────
@@ -479,12 +474,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);
   });
   const delFlow = async (id: string): Promise<void> => { const f = locate(P(), id)?.node; if (!f || f.t !== "fn") return; if (innerFns(f) > 1 && !(await confirmAsk(`Delete the flow “${f.title}” and everything inside it?`))) return; run({ type: "removeFlow", id: f.id }, false); };
-  proj.querySelector("#save")!.addEventListener("click", () => { const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P())], { type: "application/json" })); a.href = url; a.download = "flow-project.json"; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
-  const fileIn = host.ownerDocument.getElementById("openFile") as HTMLInputElement; proj.querySelector("#open")!.addEventListener("click", () => fileIn.click());
-  fileIn.addEventListener("change", async () => {
-    const f = fileIn.files?.[0]; fileIn.value = ""; if (!f) return;
-    try { const p = parseProject(await f.text()); store.load(p); ui.flow = p.flows[0]!.id; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; toast(`Project “${p.name}” opened`); } catch (e) { toast(e instanceof FlowError ? e.message : String(e)); }
-  });
   $("#agents").addEventListener("click", () => void agentsDialog());
   host.ownerDocument.addEventListener("click", e => { const b = (e.target as HTMLElement).closest<HTMLElement>(".hist-btn"); if (b) { if (b.dataset["hist"] === "undo") store.undo(); else store.redo(); } });
   $("#zin").addEventListener("click", () => zoomTo(ui.zoom * 1.15)); $("#zout").addEventListener("click", () => zoomTo(ui.zoom / 1.15)); $("#fit").addEventListener("click", () => { auto = true; render(); });
@@ -492,8 +481,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   $("#dataAll").addEventListener("click", () => { ui.allData = !ui.allData; $("#dataAll").title = ui.allData ? "States: showing all available data (click for only the new ones)" : "States: showing only the new data (click for all available)"; render(); });
   $("#expand").addEventListener("click", () => { (ui.closed as Set<string>).clear(); render(); });
   $("#collapse").addEventListener("click", () => { const f = locate(P(), ui.flow)?.node; if (f?.t === "fn") { const mark = (list: readonly Node[]): void => list.forEach(n => { if (n.t === "fn" && n.kids.length) (ui.closed as Set<string>).add(n.id); mark(kidsOf(n)); }); mark(f.kids); if (f.kids.length) (ui.closed as Set<string>).add(f.id); } auto = true; render(); });   // recolhe as funções com filhos (também dentro de if/for/try) e a própria função do fluxo
-  const showTab = (name: "ts" | "term"): void => { if (!SHOW_CODE) name = "term"; tab = name; host.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String((x as HTMLElement).dataset["tab"] === name))); host.querySelectorAll(".pane").forEach(pn => pn.classList.toggle("on", pn.id === `p-${name}`)); };
-  host.querySelectorAll<HTMLElement>("[data-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset["tab"] as "ts" | "term")));
   $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
   $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });
   const reset = (): void => { const s = sampleProject(); store.load(s.project); ui.flow = s.main; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; };
@@ -559,7 +546,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const clampTermH = (h: number): number => Math.round(Math.min(Math.max(Number.isFinite(h) ? h : TERM_DEFAULT, TERM_MIN), Math.max(TERM_MIN, totalH() * 0.55)));
   const applyPrefs = (save = true): void => {
     prefs.codeW = clampTermH(prefs.codeW); app.style.setProperty("--codew", prefs.codeW + "px"); app.classList.toggle("code-off", !prefs.codeOpen);
-    const tog = $("#codeToggle"); tog.setAttribute("aria-pressed", String(prefs.codeOpen)); tog.title = prefs.codeOpen ? "Hide the terminal (Ctrl+\\)" : "Show the terminal (Ctrl+\\)"; tog.setAttribute("aria-label", prefs.codeOpen ? "Hide terminal" : "Show terminal"); tog.innerHTML = icon("chevron"); tog.classList.toggle("open", prefs.codeOpen);
+    const tog = $("#codeToggle"); tog.setAttribute("aria-pressed", String(prefs.codeOpen)); tog.title = prefs.codeOpen ? "Hide the terminal (Ctrl+\\)" : "Show the terminal (Ctrl+\\)"; tog.setAttribute("aria-label", prefs.codeOpen ? "Hide terminal" : "Show terminal"); tog.innerHTML = icon("terminal"); tog.classList.toggle("open", prefs.codeOpen);
     splitter.setAttribute("aria-valuenow", String(prefs.codeW)); splitter.setAttribute("aria-valuemin", String(TERM_MIN)); splitter.hidden = !prefs.codeOpen;
     if (save) try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* sem espaço: segue */ }
     window.requestAnimationFrame(() => { if (auto) fit(); });
@@ -615,7 +602,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     if (!canRun()) { toast("Select a function to run it"); return; }
     if (running) { running.stop(); return; }
     const flow = locate(P(), ui.flow)?.node; if (!flow || flow.t !== "fn") return; if (!prefs.codeOpen) { prefs.codeOpen = true; applyPrefs(); }   // o Terminal mora no painel de código: se ele está escondido, abre
-    showTab("term"); tbody.innerHTML = "";
+    tbody.innerHTML = "";
     let code: string; try { code = generate(P(), ui.flow, { js: true }).code; } catch (e) { addLine("error", String(e)); return; }
     addLine("system", `▶ ${flow.title}`); setRunning(true);
     running = runInWorker(code, ev => {
@@ -626,7 +613,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     });
   };
   $("#exec").addEventListener("click", runFlow); $("#tRun").addEventListener("click", runFlow);
-  $("#tClear").addEventListener("click", () => { tbody.innerHTML = ""; if (!running) tstat.textContent = "ready"; });
+  $("#tClear").addEventListener("click", () => { tbody.innerHTML = ""; if (!running) tstat.textContent = "Terminal"; });
   host.ownerDocument.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); runFlow(); } });
 
   // ───────── dicas rápidas dos botões (o title nativo demora ~1s; esta aparece em 50 ms, fora do zoom do canvas) ─────────
@@ -645,7 +632,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
 
   const off = store.subscribe(render);
   render();
-  return { store, ui, render, reset, destroy: () => { running?.stop(); off(); proj.remove(); tip.remove(); host.innerHTML = ""; } };
+  return { store, ui, render, reset, destroy: () => { running?.stop(); off(); tip.remove(); host.innerHTML = ""; } };
 }
 
 const STORE_KEY = "flow-novo-projeto-v1";

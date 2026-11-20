@@ -157,12 +157,12 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <h3>Tela</h3>
 <table>
 <tr><th>Área</th><th>Conteúdo</th></tr>
-<tr><td>Cabeçalho</td><td>título, <b>Docs</b>, <b>Open</b>, <b>Export</b></td></tr>
+<tr><td>Cabeçalho</td><td>título FOP + badges (sem Open/Export; projeto grava no navegador)</td></tr>
 <tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> em <code>src</code> cria função/arquivo novo; <b>+</b> no arquivo adiciona nele; <b>Sources</b> e recolher no cabeçalho</td></tr>
 <tr><td>Barra do diagrama</td><td>Explorer on/off, fluxo em foco, <b>Run</b>, undo/redo, zoom (20–250%), fit, nome dentro da barra, estados todos/novos, expandir/recolher, código on/off</td></tr>
 <tr><td>Tabela <i>Source · Function</i></td><td>uma linha por função; recuo = profundidade</td></tr>
 <tr><td>Diagrama</td><td>barras, dados, blocos, ligações em <code>s0…sN</code></td></tr>
-<tr><td>Terminal</td><td>painel inferior; toggle no header (direita); default minimizado; <kbd>Ctrl+\</kbd> / Run reabrem; divisória arrastável</td></tr>
+<tr><td>Terminal</td><td>painel inferior (só Terminal, sem aba TypeScript); rótulo + ícone terminal; default minimizado; <kbd>Ctrl+\</kbd> / Run reabrem; divisória arrastável</td></tr>
 <tr><td>Footer</td><td>legenda (abstract/concrete, dados, selection, repetition, try, catch) + FOP · MIT · contato</td></tr>
 </table>
 <h3>Menu de opções</h3>
@@ -347,7 +347,7 @@ export const wrappers: Record&lt;string, Fn&gt; = {
 </table>
 <pre><code>{ "format": "flow-novo", "version": 1,
   "project": { "name": "…", "flows": [ /* Fn[] */ ], "agents": [ /* Agent[] */ ], "seq": 42 } }</code></pre>
-<p><b>Export</b> = <code>serialize</code>; <b>Open</b> = <code>parseProject</code> + <code>migrate</code>. <code>parseProject</code> valida formato e versão, tipos, ids únicos, referências (Source, resp), contratos e blocos; falha com <code>invalid</code>.</p>
+<p>Persistência automática: <code>serialize</code> → <code>localStorage</code>; ao abrir, <code>parseProject</code> + <code>migrate</code>. <code>parseProject</code> valida formato e versão, tipos, ids únicos, referências (Source, resp), contratos e blocos; falha com <code>invalid</code>. Sem botões Open/Export na UI.</p>
 <table>
 <tr><th>Parâmetro</th><th>Efeito</th></tr>
 <tr><td><code>?tema=&lt;id&gt;</code></td><td>tema</td></tr>
@@ -373,14 +373,14 @@ export const wrappers: Record&lt;string, Fn&gt; = {
 <tr><td><code>renameFile</code> para nome existente</td><td><code>invalid</code></td></tr>
 <tr><td><code>addElse</code> em <code>if</code> que já tem else</td><td><code>invalid</code></td></tr>
 <tr><td>Editar E/S de função de lib</td><td>bloqueado (contrato); só a saída se renomeia</td></tr>
-<tr><td>Arquivo inválido no Open</td><td><code>invalid</code> com mensagem</td></tr>
+<tr><td>Projeto salvo inválido</td><td><code>invalid</code> → volta ao exemplo</td></tr>
 </table>
 <div class="note warn"><b>Nomes de entrada:</b> não use nomes de tarefas de lib (<code>min</code>, <code>max</code>, <code>round</code>, <code>log</code>…) nem <code>state</code>: colidem com o código gerado.</div>
 <div class="note warn"><b>Template string:</b> entrada da raiz usada <i>apenas</i> dentro de <code>${}</code> pode não ser reconhecida (<code>exprIdents</code> remove o conteúdo de strings) e falha com “not defined”. Use concatenação (<code>"url/" + id</code>) ou use o dado também em expressão comum.</div>
 <div class="note">Texto fixo exige aspas (<code>"ana"</code>); sem aspas é nome de dado.</div>
 
 <h2 id="samples"><span class="n">15</span>Samples</h2>
-<p>Não fazem parte do projeto padrão (abre só com <code>main</code>). Baixe <a href="fop-samples.json" download>fop-samples.json</a> e use <b>Open</b>.</p>
+<p>Não fazem parte do projeto padrão (abre só com <code>main</code>). Arquivo de referência: <a href="fop-samples.json" download>fop-samples.json</a> (sem Open na UI).</p>
 <table>
 <tr><th>Função</th><th>Entradas (padrão)</th><th>Libs</th></tr>
 <tr><td><code>newId</code></td><td>—</td><td>crypto</td></tr>

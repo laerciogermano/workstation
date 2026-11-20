@@ -23,7 +23,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
-    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
     <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
@@ -251,23 +251,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       if (moved) { const stop = (ev: Event): void => ev.stopPropagation(); window.addEventListener("click", stop, { capture: true, once: true }); window.setTimeout(() => window.removeEventListener("click", stop, true), 0); }   // arrastar não seleciona
     };
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
-  });
-
-  // ───────── cadastro de responsáveis ─────────
-  const KIND_NAME = { maquina: "Browser lib", pessoa: "Person", ia: "AI agent", arquivo: "File" } as const;
-  const agentsDialog = (): Promise<void> => modal<void>("Sources", (form, done) => {
-    const draw = (): void => {
-      form.classList.add("wide");
-      form.innerHTML = `<label>Project sources</label><div class="agl">${P().agents.filter(a => a.kind === "maquina").map(a => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` · ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remove ${esc(a.name)}" aria-label="Remove ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
-        <div class="agadd"><select name="kind" aria-label="Type"><option value="maquina">Browser lib</option></select><input name="name" placeholder="name (e.g. Math, Maria, Writer)" aria-label="Name" spellcheck="false"><input name="tasks" placeholder="functions: round(value) -> result; max(a, b) -> result" aria-label="Lib functions with inputs and outputs" spellcheck="false"><button type="submit" class="pri">Add</button></div>
-        <div class="row"><button type="button" data-no>Close</button></div>`;
-      form.querySelector("[data-no]")!.addEventListener("click", () => done());
-      form.querySelectorAll<HTMLElement>("[data-rm-agent]").forEach(b => b.addEventListener("click", () => { run({ type: "removeAgent", id: b.dataset["rmAgent"]! }, false); draw(); }));
-      const kind = form.elements.namedItem("kind") as HTMLSelectElement, tasks = form.elements.namedItem("tasks") as HTMLInputElement; const sync = (): void => { tasks.hidden = kind.value !== "maquina"; }; kind.addEventListener("change", sync); sync();
-      (form.elements.namedItem("name") as HTMLInputElement).focus();
-    };
-    form.addEventListener("submit", e => { e.preventDefault(); const f = new FormData(form); if (run({ type: "addAgent", kind: String(f.get("kind")), name: String(f.get("name") ?? ""), tasks: String(f.get("tasks") ?? "") }, false)) draw(); });
-    form.addEventListener("keydown", e => { if (e.key === "Escape") done(); }); draw();
   });
 
   // ───────── caixas de edição das entradas ─────────
@@ -499,7 +482,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);
   });
   const delFlow = async (id: string): Promise<void> => { const f = locate(P(), id)?.node; if (!f || f.t !== "fn") return; if (innerFns(f) > 1 && !(await confirmAsk(`Delete the flow “${f.title}” and everything inside it?`))) return; run({ type: "removeFlow", id: f.id }, false); };
-  $("#agents").addEventListener("click", () => void agentsDialog());
   host.ownerDocument.addEventListener("click", e => { const b = (e.target as HTMLElement).closest<HTMLElement>(".hist-btn"); if (b) { if (b.dataset["hist"] === "undo") store.undo(); else store.redo(); } });
   $("#zin").addEventListener("click", () => zoomTo(ui.zoom * 1.15)); $("#zout").addEventListener("click", () => zoomTo(ui.zoom / 1.15)); $("#fit").addEventListener("click", () => { auto = true; render(); });
   $("#txtIn").addEventListener("click", () => { ui.txtIn = !ui.txtIn; render(); });

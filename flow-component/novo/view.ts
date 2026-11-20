@@ -236,13 +236,11 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
-  /** Fundo da banda + barra lateral (width IND): estilo suave tipo trilho (wash + borda direita). */
+  /** Só a barra vertical de indentação (sem fundo de banda / wash). */
   const rail = (cls: string, depth: number, y0: number, h: number): void => {
     if (depth <= 0 || h <= 0) return;
-    const x = (depth - 1) * G.IND;
-    bands.push(`<rect class="band ${cls}" x="${x}" y="${y0}" width="${W - x}" height="${h}"/>`);
-    bands.push(`<rect class="bandl ${cls}" x="${x}" y="${y0}" width="${G.IND}" height="${h}"/>`);
-    bands.push(`<line class="bande ${cls}" x1="${x + G.IND - 0.5}" y1="${y0}" x2="${x + G.IND - 0.5}" y2="${y0 + h}"/>`);
+    const x = (depth - 1) * G.IND + G.IND - 0.5;
+    bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
   };
   // composição (pai): faixa lateral sobre as linhas dos filhos
   sc.rows.forEach((r, i) => {

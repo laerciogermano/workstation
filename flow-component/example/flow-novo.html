@@ -119,10 +119,8 @@
   .plan .axis{stroke:var(--muted);stroke-width:1.3}
   .plan .chip rect{fill:var(--wash);stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.3}.plan .chip text{font:600 9px var(--mono);fill:var(--ink)}
   .plan .dia{fill:var(--paper);stroke:var(--muted);stroke-width:1.3}.plan .ttl{font:600 10px var(--mono);fill:var(--ink)}
-  /* fundo das bandas desligado — cor só nas barras laterais (bandl) */
-  .plan .band{fill:none;stroke:none}
-  .plan .bandl{stroke:none}.plan .bandl.co{fill:color-mix(in srgb,var(--ink) 9%,transparent)}.plan .bandl.if,.plan .bandl.el{fill:color-mix(in srgb,var(--wrn) 22%,transparent)}.plan .bandl.lp{fill:color-mix(in srgb,var(--loop) 22%,transparent)}.plan .bandl.tr{fill:color-mix(in srgb,var(--okc) 20%,transparent)}.plan .bandl.ca{fill:color-mix(in srgb,var(--fail) 20%,transparent)}
-  .plan .bande{stroke-width:1}.plan .bande.co{stroke:color-mix(in srgb,var(--ink) 40%,transparent)}.plan .bande.if,.plan .bande.el{stroke:var(--wrn)}.plan .bande.lp{stroke:var(--loop)}.plan .bande.tr{stroke:var(--okc)}.plan .bande.ca{stroke:var(--fail)}
+  /* indentação do plano: só a barra vertical (sem fundo) */
+  .plan .bande{stroke-width:1.5}.plan .bande.co{stroke:color-mix(in srgb,var(--ink) 55%,transparent)}.plan .bande.if,.plan .bande.el{stroke:var(--wrn)}.plan .bande.lp{stroke:var(--loop)}.plan .bande.tr{stroke:var(--okc)}.plan .bande.ca{stroke:var(--fail)}
   .plan .dlk{stroke:var(--muted);stroke-width:1.2}
   .plan .dep{fill:none;stroke:#9a9a9a;stroke-width:1.2}
   .plan .fn{fill:var(--f-conc);stroke:var(--f-conc-s);stroke-width:1.5;cursor:pointer}.plan .fn.abs{fill:var(--f-abs);stroke:var(--f-abs-s)}.plan .fn.nag{fill:transparent;stroke:var(--f-abs-s)}

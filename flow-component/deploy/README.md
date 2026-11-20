@@ -2,10 +2,14 @@
 
 **URL:** https://fop.laerciogermano.com/ → `flow-novo.html?tema=eternos-black`  
 **Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop`  
-**DNS:** Hostinger (zona `laerciogermano.com`) · A `fop` → `185.250.37.82`  
+**DNS:** Hostinger (zona `laerciogermano.com`) · A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)  
 **Conteúdo:** [`../example/`](../example/) (editor Flow · FOP)
 
 > Pedido: **só FOP** em `fop.lesgermano.com`. `lesgermano.com` não está na conta Hostinger Germano. Publicado em `fop.laerciogermano.com`. nginx também lista `fop.lesgermano.com` se o domínio for registrado depois.
+
+### Wildcard DNS
+
+Na zona `laerciogermano.com` há **A `*` → `185.250.37.82`**. Novos subdomínios resolvem sem novo registro no hPanel. Ainda precisa no Contabo: pasta + nginx `server_name` + `certbot -d <sub>.laerciogermano.com`. Apex `@` continua no parking Hostinger (`2.57.91.91`).
 
 ## Republicar
 

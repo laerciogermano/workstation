@@ -258,9 +258,15 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   // grade e passos (deslocados pelo gutter das barras de indentação)
   for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX(s)}" y1="${G.HEAD - 8}" x2="${colX(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
   sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
-  const chip = (s: number, y: number): string => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
+  // cima: quadro sN + losango embaixo; embaixo: losango em cima + quadro sN (espelho)
+  const chip = (s: number, y: number, diaAbove = false): string => {
+    const dia = diaAbove
+      ? `<path class="dia" d="M${colX(s)} ${y - 20} l4 4 l-4 4 l-4 -4z"/>`
+      : `<path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
+    return `${diaAbove ? dia : ""}<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>${diaAbove ? "" : dia}`;
+  };
   const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
-  for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
+  for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot, true));
   // os estados embaixo de cada coluna (como no Flow IDE): um quadrado (ou cubo) e o nome do dado que chega ali
   for (const [col, items] of statesByStep(sc, ui.allData, p)) {
     let row = 0;

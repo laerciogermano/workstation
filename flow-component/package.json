@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "Flow Component — comandos tipados do grafo Flow (núcleo puro, sem canvas)",
+  "author": "Laércio Germano",
+  "contributors": [
+    "Heráclito de Éfeso — «Tudo muda, exceto a mudança.»"
+  ],
   "type": "module",
   "sideEffects": false,
   "engines": {

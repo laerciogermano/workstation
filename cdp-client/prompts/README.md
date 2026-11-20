@@ -1,4 +1,4 @@
-# Timeline de prompts — CDP Client
+# Timeline de prompts — Edge Client (cdp-client)
 
 **Por quê:** guardar cada prompt do projeto, na ordem.  
 **No fluxo:** prompt novo entra **primeiro** aqui.

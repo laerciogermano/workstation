@@ -215,10 +215,12 @@
 
   .ib[hidden]{display:none}
   .ib.run .ic{fill:currentColor;stroke-width:1.5}.ib.run.on{color:var(--fail)}
-  .pane.term{padding:0}.thead{display:flex;align-items:center;gap:8px;height:34px;padding:0 6px 0 14px;border-bottom:1px solid var(--line);flex:none}.tstat{font:500 12px var(--mono);color:var(--muted)}.tstat.busy{color:var(--ok)}
-  .thead button.tbtn{display:inline-grid;place-items:center;width:28px;height:28px;border:0;background:none;border-radius:6px;padding:0;cursor:pointer;color:var(--muted)}.thead button.tbtn .ic{width:14px;height:14px}.thead button.tbtn:hover{color:var(--ink);background:var(--wash)}.thead button.tbtn.on{color:var(--fail)}.thead button.tbtn.on .ic{fill:currentColor;stroke-width:1.5}
-  .thead #codeToggle{width:28px;height:28px;margin-left:2px;color:var(--muted)}.thead #codeToggle .ic{width:14px;height:14px}.thead #codeToggle.open{color:var(--ink)}.thead #codeToggle:hover{color:var(--ink);background:var(--wash)}
-  .app.code-off .side .thead{border-bottom:0}
+  .pane.term{padding:0}.thead{display:flex;align-items:center;gap:4px;height:34px;padding:0 6px 0 10px;border-bottom:1px solid var(--line);flex:none}
+  .thead .term-toggle{display:inline-flex;align-items:center;gap:8px;flex:1;min-width:0;height:100%;margin:0;padding:0 8px 0 4px;border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer;text-align:left}
+  .thead .term-toggle .ic{width:14px;height:14px;flex:none}.thead .term-toggle .tstat{font:500 12px var(--mono);color:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .thead .term-toggle:hover,.thead .term-toggle.open{color:var(--ink);background:var(--wash)}.thead .term-toggle .tstat.busy{color:var(--ok)}
+  .thead button.tbtn{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;border:0;background:none;border-radius:6px;padding:0;cursor:pointer;color:var(--muted)}.thead button.tbtn .ic{width:14px;height:14px}.thead button.tbtn:hover{color:var(--ink);background:var(--wash)}.thead button.tbtn.on{color:var(--fail)}.thead button.tbtn.on .ic{fill:currentColor;stroke-width:1.5}
+  .app.code-off .side .thead{border-bottom:0;padding-right:10px}
   .tbody{flex:1;min-height:0;overflow:auto;background:var(--code-bg);padding:8px 0 16px;font:12.5px/1.6 ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace}.tline{display:flex;gap:10px;padding:1px 14px;white-space:pre-wrap;word-break:break-word}.tline .tt{flex:none;width:58px;text-align:right;color:var(--muted)}.tline pre{margin:0;font:inherit;white-space:pre-wrap}
   .tline.system{color:var(--muted)}.tline.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent)}.tline.error{color:var(--fail);background:color-mix(in srgb,var(--fail) 8%,transparent)}.tline.debug,.tline.info{color:var(--body)}.tline.table pre{line-height:1.25}
   .dlg{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgba(0,0,0,.35)}

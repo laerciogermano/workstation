@@ -98,8 +98,8 @@
 }
 :root[data-tema="ardosia"], :root[data-tema="gantt"], :root[data-tema="noite"], :root[data-tema="graphite"] { --fc-loop: #b794f6; }
 :root[data-tema="indigo"] { --fc-loop: #c026d3; }
-:root[data-tema="eternos"] { --fc-warn: #c9891a; --fc-loop: #6d28d9; --fc-ok: #2f8f5b; }   /* if âmbar · for violeta · try verde */
-:root[data-tema="eternos-black"] { --fc-warn: #e8b84a; --fc-loop: #a78bfa; --fc-ok: #6bcf8e; }
+:root[data-tema="eternos"] { --fc-warn: #c9891a; --fc-loop: #0b0b0b; --fc-ok: #2f8f5b; }   /* if âmbar · for preto (fundo claro) · try verde */
+:root[data-tema="eternos-black"] { --fc-warn: #e8b84a; --fc-loop: #f2f2f2; --fc-ok: #6bcf8e; }   /* for branco no fundo preto */
 :root[data-tema="tablet-black"] { --fc-loop: #22d3ee; }
 
 /* ───── seletor de temas: bolinhas redondas (como na barra do Flow IDE) ───── */

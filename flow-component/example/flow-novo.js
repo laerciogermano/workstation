@@ -2045,7 +2045,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
-        <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube</span>
+        <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>object</span>
         <span><i class="lg dia"></i>selection</span><span><i class="lg lp">\u21BB</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
       </div>
 

@@ -1723,10 +1723,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
       const n = r.node, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
       rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
-      const diamond = r.kind === "block" && n.t === "if", px = colX2(r.s) + (diamond ? 11 : 4);
-      const txt = r.kind === "catch" ? "catch \xB7 if the try fails" : r.kind === "else" ? "else" : n.t === "for" ? `\u21BB ${blockLabel(p, n)}` : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
+      const mark = r.kind === "block" && (n.t === "if" || n.t === "for"), px = colX2(r.s) + (mark ? 11 : 4);
+      const txt = r.kind === "catch" ? "catch \xB7 if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
       const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
-      if (diamond) over.push(`<path class="fif" d="M${colX2(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
+      if (mark && n.t === "if") over.push(`<path class="fif" d="M${colX2(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
+      if (mark && n.t === "for") over.push(`<text class="flp" x="${colX2(r.s)}" y="${ym(i) + 3.5}" text-anchor="middle">\u21BB</text>`);
       over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
       if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);
     });

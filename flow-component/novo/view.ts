@@ -265,7 +265,8 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
       : `<path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
     return `${diaAbove ? dia : ""}<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>${diaAbove ? "" : dia}`;
   };
-  const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
+  // embaixo: +30 p/ o losango (y-20) ficar abaixo do eixo (rowY+4), não em cima dele
+  const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 30;
   for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot, true));
   // os estados embaixo de cada coluna (como no Flow IDE): um quadrado (ou cubo) e o nome do dado que chega ali
   for (const [col, items] of statesByStep(sc, ui.allData, p)) {

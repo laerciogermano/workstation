@@ -1978,7 +1978,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const dia = diaAbove ? `<path class="dia" d="M${colX2(s)} ${y - 20} l4 4 l-4 4 l-4 -4z"/>` : `<path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
       return `${diaAbove ? dia : ""}<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>${diaAbove ? "" : dia}`;
     };
-    const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
+    const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 30;
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot, true));
     for (const [col, items] of statesByStep(sc, ui.allData, p)) {
       let row = 0;

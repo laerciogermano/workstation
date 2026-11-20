@@ -1569,10 +1569,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     need2 = Math.max(need2, 90 + sc.maxDepth * G.IND * 2 + 48);
     return Math.round(TABLE_CHROME + need2);
   }
-  var CODE_MIN = 300;
   var CODE_DEFAULT = 480;
-  var CODE_MAX_RATIO = 0.7;
-  var clampCodeWidth = (w, total) => Math.round(Math.min(Math.max(Number.isFinite(w) ? w : CODE_DEFAULT, CODE_MIN), Math.max(CODE_MIN, total * CODE_MAX_RATIO)));
   var DEFAULT_PREFS = { codeW: CODE_DEFAULT, codeOpen: true };
   function parsePrefs(raw) {
     try {
@@ -1679,7 +1676,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
       if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
         const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
-        const tag = r.kind === "catch" ? `<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `<span class="trd">try</span><b class="mono">catch \u2193 ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler")}</b>`;
+        const tag = r.kind === "catch" ? `${icon("shield", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
         return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
       }
       return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
@@ -1723,11 +1720,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
       const n = r.node, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
       rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
-      const mark = r.kind === "block" && (n.t === "if" || n.t === "for"), px = colX2(r.s) + (mark ? 11 : 4);
+      const mark = r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try") || r.kind === "catch", px = colX2(r.s) + (mark ? 11 : 4), cx = colX2(r.s), cy = ym(i);
       const txt = r.kind === "catch" ? "catch \xB7 if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
       const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
-      if (mark && n.t === "if") over.push(`<path class="fif" d="M${colX2(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
-      if (mark && n.t === "for") over.push(`<text class="flp" x="${colX2(r.s)}" y="${ym(i) + 3.5}" text-anchor="middle">\u21BB</text>`);
+      if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 6} l6 6 l-6 6 l-6 -6z"/>`);
+      if (mark && r.kind === "block" && n.t === "for") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">\u21BB</text>`);
+      if (mark && r.kind === "block" && n.t === "try") over.push(`<path class="ftr" d="M${cx} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx - 3.5} ${cy - 6.1} ${cx - 1.8} ${cy - 7} ${cx} ${cy - 7}z"/>`);
+      if (mark && r.kind === "catch") over.push(`<path class="fca" d="M${cx} ${cy - 6.5} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
       over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
       if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);
     });
@@ -2036,12 +2035,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
-    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
     <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
         <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-pressed="true" aria-label="Explorer">${icon("panel-left")}</button><span class="fx-t" id="flowName">Flow</span><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
+                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="true" aria-label="Terminal panel">${icon("panel-right")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
@@ -2050,7 +2049,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       </div>
 
     </section>
-    <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
+    <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
       <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
       <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
@@ -2298,7 +2297,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return r ? flowFile(r) : "";
       })();
       const secOpen = !exClosed.has("sec:files");
-      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
         const fid = "f:" + file, open = !exClosed.has(fid);
         const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
         return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -2325,7 +2324,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (nameEl && row && row.dataset["ex"] !== "all" && onText(nameEl, e)) void editExName(row, nameEl);
     });
     el.explorer.addEventListener("click", (e) => {
-      const t = e.target, add = t.closest("[data-exadd]");
+      const t = e.target;
+      if (t.closest("[data-exnew]")) {
+        void run({ type: "newFlow" });
+        return;
+      }
+      const add = t.closest("[data-exadd]");
       if (add) {
         {
           const taken = new Set(P2().flows.map((f) => f.title));
@@ -2980,7 +2984,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
     });
     $("#agents").addEventListener("click", () => void agentsDialog());
-    $("#newFlow").addEventListener("click", () => void run({ type: "newFlow" }));
     host.ownerDocument.addEventListener("click", (e) => {
       const b = e.target.closest(".hist-btn");
       if (b) {
@@ -3165,13 +3168,16 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
     })());
     const total = () => app.clientWidth;
+    const totalH = () => app.clientHeight;
+    const TERM_MIN = 120, TERM_DEFAULT = 220;
+    const clampTermH = (h) => Math.round(Math.min(Math.max(Number.isFinite(h) ? h : TERM_DEFAULT, TERM_MIN), Math.max(TERM_MIN, totalH() * 0.55)));
     const applyPrefs = (save = true) => {
-      prefs.codeW = clampCodeWidth(prefs.codeW, total() - (exPrefs.open ? exPrefs.w + 12 : 0));
+      prefs.codeW = clampTermH(prefs.codeW);
       app.style.setProperty("--codew", prefs.codeW + "px");
       app.classList.toggle("code-off", !prefs.codeOpen);
       $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen));
       splitter.setAttribute("aria-valuenow", String(prefs.codeW));
-      splitter.setAttribute("aria-valuemin", "300");
+      splitter.setAttribute("aria-valuemin", String(TERM_MIN));
       splitter.hidden = !prefs.codeOpen;
       if (save) try {
         localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
@@ -3259,17 +3265,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
     splitter.addEventListener("pointerdown", (e) => {
       if (e.button !== 0) return;
       e.preventDefault();
-      app.classList.add("resizing");
+      app.classList.add("resizing", "resizing-v");
       const move = (ev) => {
         const r = app.getBoundingClientRect();
-        prefs.codeW = r.right - 12 - ev.clientX - 6;
+        prefs.codeW = r.bottom - 12 - ev.clientY;
         applyPrefs(false);
       };
       const up = () => {
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
         window.removeEventListener("pointercancel", up);
-        app.classList.remove("resizing");
+        app.classList.remove("resizing", "resizing-v");
         applyPrefs();
       };
       window.addEventListener("pointermove", move);
@@ -3277,13 +3283,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
       window.addEventListener("pointercancel", up);
     });
     splitter.addEventListener("dblclick", () => {
-      prefs.codeW = CODE_DEFAULT;
+      prefs.codeW = TERM_DEFAULT;
       applyPrefs();
     });
     splitter.addEventListener("keydown", (e) => {
       const step2 = e.shiftKey ? 80 : 24;
-      if (e.key === "ArrowLeft") prefs.codeW += step2;
-      else if (e.key === "ArrowRight") prefs.codeW -= step2;
+      if (e.key === "ArrowUp") prefs.codeW += step2;
+      else if (e.key === "ArrowDown") prefs.codeW -= step2;
       else if (e.key === "Enter") toggleCode();
       else return;
       e.preventDefault();

@@ -226,9 +226,9 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
     const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
     if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
       const n = r.node as Exclude<Node, Fn>, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
-      const tag = r.kind === "catch" ? `<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
+      const tag = r.kind === "catch" ? `${icon("shield", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
         : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">↻</span><b class="mono">${esc(blockLabel(p, n))}</b>`
-        : `<span class="trd">try</span><b class="mono">catch ↓ ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler")}</b>`;
+        : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
       return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
     }
     return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
@@ -276,12 +276,14 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
     const n = r.node as Exclude<Node, Fn>, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
     rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
-    // if e for: ícone na linha (losango / ↻), pill alinhada depois — catch/else/try ficam colados na coluna
-    const mark = r.kind === "block" && (n.t === "if" || n.t === "for"), px = colX(r.s) + (mark ? 11 : 4);
+    // if / for / try / catch: ícone na linha, pill alinhada depois — só else fica colado na coluna
+    const mark = (r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try")) || r.kind === "catch", px = colX(r.s) + (mark ? 11 : 4), cx = colX(r.s), cy = ym(i);
     const txt = r.kind === "catch" ? "catch · if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
     const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
-    if (mark && n.t === "if") over.push(`<path class="fif" d="M${colX(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
-    if (mark && n.t === "for") over.push(`<text class="flp" x="${colX(r.s)}" y="${ym(i) + 3.5}" text-anchor="middle">↻</text>`);
+    if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 6} l6 6 l-6 6 l-6 -6z"/>`);
+    if (mark && r.kind === "block" && n.t === "for") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">↻</text>`);
+    if (mark && r.kind === "block" && n.t === "try") over.push(`<path class="ftr" d="M${cx} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx - 3.5} ${cy - 6.1} ${cx - 1.8} ${cy - 7} ${cx} ${cy - 7}z"/>`);
+    if (mark && r.kind === "catch") over.push(`<path class="fca" d="M${cx} ${cy - 6.5} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
     over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
     // hit transparente (toque) + traço fino (visual discreto)
     if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);

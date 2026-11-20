@@ -5,7 +5,7 @@ import { contractOf, cubeName, FlowError, flowFile, fnsOf, kidsOf, type Node, is
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
-import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planGutter, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
+import { build, fnKind, esc, G, parsePrefs, planGutter, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
 import { sampleProject, SAMPLE_TITLES } from "./sample";
 import { docExample } from "./docs-examples";
 
@@ -22,12 +22,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
-    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
     <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
         <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-pressed="true" aria-label="Explorer">${icon("panel-left")}</button><span class="fx-t" id="flowName">Flow</span><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Zoom out (−)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
+                <button type="button" class="ib" id="zout" title="Zoom out (−)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="true" aria-label="Terminal panel">${icon("panel-right")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
@@ -36,7 +36,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       </div>
 
     </section>
-    <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
+    <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <aside class="side">
       <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
       <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts" ${SHOW_CODE ? "" : "hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
@@ -158,7 +158,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), files = new Map<string, Fn[]>(); for (const f of p.flows) { const k = flowFile(f); files.set(k, [...(files.get(k) ?? []), f]); }
     const curFile = (() => { const r = locate(p, ui.flow)?.flow; return r ? flowFile(r) : ""; })();
     const secOpen = !exClosed.has("sec:files");
-    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
       const fid = "f:" + file, open = !exClosed.has(fid);
       const body = open ? fns.map(fn => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
       return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0]!.id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -173,7 +173,9 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   }
   el.explorer.addEventListener("dblclick", e => { const t = e.target as HTMLElement, nameEl = t.closest<HTMLElement>(".ex-n"), row = t.closest<HTMLElement>("[data-ex]"); if (nameEl && row && row.dataset["ex"] !== "all" && onText(nameEl, e)) void editExName(row, nameEl); });
   el.explorer.addEventListener("click", e => {
-    const t = e.target as HTMLElement, add = t.closest<HTMLElement>("[data-exadd]"); if (add) { { const taken = new Set(P().flows.map(f => f.title)); let n = 1, t = "new_function"; while (taken.has(t)) t = `new_function_${++n}`; run({ type: "newFlow", title: t, file: add.dataset["exadd"]! }); } return; }
+    const t = e.target as HTMLElement;
+    if (t.closest("[data-exnew]")) { void run({ type: "newFlow" }); return; }
+    const add = t.closest<HTMLElement>("[data-exadd]"); if (add) { { const taken = new Set(P().flows.map(f => f.title)); let n = 1, t = "new_function"; while (taken.has(t)) t = `new_function_${++n}`; run({ type: "newFlow", title: t, file: add.dataset["exadd"]! }); } return; }
     if (t.closest("[data-exreset]")) { void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then(ok => { if (!ok) return; exClosed.clear(); fileView = "*"; fitted = false; reset(); render(); }); return; }
     const delFile = t.closest<HTMLElement>("[data-exdelfile]");
     if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); const total = P().flows.filter(f => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0); void (total > 1 ? confirmAsk(`Remove the file “${file}” and its ${total} function(s)?`) : Promise.resolve(true)).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }
@@ -489,7 +491,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     try { const p = parseProject(await f.text()); store.load(p); ui.flow = p.flows[0]!.id; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; toast(`Project “${p.name}” opened`); } catch (e) { toast(e instanceof FlowError ? e.message : String(e)); }
   });
   $("#agents").addEventListener("click", () => void agentsDialog());
-  $("#newFlow").addEventListener("click", () => void run({ type: "newFlow" }));
   host.ownerDocument.addEventListener("click", e => { const b = (e.target as HTMLElement).closest<HTMLElement>(".hist-btn"); if (b) { if (b.dataset["hist"] === "undo") store.undo(); else store.redo(); } });
   $("#zin").addEventListener("click", () => zoomTo(ui.zoom * 1.15)); $("#zout").addEventListener("click", () => zoomTo(ui.zoom / 1.15)); $("#fit").addEventListener("click", () => { auto = true; render(); });
   $("#txtIn").addEventListener("click", () => { ui.txtIn = !ui.txtIn; render(); });
@@ -558,9 +559,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const app = host.querySelector<HTMLElement>(".app")!, splitter = $("#splitter"), PREFS_KEY = "flow-novo-ui-v1";
   let prefs: Prefs = parsePrefs((() => { try { return localStorage.getItem(PREFS_KEY); } catch { return null; } })());
   const total = (): number => app.clientWidth;
+  const totalH = (): number => app.clientHeight;
+  const TERM_MIN = 120, TERM_DEFAULT = 220;
+  const clampTermH = (h: number): number => Math.round(Math.min(Math.max(Number.isFinite(h) ? h : TERM_DEFAULT, TERM_MIN), Math.max(TERM_MIN, totalH() * 0.55)));
   const applyPrefs = (save = true): void => {
-    prefs.codeW = clampCodeWidth(prefs.codeW, total() - (exPrefs.open ? exPrefs.w + 12 : 0)); app.style.setProperty("--codew", prefs.codeW + "px"); app.classList.toggle("code-off", !prefs.codeOpen);
-    $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen)); splitter.setAttribute("aria-valuenow", String(prefs.codeW)); splitter.setAttribute("aria-valuemin", "300"); splitter.hidden = !prefs.codeOpen;
+    prefs.codeW = clampTermH(prefs.codeW); app.style.setProperty("--codew", prefs.codeW + "px"); app.classList.toggle("code-off", !prefs.codeOpen);
+    $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen)); splitter.setAttribute("aria-valuenow", String(prefs.codeW)); splitter.setAttribute("aria-valuemin", String(TERM_MIN)); splitter.hidden = !prefs.codeOpen;
     if (save) try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* sem espaço: segue */ }
     window.requestAnimationFrame(() => { if (auto) fit(); });
   };
@@ -588,13 +592,13 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const toggleCode = (): void => { prefs.codeOpen = !prefs.codeOpen; applyPrefs(); };
   $("#codeToggle").addEventListener("click", toggleCode);
   splitter.addEventListener("pointerdown", e => {
-    if (e.button !== 0) return; e.preventDefault(); app.classList.add("resizing");
-    const move = (ev: PointerEvent): void => { const r = app.getBoundingClientRect(); prefs.codeW = r.right - 12 - ev.clientX - 6; applyPrefs(false); };
-    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); app.classList.remove("resizing"); applyPrefs(); };
+    if (e.button !== 0) return; e.preventDefault(); app.classList.add("resizing", "resizing-v");
+    const move = (ev: PointerEvent): void => { const r = app.getBoundingClientRect(); prefs.codeW = r.bottom - 12 - ev.clientY; applyPrefs(false); };
+    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); app.classList.remove("resizing", "resizing-v"); applyPrefs(); };
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
   });
-  splitter.addEventListener("dblclick", () => { prefs.codeW = CODE_DEFAULT; applyPrefs(); });
-  splitter.addEventListener("keydown", e => { const step = e.shiftKey ? 80 : 24; if (e.key === "ArrowLeft") prefs.codeW += step; else if (e.key === "ArrowRight") prefs.codeW -= step; else if (e.key === "Enter") toggleCode(); else return; e.preventDefault(); applyPrefs(); });
+  splitter.addEventListener("dblclick", () => { prefs.codeW = TERM_DEFAULT; applyPrefs(); });
+  splitter.addEventListener("keydown", e => { const step = e.shiftKey ? 80 : 24; if (e.key === "ArrowUp") prefs.codeW += step; else if (e.key === "ArrowDown") prefs.codeW -= step; else if (e.key === "Enter") toggleCode(); else return; e.preventDefault(); applyPrefs(); });
   host.ownerDocument.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "\\") { e.preventDefault(); toggleCode(); } });
   if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => { if (auto && last) fit(); }).observe(el.scroll);
   window.addEventListener("resize", () => { applyPrefs(false); applyEx(false); }); applyPrefs(false); applyEx(false);

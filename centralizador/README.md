@@ -1,8 +1,8 @@
 # Centralizador
 
-Hub público dos projetos (título, descrição, imagem, link).
+Hub dos projetos (título, descrição, imagem, link).
 
-**URL:** https://centralizador.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
+**Status:** fora do ar (2026-11-20) — DNS A `centralizador` e site Contabo removidos. Código local em [`site/`](site/). Deploy: [`deploy/README.md`](deploy/README.md).
 
 ## Conteúdo
 

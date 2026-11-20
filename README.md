@@ -36,7 +36,7 @@ Hub de projetos, board, tasks e processo de desenvolvimento.
 
 ### Projetos
 
-Hub público: [**Centralizador**](centralizador/README.md) — https://centralizador.laerciogermano.com/
+Hub: [**Centralizador**](centralizador/README.md) — fora do ar (código local)
 
 | | Projeto | Descrição | Links |
 |:--:|:--------|:----------|:------|

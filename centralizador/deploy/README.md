@@ -1,13 +1,15 @@
 # Deploy — centralizador.laerciogermano.com
 
-**URL:** https://centralizador.laerciogermano.com/  
-**Host:** Contabo `185.250.37.82` · root `/opt/centralizador` · nginx site `centralizador`  
-**DNS:** Hostinger (zona `laerciogermano.com`) · A `centralizador` → `185.250.37.82`  
-**Conteúdo:** [`../site/`](../site/)
+**Status:** fora do ar desde 2026-11-20.  
+**Antes:** Contabo `185.250.37.82` · `/opt/centralizador` · nginx `centralizador` · DNS A `centralizador` → `185.250.37.82` · cert Let’s Encrypt.  
+**Conteúdo local:** [`../site/`](../site/)
 
-> Pedido original: `centralizador.lesgermano.com`. `lesgermano.com` **não está registrado** (whois sem match) e não aparece na conta Hostinger Germano. Publicado em `centralizador.laerciogermano.com`. Se registrar `lesgermano.com` na mesma conta: A `centralizador` → `185.250.37.82` + `certbot -d centralizador.lesgermano.com` (nginx já lista o `server_name`).
+> Pedido original: `centralizador.lesgermano.com`. `lesgermano.com` **não está registrado**. Hub ficou em `centralizador.laerciogermano.com` até o teardown.
 
-## Republicar
+## Republicar (voltar ao ar)
+
+1. hPanel → DNS `laerciogermano.com` → A `centralizador` → `185.250.37.82` (ou API DELETE inversa / PATCH)
+2. `SSHPASS='…' bash deploy/publicar.sh` (recria `/opt/centralizador`, nginx e certbot)
 
 ```bash
 SSHPASS='…' bash deploy/publicar.sh
@@ -45,8 +47,8 @@ Card **Gestão de CDPs** no hub (`img/gestao-cdps.jpg`, `url: null` = em breve).
 
 **Voltar:** remover o objeto Gestão de CDPs de `site/index.html` e `site/img/gestao-cdps.jpg`; republicar.
 
-## Rollback
+## Teardown (feito 2026-11-20)
 
-1. hPanel → DNS `laerciogermano.com` → excluir A `centralizador`
-2. Contabo: `rm /etc/nginx/sites-enabled/centralizador /etc/nginx/sites-available/centralizador; rm -rf /opt/centralizador; nginx -t && systemctl reload nginx`
-3. `certbot delete --cert-name centralizador.laerciogermano.com`
+1. Hostinger API: `DELETE` em `api/dns/v1/direct/zone/resource-records` com `domain=laerciogermano.com` e `filters: [{ name: 'centralizador', type: 'A' }]` (A `centralizador` removido; wildcard `*` na zona ainda resolve o hostname para o IP Contabo)
+2. Contabo: removidos nginx `centralizador`, `/opt/centralizador` e `certbot delete --cert-name centralizador.laerciogermano.com`
+3. HTTPS sem cert válido → browser falha; site do hub não existe mais no servidor

@@ -4,7 +4,8 @@ import { altKids, type Block, type Fn, type Node } from "./model";
  * Cena do Flow: transforma a árvore em LINHAS (tabela) e PASSOS (colunas do plano) — pura, sem DOM.
  *  - cada função folha ocupa um passo; funções em paralelo dividem o mesmo passo;
  *  - blocos e funções compostas cobrem os passos dos filhos;
- *  - o catch fica em paralelo à última célula do try e o que vem depois só começa após os dois.
+ *  - catch (try) e else (if) compartilham a mesma regra: sequência logo após o último elemento do bloco;
+ *    o que vem depois do bloco só começa quando o ramo alternativo termina. Não entram em `leaves`.
  */
 export type RowKind = "fn" | "block" | "catch" | "else";
 export interface Span { s: number; e: number }
@@ -23,9 +24,18 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
   const rows: Row[] = [], span = new Map<string, Span>(), leaves: Row[] = [];
   let maxDepth = 0;
 
-  const place = (list: readonly Node[], depth: number, start: number, emit: boolean, inCatch: boolean): number => {
+  const place = (list: readonly Node[], depth: number, start: number, emit: boolean, inAlt: boolean): number => {
     let step = start, prev: Span | null = null;
     const push = (r: Omit<Row, "last">): Row => { const row: Row = { ...r, last: 0 }; if (emit) { rows.push(row); maxDepth = Math.max(maxDepth, r.depth); } return row; };
+    /** catch e else: mesma regra — começa no passo seguinte ao fim do bloco (`after`). */
+    const placeAlt = (b: Block, alt: readonly Node[], after: number, emitAlt: boolean, blockClosed: boolean): number => {
+      const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
+      if (blockClosed) return place(alt, depth + 1, after, false, true);
+      const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
+      const cend = place(alt, depth + 1, after, emitAlt && !altClosed, true);
+      if (emitAlt) { crow.s = after; crow.e = Math.max(after, cend - 1); span.set(altKey, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
+      return cend;
+    };
     for (const n of list) {
       if (n.t === "fn") {
         const hasKids = n.kids.length > 0, isClosed = hasKids && closed.has(n.id);
@@ -33,11 +43,11 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
           const s = n.par && prev ? prev.s : step, sp: Span = { s, e: s };
           step = Math.max(step, s + 1); prev = sp; if (emit) span.set(n.id, sp);
           const row = push({ kind: "fn", id: n.id, node: n, depth, s, e: s, leaf: true, closed: false });
-          if (emit) { row.last = rows.length - 1; if (!inCatch) leaves.push(row); }
+          if (emit) { row.last = rows.length - 1; if (!inAlt) leaves.push(row); }
         } else {
           const s0 = n.par && prev ? prev.s : step;   // uma composição também pode rodar junto da anterior
           const row = push({ kind: "fn", id: n.id, node: n, depth, s: s0, e: s0, leaf: false, closed: isClosed });
-          const idx = rows.length - 1, next = place(n.kids, depth + 1, s0, emit && !isClosed, inCatch);
+          const idx = rows.length - 1, next = place(n.kids, depth + 1, s0, emit && !isClosed, inAlt);
           const sp: Span = { s: s0, e: Math.max(s0, next - 1) }; prev = sp; if (emit) { span.set(n.id, sp); row.s = sp.s; row.e = sp.e; row.last = rows.length - 1; void idx; }
           step = Math.max(step, next);
         }
@@ -46,22 +56,10 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
         const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
         const row = push({ kind: "block", id: b.id, node: b, depth, s: step, e: step, leaf: !canClose, closed: isClosed });
         // fechado: filhos (e catch/else) somem da tabela, mas o passo/span permanece
-        const next = place(b.kids, depth + 1, step, emit && !isClosed, inCatch), sp: Span = { s: step, e: Math.max(step, next - 1) };
+        const next = place(b.kids, depth + 1, step, emit && !isClosed, inAlt), sp: Span = { s: step, e: Math.max(step, next - 1) };
         if (emit) { span.set(b.id, sp); row.s = sp.s; row.e = sp.e; }
         let end = next;
-        if (alt && alt.length) {
-          // catch (do try) e else (do if): lista alternativa em paralelo à última célula do bloco, terminando junto com ela
-          const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-          const count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
-          if (isClosed) {
-            const cend = place(alt, depth + 1, cs, false, true); end = Math.max(next, cend);
-          } else {
-            const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: altClosed });
-            const cend = place(alt, depth + 1, cs, emit && !altClosed, true);
-            if (emit) { crow.s = cs; crow.e = Math.max(cs, cend - 1); span.set(altKey, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
-            end = Math.max(next, cend);
-          }
-        }
+        if (alt && alt.length) end = placeAlt(b, alt, next, emit, isClosed);
         if (emit) row.last = rows.length - 1;
         step = Math.max(step, end);
       }

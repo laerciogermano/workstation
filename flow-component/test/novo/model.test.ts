@@ -223,6 +223,14 @@ describe("funções de lib: contrato (entradas e saídas)", () => {
     fails(() => apply(t.p, { type: "renameData", id: t.a, to: "nome inválido" }), "invalid"); fails(() => apply(t.p, { type: "renameData", id: t.b, to: "x" }), "invalid");
     t.run({ type: "assign", id: t.c, agent: "console" }); fails(() => apply(t.p, { type: "renameData", id: t.c, to: "x" }), "invalid");          // log não devolve nada
   });
+  it("renameData na entrada única da lib: referência que a função pai usa (text → input)", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "console" }); t.run({ type: "setArg", id: t.a, name: "text", value: '"hi"' });
+    t.run({ type: "renameData", id: t.a, side: "in", to: "input" }); const f = locate(t.p, t.a)!.node as Fn;
+    expect(f.ins).toEqual(["input"]); expect(f.args).toEqual({ input: '"hi"' });
+    fails(() => apply(t.p, { type: "renameData", id: t.b, side: "in", to: "x" }), "invalid");   // abstrata
+    t.run({ type: "assign", id: t.b, agent: "math" }); t.run({ type: "setTask", id: t.b, task: "max" });
+    fails(() => apply(t.p, { type: "renameData", id: t.b, side: "in", to: "x" }), "invalid");   // max tem 2 params no contrato
+  });
   it("entrada opcional (nome?) não é exigida do state; o contrato guarda quais são", () => {
     expect(parseSignature("fetch(url, options?) -> response")).toEqual({ task: "fetch", contract: { ins: ["url", "options"], outs: ["response"], optional: ["options"] } });
     const t = base(); t.run({ type: "assign", id: t.a, agent: "web" }); expect(contractOf(t.p, locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["url", "options"], optional: ["options"] });

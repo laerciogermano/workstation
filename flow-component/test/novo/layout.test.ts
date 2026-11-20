@@ -37,21 +37,20 @@ describe("cena: linhas e passos", () => {
     const t = base(); const f = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }), i = t.run({ type: "wrap", id: f, kind: "if" });
     const s = t.sc(); expect(s.rows.find(r => r.id === i)!.depth).toBe(1); expect(s.rows.find(r => r.id === f)!.depth).toBe(2); expect(s.span.get(i)).toEqual(s.span.get(f));
   });
-  it("catch fica em paralelo à última célula do try e o próximo só começa depois", () => {
+  it("catch fica em sequência após o último do try; o próximo só começa depois (mesma regra do else)", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "setScope", id: tr, count: 2 });
     const s = t.sc(), c = s.rows.find(r => r.kind === "catch")!;
-    expect(s.span.get(tr)).toEqual({ s: 1, e: 2 }); expect(c.e).toBe(2);                                // termina junto com o try
-    expect(t.names(s).find(x => x.startsWith("Handle error"))).toBe("Handle error:2-2"); expect(t.names(s)).toContain("D:3-3");
-    // catch maior que o try: começa junto com ele e o próximo só vem depois dos dois
+    expect(s.span.get(tr)).toEqual({ s: 1, e: 2 }); expect(c.s).toBe(3); expect(c.e).toBe(3);   // começa no passo seguinte ao try
+    expect(t.names(s).find(x => x.startsWith("Handle error"))).toBe("Handle error:3-3"); expect(t.names(s)).toContain("D:4-4");
     t.run({ type: "addChild", id: tr, catch: true, title: "c1" }); t.run({ type: "addChild", id: tr, catch: true, title: "c0" });
-    const s2 = t.sc(), c2 = s2.rows.find(r => r.kind === "catch")!; expect(c2.s).toBe(s2.span.get(tr)!.s); expect(c2.e).toBe(3); expect(t.names(s2)).toContain("D:4-4");
-    expect(s2.rows.findIndex(r => r.kind === "catch")).toBeGreaterThan(s2.rows.findIndex(r => r.id === t.ids[2]));   // linhas do catch vêm depois das do try
+    const s2 = t.sc(), c2 = s2.rows.find(r => r.kind === "catch")!; expect(c2.s).toBe(3); expect(c2.e).toBe(5); expect(t.names(s2)).toContain("D:6-6");
+    expect(s2.rows.findIndex(r => r.kind === "catch")).toBeGreaterThan(s2.rows.findIndex(r => r.id === t.ids[2]));
   });
-  it("else do if aparece como linha própria, em paralelo à última célula do if (como o catch)", () => {
+  it("else do if: mesma regra do catch — sequência após o último do if", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); t.run({ type: "addElse", id: i, title: "Senao1" });
     const s = t.sc(), e = s.rows.find(r => r.kind === "else")!;
-    expect(e).toBeTruthy(); expect(s.span.get(i)).toEqual({ s: 1, e: 2 }); expect(e.e).toBe(2); expect(t.names(s)).toContain("Senao1:2-2"); expect(t.names(s)).toContain("D:3-3");   // termina junto com o if; o próximo vem depois
-    expect(s.rows.findIndex(r => r.kind === "else")).toBeGreaterThan(s.rows.findIndex(r => r.id === t.ids[2])); expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["A", "B", "C", "D"]);   // o else não entra na sequência
+    expect(e).toBeTruthy(); expect(s.span.get(i)).toEqual({ s: 1, e: 2 }); expect(e.s).toBe(3); expect(e.e).toBe(3); expect(t.names(s)).toContain("Senao1:3-3"); expect(t.names(s)).toContain("D:4-4");
+    expect(s.rows.findIndex(r => r.kind === "else")).toBeGreaterThan(s.rows.findIndex(r => r.id === t.ids[2])); expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["A", "B", "C", "D"]);
     expect(e.depth).toBe(1); expect(e.last).toBeGreaterThan(s.rows.indexOf(e) - 1);
   });
   it("if sem else não gera linha de else", () => { const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); expect(t.sc().rows.some(r => r.kind === "else")).toBe(false); });

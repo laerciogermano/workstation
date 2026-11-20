@@ -106,8 +106,10 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     const call = (args: string): string => obj ? `${a.name}.${f.title}(${args})` : `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
     const head = `  ${nameOf(f)}: async (state${ty(": State")})${ty(": Promise<State>")} => {`;
     if (!c) return [head, ...(obj ? [`${ind}const { ${a.name} } = state;`] : []), `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
-    const fromState = [...(obj ? [a.name] : []), ...c.ins].filter((n, i, arr) => arr.indexOf(n) === i);
-    const body = [...(fromState.length ? [`${ind}const { ${fromState.join(", ")} } = state;`] : [])], expr = call(c.ins.map(i => `${i}${ty(" as never")}`).join(", "));
+    // nomes no state = f.ins (referência no flow); ordem do contrato = c.ins → chamada da lib por índice
+    const flowIns = c.ins.map((ci, i) => f.ins[i] ?? ci);
+    const fromState = [...(obj ? [a.name] : []), ...flowIns].filter((n, i, arr) => arr.indexOf(n) === i);
+    const body = [...(fromState.length ? [`${ind}const { ${fromState.join(", ")} } = state;`] : [])], expr = call(flowIns.map(i => `${i}${ty(" as never")}`).join(", "));
     if (!f.outs.length) body.push(`${ind}await ${expr};`, `${ind}return {};`);
     else if (f.outs.length === 1) body.push(`${ind}return { ${f.outs[0]}: await ${expr} };`);
     else body.push(`${ind}return (await ${expr})${ty(" as State")};`);

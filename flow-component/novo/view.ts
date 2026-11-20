@@ -175,8 +175,7 @@ export const toolsHtml = (tools: Tool[]): string => tools.map(x => `<button type
 
 /**
  * Ligações de DADO só entre passos vizinhos (o traço nunca pula uma coluna): de quem produz um dado até quem o usa (entrada de mesmo nome,
- * ou citado no valor preenchido) quando o produtor termina no passo imediatamente anterior. Cobre as funções do catch / else, que não fazem
- * parte da sequência principal e por isso ficariam sem traço.
+ * ou citado no valor preenchido) quando o produtor termina no passo imediatamente anterior. Cobre catch / else (após o bloco, fora de `leaves`).
  */
 export interface DataLink { from: Row; to: Row; name: string }
 export function dataLinks(p: Project, sc: Scene): DataLink[] {

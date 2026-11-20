@@ -459,14 +459,25 @@
       if (Object.keys(args).length) n.args = args;
       else delete n.args;
     },
-    /** Dá um nome ao dado que a lib devolve (quando ela devolve um só): é o nome que as outras funções usam para pegá-lo. */
+    /** Nome do dado no flow (referência que a função pai usa): saída única da lib, ou entrada única (um parâmetro = dado puro ou objeto). */
     renameData: (p, a) => {
       const n = need(p, str(a, "id")).node;
-      if (n.t !== "fn") return fail("invalid", "Only functions have an output");
+      if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       const c = contractOf(p, n);
-      if (!c) return fail("invalid", "The output name can only change on lib functions");
-      if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
-      n.outs = [cleanName(a["to"], "Data name")];
+      if (!c) return fail("invalid", "The data name can only change on lib functions");
+      const side = str(a, "side") === "in" ? "in" : "out", to = cleanName(a["to"], "Data name");
+      if (side === "out") {
+        if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
+        n.outs = [to];
+        return;
+      }
+      if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
+      const from = n.ins[0] ?? c.ins[0];
+      n.ins = [to];
+      if (n.args?.[from] !== void 0) {
+        const { [from]: v, ...rest } = n.args;
+        n.args = { ...rest, [to]: v ?? "" };
+      }
     },
     /** Preenche uma entrada de função de lib: um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. Vazio limpa. */
     setArg: (p, a) => {
@@ -1091,8 +1102,9 @@
       const call = (args) => obj ? `${a.name}.${f.title}(${args})` : `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
       const head = `  ${nameOf(f)}: async (state${ty(": State")})${ty(": Promise<State>")} => {`;
       if (!c) return [head, ...obj ? [`${ind}const { ${a.name} } = state;`] : [], `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
-      const fromState2 = [...obj ? [a.name] : [], ...c.ins].filter((n, i, arr) => arr.indexOf(n) === i);
-      const body = [...fromState2.length ? [`${ind}const { ${fromState2.join(", ")} } = state;`] : []], expr = call(c.ins.map((i) => `${i}${ty(" as never")}`).join(", "));
+      const flowIns = c.ins.map((ci, i) => f.ins[i] ?? ci);
+      const fromState2 = [...obj ? [a.name] : [], ...flowIns].filter((n, i, arr) => arr.indexOf(n) === i);
+      const body = [...fromState2.length ? [`${ind}const { ${fromState2.join(", ")} } = state;`] : []], expr = call(flowIns.map((i) => `${i}${ty(" as never")}`).join(", "));
       if (!f.outs.length) body.push(`${ind}await ${expr};`, `${ind}return {};`);
       else if (f.outs.length === 1) body.push(`${ind}return { ${f.outs[0]}: await ${expr} };`);
       else body.push(`${ind}return (await ${expr})${ty(" as State")};`);
@@ -1500,7 +1512,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const closed = opts.closed ?? /* @__PURE__ */ new Set();
     const rows = [], span = /* @__PURE__ */ new Map(), leaves = [];
     let maxDepth = 0;
-    const place = (list, depth, start, emit, inCatch) => {
+    const place = (list, depth, start, emit, inAlt) => {
       let step2 = start, prev = null;
       const push = (r) => {
         const row = { ...r, last: 0 };
@@ -1509,6 +1521,19 @@ ${given.map((g) => `  ${g},`).join("\n")}
           maxDepth = Math.max(maxDepth, r.depth);
         }
         return row;
+      };
+      const placeAlt = (b, alt, after, emitAlt, blockClosed) => {
+        const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
+        if (blockClosed) return place(alt, depth + 1, after, false, true);
+        const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
+        const cend = place(alt, depth + 1, after, emitAlt && !altClosed, true);
+        if (emitAlt) {
+          crow.s = after;
+          crow.e = Math.max(after, cend - 1);
+          span.set(altKey, { s: crow.s, e: crow.e });
+          crow.last = rows.length - 1;
+        }
+        return cend;
       };
       for (const n2 of list) {
         if (n2.t === "fn") {
@@ -1521,12 +1546,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
             const row = push({ kind: "fn", id: n2.id, node: n2, depth, s, e: s, leaf: true, closed: false });
             if (emit) {
               row.last = rows.length - 1;
-              if (!inCatch) leaves.push(row);
+              if (!inAlt) leaves.push(row);
             }
           } else {
             const s0 = n2.par && prev ? prev.s : step2;
             const row = push({ kind: "fn", id: n2.id, node: n2, depth, s: s0, e: s0, leaf: false, closed: isClosed });
-            const idx = rows.length - 1, next = place(n2.kids, depth + 1, s0, emit && !isClosed, inCatch);
+            const idx = rows.length - 1, next = place(n2.kids, depth + 1, s0, emit && !isClosed, inAlt);
             const sp = { s: s0, e: Math.max(s0, next - 1) };
             prev = sp;
             if (emit) {
@@ -1543,31 +1568,14 @@ ${given.map((g) => `  ${g},`).join("\n")}
           const b = n2;
           const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
           const row = push({ kind: "block", id: b.id, node: b, depth, s: step2, e: step2, leaf: !canClose, closed: isClosed });
-          const next = place(b.kids, depth + 1, step2, emit && !isClosed, inCatch), sp = { s: step2, e: Math.max(step2, next - 1) };
+          const next = place(b.kids, depth + 1, step2, emit && !isClosed, inAlt), sp = { s: step2, e: Math.max(step2, next - 1) };
           if (emit) {
             span.set(b.id, sp);
             row.s = sp.s;
             row.e = sp.e;
           }
           let end = next;
-          if (alt && alt.length) {
-            const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-            const count = place(alt, depth + 1, 0, false, true), cs = Math.max(step2, next - count);
-            if (isClosed) {
-              const cend = place(alt, depth + 1, cs, false, true);
-              end = Math.max(next, cend);
-            } else {
-              const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: altClosed });
-              const cend = place(alt, depth + 1, cs, emit && !altClosed, true);
-              if (emit) {
-                crow.s = cs;
-                crow.e = Math.max(cs, cend - 1);
-                span.set(altKey, { s: crow.s, e: crow.e });
-                crow.last = rows.length - 1;
-              }
-              end = Math.max(next, cend);
-            }
-          }
+          if (alt && alt.length) end = placeAlt(b, alt, next, emit, isClosed);
           if (emit) row.last = rows.length - 1;
           step2 = Math.max(step2, end);
         }
@@ -2690,16 +2698,30 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       return { d: cur, ...field ? { field } : {}, ...parent ? { parent } : {}, ...idx !== void 0 ? { idx } : {} };
     };
-    const draftHtml = (d, path, states, depth = 0, removable = false, files = []) => {
-      const importChip = () => {
+    const draftVal = (d, path, states) => {
+      if (d.type === "boolean") return `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>`;
+      if (d.type === "import") {
         const [file, name] = d.value.split("#"), bare = (file ?? "").replace(/\.[^.]+$/, "");
         return `<span class="statechip" title="Imported from ${esc(file ?? "")}">${icon("file", "mini")}${esc(bare)} \u203A ${esc(name ?? "")}</span>`;
-      };
-      const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>` : d.type === "import" ? importChip() : d.type === "ref" && states.some((x) => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>` : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">` : d.type === "object" ? "" : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
-      const kids2 = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1, false, files)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
+      }
+      if (d.type === "ref" && states.some((x) => x.name === d.value)) return `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>`;
+      if (d.type === "ref") return `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">`;
+      if (d.type === "object") return "";
+      return `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
+    };
+    const objectKids = (d, path, states) => {
+      if (d.type !== "object") return "";
+      const rows = d.fields.map((f, i) => {
+        const fp = `${path}/fields/${i}`, dp = `${fp}/draft`, fd = f.draft;
+        return `<div class="argf"><input data-k="name" data-path="${fp}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><select data-k="type" data-path="${dp}" aria-label="Type">${typeOpts(fd, states, false, [])}</select>${draftVal(fd, dp, states) || "<span></span>"}<button type="button" class="ib danger" data-rm="${fp}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button>${objectKids(fd, dp, states)}</div>`;
+      }).join("");
+      return `<div class="argkids">${rows}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>`;
+    };
+    const draftHtml = (d, path, states, depth = 0, removable = false, files = []) => {
       const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable, depth === 0 ? files : [])}</select>`;
+      const val = draftVal(d, path, states), kids2 = objectKids(d, path, states);
       if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids2}`;
-      return `<div class="argd d${depth}">${sel}${val}</div>${kids2}`;
+      return `${sel}${val}${kids2}`;
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
       const lib3 = !!contractOf(P2(), n), editable = !lib3, withValue = side === "in";
@@ -2711,11 +2733,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id), files = withValue ? fileOrigins(n) : [];
       form.classList.add("wide");
       const fresh2 = names.map(() => false), orig = [...names];
-      const nameEditable = (i) => editable || side === "out" && i === 0;
+      const nameEditable = (i) => editable || side === "out" && i === 0 || side === "in" && names.length === 1;
       const canAdd = () => editable && (!withValue || names.length > 1);
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
-        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -2804,7 +2826,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         });
         try {
           const values = withValue ? drafts.map((d) => buildArg(d)) : [];
-          if (!editable && side === "out" && names[0] && orig[0] && names[0] !== orig[0]) store.dispatch({ type: "renameData", id: n.id, to: names[0] });
+          if (!editable && names[0] && orig[0] && names[0] !== orig[0] && (side === "out" || names.length === 1)) store.dispatch({ type: "renameData", id: n.id, side, to: names[0] });
           if (editable) {
             names.forEach((nm, i) => {
               if (nm && orig[i] && nm !== orig[i]) store.dispatch({ type: "renameIo", id: n.id, side, from: orig[i], to: nm });
@@ -2814,9 +2836,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
           if (editable) {
             const keep = names.map((nm, i) => [nm, values[i] ?? ""]).filter(([nm]) => nm);
             run({ type: "setData", id: n.id, side, names: keep.map((k) => k[0]), values: keep.map((k) => k[1]) }, false);
-          } else names.forEach((nm, i) => {
-            run({ type: "setArg", id: n.id, name: nm, value: values[i] }, false);
-          });
+          } else {
+            const cur = locate(P2(), n.id)?.node;
+            const keys = cur && cur.t === "fn" ? side === "in" ? cur.ins : cur.outs : names;
+            keys.forEach((nm, i) => {
+              if (side === "in") run({ type: "setArg", id: n.id, name: nm, value: values[i] }, false);
+            });
+          }
           done();
         } catch (err) {
           toast(err instanceof Error ? err.message : String(err));

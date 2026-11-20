@@ -356,11 +356,18 @@ export const HANDLERS = {
     if (side === "out") { n.outs = names; return; }
     n.ins = names; const args: Record<string, string> = {}; names.forEach((nm, i) => { if (values[i]) args[nm] = values[i]!; }); if (Object.keys(args).length) n.args = args; else delete n.args;
   },
-  /** Dá um nome ao dado que a lib devolve (quando ela devolve um só): é o nome que as outras funções usam para pegá-lo. */
+  /** Nome do dado no flow (referência que a função pai usa): saída única da lib, ou entrada única (um parâmetro = dado puro ou objeto). */
   renameData: (p, a) => {
-    const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have an output");
-    const c = contractOf(p, n); if (!c) return fail("invalid", "The output name can only change on lib functions"); if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
-    n.outs = [cleanName(a["to"], "Data name")];
+    const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
+    const c = contractOf(p, n); if (!c) return fail("invalid", "The data name can only change on lib functions");
+    const side = str(a, "side") === "in" ? "in" : "out", to = cleanName(a["to"], "Data name");
+    if (side === "out") {
+      if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
+      n.outs = [to]; return;
+    }
+    if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
+    const from = n.ins[0] ?? c.ins[0]!; n.ins = [to];
+    if (n.args?.[from] !== undefined) { const { [from]: v, ...rest } = n.args; n.args = { ...rest, [to]: v ?? "" }; }
   },
   /** Preenche uma entrada de função de lib: um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. Vazio limpa. */
   setArg: (p, a) => {

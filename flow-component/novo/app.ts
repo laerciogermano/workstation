@@ -280,23 +280,30 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     }
     return { d: cur, ...(field ? { field } : {}), ...(parent ? { parent } : {}), ...(idx !== undefined ? { idx } : {}) };
   };
-  /** Um valor editável: tipo + valor; objeto mostra os filhos (campo, tipo, valor) e "Add child". */
+  /** Valor (input/select/chip) de um ArgDraft — sem o select de tipo. */
+  const draftVal = (d: ArgDraft, path: string, states: StateRef[]): string => {
+    if (d.type === "boolean") return `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>`;
+    if (d.type === "import") { const [file, name] = d.value.split("#"), bare = (file ?? "").replace(/\.[^.]+$/, ""); return `<span class="statechip" title="Imported from ${esc(file ?? "")}">${icon("file", "mini")}${esc(bare)} › ${esc(name ?? "")}</span>`; }
+    if (d.type === "ref" && states.some(x => x.name === d.value)) return `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>`;
+    if (d.type === "ref") return `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">`;
+    if (d.type === "object") return "";
+    return `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
+  };
+  /** Filhos de um objeto: cada campo numa linha (nome · tipo · valor · lixeira). */
+  const objectKids = (d: ArgDraft, path: string, states: StateRef[]): string => {
+    if (d.type !== "object") return "";
+    const rows = d.fields.map((f, i) => {
+      const fp = `${path}/fields/${i}`, dp = `${fp}/draft`, fd = f.draft;
+      return `<div class="argf"><input data-k="name" data-path="${fp}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><select data-k="type" data-path="${dp}" aria-label="Type">${typeOpts(fd, states, false, [])}</select>${draftVal(fd, dp, states) || "<span></span>"}<button type="button" class="ib danger" data-rm="${fp}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button>${objectKids(fd, dp, states)}</div>`;
+    }).join("");
+    return `<div class="argkids">${rows}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>`;
+  };
+  /** Um valor editável: tipo + valor; objeto mostra os filhos e "Add child". */
   const draftHtml = (d: ArgDraft, path: string, states: StateRef[], depth = 0, removable = false, files: { file: string; name: string; from: string }[] = []): string => {
-    const importChip = (): string => {
-      const [file, name] = d.value.split("#"), bare = (file ?? "").replace(/\.[^.]+$/, "");
-      return `<span class="statechip" title="Imported from ${esc(file ?? "")}">${icon("file", "mini")}${esc(bare)} › ${esc(name ?? "")}</span>`;
-    };
-    const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>`
-      : d.type === "import" ? importChip()
-      : d.type === "ref" && states.some(x => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>`
-      : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">`
-      : d.type === "object" ? ""
-      : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
-    const kids = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1, false, files)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
     const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable, depth === 0 ? files : [])}</select>`;
-    // dado de primeiro nível: nome em cima (cabeçalho do bloco), depois o tipo e, embaixo, "Value" com o valor
+    const val = draftVal(d, path, states), kids = objectKids(d, path, states);
     if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids}`;
-    return `<div class="argd d${depth}">${sel}${val}</div>${kids}`;
+    return `${sel}${val}${kids}`;
   };
   /**
    * A caixa de um dado (clicar no marcador). Função de LIB: os nomes vêm do contrato; cada entrada tem TIPO e VALOR. Função ABSTRATA: os mesmos
@@ -307,14 +314,13 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const lib = !!contractOf(P(), n), editable = !lib, withValue = side === "in";
     const names: string[] = opts.names ? [...opts.names] : [...(side === "in" ? n.ins : n.outs)]; if (opts.start && !names.length) { const base = side === "in" ? "input" : "output"; names.push(base); }   // dado novo: nome automático (renomeia-se clicando no texto do dado)
     const drafts: ArgDraft[] = names.map(nm => (withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft())), refs = refNames(n), states = statesFor(P(), n.id), files = withValue ? fileOrigins(n) : []; form.classList.add("wide");
-    // o nome só é editável em linhas NOVAS (e nas saídas, que só têm nome); uma entrada que já existe abre igual à de lib: nome fixo, select de tipo e valor
+    // nome do dado: editável sempre que for o parâmetro único (dado puro ou objeto) ou saída única de lib; multi-campo de contrato de lib fica fixo
     const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];   // orig: nome de cada linha ao abrir ("" = linha nova)
-    // qualquer dado tem o campo de nome; só o parâmetro de entrada de uma lib é fixo (vem do contrato dela)
-    const nameEditable = (i: number): boolean => editable || (side === "out" && i === 0);
+    const nameEditable = (i: number): boolean => editable || (side === "out" && i === 0) || (side === "in" && names.length === 1);
     const canAdd = (): boolean => editable && (!withValue || names.length > 1);   // "Add child": numa saída, num objeto (cubo) com vários dados ou ao criar
     const title = (): string => (names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
-      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || (withValue && drafts[i]!.type === "object") ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i]!, String(i), states, 0, editable, files) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -354,11 +360,11 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       e.preventDefault(); form.querySelectorAll<HTMLInputElement>("input[data-k]").forEach(i => { const k = i.dataset["k"]; if (k === "pname") { names[Number(i.dataset["i"])] = i.value.trim(); return; } const hit = draftAt(drafts, i.dataset["path"]!); if (k === "value" && hit.d) hit.d.value = i.value; if (k === "name" && hit.field) hit.field.name = i.value; });
       try {
         const values = withValue ? drafts.map(d => buildArg(d)) : [];
-        // renomear um dado que já existia: propaga para quem o usa (renameIo / renameData da saída de uma lib)
-        if (!editable && side === "out" && names[0] && orig[0] && names[0] !== orig[0]) store.dispatch({ type: "renameData", id: n.id, to: names[0] });
+        // renomear referência: abstrata → renameIo; lib com 1 entrada/saída → renameData (nome que a função pai usa)
+        if (!editable && names[0] && orig[0] && names[0] !== orig[0] && (side === "out" || names.length === 1)) store.dispatch({ type: "renameData", id: n.id, side, to: names[0] });
         if (editable) { names.forEach((nm, i) => { if (nm && orig[i] && nm !== orig[i]) store.dispatch({ type: "renameIo", id: n.id, side, from: orig[i]!, to: nm }); orig[i] = nm; }); }
         if (editable) { const keep = names.map((nm, i) => [nm, values[i] ?? ""] as const).filter(([nm]) => nm); run({ type: "setData", id: n.id, side, names: keep.map(k => k[0]), values: keep.map(k => k[1]) }, false); }
-        else names.forEach((nm, i) => { run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); });
+        else { const cur = locate(P(), n.id)?.node as Fn | undefined; const keys = cur && cur.t === "fn" ? (side === "in" ? cur.ins : cur.outs) : names; keys.forEach((nm, i) => { if (side === "in") run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); }); }
         done();
       } catch (err) { toast(err instanceof Error ? err.message : String(err)); }
     });

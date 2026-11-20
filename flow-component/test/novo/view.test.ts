@@ -149,10 +149,10 @@ describe("plano (SVG)", () => {
     const m = v.plan.match(/<g class="pill lp"[^>]*><rect x="([\d.]+)"/)!; expect(Number(m[1])).toBe(colX(1, G.W, g) + 11);
     expect(v.plan).toMatch(new RegExp(`class="flp" x="${colX(1, G.W, g)}"`));
   });
-  it("try e catch alinham com o if: escudo/triângulo na linha e pill depois", () => {
-    const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const v = t.view(), g = planGutter(v.scene), x = colX(1, G.W, g);
-    expect(Number(v.plan.match(/<g class="pill tr"[^>]*><rect x="([\d.]+)"/)![1])).toBe(x + 11);
-    expect(Number(v.plan.match(/<g class="pill ca"[^>]*><rect x="([\d.]+)"/)![1])).toBe(x + 11);
+  it("try e catch alinham com o if: escudo/triângulo na linha e pill depois (catch na coluna seguinte)", () => {
+    const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const v = t.view(), g = planGutter(v.scene);
+    expect(Number(v.plan.match(/<g class="pill tr"[^>]*><rect x="([\d.]+)"/)![1])).toBe(colX(1, G.W, g) + 11);
+    expect(Number(v.plan.match(/<g class="pill ca"[^>]*><rect x="([\d.]+)"/)![1])).toBe(colX(2, G.W, g) + 11);   // sequência após o try
     expect(v.plan).toContain('class="ftr"'); expect(v.plan).toContain('class="fca"');
   });
   it("composta mostra a barra-resumo; fechada continua com o resumo", () => {
@@ -373,7 +373,9 @@ describe("alça do bloco (arrastar)", () => {
   });
   it("aplicar o result com setScope aumenta e diminui o bloco (if, for, try)", () => {
     for (const kind of ["if", "for", "try"] as const) {
-      const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind }); const n = countForStep(t.p, layout(t.p.flows[0]!), b, 3); t.run({ type: "setScope", id: b, count: n }); expect(locate(t.p, b)!.node.kids).toHaveLength(3);
+      const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind }), sc = layout(t.p.flows[0]!);
+      const step = sc.span.get(t.ids[3]!)!.e;   // try empurra C/D por causa do catch — usar o passo do último irmão
+      const n = countForStep(t.p, sc, b, step); t.run({ type: "setScope", id: b, count: n }); expect(locate(t.p, b)!.node.kids).toHaveLength(3);
       t.run({ type: "setScope", id: b, count: countForStep(t.p, layout(t.p.flows[0]!), b, 0) }); expect(locate(t.p, b)!.node.kids).toHaveLength(1);
     }
   });
@@ -396,15 +398,16 @@ describe("traços de ligação: só entre passos vizinhos (nunca pulam uma colun
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addInput", id: t.ids[3]!, name: "x" });   // A (passo 0) produz; D (passo 3) usa
     expect(dataLinks(t.p, t.view().scene)).toEqual([]); expect((t.view().plan.match(/class="dep"/g) ?? []).length).toBe(0);
   });
-  it("função do else/catch (fora da sequência) ganha o traço do dado do passo vizinho, contínuo (sem tracejado)", () => {
-    const t = base(); const i = t.run({ type: "wrap", id: t.ids[2]!, kind: "if", test: "ok" }); const e = t.run({ type: "addElse", id: i, title: "Plan B" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "dados" }); t.run({ type: "addInput", id: e, name: "dados" });
-    const v = t.view(), links = dataLinks(t.p, v.scene); expect(links).toHaveLength(1); expect([(links[0]!.from.node as Fn).title, (links[0]!.to.node as Fn).title]).toEqual(["B", "Plan B"]); expect(links[0]!.to.s - links[0]!.from.e).toBe(1);
+  it("função do else/catch (após o bloco) ganha o traço do dado do passo vizinho, contínuo (sem tracejado)", () => {
+    // else começa no passo seguinte ao último do if → o produtor vizinho é o último do if (C), não o anterior (B)
+    const t = base(); const i = t.run({ type: "wrap", id: t.ids[2]!, kind: "if", test: "ok" }); const e = t.run({ type: "addElse", id: i, title: "Plan B" }); t.run({ type: "addOutput", id: t.ids[2]!, name: "dados" }); t.run({ type: "addInput", id: e, name: "dados" });
+    const v = t.view(), links = dataLinks(t.p, v.scene); expect(links).toHaveLength(1); expect([(links[0]!.from.node as Fn).title, (links[0]!.to.node as Fn).title]).toEqual(["C", "Plan B"]); expect(links[0]!.to.s - links[0]!.from.e).toBe(1);
     expect(v.plan).toContain('class="dep"'); expect(v.plan).not.toMatch(/stroke-dasharray/);
   });
-  it("catch usando o dado da função anterior também liga; dado que ninguém produz não liga; valor preenchido citando um dado liga", () => {
-    const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "q" }); const h = (locate(t.p, tr)!.node as { catchKids: { id: string }[] }).catchKids[0]!.id;
+  it("catch usando o dado do último do try liga; dado que ninguém produz não liga; valor preenchido citando um dado liga", () => {
+    const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" }); const h = (locate(t.p, tr)!.node as { catchKids: { id: string }[] }).catchKids[0]!.id;
     t.run({ type: "addInput", id: h, name: "q" }); t.run({ type: "addInput", id: t.ids[2]!, name: "nobody" }); const name = (l: { from: { node: unknown }; to: { node: unknown }; name: string }): string => `${(l.from.node as Fn).title}>${(l.to.node as Fn).title}:${l.name}`;
-    expect(dataLinks(t.p, t.view().scene).map(name)).toEqual(["A>Handle error:q"]);
-    t.run({ type: "addInput", id: t.ids[1]!, name: "extra" }); t.run({ type: "setArg", id: t.ids[1]!, name: "extra", value: "q + 1" }); expect(dataLinks(t.p, t.view().scene).map(name)).toContain("A>B:q");   // C não liga: o dado vem de dois passos atrás
+    expect(dataLinks(t.p, t.view().scene).map(name)).toEqual(["B>Handle error:q"]);
+    t.run({ type: "addInput", id: t.ids[1]!, name: "extra" }); t.run({ type: "setArg", id: t.ids[1]!, name: "extra", value: "q + 1" }); expect(dataLinks(t.p, t.view().scene).map(name)).toContain("B>Handle error:q");
   });
 });

@@ -66,11 +66,20 @@ const IMPLEMENTED = [
   'GET /notificacoes',
 ];
 
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+  'Access-Control-Allow-Headers':
+    'Authorization, Content-Type, X-API-Key, Accept',
+  'Access-Control-Max-Age': '86400',
+};
+
 function sendJson(res, status, body) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
+    ...CORS,
   });
   res.end(JSON.stringify(body, null, 2));
 }
@@ -80,6 +89,7 @@ function sendRaw(res, status, contentType, body) {
     'Content-Type': contentType,
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
+    ...CORS,
   });
   res.end(body);
 }
@@ -263,12 +273,17 @@ async function enrichFaturasComContato(items, opts = {}) {
 
 const server = createServer(async (req, res) => {
   try {
+    const path = (req.url || '/').split('?')[0];
+    const q = parseQuery(req.url || '');
+
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, CORS);
+      return res.end();
+    }
+
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return sendJson(res, 405, { error: 'method not allowed' });
     }
-
-    const path = (req.url || '/').split('?')[0];
-    const q = parseQuery(req.url || '');
 
     const auth = authorize(req, path);
     if (!auth.ok) {

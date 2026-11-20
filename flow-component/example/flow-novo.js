@@ -1428,6 +1428,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     trash: ["M3 6h18", "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", "M10 11v6", "M14 11v6"],
     chevron: ["m6 9 6 6 6-6"],
     diamond: ["M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"],
+    /** Triângulo (if / seleção). */
+    triangle: ["M12 3 22 20H2Z"],
     repeat: ["m17 2 4 4-4 4", "M3 11v-1a4 4 0 0 1 4-4h14", "m7 22-4-4 4-4", "M21 13v1a4 4 0 0 1-4 4H3"],
     user: ["M20 21a8 8 0 0 0-16 0", "circle:12,8,5"],
     ia: ["M2 21a8 8 0 0 1 10.434-7.62", "circle:10,8,5", "circle:18,18,3", "M18 14v1", "M18 21v1", "M22 18h-1", "M15 18h-1"],
@@ -1730,7 +1732,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (n.kids.length) out2.push(t("toggle", "chevron", "Open / close children"));
       out2.push(t("addChild", "sibling", "Add child (inside this function)"));
       if (!root) {
-        out2.push(t("addSibling", "child", "Add sibling (next to it, same block)"), t("wrap", "diamond", "Add selection (if)", { data: { kind: "if" } }), t("wrap", "repeat", "Add repetition (for)", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch", { data: { kind: "try" } }));
+        out2.push(t("addSibling", "child", "Add sibling (next to it, same block)"), t("wrap", "triangle", "Add selection (if)", { data: { kind: "if" } }), t("wrap", "repeat", "Add repetition (for)", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch", { data: { kind: "try" } }));
         if (l.list[l.index - 1]?.t === "fn") out2.push(t("parallel", "parallel", n.par ? "Run in sequence" : "Run together with the previous one", { data: { on: String(!n.par) } }));
         if (insideBlock(p, id)) out2.push(t("exitScope", "log-out", "Leave the block (this and the following ones)"));
         out2.push(t("remove", "trash", "Remove", { danger: true }));
@@ -1743,7 +1745,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const out = [];
     if (canToggle) out.push({ act: "toggle", id: part === "main" ? id : `${id}:${part}`, icon: "chevron", title: `Open / close the ${where}` });
     out.push(t("addChild", "sibling", `Add child (inside the ${where})`, part === "catch" ? { data: { catch: "1" } } : part === "else" ? { data: { else: "1" } } : {}));
-    if (part === "main") out.push(t("wrap", "diamond", "Add condition (if) to this block", { data: { kind: "if" } }), t("wrap", "repeat", "Add loop (for) to this block", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch to this block", { data: { kind: "try" } }));
+    if (part === "main") out.push(t("wrap", "triangle", "Add condition (if) to this block", { data: { kind: "if" } }), t("wrap", "repeat", "Add loop (for) to this block", { data: { kind: "for" } }), t("wrap", "shield", "Add try/catch to this block", { data: { kind: "try" } }));
     if (part === "main" && n.t === "if" && !n.elseKids.length) out.push(t("addElse", "branch", "Add else"));
     out.push(t("addSibling", "child", "Add sibling to the right (outside the block)"));
     if (part === "main") out.push(t("setScope", "grow", "Include the next one in the block", { data: { delta: "1" } }), t("setScope", "shrink", "Take the last one out of the block", { data: { delta: "-1" } }));
@@ -1818,7 +1820,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
         const closeKey = part === "main" ? r.id : `${r.id}:${part}`;
         const lead = r.leaf ? "" : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(closeKey)}" title="Open / close">${icon("chevron")}</span>`;
-        const tag = r.kind === "catch" ? `${icon("shield", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
+        const tag = r.kind === "catch" ? `${icon("x", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("triangle", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
         return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${lead}${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
       }
       return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
@@ -1865,10 +1867,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const mark = r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try") || r.kind === "catch", px = colX2(r.s) + (mark ? 11 : 4), cx = colX2(r.s), cy = ym(i);
       const txt = r.kind === "catch" ? "catch \xB7 if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
       const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
-      if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 6} l6 6 l-6 6 l-6 -6z"/>`);
+      if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 7} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
       if (mark && r.kind === "block" && n.t === "for") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">\u21BB</text>`);
       if (mark && r.kind === "block" && n.t === "try") over.push(`<path class="ftr" d="M${cx} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx - 3.5} ${cy - 6.1} ${cx - 1.8} ${cy - 7} ${cx} ${cy - 7}z"/>`);
-      if (mark && r.kind === "catch") over.push(`<path class="fca" d="M${cx} ${cy - 6.5} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
+      if (mark && r.kind === "catch") over.push(`<path class="fca" d="M${cx - 5} ${cy - 5} L${cx + 5} ${cy + 5} M${cx + 5} ${cy - 5} L${cx - 5} ${cy + 5}"/>`);
       over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
       if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);
     });

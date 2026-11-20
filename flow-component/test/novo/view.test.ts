@@ -133,13 +133,13 @@ describe("plano (SVG)", () => {
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
     const p = t.view().plan; expect((p.match(/class="ghost"/g) ?? []).length).toBe(10 - 3); expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="addIo"');
   });
-  it("blocos: banda tracejada, etiqueta, alça e losango do if; catch vermelho; edição só em if/for", () => {
+  it("blocos: banda tracejada, etiqueta, alça e triângulo do if; catch com X; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
     const p = t.view().plan; for (const c of ["bande if", "bande lp", "bande tr", "bande ca"]) expect(p).toContain(c); expect(p).toContain('class="fif"'); expect(p).toContain("data-drag="); expect(p).toContain("catch · if the try fails");
     expect((p.match(/data-act="editBlock"/g) ?? []).length).toBe(2); expect(p).toContain('class="flp"'); expect(p).toContain('class="ftr"'); expect(p).toContain('class="fca"'); expect(p).toContain(">for (item of items)<"); expect(p).not.toContain("↻ for (");
     expect(p).toMatch(/<line class="bande if" x1="0\.5"/);   // 1ª barra colada na divisória
   });
-  it("etiqueta do if começa depois do losango e cobre os passos do bloco", () => {
+  it("etiqueta do if começa depois do triângulo e cobre os passos do bloco", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); const v = t.view(), g = planGutter(v.scene);
     const m = v.plan.match(/<g class="pill if"[^>]*><rect x="([\d.]+)" y="[\d.]+" width="([\d.]+)"/)!; expect(Number(m[1])).toBe(colX(1, G.W, g) + 11); expect(Number(m[2])).toBeGreaterThan(G.W);
   });

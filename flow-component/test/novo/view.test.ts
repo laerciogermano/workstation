@@ -179,6 +179,12 @@ describe("quadrado do dado", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "result" }); const p = t.view({ txtIn: false }).plan;
     const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>A</)![1]); expect(lbl).toBeGreaterThan(colX(1, G.WS) + G.GAP + "result".length * 5.6);
   });
+  it("função de primeira ordem: o nome fica depois do rótulo de saída (não em cima do retorno)", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.root, name: "report" });
+    const p = t.view().plan, outX = Number(p.match(/<text class="dn out"[^>]*x="([\d.]+)"/)![1]);
+    const lbl = Number(p.match(new RegExp(`<text class="lbl" x="([\\d.]+)"[^>]*>${t.p.flows[0]!.title}<`))![1]);
+    expect(lbl).toBeGreaterThan(outX + "report".length * 6.2);
+  });
   it("entrada cujo dado alguém produz = quadrado cheio; vinda de fora = vazado; saída sempre cheia", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "de_fora" });
     const p = t.view().plan; expect((p.match(/class="dot a"/g) ?? []).length).toBe(1); expect((p.match(/class="dot"/g) ?? []).length).toBe(2);

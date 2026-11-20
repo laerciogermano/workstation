@@ -20,7 +20,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
-    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><svg class="ex-logo" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="currentColor"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="currentColor"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Explorer</span><span class="sp"></span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New flow" aria-label="New flow">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><svg class="ex-logo" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="currentColor"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="currentColor"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Explorer</span><span class="sp"></span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
     <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
@@ -166,13 +166,23 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   function applyView(): void { el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`; el.zv.textContent = Math.round(ui.zoom * 100) + "%"; }
   function fit(): void {
     if (!last) return; const W = multi?.W ?? tableWidth(last.scene) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-    const k = Math.max(0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();
+    const narrow = cw < 640, k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
   }
   /** Zoom ancorado: o ponto sob (mx, my) (px da área da vista) continua no mesmo lugar. */
   const zoomTo = (k: number, mx = el.scroll.clientWidth / 2, my = el.scroll.clientHeight / 2): void => {
     const old = ui.zoom, next = Math.min(2.5, Math.max(0.2, Math.round(k * 100) / 100)); if (next === old) return;
     auto = false; ui.pan = { x: mx - (mx - ui.pan.x) * (next / old), y: my - (my - ui.pan.y) * (next / old) }; ui.zoom = next; applyView();
   };
+  // dois dedos (celular / tablet) = pinça: zoom ancorado no ponto médio dos dedos; um dedo continua movendo a vista
+  const touches = new Map<number, { x: number; y: number }>(); let pinch: { d: number; k: number } | null = null;
+  const dist = (): number => { const [a, b] = [...touches.values()]; return Math.hypot(a!.x - b!.x, a!.y - b!.y); };
+  el.scroll.addEventListener("pointerdown", e => { if (e.pointerType !== "touch") return; touches.set(e.pointerId, { x: e.clientX, y: e.clientY }); if (touches.size === 2) pinch = { d: dist() || 1, k: ui.zoom }; }, true);
+  window.addEventListener("pointermove", e => {
+    if (e.pointerType !== "touch" || !touches.has(e.pointerId)) return; touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && touches.size === 2) { const [a, b] = [...touches.values()], r = el.scroll.getBoundingClientRect(); zoomTo(pinch.k * dist() / pinch.d, (a!.x + b!.x) / 2 - r.left, (a!.y + b!.y) / 2 - r.top); }
+  });
+  const liftTouch = (e: PointerEvent): void => { if (e.pointerType !== "touch") return; touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
+  window.addEventListener("pointerup", liftTouch); window.addEventListener("pointercancel", liftTouch);
   // roda do mouse / pinça do trackpad = zoom no ponteiro; arrastar o fundo = mover; teclas + − 0
   el.scroll.addEventListener("wheel", e => { e.preventDefault(); const r = el.scroll.getBoundingClientRect(); zoomTo(ui.zoom * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0022)), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
   el.scroll.addEventListener("mousedown", e => { if (e.button === 1) e.preventDefault(); });   // sem o autoscroll do botão do meio
@@ -182,7 +192,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     if (!middle && (e.button !== 0 || (e.target as HTMLElement).closest("[data-act],[data-hover],[data-drag],button,select,input,.ghost,.bar-tools,.fl-tools"))) return;
     if (middle) e.preventDefault();
     const x0 = e.clientX, y0 = e.clientY, p0 = { ...ui.pan }; let moved = false;
-    const move = (ev: PointerEvent): void => { if (!moved && !middle && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return; moved = true; auto = false; el.scroll.classList.add("panning"); ui.pan = { x: p0.x + ev.clientX - x0, y: p0.y + ev.clientY - y0 }; applyView(); };
+    const move = (ev: PointerEvent): void => { if (touches.size > 1) return; if (!moved && !middle && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return; moved = true; auto = false; el.scroll.classList.add("panning"); ui.pan = { x: p0.x + ev.clientX - x0, y: p0.y + ev.clientY - y0 }; applyView(); };
     const up = (): void => {
       window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); el.scroll.classList.remove("panning");
       if (moved) { const stop = (ev: Event): void => ev.stopPropagation(); window.addEventListener("click", stop, { capture: true, once: true }); window.setTimeout(() => window.removeEventListener("click", stop, true), 0); }   // arrastar não seleciona

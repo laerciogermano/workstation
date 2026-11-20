@@ -199,7 +199,7 @@ test("single complete code (no module/runnable toggle, no Call command tab); con
   assert.match(await code(), /\/\/ expected inputs \(from another layer\): text/); assert.match(await code(), /await log\(\{ \.\.\.state \}\);/); assert.doesNotMatch(await code(), /call\(/);
   // click the marker: box with type + value; fill it in -> concrete, the value shows next to the data, code carries it
   await click(mk); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`)); await type("Hello, world"); await wait(150);
-  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /text = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
+  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /const text: unknown = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
   assert.equal(await ev(`document.querySelectorAll('.ghost[data-id="${fid}"]').length`), 0, "no ghost boxes on a lib function (the contract rules)");
   assert.match(await code(), /export const wrappers/); assert.match(await code(), /await console\.log\(text as never\)/); assert.match(await code(), /const humans|await main\(\{ \.\.\.wrappers/); assert.equal(await ev(`document.getElementById("fname").textContent`), "main.mts"); assert.equal(await ev(`!document.getElementById("runcmd") && !document.getElementById("cmdcopy")`), true, "no run-command bar"); await ev(`window.__dl=[];HTMLAnchorElement.prototype.click=function(){window.__dl.push(this.download)}`); await click("#dl"); assert.deepEqual(await ev(`window.__dl`), ["main.mts"]);
 });
@@ -237,7 +237,7 @@ test("abstract function data: ghost creates it (name + type + value + states); c
   // creating: the ghost box has the name too
   await click(`.ghost[data-id="${fid}"][data-kind=in]`); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "input", "the name is an editable field on top"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "type"); assert.ok(await ev(`!!document.querySelector(".dlg input[data-k=value]")`), "value"); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no Add child");
   await set(".dlg select[data-k=type]", "number"); await set(".dlg input[data-k=value]", "10"); await click(".dlg button.pri"); await wait(150);
-  assert.deepEqual((await node()).ins, ["input"]); assert.deepEqual((await node()).args, { input: "10" }); assert.match(await ev(`[...document.querySelectorAll("text.dn.in")].map(t=>t.textContent).join("|")`), /input = 10/, "the value shows next to the data"); assert.match(await code(), /input = 10;[\s\d]*await common\(\{ \.\.\.state, input \}\)/);
+  assert.deepEqual((await node()).ins, ["input"]); assert.deepEqual((await node()).args, { input: "10" }); assert.match(await ev(`[...document.querySelectorAll("text.dn.in")].map(t=>t.textContent).join("|")`), /input = 10/, "the value shows next to the data"); assert.match(await code(), /const input: unknown = 10;[\s\d]*await common\(\{ \.\.\.state, input \}\)/);
   // renaming: click the data text in the plan
   await click(`text.dn.in[data-id="${fid}"]`); assert.ok(await ev(`!!document.querySelector(".dlg")`)); await ev(`document.querySelector(".dlg input").value=""`); await type("price"); assert.deepEqual((await node()).ins, ["price"]); assert.deepEqual((await node()).args, { price: "10" });
   // later: same box as a lib function (console.log): name is static, only the select and the value
@@ -332,6 +332,20 @@ test("página inicial é Files (todos os arquivos); Sources não fica mais no to
   assert.equal(await ev(`[...document.querySelectorAll(".mcol-t")].every(h=>!!h.querySelector("svg"))`), true, "ícone de arquivo em cada arquivo"); assert.equal(await ev(`[...document.querySelectorAll(".blk-t")].every(h=>!!h.querySelector(".fn-dot"))`), true, "círculo em cada função");
   assert.equal(await ev(`!!document.querySelector(".topbar #agents")`), false, "sem Sources no header"); assert.equal(await ev(`!!document.querySelector(".explorer #agents, #explorer #agents")`), true);
   await ev(`document.querySelector(".ex-fn")?.click()`); await wait(150);
+});
+test("mobile: telas estreitas empilham Explorer, fluxo e código, sem rolagem horizontal da página", async () => {
+  await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 800, deviceScaleFactor: 1, mobile: true }); await wait(500);
+  const m = await ev(`(()=>{const r = n => document.querySelector(n).getBoundingClientRect(); return { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, fx: r(".fx").width, ex: r(".explorer").width, side: r(".side").width, exTop: r(".explorer").top, fxTop: r(".fx").top, sideTop: r(".side").top, exDisplay: getComputedStyle(document.querySelector(".explorer")).display }; })()`);
+  assert.ok(m.sw <= m.cw + 1, `sem rolagem horizontal (${m.sw} > ${m.cw})`); assert.ok(m.fx >= 300 && m.side >= 300, `fluxo e código ocupam a largura (${m.fx} / ${m.side})`);
+  if (m.exDisplay !== "none") assert.ok(m.exTop < m.fxTop, "explorer acima do fluxo"); assert.ok(m.fxTop < m.sideTop, "fluxo acima do código");
+  // pinça com dois dedos aproxima; um dedo arrasta
+  const box = await ev(`(()=>{const r=document.querySelector(".fx-scroll").getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]})()`), z0 = await ev(`flowApp.ui.zoom`);
+  const tp = (a, b) => [{ x: box[0] - a, y: box[1], id: 1 }, { x: box[0] + b, y: box[1], id: 2 }];
+  await send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: tp(20, 20) }); await wait(50);
+  for (const g of [40, 70, 100]) { await send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: tp(g, g) }); await wait(30); }
+  await send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }); await wait(100);
+  assert.ok((await ev(`flowApp.ui.zoom`)) > z0, `pinça aproxima (${z0} → ${await ev(`flowApp.ui.zoom`)})`);
+  await send("Emulation.clearDeviceMetricsOverride"); await wait(400);
 });
 test("o botão de mostrar/esconder o código é o último das opções do Flow", async () => { assert.equal(await ev(`[...document.querySelectorAll(".fx-bar > button, .fx-bar .hist-inline button")].at(-1).id`), "codeToggle"); });
 test("painel de código: linha divisória arrasta (hover destaca), duplo clique restaura, teclado ajusta, botão e Ctrl+\\ mostram/escondem, e tudo persiste", async () => {

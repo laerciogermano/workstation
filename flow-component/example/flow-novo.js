@@ -1655,18 +1655,22 @@ ${given.map((g) => `  ${g},`).join("\n")}
     sc.rows.forEach((r, i) => {
       if (r.kind !== "fn") return;
       const f = r.node, selC = ui.sel === f.id ? " sel" : "";
+      const lblAfterOuts = (fr) => {
+        const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
+        return colX2(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
+      };
       if (!r.leaf) {
-        const x12 = colX2(r.s) + 8, x22 = colX2(r.e + 1) - 8;
-        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composition = layer</title></g><text class="lbl" x="${x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+        const inset = isRoot(p, f.id) ? G.INS : 8, x12 = colX2(r.s) + inset, x22 = colX2(r.e + 1) - inset;
+        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composition = layer</title></g>`);
         if (isRoot(p, f.id)) ioMarks(f, r, i, x12, x22);
+        over.push(`<text class="lbl" x="${isRoot(p, f.id) ? lblAfterOuts(f) : x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
         return;
       }
       const k = fnKind(p, f), x1 = colX2(r.s) + G.INS, x2 = colX2(r.e + 1) - G.INS;
       const shown = f.title;
       over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
-      const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
-      if (!ui.txtIn) over.push(`<text class="lbl" x="${colX2(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
       ioMarks(f, r, i, x1, x2);
+      if (!ui.txtIn) over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
     });
     const elbow = (a, b) => `M${colX2(a.e + 1) - G.INS} ${ym(by.get(a.id))} H${colX2(a.e + 1)} V${ym(by.get(b.id))} H${colX2(b.s) + G.INS}`;
     const pairs = /* @__PURE__ */ new Map();
@@ -1727,7 +1731,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
-    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><svg class="ex-logo" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="currentColor"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="currentColor"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Explorer</span><span class="sp"></span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New flow" aria-label="New flow">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><svg class="ex-logo" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="currentColor"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="currentColor"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Explorer</span><span class="sp"></span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
     <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
@@ -2024,7 +2028,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     function fit() {
       if (!last) return;
       const W = multi?.W ?? tableWidth(last.scene) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-      const k = Math.max(0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
+      const narrow = cw < 640, k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
       applyView();
@@ -2037,6 +2041,32 @@ ${given.map((g) => `  ${g},`).join("\n")}
       ui.zoom = next;
       applyView();
     };
+    const touches = /* @__PURE__ */ new Map();
+    let pinch = null;
+    const dist = () => {
+      const [a, b] = [...touches.values()];
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    };
+    el.scroll.addEventListener("pointerdown", (e) => {
+      if (e.pointerType !== "touch") return;
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size === 2) pinch = { d: dist() || 1, k: ui.zoom };
+    }, true);
+    window.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "touch" || !touches.has(e.pointerId)) return;
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch && touches.size === 2) {
+        const [a, b] = [...touches.values()], r = el.scroll.getBoundingClientRect();
+        zoomTo(pinch.k * dist() / pinch.d, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+      }
+    });
+    const liftTouch = (e) => {
+      if (e.pointerType !== "touch") return;
+      touches.delete(e.pointerId);
+      if (touches.size < 2) pinch = null;
+    };
+    window.addEventListener("pointerup", liftTouch);
+    window.addEventListener("pointercancel", liftTouch);
     el.scroll.addEventListener("wheel", (e) => {
       e.preventDefault();
       const r = el.scroll.getBoundingClientRect();
@@ -2052,6 +2082,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const x0 = e.clientX, y0 = e.clientY, p0 = { ...ui.pan };
       let moved = false;
       const move = (ev) => {
+        if (touches.size > 1) return;
         if (!moved && !middle && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
         moved = true;
         auto = false;

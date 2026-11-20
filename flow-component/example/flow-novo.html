@@ -186,7 +186,19 @@
   .dlg button.ib{width:26px;height:26px;padding:0;border:0;background:none;display:inline-grid;place-items:center;flex:none}.dlg button.ib:hover{background:var(--panel)}.dlg button.ib.danger:hover{color:var(--fail);background:color-mix(in srgb,var(--fail) 12%,transparent)}.dlg button.ib .ic{width:14px;height:14px}
   .dlg button.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.dlg button.danger{background:var(--fail);border-color:var(--fail);color:#fff}
   .toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:40;background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:8px;font-size:12px;box-shadow:var(--shadow)}
-  @media (max-width:980px){.app{grid-template-columns:1fr;grid-template-rows:auto 60% 40%;gap:12px}.explorer{max-height:160px}.splitter{display:none}}
+  /* telas estreitas: Explorer, fluxo e código empilhados; a página rola; divisórias somem (o arrasto é para telas largas) */
+  @media (max-width:980px){
+    html,body{height:auto;min-height:100%}body{overflow:auto}#app{flex:none;display:block}
+    .topbar{height:auto;min-height:44px;flex-wrap:wrap;gap:8px;padding:6px 12px}.topbar .sub{display:none}
+    .app,.app.code-off,.app.ex-off,.app.ex-off.code-off{display:flex;flex-direction:column;gap:12px;padding:8px;min-height:0}
+    .splitter,.app #exSplitter,.app #splitter{display:none}
+    .explorer{flex:none;max-height:210px}.app.ex-off .explorer{display:none}
+    .fx{flex:none;height:72vh;min-height:360px}
+    .fx-bar{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none}.fx-bar>*{flex:none}
+    .fx-legend{display:none}.fx-bar .ib{width:36px;height:34px}.fx-bar .ib .ic{width:17px;height:17px}.fx-dock{bottom:12px}
+    .side{flex:none;height:62vh;min-height:320px}.app.code-off .side{display:none}
+    .dlg form,.dlg form.wide{width:min(94%,560px);max-height:92%;overflow:auto}
+  }
 </style>
 </head>
 <body>

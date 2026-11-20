@@ -235,18 +235,24 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   sc.rows.forEach((r, i) => {
     if (r.kind !== "fn") return;
     const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
+    /** X do nome à direita: depois da marca + rótulo de saída, para não cair em cima do retorno. */
+    const lblAfterOuts = (fr: Fn): number => {
+      const outsTxt = dataText([isCube(fr.outs) ? cubeName(fr, "out") : fr.outs[0] ?? ""]);
+      return colX(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
+    };
     if (!r.leaf) {
-      const x1 = colX(r.s) + 8, x2 = colX(r.e + 1) - 8;
-      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x1}" y="${ym(i) - 3.5}" width="${x2 - x1}" height="7" rx="3.5"/><title>${esc(f.title)} · composition = layer</title></g><text class="lbl" x="${x2 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+      const inset = isRoot(p, f.id) ? G.INS : 8, x1 = colX(r.s) + inset, x2 = colX(r.e + 1) - inset;   // a de primeira ordem recua como as funções comuns: o dado fica longe da barra
+      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x1}" y="${ym(i) - 3.5}" width="${x2 - x1}" height="7" rx="3.5"/><title>${esc(f.title)} · composition = layer</title></g>`);
       if (isRoot(p, f.id)) ioMarks(f, r, i, x1, x2);   // a função de primeira ordem também tem entradas e saídas
+      // nome depois das saídas (e depois no SVG) — não sobrepõe o retorno
+      over.push(`<text class="lbl" x="${isRoot(p, f.id) ? lblAfterOuts(f) : x2 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
       return;
     }
     const k = fnKind(p, f), x1 = colX(r.s) + G.INS, x2 = colX(r.e + 1) - G.INS;
     const shown = f.title;
     over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
-    const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
-    if (!ui.txtIn) over.push(`<text class="lbl" x="${colX(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
     ioMarks(f, r, i, x1, x2);
+    if (!ui.txtIn) over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
   });
 
   // sequência: A termina no passo anterior ao início de B → cotovelo da saída de A até a barra de B

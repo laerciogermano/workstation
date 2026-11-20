@@ -53,8 +53,60 @@ export const isRoot = (p: Project, id: string): boolean => p.flows.some(f => f.i
 /** Arquivos do projeto (uma fonte "arquivo" por .ts): as funções de primeira ordem de cada um são as tarefas que outra função pode referenciar. */
 export const filesOf = (p: Project): string[] => [...new Set(p.flows.map(f => flowFile(f)))];
 const fileAgent = (p: Project, file: string): Agent | undefined => { const fns = p.flows.filter(f => flowFile(f) === file); return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map(f => f.title), contracts: Object.fromEntries(fns.map(f => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : undefined; };
-export const agentOf = (p: Project, id: string | null): Agent | undefined => (id ? (id.startsWith("file:") ? fileAgent(p, id.slice(5)) : p.agents.find(a => a.id === id)) : undefined);
-/** Fonte com contrato (lib do navegador ou função de outro arquivo): entradas e saídas vêm dela. */
+/**
+ * Tipo semântico do retorno de uma lib (`agentId:task` → tipo).
+ * Objetos desse tipo, quando estão no estado, podem ser source com os métodos de `OBJ_TYPE_SIGS`.
+ */
+const LIB_RETURN_TYPE: Record<string, string> = { "web:fetch": "Response" };
+/** Métodos disponíveis quando o objeto do contexto tem aquele tipo. */
+const OBJ_TYPE_SIGS: Record<string, string[]> = {
+  Response: ["json() -> value", "text() -> text", "blob() -> blob", "arrayBuffer() -> buffer", "formData() -> formData"],
+};
+/** Tipo de retorno da função de lib (se conhecido). */
+export const returnTypeOf = (p: Project, f: Fn): string | null => (f.agent && f.title ? LIB_RETURN_TYPE[`${f.agent}:${f.title}`] ?? null : null);
+/** Quem produziu o dado `name` antes de `consumerId` no mesmo fluxo (mesma ordem de `statesFor`). */
+export function producerOf(p: Project, consumerId: string, name: string): Fn | null {
+  const l = locate(p, consumerId); if (!l) return null;
+  let found = false, hit: Fn | null = null;
+  const visit = (nodes: readonly Node[]): void => {
+    for (const n of nodes) {
+      if (found) return;
+      if (n.id === consumerId) { found = true; return; }
+      if (n.t === "fn") {
+        if (n.kids.length) visit(n.kids);
+        else if (!found && n.outs.includes(name)) hit = n;
+      } else { visit(n.kids); if (!found && n.t === "try") visit(n.catchKids); if (!found && n.t === "if") visit(n.elseKids); }
+    }
+  };
+  visit(l.flow.kids); return found ? hit : null;
+}
+/** Fonte sintética `obj:<dado>`: métodos do tipo do objeto produzido antes (ex.: Response.json). */
+export function objAgent(p: Project, dataName: string, consumerId?: string): Agent | undefined {
+  const producer = consumerId ? producerOf(p, consumerId, dataName) : (() => {
+    let hit: Fn | null = null;
+    for (const f of p.flows) walk(f.kids, n => { if (n.t === "fn" && n.outs.includes(dataName) && returnTypeOf(p, n)) hit = n; });
+    return hit;
+  })();
+  if (!producer) return undefined;
+  const type = returnTypeOf(p, producer); if (!type) return undefined;
+  const sigs = OBJ_TYPE_SIGS[type]; if (!sigs?.length) return undefined;
+  const contracts: Record<string, Contract> = {}, tasks: string[] = [];
+  for (const sg of sigs) { const r = parseSignature(sg)!; tasks.push(r.task); contracts[r.task] = r.contract; }
+  return { id: `obj:${dataName}`, kind: "maquina", name: dataName, tasks, contracts };
+}
+/** Objetos do contexto (antes de `consumerId`) que têm métodos utilizáveis como source. */
+export function objectSources(p: Project, consumerId: string): { name: string; agent: Agent }[] {
+  return statesFor(p, consumerId).filter(s => s.kind === "data").flatMap(s => {
+    const agent = objAgent(p, s.name, consumerId); return agent?.tasks.length ? [{ name: s.name, agent }] : [];
+  });
+}
+export const agentOf = (p: Project, id: string | null): Agent | undefined => {
+  if (!id) return undefined;
+  if (id.startsWith("file:")) return fileAgent(p, id.slice(5));
+  if (id.startsWith("obj:")) return objAgent(p, id.slice(4));
+  return p.agents.find(a => a.id === id);
+};
+/** Fonte com contrato (lib do navegador, objeto do contexto ou função de outro arquivo): entradas e saídas vêm dela. */
 export const hasContract = (a: Agent | undefined): boolean => a?.kind === "maquina" || a?.kind === "arquivo";
 export const isComposite = (n: Node): boolean => n.kids.length > 0;
 /** Está dentro de um bloco (if/for/try/catch), não só dentro de uma função composta. */

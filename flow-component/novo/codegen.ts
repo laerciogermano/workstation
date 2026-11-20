@@ -51,7 +51,7 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     const n = (used.get(base) ?? 0) + 1; used.set(base, n); let name = n === 1 ? base : `${base}${n}`; while (dataNames.has(name) && name !== base) name = `${name}_`; names.set(f.id, name);
   }
   const nameOf = (f: Fn): string => names.get(f.id) ?? camel(f.title);
-  const kindOf = (f: Fn): "abs" | "lib" | "pessoa" | "file" | "local" => { if (f.kids.length) return "local"; const a = agentOf(p, f.agent); return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs"; };
+  const kindOf = (f: Fn): "abs" | "lib" | "obj" | "pessoa" | "file" | "local" => { if (f.kids.length) return "local"; const a = agentOf(p, f.agent); if (f.agent?.startsWith("obj:")) return "obj"; return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs"; };
   /** Lib global do navegador (`Math`, `console`…) é usada pelo nome; módulo (`node:zlib`, `pkg/sub`) vira import. */
   const isModule = (n: string): boolean => /[:/@]/.test(n);
   const libVar = (n: string): string => (isModule(n) ? n.replace(/[^A-Za-z0-9_]/g, "_") : n);
@@ -63,7 +63,7 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   const needed = [...new Set([...rootIns, ...allFns.flatMap(f => f.ins.filter(i => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter(i => !producedAll.includes(i));
   const returned = flow.outs;   // saídas declaradas na função de primeira ordem; sem elas, tudo o que o fluxo produz
   const abstract = fns.filter(f => kindOf(f) === "abs").map(nameOf);   // sem responsável (ou IA): só o nome; chegam pelo state
-  const libFns = allFns.filter(f => kindOf(f) === "lib"), callables = fns.filter(f => kindOf(f) !== "pessoa" && kindOf(f) !== "file" && kindOf(f) !== "local").map(nameOf);   // as de lib também chegam pelo state, como wrappers
+  const libFns = allFns.filter(f => kindOf(f) === "lib" || kindOf(f) === "obj"), callables = fns.filter(f => kindOf(f) !== "pessoa" && kindOf(f) !== "file" && kindOf(f) !== "local").map(nameOf);   // libs e métodos de objeto chegam pelo state, como wrappers
   const libs = [...new Set(allFns.filter(f => kindOf(f) === "lib").map(f => agentOf(p, f.agent)!.name))].filter(isModule);
   const hasHumans = fns.some(f => kindOf(f) === "pessoa"), hasHumansAll = allFns.some(f => kindOf(f) === "pessoa"), needFn = allFns.some(f => !["pessoa", "file", "local"].includes(kindOf(f)));
 
@@ -91,10 +91,12 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   const assign = (f: Fn, expr: string): string => (f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`);
   /** Wrapper de uma função de lib: converte o formato do flow (state com os nomes das entradas) para os argumentos da lib e devolve as saídas no formato do flow. */
   const wrapperOf = (f: Fn): string[] => {
-    const a = agentOf(p, f.agent)!, c = contractOf(p, f), call = (args: string): string => `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
+    const a = agentOf(p, f.agent)!, c = contractOf(p, f), obj = kindOf(f) === "obj";
+    const call = (args: string): string => obj ? `${a.name}.${f.title}(${args})` : `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
     const head = `  ${nameOf(f)}: async (state${ty(": State")})${ty(": Promise<State>")} => {`;
-    if (!c) return [head, `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
-    const body = [...(c.ins.length ? [`${ind}const { ${c.ins.join(", ")} } = state;`] : [])], expr = call(c.ins.map(i => `${i}${ty(" as never")}`).join(", "));
+    if (!c) return [head, ...(obj ? [`${ind}const { ${a.name} } = state;`] : []), `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
+    const fromState = [...(obj ? [a.name] : []), ...c.ins].filter((n, i, arr) => arr.indexOf(n) === i);
+    const body = [...(fromState.length ? [`${ind}const { ${fromState.join(", ")} } = state;`] : [])], expr = call(c.ins.map(i => `${i}${ty(" as never")}`).join(", "));
     if (!f.outs.length) body.push(`${ind}await ${expr};`, `${ind}return {};`);
     else if (f.outs.length === 1) body.push(`${ind}return { ${f.outs[0]}: await ${expr} };`);
     else body.push(`${ind}return (await ${expr})${ty(" as State")};`);

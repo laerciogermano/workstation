@@ -1,5 +1,5 @@
 import { icon, KIND_ICON } from "./icons";
-import { agentOf, contractOf, filesOf, hasContract,  cubeName, flowFile, insideBlock, isCube, isRoot, locate, type Agent, type Fn, type Node, type Project } from "./model";
+import { agentOf, contractOf, filesOf, hasContract, cubeName, flowFile, insideBlock, isCube, isRoot, locate, objectSources, type Agent, type Fn, type Node, type Project } from "./model";
 import { exprIdents, isDataRef } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
@@ -198,11 +198,13 @@ export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { if (f.kid
 const circle = (cls: string, ic: string, title: string): string => `<span class="fav ${cls}" title="${esc(title)}">${ic ? icon(ic) : ""}</span>`;
 function agentSelect(p: Project, f: Fn, kind: "agent" | "resp"): string {
   const cur = agentOf(p, kind === "agent" ? f.agent : f.resp), want = (a: Agent): boolean => (kind === "resp" ? a.kind === "pessoa" : true);
-  const groups = (["maquina"] as const).map(k => { const list = p.agents.filter(a => a.kind === k && want(a)); return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map(a => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : ""; }).join("");
+  const groups = (["maquina"] as const).map(k => { const list = p.agents.filter(a => a.kind === k && want(a) && !a.id.startsWith("obj:")); return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map(a => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : ""; }).join("");
   // fonte "arquivo": uma função de outro arquivo do projeto (a do próprio arquivo não entra: evita a chamada recursiva a si mesma)
   const own = locate(p, f.id)?.flow, files = kind === "agent" ? filesOf(p).filter(x => !own || x !== flowFile(own)) : [];
   const fileGroup = files.map(x => `<optgroup label="${esc(x)}">${(agentOf(p, `file:${x}`)?.tasks ?? []).map(t => `<option value="file:${esc(x)}#${esc(t)}"${f.agent === `file:${x}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("");
-  return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${fileGroup}</select>`;
+  // objeto do contexto (ex.: Response do fetch): optgroup com os métodos dele
+  const objGroup = kind === "agent" ? objectSources(p, f.id).map(({ name, agent }) => `<optgroup label="${esc(name)} · object">${agent.tasks.map(t => `<option value="obj:${esc(name)}#${esc(t)}"${f.agent === `obj:${name}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("") : "";
+  return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${objGroup}${fileGroup}</select>`;
 }
 function respCell(p: Project, r: Row): string {
   const f = r.node as Fn;
@@ -210,6 +212,7 @@ function respCell(p: Project, r: Row): string {
   if (!r.leaf) { const own = locate(p, f.id)?.flow, file = own ? flowFile(own).replace(/\.[^.]+$/, "") : ""; return `<span class="c-ag" title="Source: the file of this flow (a function with children is concrete: it runs its own steps)">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(file)}</span></span>`; }   // composição = concreta; a origem é o arquivo local
   const a = agentOf(p, f.agent);
   if (a?.kind === "ia") { const pe = agentOf(p, f.resp); return `<span class="c-ag resp-pick">${pe ? circle("pessoa", "user", `Person: ${pe.name}`) + `<span class="rp-n">${esc(pe.name)}</span>` : circle("none", "plus", "Choose the person in charge") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "resp")}</span>`; }
+  if (f.agent?.startsWith("obj:")) return `<span class="c-ag resp-pick">${circle("maquina", "cube", `Object: ${a?.name ?? ""}`)}<span class="rp-n">${esc(a?.name ?? f.agent.slice(4))}</span>${agentSelect(p, f, "agent")}</span>`;
   return `<span class="c-ag resp-pick">${a ? circle(a.kind, KIND_ICON[a.kind], `${a.name}`) + `<span class="rp-n">${esc(a.name)}</span>` : circle("none", "plus", "Choose source") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "agent")}</span>`;
 }
 function taskCell(p: Project, r: Row): string {

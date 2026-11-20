@@ -35,7 +35,68 @@
     const fns = p.flows.filter((f) => flowFile(f) === file);
     return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map((f) => f.title), contracts: Object.fromEntries(fns.map((f) => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : void 0;
   };
-  var agentOf = (p, id) => id ? id.startsWith("file:") ? fileAgent(p, id.slice(5)) : p.agents.find((a) => a.id === id) : void 0;
+  var LIB_RETURN_TYPE = { "web:fetch": "Response" };
+  var OBJ_TYPE_SIGS = {
+    Response: ["json() -> value", "text() -> text", "blob() -> blob", "arrayBuffer() -> buffer", "formData() -> formData"]
+  };
+  var returnTypeOf = (p, f) => f.agent && f.title ? LIB_RETURN_TYPE[`${f.agent}:${f.title}`] ?? null : null;
+  function producerOf(p, consumerId, name) {
+    const l = locate(p, consumerId);
+    if (!l) return null;
+    let found = false, hit = null;
+    const visit = (nodes) => {
+      for (const n of nodes) {
+        if (found) return;
+        if (n.id === consumerId) {
+          found = true;
+          return;
+        }
+        if (n.t === "fn") {
+          if (n.kids.length) visit(n.kids);
+          else if (!found && n.outs.includes(name)) hit = n;
+        } else {
+          visit(n.kids);
+          if (!found && n.t === "try") visit(n.catchKids);
+          if (!found && n.t === "if") visit(n.elseKids);
+        }
+      }
+    };
+    visit(l.flow.kids);
+    return found ? hit : null;
+  }
+  function objAgent(p, dataName, consumerId) {
+    const producer = consumerId ? producerOf(p, consumerId, dataName) : (() => {
+      let hit = null;
+      for (const f of p.flows) walk(f.kids, (n) => {
+        if (n.t === "fn" && n.outs.includes(dataName) && returnTypeOf(p, n)) hit = n;
+      });
+      return hit;
+    })();
+    if (!producer) return void 0;
+    const type = returnTypeOf(p, producer);
+    if (!type) return void 0;
+    const sigs = OBJ_TYPE_SIGS[type];
+    if (!sigs?.length) return void 0;
+    const contracts = {}, tasks = [];
+    for (const sg of sigs) {
+      const r = parseSignature(sg);
+      tasks.push(r.task);
+      contracts[r.task] = r.contract;
+    }
+    return { id: `obj:${dataName}`, kind: "maquina", name: dataName, tasks, contracts };
+  }
+  function objectSources(p, consumerId) {
+    return statesFor(p, consumerId).filter((s) => s.kind === "data").flatMap((s) => {
+      const agent = objAgent(p, s.name, consumerId);
+      return agent?.tasks.length ? [{ name: s.name, agent }] : [];
+    });
+  }
+  var agentOf = (p, id) => {
+    if (!id) return void 0;
+    if (id.startsWith("file:")) return fileAgent(p, id.slice(5));
+    if (id.startsWith("obj:")) return objAgent(p, id.slice(4));
+    return p.agents.find((a) => a.id === id);
+  };
   var hasContract = (a) => a?.kind === "maquina" || a?.kind === "arquivo";
   var isComposite = (n) => n.kids.length > 0;
   var insideBlock = (p, id) => {
@@ -949,6 +1010,7 @@
     const kindOf = (f) => {
       if (f.kids.length) return "local";
       const a = agentOf(p, f.agent);
+      if (f.agent?.startsWith("obj:")) return "obj";
       return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs";
     };
     const isModule = (n) => /[:/@]/.test(n);
@@ -959,7 +1021,7 @@
     const needed = [.../* @__PURE__ */ new Set([...rootIns, ...allFns.flatMap((f) => f.ins.filter((i) => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter((i) => !producedAll.includes(i));
     const returned = flow.outs;
     const abstract = fns.filter((f) => kindOf(f) === "abs").map(nameOf);
-    const libFns = allFns.filter((f) => kindOf(f) === "lib"), callables = fns.filter((f) => kindOf(f) !== "pessoa" && kindOf(f) !== "file" && kindOf(f) !== "local").map(nameOf);
+    const libFns = allFns.filter((f) => kindOf(f) === "lib" || kindOf(f) === "obj"), callables = fns.filter((f) => kindOf(f) !== "pessoa" && kindOf(f) !== "file" && kindOf(f) !== "local").map(nameOf);
     const libs = [...new Set(allFns.filter((f) => kindOf(f) === "lib").map((f) => agentOf(p, f.agent).name))].filter(isModule);
     const hasHumans = fns.some((f) => kindOf(f) === "pessoa"), hasHumansAll = allFns.some((f) => kindOf(f) === "pessoa"), needFn = allFns.some((f) => !["pessoa", "file", "local"].includes(kindOf(f)));
     const lines = [], map = {};
@@ -990,10 +1052,12 @@
     const initLines = (fs, scope, ind) => fs.flatMap((f) => f.ins.map((i) => [i, initOf(f, i, scope)]).filter((x) => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
     const assign = (f, expr) => f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`;
     const wrapperOf = (f) => {
-      const a = agentOf(p, f.agent), c = contractOf(p, f), call = (args) => `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
+      const a = agentOf(p, f.agent), c = contractOf(p, f), obj = kindOf(f) === "obj";
+      const call = (args) => obj ? `${a.name}.${f.title}(${args})` : `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
       const head = `  ${nameOf(f)}: async (state${ty(": State")})${ty(": Promise<State>")} => {`;
-      if (!c) return [head, `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
-      const body = [...c.ins.length ? [`${ind}const { ${c.ins.join(", ")} } = state;`] : []], expr = call(c.ins.map((i) => `${i}${ty(" as never")}`).join(", "));
+      if (!c) return [head, ...obj ? [`${ind}const { ${a.name} } = state;`] : [], `${ind}await ${call(`state${ty(" as never")}`)};`, `${ind}return {};`, "  },"];
+      const fromState2 = [...obj ? [a.name] : [], ...c.ins].filter((n, i, arr) => arr.indexOf(n) === i);
+      const body = [...fromState2.length ? [`${ind}const { ${fromState2.join(", ")} } = state;`] : []], expr = call(c.ins.map((i) => `${i}${ty(" as never")}`).join(", "));
       if (!f.outs.length) body.push(`${ind}await ${expr};`, `${ind}return {};`);
       else if (f.outs.length === 1) body.push(`${ind}return { ${f.outs[0]}: await ${expr} };`);
       else body.push(`${ind}return (await ${expr})${ty(" as State")};`);
@@ -1643,12 +1707,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
   function agentSelect(p, f, kind) {
     const cur = agentOf(p, kind === "agent" ? f.agent : f.resp), want = (a) => kind === "resp" ? a.kind === "pessoa" : true;
     const groups = ["maquina"].map((k) => {
-      const list = p.agents.filter((a) => a.kind === k && want(a));
+      const list = p.agents.filter((a) => a.kind === k && want(a) && !a.id.startsWith("obj:"));
       return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map((a) => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : "";
     }).join("");
     const own = locate(p, f.id)?.flow, files = kind === "agent" ? filesOf(p).filter((x) => !own || x !== flowFile(own)) : [];
     const fileGroup = files.map((x) => `<optgroup label="${esc(x)}">${(agentOf(p, `file:${x}`)?.tasks ?? []).map((t) => `<option value="file:${esc(x)}#${esc(t)}"${f.agent === `file:${x}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("");
-    return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${fileGroup}</select>`;
+    const objGroup = kind === "agent" ? objectSources(p, f.id).map(({ name, agent }) => `<optgroup label="${esc(name)} \xB7 object">${agent.tasks.map((t) => `<option value="obj:${esc(name)}#${esc(t)}"${f.agent === `obj:${name}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("") : "";
+    return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${objGroup}${fileGroup}</select>`;
   }
   function respCell(p, r) {
     const f = r.node;
@@ -1662,6 +1727,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const pe = agentOf(p, f.resp);
       return `<span class="c-ag resp-pick">${pe ? circle("pessoa", "user", `Person: ${pe.name}`) + `<span class="rp-n">${esc(pe.name)}</span>` : circle("none", "plus", "Choose the person in charge") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "resp")}</span>`;
     }
+    if (f.agent?.startsWith("obj:")) return `<span class="c-ag resp-pick">${circle("maquina", "cube", `Object: ${a?.name ?? ""}`)}<span class="rp-n">${esc(a?.name ?? f.agent.slice(4))}</span>${agentSelect(p, f, "agent")}</span>`;
     return `<span class="c-ag resp-pick">${a ? circle(a.kind, KIND_ICON[a.kind], `${a.name}`) + `<span class="rp-n">${esc(a.name)}</span>` : circle("none", "plus", "Choose source") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "agent")}</span>`;
   }
   function taskCell(p, r) {
@@ -2929,8 +2995,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     host.addEventListener("change", (e) => {
       const s = e.target, c = s.dataset["change"], id = s.dataset["id"];
       if (!c || !id) return;
-      if (c === "assign" && s.value.startsWith("file:")) {
-        const [agent, task] = s.value.split("#");
+      if (c === "assign" && (s.value.startsWith("file:") || s.value.startsWith("obj:")) && s.value.includes("#")) {
+        const i = s.value.indexOf("#"), agent = s.value.slice(0, i), task = s.value.slice(i + 1);
         if (run({ type: "assign", id, agent }, false) !== void 0 || true) run({ type: "setTask", id, task }, false);
       } else if (c === "assign") run({ type: "assign", id, agent: s.value || null }, false);
       else if (c === "setResp") run({ type: "setResp", id, resp: s.value || null }, false);

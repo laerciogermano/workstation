@@ -468,7 +468,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   });
   host.addEventListener("change", e => {
     const s = e.target as HTMLSelectElement, c = s.dataset["change"], id = s.dataset["id"]; if (!c || !id) return;
-    if (c === "assign" && s.value.startsWith("file:")) { const [agent, task] = s.value.split("#"); if (run({ type: "assign", id, agent: agent! }, false) !== undefined || true) run({ type: "setTask", id, task: task! }, false); }   // função de um arquivo: fonte + função
+    if (c === "assign" && (s.value.startsWith("file:") || s.value.startsWith("obj:")) && s.value.includes("#")) { const i = s.value.indexOf("#"), agent = s.value.slice(0, i), task = s.value.slice(i + 1); if (run({ type: "assign", id, agent }, false) !== undefined || true) run({ type: "setTask", id, task }, false); }   // arquivo ou objeto do contexto: fonte + função
     else if (c === "assign") run({ type: "assign", id, agent: s.value || null }, false);
     else if (c === "setResp") run({ type: "setResp", id, resp: s.value || null }, false);
     else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);

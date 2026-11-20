@@ -273,6 +273,7 @@ run({ type: "renameData", id: s, to: "total" });</code></pre>
 <tr><td><code>web</code></td><td><code>globalThis</code></td><td><code>fetch(url, options?) → response</code> · <code>atob</code> <code>btoa(text) → result</code> · <code>structuredClone(value) → copy</code></td></tr>
 </table>
 <p>Catálogo padrão sem contrato: IA <code>lia</code>, <code>teo</code>, <code>davi</code>; pessoa <code>ana</code>, <code>bruno</code>. Cada arquivo do projeto é uma fonte <code>file:&lt;nome&gt;</code> cujas tarefas são as suas funções.</p>
+<p><b>Objeto no contexto como source:</b> se um dado produzido antes tem tipo conhecido (hoje: <code>Response</code> do <code>fetch</code>), o select de Source lista os métodos desse objeto (<code>obj:&lt;dado&gt;#json</code>…). Codegen: <code>await response.json()</code>. Rollback: remover <code>objectSources</code> / <code>objAgent</code> e o ramo <code>obj:</code> em view/codegen/app.</p>
 
 <h2 id="layout"><span class="n">9</span>Layout</h2>
 <p><code>layout(flow, { closed })</code> → <code>Scene</code>, sem DOM.</p>

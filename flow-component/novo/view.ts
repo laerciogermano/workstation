@@ -75,8 +75,8 @@ export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, S
       add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
     }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
-    // I/O vazio ([] = cubo state): mesma marca do diagrama (`input_<fn>` / `output_<fn>`) no rodapé — raiz e composições
-    if (p && !contractOf(p, f) && (!r.leaf || isRoot(p, f.id))) {
+    // I/O vazio ([] = cubo state): toda marca do diagrama (`input_<fn>` / `output_<fn>`) também no rodapé — raiz, composição e folha abstrata
+    if (p && !contractOf(p, f)) {
       if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
       if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
     }

@@ -203,7 +203,7 @@ describe("quadrado do dado", () => {
   it("estados embaixo do plano: só os novos de cada passo, ou todos os disponíveis (os antigos ficam esmaecidos)", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "r1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "r2" });
     const news = (t.view().plan.match(/class="stt"/g) ?? []).length, all = t.view({ allData: true }).plan;
-    expect(news).toBe(4);   // r1 + r2 + cubos vazios da raiz (input_/output_)
+    expect(news).toBe(10);   // r1 + r2 + cubos vazios (raiz + folhas sem aquele lado)
     expect((all.match(/class="stt/g) ?? []).length).toBeGreaterThan(news); expect(all).toContain('class="stt old"');
   });
   it("dado inicializado com valor aparece nos estados: objeto vira cubo com os campos indentados embaixo", async () => {
@@ -347,7 +347,8 @@ describe("estados embaixo das colunas e título do plano", () => {
   it("embaixo de cada coluna aparecem os dados (estados) que chegam nela: quadrado, ou cubo quando a função devolve vários", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "p" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" });
     const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_fb", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
-    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(3);   // output_fb + input_/output_ vazios da raiz
+    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1);
+    expect((plan.match(/class="scube"/g) ?? []).length).toBe(9);   // output_fb + I/O vazios (raiz + folhas)
     expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
     expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 64);
   });
@@ -368,13 +369,20 @@ describe("estados embaixo das colunas e título do plano", () => {
   it("entrada de uma composição (função com filhas) aparece no estado embaixo", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
     const m = statesByStep(t.view().scene, false, t.p); expect([...m.values()].flat().map(x => x.name)).toContain("y");
-    expect(m.get(1)).toMatchObject([{ name: "y", abs: true, side: "in", owner: t.ids[1] }]); expect(t.view().plan).toContain('class="sdot a"');
+    expect(m.get(1)!.find(x => x.name === "y")).toMatchObject({ name: "y", abs: true, side: "in", owner: t.ids[1] });
+    expect(t.view().plan).toContain('class="sdot a"');
   });
   it("composição sem I/O declarado: o cubo input_/output_ da marca também aparece nos estados", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "rename", id: t.ids[1]!, title: "fazerBenchmarking" });
     const m = statesByStep(t.view().scene, false, t.p), names = [...m.values()].flat().map(x => x.name);
     expect(names).toContain("input_fazerbenchmarking"); expect(names).toContain("output_fazerbenchmarking");
     expect(t.view().plan).toContain("input_fazerbenchmarking"); expect(t.view().plan).toContain('class="scube"');
+  });
+  it("folha abstrata sem I/O: input_/output_ da marca também aparece nos estados (não só na raiz/composição)", () => {
+    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "newFunction" });
+    const names = [...statesByStep(t.view().scene, false, t.p).values()].flat().map(x => x.name);
+    expect(names).toContain("input_newfunction"); expect(names).toContain("output_newfunction");
+    expect(t.view().plan).toContain("input_newfunction"); expect(t.view().plan).toContain("output_newfunction");
   });
 });
 

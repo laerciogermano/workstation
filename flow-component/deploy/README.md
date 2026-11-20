@@ -13,7 +13,9 @@
 
 **Antes → depois (chip sN de baixo):** quadro sN + losango embaixo (igual ao de cima) → losango em cima e quadro sN embaixo; `bot` em `rowY+30` para o losango ficar abaixo do eixo (não em cima da linha). Rollback: `chip(s, bot)` sem `diaAbove` e `bot = rowY+18` em `novo/view.ts`.
 
-**Antes → depois (I/O vazio / raiz):** 1ª ordem sem `ins`/`outs` ficava sem marca (não dava pra adicionar entrada/saída no main) → cubo vazio clicável em toda abstrata (`editData` com `start: true`); cubos `input_<fn>`/`output_<fn>` também no rodapé (`statesByStep` + `Project`, incl. raiz). Rollback: em `ioMarks` exigir `list.length` (ou excluir raiz); em `editData` não passar `{ start: true }`; tirar o ramo de I/O vazio em `statesByStep`.
+**Antes → depois (I/O vazio / estados):** marca `input_<fn>`/`output_<fn>` no diagrama sem espelho no rodapé (só alguns casos: composição/raiz) → toda abstrata sem I/O (folha inclusive) entra em `statesByStep` + `Project`. Rollback: em `statesByStep` voltar `(!r.leaf || isRoot)`.
+
+**Antes → depois (I/O vazio / raiz):** 1ª ordem sem `ins`/`outs` ficava sem marca → cubo vazio clicável (`editData` com `start: true`); cubos também no rodapé. Rollback: `ioMarks` exigir `list.length`; `editData` sem `{ start: true }`.
 
 **Antes → depois (estados composição):** cubo `input_<fn>` / `output_<fn>` da composição sem I/O só no diagrama → também no rodapé de estados (`statesByStep` + `Project`). Rollback: tirar o ramo `!r.leaf && !ins/outs` em `view.ts`.
 

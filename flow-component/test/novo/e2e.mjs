@@ -29,11 +29,16 @@ const exOpen = async on => { if ((await ev(`!document.querySelector(".app").clas
 const delClick = async () => { await mouse("mouseMoved", ...(await center(".ex-fn.cur .ex-n"))); await wait(80); await click(".ex-fn.cur .ex-del"); };
 const reload = async () => { await send("Page.reload"); await wait(1500); await ev(`document.querySelector(".ex-fn")?.click()`); await wait(150); };
 const flowSel = v => ev(`(()=>{const f=[...document.querySelectorAll(".ex-file")].find(r=>r.querySelector(".ex-n").textContent===${JSON.stringify(v.replace(/\.ts$/,""))});document.querySelector('.ex-fn[data-flow="'+f.dataset.flow+'"]').click()})()`);
+/** Recria o antigo fluxo `example` (libs + if) quando o teste precisa de estrutura além do main vazio. */
+const seedDemo = async () => {
+  await ev(`(()=>{const a=flowApp,d=c=>a.store.dispatch(c);if(a.store.project.flows.some(f=>f.title==="example")){const f=a.store.project.flows.find(f=>f.title==="example");a.ui.flow=f.id;document.querySelector('.ex-fn[data-flow="'+f.id+'"]')?.click();return}const ex=d({type:"newFlow",title:"example"});d({type:"addInput",id:ex,name:"threshold"});d({type:"setArg",id:ex,name:"threshold",value:"50"});d({type:"addOutput",id:ex,name:"score"});d({type:"addOutput",id:ex,name:"report"});const step=(lib,task,out,args={})=>{const id=d({type:"addChild",id:ex,title:task});d({type:"assign",id,agent:lib});d({type:"setTask",id,task});for(const[n,v]of Object.entries(args))d({type:"setArg",id,name:n,value:v});if(out)d({type:"renameData",id,to:out});return id};step("crypto","randomUUID","id");step("math","random","ratio");step("math","round","score",{value:"ratio * 100"});step("date","now","at");const hi=step("console","log",undefined,{text:"\`High score: \${score}\`"});step("json","stringify","report",{value:"{ id, score, at }"});step("console","log",undefined,{text:"report"});d({type:"wrap",id:hi,kind:"if",test:"score >= threshold"});a.ui.flow=ex;document.querySelector('.ex-fn[data-flow="'+ex+'"]')?.click()})()`);
+  await wait(350);
+};
 const tests = []; const test = (name, fn) => tests.push([name, fn]);
 
 test("cabeçalho da tabela: source e function", async () => { assert.deepEqual(await ev(`[...document.querySelectorAll(".ghead span")].map(s=>s.textContent)`), ["source", "function"]); });
-test("abre com main (só a raiz) e example; seletor lista os dois", async () => {
-  assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main", "example"]);
+test("abre só com main (raiz vazia)", async () => {
+  assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main"]);
   assert.match(await code(), /export async function main\(state: State\)/); assert.equal(await ev(`document.querySelectorAll(".grow").length`), 1);
 });
 test("ghost input: hovering and clicking opens the box and adds the input (marker appears at the same spot)", async () => {
@@ -53,7 +58,7 @@ test("círculo da função à esquerda do nome (na coluna function), e círculo 
   assert.equal(await ev(`document.querySelectorAll(".grow .nm .fn-dot").length`), 1); assert.ok(await ev(`!!document.querySelector(".grow .fav.arquivo")`));
 });
 test("botões do hover na tabela: filho, irmão, if, for, try; raiz só aceita filho", async () => {
-  await flowSel("example"); await wait(200);
+  await seedDemo();
   const rootTools = await ev(`[...document.querySelectorAll(".grow")[0].querySelectorAll(".fl-tools .ib")].map(b=>b.dataset.act)`); assert.deepEqual(rootTools, ["toggle", "addChild"]);
   const rows0 = await ev(`document.querySelectorAll(".grow").length`);
   const hover = async idx => { const c = await ev(`(()=>{const r=document.querySelectorAll(".grow")[${idx}].getBoundingClientRect();return [r.x+r.width*0.55,r.y+r.height/2]})()`); await mouse("mouseMoved", ...c); await wait(100); };
@@ -151,7 +156,7 @@ test("the play is the first icon on the right (before undo/redo); flows live onl
 });
 test("one trash only in each tooltip; data removal is in the type select; plan title is just the flow name; states under the columns; abstract source", async () => {
   await ev(`flowApp.reset()`); await wait(200);
-  await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];document.querySelector('.ex-file[data-flow="'+f.id+'"]').click()})()`); await wait(300);
+  await seedDemo();
   assert.equal(await ev(`!!document.querySelector(".plan text.ttl")`), false, "no title on top of the plan: the name stays beside");
   assert.ok((await ev(`document.querySelectorAll(".plan .stt").length`)) >= 3, "states under the columns"); assert.ok(await ev(`!![...document.querySelectorAll(".plan .stt text")].find(t=>t.textContent==="score")`), "score state");
   await ev(`flowApp.store.dispatch({type:"addChild",id:flowApp.ui.flow,title:"zz"})`); await wait(150);
@@ -286,10 +291,10 @@ test("persistência: o projeto fica salvo no navegador e volta ao recarregar", a
   await ev(`flowApp.store.dispatch({type:"rename",id:flowApp.store.project.flows[0].id,title:"persistido"})`); await wait(200);
   assert.match(await ev(`localStorage.getItem("flow-novo-projeto-v1")`), /persistido/);
   await reload(); assert.equal(await ev(`document.querySelector(".ex-file .ex-n").textContent.replace(/\.ts$/,"")`), "persistido", "depois de recarregar o projeto continua o mesmo");
-  await ev(`localStorage.setItem("flow-novo-projeto-v1","corrompido")`); await reload(); assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main", "example"], "salvo inválido: volta ao exemplo");
+  await ev(`localStorage.setItem("flow-novo-projeto-v1","corrompido")`); await reload(); assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main"], "salvo inválido: volta ao main");
 });
 test("explorador: arquivos .ts com funções e dados; toggle e resize como o painel de código", async () => {
-  await exOpen(true);
+  await exOpen(true); await seedDemo();
   assert.ok(await ev(`document.querySelectorAll(".ex-file").length >= 2 && document.querySelectorAll(".ex-fn").length > 0 && document.querySelectorAll(".ex-data").length === 0`));
   const w = () => ev(`document.querySelector(".explorer").getBoundingClientRect().width`);
   const w0 = await w(); await ev(`document.getElementById("exSplitter").focus()`);
@@ -309,10 +314,10 @@ test("explorador: + cria função no mesmo arquivo; cada função abre a própri
   assert.equal(await ev(`flowApp.store.project.flows.filter(f=>f.file==="main.ts").length`), 1, "the new function records the file");
   await ev(`document.querySelector(".ex-fn:not(.cur)").click()`); await wait(250);
   assert.equal(await ev(`document.querySelectorAll(".ex-fn.cur").length`), 1);
-  await flowSel("example"); await wait(200);
+  await seedDemo();
 });
 test("explorador: clicar em Files abre todos os arquivos lado a lado, cada um com as funções empilhadas", async () => {
-  await exOpen(true); const files = await ev(`document.querySelectorAll(".ex-file").length`);
+  await exOpen(true); await seedDemo(); const files = await ev(`document.querySelectorAll(".ex-file").length`);
   await click(".ex-sec-h .n"); await wait(300);
   assert.equal(await ev(`document.querySelectorAll(".mcol").length`), files);
   const xs = await ev(`[...document.querySelectorAll(".mcol")].map(c=>c.getBoundingClientRect().left)`); assert.ok(xs.every((x, i) => i === 0 || x > xs[i - 1]), "colunas uma ao lado da outra");
@@ -320,7 +325,7 @@ test("explorador: clicar em Files abre todos os arquivos lado a lado, cada um co
   await flowSel("example"); await wait(250); assert.equal(await ev(`document.querySelectorAll(".mcol").length`), 0);
 });
 test("o play só aparece com uma função de primeira ordem selecionada", async () => {
-  await exOpen(true); await flowSel("example"); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), false);
+  await exOpen(true); await seedDemo(); assert.equal(await ev(`document.getElementById("exec").hidden`), false);
   await ev(`document.querySelector(".ex-file").click()`); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), true, "arquivo selecionado: sem play");
   await click(".ex-sec-h .n"); await wait(250); assert.equal(await ev(`document.getElementById("exec").hidden`), true, "Files: sem play");
   await ev(`document.querySelector(".mcol .plan [data-sel]").dispatchEvent(new MouseEvent("click",{bubbles:true}))`); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), false, "clicou numa função em Files: play aparece"); assert.match(await ev(`document.getElementById("flowName").textContent`), / › /, "a função selecionada aparece no cabeçalho");
@@ -329,7 +334,7 @@ test("o play só aparece com uma função de primeira ordem selecionada", async 
 });
 test("página inicial é Files (todos os arquivos); Sources não fica mais no topo", async () => {
   await send("Page.reload"); await wait(1500);
-  assert.equal(await ev(`document.getElementById("flowName").textContent`), "Files"); assert.ok((await ev(`document.querySelectorAll(".mcol").length`)) >= 2, "arquivos lado a lado");
+  assert.equal(await ev(`document.getElementById("flowName").textContent`), "Files"); assert.ok((await ev(`document.querySelectorAll(".mcol").length`)) >= 1, "arquivos lado a lado");
   assert.equal(await ev(`[...document.querySelectorAll(".mcol-t")].every(h=>!!h.querySelector("svg"))`), true, "ícone de arquivo em cada arquivo"); assert.equal(await ev(`[...document.querySelectorAll(".blk-t")].every(h=>!!h.querySelector(".fn-dot"))`), true, "círculo em cada função");
   assert.equal(await ev(`!!document.querySelector(".topbar #agents")`), false, "sem Sources no header"); assert.equal(await ev(`!!document.querySelector(".explorer #agents, #explorer #agents")`), true);
   assert.equal(await ev(`document.querySelector(".topbar .logo")?.textContent.trim()`), "Flow", "marca Flow no header"); assert.equal(await ev(`!!document.querySelector(".explorer .ex-logo, .ex-head svg.ex-logo")`), false, "logo fora do Explorer");
@@ -382,10 +387,11 @@ test("dicas rápidas: aparecem em ~50 ms e somem ao sair; a barra de ferramentas
   const btn = await center(".bar-tools .ib"); await mouse("mouseMoved", ...btn); await wait(70); assert.ok(await ev(`!!document.querySelector(".tip.on")`), "dica do botão da barra");
   await mouse("mouseMoved", 5, 500); await wait(320); assert.equal(await ev(`!!document.querySelector(".bar-tools")`), false, "barra some logo depois de sair (≤ ~300 ms)");
 });
-test("nova função cria um fluxo e troca para ele; reiniciar volta ao exemplo", async () => {
-  await exOpen(true);
-  await click("#newFlow"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 3); await ev(`flowApp.reset()`); await wait(200);
-  assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 2);
+test("nova função cria um fluxo e troca para ele; reiniciar volta ao main", async () => {
+  await exOpen(true); await seedDemo();
+  const n0 = await ev(`document.querySelectorAll(".ex-file").length`);
+  await click("#newFlow"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), n0 + 1); await ev(`flowApp.reset()`); await wait(200);
+  assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 1);
 });
 test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
   await ev(`document.querySelector('.tb-temas button[data-id="eternos-black"]').click()`); assert.equal(await ev(`document.documentElement.dataset.tema`), "eternos-black");
@@ -394,6 +400,8 @@ test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
 
 await send("Runtime.enable"); await send("Page.enable");
 await send("Page.navigate", { url: `http://127.0.0.1:${port}/flow-novo.html?tema=eternos-black` }); await wait(1800);
+await ev(`localStorage.removeItem("flow-novo-projeto-v1"); localStorage.removeItem("flow-novo-ui-v1")`);
+await send("Page.reload"); await wait(1500);
 await ev(`document.querySelector(".ex-fn")?.click()`); await wait(200);
 let failed = 0;
 for (const [name, fn] of tests) { if (process.env.ONLY && !name.includes(process.env.ONLY)) continue; try { await fn(); console.log("  ✓", name); } catch (e) { failed++; console.log("  ✗", name, "\n   ", String(e.message).split("\n").slice(0, 14).join(" | ")); } }

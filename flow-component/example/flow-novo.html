@@ -194,6 +194,8 @@
 
   .side{display:flex;flex-direction:column;min-height:0;background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden}
   .tabs{display:flex;align-items:center;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
+  /* sem ?dev=true o markup traz [hidden]; display:flex acima sobrescrevia o UA e mantinha as abas TypeScript visíveis */
+  .tabs[hidden],#p-ts[hidden]{display:none!important}
   .tabs button{position:relative;height:38px;padding:0 12px;border:0;background:none;color:var(--muted);font-weight:500;cursor:pointer}
   .tabs button[aria-selected="true"]{color:var(--ink)}.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
   .fhead .meta{font:11px var(--mono);color:var(--muted);padding:0 4px}

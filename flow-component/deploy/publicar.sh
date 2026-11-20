@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Publica example/ em https://fop.laerciogermano.com (Flow · URL limpa /)
+# Publica example/ em https://fop.laerciogermano.com e https://flow-oriented-programming.com
 # Uso: SSHPASS='senha Contabo 185' bash deploy/publicar.sh
 set -euo pipefail
 : "${SSHPASS:?defina SSHPASS com a senha do Contabo 185}"
 HOST="${HOST:-185.250.37.82}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/example"
+FOP_HOSTS=(fop.laerciogermano.com flow-oriented-programming.com www.flow-oriented-programming.com)
 export SSHPASS
 
 sshpass -e ssh -o StrictHostKeyChecking=no "root@$HOST" 'mkdir -p /opt/fop'
@@ -20,7 +21,7 @@ else
 server {
     listen 80;
     listen [::]:80;
-    server_name fop.laerciogermano.com fop.lesgermano.com;
+    server_name fop.laerciogermano.com fop.lesgermano.com flow-oriented-programming.com www.flow-oriented-programming.com;
     root /opt/fop;
     index index.html;
     location ^~ /.well-known/acme-challenge/ { root /var/www/html; }
@@ -53,9 +54,22 @@ ln -sfn /etc/nginx/sites-available/fop /etc/nginx/sites-enabled/fop
 nginx -t
 systemctl reload nginx
 
-if [[ ! -s /etc/letsencrypt/live/fop.laerciogermano.com/fullchain.pem ]] \
-  && dig +short fop.laerciogermano.com A | grep -q 185.250.37.82; then
-  certbot --nginx -d fop.laerciogermano.com --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect || true
+# Cert LE: sub + apex + www (expand se faltar SAN)
+NEED_CERT=0
+if [[ ! -s /etc/letsencrypt/live/fop.laerciogermano.com/fullchain.pem ]]; then
+  NEED_CERT=1
+elif ! openssl x509 -in /etc/letsencrypt/live/fop.laerciogermano.com/fullchain.pem -noout -text \
+  | grep -q 'DNS:flow-oriented-programming.com'; then
+  NEED_CERT=1
+fi
+if [[ "$NEED_CERT" -eq 1 ]] \
+  && dig +short fop.laerciogermano.com A | grep -q 185.250.37.82 \
+  && dig +short flow-oriented-programming.com A | grep -q 185.250.37.82; then
+  certbot --nginx --cert-name fop.laerciogermano.com \
+    -d fop.laerciogermano.com \
+    -d flow-oriented-programming.com \
+    -d www.flow-oriented-programming.com \
+    --expand --non-interactive --agree-tos -m laerciogermanoo@gmail.com --redirect || true
 fi
 REMOTE
 
@@ -72,5 +86,7 @@ nginx -t && systemctl reload nginx
 REMOTE
 fi
 
-curl -sS -o /dev/null -w "https %{http_code}\n" "https://fop.laerciogermano.com/" || \
-  curl -sS -o /dev/null -w "http %{http_code}\n" "http://fop.laerciogermano.com/" || true
+for h in "${FOP_HOSTS[@]}"; do
+  curl -sS -o /dev/null -w "$h https %{http_code}\n" "https://$h/" \
+    || curl -sS -o /dev/null -w "$h http %{http_code}\n" "http://$h/" || true
+done

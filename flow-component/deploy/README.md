@@ -1,12 +1,17 @@
-# Deploy — fop.laerciogermano.com
+# Deploy — FOP (fop.laerciogermano.com · flow-oriented-programming.com)
 
-**URL:** https://fop.laerciogermano.com/ (URL limpa — sem `flow-novo.html` nem `?tema=`)  
+**URL:** https://flow-oriented-programming.com/ · https://www.flow-oriented-programming.com/ · https://fop.laerciogermano.com/ (URL limpa — sem `flow-novo.html` nem `?tema=`)  
 **Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop` · `index.html` (= editor)  
-**DNS:** Hostinger (zona `laerciogermano.com`) · A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)  
+**DNS Hostinger**
+- zona `flow-oriented-programming.com`: A `@` → `185.250.37.82`; CNAME `www` → `flow-oriented-programming.com`
+- zona `laerciogermano.com`: A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)
+**Cert LE:** `fop.laerciogermano.com` (SAN: apex + www)  
 **Tema:** default `eternos-black` no host FOP (localStorage / bolinhas; sem query na URL)  
 **App / PWA:** metas mobile (viewport-fit, apple-web-app, theme-color) + `manifest.webmanifest` + `sw.js` (instalável / “Adicionar à Tela de Início”). Nginx: HSTS, `nosniff`, Referrer-Policy, Permissions-Policy; `index.html`/`sw.js`/`manifest` com `Cache-Control: no-cache` (mesmo espírito notinhas/rolego).  
 **Conteúdo:** [`../example/`](../example/) · marca: logo no header + **Flow** (regra [`.cursor/rules/fop-flow-language.mdc`](../../../.cursor/rules/fop-flow-language.mdc))  
 **Projeto padrão:** só o fluxo `main` (raiz vazia). Os samples (11 funções de front) ficam em `fop-samples.json` e na documentação. **Docs:** `/fop-docs.html`. Topbar: FOP à esquerda + badge `0.1` (sem Open/Export); badge `prototype` = under development; sob o FOP: "Everything flows, except flow" - Heraclitus. Explorer: `+` em `src`. Terminal inferior (só Terminal, sem aba TypeScript; default minimizado; ícone terminal no toggle). Persistência automática no `localStorage`. Legenda no footer do site. For = teal (`--fc-loop`), try = esmeralda (`--fc-ok`). Rodapé: legenda + FOP · MIT License (`/LICENSE`) · contact@flow-oriented-programming.com.
+
+**Antes → depois (apex 2026-11-20):** apex/`www` caíam no default nginx (HTTP 200 ConnectMax; HTTPS 500 sem SNI) → `server_name` + `certbot --expand` com `flow-oriented-programming.com` + `www` no mesmo site `/opt/fop`. Rollback: tirar os hostnames do `server_name`/cert; A `@` de volta ao parking Hostinger se necessário; `nginx -t && systemctl reload nginx`.
 
 **Antes → depois (UI):** Open/Export na topbar + abas TypeScript/Terminal → só Terminal; projeto grava sozinho no navegador. Rollback: restaurar `proj` Open/Export + tabs em `novo/app.ts`.
 
@@ -43,10 +48,10 @@ Local (preview): `python3 -m http.server 8787 --directory example` → http://12
 
 ## Rollback
 
-1. hPanel → DNS `laerciogermano.com` → excluir A `fop`
+1. hPanel → DNS `laerciogermano.com` → excluir A `fop`; DNS `flow-oriented-programming.com` → A `@` de volta ao parking (ou excluir)
 2. Contabo: `rm /etc/nginx/sites-enabled/fop /etc/nginx/sites-available/fop; rm -rf /opt/fop; nginx -t && systemctl reload nginx`
 3. `certbot delete --cert-name fop.laerciogermano.com`
 
 ## Antes → depois
 
-Sem site FOP → `example/` (flow-novo) em `/opt/fop` + A `fop`. `flow-ide.laerciogermano.com` permanece (protótipo Flow.dev).
+Sem site FOP → `example/` (flow-novo) em `/opt/fop` + A `fop` + apex/`www`. `flow-ide.laerciogermano.com` permanece (protótipo Flow.dev).

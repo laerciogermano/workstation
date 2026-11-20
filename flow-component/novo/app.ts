@@ -4,8 +4,7 @@ import { runInWorker, type LogLevel, type Running } from "./runner";
 import { contractOf, cubeName, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
-import { countForRow } from "./scope";
-import { layout } from "./layout";
+import { countForStep } from "./scope";
 import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
 import { sampleProject, SAMPLE_TITLES } from "./sample";
 import { docExample } from "./docs-examples";
@@ -500,17 +499,26 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   });
   el.zoom.addEventListener("mouseout", e => { if ((e.target as HTMLElement).closest("[data-hover],[data-sthover]")) leaveBar(); });
 
-  // ───────── alça da etiqueta: arrastar aumenta / diminui o bloco ─────────
+  // ───────── alça da etiqueta: arrastar na horizontal aumenta / diminui o bloco (e2e + cursor col-resize) ─────────
   el.zoom.addEventListener("pointerdown", e => {   // vale para o plano único e para cada função da vista de arquivo
     const hd = (e.target as HTMLElement).closest<SVGElement>("[data-drag]"); if (!hd) return;
     const id = hd.dataset["drag"]!, p0 = P(), loc = locate(p0, id), svg = hd.closest("svg"), plan = hd.closest<HTMLElement>(".gplan") ?? el.plan; if (!loc || !svg) return;
     e.preventDefault(); e.stopPropagation();
-    const scene = layout(loc.flow, { closed: ui.closed }), guide = host.ownerDocument.createElement("div"); guide.className = "guide h"; plan.append(guide);
-    const at = (ev: PointerEvent): { count: number; lastRow: number } => countForRow(p0, scene, id, Math.floor(((ev.clientY - svg.getBoundingClientRect().top) / ui.zoom - G.HEAD) / G.RH));
-    const place = (c: { lastRow: number }): void => { guide.style.top = G.HEAD + (c.lastRow + 1) * G.RH + "px"; };
-    let c = at(e); place(c);
-    const move = (ev: PointerEvent): void => { c = at(ev); place(c); };
-    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); guide.remove(); if (c.count !== kids(id)) run({ type: "setScope", id, count: c.count }, false); };
+    const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w;
+    const guide = host.ownerDocument.createElement("div"); guide.className = "guide"; plan.append(guide);
+    const at = (ev: PointerEvent): number => {
+      const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
+      return countForStep(p0, scene, id, Math.floor((x - G.OX) / cw));
+    };
+    const place = (n: number): void => {
+      const l = locate(p0, id)!;
+      const items = [...(l.node.t === "fn" ? [] : l.node.kids), ...l.list.slice(l.index + 1)];
+      const lastItem = items[n - 1], sp = lastItem ? scene.span.get(lastItem.id) : undefined;
+      guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
+    };
+    let n = at(e); place(n);
+    const move = (ev: PointerEvent): void => { n = at(ev); place(n); };
+    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); guide.remove(); if (n !== kids(id)) run({ type: "setScope", id, count: n }, false); };
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
   });
 

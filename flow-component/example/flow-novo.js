@@ -1347,23 +1347,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
   var KIND_ICON = { maquina: "package", pessoa: "user", ia: "ia", arquivo: "file" };
 
   // novo/scope.ts
-  function countForRow(p, scene, blockId, rowIdx) {
+  function countForStep(p, scene, blockId, step2) {
     const l = locate(p, blockId);
-    if (!l || l.node.t === "fn") return { count: 1, lastRow: rowIdx };
-    const items = [...l.node.kids, ...l.list.slice(l.index + 1)], first = (id) => scene.rows.findIndex((r) => r.id === id && (r.kind === "fn" || r.kind === "block"));
-    let n = 0, lastRow = first(items[0]?.id ?? "");
+    if (!l || l.node.t === "fn") return 1;
+    const items = [...l.node.kids, ...l.list.slice(l.index + 1)];
+    let n = 0;
     for (const it of items) {
-      const f = first(it.id);
-      if (f === -1 || f > rowIdx) break;
+      const sp = scene.span.get(it.id);
+      if (sp && sp.e > step2) break;
       n++;
-      lastRow = scene.rows[f].last;
     }
-    n = Math.min(items.length, Math.max(1, n));
-    if (n === 1) {
-      const f = first(items[0]?.id ?? "");
-      lastRow = f === -1 ? rowIdx : scene.rows[f].last;
-    }
-    return { count: n, lastRow };
+    return Math.min(items.length, Math.max(1, n));
   }
 
   // novo/layout.ts
@@ -3080,24 +3074,31 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (!loc || !svg) return;
       e.preventDefault();
       e.stopPropagation();
-      const scene = layout(loc.flow, { closed: ui.closed }), guide = host.ownerDocument.createElement("div");
-      guide.className = "guide h";
+      const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w;
+      const guide = host.ownerDocument.createElement("div");
+      guide.className = "guide";
       plan.append(guide);
-      const at = (ev) => countForRow(p0, scene, id, Math.floor(((ev.clientY - svg.getBoundingClientRect().top) / ui.zoom - G.HEAD) / G.RH));
-      const place = (c2) => {
-        guide.style.top = G.HEAD + (c2.lastRow + 1) * G.RH + "px";
+      const at = (ev) => {
+        const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
+        return countForStep(p0, scene, id, Math.floor((x - G.OX) / cw));
       };
-      let c = at(e);
-      place(c);
+      const place = (n2) => {
+        const l = locate(p0, id);
+        const items = [...l.node.t === "fn" ? [] : l.node.kids, ...l.list.slice(l.index + 1)];
+        const lastItem = items[n2 - 1], sp = lastItem ? scene.span.get(lastItem.id) : void 0;
+        guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
+      };
+      let n = at(e);
+      place(n);
       const move = (ev) => {
-        c = at(ev);
-        place(c);
+        n = at(ev);
+        place(n);
       };
       const up = () => {
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
         guide.remove();
-        if (c.count !== kids(id)) run({ type: "setScope", id, count: c.count }, false);
+        if (n !== kids(id)) run({ type: "setScope", id, count: n }, false);
       };
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);

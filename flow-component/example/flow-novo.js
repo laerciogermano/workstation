@@ -1726,7 +1726,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
 
   // novo/view.ts
   var G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 };
-  var planGutter = (sc) => sc.maxDepth * G.IND;
+  var planGutter = (sc) => (sc.maxDepth + 1) * G.IND;
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var valueOf = (f, n) => f.args?.[n]?.trim() || "";
@@ -1998,12 +1998,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }
     out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     const rail = (cls, depth, y0, h) => {
-      if (depth <= 0 || h <= 0) return;
-      const x = (depth - 1) * G.IND + 0.5;
+      if (depth < 0 || h <= 0) return;
+      const x = depth * G.IND + 0.5;
       bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
     };
     sc.rows.forEach((r, i) => {
-      if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
+      if (r.kind !== "fn" || r.leaf || r.last <= i) return;
       rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
     });
     sc.rows.forEach((r, i) => {
@@ -2306,6 +2306,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       void env;
       return { project: p(), flow: root };
     },
+    // ───────── Conceitos do livro (fop-conceitos.html): um exemplo por conceito/variante, mesmo formato do PDF ─────────
+    ...conceitos(),
     /** Uma função só de libs do navegador (concretas), com valores e um if. */
     libs: () => {
       const { p, run } = fresh();
@@ -2327,6 +2329,171 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return flow ? { project: p, flow: flow.id } : null;
     }
     return BUILDERS[id]?.() ?? null;
+  }
+  function conceitos() {
+    const mk = (build2, title = "f") => () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title });
+      build2(run, root);
+      return { project: p(), flow: root };
+    };
+    const ins = (run, id, names, init = {}) => {
+      for (const n of names) {
+        run({ type: "addInput", id, name: n });
+        if (init[n] !== void 0) run({ type: "setArg", id, name: n, value: init[n] });
+      }
+    };
+    const outs = (run, id, names) => {
+      for (const n of names) run({ type: "addOutput", id, name: n });
+    };
+    const fromFile = (run, parent, title, i = [], o = []) => {
+      const src = run({ type: "newFlow", title, file: `${title}.ts` });
+      ins(run, src, i);
+      outs(run, src, o);
+      const id = run({ type: "addChild", id: parent });
+      run({ type: "assign", id, agent: `file:${title}.ts` });
+      return id;
+    };
+    return {
+      c01: mk((run, r) => {
+        ins(run, r, ["a"]);
+      }),
+      c02a: mk((run, r) => {
+        ins(run, r, ["a"]);
+      }),
+      c02b: mk((run, r) => {
+        ins(run, r, ["a"], { a: '"texto"' });
+      }),
+      c03a: mk((run, r) => {
+        ins(run, r, ["a", "b"]);
+      }),
+      c03b: mk((run, r) => {
+        step(run, r, "criarA", [], ["a"]);
+        step(run, r, "criarB", [], ["b"], void 0, { par: true });
+      }),
+      c04: mk((run, r) => {
+        outs(run, r, ["a"]);
+      }),
+      c05a: mk(() => {
+      }),
+      c05b: mk((run, r) => {
+        ins(run, r, ["a"]);
+      }),
+      c05c: mk((run, r) => {
+        ins(run, r, ["a"]);
+        outs(run, r, ["a"]);
+      }),
+      c05d: mk((run, r) => {
+        ins(run, r, ["a"]);
+        outs(run, r, ["b"]);
+      }),
+      c05e: mk((run, r) => {
+        ins(run, r, ["a", "b", "c"]);
+        outs(run, r, ["a", "b", "c"]);
+      }),
+      c06a: mk((run, r) => {
+        lib2(run, r, "crypto", "randomUUID", "uuid");
+      }, "gerarId"),
+      c06b: mk((run, r) => {
+        ins(run, r, ["a"], { a: '"texto"' });
+        lib2(run, r, "console", "log", void 0, { text: "a" });
+      }),
+      c07a: mk((run, r) => {
+        ins(run, r, ["a"]);
+      }),
+      c07b: mk((run, r) => {
+        step(run, r, "f1", [], []);
+      }),
+      c07c: mk((run, r) => {
+        step(run, r, "f1", [], [], "lia");
+        step(run, r, "f2", [], [], "ana");
+      }),
+      c08a: mk((run, r) => {
+        ins(run, r, ["a"]);
+      }),
+      c08b: mk((run, r) => {
+        step(run, r, "f1", [], []);
+      }),
+      c09a: mk((run, r) => {
+        outs(run, r, ["a"]);
+      }),
+      c09b: mk((run, r) => {
+        outs(run, r, ["f1"]);
+      }),
+      c10: mk((run, r) => {
+        step(run, r, "f1", [], []);
+        step(run, r, "f2", [], []);
+      }),
+      c11: mk((run, r) => {
+        step(run, r, "f1", [], []);
+        step(run, r, "f2", [], [], void 0, { par: true });
+      }),
+      c12: mk((run, r) => {
+        const f1 = step(run, r, "f1", [], ["a"]);
+        void f1;
+        const f2 = step(run, r, "f2", ["a"], []);
+        run({ type: "wrap", id: f2, kind: "if", test: "a" });
+      }),
+      c13: mk((run, r) => {
+        ins(run, r, ["itens"]);
+        const f1 = step(run, r, "f1", ["item"], []);
+        run({ type: "wrap", id: f1, kind: "for", v: "item", coll: "itens" });
+      }),
+      c14: mk((run, r) => {
+        ins(run, r, ["a"], { a: '""' });
+        const f1 = fromFile(run, r, "f1", ["a"], ["b"]);
+        const f2 = fromFile(run, r, "f2", ["a"], ["c"]);
+        void f1;
+        run({ type: "setParallel", id: f2, on: true });
+        const again = step(run, r, "g", ["a"], []);
+        run({ type: "wrap", id: again, kind: "if", test: "b && c" });
+      }),
+      c15: mk((run, r) => {
+        ins(run, r, ["a"]);
+        fromFile(run, r, "f1", ["a"], ["b"]);
+        const f2 = step(run, r, "f2", ["a"], ["c"], void 0, { par: true });
+        void f2;
+        const again = step(run, r, "g", ["a"], []);
+        run({ type: "wrap", id: again, kind: "if", test: "b && c" });
+      }),
+      c16: mk((run, r) => {
+        ins(run, r, ["a"]);
+        step(run, r, "f2", ["a"], ["c"]);
+      }),
+      c17a: mk((run, r) => {
+        ins(run, r, ["a"]);
+        step(run, r, "f2", ["a"], ["c"]);
+      }),
+      c17b: mk((run, r) => {
+        ins(run, r, ["a"], { a: "2.5" });
+        lib2(run, r, "math", "round", "c", { value: "a" });
+      }),
+      c18a: mk((run, r) => {
+        ins(run, r, ["a"]);
+        step(run, r, "f2", ["a"], ["c"]);
+      }),
+      c18b: mk((run, r) => {
+        ins(run, r, ["a"], { a: "2.5" });
+      }, "camadaB"),
+      c18c: mk((run, r) => {
+        ins(run, r, ["a"], { a: "2.5" });
+        step(run, r, "f2", ["a"], ["c"]);
+      }, "camadaAB"),
+      c19a: mk((run, r) => {
+        ins(run, r, ["a"]);
+        step(run, r, "f2", ["a"], ["c"]);
+      }),
+      c19b: mk((run, r) => {
+        ins(run, r, ["a"], { a: "2.5" });
+        lib2(run, r, "math", "round", "c", { value: "a" });
+        lib2(run, r, "console", "log", void 0, { text: "c" });
+      }),
+      c20: mk((run, r) => {
+        ins(run, r, ["a"], { a: "2.5" });
+        lib2(run, r, "math", "round", "c", { value: "a" });
+        step(run, r, "g", ["c"], ["d"]);
+      })
+    };
   }
 
   // novo/app.ts

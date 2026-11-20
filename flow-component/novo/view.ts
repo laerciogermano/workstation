@@ -5,8 +5,8 @@ import { layout, type Row, type Scene } from "./layout";
 
 /** Geometria do plano (px). IND = degrau de indentação; no diagrama, cada barra lateral tem largura IND. */
 export const G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 } as const;   // WS: largura da coluna com o texto fora da barra (a função fica pequena)
-/** Gutter do plano (só SVG à direita) = maxDepth × IND. */
-export const planGutter = (sc: Pick<Scene, "maxDepth">): number => sc.maxDepth * G.IND;
+/** Gutter do plano (só SVG à direita) = (maxDepth+1) × IND — reserva a faixa da 1ª ordem (depth 0). */
+export const planGutter = (sc: Pick<Scene, "maxDepth">): number => (sc.maxDepth + 1) * G.IND;
 export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: boolean; /** true = em cada estado, todos os dados disponíveis; ausente/false = só os novos (os que chegam naquele passo) */ allData?: boolean; /** largura mínima da coluna do plano (alinha as funções de um arquivo) */ minW?: number }
 
 export const esc = (s: unknown): string => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -277,15 +277,15 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
-  /** Só a barra vertical: 1ª colada na divisória (x=0); as seguintes a cada IND. */
+  /** Barra vertical: depth 0 (1ª ordem) colada na divisória; aninhadas a cada IND. */
   const rail = (cls: string, depth: number, y0: number, h: number): void => {
-    if (depth <= 0 || h <= 0) return;
-    const x = (depth - 1) * G.IND + 0.5;
+    if (depth < 0 || h <= 0) return;
+    const x = depth * G.IND + 0.5;
     bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
   };
-  // composição (pai): faixa lateral sobre as linhas dos filhos
+  // composição (pai), incl. 1ª ordem: faixa lateral sobre as linhas dos filhos (todo o escopo)
   sc.rows.forEach((r, i) => {
-    if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
+    if (r.kind !== "fn" || r.leaf || r.last <= i) return;
     rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
   });
   // bandas dos blocos + etiquetas (pills)

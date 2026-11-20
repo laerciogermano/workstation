@@ -15,6 +15,8 @@
 
 **Antes → depois (losango sN):** chips tinham losango → sem losango; `vg` encosta nos quadros; `bot=rowY+32` (folga sob o conteúdo), base `planHeight` `+66`. Rollback: path `.dia` / `bot=rowY+18` / base `+52`.
 
+**Antes → depois (faixa 1ª ordem):** `bande co` ignorava `depth === 0` → raiz também ganha trilho cobrindo os filhos; `planGutter = (maxDepth+1)×IND` e `x = depth×IND`. Rollback: excluir `depth === 0`; `x = (depth-1)×IND`; gutter `maxDepth×IND`.
+
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.
 
 **Antes → depois (nome = referência / init):** entrada com literal (`text = "…"`) não contava como produção → quem usava o mesmo nome ficava vazado e nos estados como “de fora”. Agora init entra em `produced`/`made`/`dataLinks`. Rollback: só `outs` nesses conjuntos.

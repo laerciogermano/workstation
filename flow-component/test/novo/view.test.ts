@@ -313,6 +313,11 @@ describe("estados embaixo das colunas e título do plano", () => {
     const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 64 + 2 * STATE_ROW);
   });
   it("sem dados não há estados embaixo", () => { const t = base(); expect(statesByStep(t.view().scene).size).toBe(0); expect(t.view().plan).not.toContain("sdot"); });
+  it("entrada de uma composição (função com filhas) aparece no estado embaixo", () => {
+    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
+    const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("y");
+    expect(m.get(1)).toMatchObject([{ name: "y", abs: true, side: "in", owner: t.ids[1] }]); expect(t.view().plan).toContain('class="sdot a"');
+  });
 });
 
 describe("source das funções abstratas", () => {

@@ -45,18 +45,19 @@ export function objectFields(expr: string): string[] | null {
 const isRefExpr = (e: string): boolean => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e.trim());
 export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
 export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
-  const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; list.push(it); m.set(col, list); };
+  // composição (não-folha) também entra: as entradas/saídas da camada aparecem no rodapé como as marcas no diagrama
+  const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
   for (const r of sc.rows) {
-    if (r.kind !== "fn" || !r.leaf) continue; const f = r.node as Fn;
+    if (r.kind !== "fn") continue; const f = r.node as Fn;
     // dado inicializado com um valor logo antes da função (ex.: value = { id, score }): existe a partir do início dela; objeto = cubo com os campos
     for (const i of f.ins) { const e = f.args?.[i]?.trim(); if (!e || isRefExpr(e)) continue; const fields = objectFields(e); add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], owner: f.id, side: "in" }); }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
   }
-  // dados abstratos (entradas de fora: as do flow e as de funções que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
-  const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn" && r.leaf) (r.node as Fn).outs.forEach(o => made.add(o));
+  // dados abstratos (entradas de fora: as do flow, das composições e das folhas que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
+  const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") (r.node as Fn).outs.forEach(o => made.add(o));
   const loopVars = new Set<string>(); for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);   // a variável do for não vem de fora
-  const ext = new Map<string, { col: number; owner: string }>(), rootFn = sc.rows[0]?.node as Fn | undefined; (rootFn?.ins ?? []).forEach(n => ext.set(n, { col: 0, owner: rootFn!.id }));
-  for (const r of sc.rows) if (r.kind === "fn" && r.leaf) for (const n of (r.node as Fn).ins) if (!(r.node as Fn).args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id }); else if (ext.has(n) && r.s < ext.get(n)!.col) ext.set(n, { col: r.s, owner: ext.get(n)!.owner });
+  const ext = new Map<string, { col: number; owner: string }>();
+  for (const r of sc.rows) if (r.kind === "fn") for (const n of (r.node as Fn).ins) if (!(r.node as Fn).args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id }); else if (ext.has(n) && r.s < ext.get(n)!.col) ext.set(n, { col: r.s, owner: ext.get(n)!.owner });
   for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
   if (!all) return m;
   // todos os disponíveis: cada estado repete o que já existia (um nome produzido de novo substitui o antigo)

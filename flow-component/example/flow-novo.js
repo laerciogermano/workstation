@@ -1503,11 +1503,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
   function statesByStep(sc, all = false) {
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
       const list = m.get(col) ?? [];
+      if (list.some((x) => x.name === it.name)) return;
       list.push(it);
       m.set(col, list);
     };
     for (const r of sc.rows) {
-      if (r.kind !== "fn" || !r.leaf) continue;
+      if (r.kind !== "fn") continue;
       const f = r.node;
       for (const i of f.ins) {
         const e = f.args?.[i]?.trim();
@@ -1518,12 +1519,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
     }
     const made = /* @__PURE__ */ new Set();
-    for (const r of sc.rows) if (r.kind === "fn" && r.leaf) r.node.outs.forEach((o) => made.add(o));
+    for (const r of sc.rows) if (r.kind === "fn") r.node.outs.forEach((o) => made.add(o));
     const loopVars = /* @__PURE__ */ new Set();
     for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);
-    const ext = /* @__PURE__ */ new Map(), rootFn = sc.rows[0]?.node;
-    (rootFn?.ins ?? []).forEach((n) => ext.set(n, { col: 0, owner: rootFn.id }));
-    for (const r of sc.rows) if (r.kind === "fn" && r.leaf) {
+    const ext = /* @__PURE__ */ new Map();
+    for (const r of sc.rows) if (r.kind === "fn") {
       for (const n of r.node.ins) if (!r.node.args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id });
       else if (ext.has(n) && r.s < ext.get(n).col) ext.set(n, { col: r.s, owner: ext.get(n).owner });
     }

@@ -2,6 +2,7 @@
   "name": "@flow/component",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Flow Component — comandos tipados do grafo Flow (núcleo puro, sem canvas)",
   "author": "Laércio Germano",
   "type": "module",

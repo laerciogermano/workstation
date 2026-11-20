@@ -1864,11 +1864,34 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return e && !isDataRef(e) ? e : void 0;
   };
   var producesName = (f, name) => f.outs.includes(name) || !!initsName(f, name);
+  function cubeInfoByName(sc) {
+    const m = /* @__PURE__ */ new Map();
+    for (const r of sc.rows) {
+      if (r.kind !== "fn") continue;
+      const f = r.node;
+      if (f.outs.length > 1) m.set(cubeName(f, "out"), { fields: [...f.outs] });
+      if (f.ins.length > 1) m.set(cubeName(f, "in"), { fields: [...f.ins] });
+      for (const i of f.ins) {
+        const e = initsName(f, i);
+        if (!e) continue;
+        const pairs = objectPairs(e);
+        if (!pairs || m.has(i)) continue;
+        m.set(i, { fields: pairs.map((p) => p.name), value: e, fieldValues: Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) });
+      }
+    }
+    return m;
+  }
+  var inheritCube = (it, cubes) => {
+    const c = cubes.get(it.name);
+    if (!c) return it;
+    return { ...it, cube: true, fields: c.fields, ...c.value != null && it.value == null ? { value: c.value } : {}, ...c.fieldValues && !it.fieldValues ? { fieldValues: c.fieldValues } : {} };
+  };
   function statesByStep(sc, all = false, _p) {
+    const cubes = cubeInfoByName(sc);
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
       const list = m.get(col) ?? [];
       if (list.some((x) => x.name === it.name)) return;
-      list.push(it);
+      list.push(inheritCube(it, cubes));
       m.set(col, list);
     };
     for (const r of sc.rows) {
@@ -1901,8 +1924,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const cols = [...m.keys()].sort((x, y) => x - y), out = /* @__PURE__ */ new Map();
     let acc = [];
     for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
-      const fresh2 = m.get(c) ?? [], names = new Set(fresh2.map((i) => i.name));
-      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...i, old: true })), ...fresh2];
+      const fresh2 = (m.get(c) ?? []).map((it) => inheritCube(it, cubes)), names = new Set(fresh2.map((i) => i.name));
+      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...inheritCube(i, cubes), old: true })), ...fresh2];
       if (acc.length) out.set(c, acc);
     }
     return out;
@@ -2111,11 +2134,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       f.outs.forEach((o) => produced.add(o));
       for (const n of f.ins) if (initsName(f, n)) produced.add(n);
     }
+    const cubes = cubeInfoByName(sc);
     const ioMarks = (f, r, i, x1, x2) => {
       const lib3 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
       const mark = (x, list, kind, abs, tip) => {
         if (!list.length) return "";
-        const asCube = isCube(list) || kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]] ?? "");
+        const asCube = isCube(list) || list.length === 1 && cubes.has(list[0]) || kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]] ?? "");
         const title = asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0];
         return asCube ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       };

@@ -248,6 +248,21 @@ describe("quadrado do dado", () => {
     expect(names.filter(n => n === "text")).toHaveLength(1);   // só o init; B não inventa text abstrato de fora
     expect(statesByStep(t.view().scene, true, t.p).get(1)?.some(x => x.name === "text" && x.value === '"Hello"')).toBe(true);
   });
+  it("mesmo nome herda tudo: objeto em A → pin e estado de B também são cubo (com os campos)", () => {
+    const t = base();
+    t.run({ type: "addInput", id: t.ids[0]!, name: "input" });
+    t.run({ type: "setArg", id: t.ids[0]!, name: "input", value: '{ field1: "sdfdsfsdf" }' });
+    t.run({ type: "addOutput", id: t.ids[0]!, name: "output" });
+    t.run({ type: "addInput", id: t.ids[1]!, name: "input" });
+    const p = t.view({ allData: true }).plan;
+    const markA = p.match(new RegExp(`data-act="editData" data-id="${t.ids[0]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
+    const markB = p.match(new RegExp(`data-act="editData" data-id="${t.ids[1]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
+    expect(markA).toContain('class="cube'); expect(markB).toContain('class="cube'); expect(markB).not.toContain('class="dot');
+    const at1 = statesByStep(t.view().scene, true, t.p).get(1) ?? [];
+    const inputAt1 = at1.find(x => x.name === "input");
+    expect(inputAt1).toMatchObject({ cube: true, fields: ["field1"] });
+    expect(p).toContain('class="scube"'); expect((p.match(/class="scube"/g) ?? []).length).toBeGreaterThanOrEqual(2);
+  });
 });
 
 describe("dado e cubo: [] = cubo (state); UM nome = quadrado; 2+ = cubo", () => {

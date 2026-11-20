@@ -66,9 +66,31 @@ export const stateRows = (items: readonly StateItem[]): number => items.reduce((
 const initsName = (f: Fn, n: string): string | undefined => { const e = f.args?.[n]?.trim(); return e && !isDataRef(e) ? e : undefined; };
 const producesName = (f: Fn, name: string): boolean => f.outs.includes(name) || !!initsName(f, name);
 
+/** Forma de cubo por nome no fluxo: mesmo nome = mesma forma (herda campos/objeto da origem). */
+export function cubeInfoByName(sc: Scene): Map<string, { fields: string[]; value?: string; fieldValues?: Readonly<Record<string, string>> }> {
+  const m = new Map<string, { fields: string[]; value?: string; fieldValues?: Readonly<Record<string, string>> }>();
+  for (const r of sc.rows) {
+    if (r.kind !== "fn") continue; const f = r.node as Fn;
+    if (f.outs.length > 1) m.set(cubeName(f, "out"), { fields: [...f.outs] });
+    if (f.ins.length > 1) m.set(cubeName(f, "in"), { fields: [...f.ins] });
+    for (const i of f.ins) {
+      const e = initsName(f, i); if (!e) continue;
+      const pairs = objectPairs(e); if (!pairs || m.has(i)) continue;
+      m.set(i, { fields: pairs.map(p => p.name), value: e, fieldValues: Object.fromEntries(pairs.filter(p => p.value != null).map(p => [p.name, p.value!])) });
+    }
+  }
+  return m;
+}
+/** Aplica a forma canônica do nome (cubo/campos) — referência herda tudo da origem. */
+const inheritCube = (it: StateItem, cubes: Map<string, { fields: string[]; value?: string; fieldValues?: Readonly<Record<string, string>> }>): StateItem => {
+  const c = cubes.get(it.name); if (!c) return it;
+  return { ...it, cube: true, fields: c.fields, ...(c.value != null && it.value == null ? { value: c.value } : {}), ...(c.fieldValues && !it.fieldValues ? { fieldValues: c.fieldValues } : {}) };
+};
+
 export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, StateItem[]> {
   // só dados declarados (entrada com valor, saída, entrada abstrata de fora) — sem inventar input_/output_ vazios
-  const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
+  const cubes = cubeInfoByName(sc);
+  const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(inheritCube(it, cubes)); m.set(col, list); };
   for (const r of sc.rows) {
     if (r.kind !== "fn") continue; const f = r.node as Fn;
     // dado inicializado com um valor logo antes da função (ex.: value = { id, score } / text = false): existe a partir do início dela; o valor vai só no rodapé
@@ -90,8 +112,8 @@ export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, 
   // todos os disponíveis: cada estado repete o que já existia (um nome produzido de novo substitui o antigo)
   const cols = [...m.keys()].sort((x, y) => x - y), out = new Map<number, StateItem[]>(); let acc: StateItem[] = [];
   for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
-    const fresh = m.get(c) ?? [], names = new Set(fresh.map(i => i.name));
-    acc = [...acc.filter(i => !names.has(i.name)).map(i => ({ ...i, old: true })), ...fresh]; if (acc.length) out.set(c, acc);
+    const fresh = (m.get(c) ?? []).map(it => inheritCube(it, cubes)), names = new Set(fresh.map(i => i.name));
+    acc = [...acc.filter(i => !names.has(i.name)).map(i => ({ ...inheritCube(i, cubes), old: true })), ...fresh]; if (acc.length) out.set(c, acc);
   }
   return out;
 }
@@ -311,12 +333,14 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   // nome no estado: outs + entradas inicializadas (literal); quem usa o mesmo nome referencia esse dado (marca cheia)
   const produced = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") { const f = r.node as Fn; f.outs.forEach(o => produced.add(o)); for (const n of f.ins) if (initsName(f, n)) produced.add(n); }
   /** Entradas e saídas de uma função (marca, linha até a barra, nome do dado e fantasma de adicionar): funções comuns e a função de primeira ordem. */
+  const cubes = cubeInfoByName(sc);
   const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
     // I/O só aparece quando declarado; sem I/O = fantasma (+) para adicionar (função nasce sem entrada nem retorno)
     const lib = !!contractOf(p, f), inAbs = f.ins.some(n => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
     const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => {
       if (!list.length) return "";
-      const asCube = isCube(list) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? ""));
+      // mesmo nome = mesma forma: herda cubo da origem (objeto/multi) mesmo em porto de um só identificador
+      const asCube = isCube(list) || (list.length === 1 && cubes.has(list[0]!)) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? ""));
       const title = asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!;
       return asCube
         ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} · ${tip}</title></g>`

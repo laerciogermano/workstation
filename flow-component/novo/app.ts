@@ -191,14 +191,27 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     fileCode = fileView && multi ? (fileView === "*" ? { code: [...new Set(p.flows.map(f => flowFile(f)))].map(file => generateFile(p, p.flows.filter(f => flowFile(f) === file).map(f => f.id)).code).join("\n"), fileName: "project.ts" } : generateFile(p, p.flows.filter(f => flowFile(f) === fileView).map(f => f.id))) : null;
     fileCodeText = fileCode?.code ?? null;
     if (fileCode) { lines.splice(0, lines.length, ...fileCode.code.replace(/\n$/, "").split("\n")); }
-    // cores do plano: if âmbar · for violeta · try verde · catch/dado vermelho · função azul
+    // cores do plano: if âmbar · for branco · try verde · catch/dado vermelho · função azul
+    // highlight no texto cru e só depois esc — escapar antes quebrava &lt;/&gt; (o regex coloria "lt"/"gt")
     const kw = (w: string): string | null => /^(?:if|else)$/.test(w) ? "tk-if" : /^(?:for|of)$/.test(w) ? "tk-for" : w === "try" ? "tk-try" : w === "catch" ? "tk-catch" : /^(?:const|let|await|async|import|from|export|type|return|function|as)$/.test(w) ? "tk-k" : null;
-    const hl = (l: string): string => esc(l).replace(/(\/\/.*$)|(&quot;[^&]*?&quot;)|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g, (m, c, s, n, w, par) => {
-      if (c) return `<span class="tk-c">${c}</span>`; if (s) return `<span class="tk-s">${s}</span>`; if (n) return `<span class="tk-n">${n}</span>`;
-      const k = kw(w); if (k) return `<span class="${k}">${w}</span>${par ?? ""}`;
-      if (/^(?:State|Promise|Record|unknown|Fn)$/.test(w)) return `<span class="tk-t">${w}</span>${par ?? ""}`;
-      return par ? `<span class="tk-f">${w}</span>(` : `<span class="tk-d">${w}</span>`;
-    });
+    const hl = (l: string): string => {
+      let out = "", i = 0; const re = /(\/\/.*$)|("(?:\\.|[^"\\])*")|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g; let m: RegExpExecArray | null;
+      while ((m = re.exec(l))) {
+        out += esc(l.slice(i, m.index));
+        const [, c, s, n, w, par] = m;
+        if (c) out += `<span class="tk-c">${esc(c)}</span>`;
+        else if (s) out += `<span class="tk-s">${esc(s)}</span>`;
+        else if (n) out += `<span class="tk-n">${esc(n)}</span>`;
+        else {
+          const k = kw(w!);
+          if (k) out += `<span class="${k}">${esc(w!)}</span>${par ?? ""}`;
+          else if (/^(?:State|Promise|Record|unknown|Fn)$/.test(w!)) out += `<span class="tk-t">${esc(w!)}</span>${par ?? ""}`;
+          else out += par ? `<span class="tk-f">${esc(w!)}</span>(` : `<span class="tk-d">${esc(w!)}</span>`;
+        }
+        i = m.index + m[0].length;
+      }
+      return out + esc(l.slice(i));
+    };
     el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
     el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile; el.meta.textContent = `${lines.length} lines`;
     const n = ui.sel ? locate(p, ui.sel)?.node : undefined; el.selname.textContent = n ? (n.t === "fn" ? n.title : n.t) : "";

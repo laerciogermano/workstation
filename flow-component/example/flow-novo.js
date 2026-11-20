@@ -1823,7 +1823,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
   }
   var STATE_ROW = 15;
   var PLAN_PAD_BOTTOM = 28;
-  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
+  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 70 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
   var TABLE_CHROME = 18 + 120 + 14;
   function tableWidth(sc, p) {
     let need2 = 90;
@@ -1976,10 +1976,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
     for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX2(s)}" y1="${G.HEAD - 8}" x2="${colX2(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     const chip = (s, y, diaAbove = false) => {
-      const dia = diaAbove ? `<path class="dia" d="M${colX2(s)} ${y - 20} l4 4 l-4 4 l-4 -4z"/>` : `<path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
+      const dia = diaAbove ? `<path class="dia" d="M${colX2(s)} ${y - 26} l4 4 l-4 4 l-4 -4z"/>` : `<path class="dia" d="M${colX2(s)} ${y + 18} l4 4 l-4 4 l-4 -4z"/>`;
       return `${diaAbove ? dia : ""}<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>${diaAbove ? "" : dia}`;
     };
-    const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 30;
+    const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 36;
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot, true));
     for (const [col, items] of statesByStep(sc, ui.allData, p)) {
       let row = 0;

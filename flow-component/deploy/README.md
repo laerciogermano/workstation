@@ -13,7 +13,9 @@
 
 **Antes → depois (padding do plano):** SVG do plano colava o último estado na borda → `PLAN_PAD_BOTTOM` (28) em `planHeight`. Rollback: tirar o termo em `novo/view.ts`.
 
-**Antes → depois (chip sN de baixo):** quadro sN + losango embaixo (igual ao de cima) → losango em cima e quadro sN embaixo; `bot` em `rowY+30` para o losango ficar abaixo do eixo (não em cima da linha). Rollback: `chip(s, bot)` sem `diaAbove` e `bot = rowY+18` em `novo/view.ts`.
+**Antes → depois (chip sN / folga):** losango colado no quadro (~4px) → ~10px (`y±18`/`y∓26`); `bot` em `rowY+36` e base do `planHeight` em `+70`. Rollback: offsets `±12`/`∓20`, `bot=rowY+30`, base `+64`.
+
+**Antes → depois (chip sN de baixo):** quadro sN + losango embaixo → losango em cima e quadro embaixo. Rollback: `chip(s, bot)` sem `diaAbove`.
 
 **Antes → depois (I/O vazio / estados):** marca `input_<fn>`/`output_<fn>` no diagrama sem espelho no rodapé (só alguns casos: composição/raiz) → toda abstrata sem I/O (folha inclusive) entra em `statesByStep` + `Project`. Rollback: em `statesByStep` voltar `(!r.leaf || isRoot)`.
 

@@ -96,6 +96,8 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **I/O da 1ª ordem:** sem `ins`/`outs` declarados → sem marca (não inventa `input_main`/`output_main`). Só aparece quando houver nome. **Antes:** `[]` virava cubo também na raiz.
 
+**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas com o mesmo título idem (`rename`). Libs (contrato) não propagam título. **Voltar:** rename só no nó local.
+
 ### 5.4 Responsável · Task · catálogo — *must*
 
 | Interface | Efeito | Evidência IDE |

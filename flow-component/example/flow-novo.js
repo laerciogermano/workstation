@@ -127,6 +127,52 @@
       walk(kidsOf(n), f);
     }
   }
+  var renameIdentInExpr = (expr, from, to) => {
+    if (!expr || from === to) return expr;
+    const strings = [];
+    const masked = expr.replace(/(["'`])(?:\\.|(?!\1).)*\1/g, (m) => {
+      strings.push(m);
+      return `\0${strings.length - 1}\0`;
+    });
+    const re = new RegExp(`(?<![.\\w$])${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w$])`, "g");
+    return masked.replace(re, to).replace(/\0(\d+)\0/g, (_, i) => strings[Number(i)]);
+  };
+  function renameDatumInFlow(flow, from, to) {
+    if (from === to) return;
+    const patch = (n) => {
+      n.ins = n.ins.map((x) => x === from ? to : x);
+      n.outs = n.outs.map((x) => x === from ? to : x);
+      if (n.args) {
+        const next = {};
+        for (const [k, v] of Object.entries(n.args)) next[k === from ? to : k] = renameIdentInExpr(v, from, to);
+        n.args = next;
+        if (!Object.keys(next).length) delete n.args;
+      }
+      if (n.agent?.startsWith("obj:")) {
+        const rest = n.agent.slice(4), hash = rest.indexOf("#"), data = hash >= 0 ? rest.slice(0, hash) : rest, meth = hash >= 0 ? rest.slice(hash) : "";
+        if (data === from) n.agent = `obj:${to}${meth}`;
+      }
+    };
+    patch(flow);
+    walk(flow.kids, (n) => {
+      if (n.t === "fn") patch(n);
+      else if (n.t === "if") n.test = renameIdentInExpr(n.test, from, to);
+      else if (n.t === "for") {
+        if (n.v === from) n.v = to;
+        n.coll = renameIdentInExpr(n.coll, from, to);
+      }
+    });
+  }
+  function renameFnTitleInFlow(p, flow, from, to) {
+    if (from === to) return;
+    const apply2 = (n) => {
+      if (n.title === from && !contractOf(p, n)) n.title = to;
+    };
+    apply2(flow);
+    walk(flow.kids, (n) => {
+      if (n.t === "fn") apply2(n);
+    });
+  }
   var fnsOf = (flow) => {
     const out = [];
     walk(flow.kids, (n) => {
@@ -304,7 +350,13 @@
     rename: (p, a) => {
       const l = need(p, str(a, "id"));
       if (l.node.t !== "fn") return fail("invalid", "Only functions have a name");
-      l.node.title = cleanText(a["title"], "Name", 80);
+      const to = cleanText(a["title"], "Name", 80), from = l.node.title;
+      if (from === to) return;
+      if (contractOf(p, l.node)) {
+        l.node.title = to;
+        return;
+      }
+      renameFnTitleInFlow(p, l.flow, from, to);
     },
     /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
     renameFile: (p, a) => {
@@ -425,28 +477,26 @@
       n.title = t;
       applyContract(p, n);
     },
-    /** Renomeia um dado de entrada ou saída de uma função comum (nas de lib o contrato manda). */
+    /** Renomeia um dado (referência no fluxo inteiro): entrada ou saída de função comum. */
     renameIo: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-      const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = cleanName(a["to"], "Data name"), i = n[key].indexOf(from);
-      if (i < 0) return fail("not_found", `${from} does not exist`);
+      const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = cleanName(a["to"], "Data name");
+      if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
       if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
-      n[key][i] = to;
-      if (key === "ins" && n.args?.[from] !== void 0) {
-        const { [from]: v, ...rest } = n.args;
-        n.args = { ...rest, [to]: v ?? "" };
-      }
+      renameDatumInFlow(l.flow, from, to);
     },
     /** Troca de uma vez todos os dados de um lado (entrada ou saída) de uma função comum: nomes e, nas entradas, os valores. */
     setData: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
       const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map((x) => cleanName(x, "Data name")), values = Array.isArray(a["values"]) ? a["values"].map((x) => String(x ?? "").trim()) : [];
       if (new Set(names).size !== names.length) return fail("invalid", "Duplicate data name");
       if (values.some((v) => v.length > 300)) return fail("invalid", "Value too large");
+      const prev = side === "out" ? [...n.outs] : [...n.ins];
+      for (let i = 0; i < Math.min(prev.length, names.length); i++) if (prev[i] !== names[i]) renameDatumInFlow(l.flow, prev[i], names[i]);
       if (side === "out") {
         n.outs = names;
         return;
@@ -459,25 +509,22 @@
       if (Object.keys(args).length) n.args = args;
       else delete n.args;
     },
-    /** Nome do dado no flow (referência que a função pai usa): saída única da lib, ou entrada única (um parâmetro = dado puro ou objeto). */
+    /** Nome do dado no flow (referência global no fluxo): saída única da lib, ou entrada única. */
     renameData: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       const c = contractOf(p, n);
       if (!c) return fail("invalid", "The data name can only change on lib functions");
       const side = str(a, "side") === "in" ? "in" : "out", to = cleanName(a["to"], "Data name");
       if (side === "out") {
         if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
-        n.outs = [to];
+        const from2 = n.outs[0] ?? c.outs[0];
+        renameDatumInFlow(l.flow, from2, to);
         return;
       }
       if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
       const from = n.ins[0] ?? c.ins[0];
-      n.ins = [to];
-      if (n.args?.[from] !== void 0) {
-        const { [from]: v, ...rest } = n.args;
-        n.args = { ...rest, [to]: v ?? "" };
-      }
+      renameDatumInFlow(l.flow, from, to);
     },
     /** Preenche uma entrada de função de lib: um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. Vazio limpa. */
     setArg: (p, a) => {

@@ -38,11 +38,10 @@
   .topbar .brand-text{display:flex;flex-direction:column;gap:2px;min-width:0}
   .topbar .brand-row{display:inline-flex;align-items:center;gap:8px}
   .topbar .beta{font:700 9px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-2);border-radius:99px;padding:1px 7px;line-height:1.5}
+  .topbar .epigraph{font:500 11px var(--font);color:var(--muted);line-height:1.3}
+  .topbar .epigraph em{font-style:normal;color:var(--body)}
   .topbar .docs-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}.topbar .docs-link:hover{color:var(--ink);background:var(--wash)}
-  .site-foot{flex:none;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 8px;padding:8px 16px calc(8px + var(--safe-b));border-top:1px solid var(--line);background:var(--paper);color:var(--muted);font:500 11px/1.4 var(--font);text-align:center}
-  .site-foot q{quotes:"“" "”" "‘" "’";font-style:normal;color:var(--body)}
-  .site-foot .by{color:var(--muted);white-space:nowrap}
-  .embed .topbar,.embed .site-foot,.embed .explorer,.embed #exSplitter,.embed .side,.embed #splitter,.embed .fx-bar,.embed .fx-legend{display:none!important}.embed .app{grid-template-columns:minmax(0,1fr)!important;padding:0!important}.embed .fx{border:0;border-radius:0}
+  .embed .topbar,.embed .explorer,.embed #exSplitter,.embed .side,.embed #splitter,.embed .fx-bar,.embed .fx-legend{display:none!important}.embed .app{grid-template-columns:minmax(0,1fr)!important;padding:0!important}.embed .fx{border:0;border-radius:0}
   #app{flex:1;min-height:0;display:flex}
   .app{--codew:480px;flex:1;min-height:0;display:grid;--exw:232px;grid-template-columns:var(--exw) 12px minmax(0,1fr) 12px var(--codew);gap:0;padding:12px;position:relative}.app.code-off{grid-template-columns:var(--exw) 12px minmax(0,1fr)}.app.ex-off{grid-template-columns:minmax(0,1fr) 12px var(--codew)}.app.ex-off.code-off{grid-template-columns:minmax(0,1fr)}.app.code-off .side,.app.code-off #splitter,.app.ex-off .explorer{display:none}.app.resizing{cursor:col-resize;user-select:none}.app.resizing .fx,.app.resizing .side{pointer-events:none}
   .splitter{position:relative;cursor:col-resize;touch-action:none;outline:none;z-index:4}.splitter[hidden]{display:none}.splitter i{position:absolute;left:5px;top:0;bottom:0;width:2px;border-radius:2px;background:transparent;transition:background .12s,left .12s,width .12s}.splitter:hover i,.splitter:focus-visible i,.app.resizing .splitter i{left:3px;width:6px;background:var(--accent)}
@@ -225,9 +224,8 @@
 </style>
 </head>
 <body>
-<header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="beta">beta</span></span></span></span><span class="sp"></span></header>
+<header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="beta">beta</span></span><span class="epigraph" title="Everything flows"><em>πάντα ῥεῖ</em> — Heraclitus</span></span></span><span class="sp"></span></header>
 <div id="app"></div>
-<footer class="site-foot" title="Heraclitus"><q>Everything flows. Nothing endures but change.</q><span class="by">— Heraclitus</span></footer>
 <script>document.write(`<script src="flow-novo.js?v=${Date.now()}"><\/script>`);</script>
 <script>
 if ("serviceWorker" in navigator) {

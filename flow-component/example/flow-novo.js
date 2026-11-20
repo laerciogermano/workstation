@@ -2043,8 +2043,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (f.ins.length) over.push(mark(colX2(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
       if (f.outs.length) over.push(mark(colX2(r.e + 1), f.outs, "out", false, "output"));
       const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-      if (f.ins.length) over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
-      if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+      if (f.ins.length) over.push(`<text class="dn in" data-act="editData" data-id="${esc(f.id)}" data-side="in" x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
+      if (f.outs.length) over.push(`<text class="dn out" data-act="editData" data-id="${esc(f.id)}" data-side="out" x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
       const ghost = (x, kind, tip) => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
       if (!lib3 && !f.ins.length) over.push(ghost(colX2(r.s), "in", "Add input"));
       if (!lib3 && !f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Add output"));
@@ -3362,7 +3362,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
         if (contractOf(P2(), n)) {
           if (side === "in") await dataEditor(n, "in");
-          else if (list.length === 1) await ACT["renameOut"](d);
+          else if (list.length) await dataEditor(n, "out");
           else toast("This function\u2019s outputs come from the lib contract");
           return;
         }

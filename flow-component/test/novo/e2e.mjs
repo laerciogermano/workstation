@@ -244,8 +244,9 @@ test("abstract function data: ghost creates it (name + type + value + states); c
   await click(`.ghost[data-id="${fid}"][data-kind=in]`); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "input", "the name is an editable field on top"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "type"); assert.ok(await ev(`!!document.querySelector(".dlg input[data-k=value]")`), "value"); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no Add child");
   await set(".dlg select[data-k=type]", "number"); await set(".dlg input[data-k=value]", "10"); await click(".dlg button.pri"); await wait(150);
   assert.deepEqual((await node()).ins, ["input"]); assert.deepEqual((await node()).args, { input: "10" }); assert.match(await ev(`[...document.querySelectorAll("text.dn.in")].map(t=>t.textContent).join("|")`), /input = 10/, "the value shows next to the data"); assert.match(await code(), /const input: unknown = 10;[\s\d]*await common\(\{ \.\.\.state, input \}\)/);
-  // renaming: click the data text in the plan
-  await click(`text.dn.in[data-id="${fid}"]`); assert.ok(await ev(`!!document.querySelector(".dlg")`)); await ev(`document.querySelector(".dlg input").value=""`); await type("price"); assert.deepEqual((await node()).ins, ["price"]); assert.deepEqual((await node()).args, { price: "10" });
+  // renaming: click the data text → same edit modal; change name + Save
+  await click(`text.dn.in[data-id="${fid}"]`); assert.ok(await ev(`!!document.querySelector(".dlg")`)); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "edit modal, not inline rename");
+  await set(".dlg input[data-k=pname]", "price"); await click(".dlg button.pri"); await wait(150); assert.deepEqual((await node()).ins, ["price"]); assert.deepEqual((await node()).args, { price: "10" });
   // later: same box as a lib function (console.log): name is static, only the select and the value
   await click(`.dm[data-id="${fid}"][data-side=in]`);
   assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "price", "name is an editable field on top"); assert.equal(await ev(`!!document.querySelector(".dlg [data-del]")`), false, "no trash");

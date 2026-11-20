@@ -327,8 +327,9 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     if (f.ins.length) over.push(mark(colX(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"));
     if (f.outs.length) over.push(mark(colX(r.e + 1), f.outs, "out", false, "output"));
     const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-    if (f.ins.length) over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
-    if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+    // rótulo = mesma ação da marca (modal); rename fica no campo do editor / menu de estados
+    if (f.ins.length) over.push(`<text class="dn in" data-act="editData" data-id="${esc(f.id)}" data-side="in" x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
+    if (f.outs.length) over.push(`<text class="dn out" data-act="editData" data-id="${esc(f.id)}" data-side="out" x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
     const ghost = (x: number, kind: "in" | "out", tip: string): string => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
     if (!lib && !f.ins.length) over.push(ghost(colX(r.s), "in", "Add input"));
     if (!lib && !f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Add output"));

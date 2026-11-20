@@ -185,7 +185,7 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <table>
 <tr><th>Ação</th><th>Resultado</th></tr>
 <tr><td>Clique no nome da função (tabela ou barra)</td><td>edição direta no próprio texto (<code>rename</code>); <kbd>Enter</kbd>/clique fora confirma, <kbd>Esc</kbd> cancela</td></tr>
-<tr><td>Clique no nome de um dado</td><td>renomeia (<code>renameData</code> / <code>renameIo</code>)</td></tr>
+<tr><td>Clique no nome ou na marca de um dado</td><td>abre o modal de edição (<code>editData</code>); rename no campo do modal</td></tr>
 <tr><td>Duplo clique no nome (Explorer)</td><td>renomeia arquivo (<code>renameFile</code>, sem extensão) ou função</td></tr>
 <tr><td>Clique na etiqueta de <code>if</code> / <code>for</code></td><td>edita condição / variável e coleção</td></tr>
 <tr><td>Clique no Source</td><td>troca o Source (<code>assign</code>); em lib, a Function vira seletor (<code>setTask</code>)</td></tr>

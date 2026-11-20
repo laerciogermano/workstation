@@ -485,7 +485,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     },
     editData: async d => {
       const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
-      if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length === 1) await ACT["renameOut"]!(d); else toast("This function’s outputs come from the lib contract"); return; }
+      if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length) await dataEditor(n, "out"); else toast("This function’s outputs come from the lib contract"); return; }
       await dataEditor(n, side, list.length ? {} : { start: true });   // I/O vazio: já abre com um dado (`input`/`output`) para conseguir salvar
     },
     removeIo: d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; run({ type: d["side"] === "out" ? "removeOutput" : "removeInput", id: n.id, name: d["name"]! }, false); },

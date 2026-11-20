@@ -133,9 +133,9 @@ describe("plano (SVG)", () => {
   });
   it("blocos: banda tracejada, etiqueta, alça e losango do if; catch vermelho; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
-    const p = t.view().plan; for (const c of ["band if", "band lp", "band tr", "band ca"]) expect(p).toContain(c); expect(p).toContain('class="fif"'); expect(p).toContain("data-drag="); expect(p).toContain("catch · if the try fails");
+    const p = t.view().plan; for (const c of ["bande if", "bande lp", "bande tr", "bande ca"]) expect(p).toContain(c); expect(p).toContain('class="fif"'); expect(p).toContain("data-drag="); expect(p).toContain("catch · if the try fails");
     expect((p.match(/data-act="editBlock"/g) ?? []).length).toBe(2); expect(p).toContain("↻ for (item of items)");
-    expect(p).toMatch(/<line class="bande if"/);   // só a barra vertical (sem fundo)
+    expect(p).toMatch(/<line class="bande if" x1="0\.5"/);   // 1ª barra colada na divisória
   });
   it("etiqueta do if começa depois do losango e cobre os passos do bloco", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); const v = t.view(), g = planGutter(v.scene);
@@ -288,14 +288,15 @@ describe("else no flow (mesmo princípio do catch)", () => {
     const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if", test: "ok" });
     let v = t.view(); expect(v.table).not.toContain("elserow"); expect(v.plan).not.toContain("band el");
     t.run({ type: "addElse", id: i, title: "Plano B" }); v = t.view();
-    expect(v.table).toContain("elserow"); expect(v.table).toContain('class="trd e">else'); expect(v.table).toContain("Plano B"); expect(v.plan).toContain("band el"); expect(v.plan).toContain("else"); expect(v.plan).toContain('data-part="else"');
+    expect(v.table).toContain("elserow"); expect(v.table).toContain('class="trd e">else'); expect(v.table).toContain("Plano B"); expect(v.plan).toContain("bande el"); expect(v.plan).toContain("else"); expect(v.plan).toContain('data-part="else"');
     expect(v.scene.rows.filter(r => r.kind === "else")).toHaveLength(1);
     t.run({ type: "removeElse", id: i }); expect(t.view().table).not.toContain("elserow");
   });
   it("o else cobre as mesmas linhas que o conteúdo dele (faixa até a última função do else)", () => {
     const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "addElse", id: i }); t.run({ type: "addChild", id: i, else: true, title: "Antes" });
-    const v = t.view(), el = v.scene.rows.findIndex(r => r.kind === "else"), row = v.scene.rows[el]!;
-    expect(row.last).toBeGreaterThan(el); expect((v.plan.match(/class="band el"/g) ?? []).length).toBe(1); expect(v.plan).toContain(`height="${(row.last - el + 1) * G.RH}"`);
+    const v = t.view(), el = v.scene.rows.findIndex(r => r.kind === "else"), row = v.scene.rows[el]!, h = (row.last - el + 1) * G.RH;
+    expect(row.last).toBeGreaterThan(el); expect((v.plan.match(/class="bande el"/g) ?? []).length).toBe(1);
+    const m = v.plan.match(/<line class="bande el" x1="[\d.]+" y1="([\d.]+)" x2="[\d.]+" y2="([\d.]+)"/)!; expect(Number(m[2]) - Number(m[1])).toBe(h);
   });
 });
 

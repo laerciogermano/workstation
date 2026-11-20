@@ -1703,7 +1703,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     const rail = (cls, depth, y0, h) => {
       if (depth <= 0 || h <= 0) return;
-      const x = (depth - 1) * G.IND + G.IND - 0.5;
+      const x = (depth - 1) * G.IND + 0.5;
       bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
     };
     sc.rows.forEach((r, i) => {

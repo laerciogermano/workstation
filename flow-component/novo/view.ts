@@ -236,10 +236,10 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
-  /** Só a barra vertical de indentação (sem fundo de banda / wash). */
+  /** Só a barra vertical: 1ª colada na divisória (x=0); as seguintes a cada IND. */
   const rail = (cls: string, depth: number, y0: number, h: number): void => {
     if (depth <= 0 || h <= 0) return;
-    const x = (depth - 1) * G.IND + G.IND - 0.5;
+    const x = (depth - 1) * G.IND + 0.5;
     bands.push(`<line class="bande ${cls}" x1="${x}" y1="${y0}" x2="${x}" y2="${y0 + h}"/>`);
   };
   // composição (pai): faixa lateral sobre as linhas dos filhos

@@ -290,7 +290,7 @@ describe("estados disponíveis no contexto de uma função (o que a caixa de edi
 });
 
 describe("nome = referência no fluxo", () => {
-  it("renomear um dado atualiza produtores, consumidores, args e if/for", () => {
+  it("renomear o pai (origem) atualiza consumidores, args e if/for", () => {
     const t = base(); t.run({ type: "addOutput", id: t.a, name: "x" }); t.run({ type: "addInput", id: t.b, name: "x" }); t.run({ type: "setArg", id: t.b, name: "x", value: "x + 1" });
     const i = t.run({ type: "wrap", id: t.c, kind: "if", test: "x > 0" });
     t.run({ type: "renameIo", id: t.a, side: "out", from: "x", to: "score" });
@@ -298,24 +298,42 @@ describe("nome = referência no fluxo", () => {
     expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ ins: ["score"], args: { score: "score + 1" } });
     expect((locate(t.p, i)!.node as { test: string }).test).toBe("score > 0");
   });
+  it("renomear o filho desvincula do pai (pai mantém o nome)", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "teste" }); t.run({ type: "addInput", id: t.b, name: "teste" });
+    t.run({ type: "addOutput", id: t.b, name: "teste" }); t.run({ type: "addInput", id: t.c, name: "teste" });
+    t.run({ type: "renameIo", id: t.c, side: "in", from: "teste", to: "outro" });
+    expect((locate(t.p, t.a)!.node as Fn).outs).toEqual(["teste"]);
+    expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ ins: ["teste"], outs: ["teste"] });
+    expect((locate(t.p, t.c)!.node as Fn).ins).toEqual(["outro"]);
+  });
   it("entrada para nome já usado: só reassocia o porto (referência); não renomeia o produtor", () => {
-    const t = base(); t.run({ type: "addOutput", id: t.a, name: "score" }); t.run({ type: "addInput", id: t.b, name: "x" }); t.run({ type: "setArg", id: t.b, name: "x", value: "1" });
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "score" }); t.run({ type: "addInput", id: t.b, name: "x" });
     t.run({ type: "renameIo", id: t.b, side: "in", from: "x", to: "score" });
     expect((locate(t.p, t.a)!.node as Fn).outs).toEqual(["score"]);
     expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ ins: ["score"] });
     expect((locate(t.p, t.b)!.node as Fn).args).toBeUndefined();
   });
-  it("saída pode igualar o nome da entrada (mesmo dado)", () => {
-    const t = base(); t.run({ type: "addInput", id: t.a, name: "text" }); t.run({ type: "addOutput", id: t.a, name: "result" });
+  it("entrada-pai (literal) não pode tomar nome de outro dado", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "score" }); t.run({ type: "addInput", id: t.b, name: "x" }); t.run({ type: "setArg", id: t.b, name: "x", value: "1" });
+    fails(() => apply(t.p, { type: "renameIo", id: t.b, side: "in", from: "x", to: "score" }), "invalid");
+  });
+  it("saída-filho não pode tomar nome de dado já existente", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "text" }); t.run({ type: "addOutput", id: t.b, name: "result" });
+    fails(() => apply(t.p, { type: "renameIo", id: t.b, side: "out", from: "result", to: "text" }), "invalid");
+  });
+  it("saída na origem pode igualar a própria entrada (mesmo dado)", () => {
+    const t = base(); t.run({ type: "addInput", id: t.a, name: "text" }); t.run({ type: "setArg", id: t.a, name: "text", value: '"hi"' });
+    t.run({ type: "addOutput", id: t.a, name: "result" });
     t.run({ type: "renameIo", id: t.a, side: "out", from: "result", to: "text" });
     expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["text"], outs: ["text"] });
   });
-  it("renomear função abstrata atualiza todas com o mesmo título; lib não propaga", () => {
-    const t = base(); t.run({ type: "rename", id: t.a, title: "passo" }); t.run({ type: "rename", id: t.b, title: "passo" });
+  it("função abstrata: nome único no fluxo; lib pode repetir a task", () => {
+    const t = base(); t.run({ type: "rename", id: t.a, title: "passo" });
+    fails(() => apply(t.p, { type: "rename", id: t.b, title: "passo" }), "invalid");
     t.run({ type: "rename", id: t.a, title: "etapa" });
-    expect((locate(t.p, t.a)!.node as Fn).title).toBe("etapa"); expect((locate(t.p, t.b)!.node as Fn).title).toBe("etapa");
+    expect((locate(t.p, t.a)!.node as Fn).title).toBe("etapa"); expect((locate(t.p, t.b)!.node as Fn).title).toBe("fb");
     t.run({ type: "assign", id: t.c, agent: "console" }); t.run({ type: "assign", id: t.d, agent: "console" });
-    t.run({ type: "rename", id: t.c, title: "log" }); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");   // setTask/assign já é log; rename de lib só o nó
+    expect((locate(t.p, t.c)!.node as Fn).title).toBe("log"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
     t.run({ type: "rename", id: t.c, title: "info" }); expect((locate(t.p, t.c)!.node as Fn).title).toBe("info"); expect((locate(t.p, t.d)!.node as Fn).title).toBe("log");
   });
 });

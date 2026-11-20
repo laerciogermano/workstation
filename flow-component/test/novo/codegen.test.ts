@@ -71,8 +71,8 @@ describe("transpilador Flow → TypeScript", () => {
     const { run, s, e, gen } = base(); run({ type: "setParallel", id: e, on: true }); void s;
     const { code } = gen(); expect(code).toContain("await Promise.all(["); expect(code).toMatch(/\(\{ itens \} = par\d+\[0\] as State\);/); expect(code).toContain("separarItens({ ...state, pedido }),");
   });
-  it("nomes repetidos ganham sufixo; fluxo de um elemento só chama a si mesmo", () => {
-    const { run, root, r, gen } = base(); run({ type: "rename", id: r, title: "enviarPedido" }); expect(gen().code).toContain("enviarPedido2");
+  it("abstratas não podem repetir o nome; fluxo de um elemento só chama a si mesmo", () => {
+    const t = base(); expect(() => t.run({ type: "rename", id: t.r, title: "enviarPedido" })).toThrow(/already exists/);
     const p2 = apply(emptyProject("X"), { type: "newFlow", title: "main" }); const g = generate(p2.project, p2.created!); expect(g.fileName).toBe("main.ts"); expect(g.code).toContain("export async function main(state: State)"); expect(g.code).not.toContain("return");
   });
   it("o mapa de linhas aponta a função, o bloco e a raiz", () => {

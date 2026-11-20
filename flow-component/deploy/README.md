@@ -23,7 +23,7 @@
 
 **Antes → depois (clique no rótulo do dado):** `text.dn` disparava `renameData`/`renameOut` (inline) → agora `editData` (mesmo modal da marca). Rollback: `data-act=renameData|renameOut` no rótulo.
 
-**Antes → depois (nome = ref):** renomear entrada para nome já usado fazia `renameDatumInFlow` (mudava todos) → agora rebind local + limpa valor; saída pode igualar entrada. Rollback: sempre `renameDatumInFlow` em `renameIo`/`setData`/`renameData`.
+**Antes → depois (nome = ref / pai·filho):** renomear qualquer porto propagava / abstratas fundiam título → pai (`originPort`) propaga; filho desvincula (`renamePortLocal`); abstrata com nome repetido = `invalid`; saída-filho não toma nome já usado. Rollback: sempre `renameDatumInFlow` + `renameFnTitleInFlow` em `renameIo`/`setData`/`renameData`/`rename`.
 
 **Antes → depois (modal out = in):** saída tinha só nome + Add child top-level → mesmo `dataEditor` da entrada (tipo/valor/objeto); objeto na out vira `outs` = campos. Rollback: `withValue = side === "in"`.
 

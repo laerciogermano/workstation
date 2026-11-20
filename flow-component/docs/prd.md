@@ -96,7 +96,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **I/O padrão:** função nova nasce sem entrada nem retorno (`ins`/`outs` `[]`). No diagrama: fantasma `+` (`addIo`); só há marca/rótulo/`states` depois de declarar. **Antes:** `[]` virava cubo `input_<fn>`/`output_<fn>` inventado. **Voltar:** `showIn/Out = length || !lib` e ramo de I/O vazio em `statesByStep`.
 
-**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo. Nome **novo** → `renameDatumInFlow` propaga. Entrada para nome **já usado** → só reassocia o porto (referência; limpa literal; não renomeia o produtor). Saída pode **igualar a entrada** (mesmo nome = mesmo dado). No editor: digitar o nome basta (sem select Type/origin). Entrada inicializada (literal) também **produz** o nome no estado. **Voltar:** entrada sempre `renameDatumInFlow`; sem rebind local.
+**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo. **Pai** (origem: primeira saída ou entrada com literal) → `renameDatumInFlow` propaga a todos. **Filho** (só referência) → `renamePortLocal` (desvincula; nome novo só neste porto). Entrada para nome **já usado** → só aponta (limpa literal). Dois dados distintos ou duas funções abstratas com o mesmo nome no fluxo → `invalid`. Saída na origem pode **igualar a própria entrada** (passthrough). Libs de catálogo podem repetir a task. **Voltar:** sempre `renameDatumInFlow`; abstratas fundiam título.
 
 ### 5.4 Responsável · Task · catálogo — *must*
 

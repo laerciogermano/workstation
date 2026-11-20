@@ -163,15 +163,52 @@
       }
     });
   }
-  function renameFnTitleInFlow(p, flow, from, to) {
-    if (from === to) return;
-    const apply2 = (n) => {
-      if (n.title === from && !contractOf(p, n)) n.title = to;
+  var LITERAL_IDENTS = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+  var initsDatum = (f, name) => {
+    const e = f.args?.[name]?.trim();
+    if (!e) return false;
+    if (e.startsWith("from:") || LITERAL_IDENTS.has(e)) return true;
+    return !/^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e);
+  };
+  function originPort(flow, name) {
+    const hit = (f) => {
+      if (f.ins.includes(name) && initsDatum(f, name)) return { id: f.id, side: "in" };
+      if (f.outs.includes(name)) return { id: f.id, side: "out" };
+      return null;
     };
-    apply2(flow);
-    walk(flow.kids, (n) => {
-      if (n.t === "fn") apply2(n);
-    });
+    const at = hit(flow);
+    if (at) return at;
+    let found = null;
+    const visit = (nodes) => {
+      for (const n of nodes) {
+        if (found) return;
+        if (n.t === "fn") {
+          found = hit(n);
+          if (!found && n.kids.length) visit(n.kids);
+        } else {
+          visit(n.kids);
+          if (!found && n.t === "try") visit(n.catchKids);
+          if (!found && n.t === "if") visit(n.elseKids);
+        }
+      }
+    };
+    visit(flow.kids);
+    return found;
+  }
+  function renamePortLocal(n, side, from, to, clearValue = false) {
+    if (from === to) return;
+    const key = side === "out" ? "outs" : "ins";
+    n[key] = n[key].map((x) => x === from ? to : x);
+    if (side === "in" && n.args) {
+      if (clearValue) {
+        delete n.args[from];
+        delete n.args[to];
+      } else if (from in n.args) {
+        n.args[to] = n.args[from];
+        delete n.args[from];
+      }
+      if (!Object.keys(n.args).length) delete n.args;
+    }
   }
   var fnsOf = (flow) => {
     const out = [];
@@ -238,13 +275,13 @@
   var claimRenameAbstract = (p, flow, raw, exceptId) => {
     const name = cleanFnTitle(raw);
     if (dataNamesInFlow(flow).has(name)) return fail("invalid", `\u201C${name}\u201D is already a data name in this flow`);
-    const hitLib = (n) => n.id !== exceptId && n.title === name && !!contractOf(p, n);
-    if (hitLib(flow)) return fail("invalid", `\u201C${name}\u201D is already a lib function in this flow`);
-    let lib3 = false;
+    const hit = (n) => n.id !== exceptId && n.title === name;
+    if (hit(flow)) return fail("invalid", `Function \u201C${name}\u201D already exists in this flow`);
+    let clash = false;
     walk(flow.kids, (n) => {
-      if (n.t === "fn" && hitLib(n)) lib3 = true;
+      if (n.t === "fn" && hit(n)) clash = true;
     });
-    if (lib3) return fail("invalid", `\u201C${name}\u201D is already a lib function in this flow`);
+    if (clash) return fail("invalid", `Function \u201C${name}\u201D already exists in this flow`);
     return name;
   };
   var claimDataInFlow = (flow, raw, what = "Data name") => {
@@ -428,7 +465,7 @@
       }
       const to = claimRenameAbstract(p, l.flow, a["title"], l.node.id);
       if (from === to) return;
-      renameFnTitleInFlow(p, l.flow, from, to);
+      l.node.title = to;
     },
     /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
     renameFile: (p, a) => {
@@ -556,26 +593,31 @@
       applyContract(p, n);
     },
     /**
-     * Renomeia um dado. Nome novo → propaga no fluxo. Entrada para um nome que já existe → só reassocia
-     * este porto (referência pelo nome; não renomeia produtores/outros consumidores). Saída para nome
-     * já existente (ex.: igual à entrada) → funde via renameDatumInFlow (mesmo dado).
+     * Renomeia um dado. Pai (origem do nome) → propaga a todos. Filho (só referência) → renomeia
+     * este porto e desvincula do pai. Entrada para nome já usado → só aponta (referência; limpa literal).
+     * No mesmo contexto não há dois dados distintos com o mesmo nome nem duas funções com o mesmo título.
      */
     renameIo: (p, a) => {
       const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-      const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
+      const side = str(a, "side") === "out" ? "out" : "in", key = side === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
       if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
       if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
       if (from === to) return;
-      if (key === "ins" && dataNamesInFlow(l.flow).has(to)) {
-        n.ins = n.ins.map((x) => x === from ? to : x);
-        if (n.args) {
-          delete n.args[from];
-          delete n.args[to];
-          if (!Object.keys(n.args).length) delete n.args;
+      const origin = originPort(l.flow, from), isParent = !!origin && origin.id === n.id && origin.side === side;
+      if (!isParent) {
+        if (side === "in" && dataNamesInFlow(l.flow).has(to)) {
+          renamePortLocal(n, "in", from, to, true);
+          return;
         }
+        if (side === "out" && dataNamesInFlow(l.flow).has(to) && to !== from) return fail("invalid", `\u201C${to}\u201D is already a data name in this flow`);
+        renamePortLocal(n, side, from, to);
         return;
+      }
+      if (dataNamesInFlow(l.flow).has(to) && to !== from) {
+        const other = side === "out" ? n.ins : n.outs;
+        if (!other.includes(to)) return fail("invalid", `\u201C${to}\u201D is already a data name in this flow`);
       }
       renameDatumInFlow(l.flow, from, to);
     },
@@ -591,8 +633,10 @@
       for (let i = 0; i < Math.min(prev.length, names.length); i++) {
         const from = prev[i], to = names[i];
         if (from === to) continue;
-        if (side === "in" && dataNamesInFlow(l.flow).has(to)) continue;
-        renameDatumInFlow(l.flow, from, to);
+        if (dataNamesInFlow(l.flow).has(to)) continue;
+        const origin = originPort(l.flow, from), isParent = !!origin && origin.id === n.id && origin.side === side;
+        if (isParent) renameDatumInFlow(l.flow, from, to);
+        else renamePortLocal(n, side, from, to);
       }
       if (side === "out") {
         n.outs = names;
@@ -606,7 +650,7 @@
       if (Object.keys(args).length) n.args = args;
       else delete n.args;
     },
-    /** Nome do dado no flow (referência global no fluxo): saída única da lib, ou entrada única. */
+    /** Nome do dado no flow: pai propaga; filho desvincula; entrada→nome existente só aponta. */
     renameData: (p, a) => {
       const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
@@ -616,19 +660,27 @@
       if (side === "out") {
         if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
         const from2 = n.outs[0] ?? c.outs[0];
-        if (from2 !== to) renameDatumInFlow(l.flow, from2, to);
+        if (from2 === to) return;
+        const origin2 = originPort(l.flow, from2), isParent2 = !!origin2 && origin2.id === n.id && origin2.side === "out";
+        if (!isParent2) {
+          if (dataNamesInFlow(l.flow).has(to) && to !== from2) return fail("invalid", `\u201C${to}\u201D is already a data name in this flow`);
+          renamePortLocal(n, "out", from2, to);
+          return;
+        }
+        if (dataNamesInFlow(l.flow).has(to) && to !== from2 && !n.ins.includes(to)) return fail("invalid", `\u201C${to}\u201D is already a data name in this flow`);
+        renameDatumInFlow(l.flow, from2, to);
         return;
       }
       if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
       const from = n.ins[0] ?? c.ins[0];
       if (from === to) return;
-      if (dataNamesInFlow(l.flow).has(to)) {
-        n.ins = n.ins.map((x) => x === from ? to : x);
-        if (n.args) {
-          delete n.args[from];
-          delete n.args[to];
-          if (!Object.keys(n.args).length) delete n.args;
+      const origin = originPort(l.flow, from), isParent = !!origin && origin.id === n.id && origin.side === "in";
+      if (!isParent) {
+        if (dataNamesInFlow(l.flow).has(to)) {
+          renamePortLocal(n, "in", from, to, true);
+          return;
         }
+        renamePortLocal(n, "in", from, to);
         return;
       }
       renameDatumInFlow(l.flow, from, to);
@@ -830,10 +882,10 @@
   var PATH = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
   var NUM = /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i;
   var FROM_FILE = /^([^#\s]+)#([A-Za-z_$][\w$]*)$/;
-  var LITERAL_IDENTS = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+  var LITERAL_IDENTS2 = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
   var isDataRef = (e) => {
     const v = e.trim();
-    if (!v || LITERAL_IDENTS.has(v) || v.startsWith("from:")) return false;
+    if (!v || LITERAL_IDENTS2.has(v) || v.startsWith("from:")) return false;
     return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
   };
   function buildArg(d) {
@@ -2156,7 +2208,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
         run({ type: "addInput", id, name });
         run({ type: "setArg", id, name, value });
       }
-      for (const name of outs) run({ type: "addOutput", id, name });
       steps((lib3, task, out, args = {}) => {
         const sid = run({ type: "addChild", id });
         run({ type: "assign", id: sid, agent: lib3 });
@@ -2165,6 +2216,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (out) run({ type: "renameData", id: sid, to: out });
         return sid;
       });
+      for (const name of outs) run({ type: "addOutput", id, name });
       return id;
     };
     const ifThen = (id, test) => {
@@ -3105,7 +3157,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const title = () => drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(names[0] && names.length === 1 ? names[0] : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         const known = knownNames();
-        form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+        form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data. Renaming the origin updates every reference; renaming a reference unlinks it (new name) or points it at another existing data. Data and function names stay unique in the flow.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh2[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i], String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map((r) => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;

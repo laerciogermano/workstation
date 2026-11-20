@@ -31,12 +31,12 @@ export function addSamples(run: (c: Command) => string): void {
   const fn = (title: string, ins: Record<string, string>, outs: string[], steps: (step: Step) => void): string => {
     const id = run({ type: "newFlow", title, file: FILE });
     for (const [name, value] of Object.entries(ins)) { run({ type: "addInput", id, name }); run({ type: "setArg", id, name, value }); }
-    for (const name of outs) run({ type: "addOutput", id, name });
     steps((lib, task, out, args = {}) => {
       const sid = run({ type: "addChild", id }); run({ type: "assign", id: sid, agent: lib }); run({ type: "setTask", id: sid, task });
       for (const [name, value] of Object.entries(args)) run({ type: "setArg", id: sid, name, value });
       if (out) run({ type: "renameData", id: sid, to: out }); return sid;
     });
+    for (const name of outs) run({ type: "addOutput", id, name });   // depois dos passos: o filho já é a origem do nome
     return id;
   };
   type Step = (lib: string, task: string, out?: string, args?: Record<string, string>) => string;
@@ -119,7 +119,7 @@ export function browserDemoProject(): { project: Project; main: string; example:
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
   const main = run({ type: "newFlow", title: "main" });
   const ex = run({ type: "newFlow", title: "example" });
-  run({ type: "addInput", id: ex, name: "threshold" }); run({ type: "setArg", id: ex, name: "threshold", value: "50" }); run({ type: "addOutput", id: ex, name: "score" }); run({ type: "addOutput", id: ex, name: "report" });
+  run({ type: "addInput", id: ex, name: "threshold" }); run({ type: "setArg", id: ex, name: "threshold", value: "50" });
   const step = (lib: string, task: string, out?: string, args: Record<string, string> = {}): string => {
     const id = run({ type: "addChild", id: ex }); run({ type: "assign", id, agent: lib }); run({ type: "setTask", id, task });
     for (const [name, value] of Object.entries(args)) run({ type: "setArg", id, name, value });
@@ -133,5 +133,6 @@ export function browserDemoProject(): { project: Project; main: string; example:
   step("json", "stringify", "report", { value: "{ id, score, at }" });
   step("console", "log", undefined, { text: "report" });
   run({ type: "wrap", id: hi, kind: "if", test: "score >= threshold" });
+  run({ type: "addOutput", id: ex, name: "score" }); run({ type: "addOutput", id: ex, name: "report" });
   return { project: p, main, example: ex };
 }

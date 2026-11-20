@@ -102,6 +102,9 @@ const BUILDERS: Record<string, () => DocExample> = {
     void ctr; void env; return { project: p(), flow: root };
   },
 
+  // ───────── Conceitos do livro (fop-conceitos.html): um exemplo por conceito/variante, mesmo formato do PDF ─────────
+  ...conceitos(),
+
   /** Uma função só de libs do navegador (concretas), com valores e um if. */
   libs: () => {
     const { p, run } = fresh(); const root = run({ type: "newFlow", title: "aplicarCupom" });
@@ -123,4 +126,72 @@ export function docExample(id: string): DocExample | null {
     return flow ? { project: p, flow: flow.id } : null;
   }
   return BUILDERS[id]?.() ?? null;
+}
+
+/** Um projeto `f` com entradas/saídas e passos; `abs` = entradas sem valor (abstratas), `init` = entradas inicializadas (concretas). */
+function conceitos(): Record<string, () => DocExample> {
+  const mk = (build: (run: Run, root: string) => void, title = "f"): (() => DocExample) => () => {
+    const { p, run } = fresh(); const root = run({ type: "newFlow", title }); build(run, root); return { project: p(), flow: root };
+  };
+  const ins = (run: Run, id: string, names: string[], init: Record<string, string> = {}): void => { for (const n of names) { run({ type: "addInput", id, name: n }); if (init[n] !== undefined) run({ type: "setArg", id, name: n, value: init[n]! }); } };
+  const outs = (run: Run, id: string, names: string[]): void => { for (const n of names) run({ type: "addOutput", id, name: n }); };
+  /** Função concreta vinda de um arquivo `.ts` (o import do livro). */
+  const fromFile = (run: Run, parent: string, title: string, i: string[] = [], o: string[] = []): string => {
+    const src = run({ type: "newFlow", title, file: `${title}.ts` }); ins(run, src, i); outs(run, src, o);
+    const id = run({ type: "addChild", id: parent }); run({ type: "assign", id, agent: `file:${title}.ts` }); return id;
+  };
+  return {
+    c01: mk((run, r) => { ins(run, r, ["a"]); }),
+    c02a: mk((run, r) => { ins(run, r, ["a"]); }),
+    c02b: mk((run, r) => { ins(run, r, ["a"], { a: '"texto"' }); }),
+    c03a: mk((run, r) => { ins(run, r, ["a", "b"]); }),
+    c03b: mk((run, r) => { step(run, r, "criarA", [], ["a"]); step(run, r, "criarB", [], ["b"], undefined, { par: true }); }),
+    c04: mk((run, r) => { outs(run, r, ["a"]); }),
+    c05a: mk(() => { /* sem entrada nem saída */ }),
+    c05b: mk((run, r) => { ins(run, r, ["a"]); }),
+    c05c: mk((run, r) => { ins(run, r, ["a"]); outs(run, r, ["a"]); }),
+    c05e: mk((run, r) => { ins(run, r, ["a", "b", "c"]); outs(run, r, ["a", "b", "c"]); }),
+    c06a: mk((run, r) => { lib(run, r, "crypto", "randomUUID", "uuid"); }, "gerarId"),
+    c06b: mk((run, r) => { ins(run, r, ["a"], { a: '"texto"' }); lib(run, r, "console", "log", undefined, { text: "a" }); }),
+    c07a: mk((run, r) => { ins(run, r, ["a"]); }),
+    c07b: mk((run, r) => { step(run, r, "f1", [], []); }),
+    c07c: mk((run, r) => { step(run, r, "f1", [], [], "lia"); step(run, r, "f2", [], [], "ana"); }),
+    c08a: mk((run, r) => { ins(run, r, ["a"]); }),
+    c08b: mk((run, r) => { step(run, r, "f1", [], []); }),
+    c09a: mk((run, r) => { outs(run, r, ["a"]); }),
+    c09b: mk((run, r) => { outs(run, r, ["f1"]); }),
+    c10: mk((run, r) => { step(run, r, "f1", [], []); step(run, r, "f2", [], []); }),
+    c11: mk((run, r) => { step(run, r, "f1", [], []); step(run, r, "f2", [], [], undefined, { par: true }); }),
+    c12: mk((run, r) => {
+      const f1 = step(run, r, "f1", [], ["a"]); void f1; const f2 = step(run, r, "f2", ["a"], []);
+      run({ type: "wrap", id: f2, kind: "if", test: "a" });
+    }),
+    c13: mk((run, r) => {
+      ins(run, r, ["itens"]); const f1 = step(run, r, "f1", ["item"], []);
+      run({ type: "wrap", id: f1, kind: "for", v: "item", coll: "itens" });
+    }),
+    c14: mk((run, r) => {
+      ins(run, r, ["a"], { a: '""' });
+      const f1 = fromFile(run, r, "f1", ["a"], ["b"]); const f2 = fromFile(run, r, "f2", ["a"], ["c"]); void f1;
+      run({ type: "setParallel", id: f2, on: true });
+      const again = step(run, r, "g", ["a"], []); run({ type: "wrap", id: again, kind: "if", test: "b && c" });
+    }),
+    c15: mk((run, r) => {
+      ins(run, r, ["a"]);
+      fromFile(run, r, "f1", ["a"], ["b"]); const f2 = step(run, r, "f2", ["a"], ["c"], undefined, { par: true }); void f2;
+      const again = step(run, r, "g", ["a"], []); run({ type: "wrap", id: again, kind: "if", test: "b && c" });
+    }),
+    c16: mk((run, r) => { ins(run, r, ["a"]); step(run, r, "f2", ["a"], ["c"]); }),
+    c17a: mk((run, r) => { ins(run, r, ["a"]); step(run, r, "f2", ["a"], ["c"]); }),
+    c17b: mk((run, r) => { ins(run, r, ["a"], { a: "2.5" }); lib(run, r, "math", "round", "c", { value: "a" }); }),
+    c18a: mk((run, r) => { ins(run, r, ["a"]); step(run, r, "f2", ["a"], ["c"]); }),
+    c18b: mk((run, r) => { ins(run, r, ["a"], { a: "2.5" }); }, "camadaB"),
+    c18c: mk((run, r) => { ins(run, r, ["a"], { a: "2.5" }); step(run, r, "f2", ["a"], ["c"]); }, "camadaAB"),
+    c19a: mk((run, r) => { ins(run, r, ["a"]); step(run, r, "f2", ["a"], ["c"]); }),
+    c19b: mk((run, r) => { ins(run, r, ["a"], { a: "2.5" }); lib(run, r, "math", "round", "c", { value: "a" }); lib(run, r, "console", "log", undefined, { text: "c" }); }),
+    c20: mk((run, r) => {
+      ins(run, r, ["a"], { a: "2.5" }); lib(run, r, "math", "round", "c", { value: "a" });
+      step(run, r, "g", ["c"], ["d"]);
+    }),
+  };
 }

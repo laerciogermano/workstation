@@ -1828,7 +1828,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
   }
   var STATE_ROW = 15;
   var PLAN_PAD_BOTTOM = 28;
-  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 52 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
+  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 66 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
   var TABLE_CHROME = 18 + 120 + 14;
   function tableWidth(sc, p) {
     let need2 = 90;
@@ -1978,10 +1978,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
     });
     const ym = (i) => rowY(i) + G.RH / 2;
     const out = [], bands = [], over = [];
-    const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
-    const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>`;
+    const CHIP_HALF = 8, top = G.HEAD - 18, bot = rowY(sc.rows.length) + 32;
+    const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - CHIP_HALF}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>`;
     for (let s = 0; s <= sc.nSteps; s++) {
-      out.push(`<line class="vg" x1="${colX2(s)}" y1="${top + 8}" x2="${colX2(s)}" y2="${bot - 8}"/>`);
+      out.push(`<line class="vg" x1="${colX2(s)}" y1="${top + CHIP_HALF}" x2="${colX2(s)}" y2="${bot - CHIP_HALF}"/>`);
       out.push(chip(s, top), chip(s, bot));
     }
     sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));

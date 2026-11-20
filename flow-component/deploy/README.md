@@ -13,7 +13,7 @@
 
 **Antes → depois (padding do plano):** SVG do plano colava o último estado na borda → `PLAN_PAD_BOTTOM` (28) em `planHeight`. Rollback: tirar o termo em `novo/view.ts`.
 
-**Antes → depois (losango sN):** chips tinham losango entre quadro e linha → sem losango; `vg` do quadro de cima ao de baixo (`top+8`…`bot-8`), `bot=rowY+18`, base `planHeight` `+52`. Rollback: path `.dia` + offsets anteriores.
+**Antes → depois (losango sN):** chips tinham losango → sem losango; `vg` encosta nos quadros; `bot=rowY+32` (folga sob o conteúdo), base `planHeight` `+66`. Rollback: path `.dia` / `bot=rowY+18` / base `+52`.
 
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.
 

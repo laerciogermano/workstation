@@ -62,6 +62,10 @@ export function objectFields(expr: string): string[] | null {
   const p = objectPairs(expr); return p && p.map(x => x.name);
 }
 export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+/** Nome entra no estado: saída, ou entrada inicializada com literal/expr (não é só referência a outro dado). */
+const initsName = (f: Fn, n: string): string | undefined => { const e = f.args?.[n]?.trim(); return e && !isDataRef(e) ? e : undefined; };
+const producesName = (f: Fn, name: string): boolean => f.outs.includes(name) || !!initsName(f, name);
+
 export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, StateItem[]> {
   // só dados declarados (entrada com valor, saída, entrada abstrata de fora) — sem inventar input_/output_ vazios
   const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
@@ -69,15 +73,15 @@ export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, 
     if (r.kind !== "fn") continue; const f = r.node as Fn;
     // dado inicializado com um valor logo antes da função (ex.: value = { id, score } / text = false): existe a partir do início dela; o valor vai só no rodapé
     for (const i of f.ins) {
-      const e = f.args?.[i]?.trim(); if (!e || isDataRef(e)) continue;
+      const e = initsName(f, i); if (!e) continue;
       const pairs = objectPairs(e), fields = pairs?.map(p => p.name) ?? null;
       const fieldValues = pairs ? Object.fromEntries(pairs.filter(p => p.value != null).map(p => [p.name, p.value!])) : undefined;
       add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
     }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
   }
-  // dados abstratos (entradas de fora: as do flow, das composições e das folhas que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
-  const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") (r.node as Fn).outs.forEach(o => made.add(o));
+  // dados abstratos (entradas de fora): só se ninguém no fluxo produz/inicializa o mesmo nome (nome = referência)
+  const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") { const f = r.node as Fn; f.outs.forEach(o => made.add(o)); for (const i of f.ins) if (initsName(f, i)) made.add(i); }
   const loopVars = new Set<string>(); for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);   // a variável do for não vem de fora
   const ext = new Map<string, { col: number; owner: string }>();
   for (const r of sc.rows) if (r.kind === "fn") for (const n of (r.node as Fn).ins) if (!(r.node as Fn).args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id }); else if (ext.has(n) && r.s < ext.get(n)!.col) ext.set(n, { col: r.s, owner: ext.get(n)!.owner });
@@ -183,10 +187,11 @@ export interface DataLink { from: Row; to: Row; name: string }
 export function dataLinks(p: Project, sc: Scene): DataLink[] {
   const fns = sc.rows.filter(r => r.kind === "fn" && r.leaf), out: DataLink[] = [];
   fns.forEach((b, i) => {
-    const f = b.node as Fn, c = contractOf(p, f), names = new Set<string>();
+    const f = b.node as Fn, names = new Set<string>();
     for (const n of f.ins) if (!f.args?.[n]?.trim()) names.add(n);                          // entrada de mesmo nome (só quando não foi preenchida à mão)
     for (const v of Object.values(f.args ?? {})) for (const id of exprIdents(v)) names.add(id);
-    for (const name of names) for (let j = i - 1; j >= 0; j--) { const a = fns[j]!; if ((a.node as Fn).outs.includes(name) && a.e + 1 === b.s) { out.push({ from: a, to: b, name }); break; } }
+    // produtor = saída OU entrada inicializada (literal); nome igual = mesma referência
+    for (const name of names) for (let j = i - 1; j >= 0; j--) { const a = fns[j]!; if (producesName(a.node as Fn, name) && a.e + 1 === b.s) { out.push({ from: a, to: b, name }); break; } }
   });
   return out;
 }
@@ -302,7 +307,8 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   });
 
   // funções
-  const produced = new Set<string>(); sc.leaves.forEach(l => (l.node as Fn).outs.forEach(o => produced.add(o)));
+  // nome no estado: outs + entradas inicializadas (literal); quem usa o mesmo nome referencia esse dado (marca cheia)
+  const produced = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn") { const f = r.node as Fn; f.outs.forEach(o => produced.add(o)); for (const n of f.ins) if (initsName(f, n)) produced.add(n); }
   /** Entradas e saídas de uma função (marca, linha até a barra, nome do dado e fantasma de adicionar): funções comuns e a função de primeira ordem. */
   const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
     // I/O só aparece quando declarado; sem I/O = fantasma (+) para adicionar (função nasce sem entrada nem retorno)

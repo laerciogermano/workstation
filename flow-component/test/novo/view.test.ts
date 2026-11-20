@@ -234,6 +234,18 @@ describe("quadrado do dado", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "de_fora" });
     const p = t.view().plan; expect((p.match(/class="dot a"/g) ?? []).length).toBe(1); expect((p.match(/class="dot"/g) ?? []).length).toBe(2);
   });
+  it("mesmo nome = mesma referência: entrada inicializada em A preenche a marca de B e liga o traço", () => {
+    const t = base();
+    t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '"Hello"' });
+    t.run({ type: "addInput", id: t.ids[1]!, name: "text" });
+    const p = t.view().plan;
+    const markB = p.match(new RegExp(`data-act="editData" data-id="${t.ids[1]}" data-side="in"[\\s\\S]*?</g>`))?.[0] ?? "";
+    expect(markB).toContain('class="dot"'); expect(markB).not.toContain('class="dot a"');   // cheio: referencia o text de A
+    expect((p.match(/class="dep"/g) ?? []).length).toBe(1);
+    const names = [...statesByStep(t.view().scene, false, t.p).values()].flat().map(x => x.name);
+    expect(names.filter(n => n === "text")).toHaveLength(1);   // só o init; B não inventa text abstrato de fora
+    expect(statesByStep(t.view().scene, true, t.p).get(1)?.some(x => x.name === "text" && x.value === '"Hello"')).toBe(true);
+  });
 });
 
 describe("dado e cubo: [] = cubo (state); UM nome = quadrado; 2+ = cubo", () => {

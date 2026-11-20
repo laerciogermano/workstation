@@ -1778,6 +1778,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
     });
   }
   var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+  var initsName = (f, n) => {
+    const e = f.args?.[n]?.trim();
+    return e && !isDataRef(e) ? e : void 0;
+  };
+  var producesName = (f, name) => f.outs.includes(name) || !!initsName(f, name);
   function statesByStep(sc, all = false, _p) {
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
       const list = m.get(col) ?? [];
@@ -1789,8 +1794,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (r.kind !== "fn") continue;
       const f = r.node;
       for (const i of f.ins) {
-        const e = f.args?.[i]?.trim();
-        if (!e || isDataRef(e)) continue;
+        const e = initsName(f, i);
+        if (!e) continue;
         const pairs = objectPairs(e), fields = pairs?.map((p) => p.name) ?? null;
         const fieldValues = pairs ? Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) : void 0;
         add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
@@ -1798,7 +1803,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
     }
     const made = /* @__PURE__ */ new Set();
-    for (const r of sc.rows) if (r.kind === "fn") r.node.outs.forEach((o) => made.add(o));
+    for (const r of sc.rows) if (r.kind === "fn") {
+      const f = r.node;
+      f.outs.forEach((o) => made.add(o));
+      for (const i of f.ins) if (initsName(f, i)) made.add(i);
+    }
     const loopVars = /* @__PURE__ */ new Set();
     for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);
     const ext = /* @__PURE__ */ new Map();
@@ -1891,12 +1900,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
   function dataLinks(p, sc) {
     const fns = sc.rows.filter((r) => r.kind === "fn" && r.leaf), out = [];
     fns.forEach((b, i) => {
-      const f = b.node, c = contractOf(p, f), names = /* @__PURE__ */ new Set();
+      const f = b.node, names = /* @__PURE__ */ new Set();
       for (const n of f.ins) if (!f.args?.[n]?.trim()) names.add(n);
       for (const v of Object.values(f.args ?? {})) for (const id of exprIdents(v)) names.add(id);
       for (const name of names) for (let j = i - 1; j >= 0; j--) {
         const a = fns[j];
-        if (a.node.outs.includes(name) && a.e + 1 === b.s) {
+        if (producesName(a.node, name) && a.e + 1 === b.s) {
           out.push({ from: a, to: b, name });
           break;
         }
@@ -2012,7 +2021,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);
     });
     const produced = /* @__PURE__ */ new Set();
-    sc.leaves.forEach((l) => l.node.outs.forEach((o) => produced.add(o)));
+    for (const r of sc.rows) if (r.kind === "fn") {
+      const f = r.node;
+      f.outs.forEach((o) => produced.add(o));
+      for (const n of f.ins) if (initsName(f, n)) produced.add(n);
+    }
     const ioMarks = (f, r, i, x1, x2) => {
       const lib3 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
       const mark = (x, list, kind, abs, tip) => {

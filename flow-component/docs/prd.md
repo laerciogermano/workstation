@@ -96,7 +96,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **I/O padrão:** função nova nasce sem entrada nem retorno (`ins`/`outs` `[]`). No diagrama: fantasma `+` (`addIo`); só há marca/rótulo/`states` depois de declarar. **Antes:** `[]` virava cubo `input_<fn>`/`output_<fn>` inventado. **Voltar:** `showIn/Out = length || !lib` e ramo de I/O vazio em `statesByStep`.
 
-**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas: título lowerCamelCase, único na criação; renomear para um nome já usado funde a referência (`renameFnTitleInFlow`). Dado e função não podem compartilhar o mesmo nome no fluxo. Libs (contrato) podem repetir o nome da task (vários `log`); rename de lib não propaga. **Voltar:** `cleanText` livre + rename só no nó local + sem checagem dado/função.
+**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Entrada inicializada (literal) também **produz** o nome no estado: quem depois usa o mesmo nome (sem valor próprio) fica com marca cheia + traço `dep` (não vazado “de fora”). Funções abstratas: título lowerCamelCase, único na criação; rename funde referência. Dado≠função no fluxo. **Voltar:** `produced`/`made` só com `outs`; `dataLinks` só `outs.includes`.
 
 ### 5.4 Responsável · Task · catálogo — *must*
 

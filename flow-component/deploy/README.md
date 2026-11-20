@@ -15,6 +15,8 @@
 
 **Antes → depois (losango sN):** chips tinham losango entre quadro e linha → sem losango; `vg` do quadro de cima ao de baixo (`top+8`…`bot-8`), `bot=rowY+18`, base `planHeight` `+52`. Rollback: path `.dia` + offsets anteriores.
 
+**Antes → depois (nome = referência / init):** entrada com literal (`text = "…"`) não contava como produção → quem usava o mesmo nome ficava vazado e nos estados como “de fora”. Agora init entra em `produced`/`made`/`dataLinks`. Rollback: só `outs` nesses conjuntos.
+
 **Antes → depois (I/O padrão):** abstrata sem I/O mostrava cubo `input_`/`output_` inventado → volta ao fantasma `+` (`addIo`); estados só com dado declarado. Rollback: `showIn/Out = length || !lib` + ramo de cubo vazio em `statesByStep`.
 
 **Antes → depois (nomes / explorer):** `+` em `src` criava `newFlow` (função/arquivo ambíguo); títulos livres (“New flow”, espaços). Agora: `src`+ = arquivo; arquivo+ = função lowerCamelCase; unicidade de abstratas na criação; dado≠função no mesmo fluxo; rename de abstrata funde referência. Rollback: handlers `newFlow`/`rename`/`addChild` e o clique `data-exnew`/`data-exadd` no commit anterior.

@@ -1,58 +1,51 @@
-import { COMMAND_NAMES, FlowError, locate, parseProject, serialize, Store, type Command, type Project } from "./model";
+import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft, type ArgType } from "./args";
+import { buildCond, COND_OPS, emptyClause, inferCond, JOINERS, needsRight, type CondDraft, type CondOp, type Joiner } from "./cond";
+import { runInWorker, type LogLevel, type Running } from "./runner";
+import { contractOf, cubeName, FlowError, fnsOf, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
-import { build, esc, G, planHeight, planWidth, tableWidth, toolsFor, toolsHtml, type Ui } from "./view";
+import { build, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planHeight, planWidth, tableWidth, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
 import { sampleProject } from "./sample";
 
 /** Casca de DOM fina: toda regra vive em model/layout/view/codegen (testados sem navegador). */
 declare const mountTemas: ((el: HTMLElement) => void) | undefined;
 
-const EXAMPLES: Record<string, (id: string) => Record<string, unknown>> = {
-  newFlow: () => ({ title: "novo_fluxo" }), rename: id => ({ id, title: "novo_nome" }), addChild: id => ({ id }), addSibling: id => ({ id }), remove: id => ({ id }),
-  wrap: id => ({ id, kind: "if", test: "condicao" }), unwrap: id => ({ id }), exitScope: id => ({ id }), setScope: id => ({ id, count: 2 }),
-  setFor: id => ({ id, v: "item", coll: "itens" }), setIf: id => ({ id, test: "condicao" }), addElse: id => ({ id }), removeElse: id => ({ id }),
-  addInput: id => ({ id, name: "entrada" }), removeInput: id => ({ id, name: "entrada" }), addOutput: id => ({ id, name: "saida" }), removeOutput: id => ({ id, name: "saida" }),
-  assign: id => ({ id, agent: "lia" }), setTask: id => ({ id, task: "get" }), setResp: id => ({ id, resp: "ana" }), setParallel: id => ({ id, on: true }),
-};
 
-export interface App { store: Store; ui: Ui & { flow: string; zoom: number; pan: { x: number; y: number } }; render(): void; destroy(): void }
+export interface App { store: Store; ui: Ui & { flow: string; zoom: number; pan: { x: number; y: number } }; render(): void; /** Volta ao projeto de exemplo. */ reset(): void; destroy(): void }
 
 export function mount(host: HTMLElement, store: Store, flow: string): App {
   const ui: App["ui"] = { closed: new Set<string>(), sel: null, txtIn: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-  let tab: "ts" | "cmd" = "ts", hovT = 0, fitted = false, auto = true, exec = false, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
-  const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">${icon("redo")}</button>`;
+  let tab: "ts" | "term" = "ts", hovT = 0, fitted = false, auto = true, last: ReturnType<typeof build> | null = null, gen: ReturnType<typeof generate> | null = null;
+  const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
   host.innerHTML = `
   <div class="app">
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
-        <span class="fx-t">Flow</span><select id="flowSel" aria-label="Fluxo"></select>
-        <button type="button" id="newFlow" class="btn">${icon("plus")}Nova função</button><button type="button" class="ib danger" id="delFlow" title="Excluir este fluxo" aria-label="Excluir este fluxo">${icon("trash")}</button><span class="sp"></span><span class="hist-inline">${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Menos zoom (−)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Mais zoom (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Ajustar à tela (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Nome dentro da barra" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="expand" title="Abrir tudo">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Fechar tudo">${icon("collapse")}</button>
+        <span class="fx-t">Flow</span><select id="flowSel" aria-label="Flow"></select>
+        <button type="button" id="newFlow" class="btn">${icon("plus")}New flow</button><button type="button" class="ib danger" id="delFlow" title="Delete this flow" aria-label="Delete this flow">${icon("trash")}</button><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
+                <button type="button" class="ib" id="zout" title="Zoom out (−)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
-      <div class="fx-hint">roda do mouse = zoom · arrastar o fundo = mover · + − 0</div>
       <div class="fx-legend" id="legend">
-        <span><i class="lg fc"></i>função concreta (lib node:*)</span><span><i class="lg fa"></i>função abstrata (IA · state)</span><span><i class="lg da"></i>dado abstrato (state)</span><span><i class="lg dc"></i>dado concreto</span><span><i class="lg cb"></i>cubo (mais de um dado)</span>
-        <span><i class="lg dia"></i>seleção (if)</span><span><i class="lg lp">↻</i>repetição (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
+        <span><i class="lg fc"></i>concrete function (browser lib)</span><span><i class="lg fa"></i>abstract function (AI · state)</span><span><i class="lg da"></i>abstract data (state)</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube (more than one data)</span>
+        <span><i class="lg dia"></i>selection (if)</span><span><i class="lg lp">↻</i>repetition (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
       </div>
 
     </section>
+    <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="cmd" aria-selected="false">Chamar comando</button><span class="sp"></span><span class="meta" id="meta"></span></div>
-      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">fluxo.ts</span><span class="selname" id="selname"></span><span class="seg" role="group" aria-label="Versão do código"><button type="button" data-view="mod" aria-pressed="true" title="Módulo: exporta a função do fluxo">módulo</button><button type="button" data-view="run" aria-pressed="false" title="Executável: roda direto no Node">executável</button></span><button type="button" id="dl" title="Baixar o arquivo">Baixar</button><button type="button" id="copy">Copiar</button></div><div class="runhint" id="runhint" hidden><code id="runcmd"></code><button type="button" id="cmdcopy">Copiar comando</button></div><div class="code" id="code" tabindex="0" aria-label="Código TypeScript gerado"></div></section>
-      <section class="pane cmd" id="p-cmd"><label for="cmdSel">Comando</label><select id="cmdSel"></select><label for="payload">Payload (JSON)</label><textarea id="payload" spellcheck="false"></textarea>
-        <div class="row"><button type="button" id="run" class="pri">Executar</button><button type="button" id="reset">Reiniciar</button></div><div id="res"></div></section>
+      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span><span class="meta" id="meta"></span></div>
+      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="runhint" id="runhint"><code id="runcmd"></code><button type="button" id="cmdcopy">Copy command</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun">Run</button><button type="button" id="tClear">Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
   const $ = <T extends HTMLElement = HTMLElement>(s: string): T => host.querySelector(s) as T;
-  const el = { sel: $<HTMLSelectElement>("#flowSel"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), cmdSel: $<HTMLSelectElement>("#cmdSel"), payload: $<HTMLTextAreaElement>("#payload"), res: $("#res"), zv: $("#zv") };
-  el.cmdSel.innerHTML = COMMAND_NAMES.map(c => `<option>${c}</option>`).join("");
-  // desfazer / refazer: no cabeçalho da página e ao lado das opções do cabeçalho do Flow (nunca nas dicas dos componentes)
-  const hist = host.ownerDocument.createElement("div"); hist.id = "hist"; hist.className = "hist"; hist.setAttribute("role", "toolbar"); hist.setAttribute("aria-label", "Histórico"); hist.innerHTML = histBtns;
-  const proj = host.ownerDocument.createElement("div"); proj.id = "proj"; proj.className = "proj"; proj.setAttribute("role", "toolbar"); proj.setAttribute("aria-label", "Projeto");
-  proj.innerHTML = `<button type="button" class="btn sm" id="agents" title="Cadastrar libs, pessoas e agentes de IA">${icon("users")}Responsáveis</button><button type="button" class="btn sm" id="open" title="Abrir um projeto salvo (.json)">${icon("upload")}Abrir</button><button type="button" class="btn sm" id="save" title="Salvar o projeto (.json)">${icon("download")}Salvar</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
-  host.ownerDocument.querySelector(".topbar")?.append(proj, hist);
+  const el = { sel: $<HTMLSelectElement>("#flowSel"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), zv: $("#zv") };
+  // desfazer / refazer: só ao lado das opções do cabeçalho do Flow (nunca nas dicas dos componentes nem no topo da página)
+  const proj = host.ownerDocument.createElement("div"); proj.id = "proj"; proj.className = "proj"; proj.setAttribute("role", "toolbar"); proj.setAttribute("aria-label", "Project");
+  proj.innerHTML = `<button type="button" class="btn sm" id="agents" title="Register libs, people and AI agents">${icon("users")}Sources</button><button type="button" class="btn sm" id="open" title="Open a saved project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Save the project (.json)">${icon("download")}Save</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
+  host.ownerDocument.querySelector(".topbar")?.append(proj);
   const themes = host.ownerDocument.createElement("div"); themes.id = "temas"; host.ownerDocument.querySelector(".topbar")?.append(themes); if (typeof mountTemas === "function") mountTemas(themes);
 
   // ───────── diálogos e avisos dentro da própria vista (prompt() do navegador pode ser bloqueado) ─────────
@@ -65,13 +58,13 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     (form.querySelector("input") as HTMLInputElement | null)?.focus();
   });
   const ask = (label: string, value = ""): Promise<string | null> => modal<string | null>(label, (form, done) => {
-    form.innerHTML = `<label>${esc(label)}</label><input type="text" value="${esc(value)}" spellcheck="false" aria-label="${esc(label)}"><div class="row"><button type="button" data-no>Cancelar</button><button type="submit" class="pri">OK</button></div>`;
+    form.innerHTML = `<label>${esc(label)}</label><input type="text" value="${esc(value)}" spellcheck="false" aria-label="${esc(label)}"><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">OK</button></div>`;
     const input = form.querySelector("input") as HTMLInputElement; input.select();
-    form.addEventListener("submit", e => { e.preventDefault(); done(input.value.trim() || null); });
+    form.addEventListener("submit", e => { e.preventDefault(); done(input.value.trim()); });
     form.querySelector("[data-no]")!.addEventListener("click", () => done(null)); form.addEventListener("keydown", e => { if (e.key === "Escape") done(null); });
   });
   const confirmAsk = (label: string): Promise<boolean> => modal<boolean>(label, (form, done) => {
-    form.innerHTML = `<label>${esc(label)}</label><div class="row"><button type="button" data-no>Cancelar</button><button type="submit" class="pri danger">Remover</button></div>`;
+    form.innerHTML = `<label>${esc(label)}</label><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri danger">Remove</button></div>`;
     form.addEventListener("submit", e => { e.preventDefault(); done(true); }); form.querySelector("[data-no]")!.addEventListener("click", () => done(false));
   }).then(v => !!v);
   let toastT = 0;
@@ -100,11 +93,11 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     renderCode();
   }
   function renderCode(): void {
-    const p = P(); gen = generate(p, ui.flow, { runnable: exec });
+    const p = P(); gen = generate(p, ui.flow, { runnable: true });   // uma só versão do código: a completa (função, wrappers, simuladores e a chamada)
     const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel ? gen.map[ui.sel] : undefined;
     const hl = (l: string): string => esc(l).replace(/(\/\/.*$)|(&quot;[^&]*?&quot;)|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g, (m, c, s, n, w, par) => c ? `<span class="tk-c">${c}</span>` : s ? `<span class="tk-s">${s}</span>` : n ? `<span class="tk-n">${n}</span>` : /^(?:const|let|await|async|import|from|export|type|return|if|else|for|of|try|catch|function|as)$/.test(w) ? `<span class="tk-k">${w}</span>${par ?? ""}` : /^(?:State|Promise|Record|unknown|Fn)$/.test(w) ? `<span class="tk-t">${w}</span>${par ?? ""}` : par ? `<span class="tk-f">${w}</span>(` : m);
     el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
-    el.fname.textContent = exec ? gen.runFile : gen.fileName; $("#runhint").hidden = !exec; $("#runcmd").textContent = gen.runCommand; el.meta.textContent = `${lines.length} linhas`;
+    el.fname.textContent = gen.runFile; $("#runcmd").textContent = gen.runCommand; el.meta.textContent = `${lines.length} lines`;
     const n = ui.sel ? locate(p, ui.sel)?.node : undefined; el.selname.textContent = n ? (n.t === "fn" ? n.title : n.t) : "";
   }
   const scrollToSel = (): void => { const r = ui.sel && gen?.map[ui.sel]; if (!r) return; const e = el.code.querySelector<HTMLElement>(`[data-n="${r[0]}"]`); if (e) el.code.scrollTo({ top: Math.max(0, e.offsetTop - 60), behavior: "smooth" }); };
@@ -137,13 +130,13 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   });
 
   // ───────── cadastro de responsáveis ─────────
-  const KIND_NAME = { maquina: "Lib do Node", pessoa: "Pessoa", ia: "Agente de IA" } as const;
-  const agentsDialog = (): Promise<void> => modal<void>("Responsáveis", (form, done) => {
+  const KIND_NAME = { maquina: "Browser lib", pessoa: "Person", ia: "AI agent" } as const;
+  const agentsDialog = (): Promise<void> => modal<void>("Sources", (form, done) => {
     const draw = (): void => {
       form.classList.add("wide");
-      form.innerHTML = `<label>Responsáveis do projeto</label><div class="agl">${P().agents.map(a => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` · ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remover ${esc(a.name)}" aria-label="Remover ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
-        <div class="agadd"><select name="kind" aria-label="Tipo"><option value="maquina">Lib do Node</option><option value="pessoa">Pessoa</option><option value="ia">Agente de IA</option></select><input name="name" placeholder="nome (ex.: node:zlib, Maria, Redator)" aria-label="Nome" spellcheck="false"><input name="tasks" placeholder="funções da lib (ex.: gzip, gunzip)" aria-label="Funções da lib" spellcheck="false"><button type="submit" class="pri">Adicionar</button></div>
-        <div class="row"><button type="button" data-no>Fechar</button></div>`;
+      form.innerHTML = `<label>Project sources</label><div class="agl">${P().agents.map(a => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` · ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remove ${esc(a.name)}" aria-label="Remove ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
+        <div class="agadd"><select name="kind" aria-label="Type"><option value="maquina">Browser lib</option><option value="pessoa">Person</option><option value="ia">AI agent</option></select><input name="name" placeholder="name (e.g. Math, Maria, Writer)" aria-label="Name" spellcheck="false"><input name="tasks" placeholder="functions: round(value) -> result; max(a, b) -> result" aria-label="Lib functions with inputs and outputs" spellcheck="false"><button type="submit" class="pri">Add</button></div>
+        <div class="row"><button type="button" data-no>Close</button></div>`;
       form.querySelector("[data-no]")!.addEventListener("click", () => done());
       form.querySelectorAll<HTMLElement>("[data-rm-agent]").forEach(b => b.addEventListener("click", () => { run({ type: "removeAgent", id: b.dataset["rmAgent"]! }, false); draw(); }));
       const kind = form.elements.namedItem("kind") as HTMLSelectElement, tasks = form.elements.namedItem("tasks") as HTMLInputElement; const sync = (): void => { tasks.hidden = kind.value !== "maquina"; }; kind.addEventListener("change", sync); sync();
@@ -151,6 +144,135 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     };
     form.addEventListener("submit", e => { e.preventDefault(); const f = new FormData(form); if (run({ type: "addAgent", kind: String(f.get("kind")), name: String(f.get("name") ?? ""), tasks: String(f.get("tasks") ?? "") }, false)) draw(); });
     form.addEventListener("keydown", e => { if (e.key === "Escape") done(); }); draw();
+  });
+
+  // ───────── caixas de edição das entradas ─────────
+  const refNames = (n: Fn): string[] => { const f = locate(P(), n.id)?.flow; return f ? [...new Set(fnsOf(f).flatMap(x => x.outs))] : []; };
+  /** O select de tipo: os tipos e, em outro grupo, TODOS os estados disponíveis no contexto (escolher um liga a entrada a ele). */
+  const typeOpts = (d: ArgDraft, states: StateRef[], removable = false): string => {
+    const isState = d.type === "ref" && states.some(s => s.name === d.value);
+    return ARG_TYPES.map(t => `<option value="${t.type}"${t.type === d.type && !isState ? " selected" : ""}>${t.label}</option>`).join("")
+      + (states.length ? `<optgroup label="States available in the context">${states.map(s => `<option value="state:${esc(s.name)}"${isState && d.value === s.name ? " selected" : ""}>${esc(s.name)} — ${s.kind === "loop" ? "for variable" : `from ${esc(s.from)}`}</option>`).join("")}</optgroup>` : "")
+      + (removable ? `<optgroup label="Data"><option value="__remove">remove this data</option></optgroup>` : "");
+  };
+  /** Acha o rascunho por caminho: "0" = o parâmetro 0; "0/fields/2" = o campo 2 dele (nome); "0/fields/2/draft" = o valor desse campo. */
+  const draftAt = (root: ArgDraft[], path: string): { d?: ArgDraft; field?: { name: string; draft: ArgDraft }; parent?: ArgDraft; idx?: number } => {
+    const seg = path.split("/"); let cur: ArgDraft = root[Number(seg[0])]!, field: { name: string; draft: ArgDraft } | undefined, parent: ArgDraft | undefined, idx: number | undefined, i = 1;
+    while (i < seg.length) {
+      if (seg[i] !== "fields") break; parent = cur; idx = Number(seg[i + 1]); field = cur.fields[idx]; i += 2;
+      if (seg[i] === "draft" && field) { cur = field.draft; i++; }
+    }
+    return { d: cur, ...(field ? { field } : {}), ...(parent ? { parent } : {}), ...(idx !== undefined ? { idx } : {}) };
+  };
+  /** Um valor editável: tipo + valor; objeto mostra os filhos (campo, tipo, valor) e "Add child". */
+  const draftHtml = (d: ArgDraft, path: string, states: StateRef[], depth = 0, removable = false): string => {
+    const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>`
+      : d.type === "ref" && states.some(x => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>`
+      : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">`
+      : d.type === "object" ? ""
+      : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
+    const kids = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
+    return `<div class="argd d${depth}"><select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable)}</select>${val}</div>${kids}`;
+  };
+  /**
+   * A caixa de um dado (clicar no marcador). Função de LIB: os nomes vêm do contrato; cada entrada tem TIPO e VALOR. Função ABSTRATA: os mesmos
+   * campos de valor (tipo, valor, estados do contexto, objeto com filhos) e, além disso, os nomes são editáveis, dá para remover e "Add child".
+   * Saídas só têm nome. Tudo é rascunho até o "Save".
+   */
+  const dataEditor = (n: Fn, side: "in" | "out", opts: { names?: string[]; start?: boolean } = {}): Promise<void> => modal<void>(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
+    const lib = !!contractOf(P(), n), editable = !lib, withValue = side === "in";
+    const names: string[] = opts.names ? [...opts.names] : [...(side === "in" ? n.ins : n.outs)]; if (opts.start && !names.length) { const base = side === "in" ? "input" : "output"; names.push(base); }   // dado novo: nome automático (renomeia-se clicando no texto do dado)
+    const drafts: ArgDraft[] = names.map(nm => (withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft())), refs = refNames(n), states = statesFor(P(), n.id); form.classList.add("wide");
+    // o nome só é editável em linhas NOVAS (e nas saídas, que só têm nome); uma entrada que já existe abre igual à de lib: nome fixo, select de tipo e valor
+    const fresh: boolean[] = names.map(() => false); const nameEditable = (i: number): boolean => editable && (!withValue || !!fresh[i]);
+    const canAdd = (): boolean => editable && (!withValue || names.length > 1);   // "Add child": numa saída, num objeto (cubo) com vários dados ou ao criar
+    const title = (): string => (names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`);
+    const draw = (): void => {
+      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type and value. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${nameEditable(i) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i]!, String(i), states, 0, editable) : ""}</div>`).join("")}
+        ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
+        <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
+      form.querySelector("[data-no]")!.addEventListener("click", () => done());
+    };
+    form.addEventListener("change", e => {
+      const t = e.target as HTMLInputElement | HTMLSelectElement, path = t.dataset["path"], k = t.dataset["k"]; if (!k) return;
+      if (k === "pname") { names[Number(t.dataset["i"])] = t.value.trim(); return; }
+      if (!path) return; const hit = draftAt(drafts, path);
+      if (k === "name" && hit.field) hit.field.name = t.value; else if (k === "value" && hit.d) hit.d.value = t.value;
+      else if (k === "type" && hit.d) {
+        if (t.value === "__remove") {   // "remove this data" no select de tipo (função comum): tira a linha; se era a única, aplica na hora
+          const i = Number(path.split("/")[0]); names.splice(i, 1); drafts.splice(i, 1); fresh.splice(i, 1);
+          if (!names.length) { run({ type: "setData", id: n.id, side, names: [], values: [] }, false); done(); return; } draw(); return;
+        }
+        if (t.value.startsWith("state:")) Object.assign(hit.d, emptyDraft("ref"), { value: t.value.slice(6) });   // um estado do contexto
+        else { const keep = hit.d.value; Object.assign(hit.d, emptyDraft(t.value as ArgType), t.value === "expr" || t.value === "text" ? { value: keep } : {}); }
+        draw();
+      }
+    });
+    form.addEventListener("click", e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>("[data-add],[data-rm],[data-del],[data-newrow]"); if (!b) return;
+      if (b.dataset["add"] !== undefined) { const o = draftAt(drafts, b.dataset["add"]).d!; let i = o.fields.length + 1; while (o.fields.some(f => f.name === `field${i}`)) i++; o.fields.push({ name: `field${i}`, draft: emptyDraft() }); }
+      else if (b.dataset["rm"] !== undefined) { const r = draftAt(drafts, b.dataset["rm"]); r.parent!.fields.splice(r.idx!, 1); }
+      else if (b.dataset["del"] !== undefined) { const i = Number(b.dataset["del"]); names.splice(i, 1); drafts.splice(i, 1); fresh.splice(i, 1); }
+      else { let i = names.length + 1; while (names.includes(`field${i}`)) i++; names.push(`field${i}`); drafts.push(emptyDraft()); fresh.push(true); }
+      draw();
+    });
+    form.addEventListener("keydown", e => { if (e.key === "Escape") done(); });
+    form.addEventListener("submit", e => {
+      e.preventDefault(); form.querySelectorAll<HTMLInputElement>("input[data-k]").forEach(i => { const k = i.dataset["k"]; if (k === "pname") { names[Number(i.dataset["i"])] = i.value.trim(); return; } const hit = draftAt(drafts, i.dataset["path"]!); if (k === "value" && hit.d) hit.d.value = i.value; if (k === "name" && hit.field) hit.field.name = i.value; });
+      try {
+        const values = withValue ? drafts.map(d => buildArg(d)) : [];
+        if (editable) { const keep = names.map((nm, i) => [nm, values[i] ?? ""] as const).filter(([nm]) => nm); run({ type: "setData", id: n.id, side, names: keep.map(k => k[0]), values: keep.map(k => k[1]) }, false); }
+        else names.forEach((nm, i) => { run({ type: "setArg", id: n.id, name: nm, value: values[i]! }, false); });
+        done();
+      } catch (err) { toast(err instanceof Error ? err.message : String(err)); }
+    });
+    draw();
+  });
+
+  /** Caixa da condição do if: cláusulas (dado + operador + valor) ligadas por AND / OR, com os estados do contexto no select. */
+  const condDialog = (ifId: string, current: string, kids: readonly import("./model").Node[]): Promise<void> => modal<void>("Condition", (form, done) => {
+    const first = (ns: readonly import("./model").Node[]): string | undefined => { for (const x of ns) { if (x.t === "fn" && !x.kids.length) return x.id; const r = first(x.t === "try" ? [...x.kids, ...x.catchKids] : x.t === "if" ? [...x.kids, ...x.elseKids] : x.kids); if (r) return r; } return undefined; };
+    const states = (() => { const f = first(kids); return f ? statesFor(P(), f) : []; })(), draft: CondDraft = inferCond(current); form.classList.add("wide");
+    const stateOpts = (sel: string): string => states.length ? `<optgroup label="States available in the context">${states.map(s => `<option value="state:${esc(s.name)}"${sel === s.name ? " selected" : ""}>${esc(s.name)} — ${s.kind === "loop" ? "for variable" : `from ${esc(s.from)}`}</option>`).join("")}</optgroup>` : "";
+    const preview = (): string => { try { return buildCond(draft) || "(empty)"; } catch (e) { return e instanceof Error ? e.message : String(e); } };
+    const draw = (): void => {
+      form.innerHTML = `<label>Condition of the if</label><p class="hint">Pick a state from the context or type a data path, choose how to compare it, and chain more conditions with AND / OR (AND is evaluated before OR).</p>
+        <div class="conds">${draft.clauses.map((c, i) => {
+          const isState = states.some(s => s.name === c.left.value), r = c.right, rIsState = r.type === "ref" && states.some(s => s.name === r.value);
+          return `<div class="cond">${i === 0 ? '<span class="cj">IF</span>' : `<select class="cj" data-ci="${i}" data-k="join" aria-label="Join">${JOINERS.map(j => `<option value="${j.join}"${c.join === j.join ? " selected" : ""}>${j.label}</option>`).join("")}</select>`}
+            <select data-ci="${i}" data-k="left" aria-label="Data"><option value="custom"${isState ? "" : " selected"}>data path / expression…</option>${stateOpts(isState ? c.left.value : "")}</select>
+            ${isState ? "" : `<input data-ci="${i}" data-k="leftv" value="${esc(c.left.value)}" placeholder="e.g. customer.status" spellcheck="false" aria-label="Data path or expression">`}
+            <select data-ci="${i}" data-k="op" aria-label="Operator">${COND_OPS.map(o => `<option value="${o.op}"${c.op === o.op ? " selected" : ""}>${o.label}</option>`).join("")}</select>
+            ${needsRight(c.op) ? `<select data-ci="${i}" data-k="rtype" aria-label="Value type"><option value="text"${r.type === "text" ? " selected" : ""}>text</option><option value="number"${r.type === "number" ? " selected" : ""}>number</option><option value="boolean"${r.type === "boolean" ? " selected" : ""}>boolean</option><option value="expr"${r.type === "expr" || (r.type === "ref" && !rIsState) ? " selected" : ""}>expression</option>${stateOpts(rIsState ? r.value : "")}</select>${
+              r.type === "boolean" ? `<select data-ci="${i}" data-k="rvalue" aria-label="Value"><option value="true"${r.value === "true" ? " selected" : ""}>true</option><option value="false"${r.value !== "true" ? " selected" : ""}>false</option></select>` : rIsState ? "" : `<input data-ci="${i}" data-k="rvalue" value="${esc(r.value)}" placeholder="${r.type === "number" ? "number (e.g. 3)" : r.type === "text" ? "text (e.g. active)" : "expression"}" spellcheck="false" aria-label="Value">`}` : ""}
+            <button type="button" class="ib danger" data-cdel="${i}" title="Remove this condition" aria-label="Remove this condition">${icon("trash")}</button></div>`; }).join("")}</div>
+        <div class="row"><button type="button" class="addkid" data-cadd="&&">${icon("plus")}Add AND</button><button type="button" class="addkid" data-cadd="||">${icon("plus")}Add OR</button><span class="sp"></span></div>
+        <code class="preview" id="cpreview">${esc(preview())}</code>
+        <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
+      form.querySelector("[data-no]")!.addEventListener("click", () => done());
+    };
+    const upd = (t: HTMLInputElement | HTMLSelectElement): boolean => {
+      const i = Number(t.dataset["ci"]), c = draft.clauses[i]; if (!c) return false; const k = t.dataset["k"];
+      if (k === "join") c.join = t.value as Joiner;
+      else if (k === "left") { if (t.value.startsWith("state:")) { c.left = { type: "ref", value: t.value.slice(6), fields: [] }; } else c.left = { type: "ref", value: "", fields: [] }; return true; }
+      else if (k === "leftv") c.left = { type: "expr", value: t.value, fields: [] };
+      else if (k === "op") { c.op = t.value as CondOp; return true; }
+      else if (k === "rtype") { if (t.value.startsWith("state:")) c.right = { type: "ref", value: t.value.slice(6), fields: [] }; else c.right = { type: t.value as "text" | "number" | "boolean" | "expr", value: t.value === "boolean" ? "true" : (c.right.type === "ref" ? "" : c.right.value), fields: [] }; return true; }
+      else if (k === "rvalue") c.right = { ...c.right, value: t.value };
+      return false;
+    };
+    form.addEventListener("input", e => { const t = e.target as HTMLInputElement; if (t.dataset["k"] === "leftv" || t.dataset["k"] === "rvalue") { upd(t); const pv = form.querySelector("#cpreview"); if (pv) pv.textContent = preview(); } });
+    form.addEventListener("change", e => { const t = e.target as HTMLInputElement | HTMLSelectElement; if (!t.dataset["k"]) return; if (upd(t)) draw(); else { const pv = form.querySelector("#cpreview"); if (pv) pv.textContent = preview(); } });
+    form.addEventListener("click", e => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>("[data-cadd],[data-cdel]"); if (!b) return;
+      if (b.dataset["cadd"]) draft.clauses.push(emptyClause(b.dataset["cadd"] as Joiner)); else { draft.clauses.splice(Number(b.dataset["cdel"]), 1); if (!draft.clauses.length) draft.clauses.push(emptyClause()); } draw();
+    });
+    form.addEventListener("keydown", e => { if (e.key === "Escape") done(); });
+    form.addEventListener("submit", e => {
+      e.preventDefault(); try { const test = buildCond(draft); if (!test) { toast("Add at least one condition"); return; } run({ type: "setIf", id: ifId, test }, false); done(); } catch (err) { toast(err instanceof Error ? err.message : String(err)); }
+    });
+    draw();
   });
 
   // ───────── ações (data-act) ─────────
@@ -166,15 +288,27 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     exitScope: d => void run({ type: "exitScope", id: d["id"]! }),
     parallel: d => void run({ type: "setParallel", id: d["id"]!, on: d["on"] === "true" }),
     setScope: d => void run({ type: "setScope", id: d["id"]!, count: kids(d["id"]!) + Number(d["delta"]) }, false),
-    remove: async d => { const l = locate(P(), d["id"]!); if (l && l.node.kids.length && !(await confirmAsk(`Remover “${l.node.t === "fn" ? l.node.title : l.node.t}” e tudo dentro dela?`))) return; if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false); },
-    rename: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; ui.sel = n.id; const v = await ask("Novo nome da função:", n.title); if (v) run({ type: "rename", id: n.id, title: v }); else render(); },
+    remove: async d => { const l = locate(P(), d["id"]!); if (l && l.node.kids.length && !(await confirmAsk(`Remove “${l.node.t === "fn" ? l.node.title : l.node.t}” and everything inside it?`))) return; if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false); },
+    rename: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; ui.sel = n.id; const v = await ask("New function name:", n.title); if (v) run({ type: "rename", id: n.id, title: v }); else render(); },
     editBlock: async d => {
       const id = d["id"]!, n = locate(P(), id)?.node; if (!n) return;
-      if (n.t === "for") { const v = await ask("Variável do for (cada item):", n.v); if (!v) return; const c = await ask("Coleção percorrida:", n.coll); if (c) run({ type: "setFor", id, v, coll: c }, false); }
-      else if (n.t === "if") { const test = await ask("Condição do if (dado testado, ex.: estoque_ok):", n.test); if (test) run({ type: "setIf", id, test }, false); }
+      if (n.t === "for") { const v = await ask("for variable (each item):", n.v); if (!v) return; const c = await ask("Collection to loop over:", n.coll); if (c) run({ type: "setFor", id, v, coll: c }, false); }
+      else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
     },
-    addIo: async d => { const v = await ask(d["kind"] === "in" ? "Nome da nova entrada:" : "Nome da nova saída:"); if (v) run({ type: d["kind"] === "in" ? "addInput" : "addOutput", id: d["id"]!, name: v }, false); },
-    rmIo: d => void run({ type: d["kind"] === "in" ? "removeInput" : "removeOutput", id: d["id"]!, name: d["name"]! }, false),
+    editData: async d => {
+      const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
+      if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length === 1) await ACT["renameOut"]!(d); else toast("This function’s outputs come from the lib contract"); return; }
+      await dataEditor(n, side);
+    },
+    renameOut: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const v = await ask("Name of the data this function returns:", n.outs[0] ?? ""); if (v) run({ type: "renameData", id: n.id, to: v }, false); },
+    // caixa fantasma: entrada abre a caixa só com select e valor (o nome é automático); saída é criada na hora, só tem nome
+    addIo: async d => {
+      const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return;
+      if (d["kind"] === "in") { await dataEditor(n, "in", { start: true }); return; }
+      let i = 2, name = "output"; while (n.outs.includes(name)) name = `output${i++}`; run({ type: "setData", id: n.id, side: "out", names: [...n.outs, name] }, false);
+    },
+    /** Clicar no texto do dado (função comum, um dado só) renomeia. */
+    renameData: async d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", cur = d["name"]!; const v = await ask(side === "in" ? "Input data name:" : "Output data name:", cur); if (v && v !== cur) run({ type: "renameIo", id: n.id, side, from: cur, to: v }, false); },
   };
 
   host.addEventListener("click", e => {
@@ -192,12 +326,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);
   });
   el.sel.addEventListener("change", () => { ui.flow = el.sel.value; ui.sel = null; fitted = false; render(); });
-  $("#delFlow").addEventListener("click", async () => { const f = locate(P(), ui.flow)?.node; if (!f || f.t !== "fn") return; if (!(await confirmAsk(`Excluir o fluxo “${f.title}” e tudo dentro dele?`))) return; run({ type: "removeFlow", id: f.id }, false); });
-  proj.querySelector("#save")!.addEventListener("click", () => { const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P())], { type: "application/json" })); a.href = url; a.download = "projeto-flow.json"; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  $("#delFlow").addEventListener("click", async () => { const f = locate(P(), ui.flow)?.node; if (!f || f.t !== "fn") return; if (!(await confirmAsk(`Delete the flow “${f.title}” and everything inside it?`))) return; run({ type: "removeFlow", id: f.id }, false); });
+  proj.querySelector("#save")!.addEventListener("click", () => { const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P())], { type: "application/json" })); a.href = url; a.download = "flow-project.json"; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
   const fileIn = host.ownerDocument.getElementById("openFile") as HTMLInputElement; proj.querySelector("#open")!.addEventListener("click", () => fileIn.click());
   fileIn.addEventListener("change", async () => {
     const f = fileIn.files?.[0]; fileIn.value = ""; if (!f) return;
-    try { const p = parseProject(await f.text()); store.load(p); ui.flow = p.flows[0]!.id; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; toast(`Projeto “${p.name}” aberto`); } catch (e) { toast(e instanceof FlowError ? e.message : String(e)); }
+    try { const p = parseProject(await f.text()); store.load(p); ui.flow = p.flows[0]!.id; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; toast(`Project “${p.name}” opened`); } catch (e) { toast(e instanceof FlowError ? e.message : String(e)); }
   });
   proj.querySelector("#agents")!.addEventListener("click", () => void agentsDialog());
   $("#newFlow").addEventListener("click", () => void run({ type: "newFlow" }));
@@ -206,18 +340,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   $("#txtIn").addEventListener("click", () => { ui.txtIn = !ui.txtIn; render(); });
   $("#expand").addEventListener("click", () => { (ui.closed as Set<string>).clear(); render(); });
   $("#collapse").addEventListener("click", () => { const f = locate(P(), ui.flow)?.node; if (f?.t === "fn") f.kids.forEach(function mark(n): void { if (n.t === "fn" && n.kids.length) (ui.closed as Set<string>).add(n.id); }); render(); });
-  host.querySelectorAll<HTMLElement>("[data-tab]").forEach(b => b.addEventListener("click", () => { tab = b.dataset["tab"] as "ts" | "cmd"; host.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String(x === b))); $("#p-ts").classList.toggle("on", tab === "ts"); $("#p-cmd").classList.toggle("on", tab === "cmd"); }));
-  host.querySelectorAll<HTMLElement>("[data-view]").forEach(b => b.addEventListener("click", () => { exec = b.dataset["view"] === "run"; host.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderCode(); }));
-  $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([gen.code], { type: "text/plain" })); a.href = url; a.download = exec ? gen.runFile : gen.fileName; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
-  $("#cmdcopy").addEventListener("click", async () => { await navigator.clipboard?.writeText(gen?.runCommand ?? "").catch(() => {}); $("#cmdcopy").textContent = "Copiado"; setTimeout(() => ($("#cmdcopy").textContent = "Copiar comando"), 1200); });
-  $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copiado"; setTimeout(() => ($("#copy").textContent = "Copiar"), 1200); });
-  const fillPayload = (): void => { const ex = EXAMPLES[el.cmdSel.value]; el.payload.value = JSON.stringify(ex ? ex(ui.sel ?? ui.flow) : {}, null, 2); };
-  el.cmdSel.addEventListener("change", fillPayload); fillPayload();
-  $("#run").addEventListener("click", () => {
-    try { const id = store.dispatch({ type: el.cmdSel.value as Command["type"], ...JSON.parse(el.payload.value || "{}") }); el.res.innerHTML = `<span class="ok">ok</span><pre class="res">${esc(JSON.stringify({ created: id ?? null }, null, 2))}</pre>`; }
-    catch (err) { el.res.innerHTML = `<span class="er">erro</span><pre class="res">${esc(err instanceof Error ? err.message : String(err))}</pre>`; }
-  });
-  $("#reset").addEventListener("click", () => { const s = sampleProject(); store.load(s.project); ui.flow = s.main; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; });
+  const showTab = (name: "ts" | "term"): void => { tab = name; host.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String((x as HTMLElement).dataset["tab"] === name))); host.querySelectorAll(".pane").forEach(pn => pn.classList.toggle("on", pn.id === `p-${name}`)); };
+  host.querySelectorAll<HTMLElement>("[data-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset["tab"] as "ts" | "term")));
+  $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  $("#cmdcopy").addEventListener("click", async () => { await navigator.clipboard?.writeText(gen?.runCommand ?? "").catch(() => {}); $("#cmdcopy").textContent = "Copied"; setTimeout(() => ($("#cmdcopy").textContent = "Copy command"), 1200); });
+  $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });
+  const reset = (): void => { const s = sampleProject(); store.load(s.project); ui.flow = s.main; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; };
   host.ownerDocument.addEventListener("keydown", e => {
     const tg = e.target as HTMLElement; if (/input|textarea|select/i.test(tg.tagName)) return;
     if (!e.metaKey && !e.ctrlKey && !e.altKey) { if (e.key === "+" || e.key === "=") { zoomTo(ui.zoom * 1.15); return; } if (e.key === "-") { zoomTo(ui.zoom / 1.15); return; } if (e.key === "0") { auto = true; render(); return; } }
@@ -225,7 +353,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   });
 
   // ───────── barra de ferramentas ao passar o mouse nas barras e etiquetas do plano ─────────
-  const leaveBar = (): void => { window.clearTimeout(hovT); hovT = window.setTimeout(() => el.plan.querySelector(".bar-tools")?.remove(), 450); };
+  const SWITCH_MS = 110, LEAVE_MS = 180;   // trocar de alvo e sumir: rápido, mas com folga para o mouse chegar ao menu
+  const leaveBar = (): void => { window.clearTimeout(hovT); hovT = window.setTimeout(() => el.plan.querySelector(".bar-tools")?.remove(), LEAVE_MS); };
   el.plan.addEventListener("mouseover", e => {
     const h = (e.target as HTMLElement).closest<SVGElement>("[data-hover]"); if (!h) return;
     window.clearTimeout(hovT); const id = h.dataset["hover"]!, part = (h.dataset["part"] as "main" | "catch" | "else" | undefined) ?? "main", key = id + part;
@@ -236,7 +365,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       bar.style.left = Math.max(4, (hr.left - pr.left) / k) + "px"; bar.style.top = Math.max(2, (hr.top - pr.top) / k - 30) + "px";
       bar.addEventListener("mouseenter", () => window.clearTimeout(hovT)); bar.addEventListener("mouseleave", leaveBar); el.plan.append(bar);
     };
-    if (cur) hovT = window.setTimeout(show, 350); else show();
+    if (cur) hovT = window.setTimeout(show, SWITCH_MS); else show();
   });
   el.plan.addEventListener("mouseout", e => { if ((e.target as HTMLElement).closest("[data-hover]")) leaveBar(); });
 
@@ -253,9 +382,75 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
   });
 
+  // ───────── painel de código: abrir/fechar e arrastar a linha divisória ─────────
+  const app = host.querySelector<HTMLElement>(".app")!, splitter = $("#splitter"), PREFS_KEY = "flow-novo-ui-v1";
+  let prefs: Prefs = parsePrefs((() => { try { return localStorage.getItem(PREFS_KEY); } catch { return null; } })());
+  const total = (): number => app.clientWidth;
+  const applyPrefs = (save = true): void => {
+    prefs.codeW = clampCodeWidth(prefs.codeW, total()); app.style.setProperty("--codew", prefs.codeW + "px"); app.classList.toggle("code-off", !prefs.codeOpen);
+    $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen)); splitter.setAttribute("aria-valuenow", String(prefs.codeW)); splitter.setAttribute("aria-valuemin", "300"); splitter.hidden = !prefs.codeOpen;
+    if (save) try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* sem espaço: segue */ }
+    window.requestAnimationFrame(() => { if (auto) fit(); });
+  };
+  const toggleCode = (): void => { prefs.codeOpen = !prefs.codeOpen; applyPrefs(); };
+  $("#codeToggle").addEventListener("click", toggleCode);
+  splitter.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return; e.preventDefault(); app.classList.add("resizing");
+    const move = (ev: PointerEvent): void => { const r = app.getBoundingClientRect(); prefs.codeW = r.right - 12 - ev.clientX - 6; applyPrefs(false); };
+    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); app.classList.remove("resizing"); applyPrefs(); };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+  });
+  splitter.addEventListener("dblclick", () => { prefs.codeW = CODE_DEFAULT; applyPrefs(); });
+  splitter.addEventListener("keydown", e => { const step = e.shiftKey ? 80 : 24; if (e.key === "ArrowLeft") prefs.codeW += step; else if (e.key === "ArrowRight") prefs.codeW -= step; else if (e.key === "Enter") toggleCode(); else return; e.preventDefault(); applyPrefs(); });
+  host.ownerDocument.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "\\") { e.preventDefault(); toggleCode(); } });
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => { if (auto && last) fit(); }).observe(el.scroll);
+  window.addEventListener("resize", () => applyPrefs(false)); applyPrefs(false);
+
+  // ───────── executar no navegador + terminal ─────────
+  let running: Running | null = null; const tbody = $("#tbody"), tstat = $("#tstat");
+  const addLine = (level: LogLevel, text: string, t?: number): void => {
+    const d = host.ownerDocument.createElement("div"); d.className = `tline ${level}`;
+    if (t !== undefined) { const ts = host.ownerDocument.createElement("span"); ts.className = "tt"; ts.textContent = `${Math.round(t)} ms`; d.append(ts); }
+    const body = host.ownerDocument.createElement(level === "table" || text.includes("\n") ? "pre" : "span"); body.textContent = text; d.append(body); tbody.append(d);
+    while (tbody.children.length > 2000) tbody.firstElementChild?.remove(); tbody.scrollTop = tbody.scrollHeight;
+  };
+  const setRunning = (on: boolean): void => {
+    $("#exec").innerHTML = icon(on ? "square" : "play"); $("#exec").title = on ? "Stop the run (Ctrl+Enter)" : "Run this flow in the browser (Ctrl+Enter)"; $("#exec").setAttribute("aria-label", on ? "Stop" : "Run"); $("#exec").classList.toggle("on", on); $("#tRun").textContent = on ? "Stop" : "Run";
+    tstat.textContent = on ? "running…" : tstat.textContent; tstat.classList.toggle("busy", on);
+  };
+  const runFlow = (): void => {
+    if (running) { running.stop(); return; }
+    const flow = locate(P(), ui.flow)?.node; if (!flow || flow.t !== "fn") return; showTab("term"); tbody.innerHTML = "";
+    let code: string; try { code = generate(P(), ui.flow, { js: true }).code; } catch (e) { addLine("error", String(e)); return; }
+    addLine("system", `▶ ${flow.title}`); setRunning(true);
+    running = runInWorker(code, ev => {
+      if (ev.type === "log") { addLine(ev.level, ev.text, ev.t); return; }
+      running = null; setRunning(false);
+      if (ev.type === "done") { addLine("system", `✓ finished in ${Math.round(ev.ms)} ms`); tstat.textContent = "done"; }
+      else { addLine("error", ev.message); addLine("system", `✗ failed after ${Math.round(ev.ms)} ms`); tstat.textContent = "error"; }
+    });
+  };
+  $("#exec").addEventListener("click", runFlow); $("#tRun").addEventListener("click", runFlow);
+  $("#tClear").addEventListener("click", () => { tbody.innerHTML = ""; if (!running) tstat.textContent = "ready"; });
+  host.ownerDocument.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); runFlow(); } });
+
+  // ───────── dicas rápidas dos botões (o title nativo demora ~1s; esta aparece em 50 ms, fora do zoom do canvas) ─────────
+  const tip = host.ownerDocument.createElement("div"); tip.className = "tip"; tip.setAttribute("role", "tooltip"); host.ownerDocument.body.append(tip); let tipT = 0;
+  const hideTip = (): void => { window.clearTimeout(tipT); tip.classList.remove("on"); };
+  host.ownerDocument.addEventListener("mouseover", e => {
+    const b = (e.target as HTMLElement).closest?.<HTMLElement>("button[title], [data-tip]"); if (!b) return;
+    if (b.hasAttribute("title")) { b.dataset["tip"] = b.getAttribute("title")!; b.removeAttribute("title"); }   // sem a dica nativa, que demora
+    const text = b.dataset["tip"]; if (!text) return; window.clearTimeout(tipT);
+    tipT = window.setTimeout(() => {
+      tip.textContent = text; tip.classList.add("on"); const r = b.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = Math.max(4, Math.min(window.innerWidth - w - 4, r.left + r.width / 2 - w / 2)) + "px"; tip.style.top = (r.top - h - 6 < 4 ? r.bottom + 6 : r.top - h - 6) + "px";
+    }, 50);
+  });
+  for (const t of ["mouseout", "mousedown", "wheel", "keydown"]) host.ownerDocument.addEventListener(t, hideTip, true);
+
   const off = store.subscribe(render);
   render();
-  return { store, ui, render, destroy: () => { off(); hist.remove(); host.innerHTML = ""; } };
+  return { store, ui, render, reset, destroy: () => { running?.stop(); off(); proj.remove(); tip.remove(); host.innerHTML = ""; } };
 }
 
 const STORE_KEY = "flow-novo-projeto-v1";

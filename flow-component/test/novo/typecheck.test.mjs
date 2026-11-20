@@ -19,17 +19,24 @@ const project = () => { let q = emptyProject("T"); q.agents = structuredClone([.
 
 describe("o código gerado compila sem erros de TypeScript", () => {
   for (const runnable of [false, true]) {
-    it(`fazer_onboarding e main do exemplo (${runnable ? "executável" : "módulo"})`, () => {
+    it(`onboarding e main do exemplo (${runnable ? "executável" : "módulo"})`, () => {
       const s = sampleProject();
       for (const f of s.project.flows) { const g = generate(s.project, f.id, { runnable }); expect(check(g.code, g.runFile), g.code).toEqual([]); }
     });
   }
-  it("libs com qualquer task e quantidade de argumentos (os.platform, path.basename, console.log, crypto)", () => {
+  it("todas as funções de todas as libs do catálogo (wrappers com argumentos do contrato) compilam", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "libs" });
-    for (const [agent, task] of [["os", "platform"], ["path", "basename"], ["console", "log"], ["crypto", "randomUUID"], ["http", "get"]]) { const f = d.go({ type: "addChild", id: m, title: "f" }); d.go({ type: "assign", id: f, agent }); d.go({ type: "setTask", id: f, task }); d.go({ type: "addOutput", id: f, name: `${task}_out` }); }
-    for (const runnable of [false, true]) { const g = generate(d.q, m, { runnable }); expect(check(g.code, g.runFile), g.code).toEqual([]); }
+    for (const ag of DEFAULT_AGENTS.filter(x => x.kind === "maquina")) for (const task of ag.tasks) { const f = d.go({ type: "addChild", id: m, title: "f" }); d.go({ type: "assign", id: f, agent: ag.id }); d.go({ type: "setTask", id: f, task }); }
+    for (const runnable of [false, true]) { const g = generate(d.q, m, { runnable }); expect(g.code).toContain("export const wrappers"); expect(check(g.code, g.runFile), g.code).toEqual([]); }
   });
-  it("condições e repetições citando dados de fora, de dentro e da própria repetição", () => {
+  it("lib com entradas preenchidas (valor fixo, dado produzido antes, expressão, objeto) e saída renomeada", () => {
+    const d = project(), m = d.go({ type: "newFlow", title: "linked" }), a = d.go({ type: "addChild", id: m, title: "Parse" }); d.go({ type: "assign", id: a, agent: "json" }); d.go({ type: "setTask", id: a, task: "parse" });
+    d.go({ type: "setArg", id: a, name: "text", value: '"{\\"n\\": 1}"' }); d.go({ type: "renameData", id: a, to: "parsed" });
+    const b = d.go({ type: "addChild", id: m, title: "Show" }); d.go({ type: "assign", id: b, agent: "console" }); d.go({ type: "setArg", id: b, name: "text", value: "parsed" });
+    const c = d.go({ type: "addChild", id: m, title: "Table" }); d.go({ type: "assign", id: c, agent: "console" }); d.go({ type: "setTask", id: c, task: "table" }); d.go({ type: "setArg", id: c, name: "data", value: "{ parsed, size: String(parsed).length }" });
+    for (const runnable of [false, true]) { const g = generate(d.q, m, { runnable }); expect(g.code).toContain("await parse({ ...state, text: "); expect(check(g.code, g.runFile), g.code).toEqual([]); }
+  });
+  it("condições e repetições citando data de fora, de dentro e da própria repetição", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "exprs" });
     const a = d.go({ type: "addChild", id: m, title: "Ler" }); d.go({ type: "addOutput", id: a, name: "pedidos" });
     const b = d.go({ type: "addChild", id: m, title: "Tratar" }); const f = d.go({ type: "wrap", id: b, kind: "for", v: "pedido", coll: "pedidos" });

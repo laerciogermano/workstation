@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, COMMAND_NAMES, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
+import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
 
 /** Projeto de teste: raiz "R" com filhos A, B, C, D (todos folhas). */
 function base() {
@@ -17,7 +17,7 @@ const kinds = ["if", "for", "try"] as const;
 describe("fluxos e funções", () => {
   it("newFlow cria uma raiz; renomear só vale para funções", () => {
     const t = base(); expect(t.p.flows.map(f => f.title)).toEqual(["R"]);
-    const n = t.run({ type: "newFlow" }); expect(locate(t.p, n)!.node).toMatchObject({ t: "fn", title: "Fazer novo fluxo" });
+    const n = t.run({ type: "newFlow" }); expect(locate(t.p, n)!.node).toMatchObject({ t: "fn", title: "New flow" });
     t.run({ type: "rename", id: t.a, title: "Renomeada" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("Renomeada");
     const ifId = t.run({ type: "wrap", id: t.b, kind: "if" }); fails(() => apply(t.p, { type: "rename", id: ifId, title: "x" }), "invalid");
     fails(() => apply(t.p, { type: "rename", id: t.a, title: "  " }), "invalid");
@@ -110,10 +110,10 @@ describe("if, for e try: particularidades", () => {
   });
   it("try nasce com um catch contendo a função de tratamento; addChild catch entra na primeira posição do catch", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.b, kind: "try" }); const node = () => locate(t.p, tr)!.node as { catchKids: Node[] };
-    expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Tratar erro"]);
-    t.run({ type: "addChild", id: tr, catch: true, title: "Primeiro do catch" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Tratar erro"]);
-    const h = node().catchKids[1]!.id; t.run({ type: "addSibling", id: h, title: "Depois" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Tratar erro", "Depois"]);
-    t.run({ type: "exitScope", id: h }); expect(t.rootKids()).toEqual(["A", "try", "Tratar erro", "Depois", "C", "D"]);
+    expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Handle error"]);
+    t.run({ type: "addChild", id: tr, catch: true, title: "Primeiro do catch" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Handle error"]);
+    const h = node().catchKids[1]!.id; t.run({ type: "addSibling", id: h, title: "Depois" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Handle error", "Depois"]);
+    t.run({ type: "exitScope", id: h }); expect(t.rootKids()).toEqual(["A", "try", "Handle error", "Depois", "C", "D"]);
   });
   it("a raiz não aceita try/if/for nem irmãos", () => { const t = base(); for (const k of kinds) fails(() => apply(t.p, { type: "wrap", id: t.root, kind: k }), "root"); expect(isRoot(t.p, t.root)).toBe(true); });
 });
@@ -127,14 +127,14 @@ describe("entradas, saídas, responsável e paralelo", () => {
     const i = t.run({ type: "wrap", id: t.b, kind: "if" }); fails(() => apply(t.p, { type: "addInput", id: i, name: "x" }), "invalid");
   });
   it("assign: lib concreta força uma task do catálogo; setTask só aceita tasks da lib; IA/pessoa mantêm o nome", () => {
-    const t = base(); t.run({ type: "assign", id: t.a, agent: "http" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("get");
-    t.run({ type: "setTask", id: t.a, task: "post" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("post"); fails(() => apply(t.p, { type: "setTask", id: t.a, task: "voar" }), "invalid");
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "math" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("random");
+    t.run({ type: "setTask", id: t.a, task: "round" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("round"); fails(() => apply(t.p, { type: "setTask", id: t.a, task: "voar" }), "invalid");
     t.run({ type: "assign", id: t.b, agent: "lia" }); expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ title: "B", agent: "lia" });
     t.run({ type: "assign", id: t.b, agent: null }); expect((locate(t.p, t.b)!.node as Fn).agent).toBeNull(); fails(() => apply(t.p, { type: "assign", id: t.b, agent: "nao-existe" }), "not_found");
   });
   it("setResp: só pessoa; trocar de IA para outro responsável limpa a pessoa", () => {
     const t = base(); t.run({ type: "assign", id: t.a, agent: "lia" }); t.run({ type: "setResp", id: t.a, resp: "ana" }); expect((locate(t.p, t.a)!.node as Fn).resp).toBe("ana");
-    fails(() => apply(t.p, { type: "setResp", id: t.a, resp: "lia" }), "invalid"); t.run({ type: "assign", id: t.a, agent: "http" }); expect((locate(t.p, t.a)!.node as Fn).resp).toBeNull();
+    fails(() => apply(t.p, { type: "setResp", id: t.a, resp: "lia" }), "invalid"); t.run({ type: "assign", id: t.a, agent: "math" }); expect((locate(t.p, t.a)!.node as Fn).resp).toBeNull();
   });
   it("setParallel precisa de uma função irmã anterior", () => {
     const t = base(); fails(() => apply(t.p, { type: "setParallel", id: t.a, on: true }), "invalid"); t.run({ type: "setParallel", id: t.b, on: true }); expect((locate(t.p, t.b)!.node as Fn).par).toBe(true);
@@ -168,9 +168,9 @@ describe("fluxos: excluir", () => {
 describe("cadastro de responsáveis", () => {
   it("addAgent: lib (com funções), pessoa e IA; valida tipo, nome repetido e funções da lib", () => {
     const t = base(); const lib = t.run({ type: "addAgent", kind: "maquina", name: "node:zlib", tasks: "gzip, gunzip, gzip" }); const pe = t.run({ type: "addAgent", kind: "pessoa", name: "Maria", tasks: "ignorado" }); const ia = t.run({ type: "addAgent", kind: "ia", name: "Redator" });
-    const find = (id: string) => t.p.agents.find(a => a.id === id)!; expect(find(lib)).toMatchObject({ kind: "maquina", name: "node:zlib", tasks: ["gzip", "gunzip"] }); expect(find(pe)).toMatchObject({ kind: "pessoa", tasks: [] }); expect(find(ia).kind).toBe("ia");
+    const find = (id: string) => t.p.agents.find(a => a.id === id)!; expect(find(lib)).toMatchObject({ kind: "maquina", name: "node:zlib", tasks: ["gzip", "gunzip"], contracts: { gzip: { ins: ["input"], outs: ["result"] } } }); expect(find(pe)).toMatchObject({ kind: "pessoa", tasks: [] }); expect(find(ia).kind).toBe("ia");
     fails(() => apply(t.p, { type: "addAgent", kind: "maquina", name: "NODE:ZLIB", tasks: "x" }), "invalid"); fails(() => apply(t.p, { type: "addAgent", kind: "maquina", name: "node:vm" }), "invalid"); fails(() => apply(t.p, { type: "addAgent", kind: "robo", name: "x" }), "invalid"); fails(() => apply(t.p, { type: "addAgent", kind: "pessoa", name: " " }), "invalid");
-    t.run({ type: "assign", id: t.a, agent: lib }); expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ agent: lib, title: "gzip" });   // o responsável novo já serve
+    t.run({ type: "assign", id: t.a, agent: lib }); expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ agent: lib, title: "gzip", ins: ["input"], outs: ["result"] });   // o responsável novo já serve, com o contrato padrão
   });
   it("removeAgent tira o responsável e solta as funções que o usavam", () => {
     const t = base(); const ia = t.run({ type: "addAgent", kind: "ia", name: "Redator" }), pe = t.run({ type: "addAgent", kind: "pessoa", name: "Maria" });
@@ -181,15 +181,121 @@ describe("cadastro de responsáveis", () => {
 
 describe("salvar e abrir (serialize / parseProject)", () => {
   const rich = () => { const t = base(); const i = t.run({ type: "wrap", id: t.b, kind: "if", test: "ok" }); t.run({ type: "addElse", id: i }); t.run({ type: "wrap", id: t.c, kind: "try" }); t.run({ type: "wrap", id: t.d, kind: "for", v: "n", coll: "xs" });
-    t.run({ type: "assign", id: t.a, agent: "http" }); t.run({ type: "addInput", id: t.a, name: "x" }); t.run({ type: "addOutput", id: t.a, name: "y" }); t.run({ type: "setParallel", id: t.b, on: false }); return t; };
-  it("ida e volta preserva o projeto inteiro (blocos, else, catch, dados, responsáveis)", () => { const t = rich(); expect(parseProject(serialize(t.p))).toEqual(t.p); });
+    t.run({ type: "assign", id: t.a, agent: "web" }); t.run({ type: "setArg", id: t.a, name: "url", value: '"https://x.com"' }); t.run({ type: "renameData", id: t.a, to: "dado" }); t.run({ type: "addInput", id: t.d, name: "x" }); t.run({ type: "addOutput", id: t.d, name: "y" }); t.run({ type: "addAgent", kind: "maquina", name: "node:zlib", tasks: "gzip(data) -> comprimido" }); t.run({ type: "setParallel", id: t.b, on: false }); return t; };
+  it("ida e volta preserva o projeto inteiro (blocos, else, catch, data, responsáveis)", () => { const t = rich(); expect(parseProject(serialize(t.p))).toEqual(t.p); });
   it("depois de abrir, os ids novos não colidem com os existentes", () => { const t = rich(), q = parseProject(serialize(t.p)); const ids = new Set<string>(); walk(q.flows[0]!.kids, n => ids.add(n.id)); const r = apply(q, { type: "addChild", id: q.flows[0]!.id }); expect(ids.has(r.created!)).toBe(false); });
   it("recusa arquivo inválido com mensagem clara", () => {
     const t = rich(), good = JSON.parse(serialize(t.p)); const bad = (mut: (g: any) => void): string => { const g = structuredClone(good); mut(g); try { parseProject(JSON.stringify(g)); return "ok"; } catch (e) { return (e as Error).message; } };
-    expect(() => parseProject("{ não é json")).toThrow(/JSON válido/); expect(() => parseProject("{}")).toThrow(/não é um projeto do Flow/);
-    expect(bad(g => { g.version = 9; })).toMatch(/Versão 9/); expect(bad(g => { g.project.flows = []; })).toMatch(/nenhum fluxo/); expect(bad(g => { g.project.flows[0].kids[0].id = g.project.flows[0].id; })).toMatch(/Id repetido/);
-    expect(bad(g => { g.project.flows[0].kids[0].t = "while"; })).toMatch(/desconhecido/); expect(bad(g => { g.project.flows[0].kids[0].agent = "fantasma"; })).toMatch(/não existe/); expect(bad(g => { delete g.project.flows[0].kids[0].title; })).toMatch(/sem nome|desconhecido/);
-    expect(bad(g => { g.project.agents[0].kind = "robo"; })).toMatch(/Responsável inválido/); expect(bad(g => { g.project.flows[0].kids[0].ins = "x"; })).toMatch(/lista de textos/); expect(bad(() => undefined)).toBe("ok");
+    expect(() => parseProject("{ não é json")).toThrow(/valid JSON/); expect(() => parseProject("{}")).toThrow(/not a Flow project/);
+    expect(bad(g => { g.version = 9; })).toMatch(/Version 9/); expect(bad(g => { g.project.flows = []; })).toMatch(/no flow/); expect(bad(g => { g.project.flows[0].kids[0].id = g.project.flows[0].id; })).toMatch(/Duplicate id/);
+    expect(bad(g => { g.project.flows[0].kids[0].t = "while"; })).toMatch(/nknown/); expect(bad(g => { g.project.flows[0].kids[0].agent = "fantasma"; })).toMatch(/does not exist/); expect(bad(g => { delete g.project.flows[0].kids[0].title; })).toMatch(/without a name|nknown/);
+    expect(bad(g => { g.project.agents[0].kind = "robo"; })).toMatch(/Invalid source/); expect(bad(g => { g.project.flows[0].kids[0].ins = "x"; })).toMatch(/list of texts/); expect(bad(() => undefined)).toBe("ok");
   });
   it("Store.load troca o projeto e zera o histórico", () => { const t = base(), s = new Store(t.p); s.dispatch({ type: "addChild", id: t.a }); expect(s.canUndo).toBe(true); let n = 0; s.subscribe(() => n++); s.load(emptyProject("novo")); expect(s.project.name).toBe("novo"); expect(s.canUndo).toBe(false); expect(n).toBe(1); });
+});
+
+describe("funções de lib: contrato (entradas e saídas)", () => {
+  it("parseSignature lê nome(entradas) -> saídas; só o nome vira entrada → result; lixo é recusado", () => {
+    expect(parseSignature("log(text)")).toEqual({ task: "log", contract: { ins: ["text"], outs: [] } }); expect(parseSignature("max(a, b) -> result")).toEqual({ task: "max", contract: { ins: ["a", "b"], outs: ["result"] } });
+    expect(parseSignature("now() -> agora")).toEqual({ task: "now", contract: { ins: [], outs: ["agora"] } }); expect(parseSignature("gzip")).toEqual({ task: "gzip", contract: { ins: ["input"], outs: ["result"] } });
+    expect(parseSignature("123 inválido")).toBeNull(); expect(parseSignature("")).toBeNull();
+  });
+  it("escolher uma função da lib traz as entradas (abstratas) e saídas do contrato; trocar de função troca o contrato e guarda o que já foi preenchido", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "console" }); const f = () => locate(t.p, t.a)!.node as Fn;
+    expect(f()).toMatchObject({ title: "log", ins: ["text"], outs: [] }); expect(contractOf(t.p, f())).toEqual({ ins: ["text"], outs: [] });
+    t.run({ type: "setArg", id: t.a, name: "text", value: '"Olá"' }); t.run({ type: "setTask", id: t.a, task: "error" }); expect(f()).toMatchObject({ title: "error", ins: ["text"], args: { text: '"Olá"' } });   // mesma entrada: value mantido
+    t.run({ type: "setTask", id: t.a, task: "table" }); expect(f()).toMatchObject({ title: "table", ins: ["data"] }); expect(f().args).toBeUndefined();                                            // entrada diferente: volta a ficar abstrata
+    t.run({ type: "assign", id: t.a, agent: "math" }); t.run({ type: "setTask", id: t.a, task: "max" }); expect(f()).toMatchObject({ ins: ["a", "b"], outs: ["result"] });
+    t.run({ type: "assign", id: t.a, agent: "lia" }); expect(f().args).toBeUndefined(); expect(contractOf(t.p, f())).toBeNull();   // IA não tem contrato de lib
+  });
+  it("as entradas e saídas de uma função de lib vêm do contrato: não dá para adicionar nem remover à mão", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "console" });
+    for (const type of ["addInput", "removeInput", "addOutput", "removeOutput"] as const) fails(() => apply(t.p, { type, id: t.a, name: "x" }), "invalid");
+  });
+  it("setArg preenche (value fixo ou dado), limpa com vazio e valida", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "math" }); t.run({ type: "setTask", id: t.a, task: "max" }); const f = () => locate(t.p, t.a)!.node as Fn;
+    t.run({ type: "setArg", id: t.a, name: "a", value: " 10 " }); t.run({ type: "setArg", id: t.a, name: "b", value: "nome" }); expect(f().args).toEqual({ a: "10", b: "nome" });
+    t.run({ type: "setArg", id: t.a, name: "a", value: "" }); expect(f().args).toEqual({ b: "nome" }); t.run({ type: "setArg", id: t.a, name: "b", value: "" }); expect(f().args).toBeUndefined();
+    fails(() => apply(t.p, { type: "setArg", id: t.a, name: "naoexiste", value: "x" }), "not_found"); fails(() => apply(t.p, { type: "setArg", id: t.b, name: "x", value: "y" }), "not_found");   // a função b não tem a entrada x fails(() => apply(t.p, { type: "setArg", id: t.a, name: "a", value: "x".repeat(301) }), "invalid");
+  });
+  it("renameData dá nome ao dado que a lib devolve (só quando é um); o novo nome liga a próxima função", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "date" }); t.run({ type: "setTask", id: t.a, task: "now" }); t.run({ type: "renameData", id: t.a, to: "agora" }); expect((locate(t.p, t.a)!.node as Fn).outs).toEqual(["agora"]);
+    fails(() => apply(t.p, { type: "renameData", id: t.a, to: "nome inválido" }), "invalid"); fails(() => apply(t.p, { type: "renameData", id: t.b, to: "x" }), "invalid");
+    t.run({ type: "assign", id: t.c, agent: "console" }); fails(() => apply(t.p, { type: "renameData", id: t.c, to: "x" }), "invalid");          // log não devolve nada
+  });
+  it("entrada opcional (nome?) não é exigida do state; o contrato guarda quais são", () => {
+    expect(parseSignature("fetch(url, options?) -> response")).toEqual({ task: "fetch", contract: { ins: ["url", "options"], outs: ["response"], optional: ["options"] } });
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "web" }); expect(contractOf(t.p, locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["url", "options"], optional: ["options"] });
+  });
+  it("addAgent aceita contratos por assinatura (nome(entradas) -> saídas; separadas por ;) e valida os nomes", () => {
+    const t = base(); const id = t.run({ type: "addAgent", kind: "maquina", name: "node:zlib", tasks: "gzip(data) -> comprimido; gunzip(data, nivel) -> original" }); const ag = t.p.agents.find(a => a.id === id)!;
+    expect(ag.tasks).toEqual(["gzip", "gunzip"]); expect(ag.contracts).toEqual({ gzip: { ins: ["data"], outs: ["comprimido"] }, gunzip: { ins: ["data", "nivel"], outs: ["original"] } });
+    fails(() => apply(t.p, { type: "addAgent", kind: "maquina", name: "x", tasks: "ok(a b) -> c" }), "invalid"); fails(() => apply(t.p, { type: "addAgent", kind: "maquina", name: "y", tasks: "9 ruim" }), "invalid");
+  });
+  it("o contrato e os values preenchidos sobrevivem a salvar e abrir; contrato inválido no arquivo é recusado", () => {
+    const t = base(); t.run({ type: "assign", id: t.a, agent: "math" }); t.run({ type: "setTask", id: t.a, task: "max" }); t.run({ type: "setArg", id: t.a, name: "a", value: "7" });
+    const q = parseProject(serialize(t.p)); expect(q).toEqual(t.p); expect((locate(q, t.a)!.node as Fn).args).toEqual({ a: "7" });
+    const g = JSON.parse(serialize(t.p)); g.project.agents.find((a: { id: string }) => a.id === "math").contracts.max.ins = "x"; expect(() => parseProject(JSON.stringify(g))).toThrow(/list of texts/);
+  });
+});
+
+describe("projetos salvos antes das libs do navegador (migração)", () => {
+  const old = () => JSON.stringify({ format: "flow-novo", version: 1, project: { name: "Antigo", seq: 9, agents: [
+    { id: "console", kind: "maquina", name: "node:console", tasks: ["log", "table"] }, { id: "http", kind: "maquina", name: "node:http", tasks: ["get", "post"] }, { id: "lia", kind: "ia", name: "Lia", tasks: [] }, { id: "meu", kind: "maquina", name: "node:zlib", tasks: ["gzip"], contracts: { gzip: { ins: ["data"], outs: ["comprimido"] } } }],
+    flows: [{ t: "fn", id: "n1", title: "main", agent: null, resp: null, ins: [], outs: [], par: false, kids: [
+      { t: "fn", id: "n2", title: "log", agent: "console", resp: null, ins: [], outs: [], kids: [], par: false },
+      { t: "fn", id: "n3", title: "get", agent: "http", resp: null, ins: ["x"], outs: ["y"], kids: [], par: false },
+      { t: "fn", id: "n4", title: "gzip", agent: "meu", resp: null, ins: ["data"], outs: ["comprimido"], kids: [], par: false }] }] } });
+  it("troca as libs do Node pelas do navegador (mesmo id), solta quem usava as que saíram e completa o contrato", () => {
+    const p = parseProject(old()), find = (id: string) => locate(p, id)!.node as Fn;
+    expect(p.agents.find(a => a.id === "console")).toMatchObject({ name: "console", contracts: { log: { ins: ["text"], outs: [] } } }); expect(p.agents.some(a => a.id === "http")).toBe(false);
+    expect(find("n2")).toMatchObject({ agent: "console", title: "log", ins: ["text"] }); expect(find("n3")).toMatchObject({ agent: null, title: "get" });   // a lib saiu: a função fica sem responsável, com o nome
+    expect(p.agents.find(a => a.id === "meu")!.name).toBe("node:zlib");                                                                        // lib do usuário não é tocada
+    for (const n of ["Math", "JSON", "Date", "performance", "globalThis", "crypto"]) expect(p.agents.some(a => a.name === n), n).toBe(true);   // as libs novas aparecem
+  });
+  it("o código gerado pelo projeto migrado não tem import nem tipos no modo navegador (módulo vira import dinâmico)", async () => {
+    const { generate } = await import("../../novo/codegen"), p = parseProject(old()), g = generate(p, "n1", { js: true });
+    expect(g.code).not.toMatch(/^import /m); expect(g.code).toContain('const node_zlib = await import("node:zlib");'); expect(g.code).not.toContain("node_console");
+  });
+  it("migrar duas vezes dá o mesmo result (idempotente)", () => { const p = parseProject(old()); expect(parseProject(serialize(p))).toEqual(p); });
+});
+
+describe("estados disponíveis no contexto de uma função (o que a caixa de edição oferece)", () => {
+  const flow = () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "x" }); t.run({ type: "addOutput", id: t.b, name: "y" }); t.run({ type: "addOutput", id: t.b, name: "y2" }); t.run({ type: "addOutput", id: t.d, name: "z" });
+    const f = t.run({ type: "wrap", id: t.b, kind: "for", v: "item", coll: "xs" }); t.run({ type: "setScope", id: f, count: 2 }); return { ...t, f, st: (id: string) => statesFor(t.p, id).map(s => s.name) };
+  };
+  it("só o que vem antes: saídas das funções anteriores e as variáveis dos for que cercam a função", () => {
+    const t = flow(); expect(t.st(t.a)).toEqual([]); expect(t.st(t.b)).toEqual(["x", "item"]); expect(t.st(t.c)).toEqual(["x", "y", "y2", "item"]);
+    expect(t.st(t.d)).toEqual(["x", "y", "y2"]);                       // fora do for: a variável item não vale
+    const s = statesFor(t.p, t.d); expect(s.map(r => r.from)).toEqual(["A", "B", "B"]); expect(statesFor(t.p, t.c).at(-1)).toEqual({ name: "item", from: "for", kind: "loop" });
+  });
+  it("funções dentro de composta, do if/else e do catch também contam; raiz e id desconhecido não têm estados", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "x" }); const k = t.run({ type: "addChild", id: t.b, title: "filho" }); t.run({ type: "addOutput", id: k, name: "k" });
+    const i = t.run({ type: "wrap", id: t.c, kind: "if", test: "ok" }); const e = t.run({ type: "addElse", id: i, title: "senao" }); t.run({ type: "addOutput", id: e, name: "e" });
+    expect(statesFor(t.p, t.d).map(s => s.name)).toEqual(["x", "k", "e"]); expect(statesFor(t.p, t.root)).toEqual([]); expect(statesFor(t.p, "zzz")).toEqual([]);
+  });
+  it("sem repetir nomes e sem as saídas da própria função", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "dup" }); t.run({ type: "addOutput", id: t.b, name: "dup" }); t.run({ type: "addOutput", id: t.c, name: "mine" });
+    expect(statesFor(t.p, t.c).map(s => s.name)).toEqual(["dup"]);
+  });
+});
+
+describe("valores também em função abstrata (setArg / setData)", () => {
+  it("setArg vale para qualquer função com a entrada; o valor acompanha renomear e some ao remover a entrada", () => {
+    const t = base(); t.run({ type: "addInput", id: t.a, name: "preco" }); t.run({ type: "setArg", id: t.a, name: "preco", value: "10" }); const f = () => locate(t.p, t.a)!.node as Fn;
+    expect(f().args).toEqual({ preco: "10" }); fails(() => apply(t.p, { type: "setArg", id: t.a, name: "outro", value: "1" }), "not_found");
+    t.run({ type: "renameIo", id: t.a, side: "in", from: "preco", to: "valor" }); expect(f().args).toEqual({ valor: "10" }); t.run({ type: "removeInput", id: t.a, name: "valor" }); expect(f().args).toBeUndefined();
+  });
+  it("trocar de responsável mantém os valores das entradas que continuam existindo", () => {
+    const t = base(); t.run({ type: "addInput", id: t.a, name: "x" }); t.run({ type: "setArg", id: t.a, name: "x", value: '"a"' }); t.run({ type: "assign", id: t.a, agent: "lia" }); expect((locate(t.p, t.a)!.node as Fn).args).toEqual({ x: '"a"' });
+  });
+  it("setData troca os nomes e os valores de um lado de uma vez (só função comum)", () => {
+    const t = base(); const f = () => locate(t.p, t.a)!.node as Fn;
+    t.run({ type: "setData", id: t.a, side: "in", names: ["a", "b"], values: ['"x"', ""] }); expect(f()).toMatchObject({ ins: ["a", "b"], args: { a: '"x"' } });
+    t.run({ type: "setData", id: t.a, side: "in", names: ["b"], values: ["2"] }); expect(f()).toMatchObject({ ins: ["b"], args: { b: "2" } }); t.run({ type: "setData", id: t.a, side: "out", names: ["r", "s"] }); expect(f().outs).toEqual(["r", "s"]);
+    t.run({ type: "setData", id: t.a, side: "in", names: [], values: [] }); expect(f().ins).toEqual([]); expect(f().args).toBeUndefined();
+    fails(() => apply(t.p, { type: "setData", id: t.a, side: "in", names: ["a", "a"], values: [] }), "invalid"); fails(() => apply(t.p, { type: "setData", id: t.a, side: "in", names: ["class"], values: [] }), "invalid");
+    fails(() => apply(t.p, { type: "setData", id: t.a, side: "in", names: ["a"], values: ["x".repeat(301)] }), "invalid"); t.run({ type: "assign", id: t.b, agent: "console" }); fails(() => apply(t.p, { type: "setData", id: t.b, side: "in", names: ["a"], values: [] }), "invalid");
+  });
 });

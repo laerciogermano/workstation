@@ -6,15 +6,13 @@ import { altKids, type Block, type Fn, type Node } from "./model";
  *  - blocos e funções compostas cobrem os passos dos filhos;
  *  - o catch fica em paralelo à última célula do try e o que vem depois só começa após os dois.
  */
-export type RowKind = "fn" | "io" | "block" | "catch" | "else";
+export type RowKind = "fn" | "block" | "catch" | "else";
 export interface Span { s: number; e: number }
 export interface Row {
   kind: RowKind; id: string; node: Node; depth: number; s: number; e: number;
   /** Última linha coberta (blocos e compostas). */
   last: number;
   leaf: boolean; closed: boolean;
-  /** Número do passo, entradas e saídas (linhas "io"). */
-  ins?: string[]; outs?: string[];
 }
 export interface Scene { rows: Row[]; nSteps: number; span: Map<string, Span>; maxDepth: number; leaves: Row[] }
 
@@ -36,7 +34,6 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
           step = Math.max(step, s + 1); prev = sp; if (emit) span.set(n.id, sp);
           const row = push({ kind: "fn", id: n.id, node: n, depth, s, e: s, leaf: true, closed: false });
           if (emit) { row.last = rows.length - 1; if (!inCatch) leaves.push(row); }
-          if (n.ins.length || n.outs.length) { const io = push({ kind: "io", id: n.id, node: n, depth, s, e: s, leaf: false, closed: false, ins: n.ins, outs: n.outs }); if (emit) { io.last = rows.length - 1; row.last = rows.length - 1; } }
         } else {
           const row = push({ kind: "fn", id: n.id, node: n, depth, s: step, e: step, leaf: false, closed: isClosed });
           const idx = rows.length - 1, next = place(n.kids, depth + 1, step, emit && !isClosed, inCatch);
@@ -70,7 +67,6 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
   let n = 1;
   if (flow.kids.length === 0) {
     span.set(flow.id, { s: 0, e: 0 });
-    if (flow.ins.length || flow.outs.length) rows.push({ kind: "io", id: flow.id, node: flow, depth: 0, s: 0, e: 0, last: 1, leaf: false, closed: false, ins: flow.ins, outs: flow.outs });
     rootRow.last = rows.length - 1; leaves.push(rootRow);
   } else {
     n = Math.max(1, place(flow.kids, 1, 0, !rootRow.closed, false));

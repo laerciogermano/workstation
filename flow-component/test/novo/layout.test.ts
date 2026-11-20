@@ -21,9 +21,9 @@ describe("cena: linhas e passos", () => {
     const t = base(), s = t.sc(); expect(t.names(s)).toEqual(["R:0-3", "A:0-0", "B:1-1", "C:2-2", "D:3-3"]); expect(s.nSteps).toBe(4);
     expect(s.span.get(t.root)).toEqual({ s: 0, e: 3 }); expect(s.rows[0]!.last).toBe(4);
   });
-  it("linha de entradas/saídas aparece abaixo da função que tem dados", () => {
+  it("dados (entradas e saídas) não ganham linha própria: a tabela só tem funções e blocos", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" });
-    const s = t.sc(); expect(s.rows.map(r => r.kind)).toEqual(["fn", "fn", "io", "fn", "fn", "fn"]); const io = s.rows[2]!; expect(io).toMatchObject({ ins: ["x"], outs: ["y"] });
+    const s = t.sc(); expect(s.rows.map(r => r.kind)).toEqual(["fn", "fn", "fn", "fn", "fn"]); expect(s.rows.length).toBe(5); expect(s.rows[1]!.last).toBe(1);
   });
   it("funções em paralelo dividem o mesmo passo; o seguinte vem depois", () => {
     const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true }); expect(t.names(t.sc())).toEqual(["R:0-2", "A:0-0", "B:0-0", "C:1-1", "D:2-2"]);
@@ -41,7 +41,7 @@ describe("cena: linhas e passos", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "setScope", id: tr, count: 2 });
     const s = t.sc(), c = s.rows.find(r => r.kind === "catch")!;
     expect(s.span.get(tr)).toEqual({ s: 1, e: 2 }); expect(c.e).toBe(2);                                // termina junto com o try
-    expect(t.names(s).find(x => x.startsWith("Tratar erro"))).toBe("Tratar erro:2-2"); expect(t.names(s)).toContain("D:3-3");
+    expect(t.names(s).find(x => x.startsWith("Handle error"))).toBe("Handle error:2-2"); expect(t.names(s)).toContain("D:3-3");
     // catch maior que o try: começa junto com ele e o próximo só vem depois dos dois
     t.run({ type: "addChild", id: tr, catch: true, title: "c1" }); t.run({ type: "addChild", id: tr, catch: true, title: "c0" });
     const s2 = t.sc(), c2 = s2.rows.find(r => r.kind === "catch")!; expect(c2.s).toBe(s2.span.get(tr)!.s); expect(c2.e).toBe(3); expect(t.names(s2)).toContain("D:4-4");

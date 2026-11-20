@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { generate } from "../../novo/codegen";
 import { apply, DEFAULT_AGENTS, emptyProject } from "../../novo/model";
-import { sampleProject } from "../../novo/sample";
+import { browserDemoProject } from "../../novo/sample";
 
 const [maj = 0, min = 0] = process.versions.node.split(".").map(Number);
 const nodeOk = maj > 22 || (maj === 22 && min >= 6);
@@ -18,8 +18,8 @@ const exec = g => {
 const project = () => { let q = emptyProject("T"); q.agents = structuredClone([...DEFAULT_AGENTS]); const go = c => { const x = apply(q, c); q = x.project; return x.created ?? ""; }; return { go, get q() { return q; } }; };
 
 describe.skipIf(!nodeOk)("exportar o código e rodar no Node", () => {
-  it("o exemplo do projeto roda de verdade, só com libs do navegador", () => {
-    const sm = sampleProject(), g = generate(sm.project, sm.example, { runnable: true }), res = exec(g);
+  it("o demo de browser roda de verdade, só com libs do navegador", () => {
+    const sm = browserDemoProject(), g = generate(sm.project, sm.example, { runnable: true }), res = exec(g);
     expect(res.status, res.err + "\n" + g.code).toBe(0); expect(res.out).toMatch(/\{"id":"/); expect(res.out).toContain('{"id":"');
   });
   it("console.log de verdade: o wrapper recebe o text do flow e chama console.log(text)", () => {

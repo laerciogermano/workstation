@@ -58,7 +58,8 @@
   .app.ex-off{grid-template-columns:minmax(0,1fr);grid-template-areas:"fx" "hs" "side"}
   .app.ex-off.code-off{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) 34px;grid-template-areas:"fx" "side"}
   .app.code-off #splitter,.app.ex-off .explorer,.app.ex-off #exSplitter{display:none}
-  .app.code-off .side .tbody,.app.code-off .side .tbtn{display:none}
+  .app.code-off .side .tabs,.app.code-off .side #p-ts,.app.code-off .side .tbody,.app.code-off .side .tbtn{display:none}
+  .app.code-off .side #p-term{display:flex!important}
   .app.code-off .side{min-height:0;overflow:hidden}
   .app.resizing{user-select:none}.app.resizing .fx,.app.resizing .side{pointer-events:none}
   .splitter{position:relative;cursor:col-resize;touch-action:none;outline:none;z-index:4}.splitter[hidden]{display:none}

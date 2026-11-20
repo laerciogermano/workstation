@@ -2096,7 +2096,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
   // novo/app.ts
   function mount(host, store, flow) {
     const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-    let fileCodeText = null, fileView = "*", multi = null, hovT = 0, fitted = false, auto = true, last = null, gen = null;
+    const SHOW_CODE = /^(1|true|yes)$/i.test(new URLSearchParams(host.ownerDocument.defaultView?.location.search ?? "").get("dev") ?? "");
+    let fileCodeText = null, fileView = "*", multi = null, tab = SHOW_CODE ? "ts" : "term", hovT = 0, fitted = false, auto = true, last = null, gen = null;
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
@@ -2111,8 +2112,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
-      <section class="pane" id="p-ts" hidden><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term on" id="p-term"><div class="thead"><button type="button" class="term-toggle" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}<span class="tstat" id="tstat">Terminal</span></button><button type="button" id="tRun" class="tbtn" title="Run (Ctrl+Enter)" aria-label="Run">${icon("play")}</button><button type="button" id="tClear" class="tbtn" title="Clear" aria-label="Clear">${icon("eraser")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button type="button" role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button type="button" role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
+      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts"${SHOW_CODE ? "" : " hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><button type="button" class="term-toggle" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}<span class="tstat" id="tstat">Terminal</span></button><button type="button" id="tRun" class="tbtn" title="Run (Ctrl+Enter)" aria-label="Run">${icon("play")}</button><button type="button" id="tClear" class="tbtn" title="Clear" aria-label="Clear">${icon("eraser")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
@@ -3048,6 +3050,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
       auto = true;
       render();
     });
+    const showTab = (name) => {
+      if (!SHOW_CODE) name = "term";
+      tab = name;
+      host.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x.dataset["tab"] === name)));
+      host.querySelectorAll(".pane").forEach((pn) => {
+        const on = pn.id === `p-${name}`;
+        pn.classList.toggle("on", on);
+        if (pn.id === "p-ts") pn.hidden = !SHOW_CODE || !on;
+      });
+    };
+    host.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset["tab"])));
     $("#dl").addEventListener("click", () => {
       if (!gen) return;
       const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" }));
@@ -3185,6 +3198,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return null;
       }
     })());
+    if (SHOW_CODE) prefs.codeOpen = true;
     const total = () => app.clientWidth;
     const totalH = () => app.clientHeight;
     const TERM_MIN = 120, TERM_DEFAULT = 220;
@@ -3193,6 +3207,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       prefs.codeW = clampTermH(prefs.codeW);
       app.style.setProperty("--codew", prefs.codeW + "px");
       app.classList.toggle("code-off", !prefs.codeOpen);
+      if (!prefs.codeOpen && SHOW_CODE && tab === "ts") showTab("term");
       const tog = $("#codeToggle");
       tog.setAttribute("aria-pressed", String(prefs.codeOpen));
       tog.title = prefs.codeOpen ? "Hide the terminal (Ctrl+\\)" : "Show the terminal (Ctrl+\\)";

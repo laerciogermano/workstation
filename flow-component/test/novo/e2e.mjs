@@ -201,7 +201,7 @@ test("single complete code (no module/runnable toggle, no Call command tab); con
   const fid = await ev(`flowApp.store.project.flows[0].kids.at(-1).id`), mk = `.plan .dm[data-act=editData][data-id="${fid}"][data-side=in]`;
   assert.ok(await ev(`!!document.querySelector('.plan .dm .dot.a')`), "abstract (hollow) marker"); assert.equal(await ev(`document.querySelectorAll(".iorow").length`), 0, "no input/output rows");
   assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = \?/, "shows the name and ? while not filled");
-  assert.match(await code(), /\/\/ expected inputs \(from another layer\): text/); assert.match(await code(), /await log\(\{ \.\.\.state \}\);/); assert.doesNotMatch(await code(), /call\(/);
+  assert.doesNotMatch(await code(), /\/\/|\/\*/); assert.match(await code(), /await log\(\{ \.\.\.state \}\);/); assert.doesNotMatch(await code(), /call\(/);
   // click the marker: box with type + value; fill it in -> concrete, the value shows next to the data, code carries it
   await click(mk); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`)); await type("Hello, world"); await wait(150);
   assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /const text: unknown = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);

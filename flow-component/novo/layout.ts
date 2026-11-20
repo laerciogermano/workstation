@@ -35,9 +35,10 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
           const row = push({ kind: "fn", id: n.id, node: n, depth, s, e: s, leaf: true, closed: false });
           if (emit) { row.last = rows.length - 1; if (!inCatch) leaves.push(row); }
         } else {
-          const row = push({ kind: "fn", id: n.id, node: n, depth, s: step, e: step, leaf: false, closed: isClosed });
-          const idx = rows.length - 1, next = place(n.kids, depth + 1, step, emit && !isClosed, inCatch);
-          const sp: Span = { s: step, e: Math.max(step, next - 1) }; prev = null; if (emit) { span.set(n.id, sp); row.s = sp.s; row.e = sp.e; row.last = rows.length - 1; void idx; }
+          const s0 = n.par && prev ? prev.s : step;   // uma composição também pode rodar junto da anterior
+          const row = push({ kind: "fn", id: n.id, node: n, depth, s: s0, e: s0, leaf: false, closed: isClosed });
+          const idx = rows.length - 1, next = place(n.kids, depth + 1, s0, emit && !isClosed, inCatch);
+          const sp: Span = { s: s0, e: Math.max(s0, next - 1) }; prev = sp; if (emit) { span.set(n.id, sp); row.s = sp.s; row.e = sp.e; row.last = rows.length - 1; void idx; }
           step = Math.max(step, next);
         }
       } else {

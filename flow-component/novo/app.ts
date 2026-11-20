@@ -4,9 +4,11 @@ import { runInWorker, type LogLevel, type Running } from "./runner";
 import { contractOf, cubeName, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
-import { countForStep } from "./scope";
-import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planHeight, planWidth, tableWidth, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
-import { sampleProject } from "./sample";
+import { countForRow } from "./scope";
+import { layout } from "./layout";
+import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
+import { sampleProject, SAMPLE_TITLES } from "./sample";
+import { docExample } from "./docs-examples";
 
 /** Casca de DOM fina: toda regra vive em model/layout/view/codegen (testados sem navegador). */
 declare const mountTemas: ((el: HTMLElement) => void) | undefined;
@@ -29,8 +31,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
-        <span><i class="lg fc"></i>concrete function (browser lib)</span><span><i class="lg fa"></i>abstract function (AI · state)</span><span><i class="lg da"></i>abstract data (state)</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube (more than one data)</span>
-        <span><i class="lg dia"></i>selection (if)</span><span><i class="lg lp">↻</i>repetition (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
+        <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube</span>
+        <span><i class="lg dia"></i>selection</span><span><i class="lg lp">↻</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
       </div>
 
     </section>
@@ -50,9 +52,9 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const multiEl = host.ownerDocument.createElement("div"); multiEl.className = "multi"; multiEl.hidden = true; el.zoom.append(multiEl); multiEl.addEventListener("click", multiClick);
   // desfazer / refazer: só ao lado das opções do cabeçalho do Flow (nunca nas dicas dos componentes nem no topo da página)
   const proj = host.ownerDocument.createElement("div"); proj.id = "proj"; proj.className = "proj"; proj.setAttribute("role", "toolbar"); proj.setAttribute("aria-label", "Project");
-  proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open a saved project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Save the project (.json)">${icon("download")}Save</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
+  proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open an exported project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Export the project (.json)">${icon("download")}Export</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
   host.ownerDocument.querySelector(".topbar")?.append(proj);
-  const themes = host.ownerDocument.createElement("div"); themes.id = "temas"; host.ownerDocument.querySelector(".topbar")?.append(themes); if (typeof mountTemas === "function") mountTemas(themes);
+  const themes = host.ownerDocument.createElement("div"); themes.id = "temas"; host.ownerDocument.querySelector(".topbar")?.append(themes); themes.hidden = true;   // seletor de temas escondido (o tema ainda vem de ?tema= ou do salvo)
 
   // ───────── diálogos e avisos dentro da própria vista (prompt() do navegador pode ser bloqueado) ─────────
   const modal = <T,>(label: string, fill: (form: HTMLFormElement, done: (v: T) => void) => void): Promise<T> => new Promise(res => {
@@ -63,12 +65,36 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     fill(form, done); dlg.addEventListener("mousedown", e => { if (e.target === dlg) done(null as T); }); host.append(dlg);
     (form.querySelector("input") as HTMLInputElement | null)?.focus();
   });
+  /** Edição direta: um campo de texto sobre o próprio rótulo (sem modal). Enter/clicar fora confirma, Esc cancela. */
+  let actEl: HTMLElement | null = null;
+  /** O clique caiu em cima do TEXTO do elemento (e não na caixa em volta dele, que pode ser bem mais larga que o texto)? */
+  const onText = (el: Element, e: MouseEvent): boolean => {
+    const r = el.ownerDocument.createRange(); r.selectNodeContents(el); const b = r.getBoundingClientRect();
+    return b.width > 0 && e.clientX >= b.left - 1 && e.clientX <= b.right + 1 && e.clientY >= b.top - 1 && e.clientY <= b.bottom + 1;
+  };
+  const editInline = (value: string, label: string): Promise<string | null> => new Promise(res => {
+    const el = actEl; if (!el) { void ask(label, value).then(res); return; }
+    const rc = el.getBoundingClientRect(), cs = getComputedStyle(el), k = el instanceof SVGElement ? ui.zoom : 1;
+    const input = document.createElement("input"); input.type = "text"; input.value = value; input.spellcheck = false; input.setAttribute("aria-label", label);
+    const txtColor = el instanceof SVGElement && cs.fill && cs.fill !== "none" ? cs.fill : cs.color;
+    const w = Math.max(rc.width + 16, 48), h = Math.max(rc.height, 16);
+    // sem caixa: o campo fica transparente sobre o próprio texto (que some enquanto edita), só o cursor e a seleção aparecem
+    input.style.cssText = `position:fixed;z-index:60;box-sizing:border-box;left:${rc.left}px;top:${rc.top + rc.height / 2 - h / 2}px;width:${w}px;height:${h}px;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:${txtColor};caret-color:${txtColor};outline:none;box-shadow:none;font-family:${cs.fontFamily};font-size:${(parseFloat(cs.fontSize) || 12) * k}px;font-weight:${cs.fontWeight};letter-spacing:${cs.letterSpacing};text-align:left`;
+    const prevVis = el.style.visibility; el.style.visibility = "hidden";
+    let done = false; const fin = (v: string | null): void => { if (done) return; done = true; input.remove(); el.style.visibility = prevVis; res(v); };
+    input.addEventListener("keydown", e => { e.stopPropagation(); if (e.key === "Enter") fin(input.value.trim() || null); else if (e.key === "Escape") fin(null); });
+    input.addEventListener("blur", () => fin(input.value.trim() || null));
+    for (const t of ["pointerdown", "mousedown", "click", "dblclick"]) input.addEventListener(t, e => e.stopPropagation());
+    document.body.appendChild(input); input.focus(); input.select();
+  });
   const ask = (label: string, value = ""): Promise<string | null> => modal<string | null>(label, (form, done) => {
     form.innerHTML = `<label>${esc(label)}</label><input type="text" value="${esc(value)}" spellcheck="false" aria-label="${esc(label)}"><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">OK</button></div>`;
     const input = form.querySelector("input") as HTMLInputElement; input.select();
     form.addEventListener("submit", e => { e.preventDefault(); done(input.value.trim()); });
     form.querySelector("[data-no]")!.addEventListener("click", () => done(null)); form.addEventListener("keydown", e => { if (e.key === "Escape") done(null); });
   });
+  /** Quantas funções há DENTRO do nó (filhas, netas…, inclusive dentro de blocos). Só pede confirmação para remover quando são mais de uma. */
+  const innerFns = (n: Node): number => { let c = 0; const go = (list: readonly Node[]): void => { for (const x of list) { if (x.t === "fn") c++; go(kidsOf(x)); } }; go(kidsOf(n)); return c; };
   const confirmAsk = (label: string): Promise<boolean> => modal<boolean>(label, (form, done) => {
     form.innerHTML = `<label>${esc(label)}</label><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri danger">Remove</button></div>`;
     form.addEventListener("submit", e => { e.preventDefault(); done(true); }); form.querySelector("[data-no]")!.addEventListener("click", () => done(false));
@@ -97,7 +123,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     if (groups.length) {
       // todas as funções de um arquivo com as mesmas colunas: a maior tabela e a maior coluna do plano valem para todas (se uma cresce, todas crescem)
       const stack = (fns: Fn[]): { html: string; W: number; H: number } => {
-        const first = fns.map(f => build(p, f.id, ui)), minW = Math.max(...first.map(b => b.w)), tw = Math.max(...first.map(b => tableWidth(b.scene))); let W = 0, H = 0;
+        const first = fns.map(f => build(p, f.id, ui)), minW = Math.max(...first.map(b => b.w)), tw = Math.max(...first.map(b => tableWidth(b.scene, p))); let W = 0, H = 0;
         const html = fns.map(f => { const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData); W = Math.max(W, tw + planWidth(b.scene, b.w)); H += h + 34;
           return `<div class="blk${ui.sel === f.id ? " on" : ""}" data-fid="${f.id}"><div class="blk-t"><span class="fn-dot ${fnKind(p, f)}"></span>${esc(f.title)}</div><div class="blk-r" style="height:${h}px"><div class="gtable" style="width:${tw}px;--tw:${tw}px"><div class="ghead"><span>source</span><span>function</span></div>${b.table}</div><div class="gplan">${b.plan}</div></div></div>`; }).join("");
         return { html, W, H };
@@ -112,12 +138,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       multi = null; multiEl.hidden = true; multiEl.innerHTML = ""; el.table.hidden = el.plan.hidden = false;
     el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
     el.plan.innerHTML = last.plan;
-    const tw0 = tableWidth(last.scene); el.table.style.width = tw0 + "px"; (el.table.style as CSSStyleDeclaration).setProperty("--tw", tw0 + "px");
+    const tw0 = tableWidth(last.scene, P()); el.table.style.width = tw0 + "px"; (el.table.style as CSSStyleDeclaration).setProperty("--tw", tw0 + "px");
     const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData);
     el.zoom.style.width = W + "px"; el.zoom.style.height = H + "px"; applyView();
     }
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), fl = locate(p, ui.flow)?.flow;   // cabeçalho: arquivo › função em foco (sem função em foco na vista de arquivo / Files: só o arquivo)
-    el.flowName.textContent = fileView && !canRun() ? (fileView === "*" ? "Files" : bare(fileView)) : fl ? `${bare(flowFile(fl))} › ${fl.title}` : "Flow";
+    el.flowName.textContent = fileView && !canRun() ? (fileView === "*" ? "src" : bare(fileView)) : fl ? `${bare(flowFile(fl))} › ${fl.title}` : "Flow";
     host.ownerDocument.querySelectorAll<HTMLButtonElement>(".hist-btn").forEach(b => { b.disabled = b.dataset["hist"] === "undo" ? !store.canUndo : !store.canRedo; });
     ($("#txtIn")).setAttribute("aria-pressed", String(ui.txtIn)); $("#dataAll").setAttribute("aria-pressed", String(ui.allData !== false));
     if (!fitted || auto) { fitted = true; fit(); }
@@ -132,20 +158,30 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), files = new Map<string, Fn[]>(); for (const f of p.flows) { const k = flowFile(f); files.set(k, [...(files.get(k) ?? []), f]); }
     const curFile = (() => { const r = locate(p, ui.flow)?.flow; return r ? flowFile(r) : ""; })();
     const secOpen = !exClosed.has("sec:files");
-    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>Files</span><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
       const fid = "f:" + file, open = !exClosed.has(fid);
       const body = open ? fns.map(fn => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
       return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0]!.id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
     }).join("") : "");
   }
+  /** Renomeia direto na árvore: arquivo (sem a extensão) ou função. */
+  async function editExName(row: HTMLElement, nameEl: HTMLElement): Promise<void> {
+    actEl = nameEl;
+    if (row.dataset["ex"] === "file") { const file = row.dataset["file"]!, v = await editInline(file.replace(/\.[^.]+$/, ""), "File name"); if (v && v + ".ts" !== file && v !== file) { const to = /\.[A-Za-z0-9]+$/.test(v) ? v : v + ".ts"; if (fileView === file) fileView = to; run({ type: "renameFile", from: file, to: v }, false); } return; }
+    const n = locate(P(), row.dataset["flow"]!)?.node; if (!n || n.t !== "fn") return;
+    const v = await editInline(n.title, "Function name"); if (v && v !== n.title) run({ type: "rename", id: n.id, title: v }, false);
+  }
+  el.explorer.addEventListener("dblclick", e => { const t = e.target as HTMLElement, nameEl = t.closest<HTMLElement>(".ex-n"), row = t.closest<HTMLElement>("[data-ex]"); if (nameEl && row && row.dataset["ex"] !== "all" && onText(nameEl, e)) void editExName(row, nameEl); });
   el.explorer.addEventListener("click", e => {
     const t = e.target as HTMLElement, add = t.closest<HTMLElement>("[data-exadd]"); if (add) { { const taken = new Set(P().flows.map(f => f.title)); let n = 1, t = "new_function"; while (taken.has(t)) t = `new_function_${++n}`; run({ type: "newFlow", title: t, file: add.dataset["exadd"]! }); } return; }
+    if (t.closest("[data-exreset]")) { void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then(ok => { if (!ok) return; exClosed.clear(); fileView = "*"; fitted = false; reset(); render(); }); return; }
     const delFile = t.closest<HTMLElement>("[data-exdelfile]");
-    if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); void confirmAsk(`Remove the file “${file}” and its ${ids.length} function(s)?`).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }
+    if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); const total = P().flows.filter(f => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0); void (total > 1 ? confirmAsk(`Remove the file “${file}” and its ${total} function(s)?`) : Promise.resolve(true)).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }
     const del = t.closest<HTMLElement>("[data-exdel]"); if (del) { void delFlow(del.dataset["exdel"]!); return; }
     const fold = t.closest<HTMLElement>("[data-exfold]");
     if (fold) { const k = fold.dataset["exfold"]!; if (exClosed.has(k)) exClosed.delete(k); else exClosed.add(k); renderExplorer(); return; }
     const row = t.closest<HTMLElement>("[data-ex]"); if (!row) return;
+    const nameEl = t.closest<HTMLElement>(".ex-n"); if (nameEl && row.dataset["ex"] !== "all" && row.classList.contains("cur") && onText(nameEl, e)) { void editExName(row, nameEl); return; }   // clicar de novo no nome do item aberto edita
     if (row.dataset["ex"] === "all") { fileView = "*"; ui.sel = null; fitted = false; render(); return; }
     ui.flow = row.dataset["flow"]!; ui.sel = null; fitted = false; fileView = row.dataset["ex"] === "file" ? row.dataset["file"]! : null; render();   // arquivo: todas as funções dele (uma embaixo da outra); função: o fluxo dela
   });
@@ -165,8 +201,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   /** Posição e escala da vista (a "câmera"): arrastar o fundo mexe no pan, a roda mexe no zoom. */
   function applyView(): void { el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`; el.zv.textContent = Math.round(ui.zoom * 100) + "%"; }
   function fit(): void {
-    if (!last) return; const W = multi?.W ?? tableWidth(last.scene) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-    const narrow = cw < 640, k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
+    if (!last) return; const W = multi?.W ?? tableWidth(last.scene, P()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+    const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H)); ui.zoom = Math.round(k * 100) / 100; ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 }; applyView();   // em tela estreita não encolhe até ficar ilegível: arrasta com um dedo, pinça com dois
   }
   /** Zoom ancorado: o ponto sob (mx, my) (px da área da vista) continua no mesmo lugar. */
   const zoomTo = (k: number, mx = el.scroll.clientWidth / 2, my = el.scroll.clientHeight / 2): void => {
@@ -251,7 +287,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   /**
    * A caixa de um dado (clicar no marcador). Função de LIB: os nomes vêm do contrato; cada entrada tem TIPO e VALOR. Função ABSTRATA: os mesmos
    * campos de valor (tipo, valor, estados do contexto, objeto com filhos) e, além disso, os nomes são editáveis, dá para remover e "Add child".
-   * Saídas só têm nome. Tudo é rascunho até o "Save".
+   * Saídas só têm nome. Tudo é rascunho até o "Save" do diálogo.
    */
   const dataEditor = (n: Fn, side: "in" | "out", opts: { names?: string[]; start?: boolean } = {}): Promise<void> => modal<void>(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
     const lib = !!contractOf(P(), n), editable = !lib, withValue = side === "in";
@@ -381,8 +417,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     exitScope: d => void run({ type: "exitScope", id: d["id"]! }),
     parallel: d => void run({ type: "setParallel", id: d["id"]!, on: d["on"] === "true" }),
     setScope: d => void run({ type: "setScope", id: d["id"]!, count: kids(d["id"]!) + Number(d["delta"]) }, false),
-    remove: async d => { const l = locate(P(), d["id"]!); if (l && l.node.kids.length && !(await confirmAsk(`Remove “${l.node.t === "fn" ? l.node.title : l.node.t}” and everything inside it?`))) return; if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false); },
-    rename: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; ui.sel = n.id; const v = await ask("New function name:", n.title); if (v) run({ type: "rename", id: n.id, title: v }); else render(); },
+    remove: async d => { const l = locate(P(), d["id"]!); if (l && innerFns(l.node) > 1 && !(await confirmAsk(`Remove “${l.node.t === "fn" ? l.node.title : l.node.t}” and everything inside it?`))) return; if (ui.sel === d["id"]) ui.sel = null; run({ type: "remove", id: d["id"]! }, false); },
+    rename: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; ui.sel = n.id; const v = await editInline(n.title, "Function name"); if (v) run({ type: "rename", id: n.id, title: v }); else render(); },
     editBlock: async d => {
       const id = d["id"]!, n = locate(P(), id)?.node; if (!n) return;
       if (n.t === "for") await forDialog(n.id, n.v, n.coll, n.kids);
@@ -393,7 +429,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length === 1) await ACT["renameOut"]!(d); else toast("This function’s outputs come from the lib contract"); return; }
       await dataEditor(n, side);
     },
-    renameOut: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const v = await ask("Name of the data this function returns:", n.outs[0] ?? ""); if (v) run({ type: "renameData", id: n.id, to: v }, false); },
+    removeIo: d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; run({ type: d["side"] === "out" ? "removeOutput" : "removeInput", id: n.id, name: d["name"]! }, false); },
+    renameOut: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const v = await editInline(n.outs[0] ?? "", "Output data name"); if (v) run({ type: "renameData", id: n.id, to: v }, false); },
     // caixa fantasma: entrada abre a caixa só com select e valor (o nome é automático); saída é criada na hora, só tem nome
     addIo: async d => {
       const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return;
@@ -401,14 +438,14 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       let i = 2, name = "output"; while (n.outs.includes(name)) name = `output${i++}`; run({ type: "setData", id: n.id, side: "out", names: [...n.outs, name] }, false);
     },
     /** Clicar no texto do dado (função comum, um dado só) renomeia. */
-    renameData: async d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", cur = d["name"]!; const v = await ask(side === "in" ? "Input data name:" : "Output data name:", cur); if (v && v !== cur) run({ type: "renameIo", id: n.id, side, from: cur, to: v }, false); },
+    renameData: async d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", cur = d["name"]!; const v = await editInline(cur, side === "in" ? "Input data name" : "Output data name"); if (v && v !== cur) run({ type: "renameIo", id: n.id, side, from: cur, to: v }, false); },
   };
 
   host.addEventListener("click", e => {
     const t = e.target as HTMLElement;
     if (t.closest(".dlg, select")) return;
     const a = t.closest<HTMLElement>("[data-act]");
-    if (a?.dataset["act"] && ACT[a.dataset["act"]]) { e.stopPropagation(); void ACT[a.dataset["act"]]!(a.dataset); return; }
+    if (a?.dataset["act"] && ACT[a.dataset["act"]] && !(a.dataset["act"] === "rename" && !onText(a, e))) { e.stopPropagation(); actEl = a; void ACT[a.dataset["act"]]!(a.dataset); return; }   // renomear: só clicando em cima do texto; na caixa em volta, só seleciona
     const row = t.closest<HTMLElement>(".grow[data-id], [data-sel]");
     if (row) { ui.sel = row.dataset["id"] ?? row.dataset["sel"] ?? null; render(); scrollToSel(); }
   });
@@ -419,7 +456,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     else if (c === "setResp") run({ type: "setResp", id, resp: s.value || null }, false);
     else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);
   });
-  const delFlow = async (id: string): Promise<void> => { const f = locate(P(), id)?.node; if (!f || f.t !== "fn") return; if (!(await confirmAsk(`Delete the flow “${f.title}” and everything inside it?`))) return; run({ type: "removeFlow", id: f.id }, false); };
+  const delFlow = async (id: string): Promise<void> => { const f = locate(P(), id)?.node; if (!f || f.t !== "fn") return; if (innerFns(f) > 1 && !(await confirmAsk(`Delete the flow “${f.title}” and everything inside it?`))) return; run({ type: "removeFlow", id: f.id }, false); };
   proj.querySelector("#save")!.addEventListener("click", () => { const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P())], { type: "application/json" })); a.href = url; a.download = "flow-project.json"; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
   const fileIn = host.ownerDocument.getElementById("openFile") as HTMLInputElement; proj.querySelector("#open")!.addEventListener("click", () => fileIn.click());
   fileIn.addEventListener("change", async () => {
@@ -447,31 +484,33 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
 
   // ───────── barra de ferramentas ao passar o mouse nas barras e etiquetas do plano ─────────
   const SWITCH_MS = 110, LEAVE_MS = 180;   // trocar de alvo e sumir: rápido, mas com folga para o mouse chegar ao menu
-  const leaveBar = (): void => { window.clearTimeout(hovT); hovT = window.setTimeout(() => el.plan.querySelector(".bar-tools")?.remove(), LEAVE_MS); };
-  el.plan.addEventListener("mouseover", e => {
-    const h = (e.target as HTMLElement).closest<SVGElement>("[data-hover]"); if (!h) return;
-    window.clearTimeout(hovT); const id = h.dataset["hover"]!, part = (h.dataset["part"] as "main" | "catch" | "else" | undefined) ?? "main", key = id + part;
-    const cur = el.plan.querySelector<HTMLElement>(".bar-tools"); if (cur?.dataset["key"] === key) return;
+  const leaveBar = (): void => { window.clearTimeout(hovT); hovT = window.setTimeout(() => el.zoom.querySelectorAll(".bar-tools").forEach(b => b.remove()), LEAVE_MS); };
+  el.zoom.addEventListener("mouseover", e => {   // vale para o plano único e para cada função da vista de arquivo (multi)
+    const h = (e.target as HTMLElement).closest<SVGElement>("[data-hover],[data-sthover]"); if (!h) return;
+    const plan = h.closest<HTMLElement>(".gplan") ?? el.plan, isSt = h.dataset["sthover"] !== undefined;   // estado (dado embaixo da coluna) ou barra/etiqueta
+    window.clearTimeout(hovT); const id = (isSt ? h.dataset["sthover"] : h.dataset["hover"])!, part = (h.dataset["part"] as "main" | "catch" | "else" | undefined) ?? "main", key = isSt ? `${id}|${h.dataset["side"]}|${h.dataset["name"]}|st` : id + part;
+    const cur = el.zoom.querySelector<HTMLElement>(".bar-tools"); if (cur && cur.parentElement === plan && cur.dataset["key"] === key) return;
     const show = (): void => {
-      el.plan.querySelector(".bar-tools")?.remove(); const bar = host.ownerDocument.createElement("div"); bar.className = "bar-tools"; bar.dataset["key"] = key; bar.setAttribute("role", "toolbar");
-      bar.innerHTML = toolsHtml(toolsFor(P(), id, part)); const hr = h.getBoundingClientRect(), pr = el.plan.getBoundingClientRect(), k = ui.zoom;
+      el.zoom.querySelectorAll(".bar-tools").forEach(b => b.remove()); const bar = host.ownerDocument.createElement("div"); bar.className = "bar-tools"; bar.dataset["key"] = key; bar.setAttribute("role", "toolbar");
+      bar.innerHTML = toolsHtml(isSt ? stateTools(P(), id, h.dataset["side"] === "out" ? "out" : "in", h.dataset["name"] ?? "") : toolsFor(P(), id, part)); const hr = h.getBoundingClientRect(), pr = plan.getBoundingClientRect(), k = ui.zoom;
       bar.style.left = Math.max(4, (hr.left - pr.left) / k) + "px"; bar.style.top = Math.max(2, (hr.top - pr.top) / k - 30) + "px";
-      bar.addEventListener("mouseenter", () => window.clearTimeout(hovT)); bar.addEventListener("mouseleave", leaveBar); el.plan.append(bar);
+      bar.addEventListener("mouseenter", () => window.clearTimeout(hovT)); bar.addEventListener("mouseleave", leaveBar); plan.append(bar);
     };
     if (cur) hovT = window.setTimeout(show, SWITCH_MS); else show();
   });
-  el.plan.addEventListener("mouseout", e => { if ((e.target as HTMLElement).closest("[data-hover]")) leaveBar(); });
+  el.zoom.addEventListener("mouseout", e => { if ((e.target as HTMLElement).closest("[data-hover],[data-sthover]")) leaveBar(); });
 
   // ───────── alça da etiqueta: arrastar aumenta / diminui o bloco ─────────
-  el.plan.addEventListener("pointerdown", e => {
-    const hd = (e.target as HTMLElement).closest<SVGElement>("[data-drag]"); if (!hd || !last) return;
-    e.preventDefault(); e.stopPropagation(); const id = hd.dataset["drag"]!, svg = el.plan.querySelector("svg")!, p0 = P();
-    const guide = host.ownerDocument.createElement("div"); guide.className = "guide"; el.plan.append(guide);
-    const at = (ev: PointerEvent): number => { const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom; return countForStep(p0, last!.scene, id, Math.floor((x - G.OX) / last!.w)); };
-    const place = (n: number): void => { const l = locate(p0, id)!, items = [...(l.node as { kids: { id: string }[] }).kids, ...l.list.slice(l.index + 1)], last2 = items[n - 1], sp = last2 ? last!.scene.span.get(last2.id) : undefined; guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * last!.w + "px"; };
-    let n = at(e); place(n);
-    const move = (ev: PointerEvent): void => { n = at(ev); place(n); };
-    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); guide.remove(); const cur = kids(id); if (n !== cur) run({ type: "setScope", id, count: n }, false); };
+  el.zoom.addEventListener("pointerdown", e => {   // vale para o plano único e para cada função da vista de arquivo
+    const hd = (e.target as HTMLElement).closest<SVGElement>("[data-drag]"); if (!hd) return;
+    const id = hd.dataset["drag"]!, p0 = P(), loc = locate(p0, id), svg = hd.closest("svg"), plan = hd.closest<HTMLElement>(".gplan") ?? el.plan; if (!loc || !svg) return;
+    e.preventDefault(); e.stopPropagation();
+    const scene = layout(loc.flow, { closed: ui.closed }), guide = host.ownerDocument.createElement("div"); guide.className = "guide h"; plan.append(guide);
+    const at = (ev: PointerEvent): { count: number; lastRow: number } => countForRow(p0, scene, id, Math.floor(((ev.clientY - svg.getBoundingClientRect().top) / ui.zoom - G.HEAD) / G.RH));
+    const place = (c: { lastRow: number }): void => { guide.style.top = G.HEAD + (c.lastRow + 1) * G.RH + "px"; };
+    let c = at(e); place(c);
+    const move = (ev: PointerEvent): void => { c = at(ev); place(c); };
+    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); guide.remove(); if (c.count !== kids(id)) run({ type: "setScope", id, count: c.count }, false); };
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
   });
 
@@ -535,7 +574,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const runFlow = (): void => {
     if (!canRun()) { toast("Select a function to run it"); return; }
     if (running) { running.stop(); return; }
-    const flow = locate(P(), ui.flow)?.node; if (!flow || flow.t !== "fn") return; showTab("term"); tbody.innerHTML = "";
+    const flow = locate(P(), ui.flow)?.node; if (!flow || flow.t !== "fn") return; if (!prefs.codeOpen) { prefs.codeOpen = true; applyPrefs(); }   // o Terminal mora no painel de código: se ele está escondido, abre
+    showTab("term"); tbody.innerHTML = "";
     let code: string; try { code = generate(P(), ui.flow, { js: true }).code; } catch (e) { addLine("error", String(e)); return; }
     addLine("system", `▶ ${flow.title}`); setRunning(true);
     running = runInWorker(code, ev => {
@@ -571,11 +611,15 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
 const STORE_KEY = "flow-novo-projeto-v1";
 /** Abre o projeto salvo no navegador (se houver e for válido); senão, o exemplo. */
 function startProject(): { project: Project; flow: string } {
-  try { const raw = localStorage.getItem(STORE_KEY); if (raw) { const p = parseProject(raw); return { project: p, flow: p.flows[0]!.id }; } } catch { /* salvo corrompido: volta ao exemplo */ }
+  try { const raw = localStorage.getItem(STORE_KEY); if (raw) { const p = parseProject(raw); const rest = p.flows.filter(f => !(f.file === "samples.ts" && SAMPLE_TITLES.includes(f.title))); if (rest.length && rest.length < p.flows.length) p.flows = rest;   /* os samples já foram o padrão: saem do que ficou salvo */ return { project: p, flow: p.flows[0]!.id }; } } catch { /* salvo corrompido: volta ao exemplo */ }
   const s = sampleProject(); return { project: s.project, flow: s.main };
 }
 export function boot(): App {
-  const s = startProject(), store = new Store(s.project), app = mount(document.getElementById("app")!, store, s.flow);
+  // ?demo=<id>: exemplo da documentação, incorporado (sem barra, Explorer nem código) e que nunca grava no navegador
+  const demo = new URLSearchParams(location.search).get("demo"), ex = demo ? docExample(demo) : null;
+  if (ex) document.documentElement.classList.add("embed");
+  const s = ex ? { project: ex.project, flow: ex.flow } : startProject(), store = new Store(s.project), app = mount(document.getElementById("app")!, store, s.flow);
+  if (ex) { if (new URLSearchParams(location.search).get("txt") === "0") { app.ui.txtIn = false; app.render(); } (window as unknown as { flowApp: App }).flowApp = app; return app; }
   const save = (): void => { try { localStorage.setItem(STORE_KEY, serialize(store.project)); } catch { /* sem espaço ou bloqueado: segue sem salvar */ } };
   store.subscribe(save);
   (window as unknown as { flowApp: App }).flowApp = app; return app;

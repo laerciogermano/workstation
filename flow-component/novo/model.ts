@@ -188,6 +188,14 @@ export const HANDLERS = {
     for (const f of p.flows) walk([f], n => { if (n.t === "fn") { if (n.agent === id) n.agent = null; if (n.resp === id) n.resp = null; } });
   },
   rename: (p, a) => { const l = need(p, str(a, "id")); if (l.node.t !== "fn") return fail("invalid", "Only functions have a name"); l.node.title = cleanText(a["title"], "Name", 80); },
+  /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
+  renameFile: (p, a) => {
+    const from = str(a, "from"), to = cleanText(a["to"], "File name", 80).replace(/\s+/g, "-"), file = /\.[A-Za-z0-9]+$/.test(to) ? to : `${to}.ts`;
+    const own = p.flows.filter(f => flowFile(f) === from); if (!own.length) return fail("not_found", `File ${from} does not exist`);
+    if (file !== from && p.flows.some(f => flowFile(f) === file)) return fail("invalid", `File ${file} already exists`);
+    for (const f of own) f.file = file;
+    for (const f of p.flows) walk([f], n => { if (n.t === "fn" && n.agent === `file:${from}`) n.agent = `file:${file}`; });
+  },
 
   /** Filho: função → no fim da lista dela; bloco → na PRIMEIRA posição (o lugar do cabeçalho); `catch` → primeira posição do catch. */
   addChild: (p, a) => {

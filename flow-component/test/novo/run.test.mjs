@@ -27,13 +27,13 @@ describe.skipIf(!nodeOk)("exportar o código e rodar no Node", () => {
     const b = d.go({ type: "addChild", id: m, title: "x" }); d.go({ type: "assign", id: b, agent: "console" }); d.go({ type: "setArg", id: b, name: "text", value: "mensagem" });
     const c = d.go({ type: "addChild", id: m, title: "y" }); d.go({ type: "assign", id: c, agent: "console" }); d.go({ type: "setArg", id: c, name: "text", value: '"Olá, mundo"' });
     const res = exec(generate(d.q, m, { runnable: true })); expect(res.status, res.err).toBe(0);
-    expect(res.out).toContain("mensagem (simulated)\n"); expect(res.out).toContain("Olá, mundo\n"); expect(res.out).toContain("{ mensagem: 'mensagem (simulated)' }"); expect(res.out).not.toContain("AsyncFunction");
+    expect(res.out).toContain("mensagem (simulated)\n"); expect(res.out).toContain("Olá, mundo\n"); expect(res.out).not.toContain("{ mensagem:"); expect(res.out).not.toContain("AsyncFunction");
   });
   it("libs do navegador com contrato (Math, JSON, Date, crypto, performance) devolvem o dado no formato do flow e o código seguinte usa o nome dele", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "libs" }), mk = (agent, task, args = {}, rename) => { const f = d.go({ type: "addChild", id: m, title: "f" }); d.go({ type: "assign", id: f, agent }); d.go({ type: "setTask", id: f, task }); for (const [k, v] of Object.entries(args)) d.go({ type: "setArg", id: f, name: k, value: v }); if (rename) d.go({ type: "renameData", id: f, to: rename }); return f; };
     mk("math", "max", { a: "3", b: "9" }, "biggest"); mk("math", "pow", { base: "biggest", exponent: "2" }, "square"); mk("json", "stringify", { value: "{ n: square }" }, "as_text"); mk("crypto", "randomUUID", {}, "id"); mk("date", "now", {}, "now"); mk("perf", "now", {}, "ms");
     mk("console", "log", { text: "as_text" }); const g = generate(d.q, m, { runnable: true }), res = exec(g);
-    expect(res.status, res.err + g.code).toBe(0); expect(res.out).toContain('{"n":81}\n'); expect(res.out).toMatch(/biggest: 9[^}]*square: 81/s); expect(res.out).toMatch(/id: '[0-9a-f-]{36}'/);
+    expect(res.status, res.err + g.code).toBe(0); expect(res.out).toContain('{"n":81}\n'); expect(g.code).toContain("randomUUID");
   });
   it("exemplo completo (if/else, for, paralelo, try/catch, libs e pessoas) exporta e roda sem erro", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "completo" }), kid = t => d.go({ type: "addChild", id: m, title: t });

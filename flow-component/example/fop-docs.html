@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>FOP · Manual de referência</title>
+<link rel="stylesheet" href="themes.css">
+<script>window.TEMA_PADRAO = "eternos-black";</script>
+<script src="themes.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  body{margin:0;background:var(--paper,#0b0b0b);color:var(--body,#d6d6d6);font:14px/1.6 var(--font,system-ui,-apple-system,"Segoe UI",sans-serif)}
+  a{color:var(--accent,#5b8cff);text-decoration:none}a:hover{text-decoration:underline}
+  code,kbd,pre{font-family:var(--mono,ui-monospace,SFMono-Regular,Menlo,monospace)}
+  code{font-size:.88em;background:var(--wash,#1a1a1a);border:1px solid var(--line,#262626);border-radius:4px;padding:0 5px;color:var(--ink,#fff)}
+  kbd{font-size:.8em;background:var(--panel,#141414);border:1px solid var(--line-2,#333);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink,#fff)}
+  pre{background:var(--panel,#111);border:1px solid var(--line,#262626);border-radius:6px;padding:12px 14px;overflow:auto;font-size:12px;line-height:1.55;color:var(--ink,#eee);max-width:920px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;height:44px;padding:0 20px;background:var(--paper,#0b0b0b);border-bottom:1px solid var(--line,#262626);font-size:12px}
+  .top b{color:var(--ink,#fff)}.top .sp{flex:1}.top span{color:var(--muted,#8a8a8a)}
+  .top a.open{border:1px solid var(--line-2,#333);border-radius:6px;padding:4px 10px;color:var(--ink,#fff)}.top a.open:hover{border-color:var(--accent,#5b8cff);text-decoration:none}
+  .wrap{display:grid;grid-template-columns:230px minmax(0,1fr);max-width:1200px;margin:0 auto}
+  nav{position:sticky;top:44px;align-self:start;height:calc(100vh - 44px);overflow:auto;padding:18px 12px 40px 18px;border-right:1px solid var(--line,#262626);font-size:12.5px}
+  nav a{display:block;padding:2px 8px;border-radius:5px;color:var(--body,#ccc)}nav a:hover{background:var(--wash,#1a1a1a);color:var(--ink,#fff);text-decoration:none}
+  nav a b{display:inline-block;width:20px;color:var(--muted,#8a8a8a);font:600 11px var(--mono,monospace)}
+  main{padding:28px 36px 100px;min-width:0}
+  h1{margin:0 0 4px;font-size:26px;letter-spacing:-.01em;color:var(--ink,#fff)}
+  .sub{margin:0 0 6px;color:var(--muted,#8a8a8a)}
+  h2{margin:42px 0 8px;padding-top:16px;border-top:1px solid var(--line,#262626);font-size:18px;color:var(--ink,#fff)}
+  h2 .n{display:inline-block;min-width:30px;color:var(--muted,#8a8a8a);font:600 13px var(--mono,monospace)}
+  h3{margin:20px 0 4px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#9a9a9a)}
+  p,li{max-width:840px}p{margin:6px 0}li{margin:2px 0}ul,ol{margin:6px 0;padding-left:22px}
+  table{border-collapse:collapse;width:100%;margin:8px 0 14px;font-size:13px}
+  th,td{text-align:left;vertical-align:top;padding:5px 10px;border-bottom:1px solid var(--line,#262626)}
+  th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#8a8a8a);border-bottom:1px solid var(--line-2,#333)}
+  td:first-child{white-space:nowrap}
+  .note{border-left:3px solid var(--line-2,#444);background:var(--panel,#111);padding:6px 12px;margin:10px 0;max-width:840px;font-size:13px}
+  .note.warn{border-left-color:#e0a030}
+  .sym{display:inline-block;vertical-align:-2px;margin-right:5px}
+  .fc{width:18px;height:10px;border-radius:5px;background:var(--ink,#fff)}.fa{width:18px;height:10px;border-radius:5px;border:1.5px solid var(--ink,#fff)}
+  .dc{width:9px;height:9px;background:var(--ink,#fff)}.da{width:9px;height:9px;border:1.5px solid var(--ink,#fff)}
+  .dia{width:9px;height:9px;border:1.5px solid var(--ink,#fff);transform:rotate(45deg)}
+  figure{margin:10px 0 16px;max-width:920px}
+  figure .fop{display:block;width:100%;border:1px solid var(--line-2,#333);border-radius:8px;background:var(--paper,#0b0b0b)}
+  figcaption{margin-top:5px;font-size:12px;color:var(--muted,#8a8a8a)}
+  .two{display:block}.two figure{margin:10px 0 16px}
+  @media(max-width:860px){.wrap{display:block}nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line,#262626)}main{padding:20px 16px 80px}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><b>FOP</b><span>Manual de referência</span><span class="sp"></span><a class="open" href="flow-novo.html">Abrir o editor</a></header>
+<div class="wrap">
+<nav>
+  <a href="#visao"><b>1</b>Visão geral</a><a href="#modelo"><b>2</b>Modelo</a><a href="#semantica"><b>3</b>Semântica</a><a href="#visual"><b>4</b>Elementos visuais</a><a href="#editor"><b>5</b>Editor</a><a href="#comandos"><b>6</b>Comandos</a><a href="#valores"><b>7</b>Valores e condições</a><a href="#libs"><b>8</b>Libs e contratos</a><a href="#layout"><b>9</b>Layout</a><a href="#codegen"><b>10</b>Código gerado</a><a href="#runner"><b>11</b>Execução</a><a href="#persistencia"><b>12</b>Persistência e URL</a><a href="#build"><b>13</b>Build e deploy</a><a href="#erros"><b>14</b>Erros e restrições</a><a href="#samples"><b>15</b>Samples</a><a href="#glossario"><b>16</b>Glossário</a>
+</nav>
+<main>
+<h1>FOP — Manual de referência</h1>
+<p class="sub">Flow Oriented Programming · editor <code>flow-novo</code></p>
+<p>Os diagramas são o próprio editor, incorporado (<code>flow-novo.html?demo=&lt;id&gt;</code>); não gravam nada no navegador.</p>
+
+<h2 id="visao"><span class="n">1</span>Visão geral</h2>
+<p>O fluxo é uma <b>árvore</b> de funções e blocos. O editor aplica <b>comandos</b> sobre um projeto imutável, calcula o <b>layout</b> em estados (<code>s0…sN</code>), desenha tabela e diagrama e gera <b>TypeScript/JavaScript</b> executável.</p>
+<pre><code>comando ──► apply(projeto, comando) ──► projeto novo ──► Store.subscribe ──► render()
+                    │                                              │
+             histórico (past/future)                  layout(flow) ──► tabela HTML + plano SVG
+                                                       generate(projeto) ──► TS/JS ──► Worker (Run)</code></pre>
+<table>
+<tr><th>Módulo (<code>novo/</code>)</th><th>Responsabilidade</th></tr>
+<tr><td><code>model.ts</code></td><td>Tipos, consultas, <code>HANDLERS</code>, <code>apply</code>, <code>Store</code>, <code>serialize</code>/<code>parseProject</code>/<code>migrate</code></td></tr>
+<tr><td><code>layout.ts</code> · <code>scope.ts</code></td><td>Árvore → linhas e colunas (puro, sem DOM) · aritmética de escopo de bloco</td></tr>
+<tr><td><code>args.ts</code> · <code>cond.ts</code></td><td>Valores de entrada e condições: rascunho ↔ expressão TypeScript</td></tr>
+<tr><td><code>view.ts</code></td><td>Tabela (HTML), plano (SVG), <code>toolsFor</code>, estados por coluna, larguras</td></tr>
+<tr><td><code>codegen.ts</code> · <code>runner.ts</code></td><td>Projeto → TS/JS · execução em Web Worker</td></tr>
+<tr><td><code>app.ts</code></td><td>DOM, eventos, painéis, Explorer, Terminal, persistência no navegador</td></tr>
+<tr><td><code>sample.ts</code> · <code>docs-examples.ts</code></td><td>Projeto inicial, projeto de samples, exemplos deste manual</td></tr>
+</table>
+
+<h2 id="modelo"><span class="n">2</span>Modelo</h2>
+<pre><code>type AgentKind = "maquina" | "ia" | "pessoa" | "arquivo";
+interface Contract { ins: string[]; outs: string[]; optional?: string[] }
+interface Agent    { id: string; kind: AgentKind; name: string; tasks: string[]; contracts?: Record&lt;string, Contract&gt; }
+
+interface Fn {
+  t: "fn"; id: string; title: string;
+  agent: string | null;            // Source: id do agente ou "file:&lt;arquivo&gt;"
+  resp: string | null;             // pessoa responsável (quando agent é IA)
+  ins: string[]; outs: string[];
+  kids: Node[]; par: boolean;      // filhas · roda junto da anterior
+  args?: Record&lt;string, string&gt;;   // entrada → expressão
+  file?: string;                   // só na função raiz
+}
+interface IfB  { t: "if";  id: string; test: string; kids: Node[]; elseKids: Node[] }   // elseKids = [] → sem else
+interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[] }
+interface TryB { t: "try"; id: string; kids: Node[]; catchKids: Node[] }
+type Node = Fn | IfB | ForB | TryB;
+interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</code></pre>
+<table>
+<tr><th>Invariante</th><th>Garantia</th></tr>
+<tr><td>Id único e estável (IDR)</td><td><code>nextId(p)</code> incrementa <code>seq</code>; ids nunca são reutilizados; renomear não muda o id; referências usam o id</td></tr>
+<tr><td>Nomes não vazios (máx. 80 em título e arquivo)</td><td><code>cleanText</code> / <code>cleanName</code> → <code>FlowError("invalid")</code></td></tr>
+<tr><td>Raiz não tem irmãos nem estrutura em volta</td><td><code>isRoot</code>; comandos falham com <code>root</code></td></tr>
+<tr><td>Arquivos com nomes distintos</td><td><code>renameFile</code> recusa colisão</td></tr>
+<tr><td>Lib: <code>ins</code>/<code>outs</code> vêm do contrato</td><td><code>applyContract</code> ao trocar lib/task; mantém valores de mesmo nome</td></tr>
+</table>
+<p>Consultas: <code>locate(p,id)</code> → <code>{ node, list, index, parent, slot, flow }</code>; <code>walk</code>, <code>fnsOf</code>, <code>kidsOf</code>, <code>altKids</code> (catch/else), <code>filesOf</code>, <code>flowFile</code> (<code>f.file</code> ou <code>slug(title).ts</code>), <code>statesFor</code> (dados disponíveis antes de uma função + variáveis de <code>for</code> que a cercam).</p>
+
+<h2 id="semantica"><span class="n">3</span>Semântica</h2>
+<table>
+<tr><th>Construção</th><th>Posição (<code>s</code>)</th><th>Código</th></tr>
+<tr><td>Sequência</td><td>cada folha ocupa uma coluna; a próxima em <code>s+1</code></td><td><code>await f1(…); await f2(…)</code></td></tr>
+<tr><td>Paralelo (<code>par: true</code>)</td><td>reusa o <code>s</code> da folha anterior</td><td><code>await Promise.all([…])</code></td></tr>
+<tr><td>Composição</td><td>de <code>s</code> até o fim da última filha</td><td>filhas em ordem</td></tr>
+<tr><td><code>if</code> / <code>else</code></td><td>colunas dos filhos; else em linha própria, termina junto com o bloco</td><td><code>if (test) {…} else {…}</code></td></tr>
+<tr><td><code>for</code></td><td>colunas dos filhos</td><td><code>for (const v of coll) {…}</code></td></tr>
+<tr><td><code>try</code> / catch</td><td>colunas dos filhos; catch em linha própria</td><td><code>try {…} catch (error) {…}</code></td></tr>
+</table>
+<p>Ligação por dados: entrada <b>sem valor</b> recebe o dado de <b>mesmo nome</b> produzido antes. Dado sem produtor vem do <code>state</code> (abstrato).</p>
+<div class="two">
+<figure><iframe class="fop" style="height:290px" loading="lazy" src="flow-novo.html?demo=sequencia"></iframe><figcaption>Sequência — <code>demo=sequencia</code></figcaption></figure>
+<figure><iframe class="fop" style="height:290px" loading="lazy" src="flow-novo.html?demo=paralelo"></iframe><figcaption>Paralelo — <code>demo=paralelo</code></figcaption></figure>
+<figure><iframe class="fop" style="height:370px" loading="lazy" src="flow-novo.html?demo=selecao"></iframe><figcaption>if / else — <code>demo=selecao</code></figcaption></figure>
+<figure><iframe class="fop" style="height:290px" loading="lazy" src="flow-novo.html?demo=repeticao"></iframe><figcaption>for — <code>demo=repeticao</code></figcaption></figure>
+<figure><iframe class="fop" style="height:350px" loading="lazy" src="flow-novo.html?demo=trycatch"></iframe><figcaption>try / catch — <code>demo=trycatch</code></figcaption></figure>
+<figure><iframe class="fop" style="height:330px" loading="lazy" src="flow-novo.html?demo=composicao"></iframe><figcaption>Composição — <code>demo=composicao</code></figcaption></figure>
+</div>
+<figure><iframe class="fop" style="height:520px" loading="lazy" src="flow-novo.html?demo=onboarding"></iframe><figcaption>Exemplo completo: IA, pessoa, <code>for</code>, paralelo — <code>demo=onboarding</code></figcaption></figure>
+
+<h2 id="visual"><span class="n">4</span>Elementos visuais</h2>
+<table>
+<tr><th>Símbolo</th><th>Significado</th></tr>
+<tr><td><span class="sym fa"></span>barra vazada</td><td>função abstrata (IA, pessoa ou sem Source)</td></tr>
+<tr><td><span class="sym fc"></span>barra cheia</td><td>função concreta (lib ou arquivo)</td></tr>
+<tr><td>faixa fina</td><td>composição (função com filhas)</td></tr>
+<tr><td><span class="sym da"></span>quadrado vazado</td><td>dado abstrato (vem do state)</td></tr>
+<tr><td><span class="sym dc"></span>quadrado cheio</td><td>dado concreto (produzido por função concreta)</td></tr>
+<tr><td>cubo</td><td>&gt; 1 dado numa entrada ou saída (objeto)</td></tr>
+<tr><td><span class="sym dia"></span>losango · faixa <code>if</code></td><td>selection</td></tr>
+<tr><td>↻ · faixa <code>for</code></td><td>repetition</td></tr>
+<tr><td>faixas <code>try</code> / <code>catch</code> / <code>else</code></td><td>caminho do erro e do else</td></tr>
+<tr><td><code>s0…sN</code></td><td>estados: colunas do diagrama; abaixo de cada um, os dados novos (ou todos, com o botão <i>cubo</i>)</td></tr>
+</table>
+<h3>Source</h3>
+<table>
+<tr><th>Source</th><th><code>AgentKind</code></th><th>Função</th><th>Coluna Function</th></tr>
+<tr><td>IA</td><td><code>ia</code></td><td>abstrata</td><td>texto livre + pessoa responsável (<code>resp</code>)</td></tr>
+<tr><td>Pessoa</td><td><code>pessoa</code></td><td>abstrata</td><td>texto livre</td></tr>
+<tr><td><i>abstract</i></td><td><code>agent: null</code></td><td>abstrata</td><td>texto livre</td></tr>
+<tr><td>Lib do navegador</td><td><code>maquina</code></td><td>concreta</td><td>seletor de tarefas; <code>ins</code>/<code>outs</code> do contrato</td></tr>
+<tr><td>Arquivo (<code>file:x.ts</code>)</td><td><code>arquivo</code></td><td>concreta</td><td>seletor com as funções do arquivo</td></tr>
+</table>
+
+<h2 id="editor"><span class="n">5</span>Editor</h2>
+<h3>Tela</h3>
+<table>
+<tr><th>Área</th><th>Conteúdo</th></tr>
+<tr><td>Cabeçalho</td><td>título, <b>Docs</b>, <b>Open</b>, <b>Export</b></td></tr>
+<tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> nova função, <b>Sources</b>, recolher tudo</td></tr>
+<tr><td>Barra do diagrama</td><td>Explorer on/off, fluxo em foco, <b>Run</b>, undo/redo, zoom (20–250%), fit, nome dentro da barra, estados todos/novos, expandir/recolher, código on/off</td></tr>
+<tr><td>Tabela <i>Source · Function</i></td><td>uma linha por função; recuo = profundidade</td></tr>
+<tr><td>Diagrama</td><td>barras, dados, blocos, ligações em <code>s0…sN</code></td></tr>
+<tr><td>Painel direito</td><td>aba <b>TypeScript</b> (código, <b>Download</b>, <b>Copy</b>) e <b>Terminal</b>; divisória arrastável (duplo clique = largura padrão)</td></tr>
+</table>
+<h3>Menu de opções</h3>
+<p>Aparece acima da barra/etiqueta sob o mouse e à direita da linha da tabela. A largura da tabela reserva espaço para ele (<code>tableWidth</code>).</p>
+<table>
+<tr><th>Botão</th><th>Comando</th><th>Observação</th></tr>
+<tr><td>Abrir/fechar</td><td>—</td><td>só visual; aparece se há filhas</td></tr>
+<tr><td>Filho</td><td><code>addChild</code></td><td>a função vira composição</td></tr>
+<tr><td>Irmão</td><td><code>addSibling</code></td><td>mesmo bloco</td></tr>
+<tr><td>◇ · ↻ · escudo</td><td><code>wrap</code> <code>if</code> / <code>for</code> / <code>try</code></td><td>try cria a função de tratamento</td></tr>
+<tr><td>∥</td><td><code>setParallel</code></td><td>só com função anterior</td></tr>
+<tr><td>Sair do bloco</td><td><code>exitScope</code></td><td>esta e as seguintes</td></tr>
+<tr><td>Incluir / tirar</td><td><code>setScope</code></td><td>ou arrastar a alça da etiqueta</td></tr>
+<tr><td>Remover estrutura</td><td><code>unwrap</code></td><td>devolve as filhas</td></tr>
+<tr><td>Lixeira</td><td><code>remove</code></td><td>confirma se há filhas</td></tr>
+</table>
+<p>A raiz oferece só <i>Filho</i> e abrir/fechar.</p>
+<h3>Interações</h3>
+<table>
+<tr><th>Ação</th><th>Resultado</th></tr>
+<tr><td>Clique no nome da função (tabela ou barra)</td><td>edição direta no próprio texto (<code>rename</code>); <kbd>Enter</kbd>/clique fora confirma, <kbd>Esc</kbd> cancela</td></tr>
+<tr><td>Clique no nome de um dado</td><td>renomeia (<code>renameData</code> / <code>renameIo</code>)</td></tr>
+<tr><td>Duplo clique no nome (Explorer)</td><td>renomeia arquivo (<code>renameFile</code>, sem extensão) ou função</td></tr>
+<tr><td>Clique na etiqueta de <code>if</code> / <code>for</code></td><td>edita condição / variável e coleção</td></tr>
+<tr><td>Clique no Source</td><td>troca o Source (<code>assign</code>); em lib, a Function vira seletor (<code>setTask</code>)</td></tr>
+<tr><td><b>+</b> / <b>×</b> na linha de dados</td><td><code>addInput</code>/<code>addOutput</code> · <code>removeInput</code>/<code>removeOutput</code> (só função comum)</td></tr>
+<tr><td>Arrastar a alça da etiqueta</td><td><code>setScope</code></td></tr>
+<tr><td>Roda / arrastar o diagrama</td><td>zoom / pan</td></tr>
+</table>
+<h3>Atalhos</h3>
+<table>
+<tr><th>Atalho</th><th>Ação</th></tr>
+<tr><td><kbd>Ctrl/⌘</kbd>+<kbd>Enter</kbd></td><td>Run</td></tr>
+<tr><td><kbd>Ctrl/⌘</kbd>+<kbd>Z</kbd> · <kbd>Shift</kbd>+…</td><td>undo · redo</td></tr>
+<tr><td><kbd>Ctrl/⌘</kbd>+<kbd>B</kbd> · <kbd>Ctrl</kbd>+<kbd>\</kbd></td><td>Explorer · painel de código</td></tr>
+<tr><td><kbd>+</kbd> <kbd>-</kbd> <kbd>0</kbd></td><td>zoom in · out · fit</td></tr>
+<tr><td><kbd>Enter</kbd> · <kbd>Esc</kbd></td><td>confirmar · cancelar edição de nome</td></tr>
+</table>
+<p>Temas: <code>?tema=&lt;id&gt;</code>; ids <code>eternos</code>, <code>eternos-black</code> (padrão), <code>tablet-black</code>, <code>papel</code>, <code>teal</code>, <code>indigo</code>, <code>cobalto</code>, <code>musgo</code>, <code>ardosia</code>, <code>gantt</code>, <code>noite</code>, <code>graphite</code>. O último fica em <code>localStorage</code>.</p>
+
+<h2 id="comandos"><span class="n">6</span>Comandos</h2>
+<p><code>apply(p, cmd)</code> → <code>{ project, created? }</code>; não muta <code>p</code>. Falhas: <code>FlowError</code> com <code>code</code> ∈ <code>invalid</code> · <code>not_found</code> · <code>root</code>. Lista exaustiva em <code>HANDLERS</code> / <code>COMMAND_NAMES</code>.</p>
+<table>
+<tr><th>Comando</th><th>Payload</th><th>Efeito</th></tr>
+<tr><td><code>newFlow</code></td><td><code>{ title?, file? }</code></td><td>nova função raiz; devolve id</td></tr>
+<tr><td><code>removeFlow</code></td><td><code>{ id }</code></td><td>remove função raiz</td></tr>
+<tr><td><code>renameFile</code></td><td><code>{ from, to }</code></td><td>renomeia arquivo; atualiza <code>file</code> das funções e <code>file:from</code> nos Sources</td></tr>
+<tr><td><code>rename</code></td><td><code>{ id, title }</code></td><td>renomeia função</td></tr>
+<tr><td><code>addChild</code></td><td><code>{ id, title?, catch? }</code></td><td>filho (ou filho do catch); devolve id</td></tr>
+<tr><td><code>addSibling</code></td><td><code>{ id, title?, before? }</code></td><td>irmão no mesmo bloco; devolve id</td></tr>
+<tr><td><code>remove</code></td><td><code>{ id }</code></td><td>remove função</td></tr>
+<tr><td><code>wrap</code></td><td><code>{ id, kind, test?, v?, coll? }</code></td><td><code>kind</code> ∈ <code>if</code>·<code>for</code>·<code>try</code>; devolve id do bloco</td></tr>
+<tr><td><code>unwrap</code></td><td><code>{ id }</code></td><td>desfaz o bloco</td></tr>
+<tr><td><code>exitScope</code></td><td><code>{ id }</code></td><td>tira a função e as seguintes do bloco</td></tr>
+<tr><td><code>setScope</code></td><td><code>{ id, count }</code></td><td>nº de funções cobertas pelo bloco</td></tr>
+<tr><td><code>setIf</code></td><td><code>{ id, test, elseTo? }</code></td><td>condição</td></tr>
+<tr><td><code>addElse</code> · <code>removeElse</code></td><td><code>{ id, title? }</code> · <code>{ id }</code></td><td>cria (devolve id da função) / remove else</td></tr>
+<tr><td><code>setFor</code></td><td><code>{ id, v, coll }</code></td><td>variável e coleção</td></tr>
+<tr><td><code>addInput</code> <code>removeInput</code> <code>addOutput</code> <code>removeOutput</code></td><td><code>{ id, name }</code></td><td>E/S da função</td></tr>
+<tr><td><code>setData</code></td><td><code>{ id, side, names }</code></td><td><code>side</code> ∈ <code>in</code>·<code>out</code></td></tr>
+<tr><td><code>renameIo</code></td><td><code>{ id, side, from, to }</code></td><td>renomeia E/S</td></tr>
+<tr><td><code>renameData</code></td><td><code>{ id, to }</code></td><td>renomeia a saída e propaga aos consumidores</td></tr>
+<tr><td><code>setArg</code></td><td><code>{ id, name, value }</code></td><td>expressão da entrada (vazio = abstrata)</td></tr>
+<tr><td><code>assign</code></td><td><code>{ id, agent }</code></td><td>Source; aplica contrato</td></tr>
+<tr><td><code>setTask</code></td><td><code>{ id, task }</code></td><td>tarefa da lib; aplica contrato</td></tr>
+<tr><td><code>setResp</code></td><td><code>{ id, resp }</code></td><td>pessoa de uma IA</td></tr>
+<tr><td><code>setParallel</code></td><td><code>{ id, on }</code></td><td><code>par</code></td></tr>
+<tr><td><code>addAgent</code> · <code>removeAgent</code></td><td><code>{ kind, name, tasks? }</code> · <code>{ id }</code></td><td>fonte (<code>maquina</code>·<code>ia</code>·<code>pessoa</code>); remover limpa referências</td></tr>
+</table>
+<p><b>Histórico.</b> <code>Store</code>: <code>dispatch</code> (push em <code>past</code>, zera <code>future</code>), <code>undo</code>, <code>redo</code>, <code>load</code> (troca o projeto e zera o histórico), <code>subscribe</code>.</p>
+<pre><code>let p = emptyProject("Demo"); p.agents = structuredClone([...DEFAULT_AGENTS]);
+const run = c =&gt; { const r = apply(p, c); p = r.project; return r.created; };
+
+const root = run({ type: "newFlow", title: "Aplicar cupom" });
+const s = run({ type: "addChild", id: root, title: "round" });
+run({ type: "assign", id: s, agent: "math" });
+run({ type: "setTask", id: s, task: "round" });
+run({ type: "setArg",  id: s, name: "value", value: "price * 0.85" });
+run({ type: "renameData", id: s, to: "total" });</code></pre>
+
+<h2 id="valores"><span class="n">7</span>Valores e condições</h2>
+<p><b>Valor</b> = expressão TypeScript em <code>Fn.args[entrada]</code>. Rascunho (<code>args.ts</code>): <code>ArgType</code> ∈ <code>text</code> · <code>number</code> · <code>boolean</code> · <code>ref</code> · <code>expr</code> · <code>object</code>; <code>buildArg</code> → expressão; <code>inferArg</code> → rascunho. <code>exprIdents(expr)</code> devolve os identificadores livres (ignora strings, chaves de objeto e <code>.campo</code>).</p>
+<table>
+<tr><th>Escrito</th><th>Significado</th></tr>
+<tr><td><code>100</code> · <code>"txt"</code> · <code>true</code></td><td>literal (texto entre aspas)</td></tr>
+<tr><td><code>total</code></td><td>dado produzido antes</td></tr>
+<tr><td><code>price * (100 - percent) / 100</code></td><td>expressão</td></tr>
+<tr><td><code>{ id, score }</code></td><td>objeto</td></tr>
+</table>
+<p><b>Condição</b> (<code>cond.ts</code>): cláusulas <code>esquerda op direita</code> ligadas por <code>&amp;&amp;</code> / <code>||</code>; <code>buildCond</code> / <code>inferCond</code>; <code>splitTop</code> divide só nos conectores de nível mais alto.</p>
+<table>
+<tr><th><code>CondOp</code></th><th>Direita</th></tr>
+<tr><td><code>truthy</code> <code>falsy</code> <code>empty</code> <code>notEmpty</code></td><td>não</td></tr>
+<tr><td><code>eq</code> <code>neq</code> <code>gt</code> <code>gte</code> <code>lt</code> <code>lte</code> <code>contains</code> <code>notContains</code> <code>startsWith</code> <code>endsWith</code></td><td>sim</td></tr>
+</table>
+
+<h2 id="libs"><span class="n">8</span>Libs e contratos</h2>
+<p>Assinatura: <code>nome(a, b?) -&gt; x, y</code> — <code>?</code> = entrada opcional (não exigida do state); 1 saída = dado; &gt;1 = cubo; só <code>nome</code> = <code>input → result</code>. <code>parseSignature</code> → <code>{ task, contract }</code>; <code>applyContract(p,f)</code> aplica <code>ins</code>/<code>outs</code> e preserva valores de mesmo nome; <code>migrate</code> troca libs antigas e solta referências inexistentes ao abrir um projeto.</p>
+<table>
+<tr><th>id</th><th>Global</th><th>Tarefas</th></tr>
+<tr><td><code>console</code></td><td><code>console</code></td><td><code>log</code> <code>info</code> <code>warn</code> <code>error</code> <code>debug</code> (<code>text</code>) · <code>table(data)</code></td></tr>
+<tr><td><code>math</code></td><td><code>Math</code></td><td><code>random() → number</code> · <code>round</code> <code>floor</code> <code>ceil</code> <code>abs</code> <code>sqrt(value) → result</code> · <code>max</code> <code>min(a, b)</code> · <code>pow(base, exponent)</code></td></tr>
+<tr><td><code>json</code></td><td><code>JSON</code></td><td><code>stringify(value) → text</code> · <code>parse(text) → value</code></td></tr>
+<tr><td><code>date</code></td><td><code>Date</code></td><td><code>now() → timestamp</code> · <code>parse(text) → timestamp</code></td></tr>
+<tr><td><code>crypto</code></td><td><code>crypto</code></td><td><code>randomUUID() → uuid</code></td></tr>
+<tr><td><code>perf</code></td><td><code>performance</code></td><td><code>now() → time</code></td></tr>
+<tr><td><code>web</code></td><td><code>globalThis</code></td><td><code>fetch(url, options?) → response</code> · <code>atob</code> <code>btoa(text) → result</code> · <code>structuredClone(value) → copy</code></td></tr>
+</table>
+<p>Catálogo padrão sem contrato: IA <code>lia</code>, <code>teo</code>, <code>davi</code>; pessoa <code>ana</code>, <code>bruno</code>. Cada arquivo do projeto é uma fonte <code>file:&lt;nome&gt;</code> cujas tarefas são as suas funções.</p>
+
+<h2 id="layout"><span class="n">9</span>Layout</h2>
+<p><code>layout(flow, { closed })</code> → <code>Scene</code>, sem DOM.</p>
+<pre><code>interface Row   { kind: "fn"|"block"|"catch"|"else"; id; node; depth; s: number; e: number; last: number; leaf: boolean; closed: boolean }
+interface Scene { rows: Row[]; nSteps: number; span: Map&lt;string,{s,e}&gt;; maxDepth: number; leaves: Row[] }</code></pre>
+<ul>
+  <li>Folha: <code>s = par ? prev.s : step</code>; <code>step = max(step, s+1)</code>.</li>
+  <li>Composição: <code>s</code> = início; <code>e</code> = fim da última filha; <code>closed</code> não emite as filhas.</li>
+  <li>Bloco: <code>e</code> = fim dos filhos. Catch/else: linha própria com <code>s = max(step, next − count)</code>, terminando com o bloco.</li>
+  <li><code>nSteps</code> = nº de colunas; <code>leaves</code> = folhas fora de catch (usadas em <code>links()</code>); <code>maxDepth</code> dimensiona a tabela.</li>
+</ul>
+<p>Geometria (<code>view.ts</code>): origem do diagrama <code>G.OX</code>; coluna <code>G.W</code> (maior quando o nome fica dentro da barra); linha <code>G.RH</code> = 34; recuo <code>G.IND</code> = 14 por nível (×2 na tabela). <code>tableWidth(sc, p)</code> = 138 + max<sub>linhas</sub>(recuo + texto + menu da linha), mín. 228.</p>
+
+<h2 id="codegen"><span class="n">10</span>Código gerado</h2>
+<p><code>generate(p, rootId, opts)</code> → <code>{ code, map, fileName, name, runFile, runCommand }</code>; <code>map</code>: id → <code>[linhaIni, linhaFim]</code> (destaque ao selecionar). <code>generateFile(p, ids)</code> gera o arquivo com várias funções.</p>
+<table>
+<tr><th>Opção</th><th>Efeito</th></tr>
+<tr><td>—</td><td>TypeScript com tipos e <code>export</code></td></tr>
+<tr><td><code>js</code></td><td>JavaScript puro para o navegador; implica <code>runnable</code></td></tr>
+<tr><td><code>runnable</code></td><td>pessoas viram simulador, abstratas ganham stubs, o fluxo é chamado no fim</td></tr>
+</table>
+<table>
+<tr><th>Fluxo</th><th>Código</th></tr>
+<tr><td>Raiz</td><td><code>export async function nome(state: State): Promise&lt;State&gt;</code>; camelCase único, sem palavras reservadas, sem colidir com dados</td></tr>
+<tr><td>Dados de fora</td><td><code>const { … } = state</code> para: entradas da raiz + entradas sem valor que ninguém produz</td></tr>
+<tr><td>Filha</td><td><code>const { saída } = await fn({ ...state, entrada })</code></td></tr>
+<tr><td>Entrada com valor</td><td><code>const entrada: unknown = &lt;expr&gt;</code> antes da chamada</td></tr>
+<tr><td>Lib</td><td>wrapper em <code>wrappers</code>: <code>{ saída: await Lib.tarefa(entrada as never) }</code>; global pelo nome, módulo (<code>pkg/x</code>, <code>node:x</code>) vira <code>import</code></td></tr>
+<tr><td>IA / sem Source</td><td>só o nome, vindo do <code>state</code></td></tr>
+<tr><td>Pessoa</td><td>simulador local (<code>runnable</code>)</td></tr>
+<tr><td>if · for · try · paralelo</td><td><code>if/else</code> · <code>for…of</code> · <code>try/catch (error)</code> + <code>handleError</code> · <code>Promise.all</code></td></tr>
+<tr><td>Retorno</td><td>saídas declaradas na raiz; sem elas, tudo o que o fluxo produz</td></tr>
+</table>
+<pre><code>export async function applyCoupon(state: State): Promise&lt;State&gt; {
+  // expected inputs (from another layer): price, percent
+  const { round, log } = state as Record&lt;"round" | "log", Fn&gt;;
+  const { price, percent } = state as Record&lt;string, any&gt;;
+  const value: unknown = price * (100 - percent) / 100;
+  const { total } = await round({ ...state, value });
+  if (percent &gt; 0) {
+    const text: unknown = `Coupon ${percent}% off: ${price} -&gt; ${total}`;
+    await log({ ...state, text });
+  }
+  return { total };
+}
+export const wrappers: Record&lt;string, Fn&gt; = {
+  round: async (state) =&gt; { const { value } = state; return { total: await Math.round(value as never) }; },
+  log:   async (state) =&gt; { const { text } = state;   await console.log(text as never); return {}; },
+};
+// run: await applyCoupon({ ...wrappers, price, percent });</code></pre>
+<figure><iframe class="fop" style="height:330px" loading="lazy" src="flow-novo.html?demo=libs"></iframe><figcaption>Fluxo que gerou o código acima — <code>demo=libs</code></figcaption></figure>
+
+<h2 id="runner"><span class="n">11</span>Execução</h2>
+<p><code>runInWorker(code, onEvent)</code> → <code>{ stop() }</code>. O Worker (criado de um <code>Blob</code>) recebe <code>{ code }</code> e executa <code>execute(code, emit)</code>: o código roda como corpo de função assíncrona com um <code>console</code> próprio.</p>
+<pre><code>type RunEvent =
+  | { type: "log";   level: "log"|"info"|"warn"|"error"|"debug"|"table"|"system"; text: string; t: number }
+  | { type: "done";  ms: number }
+  | { type: "error"; message: string; ms: number };</code></pre>
+<ul>
+  <li>Primeiro evento ≠ <code>log</code> (<code>done</code>/<code>error</code>) encerra o Worker; <code>stop()</code> o termina.</li>
+  <li><code>t</code> = ms desde o início. O texto logado é espelhado no console do DevTools.</li>
+  <li>Sem DOM no Worker, mas <b>não é sandbox de segurança</b>: <code>fetch</code> e demais globais existem (CORS vale).</li>
+  <li>Abstratas e pessoas rodam como stubs: validam o fluxo, não produzem resultado real.</li>
+</ul>
+
+<h2 id="persistencia"><span class="n">12</span>Persistência e URL</h2>
+<table>
+<tr><th>Chave <code>localStorage</code></th><th>Conteúdo</th></tr>
+<tr><td><code>flow-novo-projeto-v1</code></td><td>projeto (gravado a cada mudança)</td></tr>
+<tr><td><code>flow-novo-ui-v1</code> · <code>flow-novo-explorer-v1</code></td><td>largura e estado dos painéis</td></tr>
+<tr><td><code>tema-flow-component-v1</code></td><td>tema</td></tr>
+</table>
+<pre><code>{ "format": "flow-novo", "version": 1,
+  "project": { "name": "…", "flows": [ /* Fn[] */ ], "agents": [ /* Agent[] */ ], "seq": 42 } }</code></pre>
+<p><b>Export</b> = <code>serialize</code>; <b>Open</b> = <code>parseProject</code> + <code>migrate</code>. <code>parseProject</code> valida formato e versão, tipos, ids únicos, referências (Source, resp), contratos e blocos; falha com <code>invalid</code>.</p>
+<table>
+<tr><th>Parâmetro</th><th>Efeito</th></tr>
+<tr><td><code>?tema=&lt;id&gt;</code></td><td>tema</td></tr>
+<tr><td><code>?demo=&lt;id&gt;</code></td><td>modo incorporado (sem cabeçalho, Explorer, barra e código; <b>nunca grava</b>). ids: <code>novo-fluxo</code> <code>sequencia</code> <code>paralelo</code> <code>selecao</code> <code>repeticao</code> <code>trycatch</code> <code>composicao</code> <code>onboarding</code> <code>libs</code> <code>sample:&lt;função&gt;</code></td></tr>
+</table>
+<pre><code>&lt;iframe src="flow-novo.html?demo=sequencia" style="width:100%;height:300px;border:0"&gt;&lt;/iframe&gt;</code></pre>
+
+<h2 id="build"><span class="n">13</span>Build e deploy</h2>
+<table>
+<tr><th>Tarefa</th><th>Comando</th></tr>
+<tr><td>Build (esbuild, IIFE)</td><td><code>node example/build.mjs</code> → <code>flow-component.js</code>, <code>flow-novo.js</code> (de <code>novo/app.ts</code>), <code>contracts.js</code>, <code>fop-samples.json</code></td></tr>
+<tr><td>Tipos · testes · e2e</td><td><code>npx tsc --noEmit</code> · <code>npm test</code> (vitest) · <code>npm run test:e2e</code></td></tr>
+<tr><td>Preview</td><td><code>python3 -m http.server 8787 --directory example</code></td></tr>
+<tr><td>Publicar</td><td><code>bash deploy/publicar.sh</code> → <code>fop.laerciogermano.com</code> (<code>/flow-novo.html</code> → 301 <code>/</code>; este manual em <code>/fop-docs.html</code>)</td></tr>
+</table>
+
+<h2 id="erros"><span class="n">14</span>Erros e restrições</h2>
+<table>
+<tr><th>Situação</th><th>Resultado</th></tr>
+<tr><td>Nome vazio / &gt; 80 caracteres (título, arquivo)</td><td><code>invalid</code></td></tr>
+<tr><td>Id inexistente</td><td><code>not_found</code></td></tr>
+<tr><td>Irmão, estrutura ou remoção na raiz</td><td><code>root</code></td></tr>
+<tr><td><code>renameFile</code> para nome existente</td><td><code>invalid</code></td></tr>
+<tr><td><code>addElse</code> em <code>if</code> que já tem else</td><td><code>invalid</code></td></tr>
+<tr><td>Editar E/S de função de lib</td><td>bloqueado (contrato); só a saída se renomeia</td></tr>
+<tr><td>Arquivo inválido no Open</td><td><code>invalid</code> com mensagem</td></tr>
+</table>
+<div class="note warn"><b>Nomes de entrada:</b> não use nomes de tarefas de lib (<code>min</code>, <code>max</code>, <code>round</code>, <code>log</code>…) nem <code>state</code>: colidem com o código gerado.</div>
+<div class="note warn"><b>Template string:</b> entrada da raiz usada <i>apenas</i> dentro de <code>${}</code> pode não ser reconhecida (<code>exprIdents</code> remove o conteúdo de strings) e falha com “not defined”. Use concatenação (<code>"url/" + id</code>) ou use o dado também em expressão comum.</div>
+<div class="note">Texto fixo exige aspas (<code>"ana"</code>); sem aspas é nome de dado.</div>
+
+<h2 id="samples"><span class="n">15</span>Samples</h2>
+<p>Não fazem parte do projeto padrão (abre só com <code>main</code>). Baixe <a href="fop-samples.json" download>fop-samples.json</a> e use <b>Open</b>.</p>
+<table>
+<tr><th>Função</th><th>Entradas (padrão)</th><th>Libs</th></tr>
+<tr><td><code>newId</code></td><td>—</td><td>crypto</td></tr>
+<tr><td><code>formatPrice</code></td><td><code>amount</code> = 1999.9</td><td>math, console</td></tr>
+<tr><td><code>applyCoupon</code></td><td><code>price</code> = 250, <code>percent</code> = 15</td><td>math, console, <code>if</code></td></tr>
+<tr><td><code>clamp</code></td><td><code>value</code> = 130, <code>low</code> = 0, <code>high</code> = 100</td><td>math</td></tr>
+<tr><td><code>retryDelay</code></td><td><code>attempt</code> = 3</td><td>math</td></tr>
+<tr><td><code>basicAuthHeader</code></td><td><code>user</code>, <code>password</code></td><td>web (btoa)</td></tr>
+<tr><td><code>readSession</code></td><td><code>session</code> (base64 de JSON)</td><td>web (atob), json</td></tr>
+<tr><td><code>snapshotState</code></td><td><code>form</code> = { cart, total }</td><td>web (structuredClone)</td></tr>
+<tr><td><code>isAdult</code></td><td><code>birthYear</code> = 1998</td><td>date, math, <code>if</code></td></tr>
+<tr><td><code>measureAction</code></td><td>—</td><td>perf, math</td></tr>
+<tr><td><code>fetchUser</code></td><td><code>id</code> = 1</td><td>web (fetch)</td></tr>
+</table>
+<div class="two">
+<figure><iframe class="fop" style="height:290px" loading="lazy" src="flow-novo.html?demo=sample:retryDelay"></iframe><figcaption><code>demo=sample:retryDelay</code></figcaption></figure>
+<figure><iframe class="fop" style="height:300px" loading="lazy" src="flow-novo.html?demo=sample:isAdult"></iframe><figcaption><code>demo=sample:isAdult</code></figcaption></figure>
+</div>
+
+<h2 id="glossario"><span class="n">16</span>Glossário</h2>
+<table>
+<tr><th>Termo</th><th>Definição</th></tr>
+<tr><td>Fluxo</td><td>Árvore de funções e blocos de uma função raiz</td></tr>
+<tr><td>Função raiz</td><td>Elemento de <code>Project.flows</code>; unidade que se roda</td></tr>
+<tr><td>Composição</td><td>Função com <code>kids</code></td></tr>
+<tr><td>Estado <code>sN</code></td><td>Coluna do layout; dados acumulados até ali</td></tr>
+<tr><td>state</td><td>Objeto de entrada do código gerado: dados e funções externos</td></tr>
+<tr><td>Abstrato / concreto</td><td>Sem executor ou valor / com executor (lib, arquivo) ou valor</td></tr>
+<tr><td>Source</td><td>Quem executa a função (<code>Fn.agent</code>)</td></tr>
+<tr><td>Contrato</td><td><code>ins</code>/<code>outs</code> fixos de uma tarefa de lib</td></tr>
+<tr><td>Cubo</td><td>Mais de um dado numa entrada ou saída</td></tr>
+<tr><td>Wrapper</td><td>Função gerada que liga o state à chamada da lib</td></tr>
+<tr><td>IDR</td><td>Id único e estável; o nome é só rótulo</td></tr>
+</table>
+</main>
+</div>
+</body>
+</html>

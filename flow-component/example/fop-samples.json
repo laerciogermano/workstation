@@ -1,0 +1,1017 @@
+{
+  "format": "flow-novo",
+  "version": 1,
+  "project": {
+    "name": "Samples",
+    "flows": [
+      {
+        "t": "fn",
+        "id": "n1",
+        "title": "newId",
+        "agent": null,
+        "resp": null,
+        "ins": [],
+        "outs": [
+          "id"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n2",
+            "title": "randomUUID",
+            "agent": "crypto",
+            "resp": null,
+            "ins": [],
+            "outs": [
+              "id"
+            ],
+            "kids": [],
+            "par": false
+          }
+        ],
+        "par": false,
+        "file": "samples.ts"
+      },
+      {
+        "t": "fn",
+        "id": "n3",
+        "title": "formatPrice",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "amount"
+        ],
+        "outs": [],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n4",
+            "title": "round",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "cents"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "value": "amount * 100"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n5",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`R$ ${(cents / 100).toFixed(2).replace(\".\", \",\")}`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "amount": "1999.9"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n6",
+        "title": "applyCoupon",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "price",
+          "percent"
+        ],
+        "outs": [
+          "total"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n7",
+            "title": "round",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "total"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "value": "price * (100 - percent) / 100"
+            }
+          },
+          {
+            "t": "if",
+            "id": "n9",
+            "test": "percent > 0",
+            "kids": [
+              {
+                "t": "fn",
+                "id": "n8",
+                "title": "log",
+                "agent": "console",
+                "resp": null,
+                "ins": [
+                  "text"
+                ],
+                "outs": [],
+                "kids": [],
+                "par": false,
+                "args": {
+                  "text": "`Coupon ${percent}% off: ${price} -> ${total}`"
+                }
+              }
+            ],
+            "elseKids": []
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "price": "250",
+          "percent": "15"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n10",
+        "title": "clamp",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "value",
+          "low",
+          "high"
+        ],
+        "outs": [
+          "clamped"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n11",
+            "title": "max",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "a",
+              "b"
+            ],
+            "outs": [
+              "atLeastLow"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "a": "low",
+              "b": "value"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n12",
+            "title": "min",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "a",
+              "b"
+            ],
+            "outs": [
+              "clamped"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "a": "high",
+              "b": "atLeastLow"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n13",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`${value} -> ${clamped}`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "value": "130",
+          "low": "0",
+          "high": "100"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n14",
+        "title": "retryDelay",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "attempt"
+        ],
+        "outs": [
+          "delay"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n15",
+            "title": "pow",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "base",
+              "exponent"
+            ],
+            "outs": [
+              "seconds"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "base": "2",
+              "exponent": "attempt"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n16",
+            "title": "min",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "a",
+              "b"
+            ],
+            "outs": [
+              "delay"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "a": "seconds",
+              "b": "30"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n17",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`Try again in ${delay}s (attempt ${attempt})`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "attempt": "3"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n18",
+        "title": "basicAuthHeader",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "user",
+          "password"
+        ],
+        "outs": [
+          "token"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n19",
+            "title": "btoa",
+            "agent": "web",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "token"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "user + \":\" + password"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n20",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`Authorization: Basic ${token}`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "user": "\"ana\"",
+          "password": "\"1234\""
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n21",
+        "title": "readSession",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "session"
+        ],
+        "outs": [
+          "user"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n22",
+            "title": "atob",
+            "agent": "web",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "raw"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "session"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n23",
+            "title": "parse",
+            "agent": "json",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "user"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "raw"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n24",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`Welcome ${user.name} (${user.role})`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "session": "btoa('{\"name\":\"Ana\",\"role\":\"admin\"}')"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n25",
+        "title": "snapshotState",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "form"
+        ],
+        "outs": [
+          "snapshot"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n26",
+            "title": "structuredClone",
+            "agent": "web",
+            "resp": null,
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "snapshot"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "value": "form"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n27",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "snapshot"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "form": "{ cart: [1, 2, 3], total: 30 }"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n28",
+        "title": "isAdult",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "birthYear"
+        ],
+        "outs": [
+          "age"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n29",
+            "title": "now",
+            "agent": "date",
+            "resp": null,
+            "ins": [],
+            "outs": [
+              "today"
+            ],
+            "kids": [],
+            "par": false
+          },
+          {
+            "t": "fn",
+            "id": "n30",
+            "title": "floor",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "age"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "value": "(today - new Date(birthYear, 0, 1)) / 31557600000"
+            }
+          },
+          {
+            "t": "if",
+            "id": "n32",
+            "test": "age >= 18",
+            "kids": [
+              {
+                "t": "fn",
+                "id": "n31",
+                "title": "log",
+                "agent": "console",
+                "resp": null,
+                "ins": [
+                  "text"
+                ],
+                "outs": [],
+                "kids": [],
+                "par": false,
+                "args": {
+                  "text": "`${age} years old: adult`"
+                }
+              }
+            ],
+            "elseKids": []
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "birthYear": "1998"
+        }
+      },
+      {
+        "t": "fn",
+        "id": "n33",
+        "title": "measureAction",
+        "agent": null,
+        "resp": null,
+        "ins": [],
+        "outs": [
+          "ms"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n34",
+            "title": "now",
+            "agent": "perf",
+            "resp": null,
+            "ins": [],
+            "outs": [
+              "start"
+            ],
+            "kids": [],
+            "par": false
+          },
+          {
+            "t": "fn",
+            "id": "n35",
+            "title": "random",
+            "agent": "math",
+            "resp": null,
+            "ins": [],
+            "outs": [
+              "work"
+            ],
+            "kids": [],
+            "par": false
+          },
+          {
+            "t": "fn",
+            "id": "n36",
+            "title": "now",
+            "agent": "perf",
+            "resp": null,
+            "ins": [],
+            "outs": [
+              "end"
+            ],
+            "kids": [],
+            "par": false
+          },
+          {
+            "t": "fn",
+            "id": "n37",
+            "title": "round",
+            "agent": "math",
+            "resp": null,
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "ms"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "value": "end - start"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n38",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`Action took ${ms}ms`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts"
+      },
+      {
+        "t": "fn",
+        "id": "n39",
+        "title": "fetchUser",
+        "agent": null,
+        "resp": null,
+        "ins": [
+          "id"
+        ],
+        "outs": [
+          "response"
+        ],
+        "kids": [
+          {
+            "t": "fn",
+            "id": "n40",
+            "title": "fetch",
+            "agent": "web",
+            "resp": null,
+            "ins": [
+              "url",
+              "options"
+            ],
+            "outs": [
+              "response"
+            ],
+            "kids": [],
+            "par": false,
+            "args": {
+              "url": "\"https://jsonplaceholder.typicode.com/users/\" + id"
+            }
+          },
+          {
+            "t": "fn",
+            "id": "n41",
+            "title": "log",
+            "agent": "console",
+            "resp": null,
+            "ins": [
+              "text"
+            ],
+            "outs": [],
+            "kids": [],
+            "par": false,
+            "args": {
+              "text": "`HTTP ${response.status}`"
+            }
+          }
+        ],
+        "par": false,
+        "file": "samples.ts",
+        "args": {
+          "id": "1"
+        }
+      }
+    ],
+    "agents": [
+      {
+        "id": "console",
+        "kind": "maquina",
+        "name": "console",
+        "tasks": [
+          "log",
+          "info",
+          "warn",
+          "error",
+          "debug",
+          "table"
+        ],
+        "contracts": {
+          "log": {
+            "ins": [
+              "text"
+            ],
+            "outs": []
+          },
+          "info": {
+            "ins": [
+              "text"
+            ],
+            "outs": []
+          },
+          "warn": {
+            "ins": [
+              "text"
+            ],
+            "outs": []
+          },
+          "error": {
+            "ins": [
+              "text"
+            ],
+            "outs": []
+          },
+          "debug": {
+            "ins": [
+              "text"
+            ],
+            "outs": []
+          },
+          "table": {
+            "ins": [
+              "data"
+            ],
+            "outs": []
+          }
+        }
+      },
+      {
+        "id": "math",
+        "kind": "maquina",
+        "name": "Math",
+        "tasks": [
+          "random",
+          "round",
+          "floor",
+          "ceil",
+          "abs",
+          "max",
+          "min",
+          "pow",
+          "sqrt"
+        ],
+        "contracts": {
+          "random": {
+            "ins": [],
+            "outs": [
+              "number"
+            ]
+          },
+          "round": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "floor": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "ceil": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "abs": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "max": {
+            "ins": [
+              "a",
+              "b"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "min": {
+            "ins": [
+              "a",
+              "b"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "pow": {
+            "ins": [
+              "base",
+              "exponent"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "sqrt": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "result"
+            ]
+          }
+        }
+      },
+      {
+        "id": "json",
+        "kind": "maquina",
+        "name": "JSON",
+        "tasks": [
+          "stringify",
+          "parse"
+        ],
+        "contracts": {
+          "stringify": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "text"
+            ]
+          },
+          "parse": {
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "value"
+            ]
+          }
+        }
+      },
+      {
+        "id": "date",
+        "kind": "maquina",
+        "name": "Date",
+        "tasks": [
+          "now",
+          "parse"
+        ],
+        "contracts": {
+          "now": {
+            "ins": [],
+            "outs": [
+              "timestamp"
+            ]
+          },
+          "parse": {
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "timestamp"
+            ]
+          }
+        }
+      },
+      {
+        "id": "crypto",
+        "kind": "maquina",
+        "name": "crypto",
+        "tasks": [
+          "randomUUID"
+        ],
+        "contracts": {
+          "randomUUID": {
+            "ins": [],
+            "outs": [
+              "uuid"
+            ]
+          }
+        }
+      },
+      {
+        "id": "perf",
+        "kind": "maquina",
+        "name": "performance",
+        "tasks": [
+          "now"
+        ],
+        "contracts": {
+          "now": {
+            "ins": [],
+            "outs": [
+              "time"
+            ]
+          }
+        }
+      },
+      {
+        "id": "web",
+        "kind": "maquina",
+        "name": "globalThis",
+        "tasks": [
+          "fetch",
+          "atob",
+          "btoa",
+          "structuredClone"
+        ],
+        "contracts": {
+          "fetch": {
+            "ins": [
+              "url",
+              "options"
+            ],
+            "outs": [
+              "response"
+            ],
+            "optional": [
+              "options"
+            ]
+          },
+          "atob": {
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "btoa": {
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "result"
+            ]
+          },
+          "structuredClone": {
+            "ins": [
+              "value"
+            ],
+            "outs": [
+              "copy"
+            ]
+          }
+        }
+      },
+      {
+        "id": "lia",
+        "kind": "ia",
+        "name": "Lia",
+        "tasks": []
+      },
+      {
+        "id": "teo",
+        "kind": "ia",
+        "name": "Teo",
+        "tasks": []
+      },
+      {
+        "id": "davi",
+        "kind": "ia",
+        "name": "Davi",
+        "tasks": []
+      },
+      {
+        "id": "ana",
+        "kind": "pessoa",
+        "name": "Ana Souza",
+        "tasks": []
+      },
+      {
+        "id": "bruno",
+        "kind": "pessoa",
+        "name": "Bruno Lima",
+        "tasks": []
+      }
+    ],
+    "seq": 41
+  }
+}

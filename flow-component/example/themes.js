@@ -18,7 +18,7 @@ const FOP_HOST = /^fop\.(laerciogermano|lesgermano)\.com$/i;
 (function () {
   const q = new URLSearchParams(location.search).get("tema") || new URLSearchParams(location.search).get("theme");
   let saved = null; try { saved = localStorage.getItem(TEMA_KEY); } catch (e) {}
-  const hostDefault = FOP_HOST.test(location.hostname) ? "eternos-black" : "cobalto";
+  const hostDefault = window.TEMA_PADRAO || (FOP_HOST.test(location.hostname) ? "eternos-black" : "cobalto");
   const first = TEMAS.some(t => t.id === q) ? q : TEMAS.some(t => t.id === saved) ? saved : hostDefault;
   document.documentElement.dataset.tema = first;
   // FOP: URL limpa — sem ?tema= / flow-novo.html na barra

@@ -229,6 +229,17 @@
       if (l.node.t !== "fn") return fail("invalid", "Only functions have a name");
       l.node.title = cleanText(a["title"], "Name", 80);
     },
+    /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
+    renameFile: (p, a) => {
+      const from = str(a, "from"), to = cleanText(a["to"], "File name", 80).replace(/\s+/g, "-"), file = /\.[A-Za-z0-9]+$/.test(to) ? to : `${to}.ts`;
+      const own = p.flows.filter((f) => flowFile(f) === from);
+      if (!own.length) return fail("not_found", `File ${from} does not exist`);
+      if (file !== from && p.flows.some((f) => flowFile(f) === file)) return fail("invalid", `File ${file} already exists`);
+      for (const f of own) f.file = file;
+      for (const f of p.flows) walk([f], (n) => {
+        if (n.t === "fn" && n.agent === `file:${from}`) n.agent = `file:${file}`;
+      });
+    },
     /** Filho: função → no fim da lista dela; bloco → na PRIMEIRA posição (o lugar do cabeçalho); `catch` → primeira posição do catch. */
     addChild: (p, a) => {
       const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : void 0);
@@ -911,13 +922,15 @@
     const ty = (withTypes, plain = "") => ts ? withTypes : plain;
     const loc = locate(p, rootId), flow = loc?.node.t === "fn" ? loc.node : null;
     if (!flow) throw new Error(`Flow ${rootId} does not exist`);
-    const fns = flow.kids.length ? fnsOf(flow) : [flow];
-    const used = /* @__PURE__ */ new Map(), names = /* @__PURE__ */ new Map();
-    const dataNames = /* @__PURE__ */ new Set([...fns.flatMap((f) => [...f.ins, ...f.outs])]);
+    const allFns = flow.kids.length ? fnsOf(flow) : [flow];
+    const scopeFns = (nodes) => nodes.flatMap((n) => n.t === "fn" ? [n] : scopeFns(kidsOf(n)));
+    const fns = flow.kids.length ? scopeFns(flow.kids) : [flow];
+    const used = opts.reg ?? /* @__PURE__ */ new Map(), names = opts.names ?? /* @__PURE__ */ new Map();
+    const dataNames = /* @__PURE__ */ new Set([...allFns.flatMap((f) => [...f.ins, ...f.outs])]);
     walk(flow.kids, (n) => {
       if (n.t === "for") dataNames.add(n.v);
     });
-    for (const f of fns) {
+    if (!opts.names) for (const f of allFns) {
       let base = camel(f.title);
       if (dataNames.has(base)) base = `${base}Fn`;
       const n = (used.get(base) ?? 0) + 1;
@@ -928,6 +941,7 @@
     }
     const nameOf = (f) => names.get(f.id) ?? camel(f.title);
     const kindOf = (f) => {
+      if (f.kids.length) return "local";
       const a = agentOf(p, f.agent);
       return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs";
     };
@@ -935,12 +949,13 @@
     const libVar = (n) => isModule(n) ? n.replace(/[^A-Za-z0-9_]/g, "_") : n;
     const produced = [...new Set(fns.flatMap((f) => f.outs))];
     const rootIns = flow.kids.length ? flow.ins : [];
-    const needed = [.../* @__PURE__ */ new Set([...rootIns, ...fns.flatMap((f) => f.ins.filter((i) => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter((i) => !produced.includes(i));
-    const returned = flow.kids.length && flow.outs.length ? flow.outs : produced;
+    const producedAll = [...new Set(allFns.flatMap((f) => f.outs))];
+    const needed = [.../* @__PURE__ */ new Set([...rootIns, ...allFns.flatMap((f) => f.ins.filter((i) => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter((i) => !producedAll.includes(i));
+    const returned = flow.outs;
     const abstract = fns.filter((f) => kindOf(f) === "abs").map(nameOf);
-    const libFns = fns.filter((f) => kindOf(f) === "lib"), callables = fns.filter((f) => kindOf(f) !== "pessoa" && kindOf(f) !== "file").map(nameOf);
-    const libs = [...new Set(fns.filter((f) => kindOf(f) === "lib").map((f) => agentOf(p, f.agent).name))].filter(isModule);
-    const hasHumans = fns.some((f) => kindOf(f) === "pessoa");
+    const libFns = allFns.filter((f) => kindOf(f) === "lib"), callables = fns.filter((f) => kindOf(f) !== "pessoa" && kindOf(f) !== "file" && kindOf(f) !== "local").map(nameOf);
+    const libs = [...new Set(allFns.filter((f) => kindOf(f) === "lib").map((f) => agentOf(p, f.agent).name))].filter(isModule);
+    const hasHumans = fns.some((f) => kindOf(f) === "pessoa"), hasHumansAll = allFns.some((f) => kindOf(f) === "pessoa"), needFn = allFns.some((f) => !["pessoa", "file", "local"].includes(kindOf(f)));
     const lines = [], map = {};
     const emit = (s) => {
       lines.push(s);
@@ -951,7 +966,8 @@
     const callOf = (f, scope, err) => {
       const entries = /* @__PURE__ */ new Map();
       for (const v of scope) entries.set(v, v);
-      for (const i of f.ins) if (produced.includes(i) || scope.includes(i)) entries.set(i, i);
+      if (kindOf(f) === "local") for (const d of declared) entries.set(d, d);
+      for (const i of f.ins) if (produced.includes(i) || scope.includes(i) || needed.includes(i)) entries.set(i, i);
       for (const i of f.ins) {
         const expr = f.args?.[i]?.trim();
         if (expr) entries.set(i, initOf(f, i, scope) ? i : expr);
@@ -979,6 +995,19 @@
       return [head, ...body, "  },"];
     };
     const declared = /* @__PURE__ */ new Set();
+    const inferType = (e) => {
+      const x = e.trim();
+      if (/^"(?:[^"\\]|\\.)*"$|^'(?:[^'\\]|\\.)*'$|^`[^`]*`$/.test(x)) return "string";
+      if (/^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(x)) return "number";
+      if (/^(?:true|false)$/.test(x)) return "boolean";
+      if (/^\[[\s\S]*\]$/.test(x)) return "unknown[]";
+      if (/^\{[\s\S]*\}$/.test(x)) return "Record<string, unknown>";
+      const bare = x.replace(/(["'`])(?:\\.|(?!\1).)*\1/g, "");
+      if (!bare.includes(x) && /["'`]/.test(x)) return void 0;
+      if (/^!|(?:===?|!==?|<=?|>=?)/.test(bare) && !/[?]/.test(bare)) return "boolean";
+      if (/^[\w$.\s()+\-*/%]+$/.test(x) && /[*/%]|\s-\s/.test(x) && !/["'`]/.test(x)) return "number";
+      return void 0;
+    };
     const typeOf = (n) => inExpr.has(n) ? "any" : "unknown";
     const letLine = (names2, ind) => {
       const ns = names2.filter((n) => !declared.has(n));
@@ -989,9 +1018,9 @@
     const list = (nodes, ind, scope, err, key = "r") => {
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i], a = lines.length + 1;
-        if (n.t === "fn" && n.kids.length === 0) {
+        if (n.t === "fn") {
           const group = [n];
-          while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par && nodes[i + 1].kids.length === 0) group.push(nodes[++i]);
+          while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par) group.push(nodes[++i]);
           const ds = (declAt.get(`${key}|${n.id}`) ?? []).filter((x) => !declared.has(x));
           if (group.length === 1) {
             const inl = /* @__PURE__ */ new Set();
@@ -1001,7 +1030,7 @@
               if (ds.includes(x)) {
                 inl.add(x);
                 declared.add(x);
-                return [`${ind}${writers.get(x) === 1 ? "const" : "let"} ${x}${ty(`: ${typeOf(x)}`)} = ${e};`];
+                return [`${ind}${writers.get(x) === 1 ? "const" : "let"} ${x}${ty(`: ${writers.get(x) === 1 && !inExpr.has(x) ? inferType(e) ?? typeOf(x) : typeOf(x)}`)} = ${e};`];
               }
               return [`${ind}${x} = ${e};`];
             });
@@ -1019,7 +1048,8 @@
           letLine(ds, ind);
           initLines(group, scope, ind).forEach((l) => emit(l));
           const a0 = lines.length + 1;
-          emit(`${ind}const par${a0} = await Promise.all([  // parallel`);
+          const anyOut = group.some((g) => g.outs.length);
+          emit(`${ind}${anyOut ? `const par${a0} = ` : ""}await Promise.all([`);
           group.forEach((g) => emit(`${ind}  ${callOf(g, scope, err)},`));
           emit(`${ind}]);`);
           group.forEach((g, k) => {
@@ -1028,9 +1058,6 @@
           group.forEach((g) => {
             map[g.id] = [a, lines.length];
           });
-        } else if (n.t === "fn") {
-          list(n.kids, ind, scope, err, key);
-          map[n.id] = [map[n.kids[0].id]?.[0] ?? a, lines.length];
         } else if (n.t === "if") {
           letLine(declAt.get(`${key}|${n.id}`) ?? [], ind);
           const a1 = lines.length + 1;
@@ -1056,7 +1083,7 @@
           list(n.kids, ind + "  ", scope, err, `${n.id}:k`);
           emit(`${ind}} catch (error) {`);
           list(n.catchKids, ind + "  ", scope, true, `${n.id}:c`);
-          emit(`${ind}  return { ...state, error };`);
+          emit(returned.length ? `${ind}  return { ...state, error };` : `${ind}  return;`);
           emit(`${ind}}`);
           mark(n.id, a1);
         }
@@ -1089,7 +1116,7 @@
         } else if (n.t === "try") {
           scan(n.kids, scope);
           scan(n.catchKids, scope);
-        } else scan(n.kids, scope);
+        }
       }
     };
     scan(flow.kids, []);
@@ -1111,9 +1138,9 @@
     const scanDecl = (nodes, key, trail, scope) => {
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
-        if (n.t === "fn" && n.kids.length === 0) {
+        if (n.t === "fn") {
           const group = [n];
-          while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par && nodes[i + 1].kids.length === 0) group.push(nodes[++i]);
+          while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par) group.push(nodes[++i]);
           const here = [...trail, [key, n.id]];
           for (const g of group) {
             for (const x of g.ins) {
@@ -1131,8 +1158,7 @@
               writers.set(o, (writers.get(o) ?? 0) + 1);
             }
           }
-        } else if (n.t === "fn") scanDecl(n.kids, key, trail, scope);
-        else {
+        } else {
           const here = [...trail, [key, n.id]];
           if (n.t === "if") {
             idsOf(n.test).forEach((id) => addUse(id, here));
@@ -1158,31 +1184,31 @@
       const firstUse = us.reduce((m, u) => u.seq < m.seq ? u : m), k = `${f0.keys[l]}|${firstUse.ids[l]}`;
       declAt.set(k, [...declAt.get(k) ?? [], name]);
     }
-    emit(`// Generated by Flow \xB7 flow ${JSON.stringify(flow.title)}`);
-    for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});   // module: only works if the browser can load it` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
-    const byFile = /* @__PURE__ */ new Map();
-    for (const f of fns.filter((x) => kindOf(x) === "file")) {
-      const k = agentOf(p, f.agent).name;
-      byFile.set(k, [...byFile.get(k) ?? [], f]);
+    if (!opts.inner) {
+      for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
+      const byFile = /* @__PURE__ */ new Map();
+      for (const f of allFns.filter((x) => kindOf(x) === "file")) {
+        const k = agentOf(p, f.agent).name;
+        byFile.set(k, [...byFile.get(k) ?? [], f]);
+      }
+      for (const [file, list2] of byFile) {
+        const names2 = [...new Set(list2.map((f) => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
+        emit(opts.js ? `const { ${names2.map((n) => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});` : `import { ${names2.join(", ")} } from ${JSON.stringify("./" + file)};`);
+      }
+      if (lines.length > 0) emit("");
+      if (ts) {
+        emit("type State = Record<string, unknown>;");
+        if (needFn) emit("type Fn = (state: State) => Promise<State>;");
+        if (hasHumansAll) emit("type Humans = { ask: (who: string, what: string, args: State) => Promise<State> };");
+      }
+      if (lines.length > 0) emit("");
     }
-    for (const [file, list2] of byFile) {
-      const names2 = [...new Set(list2.map((f) => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
-      emit(opts.js ? `const { ${names2.map((n) => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});   // another file of the project` : `import { ${names2.join(", ")} } from ${JSON.stringify("./" + file)};`);
-    }
-    if (lines.length > 1) emit("");
-    if (ts) {
-      emit("type State = Record<string, unknown>;");
-      if (callables.length) emit("type Fn = (state: State) => Promise<State>;");
-      if (hasHumans) emit("type Humans = { ask: (who: string, what: string, args: State) => Promise<State> };");
-    }
-    emit("");
-    emit(`/** ${flow.title} \xB7 ${flowFile(flow)} */`);
-    emit(`${ty("export ")}async function ${camel(flow.title)}(state${ty(": State")})${ty(": Promise<State>")} {`);
+    emit(`${opts.inner ? "" : ty("export ")}async function ${opts.fnName ?? camel(flow.title)}(state${ty(": State")})${ty(returned.length ? ": Promise<State>" : ": Promise<void>")} {`);
     const startBody = lines.length + 1;
-    if (needed.length) emit(`  // expected inputs (from another layer): ${needed.join(", ")}`);
-    if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};  // people: come from the state`);
-    if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map((n) => JSON.stringify(n)).join(" | ")}, Fn>`)};  // functions: come from the state (lib ones are the wrappers exported below)`);
-    if (fromState.length) emit(`  const { ${fromState.join(", ")} } = state${ty(" as Record<string, any>")};  // data read in conditions and loops`);
+    if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};`);
+    if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map((n) => JSON.stringify(n)).join(" | ")}, Fn>`)};`);
+    const stateNames = [.../* @__PURE__ */ new Set([...fromState, ...needed.filter((n) => !callables.includes(n) && n !== "humans")])];
+    if (stateNames.length) emit(`  const { ${stateNames.join(", ")} } = state${ty(" as Record<string, any>")};`);
     if (flow.kids.length) list(flow.kids, "  ", [], false);
     else {
       letLine([...produced, ...inits], "  ");
@@ -1192,12 +1218,17 @@
       mark(flow.id, a);
     }
     letLine(declAt.get("r|__ret") ?? [], "  ");
-    emit(returned.length ? `  return { ${returned.join(", ")} };` : "  return state;");
+    if (returned.length) emit(`  return { ${returned.join(", ")} };`);
     emit("}");
     map[flow.id] = [startBody, lines.length - 1];
     emit("");
-    if (libFns.length) {
-      emit("/** Lib function wrappers: turn the flow input (state) into the lib input, and the lib output back into the flow format. Pass them in the state. */");
+    for (const f of fns.filter((x) => kindOf(x) === "local")) {
+      const g = generate(p, f.id, { ...options, inner: true, names, reg: used, fnName: nameOf(f) }), off = lines.length;
+      g.code.replace(/\n$/, "").split("\n").forEach((l) => emit(l));
+      for (const [k, [a, b]] of Object.entries(g.map)) map[k] = [a + off, b + off];
+      emit("");
+    }
+    if (!opts.inner && libFns.length) {
       emit(`${ty("export ")}const wrappers${ty(": Record<string, Fn>")} = {`);
       for (const f of libFns) {
         const start = lines.length + 1;
@@ -1208,10 +1239,10 @@
       emit("");
     }
     const fnName = camel(flow.title), runFile = `${slug(flow.title)}.mts`, runCommand = `node --experimental-strip-types ${runFile}`;
-    if (opts.runnable) {
-      emit(opts.js ? "// \u2500\u2500 runs in the browser" : `// \u2500\u2500 run: ${runCommand}  (Node \u2265 22.6)`);
+    if (opts.inner) {
+    } else if (opts.runnable) {
       const sim = (f) => `${nameOf(f)}: async () => (${f.outs.length ? `{ ${f.outs.map((o) => `${o}: ${JSON.stringify(`${o} (simulated)`)}`).join(", ")} }` : "{}"})`;
-      const given = [...libFns.length ? ["...wrappers"] : [], ...fns.filter((x) => kindOf(x) === "abs").map(sim), ...hasHumans ? [`humans: { ask: async (who${ty(": string")}, what${ty(": string")}) => (console.log(\`[person] \${who}: \${what}\`), {}) }`] : [], ...needed.map((n) => `${n}: ${flow.args?.[n]?.trim() || JSON.stringify(`${n} (simulated)`)}`)];
+      const given = [...libFns.length ? ["...wrappers"] : [], ...allFns.filter((x) => kindOf(x) === "abs").map(sim), ...hasHumansAll ? [`humans: { ask: async (who${ty(": string")}, what${ty(": string")}) => (console.log(\`[person] \${who}: \${what}\`), {}) }`] : [], ...needed.map((n) => `${n}: ${flow.args?.[n]?.trim() || JSON.stringify(`${n} (simulated)`)}`)];
       const arg = !given.length ? "" : given.length < 3 && given.every((g) => g.length < 30) ? `{ ${given.join(", ")} }` : `{
 ${given.map((g) => `  ${g},`).join("\n")}
 }`;
@@ -1219,42 +1250,41 @@ ${given.map((g) => `  ${g},`).join("\n")}
         emit(`const result = await ${fnName}(${arg});`);
         emit("console.log(result);");
       } else emit(`await ${fnName}(${arg});`);
-    } else emit(`// run: await ${fnName}({ ${[...libFns.length ? ["...wrappers"] : [], ...needed].join(", ")}${libFns.length || needed.length ? " " : ""}});`);
+    }
     void isComposite;
     void walk;
     return { code: lines.join("\n") + "\n", map, fileName: flowFile(flow), name: fnName, runFile, runCommand };
   }
   function generateFile(p, ids, options = {}) {
     const imports = /* @__PURE__ */ new Set(), types = /* @__PURE__ */ new Set(), parts = [], wrappers = /* @__PURE__ */ new Map();
-    let wDoc = "", wOpen = "";
+    let wOpen = "";
     let fileName = "";
     for (const id of ids) {
       const g = generate(p, id, { ...options, runnable: false });
       fileName ||= g.fileName;
-      const L = g.code.replace(/\n$/, "").split("\n"), docI = L.findIndex((l) => l.startsWith("/** ") && l.includes(" \xB7 ")), endI = L.findIndex((l) => l.startsWith("/** Lib function wrappers") || l.startsWith("// run:"));
-      for (const l of L.slice(1, Math.max(1, docI))) {
+      const L = g.code.replace(/\n$/, "").split("\n"), fnI = Math.max(0, L.findIndex((l) => /^(export )?async function /.test(l))), wI = L.findIndex((l) => /^(export )?const wrappers\b/.test(l));
+      for (const l of L.slice(0, fnI)) {
         if (/^(import |const \{.*\} = await import)/.test(l)) imports.add(l);
         else if (l.startsWith("type ")) types.add(l);
       }
-      const stop = endI === -1 ? L.length : endI;
-      parts.push(L.slice(Math.max(0, docI), stop));
-      while (parts[parts.length - 1].length && !parts[parts.length - 1][parts[parts.length - 1].length - 1].trim()) parts[parts.length - 1].pop();
-      if (endI !== -1 && L[endI].startsWith("/** Lib function wrappers")) {
-        wDoc ||= L[endI];
-        wOpen ||= L[endI + 1];
+      const part = L.slice(fnI, wI === -1 ? L.length : wI);
+      while (part.length && !part[part.length - 1].trim()) part.pop();
+      parts.push(part);
+      if (wI !== -1) {
+        wOpen ||= L[wI];
         let cur = null;
-        for (const l of L.slice(endI + 2)) {
+        for (const l of L.slice(wI + 1)) {
           if (l === "};") break;
           if (/^  \w+: async/.test(l)) cur = wrappers.has(l) ? null : (wrappers.set(l, []), wrappers.get(l));
           cur?.push(l);
         }
       }
     }
-    const out = [`// Generated by Flow \xB7 file ${JSON.stringify(fileName)}`, ...imports, ...imports.size ? [""] : [], ...types, ...types.size ? [""] : []];
+    const out = [...imports, ...imports.size ? [""] : [], ...types, ...types.size ? [""] : []];
     parts.forEach((pt) => {
       out.push(...pt, "");
     });
-    if (wrappers.size) out.push(wDoc, wOpen, ...[...wrappers.values()].flat(), "};", "");
+    if (wrappers.size) out.push(wOpen, ...[...wrappers.values()].flat(), "};", "");
     return { code: out.join("\n"), fileName };
   }
 
@@ -1291,6 +1321,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     play: ["M6 4v16l14-8z"],
     square: ["rect:6,6,12,12,1"],
     terminal: ["m4 17 6-6-6-6", "M12 19h8"],
+    reset: ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"],
     undo: ["M9 14 4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"],
     redo: ["m15 14 5-5-5-5", "M20 9H9.5A5.5 5.5 0 0 0 4 14.5 5.5 5.5 0 0 0 9.5 20H13"],
     text: ["M12 4v16", "M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2", "M9 20h6"],
@@ -1316,17 +1347,23 @@ ${given.map((g) => `  ${g},`).join("\n")}
   var KIND_ICON = { maquina: "package", pessoa: "user", ia: "ia", arquivo: "file" };
 
   // novo/scope.ts
-  function countForStep(p, scene, blockId, step) {
+  function countForRow(p, scene, blockId, rowIdx) {
     const l = locate(p, blockId);
-    if (!l || l.node.t === "fn") return 1;
-    const items = [...l.node.kids, ...l.list.slice(l.index + 1)];
-    let n = 0;
+    if (!l || l.node.t === "fn") return { count: 1, lastRow: rowIdx };
+    const items = [...l.node.kids, ...l.list.slice(l.index + 1)], first = (id) => scene.rows.findIndex((r) => r.id === id && (r.kind === "fn" || r.kind === "block"));
+    let n = 0, lastRow = first(items[0]?.id ?? "");
     for (const it of items) {
-      const sp = scene.span.get(it.id);
-      if (sp && sp.e > step) break;
+      const f = first(it.id);
+      if (f === -1 || f > rowIdx) break;
       n++;
+      lastRow = scene.rows[f].last;
     }
-    return Math.min(items.length, Math.max(1, n));
+    n = Math.min(items.length, Math.max(1, n));
+    if (n === 1) {
+      const f = first(items[0]?.id ?? "");
+      lastRow = f === -1 ? rowIdx : scene.rows[f].last;
+    }
+    return { count: n, lastRow };
   }
 
   // novo/layout.ts
@@ -1335,7 +1372,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const rows = [], span = /* @__PURE__ */ new Map(), leaves = [];
     let maxDepth = 0;
     const place = (list, depth, start, emit, inCatch) => {
-      let step = start, prev = null;
+      let step2 = start, prev = null;
       const push = (r) => {
         const row = { ...r, last: 0 };
         if (emit) {
@@ -1348,8 +1385,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (n2.t === "fn") {
           const hasKids = n2.kids.length > 0, isClosed = hasKids && closed.has(n2.id);
           if (!hasKids) {
-            const s = n2.par && prev ? prev.s : step, sp = { s, e: s };
-            step = Math.max(step, s + 1);
+            const s = n2.par && prev ? prev.s : step2, sp = { s, e: s };
+            step2 = Math.max(step2, s + 1);
             prev = sp;
             if (emit) span.set(n2.id, sp);
             const row = push({ kind: "fn", id: n2.id, node: n2, depth, s, e: s, leaf: true, closed: false });
@@ -1358,10 +1395,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
               if (!inCatch) leaves.push(row);
             }
           } else {
-            const row = push({ kind: "fn", id: n2.id, node: n2, depth, s: step, e: step, leaf: false, closed: isClosed });
-            const idx = rows.length - 1, next = place(n2.kids, depth + 1, step, emit && !isClosed, inCatch);
-            const sp = { s: step, e: Math.max(step, next - 1) };
-            prev = null;
+            const s0 = n2.par && prev ? prev.s : step2;
+            const row = push({ kind: "fn", id: n2.id, node: n2, depth, s: s0, e: s0, leaf: false, closed: isClosed });
+            const idx = rows.length - 1, next = place(n2.kids, depth + 1, s0, emit && !isClosed, inCatch);
+            const sp = { s: s0, e: Math.max(s0, next - 1) };
+            prev = sp;
             if (emit) {
               span.set(n2.id, sp);
               row.s = sp.s;
@@ -1369,13 +1407,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
               row.last = rows.length - 1;
               void idx;
             }
-            step = Math.max(step, next);
+            step2 = Math.max(step2, next);
           }
         } else {
           prev = null;
           const b = n2;
-          const row = push({ kind: "block", id: b.id, node: b, depth, s: step, e: step, leaf: false, closed: false });
-          const next = place(b.kids, depth + 1, step, emit, inCatch), sp = { s: step, e: Math.max(step, next - 1) };
+          const row = push({ kind: "block", id: b.id, node: b, depth, s: step2, e: step2, leaf: false, closed: false });
+          const next = place(b.kids, depth + 1, step2, emit, inCatch), sp = { s: step2, e: Math.max(step2, next - 1) };
           if (emit) {
             span.set(b.id, sp);
             row.s = sp.s;
@@ -1384,7 +1422,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
           let end = next;
           const alt = altKids(b);
           if (alt && alt.length) {
-            const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step, next - count);
+            const kind = b.t === "try" ? "catch" : "else", count = place(alt, depth + 1, 0, false, true), cs = Math.max(step2, next - count);
             const crow = push({ kind, id: b.id, node: b, depth, s: cs, e: cs, leaf: false, closed: false });
             const cend = place(alt, depth + 1, cs, emit, true);
             if (emit) {
@@ -1396,10 +1434,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
             end = Math.max(next, cend);
           }
           if (emit) row.last = rows.length - 1;
-          step = Math.max(step, end);
+          step2 = Math.max(step2, end);
         }
       }
-      return step;
+      return step2;
     };
     const rootRow = { kind: "fn", id: flow.id, node: flow, depth: 0, s: 0, e: 0, last: 0, leaf: flow.kids.length === 0, closed: closed.has(flow.id) && flow.kids.length > 0 };
     rows.push(rootRow);
@@ -1418,17 +1456,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
   }
 
   // novo/view.ts
-  var G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16, WS: 100 };
+  var G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 };
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var valueOf = (f, n) => f.args?.[n]?.trim() || "";
   function inputLabel(p, f) {
-    const lib2 = !!contractOf(p, f), one = (n) => lib2 ? `${n} = ${valueOf(f, n) || "?"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n;
-    return isCube(f.ins) ? lib2 || f.ins.some((n) => valueOf(f, n)) ? `${cubeName(f, "in")} { ${f.ins.map(one).join(", ")} }` : cubeName(f, "in") : one(f.ins[0] ?? "");
+    const lib3 = !!contractOf(p, f), one = (n) => lib3 ? `${n} = ${valueOf(f, n) || "?"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n;
+    return isCube(f.ins) ? lib3 || f.ins.some((n) => valueOf(f, n)) ? `${cubeName(f, "in")} { ${f.ins.map(one).join(", ")} }` : cubeName(f, "in") : one(f.ins[0] ?? "");
   }
   var inputTip = (p, f) => {
-    const lib2 = !!contractOf(p, f);
-    return f.ins.map((n) => lib2 ? `${n} = ${valueOf(f, n) || "(not filled in yet)"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n).join("\n");
+    const lib3 = !!contractOf(p, f);
+    return f.ins.map((n) => lib3 ? `${n} = ${valueOf(f, n) || "(not filled in yet)"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n).join("\n");
   };
   var dataText = (names, max = 24) => {
     const t = names.join(", ");
@@ -1480,23 +1518,51 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const e = f.args?.[i]?.trim();
         if (!e || isRefExpr(e)) continue;
         const fields = objectFields(e);
-        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i] });
+        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], owner: f.id, side: "in" });
       }
-      if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs });
+      if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
     }
+    const made = /* @__PURE__ */ new Set();
+    for (const r of sc.rows) if (r.kind === "fn" && r.leaf) r.node.outs.forEach((o) => made.add(o));
+    const loopVars = /* @__PURE__ */ new Set();
+    for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);
+    const ext = /* @__PURE__ */ new Map(), rootFn = sc.rows[0]?.node;
+    (rootFn?.ins ?? []).forEach((n) => ext.set(n, { col: 0, owner: rootFn.id }));
+    for (const r of sc.rows) if (r.kind === "fn" && r.leaf) {
+      for (const n of r.node.ins) if (!r.node.args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id });
+      else if (ext.has(n) && r.s < ext.get(n).col) ext.set(n, { col: r.s, owner: ext.get(n).owner });
+    }
+    for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
     if (!all) return m;
     const cols = [...m.keys()].sort((x, y) => x - y), out = /* @__PURE__ */ new Map();
     let acc = [];
     for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
-      const fresh = m.get(c) ?? [], names = new Set(fresh.map((i) => i.name));
-      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...i, old: true })), ...fresh];
+      const fresh2 = m.get(c) ?? [], names = new Set(fresh2.map((i) => i.name));
+      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...i, old: true })), ...fresh2];
       if (acc.length) out.set(c, acc);
     }
     return out;
   }
   var STATE_ROW = 15;
   var planHeight = (sc, all = false) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
-  var tableWidth = (sc) => 440 + sc.maxDepth * G.IND * 2;
+  function tableWidth(sc, p) {
+    let need2 = 0;
+    for (const r of sc.rows) {
+      const pad = 10 + r.depth * G.IND * 2;
+      let w;
+      if (r.kind === "fn") {
+        const f = r.node, a = agentOf(p, f.agent);
+        w = pad + (r.leaf ? 22 : 38) + (f.title || "unnamed").length * 7.4 + (a?.kind === "ia" ? 28 + a.name.length * 6.5 : 0) + (f.par ? 22 : 0) + (hasContract(a) && r.leaf ? 30 : 0);
+      } else {
+        const n = r.node;
+        const txt = r.kind === "catch" ? "if the try fails" : r.kind === "else" ? "otherwise" : n.t === "try" ? `catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
+        w = pad + 54 + txt.length * 7.4;
+      }
+      const part = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main", menu = toolsFor(p, r.id, part).length * 25 + 12 + 24;
+      need2 = Math.max(need2, w + menu);
+    }
+    return Math.round(Math.max(138 + 90, 138 + need2));
+  }
   var CODE_MIN = 300;
   var CODE_DEFAULT = 480;
   var CODE_MAX_RATIO = 0.7;
@@ -1509,6 +1575,14 @@ ${given.map((g) => `  ${g},`).join("\n")}
     } catch {
       return { ...DEFAULT_PREFS };
     }
+  }
+  function stateTools(p, owner, side, name) {
+    const n = locate(p, owner)?.node;
+    if (!n || n.t !== "fn") return [];
+    const t = (act, icon2, title, extra = {}) => ({ act, id: owner, icon: icon2, title, data: { side, name }, ...extra });
+    if (!name) return [t("editData", "cube", "Edit the data")];
+    if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "cube", "Set the value")];
+    return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
   }
   function toolsFor(p, id, part = "main") {
     const l = locate(p, id);
@@ -1558,6 +1632,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return "try";
   };
   var fnKind = (p, f) => {
+    if (f.kids.length) return "conc";
     const a = agentOf(p, f.agent);
     return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs";
   };
@@ -1575,7 +1650,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
   function respCell(p, r) {
     const f = r.node;
     if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f).replace(/\.[^.]+$/, ""))}</span></span>`;
-    if (!r.leaf) return `<span class="c-ag muted">\u2014</span>`;
+    if (!r.leaf) {
+      const own = locate(p, f.id)?.flow, file = own ? flowFile(own).replace(/\.[^.]+$/, "") : "";
+      return `<span class="c-ag" title="Source: the file of this flow (a function with children is concrete: it runs its own steps)">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(file)}</span></span>`;
+    }
     const a = agentOf(p, f.agent);
     if (a?.kind === "ia") {
       const pe = agentOf(p, f.resp);
@@ -1584,7 +1662,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return `<span class="c-ag resp-pick">${a ? circle(a.kind, KIND_ICON[a.kind], `${a.name}`) + `<span class="rp-n">${esc(a.name)}</span>` : circle("none", "plus", "Choose source") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "agent")}</span>`;
   }
   function taskCell(p, r) {
-    const f = r.node, a = agentOf(p, f.agent), pad = 10 + r.depth * G.IND * 2;
+    const f = r.node, a = agentOf(p, f.agent), pad = r.depth * G.IND * 2;
     const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="fn-dot ${fnKind(p, f)}" title="Function"></span>`;
     const name = hasContract(a) && r.leaf ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a.name)}">${a.tasks.map((t) => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<b data-act="rename" data-id="${esc(f.id)}" title="Click to rename">${esc(f.title || "unnamed")}</b>`;
     const iaTag = a?.kind === "ia" ? `<span class="agent-tag resp-pick">${icon("ia")}<span>${esc(a.name)}</span>${agentSelect(p, f, "agent")}</span>` : "";
@@ -1594,7 +1672,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return sc.rows.map((r, i) => {
       const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
       if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
-        const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = 10 + r.depth * G.IND * 2;
+        const n = r.node, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
         const tag = r.kind === "catch" ? `<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>` : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">\u21BB</span><b class="mono">${esc(blockLabel(p, n))}</b>` : `<span class="trd">try</span><b class="mono">catch \u2193 ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler")}</b>`;
         return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
       }
@@ -1618,7 +1696,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       let row = 0;
       for (const it of items) {
         const y = bot + 34 + row++ * STATE_ROW;
-        out.push(`<g class="stt${it.old ? " old" : ""}"><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
+        out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
         if (it.cube) for (const fld of it.fields) {
           const fy = bot + 34 + row++ * STATE_ROW;
           out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX2(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX2(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`);
@@ -1626,6 +1704,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
     }
     out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
+    sc.rows.forEach((r, i) => {
+      if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
+      const x0 = r.depth * G.IND;
+      bands.push(`<rect class="band co" x="${x0}" y="${rowY(i + 1)}" width="${W - x0}" height="${(r.last - i) * G.RH}"/><line class="bandl co" x1="${x0 + 1}" y1="${rowY(i + 1)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+    });
     sc.rows.forEach((r, i) => {
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
       const n = r.node, x0 = r.depth * G.IND, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
@@ -1640,18 +1723,19 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const produced = /* @__PURE__ */ new Set();
     sc.leaves.forEach((l) => l.node.outs.forEach((o) => produced.add(o)));
     const ioMarks = (f, r, i, x1, x2) => {
-      const lib2 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
+      const lib3 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
       const mark = (x, list, kind, abs, tip) => !list.length ? "" : isCube(list) || kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]] ?? "") ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0])} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       if (f.ins.length) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
       if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
       over.push(mark(colX2(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX2(r.e + 1), f.outs, "out", false, "output"));
       const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-      if (f.ins.length) over.push(`<text class="dn in"${!lib2 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
-      if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib2 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
+      if (f.ins.length) over.push(`<text class="dn in"${!lib3 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
+      if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib3 ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0])}"` : ""} x="${colX2(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
       const ghost = (x, kind, tip) => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
-      if (!lib2 && !f.ins.length) over.push(ghost(colX2(r.s), "in", "Add input"));
-      if (!lib2 && !f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Add output"));
+      if (!lib3 && !f.ins.length) over.push(ghost(colX2(r.s), "in", "Add input"));
+      if (!lib3 && !f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Add output"));
     };
+    const barX = /* @__PURE__ */ new Map();
     sc.rows.forEach((r, i) => {
       if (r.kind !== "fn") return;
       const f = r.node, selC = ui.sel === f.id ? " sel" : "";
@@ -1660,19 +1744,21 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return colX2(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
       };
       if (!r.leaf) {
-        const inset = isRoot(p, f.id) ? G.INS : 8, x12 = colX2(r.s) + inset, x22 = colX2(r.e + 1) - inset;
-        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composition = layer</title></g>`);
-        if (isRoot(p, f.id)) ioMarks(f, r, i, x12, x22);
-        over.push(`<text class="lbl" x="${isRoot(p, f.id) ? lblAfterOuts(f) : x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+        const inset = 21, x12 = colX2(r.s) + inset, x22 = colX2(r.e + 1) - inset;
+        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><path class="sum${selC}" d="M${x12} ${ym(i) - 3.5}H${x22}V${ym(i) + 7.5}L${x22 - 5} ${ym(i) + 3.5}H${x12 + 5}L${x12} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} \xB7 composition = layer</title></g>`);
+        ioMarks(f, r, i, x12, x22);
+        over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
         return;
       }
-      const k = fnKind(p, f), x1 = colX2(r.s) + G.INS, x2 = colX2(r.e + 1) - G.INS;
-      const shown = f.title;
+      const k = fnKind(p, f), shown = f.title;
+      const hasText = ui.txtIn && shown.trim() !== "", cx = (colX2(r.s) + colX2(r.e + 1)) / 2;
+      const x1 = hasText ? colX2(r.s) + G.INS : cx - G.BH / 2, x2 = hasText ? colX2(r.e + 1) - G.INS : cx + G.BH / 2;
+      barX.set(f.id, { x1, x2 });
       over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
       ioMarks(f, r, i, x1, x2);
       if (!ui.txtIn) over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
     });
-    const elbow = (a, b) => `M${colX2(a.e + 1) - G.INS} ${ym(by.get(a.id))} H${colX2(a.e + 1)} V${ym(by.get(b.id))} H${colX2(b.s) + G.INS}`;
+    const elbow = (a, b) => `M${barX.get(a.id)?.x2 ?? colX2(a.e + 1) - G.INS} ${ym(by.get(a.id))} H${colX2(a.e + 1)} V${ym(by.get(b.id))} H${barX.get(b.id)?.x1 ?? colX2(b.s) + G.INS}`;
     const pairs = /* @__PURE__ */ new Map();
     for (const l of dataLinks(p, sc)) {
       const k = `${l.from.id}>${l.to.id}`, e = pairs.get(k);
@@ -1699,7 +1785,236 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return r.created ?? "";
     };
     const main = run({ type: "newFlow", title: "main" });
+    const log = run({ type: "addChild", id: main, title: "log" });
+    run({ type: "assign", id: log, agent: "console" });
+    run({ type: "setTask", id: log, task: "log" });
+    run({ type: "setArg", id: log, name: "text", value: '"Hello World"' });
     return { project: p, main };
+  }
+  function samplesProject() {
+    let p = emptyProject("Samples");
+    p.agents = structuredClone([...DEFAULT_AGENTS]);
+    const run = (c) => {
+      const r = apply(p, c);
+      p = r.project;
+      return r.created ?? "";
+    };
+    addSamples(run);
+    return { project: p };
+  }
+  var SAMPLE_TITLES = ["newId", "formatPrice", "applyCoupon", "clamp", "retryDelay", "basicAuthHeader", "readSession", "snapshotState", "isAdult", "measureAction", "fetchUser"];
+  function addSamples(run) {
+    const FILE = "samples.ts";
+    const fn = (title, ins, outs, steps) => {
+      const id = run({ type: "newFlow", title, file: FILE });
+      for (const [name, value] of Object.entries(ins)) {
+        run({ type: "addInput", id, name });
+        run({ type: "setArg", id, name, value });
+      }
+      for (const name of outs) run({ type: "addOutput", id, name });
+      steps((lib3, task, out, args = {}) => {
+        const sid = run({ type: "addChild", id, title: task });
+        run({ type: "assign", id: sid, agent: lib3 });
+        run({ type: "setTask", id: sid, task });
+        for (const [name, value] of Object.entries(args)) run({ type: "setArg", id: sid, name, value });
+        if (out) run({ type: "renameData", id: sid, to: out });
+        return sid;
+      });
+      return id;
+    };
+    const ifThen = (id, test) => {
+      run({ type: "wrap", id, kind: "if", test });
+    };
+    fn("newId", {}, ["id"], (s) => {
+      s("crypto", "randomUUID", "id");
+    });
+    fn("formatPrice", { amount: "1999.9" }, [], (s) => {
+      s("math", "round", "cents", { value: "amount * 100" });
+      s("console", "log", void 0, { text: '`R$ ${(cents / 100).toFixed(2).replace(".", ",")}`' });
+    });
+    fn("applyCoupon", { price: "250", percent: "15" }, ["total"], (s) => {
+      s("math", "round", "total", { value: "price * (100 - percent) / 100" });
+      ifThen(s("console", "log", void 0, { text: "`Coupon ${percent}% off: ${price} -> ${total}`" }), "percent > 0");
+    });
+    fn("clamp", { value: "130", low: "0", high: "100" }, ["clamped"], (s) => {
+      s("math", "max", "atLeastLow", { a: "low", b: "value" });
+      s("math", "min", "clamped", { a: "high", b: "atLeastLow" });
+      s("console", "log", void 0, { text: "`${value} -> ${clamped}`" });
+    });
+    fn("retryDelay", { attempt: "3" }, ["delay"], (s) => {
+      s("math", "pow", "seconds", { base: "2", exponent: "attempt" });
+      s("math", "min", "delay", { a: "seconds", b: "30" });
+      s("console", "log", void 0, { text: "`Try again in ${delay}s (attempt ${attempt})`" });
+    });
+    fn("basicAuthHeader", { user: '"ana"', password: '"1234"' }, ["token"], (s) => {
+      s("web", "btoa", "token", { text: 'user + ":" + password' });
+      s("console", "log", void 0, { text: "`Authorization: Basic ${token}`" });
+    });
+    fn("readSession", { session: `btoa('{"name":"Ana","role":"admin"}')` }, ["user"], (s) => {
+      s("web", "atob", "raw", { text: "session" });
+      s("json", "parse", "user", { text: "raw" });
+      s("console", "log", void 0, { text: "`Welcome ${user.name} (${user.role})`" });
+    });
+    fn("snapshotState", { form: "{ cart: [1, 2, 3], total: 30 }" }, ["snapshot"], (s) => {
+      s("web", "structuredClone", "snapshot", { value: "form" });
+      s("console", "log", void 0, { text: "snapshot" });
+    });
+    fn("isAdult", { birthYear: "1998" }, ["age"], (s) => {
+      s("date", "now", "today");
+      s("math", "floor", "age", { value: "(today - new Date(birthYear, 0, 1)) / 31557600000" });
+      ifThen(s("console", "log", void 0, { text: "`${age} years old: adult`" }), "age >= 18");
+    });
+    fn("measureAction", {}, ["ms"], (s) => {
+      s("perf", "now", "start");
+      s("math", "random", "work");
+      s("perf", "now", "end");
+      s("math", "round", "ms", { value: "end - start" });
+      s("console", "log", void 0, { text: "`Action took ${ms}ms`" });
+    });
+    fn("fetchUser", { id: "1" }, ["response"], (s) => {
+      s("web", "fetch", "response", { url: '"https://jsonplaceholder.typicode.com/users/" + id' });
+      s("console", "log", void 0, { text: "`HTTP ${response.status}`" });
+    });
+  }
+
+  // novo/docs-examples.ts
+  var fresh = () => {
+    let p = emptyProject("Docs");
+    p.agents = structuredClone([...DEFAULT_AGENTS]);
+    return { p: () => p, run: (c) => {
+      const r = apply(p, c);
+      p = r.project;
+      return r.created ?? "";
+    } };
+  };
+  var step = (run, parent, title, ins = [], outs = [], agent, extra = {}) => {
+    const id = run({ type: "addChild", id: parent, title, ...extra.catch ? { catch: true } : {} });
+    for (const n of ins) run({ type: "addInput", id, name: n });
+    for (const n of outs) run({ type: "addOutput", id, name: n });
+    if (agent) run({ type: "assign", id, agent });
+    if (extra.par) run({ type: "setParallel", id, on: true });
+    return id;
+  };
+  var lib2 = (run, parent, agent, task, out, args = {}) => {
+    const id = run({ type: "addChild", id: parent, title: task });
+    run({ type: "assign", id, agent });
+    run({ type: "setTask", id, task });
+    for (const [k, v] of Object.entries(args)) run({ type: "setArg", id, name: k, value: v });
+    if (out) run({ type: "renameData", id, to: out });
+    return id;
+  };
+  var BUILDERS = {
+    /** UC-01: novo fluxo — uma função `main`, source arquivo `main`. */
+    "novo-fluxo": () => {
+      const { p, run } = fresh();
+      const main = run({ type: "newFlow", title: "main" });
+      return { project: p(), flow: main };
+    },
+    /** Sequência: cada passo começa quando o anterior termina; o dado de mesmo nome liga os passos. */
+    sequencia: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Fazer pedido" });
+      step(run, root, "Receber pedido", [], ["pedido"]);
+      step(run, root, "Cobrar cliente", ["pedido"], ["pagamento"]);
+      step(run, root, "Enviar produto", ["pedido", "pagamento"], ["envio"]);
+      return { project: p(), flow: root };
+    },
+    /** Paralelo: as duas funções ocupam o mesmo estado. */
+    paralelo: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Ativar cliente" });
+      step(run, root, "Gerar credenciais", [], ["credenciais"]);
+      step(run, root, "Agendar kickoff", [], ["kickoff"], "lia");
+      step(run, root, "Criar conta", [], ["conta"], void 0, { par: true });
+      return { project: p(), flow: root };
+    },
+    /** Seleção: if com else. */
+    selecao: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Revisar proposta" });
+      step(run, root, "Rascunhar proposta", [], ["proposta"], "lia");
+      const rev = step(run, root, "Revisar proposta", ["proposta"], ["aprovada"], "ana");
+      const send = step(run, root, "Enviar ao cliente", ["proposta"], ["envio"]);
+      const w = run({ type: "wrap", id: send, kind: "if", test: "aprovada" });
+      void rev;
+      run({ type: "addElse", id: w, title: "Pedir nova revisao" });
+      return { project: p(), flow: root };
+    },
+    /** Repetição: for … of. */
+    repeticao: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Traduzir proposta" });
+      run({ type: "addInput", id: root, name: "idiomas" });
+      const t = step(run, root, "Traduzir texto", ["idioma"], ["traducao"], "teo");
+      step(run, root, "Publicar traducoes", ["traducao"], [], void 0);
+      run({ type: "wrap", id: t, kind: "for", v: "idioma", coll: "idiomas" });
+      return { project: p(), flow: root };
+    },
+    /** try / catch: a função de tratamento é o catch. */
+    trycatch: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Cobrar com seguranca" });
+      const c = step(run, root, "Cobrar cliente", ["pedido"], ["pagamento"]);
+      step(run, root, "Emitir recibo", ["pagamento"], ["recibo"]);
+      run({ type: "wrap", id: c, kind: "try" });
+      return { project: p(), flow: root };
+    },
+    /** Paralelo entre uma composição e a função seguinte. */
+    "paralelo-composicao": () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Preparar e avisar" });
+      const c = step(run, root, "Preparar conta", [], ["conta"]);
+      step(run, c, "Criar usuario", [], ["usuario"]);
+      step(run, root, "Avisar time", [], ["aviso"], void 0, { par: true });
+      return { project: p(), flow: root };
+    },
+    /** Composição: função com filhas (camadas). */
+    composicao: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Fazer onboarding" });
+      const a = step(run, root, "Preparar conta", [], ["conta"]);
+      step(run, a, "Criar usuario", [], ["usuario"]);
+      step(run, a, "Gerar senha", ["usuario"], ["credenciais"]);
+      step(run, root, "Enviar boas-vindas", ["credenciais"], []);
+      return { project: p(), flow: root };
+    },
+    /** Exemplo completo do livro / Flow Language: seleção + paralelo + repetição, com IA, pessoa e libs. */
+    onboarding: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Fazer onboarding da Acme" });
+      step(run, root, "Coletar dados do cliente", [], ["dados_cliente"]);
+      step(run, root, "Rascunhar proposta", ["dados_cliente"], ["rascunho"], "lia");
+      step(run, root, "Revisar proposta", ["rascunho"], ["proposta_aprovada"], "ana");
+      const trad = step(run, root, "Traduzir proposta", ["proposta_aprovada", "idioma"], ["proposta_traduzida"], "teo");
+      const ctr = step(run, root, "Gerar contrato", ["proposta_aprovada", "dados_cliente"], ["contrato"]);
+      step(run, root, "Registrar auditoria", ["dados_cliente"], [], void 0, { par: true });
+      const env = step(run, root, "Enviar ao cliente", ["proposta_traduzida", "contrato"], ["envio_id"]);
+      run({ type: "wrap", id: trad, kind: "for", v: "idioma", coll: '["en", "es"]' });
+      void ctr;
+      void env;
+      return { project: p(), flow: root };
+    },
+    /** Uma função só de libs do navegador (concretas), com valores e um if. */
+    libs: () => {
+      const { p, run } = fresh();
+      const root = run({ type: "newFlow", title: "Aplicar cupom" });
+      run({ type: "addInput", id: root, name: "price" });
+      run({ type: "setArg", id: root, name: "price", value: "250" });
+      run({ type: "addInput", id: root, name: "percent" });
+      run({ type: "setArg", id: root, name: "percent", value: "15" });
+      lib2(run, root, "math", "round", "total", { value: "price * (100 - percent) / 100" });
+      const log = lib2(run, root, "console", "log", void 0, { text: "`Coupon ${percent}% off: ${price} -> ${total}`" });
+      run({ type: "wrap", id: log, kind: "if", test: "percent > 0" });
+      return { project: p(), flow: root };
+    }
+  };
+  var DOC_EXAMPLE_IDS = Object.keys(BUILDERS);
+  function docExample(id) {
+    if (id.startsWith("sample:")) {
+      const s = samplesProject(), f = s.project.flows.find((x) => x.title === id.slice(7));
+      return f ? { project: s.project, flow: f.id } : null;
+    }
+    return BUILDERS[id]?.() ?? null;
   }
 
   // novo/app.ts
@@ -1718,8 +2033,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
-        <span><i class="lg fc"></i>concrete function (browser lib)</span><span><i class="lg fa"></i>abstract function (AI \xB7 state)</span><span><i class="lg da"></i>abstract data (state)</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube (more than one data)</span>
-        <span><i class="lg dia"></i>selection (if)</span><span><i class="lg lp">\u21BB</i>repetition (for)</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
+        <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>cube</span>
+        <span><i class="lg dia"></i>selection</span><span><i class="lg lp">\u21BB</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span><span><i class="lg el"></i>else</span>
       </div>
 
     </section>
@@ -1751,12 +2066,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
     proj.className = "proj";
     proj.setAttribute("role", "toolbar");
     proj.setAttribute("aria-label", "Project");
-    proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open a saved project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Save the project (.json)">${icon("download")}Save</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
+    proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open an exported project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Export the project (.json)">${icon("download")}Export</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
     host.ownerDocument.querySelector(".topbar")?.append(proj);
     const themes = host.ownerDocument.createElement("div");
     themes.id = "temas";
     host.ownerDocument.querySelector(".topbar")?.append(themes);
-    if (typeof mountTemas === "function") mountTemas(themes);
+    themes.hidden = true;
     const modal = (label, fill) => new Promise((res) => {
       host.querySelector(".dlg")?.remove();
       const dlg = host.ownerDocument.createElement("div");
@@ -1776,6 +2091,49 @@ ${given.map((g) => `  ${g},`).join("\n")}
       host.append(dlg);
       form.querySelector("input")?.focus();
     });
+    let actEl = null;
+    const onText = (el2, e) => {
+      const r = el2.ownerDocument.createRange();
+      r.selectNodeContents(el2);
+      const b = r.getBoundingClientRect();
+      return b.width > 0 && e.clientX >= b.left - 1 && e.clientX <= b.right + 1 && e.clientY >= b.top - 1 && e.clientY <= b.bottom + 1;
+    };
+    const editInline = (value, label) => new Promise((res) => {
+      const el2 = actEl;
+      if (!el2) {
+        void ask(label, value).then(res);
+        return;
+      }
+      const rc = el2.getBoundingClientRect(), cs = getComputedStyle(el2), k = el2 instanceof SVGElement ? ui.zoom : 1;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = value;
+      input.spellcheck = false;
+      input.setAttribute("aria-label", label);
+      const txtColor = el2 instanceof SVGElement && cs.fill && cs.fill !== "none" ? cs.fill : cs.color;
+      const w = Math.max(rc.width + 16, 48), h = Math.max(rc.height, 16);
+      input.style.cssText = `position:fixed;z-index:60;box-sizing:border-box;left:${rc.left}px;top:${rc.top + rc.height / 2 - h / 2}px;width:${w}px;height:${h}px;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:${txtColor};caret-color:${txtColor};outline:none;box-shadow:none;font-family:${cs.fontFamily};font-size:${(parseFloat(cs.fontSize) || 12) * k}px;font-weight:${cs.fontWeight};letter-spacing:${cs.letterSpacing};text-align:left`;
+      const prevVis = el2.style.visibility;
+      el2.style.visibility = "hidden";
+      let done = false;
+      const fin = (v) => {
+        if (done) return;
+        done = true;
+        input.remove();
+        el2.style.visibility = prevVis;
+        res(v);
+      };
+      input.addEventListener("keydown", (e) => {
+        e.stopPropagation();
+        if (e.key === "Enter") fin(input.value.trim() || null);
+        else if (e.key === "Escape") fin(null);
+      });
+      input.addEventListener("blur", () => fin(input.value.trim() || null));
+      for (const t of ["pointerdown", "mousedown", "click", "dblclick"]) input.addEventListener(t, (e) => e.stopPropagation());
+      document.body.appendChild(input);
+      input.focus();
+      input.select();
+    });
     const ask = (label, value = "") => modal(label, (form, done) => {
       form.innerHTML = `<label>${esc(label)}</label><input type="text" value="${esc(value)}" spellcheck="false" aria-label="${esc(label)}"><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">OK</button></div>`;
       const input = form.querySelector("input");
@@ -1789,6 +2147,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (e.key === "Escape") done(null);
       });
     });
+    const innerFns = (n) => {
+      let c = 0;
+      const go = (list) => {
+        for (const x of list) {
+          if (x.t === "fn") c++;
+          go(kidsOf(x));
+        }
+      };
+      go(kidsOf(n));
+      return c;
+    };
     const confirmAsk = (label) => modal(label, (form, done) => {
       form.innerHTML = `<label>${esc(label)}</label><div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri danger">Remove</button></div>`;
       form.addEventListener("submit", (e) => {
@@ -1841,7 +2210,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (fileView && !star && !byFile.has(fileView)) fileView = null;
       if (groups.length) {
         const stack = (fns) => {
-          const first = fns.map((f) => build(p, f.id, ui)), minW = Math.max(...first.map((b) => b.w)), tw2 = Math.max(...first.map((b) => tableWidth(b.scene)));
+          const first = fns.map((f) => build(p, f.id, ui)), minW = Math.max(...first.map((b) => b.w)), tw2 = Math.max(...first.map((b) => tableWidth(b.scene, p)));
           let W2 = 0, H2 = 0;
           const html = fns.map((f) => {
             const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData);
@@ -1881,7 +2250,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         el.table.hidden = el.plan.hidden = false;
         el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
         el.plan.innerHTML = last.plan;
-        const tw0 = tableWidth(last.scene);
+        const tw0 = tableWidth(last.scene, P2());
         el.table.style.width = tw0 + "px";
         el.table.style.setProperty("--tw", tw0 + "px");
         const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData);
@@ -1890,7 +2259,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         applyView();
       }
       const bare = (f) => f.replace(/\.[^.]+$/, ""), fl = locate(p, ui.flow)?.flow;
-      el.flowName.textContent = fileView && !canRun() ? fileView === "*" ? "Files" : bare(fileView) : fl ? `${bare(flowFile(fl))} \u203A ${fl.title}` : "Flow";
+      el.flowName.textContent = fileView && !canRun() ? fileView === "*" ? "src" : bare(fileView) : fl ? `${bare(flowFile(fl))} \u203A ${fl.title}` : "Flow";
       host.ownerDocument.querySelectorAll(".hist-btn").forEach((b) => {
         b.disabled = b.dataset["hist"] === "undo" ? !store.canUndo : !store.canRedo;
       });
@@ -1917,12 +2286,32 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return r ? flowFile(r) : "";
       })();
       const secOpen = !exClosed.has("sec:files");
-      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>Files</span><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
         const fid = "f:" + file, open = !exClosed.has(fid);
         const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
         return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
       }).join("") : "");
     }
+    async function editExName(row, nameEl) {
+      actEl = nameEl;
+      if (row.dataset["ex"] === "file") {
+        const file = row.dataset["file"], v2 = await editInline(file.replace(/\.[^.]+$/, ""), "File name");
+        if (v2 && v2 + ".ts" !== file && v2 !== file) {
+          const to = /\.[A-Za-z0-9]+$/.test(v2) ? v2 : v2 + ".ts";
+          if (fileView === file) fileView = to;
+          run({ type: "renameFile", from: file, to: v2 }, false);
+        }
+        return;
+      }
+      const n = locate(P2(), row.dataset["flow"])?.node;
+      if (!n || n.t !== "fn") return;
+      const v = await editInline(n.title, "Function name");
+      if (v && v !== n.title) run({ type: "rename", id: n.id, title: v }, false);
+    }
+    el.explorer.addEventListener("dblclick", (e) => {
+      const t = e.target, nameEl = t.closest(".ex-n"), row = t.closest("[data-ex]");
+      if (nameEl && row && row.dataset["ex"] !== "all" && onText(nameEl, e)) void editExName(row, nameEl);
+    });
     el.explorer.addEventListener("click", (e) => {
       const t = e.target, add = t.closest("[data-exadd]");
       if (add) {
@@ -1934,10 +2323,22 @@ ${given.map((g) => `  ${g},`).join("\n")}
         }
         return;
       }
+      if (t.closest("[data-exreset]")) {
+        void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then((ok) => {
+          if (!ok) return;
+          exClosed.clear();
+          fileView = "*";
+          fitted = false;
+          reset();
+          render();
+        });
+        return;
+      }
       const delFile = t.closest("[data-exdelfile]");
       if (delFile) {
         const file = delFile.dataset["exdelfile"], ids = P2().flows.filter((f) => flowFile(f) === file).map((f) => f.id);
-        void confirmAsk(`Remove the file \u201C${file}\u201D and its ${ids.length} function(s)?`).then((ok) => {
+        const total2 = P2().flows.filter((f) => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0);
+        void (total2 > 1 ? confirmAsk(`Remove the file \u201C${file}\u201D and its ${total2} function(s)?`) : Promise.resolve(true)).then((ok) => {
           if (ok) {
             for (const id of ids) if (run({ type: "removeFlow", id }, false) === void 0 && P2().flows.length <= 1) break;
           }
@@ -1959,6 +2360,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       const row = t.closest("[data-ex]");
       if (!row) return;
+      const nameEl = t.closest(".ex-n");
+      if (nameEl && row.dataset["ex"] !== "all" && row.classList.contains("cur") && onText(nameEl, e)) {
+        void editExName(row, nameEl);
+        return;
+      }
       if (row.dataset["ex"] === "all") {
         fileView = "*";
         ui.sel = null;
@@ -2005,8 +2411,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }
     function fit() {
       if (!last) return;
-      const W = multi?.W ?? tableWidth(last.scene) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
-      const narrow = cw < 640, k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
+      const W = multi?.W ?? tableWidth(last.scene, P2()) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+      const narrow = cw < 640 && !document.documentElement.classList.contains("embed"), k = Math.max(narrow ? 0.55 : 0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
       applyView();
@@ -2143,7 +2549,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return `<div class="argd d${depth}">${sel}${val}</div>${kids2}`;
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
-      const lib2 = !!contractOf(P2(), n), editable = !lib2, withValue = side === "in";
+      const lib3 = !!contractOf(P2(), n), editable = !lib3, withValue = side === "in";
       const names = opts.names ? [...opts.names] : [...side === "in" ? n.ins : n.outs];
       if (opts.start && !names.length) {
         const base = side === "in" ? "input" : "output";
@@ -2151,13 +2557,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id);
       form.classList.add("wide");
-      const fresh = names.map(() => false), orig = [...names];
+      const fresh2 = names.map(() => false), orig = [...names];
       const nameEditable = (i) => editable || side === "out" && i === 0;
       const canAdd = () => editable && (!withValue || names.length > 1);
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type and value. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable) : ""}</div>`).join("")}
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
@@ -2178,7 +2584,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
             const i = Number(path.split("/")[0]);
             names.splice(i, 1);
             drafts.splice(i, 1);
-            fresh.splice(i, 1);
+            fresh2.splice(i, 1);
             orig.splice(i, 1);
             if (!names.length) {
               run({ type: "setData", id: n.id, side, names: [], values: [] }, false);
@@ -2211,14 +2617,14 @@ ${given.map((g) => `  ${g},`).join("\n")}
           const i = Number(b.dataset["del"]);
           names.splice(i, 1);
           drafts.splice(i, 1);
-          fresh.splice(i, 1);
+          fresh2.splice(i, 1);
           orig.splice(i, 1);
         } else {
           let i = names.length + 1;
           while (names.includes(`field${i}`)) i++;
           names.push(`field${i}`);
           drafts.push(emptyDraft());
-          fresh.push(true);
+          fresh2.push(true);
           orig.push("");
         }
         draw();
@@ -2417,7 +2823,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       setScope: (d) => void run({ type: "setScope", id: d["id"], count: kids(d["id"]) + Number(d["delta"]) }, false),
       remove: async (d) => {
         const l = locate(P2(), d["id"]);
-        if (l && l.node.kids.length && !await confirmAsk(`Remove \u201C${l.node.t === "fn" ? l.node.title : l.node.t}\u201D and everything inside it?`)) return;
+        if (l && innerFns(l.node) > 1 && !await confirmAsk(`Remove \u201C${l.node.t === "fn" ? l.node.title : l.node.t}\u201D and everything inside it?`)) return;
         if (ui.sel === d["id"]) ui.sel = null;
         run({ type: "remove", id: d["id"] }, false);
       },
@@ -2425,7 +2831,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const n = locate(P2(), d["id"])?.node;
         if (!n || n.t !== "fn") return;
         ui.sel = n.id;
-        const v = await ask("New function name:", n.title);
+        const v = await editInline(n.title, "Function name");
         if (v) run({ type: "rename", id: n.id, title: v });
         else render();
       },
@@ -2447,10 +2853,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
         }
         await dataEditor(n, side);
       },
+      removeIo: (d) => {
+        const n = locate(P2(), d["id"])?.node;
+        if (n?.t !== "fn") return;
+        run({ type: d["side"] === "out" ? "removeOutput" : "removeInput", id: n.id, name: d["name"] }, false);
+      },
       renameOut: async (d) => {
         const n = locate(P2(), d["id"])?.node;
         if (!n || n.t !== "fn") return;
-        const v = await ask("Name of the data this function returns:", n.outs[0] ?? "");
+        const v = await editInline(n.outs[0] ?? "", "Output data name");
         if (v) run({ type: "renameData", id: n.id, to: v }, false);
       },
       // caixa fantasma: entrada abre a caixa só com select e valor (o nome é automático); saída é criada na hora, só tem nome
@@ -2470,7 +2881,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const n = locate(P2(), d["id"])?.node;
         if (n?.t !== "fn") return;
         const side = d["side"] === "out" ? "out" : "in", cur = d["name"];
-        const v = await ask(side === "in" ? "Input data name:" : "Output data name:", cur);
+        const v = await editInline(cur, side === "in" ? "Input data name" : "Output data name");
         if (v && v !== cur) run({ type: "renameIo", id: n.id, side, from: cur, to: v }, false);
       }
     };
@@ -2478,8 +2889,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const t = e.target;
       if (t.closest(".dlg, select")) return;
       const a = t.closest("[data-act]");
-      if (a?.dataset["act"] && ACT[a.dataset["act"]]) {
+      if (a?.dataset["act"] && ACT[a.dataset["act"]] && !(a.dataset["act"] === "rename" && !onText(a, e))) {
         e.stopPropagation();
+        actEl = a;
         void ACT[a.dataset["act"]](a.dataset);
         return;
       }
@@ -2503,7 +2915,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const delFlow = async (id) => {
       const f = locate(P2(), id)?.node;
       if (!f || f.t !== "fn") return;
-      if (!await confirmAsk(`Delete the flow \u201C${f.title}\u201D and everything inside it?`)) return;
+      if (innerFns(f) > 1 && !await confirmAsk(`Delete the flow \u201C${f.title}\u201D and everything inside it?`)) return;
       run({ type: "removeFlow", id: f.id }, false);
     };
     proj.querySelector("#save").addEventListener("click", () => {
@@ -2631,64 +3043,61 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const SWITCH_MS = 110, LEAVE_MS = 180;
     const leaveBar = () => {
       window.clearTimeout(hovT);
-      hovT = window.setTimeout(() => el.plan.querySelector(".bar-tools")?.remove(), LEAVE_MS);
+      hovT = window.setTimeout(() => el.zoom.querySelectorAll(".bar-tools").forEach((b) => b.remove()), LEAVE_MS);
     };
-    el.plan.addEventListener("mouseover", (e) => {
-      const h = e.target.closest("[data-hover]");
+    el.zoom.addEventListener("mouseover", (e) => {
+      const h = e.target.closest("[data-hover],[data-sthover]");
       if (!h) return;
+      const plan = h.closest(".gplan") ?? el.plan, isSt = h.dataset["sthover"] !== void 0;
       window.clearTimeout(hovT);
-      const id = h.dataset["hover"], part = h.dataset["part"] ?? "main", key = id + part;
-      const cur = el.plan.querySelector(".bar-tools");
-      if (cur?.dataset["key"] === key) return;
+      const id = isSt ? h.dataset["sthover"] : h.dataset["hover"], part = h.dataset["part"] ?? "main", key = isSt ? `${id}|${h.dataset["side"]}|${h.dataset["name"]}|st` : id + part;
+      const cur = el.zoom.querySelector(".bar-tools");
+      if (cur && cur.parentElement === plan && cur.dataset["key"] === key) return;
       const show = () => {
-        el.plan.querySelector(".bar-tools")?.remove();
+        el.zoom.querySelectorAll(".bar-tools").forEach((b) => b.remove());
         const bar = host.ownerDocument.createElement("div");
         bar.className = "bar-tools";
         bar.dataset["key"] = key;
         bar.setAttribute("role", "toolbar");
-        bar.innerHTML = toolsHtml(toolsFor(P2(), id, part));
-        const hr = h.getBoundingClientRect(), pr = el.plan.getBoundingClientRect(), k = ui.zoom;
+        bar.innerHTML = toolsHtml(isSt ? stateTools(P2(), id, h.dataset["side"] === "out" ? "out" : "in", h.dataset["name"] ?? "") : toolsFor(P2(), id, part));
+        const hr = h.getBoundingClientRect(), pr = plan.getBoundingClientRect(), k = ui.zoom;
         bar.style.left = Math.max(4, (hr.left - pr.left) / k) + "px";
         bar.style.top = Math.max(2, (hr.top - pr.top) / k - 30) + "px";
         bar.addEventListener("mouseenter", () => window.clearTimeout(hovT));
         bar.addEventListener("mouseleave", leaveBar);
-        el.plan.append(bar);
+        plan.append(bar);
       };
       if (cur) hovT = window.setTimeout(show, SWITCH_MS);
       else show();
     });
-    el.plan.addEventListener("mouseout", (e) => {
-      if (e.target.closest("[data-hover]")) leaveBar();
+    el.zoom.addEventListener("mouseout", (e) => {
+      if (e.target.closest("[data-hover],[data-sthover]")) leaveBar();
     });
-    el.plan.addEventListener("pointerdown", (e) => {
+    el.zoom.addEventListener("pointerdown", (e) => {
       const hd = e.target.closest("[data-drag]");
-      if (!hd || !last) return;
+      if (!hd) return;
+      const id = hd.dataset["drag"], p0 = P2(), loc = locate(p0, id), svg = hd.closest("svg"), plan = hd.closest(".gplan") ?? el.plan;
+      if (!loc || !svg) return;
       e.preventDefault();
       e.stopPropagation();
-      const id = hd.dataset["drag"], svg = el.plan.querySelector("svg"), p0 = P2();
-      const guide = host.ownerDocument.createElement("div");
-      guide.className = "guide";
-      el.plan.append(guide);
-      const at = (ev) => {
-        const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
-        return countForStep(p0, last.scene, id, Math.floor((x - G.OX) / last.w));
+      const scene = layout(loc.flow, { closed: ui.closed }), guide = host.ownerDocument.createElement("div");
+      guide.className = "guide h";
+      plan.append(guide);
+      const at = (ev) => countForRow(p0, scene, id, Math.floor(((ev.clientY - svg.getBoundingClientRect().top) / ui.zoom - G.HEAD) / G.RH));
+      const place = (c2) => {
+        guide.style.top = G.HEAD + (c2.lastRow + 1) * G.RH + "px";
       };
-      const place = (n2) => {
-        const l = locate(p0, id), items = [...l.node.kids, ...l.list.slice(l.index + 1)], last2 = items[n2 - 1], sp = last2 ? last.scene.span.get(last2.id) : void 0;
-        guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * last.w + "px";
-      };
-      let n = at(e);
-      place(n);
+      let c = at(e);
+      place(c);
       const move = (ev) => {
-        n = at(ev);
-        place(n);
+        c = at(ev);
+        place(c);
       };
       const up = () => {
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
         guide.remove();
-        const cur = kids(id);
-        if (n !== cur) run({ type: "setScope", id, count: n }, false);
+        if (c.count !== kids(id)) run({ type: "setScope", id, count: c.count }, false);
       };
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
@@ -2774,9 +3183,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
       applyEx();
     });
     exSplitter.addEventListener("keydown", (e) => {
-      const step = e.shiftKey ? 80 : 24;
-      if (e.key === "ArrowLeft") exPrefs.w -= step;
-      else if (e.key === "ArrowRight") exPrefs.w += step;
+      const step2 = e.shiftKey ? 80 : 24;
+      if (e.key === "ArrowLeft") exPrefs.w -= step2;
+      else if (e.key === "ArrowRight") exPrefs.w += step2;
       else if (e.key === "Enter") toggleEx();
       else return;
       e.preventDefault();
@@ -2818,9 +3227,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
       applyPrefs();
     });
     splitter.addEventListener("keydown", (e) => {
-      const step = e.shiftKey ? 80 : 24;
-      if (e.key === "ArrowLeft") prefs.codeW += step;
-      else if (e.key === "ArrowRight") prefs.codeW -= step;
+      const step2 = e.shiftKey ? 80 : 24;
+      if (e.key === "ArrowLeft") prefs.codeW += step2;
+      else if (e.key === "ArrowRight") prefs.codeW -= step2;
       else if (e.key === "Enter") toggleCode();
       else return;
       e.preventDefault();
@@ -2879,6 +3288,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       const flow2 = locate(P2(), ui.flow)?.node;
       if (!flow2 || flow2.t !== "fn") return;
+      if (!prefs.codeOpen) {
+        prefs.codeOpen = true;
+        applyPrefs();
+      }
       showTab("term");
       tbody.innerHTML = "";
       let code;
@@ -2963,6 +3376,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const raw = localStorage.getItem(STORE_KEY);
       if (raw) {
         const p = parseProject(raw);
+        const rest = p.flows.filter((f) => !(f.file === "samples.ts" && SAMPLE_TITLES.includes(f.title)));
+        if (rest.length && rest.length < p.flows.length) p.flows = rest;
         return { project: p, flow: p.flows[0].id };
       }
     } catch {
@@ -2971,7 +3386,17 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return { project: s.project, flow: s.main };
   }
   function boot() {
-    const s = startProject(), store = new Store(s.project), app = mount(document.getElementById("app"), store, s.flow);
+    const demo = new URLSearchParams(location.search).get("demo"), ex = demo ? docExample(demo) : null;
+    if (ex) document.documentElement.classList.add("embed");
+    const s = ex ? { project: ex.project, flow: ex.flow } : startProject(), store = new Store(s.project), app = mount(document.getElementById("app"), store, s.flow);
+    if (ex) {
+      if (new URLSearchParams(location.search).get("txt") === "0") {
+        app.ui.txtIn = false;
+        app.render();
+      }
+      window.flowApp = app;
+      return app;
+    }
     const save = () => {
       try {
         localStorage.setItem(STORE_KEY, serialize(store.project));

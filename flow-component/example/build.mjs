@@ -25,3 +25,11 @@ const patch = src.match(/export interface FunctionPatch \{([\s\S]*?)\n\}/)?.[1] 
 const fnPatch = patch.split("\n").map(l => l.replace(/\/\*\*.*?\*\//g, "").replace(/readonly /g, "").trim()).filter(Boolean).join("\n  ");
 writeFileSync(join(root, "example/contracts.js"), `// GERADO por example/build.mjs a partir de src/commands.ts — não editar\nconst CONTRACTS = ${JSON.stringify(contracts, null, 2)};\nconst FUNCTION_PATCH = ${JSON.stringify(`interface FunctionPatch {\n  ${fnPatch}\n}`)};\n`);
 console.log("contracts:", Object.keys(contracts).length);
+
+// projeto com o arquivo samples.ts (não é o padrão): example/fop-samples.json, para abrir com Open
+{
+  const { tmpdir } = await import("node:os"), tmp = join(tmpdir(), `fop-samples-${process.pid}.mjs`);
+  await build({ entryPoints: [join(root, "novo/sample.ts"), join(root, "novo/model.ts")], outdir: join(tmpdir(), `fop-samples-${process.pid}`), bundle: true, format: "esm", platform: "node", logLevel: "silent" });
+  const dir = join(tmpdir(), `fop-samples-${process.pid}`), sm = await import(join(dir, "sample.js")), md = await import(join(dir, "model.js"));
+  writeFileSync(join(root, "example/fop-samples.json"), md.serialize(sm.samplesProject().project)); void tmp;
+}

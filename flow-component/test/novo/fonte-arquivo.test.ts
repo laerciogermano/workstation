@@ -17,7 +17,7 @@ describe("fonte arquivo: referenciar uma função de outro arquivo", () => {
   });
   it("o código importa a função do outro arquivo e a chama", () => {
     const t = setup(), g = generate(t.p, t.main, { runnable: true });
-    expect(g.code).toContain('import { helper } from "./utils.ts";'); expect(g.code).toContain("const { r } = await helper({ ...state });");
+    expect(g.code).toContain('import { helper } from "./utils.ts";'); expect(g.code).toContain("const { r } = await helper({ ...state, n });");
     expect(generate(t.p, t.main, { js: true }).code).toContain('const { helper } = await import("./utils.ts");');
   });
 });

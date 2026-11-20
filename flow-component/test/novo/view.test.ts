@@ -3,7 +3,7 @@ import { icon } from "../../novo/icons";
 import { layout } from "../../novo/layout";
 import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, type Command, type Fn, type Project } from "../../novo/model";
 import { sampleProject } from "../../novo/sample";
-import { countForStep } from "../../novo/scope";
+import { countForRow, countForStep } from "../../novo/scope";
 import { build, planHeight, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
 
 function base() {
@@ -277,7 +277,7 @@ describe("estados embaixo das colunas e título do plano", () => {
   it("o título do plano é só o nome do fluxo (sem o nome do projeto)", () => { const t = base(); const p = t.view().plan; expect(p).toContain(">R</text>"); expect(p).not.toContain("T · R"); expect(p).not.toContain("New project"); });
   it("embaixo de cada coluna aparecem os dados (estados) que chegam nela: quadrado, ou cubo quando a função devolve vários", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "p" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" });
-    const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toEqual([{ name: "x", cube: false, fields: ["x"] }]); expect(m.get(2)).toEqual([{ name: "output_b", cube: true, fields: ["p", "q"] }]);
+    const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_b", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
     const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(1); expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_b</text>");
     expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 64);
   });
@@ -300,6 +300,13 @@ describe("alça do bloco (arrastar)", () => {
     const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }), sc = layout(t.p.flows[0]!);
     expect(countForStep(t.p, sc, b, 1)).toBe(1); expect(countForStep(t.p, sc, b, 2)).toBe(2); expect(countForStep(t.p, sc, b, 3)).toBe(3); expect(countForStep(t.p, sc, b, 99)).toBe(3); expect(countForStep(t.p, sc, b, -5)).toBe(1);
     expect(countForStep(t.p, sc, t.ids[0]!, 3)).toBe(1);   // função não tem escopo
+  });
+  it("arrastar a alça pra baixo: a linha sob o ponteiro decide quantos itens o bloco engloba (do bloco + irmãos seguintes)", () => {
+    const t = base(), b = t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }), sc = layout(t.p.flows[0]!), rowOf = (id: string): number => sc.rows.findIndex(r => r.id === id && r.kind === "fn");
+    expect(countForRow(t.p, sc, b, rowOf(t.ids[1]!)).count).toBe(1); expect(countForRow(t.p, sc, b, rowOf(t.ids[2]!)).count).toBe(2); expect(countForRow(t.p, sc, b, rowOf(t.ids[3]!)).count).toBe(3);
+    expect(countForRow(t.p, sc, b, 99).count).toBe(3); expect(countForRow(t.p, sc, b, 0).count).toBe(1);   // nunca menos de 1
+    expect(countForRow(t.p, sc, b, rowOf(t.ids[2]!)).lastRow).toBe(rowOf(t.ids[2]!));   // a guia fica na última linha do item que fecha o bloco
+    t.run({ type: "setScope", id: b, count: countForRow(t.p, sc, b, rowOf(t.ids[3]!)).count }); expect(locate(t.p, b)!.node.kids).toHaveLength(3);
   });
   it("aplicar o result com setScope aumenta e diminui o bloco (if, for, try)", () => {
     for (const kind of ["if", "for", "try"] as const) {

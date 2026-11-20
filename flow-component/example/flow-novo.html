@@ -34,6 +34,8 @@
   .topbar{flex:none;display:flex;align-items:center;gap:14px;height:44px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--paper)}
   .topbar .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;letter-spacing:-.01em;color:var(--ink)}
   .topbar .ttl{font-weight:700;font-size:12px;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}.topbar .logo .mark{width:22px;height:20px;flex:none}.topbar .sub{color:var(--muted)}.topbar .sp{flex:1}
+  .topbar .brand{display:inline-flex;align-items:center;gap:9px;color:var(--ink)}.topbar .brand .mark{width:22px;height:22px;flex:none}
+  .topbar .beta{font:700 9px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-2);border-radius:99px;padding:1px 7px;line-height:1.5}
   .topbar .docs-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}.topbar .docs-link:hover{color:var(--ink);background:var(--wash)}
   .embed .topbar,.embed .explorer,.embed #exSplitter,.embed .side,.embed #splitter,.embed .fx-bar,.embed .fx-legend{display:none!important}.embed .app{grid-template-columns:minmax(0,1fr)!important;padding:0!important}.embed .fx{border:0;border-radius:0}
   #app{flex:1;min-height:0;display:flex}
@@ -128,7 +130,6 @@
   .plan .band.el{fill:color-mix(in srgb,var(--wrn) 5%,transparent);stroke:color-mix(in srgb,var(--wrn) 45%,transparent)}
   .plan .band.ca{fill:color-mix(in srgb,var(--fail) 5%,transparent);stroke:color-mix(in srgb,var(--fail) 45%,transparent)}
   .plan .band.co{fill:color-mix(in srgb,var(--ink) 4%,transparent);stroke:color-mix(in srgb,var(--ink) 35%,transparent)}.plan .bandl.co{stroke:var(--ink);stroke-opacity:.8}
-  .grow .cobar{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.8;pointer-events:none}
   .plan .bandl{stroke-width:2}.plan .bandl.if{stroke:var(--wrn)}.plan .bandl.lp{stroke:var(--loop)}.plan .bandl.tr{stroke:var(--okc)}.plan .bandl.ca{stroke:var(--fail)}.plan .bandl.el{stroke:var(--wrn)}
   :root[data-tema="eternos-black"] .plan .band.if,:root[data-tema="eternos-black"] .plan .band.lp{fill:rgba(255,255,255,.04)}
   .plan .dlk{stroke:var(--muted);stroke-width:1.2}
@@ -140,7 +141,7 @@
   .plan .lbl{font:600 9.5px var(--mono);fill:var(--ink);cursor:text}
   .plan .dn[data-act]{cursor:text}.plan .dn[data-act]:hover{fill:var(--ink);text-decoration:underline}
   .plan .dn{font:500 9px var(--mono);fill:var(--muted)}
-  .plan .sdot{fill:var(--d-conc);stroke:var(--d-conc);stroke-width:1.3}.plan .scube{fill:var(--d-conc);stroke:var(--paper);stroke-width:.9;stroke-linejoin:round}.plan .stt.old{opacity:.45}
+  .plan .sdot{fill:var(--d-conc);stroke:var(--d-conc);stroke-width:1.3}.plan .sdot.a{fill:var(--paper)}.plan .scube{fill:var(--d-conc);stroke:var(--paper);stroke-width:.9;stroke-linejoin:round}.plan .stt.old{opacity:.45}
   .plan .dn.st{fill:var(--muted)}
   .plan .cube{fill:var(--d-conc);stroke:var(--paper);stroke-width:.9;stroke-linejoin:round}.plan .cube.a{fill:var(--paper);stroke:var(--d-conc);stroke-width:1.1}
   .plan .dot{fill:var(--d-conc);stroke:var(--d-conc);stroke-width:1.3}.plan .dot.a{fill:var(--paper)}
@@ -156,6 +157,7 @@
   .bar-tools{position:absolute;z-index:6;display:flex;align-items:center;gap:1px;height:26px;padding:1px;background:var(--paper);border:1px solid var(--line-2);border-radius:7px;box-shadow:var(--shadow);white-space:nowrap}
   .tip{position:fixed;z-index:200;pointer-events:none;background:var(--ink);color:var(--paper);font:11px/1.3 var(--font);padding:4px 8px;border-radius:5px;box-shadow:var(--shadow);white-space:nowrap;opacity:0;transition:opacity .06s}.tip.on{opacity:1}
   .guide{position:absolute;top:52px;bottom:0;width:0;border-left:2px dashed var(--accent);pointer-events:none;z-index:5}
+  .guide.h{top:0;bottom:auto;left:0;right:0;width:auto;height:0;border-left:0;border-top:2px dashed var(--accent)}
 
   .fx-legend{flex:none;display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 16px;border-top:1px solid var(--line);color:var(--body);font-size:10.5px}
   .fx-legend span{display:inline-flex;align-items:center;gap:6px}.lg{display:inline-block;width:16px;height:9px;border-radius:5px}
@@ -223,7 +225,7 @@
 </style>
 </head>
 <body>
-<header class="topbar"><span class="ttl">FOP - Flow Oriented Programming</span><span class="sp"></span></header>
+<header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="ttl">FOP - Flow Oriented Programming</span><span class="beta">beta</span></span><span class="sp"></span></header>
 <div id="app"></div>
 <script>document.write(`<script src="flow-novo.js?v=${Date.now()}"><\/script>`);</script>
 <script>

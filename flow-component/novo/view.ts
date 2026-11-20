@@ -4,7 +4,7 @@ import { exprIdents } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
 /** Geometria do plano (px). */
-export const G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16, WS: 100 } as const;   // WS: largura da coluna com o texto fora da barra (a função fica pequena)
+export const G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 } as const;   // WS: largura da coluna com o texto fora da barra (a função fica pequena)
 export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: boolean; /** true = em cada estado, todos os dados disponíveis; ausente/false = só os novos (os que chegam naquele passo) */ allData?: boolean; /** largura mínima da coluna do plano (alinha as funções de um arquivo) */ minW?: number }
 
 export const esc = (s: unknown): string => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -26,7 +26,7 @@ export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps,
 export const PAD = 12;
 export const colW = (sc: Scene, ui: Pick<Ui, "txtIn" | "minW">): number => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map(l => tw((l.node as Fn).title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
 /** Estados (dados produzidos) que aparecem embaixo de cada coluna, como no Flow IDE: quem termina no passo anterior à coluna. */
-export interface StateItem { name: string; cube: boolean; fields: string[]; /** já existia em estado anterior (só aparece em "todos") */ old?: boolean }
+export interface StateItem { name: string; cube: boolean; fields: string[]; /** já existia em estado anterior (só aparece em "todos") */ old?: boolean; /** dado de fora (state): entrada que ninguém produz */ abs?: boolean; /** função dona do dado e lado (para o menu do estado) */ owner?: string; side?: "in" | "out" }
 /** Campos de primeiro nível de um objeto literal (`{ a: 1, b, ...c }` → a, b, c); null se não for objeto. */
 export function objectFields(expr: string): string[] | null {
   const e = expr.trim(); if (!e.startsWith("{") || !e.endsWith("}")) return null;
@@ -47,9 +47,15 @@ export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
   for (const r of sc.rows) {
     if (r.kind !== "fn" || !r.leaf) continue; const f = r.node as Fn;
     // dado inicializado com um valor logo antes da função (ex.: value = { id, score }): existe a partir do início dela; objeto = cubo com os campos
-    for (const i of f.ins) { const e = f.args?.[i]?.trim(); if (!e || isRefExpr(e)) continue; const fields = objectFields(e); add(r.s, { name: i, cube: !!fields, fields: fields ?? [i] }); }
-    if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs });
+    for (const i of f.ins) { const e = f.args?.[i]?.trim(); if (!e || isRefExpr(e)) continue; const fields = objectFields(e); add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], owner: f.id, side: "in" }); }
+    if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
   }
+  // dados abstratos (entradas de fora: as do flow e as de funções que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
+  const made = new Set<string>(); for (const r of sc.rows) if (r.kind === "fn" && r.leaf) (r.node as Fn).outs.forEach(o => made.add(o));
+  const loopVars = new Set<string>(); for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);   // a variável do for não vem de fora
+  const ext = new Map<string, { col: number; owner: string }>(), rootFn = sc.rows[0]?.node as Fn | undefined; (rootFn?.ins ?? []).forEach(n => ext.set(n, { col: 0, owner: rootFn!.id }));
+  for (const r of sc.rows) if (r.kind === "fn" && r.leaf) for (const n of (r.node as Fn).ins) if (!(r.node as Fn).args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id }); else if (ext.has(n) && r.s < ext.get(n)!.col) ext.set(n, { col: r.s, owner: ext.get(n)!.owner });
+  for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
   if (!all) return m;
   // todos os disponíveis: cada estado repete o que já existia (um nome produzido de novo substitui o antigo)
   const cols = [...m.keys()].sort((x, y) => x - y), out = new Map<number, StateItem[]>(); let acc: StateItem[] = [];
@@ -62,7 +68,25 @@ export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
 export const STATE_ROW = 15;
 export const planHeight = (sc: Scene, all = false): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
 /** A tabela cresce para a linha de dados caber, mas até um limite (o que passar vira reticências; a lista completa fica no tooltip). */
-export const tableWidth = (sc: Scene): number => 440 + sc.maxDepth * G.IND * 2;
+export function tableWidth(sc: Scene, p: Project): number {
+  // 134 = coluna Source (120) + margens; o resto é o que a coluna Function precisa para o texto (nunca encolhe abaixo disso)
+  let need = 0;
+  for (const r of sc.rows) {
+    const pad = 10 + r.depth * G.IND * 2; let w: number;
+    if (r.kind === "fn") {
+      const f = r.node as Fn, a = agentOf(p, f.agent);
+      w = pad + (r.leaf ? 22 : 38) + (f.title || "unnamed").length * 7.4 + (a?.kind === "ia" ? 28 + a.name.length * 6.5 : 0) + (f.par ? 22 : 0) + (hasContract(a) && r.leaf ? 30 : 0);
+    } else {
+      const n = r.node as Exclude<Node, Fn>;
+      const txt = r.kind === "catch" ? "if the try fails" : r.kind === "else" ? "otherwise" : n.t === "try" ? `catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
+      w = pad + 54 + txt.length * 7.4;
+    }
+    // espaço seguro: o menu de opções (aparece ao passar o mouse na linha) tem de caber ao lado do texto, sem cobri-lo
+    const part = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main", menu = toolsFor(p, r.id, part).length * 25 + 12 + 24;
+    need = Math.max(need, w + menu);
+  }
+  return Math.round(Math.max(138 + 90, 138 + need));
+}
 
 // ───────────────────────── painel de código (largura e abrir/fechar, como nas IDEs) ─────────────────────────
 export const CODE_MIN = 300, CODE_DEFAULT = 480, CODE_MAX_RATIO = 0.7;
@@ -77,6 +101,15 @@ export function parsePrefs(raw: string | null): Prefs {
 
 // ───────────────────────── ferramentas (regras ÚNICAS, usadas pela tabela e pelo plano) ─────────────────────────
 export interface Tool { act: string; id: string; icon: string; title: string; danger?: boolean; data?: Record<string, string> }
+
+/** Menu de um dado listado nos estados: renomear / remover (função comum), editar (cubo ou entrada de lib) ou renomear a saída (lib). */
+export function stateTools(p: Project, owner: string, side: "in" | "out", name: string): Tool[] {
+  const n = locate(p, owner)?.node; if (!n || n.t !== "fn") return [];
+  const t = (act: string, icon: string, title: string, extra: Partial<Tool> = {}): Tool => ({ act, id: owner, icon, title, data: { side, name }, ...extra });
+  if (!name) return [t("editData", "cube", "Edit the data")];
+  if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "cube", "Set the value")];
+  return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
+}
 
 /** Botões de um nó. Os blocos (if · for · try · catch) compartilham as mesmas ações; só mudam os rótulos. */
 export function toolsFor(p: Project, id: string, part: "main" | "catch" | "else" = "main"): Tool[] {
@@ -128,7 +161,7 @@ export const blockLabel = (_p: Project, n: Node): string => {
   if (n.t === "for") return `for (${n.v} of ${n.coll})`;
   return "try";
 };
-export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { const a = agentOf(p, f.agent); return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs"; };
+export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { if (f.kids.length) return "conc"; const a = agentOf(p, f.agent); return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs"; };
 
 // ───────────────────────── tabela (esquerda) ─────────────────────────
 const circle = (cls: string, ic: string, title: string): string => `<span class="fav ${cls}" title="${esc(title)}">${ic ? icon(ic) : ""}</span>`;
@@ -143,13 +176,13 @@ function agentSelect(p: Project, f: Fn, kind: "agent" | "resp"): string {
 function respCell(p: Project, r: Row): string {
   const f = r.node as Fn;
   if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f).replace(/\.[^.]+$/, ""))}</span></span>`;
-  if (!r.leaf) return `<span class="c-ag muted">—</span>`;
+  if (!r.leaf) { const own = locate(p, f.id)?.flow, file = own ? flowFile(own).replace(/\.[^.]+$/, "") : ""; return `<span class="c-ag" title="Source: the file of this flow (a function with children is concrete: it runs its own steps)">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(file)}</span></span>`; }   // composição = concreta; a origem é o arquivo local
   const a = agentOf(p, f.agent);
   if (a?.kind === "ia") { const pe = agentOf(p, f.resp); return `<span class="c-ag resp-pick">${pe ? circle("pessoa", "user", `Person: ${pe.name}`) + `<span class="rp-n">${esc(pe.name)}</span>` : circle("none", "plus", "Choose the person in charge") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "resp")}</span>`; }
   return `<span class="c-ag resp-pick">${a ? circle(a.kind, KIND_ICON[a.kind], `${a.name}`) + `<span class="rp-n">${esc(a.name)}</span>` : circle("none", "plus", "Choose source") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "agent")}</span>`;
 }
 function taskCell(p: Project, r: Row): string {
-  const f = r.node as Fn, a = agentOf(p, f.agent), pad = 10 + r.depth * G.IND * 2;
+  const f = r.node as Fn, a = agentOf(p, f.agent), pad = r.depth * G.IND * 2;
   const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="fn-dot ${fnKind(p, f)}" title="Function"></span>`;
   const name = hasContract(a) && r.leaf
     ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a!.name)}">${a!.tasks.map(t => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`
@@ -161,7 +194,7 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
   return sc.rows.map((r, i) => {
     const sel = ui.sel === r.id ? " sel" : "", base = `data-i="${i}" data-id="${esc(r.id)}"`;
     if (r.kind === "block" || r.kind === "catch" || r.kind === "else") {
-      const n = r.node as Exclude<Node, Fn>, part = r.kind === "block" ? "main" : r.kind, pad = 10 + r.depth * G.IND * 2;
+      const n = r.node as Exclude<Node, Fn>, part = r.kind === "block" ? "main" : r.kind, pad = r.depth * G.IND * 2;
       const tag = r.kind === "catch" ? `<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
         : n.t === "if" ? `${icon("diamond", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">↻</span><b class="mono">${esc(blockLabel(p, n))}</b>`
         : `<span class="trd">try</span><b class="mono">catch ↓ ${esc(n.t === "try" && n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler")}</b>`;
@@ -189,13 +222,19 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     let row = 0;
     for (const it of items) {
       const y = bot + 34 + row++ * STATE_ROW;
-      out.push(`<g class="stt${it.old ? " old" : ""}"><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
+      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
       // o cubo mostra os campos logo abaixo, indentados
       if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`); }
     }
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
+  // composição (pai): faixa lateral sobre as linhas dos filhos, como a dos blocos if/for — identifica pai e filho (a raiz não precisa: tudo é filho dela)
+  sc.rows.forEach((r, i) => {
+    if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
+    const x0 = r.depth * G.IND;
+    bands.push(`<rect class="band co" x="${x0}" y="${rowY(i + 1)}" width="${W - x0}" height="${(r.last - i) * G.RH}"/><line class="bandl co" x1="${x0 + 1}" y1="${rowY(i + 1)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+  });
   // bandas dos blocos + etiquetas (pills)
   sc.rows.forEach((r, i) => {
     if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
@@ -232,6 +271,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     if (!lib && !f.ins.length) over.push(ghost(colX(r.s), "in", "Add input"));
     if (!lib && !f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Add output"));
   };
+  const barX = new Map<string, { x1: number; x2: number }>();   // onde a barra de cada função começa e termina (as ligações saem e chegam nela)
   sc.rows.forEach((r, i) => {
     if (r.kind !== "fn") return;
     const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
@@ -241,15 +281,18 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
       return colX(r.e + 1) + 10 + (fr.outs.length ? G.GAP - 10 + tw(outsTxt, 6.2) + 36 : 0);
     };
     if (!r.leaf) {
-      const inset = isRoot(p, f.id) ? G.INS : 8, x1 = colX(r.s) + inset, x2 = colX(r.e + 1) - inset;   // a de primeira ordem recua como as funções comuns: o dado fica longe da barra
-      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x1}" y="${ym(i) - 3.5}" width="${x2 - x1}" height="7" rx="3.5"/><title>${esc(f.title)} · composition = layer</title></g>`);
-      if (isRoot(p, f.id)) ioMarks(f, r, i, x1, x2);   // a função de primeira ordem também tem entradas e saídas
+      const inset = 21, x1 = colX(r.s) + inset, x2 = colX(r.e + 1) - inset;   // mesmo recuo em toda composição: a barra pai nunca é menor que a filha (igual quando cobrem os mesmos estados) e nunca maior que ela por recuo
+      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><path class="sum${selC}" d="M${x1} ${ym(i) - 3.5}H${x2}V${ym(i) + 7.5}L${x2 - 5} ${ym(i) + 3.5}H${x1 + 5}L${x1} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} · composition = layer</title></g>`);
+      ioMarks(f, r, i, x1, x2);   // toda composição (a raiz e as internas) também tem entradas e saídas
       // nome depois das saídas (e depois no SVG) — não sobrepõe o retorno
-      over.push(`<text class="lbl" x="${isRoot(p, f.id) ? lblAfterOuts(f) : x2 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+      over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
       return;
     }
-    const k = fnKind(p, f), x1 = colX(r.s) + G.INS, x2 = colX(r.e + 1) - G.INS;
-    const shown = f.title;
+    const k = fnKind(p, f), shown = f.title;
+    // sem texto dentro da barra (título vazio ou nome fora da barra): círculo perfeito; com texto, a barra se expande até a largura do estado
+    const hasText = ui.txtIn && shown.trim() !== "", cx = (colX(r.s) + colX(r.e + 1)) / 2;
+    const x1 = hasText ? colX(r.s) + G.INS : cx - G.BH / 2, x2 = hasText ? colX(r.e + 1) - G.INS : cx + G.BH / 2;
+    barX.set(f.id, { x1, x2 });
     over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
     ioMarks(f, r, i, x1, x2);
     if (!ui.txtIn) over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
@@ -257,7 +300,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
 
   // sequência: A termina no passo anterior ao início de B → cotovelo da saída de A até a barra de B
   // o traço existe só onde há DADO ligando as funções: a saída de uma é entrada (ou valor) da outra, no passo vizinho. Tirou a entrada, o traço some.
-  const elbow = (a: Row, b: Row): string => `M${colX(a.e + 1) - G.INS} ${ym(by.get(a.id)!)} H${colX(a.e + 1)} V${ym(by.get(b.id)!)} H${colX(b.s) + G.INS}`;
+  const elbow = (a: Row, b: Row): string => `M${barX.get(a.id)?.x2 ?? colX(a.e + 1) - G.INS} ${ym(by.get(a.id)!)} H${colX(a.e + 1)} V${ym(by.get(b.id)!)} H${barX.get(b.id)?.x1 ?? colX(b.s) + G.INS}`;
   const pairs = new Map<string, { from: Row; to: Row; names: string[] }>();
   for (const l of dataLinks(p, sc)) { const k = `${l.from.id}>${l.to.id}`, e = pairs.get(k); if (e) e.names.push(l.name); else pairs.set(k, { from: l.from, to: l.to, names: [l.name] }); }
   for (const { from, to, names } of pairs.values()) out.push(`<path class="dep" d="${elbow(from, to)}"><title>${esc(names.join(", "))}</title></path>`);

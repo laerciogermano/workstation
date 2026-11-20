@@ -117,10 +117,9 @@ function forceLogin(q) {
   return q.refresh === '1' || q.refresh === 'true';
 }
 
-function wantAll(q) {
-  if (q.all === '0' || q.all === 'false') return false;
-  if (q.current_page) return false;
-  return q.all !== '0';
+/** Paginação do portal não é exposta: só enche até EXTRACT_LIMIT a partir da pág. 1 (mais novos). */
+function wantAll(_q) {
+  return false;
 }
 
 function filterStatus(items, status) {
@@ -144,22 +143,27 @@ function sumField(items, field = 'valor') {
 
 async function listPaginated(page, q, extraQuery, parse) {
   const range = dateRange(q);
-  const query = forcePortalFranquia({
+  const query = {
     ...range,
     ...extraQuery,
     status: q.status_portal || undefined,
     id_vendedor: q.id_vendedor || undefined,
-  });
+  };
   const currentPage = q.current_page ? Number(q.current_page) : undefined;
-  const { html, pages } = await fetchPageHtmlPaginated(page, query, {
+  const result = await fetchPageHtmlPaginated(page, query, {
     forceLogin: forceLogin(q),
     all: wantAll(q),
     currentPage,
+    maxItems: currentPage ? 0 : EXTRACT_LIMIT,
+    parse,
   });
+  const items = Array.isArray(result.items)
+    ? result.items
+    : parse(result.html);
   return {
     range,
-    pagesFetched: pages?.length || 1,
-    items: parse(html),
+    pagesFetched: result.pages?.length || 1,
+    items,
   };
 }
 
@@ -372,10 +376,7 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'contasareceber',
-        forcePortalFranquia({
-          ...range,
-          status: q.status_portal || undefined,
-        }),
+        { ...range, status: q.status_portal || undefined },
         { forceLogin: forceLogin(q) },
       );
       let items = capExtract(filterStatus(parseFaturasHtml(html), q.status));
@@ -489,10 +490,7 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const page = await fetchPageHtml(
         'faturamento',
-        forcePortalFranquia({
-          ...range,
-          id_vendedor: q.id_vendedor || undefined,
-        }),
+        { ...range, id_vendedor: q.id_vendedor || undefined },
         { forceLogin: forceLogin(q) },
       );
       const porVendedorHtml = parseFaturamentoHtml(page.html);
@@ -526,7 +524,7 @@ const server = createServer(async (req, res) => {
       const data = q.data || q.mes || undefined;
       const { html } = await fetchPageHtml(
         'fluxo_previsto',
-        forcePortalFranquia(data ? { data } : {}),
+        data ? { data } : {},
         { forceLogin: forceLogin(q) },
       );
       const fluxo = parseFluxoPrevistoHtml(html);
@@ -540,10 +538,10 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'chamados',
-        forcePortalFranquia({
+        {
           ...range,
           status: q.status_portal || q.status || undefined,
-        }),
+        },
         { forceLogin: forceLogin(q) },
       );
       const items = capExtract(parseChamadosHtml(html));
@@ -561,7 +559,7 @@ const server = createServer(async (req, res) => {
       const range = dateRange(q);
       const { html } = await fetchPageHtml(
         'notificacoes',
-        forcePortalFranquia(range),
+        range,
         { forceLogin: forceLogin(q) },
       );
       const items = capExtract(parseNotificacoesHtml(html));

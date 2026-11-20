@@ -27,13 +27,19 @@ export function stripClientFranquia(q = {}) {
   return out;
 }
 
+/** Remove ids de franquia da query (lista do portal = sessão Campinas). */
+export function sanitizePortalFranquia(query = {}) {
+  const out = { ...query };
+  for (const k of FRANQUIA_QUERY_KEYS) delete out[k];
+  return out;
+}
+
 /**
- * Força id de franquia nos params enviados ao portal.
+ * Força id Campinas só onde o portal exige o param (ex.: excel faturamento).
  * Nunca propaga id de outra unidade.
  */
 export function forcePortalFranquia(query = {}) {
-  const out = { ...query };
-  for (const k of FRANQUIA_QUERY_KEYS) delete out[k];
+  const out = sanitizePortalFranquia(query);
   out.id_franqueado = LOCKED_FRANQUIA_ID;
   out.id_franqueado_rel = LOCKED_FRANQUIA_ID;
   return out;

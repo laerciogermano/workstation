@@ -2,7 +2,7 @@ import { homedir } from 'node:os';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { isLoginPage, maxCurrentPage } from './html-utils.js';
-import { forcePortalFranquia } from './franquia.js';
+import { sanitizePortalFranquia } from './franquia.js';
 
 const BASE = 'https://franqueado.conectmax.com';
 const CONFIG_DIR =
@@ -119,7 +119,8 @@ async function readHtml(res) {
  */
 export async function fetchPageHtml(page, query = {}, opts = {}) {
   let cookie = await ensureCookie(opts.forceLogin);
-  const safeQuery = forcePortalFranquia(query);
+  // Só remove tentativa de outra franquia — lista segue a sessão (Campinas).
+  const safeQuery = sanitizePortalFranquia(query);
   const url = new URL(`${BASE}/franqueado/`);
   url.searchParams.set('page', page);
   for (const [k, v] of Object.entries(safeQuery)) {
@@ -145,10 +146,41 @@ export async function fetchPageHtml(page, query = {}, opts = {}) {
  * @param {Record<string, string|number|undefined|null>} query
  * @param {{ forceLogin?: boolean, all?: boolean, currentPage?: number }} [opts]
  */
+/**
+ * Página 1 = mais recentes no portal.
+ * Com maxItems: anda página a página (1→N) até encher o teto — sem varrer tudo.
+ */
 export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
-  const base = forcePortalFranquia(query);
+  const base = sanitizePortalFranquia(query);
   const q = { ...base };
   if (opts.currentPage) q.current_page = opts.currentPage;
+
+  const maxItems =
+    Number(opts.maxItems) > 0 ? Math.floor(Number(opts.maxItems)) : 0;
+  const parse = typeof opts.parse === 'function' ? opts.parse : null;
+
+  if (maxItems && parse && !opts.currentPage) {
+    const pages = [];
+    const items = [];
+    let last = 1;
+    for (let p = 1; p <= last && items.length < maxItems; p++) {
+      const next = await fetchPageHtml(
+        page,
+        { ...base, current_page: p },
+        { forceLogin: p === 1 ? opts.forceLogin : false },
+      );
+      pages.push(next.html);
+      if (p === 1) last = maxCurrentPage(next.html) || 1;
+      items.push(...parse(next.html));
+    }
+    return {
+      pages,
+      html: pages.join('\n'),
+      items,
+      cookie: undefined,
+    };
+  }
+
   const first = await fetchPageHtml(page, q, opts);
   if (!opts.all) return { pages: [first.html], ...first };
 
@@ -169,7 +201,8 @@ export async function fetchPageHtmlPaginated(page, query = {}, opts = {}) {
  */
 export async function fetchAjax(pathRel, query = {}, opts = {}) {
   let cookie = await ensureCookie(opts.forceLogin);
-  const safeQuery = forcePortalFranquia(query);
+  // Ajax: só sanitize aqui; quem precisa de id_franqueado passa via forcePortalFranquia no caller.
+  const safeQuery = sanitizePortalFranquia(query);
   const method = (opts.method || 'GET').toUpperCase();
   const url = new URL(pathRel.startsWith('http') ? pathRel : `${BASE}${pathRel}`);
   /** @type {RequestInit} */

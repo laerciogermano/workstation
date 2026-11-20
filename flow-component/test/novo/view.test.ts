@@ -4,7 +4,7 @@ import { layout } from "../../novo/layout";
 import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, type Command, type Fn, type Project } from "../../novo/model";
 import { sampleProject } from "../../novo/sample";
 import { countForRow, countForStep } from "../../novo/scope";
-import { build, planHeight, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planGutter, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
+import { build, planHeight, PLAN_PAD_BOTTOM, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planGutter, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
 
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
@@ -354,7 +354,7 @@ describe("estados embaixo das colunas e título do plano", () => {
   });
   it("funções do mesmo passo empilham os estados na mesma coluna e a altura cresce", () => {
     const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true }); t.run({ type: "addOutput", id: t.ids[0]!, name: "a1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "a2" });
-    const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 64 + 2 * STATE_ROW);
+    const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 64 + 2 * STATE_ROW + PLAN_PAD_BOTTOM);
   });
   it("sem dados não há estados embaixo", () => {
     const t = base(); expect(statesByStep(t.view().scene).size).toBe(0);   // sem Project: só dados declarados

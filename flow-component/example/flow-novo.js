@@ -1822,7 +1822,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return out;
   }
   var STATE_ROW = 15;
-  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW;
+  var PLAN_PAD_BOTTOM = 28;
+  var planHeight = (sc, all = false, p) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
   var TABLE_CHROME = 18 + 120 + 14;
   function tableWidth(sc, p) {
     let need2 = 90;

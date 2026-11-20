@@ -97,7 +97,9 @@ export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, S
   return out;
 }
 export const STATE_ROW = 15;
-export const planHeight = (sc: Scene, all = false, p?: Project): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW;
+/** Folga abaixo do último estado no SVG (evita colar na borda do plano). */
+export const PLAN_PAD_BOTTOM = 28;
+export const planHeight = (sc: Scene, all = false, p?: Project): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
 /** Chrome fixo da tabela: padding esquerdo 18 + coluna Source 120 + padding direito 14. */
 const TABLE_CHROME = 18 + 120 + 14;
 /** A tabela cresce com o aninhamento (padding por depth) para o texto não invadir o plano. */

@@ -2409,7 +2409,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (n2) return `<span class="tk-n">${n2}</span>`;
         const k = kw(w);
         if (k) return `<span class="${k}">${w}</span>${par ?? ""}`;
-        return /^(?:State|Promise|Record|unknown|Fn)$/.test(w) ? `<span class="tk-t">${w}</span>${par ?? ""}` : par ? `<span class="tk-f">${w}</span>(` : m;
+        if (/^(?:State|Promise|Record|unknown|Fn)$/.test(w)) return `<span class="tk-t">${w}</span>${par ?? ""}`;
+        return par ? `<span class="tk-f">${w}</span>(` : `<span class="tk-d">${w}</span>`;
       });
       el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
       el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile;

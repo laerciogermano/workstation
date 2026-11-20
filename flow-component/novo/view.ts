@@ -94,7 +94,7 @@ export function statesByStep(sc: Scene, all = false, _p?: Project): Map<number, 
 export const STATE_ROW = 15;
 /** Folga abaixo do último estado no SVG (evita colar na borda do plano). */
 export const PLAN_PAD_BOTTOM = 28;
-export const planHeight = (sc: Scene, all = false, p?: Project): number => rowY(sc.rows.length) + 70 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
+export const planHeight = (sc: Scene, all = false, p?: Project): number => rowY(sc.rows.length) + 52 + Math.max(0, ...[...statesByStep(sc, all, p).values()].map(stateRows)) * STATE_ROW + PLAN_PAD_BOTTOM;
 /** Chrome fixo da tabela: padding esquerdo 18 + coluna Source 120 + padding direito 14. */
 const TABLE_CHROME = 18 + 120 + 14;
 /** A tabela cresce com o aninhamento (padding por depth) para o texto não invadir o plano. */
@@ -252,19 +252,14 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   sc.rows.forEach((r, i) => { if (r.kind === "fn" || r.kind === "block") by.set(r.id, i); });
   const ym = (i: number): number => rowY(i) + G.RH / 2;
   const out: string[] = [], bands: string[] = [], over: string[] = [];
-  // grade e passos (deslocados pelo gutter das barras de indentação)
-  for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX(s)}" y1="${G.HEAD - 8}" x2="${colX(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
+  // chips sN (sem losango): linha vertical corre do quadro de cima ao de baixo
+  const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
+  const chip = (s: number, y: number): string => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>`;
+  for (let s = 0; s <= sc.nSteps; s++) {
+    out.push(`<line class="vg" x1="${colX(s)}" y1="${top + 8}" x2="${colX(s)}" y2="${bot - 8}"/>`);
+    out.push(chip(s, top), chip(s, bot));
+  }
   sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
-  // cima: quadro sN + losango embaixo; embaixo: losango em cima + quadro sN (espelho); folga ~10px entre quadro e losango
-  const chip = (s: number, y: number, diaAbove = false): string => {
-    const dia = diaAbove
-      ? `<path class="dia" d="M${colX(s)} ${y - 26} l4 4 l-4 4 l-4 -4z"/>`
-      : `<path class="dia" d="M${colX(s)} ${y + 18} l4 4 l-4 4 l-4 -4z"/>`;
-    return `${diaAbove ? dia : ""}<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>${diaAbove ? "" : dia}`;
-  };
-  // embaixo: +36 p/ o losango (y-26) ficar abaixo do eixo (rowY+4)
-  const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 36;
-  for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot, true));
   // os estados embaixo de cada coluna (como no Flow IDE): um quadrado (ou cubo) e o nome do dado que chega ali
   for (const [col, items] of statesByStep(sc, ui.allData, p)) {
     let row = 0;

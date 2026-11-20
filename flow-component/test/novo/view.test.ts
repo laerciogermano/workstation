@@ -354,11 +354,11 @@ describe("estados embaixo das colunas e título do plano", () => {
     const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1);
     expect((plan.match(/class="scube"/g) ?? []).length).toBe(1);   // só output_fb
     expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
-    expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 70);
+    expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 52);
   });
   it("funções do mesmo passo empilham os estados na mesma coluna e a altura cresce", () => {
     const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true }); t.run({ type: "addOutput", id: t.ids[0]!, name: "a1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "a2" });
-    const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 70 + 2 * STATE_ROW + PLAN_PAD_BOTTOM);
+    const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 52 + 2 * STATE_ROW + PLAN_PAD_BOTTOM);
   });
   it("sem dados não há estados embaixo", () => {
     const t = base(); expect(statesByStep(t.view().scene).size).toBe(0);

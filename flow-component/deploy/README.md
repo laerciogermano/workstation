@@ -13,9 +13,7 @@
 
 **Antes → depois (padding do plano):** SVG do plano colava o último estado na borda → `PLAN_PAD_BOTTOM` (28) em `planHeight`. Rollback: tirar o termo em `novo/view.ts`.
 
-**Antes → depois (chip sN / folga):** losango colado no quadro (~4px) → ~10px (`y±18`/`y∓26`); `bot` em `rowY+36` e base do `planHeight` em `+70`. Rollback: offsets `±12`/`∓20`, `bot=rowY+30`, base `+64`.
-
-**Antes → depois (chip sN de baixo):** quadro sN + losango embaixo → losango em cima e quadro embaixo. Rollback: `chip(s, bot)` sem `diaAbove`.
+**Antes → depois (losango sN):** chips tinham losango entre quadro e linha → sem losango; `vg` do quadro de cima ao de baixo (`top+8`…`bot-8`), `bot=rowY+18`, base `planHeight` `+52`. Rollback: path `.dia` + offsets anteriores.
 
 **Antes → depois (I/O padrão):** abstrata sem I/O mostrava cubo `input_`/`output_` inventado → volta ao fantasma `+` (`addIo`); estados só com dado declarado. Rollback: `showIn/Out = length || !lib` + ramo de cubo vazio em `statesByStep`.
 

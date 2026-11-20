@@ -141,9 +141,11 @@
   .plan .pill.el rect{fill:color-mix(in srgb,var(--wrn) 12%,var(--paper))}.plan .pill.el text{fill:var(--wrn)}
   .plan .pill.ca rect{fill:color-mix(in srgb,var(--fail) 16%,var(--paper))}.plan .pill.ca text{fill:var(--fail)}
   .plan .pill[data-act]{cursor:pointer}
-  .plan .handle{fill:currentColor;opacity:0;cursor:col-resize;touch-action:none;pointer-events:all}.plan .pill:hover+.handle,.plan .handle:hover{opacity:.35}
-  /* mobile: alça sempre visível (sem hover) e alvo grande o bastante pro dedo */
-  @media (hover:none),(pointer:coarse){.plan .handle{opacity:.55;fill:var(--accent)}}
+  .plan .handle-hit{fill:transparent;cursor:col-resize;touch-action:none}
+  .plan .handle{fill:currentColor;opacity:0;cursor:col-resize;touch-action:none;pointer-events:none}
+  .plan .pill:hover+.handle-hit+.handle,.plan .handle-hit:hover+.handle{opacity:.4}
+  /* mobile: traço fino sempre visível (sem o retângulo largo) */
+  @media (hover:none),(pointer:coarse){.plan .handle{opacity:.45;fill:var(--accent)}}
   .plan .ghost{cursor:pointer}.plan .ghost .hit{fill:transparent}.plan .ghost .gh{fill:var(--paper);stroke:var(--d-conc);stroke-width:1.2;opacity:0}.plan .ghost .gp{stroke:var(--d-conc);stroke-width:1.2;fill:none;opacity:0;pointer-events:none}.plan .ghost:hover .gh,.plan .ghost:hover .gp{opacity:.9}
   .bar-tools{position:absolute;z-index:6;display:flex;align-items:center;gap:1px;height:26px;padding:1px;background:var(--paper);border:1px solid var(--line-2);border-radius:7px;box-shadow:var(--shadow);white-space:nowrap}
   .tip{position:fixed;z-index:200;pointer-events:none;background:var(--ink);color:var(--paper);font:11px/1.3 var(--font);padding:4px 8px;border-radius:5px;box-shadow:var(--shadow);white-space:nowrap;opacity:0;transition:opacity .06s}.tip.on{opacity:1}

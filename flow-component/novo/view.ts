@@ -258,8 +258,8 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
     if (diamond) over.push(`<path class="fif" d="M${colX(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
     over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
-    // alça larga o bastante pro dedo (hit 28×32); o CSS no desktop deixa quase invisível até o hover
-    if (r.kind === "block") over.push(`<rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 10}" y="${ym(i) - 14}" width="28" height="32" rx="3"><title>Drag to grow or shrink the block</title></rect>`);
+    // hit transparente (toque) + traço fino (visual discreto)
+    if (r.kind === "block") over.push(`<rect class="handle-hit" data-drag="${esc(r.id)}" x="${px + w - 6}" y="${ym(i) - 12}" width="18" height="26"/><rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 4}" y="${ym(i) - 8}" width="4" height="16" rx="1"><title>Drag to grow or shrink the block</title></rect>`);
   });
 
   // funções

@@ -14,16 +14,25 @@ const TEMAS = [
   { id: "graphite", name: "Graphite", a: "#1a1a1a", b: "#61c24f" },
 ];
 const TEMA_KEY = "tema-flow-component-v1";
+const FOP_HOST = /^fop\.(laerciogermano|lesgermano)\.com$/i;
 (function () {
   const q = new URLSearchParams(location.search).get("tema") || new URLSearchParams(location.search).get("theme");
   let saved = null; try { saved = localStorage.getItem(TEMA_KEY); } catch (e) {}
-  const first = TEMAS.some(t => t.id === q) ? q : TEMAS.some(t => t.id === saved) ? saved : "cobalto";
+  const hostDefault = FOP_HOST.test(location.hostname) ? "eternos-black" : "cobalto";
+  const first = TEMAS.some(t => t.id === q) ? q : TEMAS.some(t => t.id === saved) ? saved : hostDefault;
   document.documentElement.dataset.tema = first;
+  // FOP: URL limpa — sem ?tema= / flow-novo.html na barra
+  if (FOP_HOST.test(location.hostname) && (location.search || /flow-novo\.html$/i.test(location.pathname))) {
+    try { history.replaceState(null, "", "/"); } catch (e) {}
+  }
 })();
 function setTema(id) {
   document.documentElement.dataset.tema = id;
   try { localStorage.setItem(TEMA_KEY, id); } catch (e) {}
   document.querySelectorAll(".tb-temas button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === id)));
+  if (FOP_HOST.test(location.hostname) && location.search) {
+    try { history.replaceState(null, "", location.pathname === "/flow-novo.html" ? "/" : location.pathname); } catch (e) {}
+  }
 }
 function mountTemas(el) {
   const cur = document.documentElement.dataset.tema;

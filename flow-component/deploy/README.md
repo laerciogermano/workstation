@@ -1,9 +1,12 @@
 # Deploy — fop.laerciogermano.com
 
-**URL:** https://fop.laerciogermano.com/ → Flow Language (`flow-novo.html?tema=eternos-black`)  
-**Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop`  
+**URL:** https://fop.laerciogermano.com/ (URL limpa — sem `flow-novo.html` nem `?tema=`)  
+**Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop` · `index.html` (= editor)  
 **DNS:** Hostinger (zona `laerciogermano.com`) · A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)  
+**Tema:** default `eternos-black` no host FOP (localStorage / bolinhas; sem query na URL)  
 **Conteúdo:** [`../example/`](../example/) · marca: logo no header + **Flow Language** (regra [`.cursor/rules/fop-flow-language.mdc`](../../../.cursor/rules/fop-flow-language.mdc))
+
+**Antes → depois:** `/` redirecionava para `/flow-novo.html?tema=eternos-black` → `/` serve `index.html` e `/flow-novo.html` vira 301 `/`.
 
 > Pedido: **só FOP** em `fop.lesgermano.com`. `lesgermano.com` não está na conta Hostinger Germano. Publicado em `fop.laerciogermano.com`. nginx também lista `fop.lesgermano.com` se o domínio for registrado depois.
 

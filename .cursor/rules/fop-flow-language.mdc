@@ -7,14 +7,16 @@ O editor **Flow Language** (flow-novo / `flow-component/example`) publica só em
 1. Host canônico: `fop.laerciogermano.com` (pedido `fop.lesgermano.com` → mesma conta Hostinger usa `laerciogermano.com`; wildcard `*` cobre DNS)
 2. Marca na UI: logo no **início do header** (topbar) + texto **Flow Language** — como o Flow IDE (`flow.dev` no `.tb .logo`). Sem “Flow · editor” / “flow-novo” no título
 3. Logo **não** fica no Explorer — Explorer só “Explorer” + ações
-4. Deploy: `SSHPASS=… bash flow-component/deploy/publicar.sh` → `/opt/fop` · `/` redireciona para `flow-novo.html?tema=eternos-black`
-5. `flow-ide.laerciogermano.com` continua sendo o Flow.dev (protótipo IDE), distinto do FOP
+4. Deploy: `SSHPASS=… bash flow-component/deploy/publicar.sh` → `/opt/fop` · URL **só** `https://fop.laerciogermano.com/` (`index.html`; `/flow-novo.html` → 301 `/`)
+5. Tema default no host FOP: `eternos-black` — **sem** `?tema=` na barra
+6. `flow-ide.laerciogermano.com` continua sendo o Flow.dev (protótipo IDE), distinto do FOP
 
 ## Exemplos
 
 ```text
 ✅ https://fop.laerciogermano.com/ · topbar [logo] Flow Language
 ✅ Explorer sem mark SVG
+❌ /flow-novo.html?tema=eternos-black na URL pública
 ❌ título “Flow · editor” / logo só no Explorer
 ❌ republicar Flow Language em flow-ide
 ```

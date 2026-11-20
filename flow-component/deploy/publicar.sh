@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publica example/ em https://fop.laerciogermano.com (Flow · só FOP / flow-novo)
+# Publica example/ em https://fop.laerciogermano.com (Flow Language · URL limpa /)
 # Uso: SSHPASS='senha Contabo 185' bash deploy/publicar.sh
 set -euo pipefail
 : "${SSHPASS:?defina SSHPASS com a senha do Contabo 185}"
@@ -22,10 +22,10 @@ server {
     listen [::]:80;
     server_name fop.laerciogermano.com fop.lesgermano.com;
     root /opt/fop;
-    index flow-novo.html index.html;
+    index index.html;
     location ^~ /.well-known/acme-challenge/ { root /var/www/html; }
-    location = / { return 302 /flow-novo.html?tema=eternos-black; }
-    location / { try_files $uri $uri/ =404; }
+    location = /flow-novo.html { return 301 /; }
+    location / { try_files $uri $uri/ /index.html; }
 }
 HTTPONLY
 fi
@@ -35,6 +35,10 @@ sshpass -e rsync -az --delete \
   --exclude 'build.mjs' \
   -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
   "$SRC/" "root@$HOST:/opt/fop/"
+
+# Entrada canônica: / → index.html (= editor), sem flow-novo nem ?tema= na URL
+sshpass -e ssh -o StrictHostKeyChecking=no "root@$HOST" \
+  'cp -f /opt/fop/flow-novo.html /opt/fop/index.html'
 
 sshpass -e rsync -az \
   -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
@@ -68,5 +72,5 @@ nginx -t && systemctl reload nginx
 REMOTE
 fi
 
-curl -sS -o /dev/null -w "https %{http_code}\n" "https://fop.laerciogermano.com/flow-novo.html?tema=eternos-black" || \
-  curl -sS -o /dev/null -w "http %{http_code}\n" "http://fop.laerciogermano.com/flow-novo.html?tema=eternos-black" || true
+curl -sS -o /dev/null -w "https %{http_code}\n" "https://fop.laerciogermano.com/" || \
+  curl -sS -o /dev/null -w "http %{http_code}\n" "http://fop.laerciogermano.com/" || true

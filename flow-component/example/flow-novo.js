@@ -1719,7 +1719,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
       if (diamond) over.push(`<path class="fif" d="M${colX2(r.s)} ${ym(i) - 6} l6 6 l-6 6 l-6 -6z"/>`);
       over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
-      if (r.kind === "block") over.push(`<rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 7}" y="${ym(i) - 8}" width="7" height="16"><title>Drag to grow or shrink the block</title></rect>`);
+      if (r.kind === "block") over.push(`<rect class="handle" data-drag="${esc(r.id)}" x="${px + w - 10}" y="${ym(i) - 14}" width="28" height="32" rx="3"><title>Drag to grow or shrink the block</title></rect>`);
     });
     const produced = /* @__PURE__ */ new Set();
     sc.leaves.forEach((l) => l.node.outs.forEach((o) => produced.add(o)));
@@ -3083,34 +3083,46 @@ ${given.map((g) => `  ${g},`).join("\n")}
       if (!loc || !svg) return;
       e.preventDefault();
       e.stopPropagation();
-      const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w;
+      try {
+        hd.setPointerCapture(e.pointerId);
+      } catch {
+      }
+      const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w, gutter = planGutter(scene);
       const guide = host.ownerDocument.createElement("div");
       guide.className = "guide";
       plan.append(guide);
       const at = (ev) => {
         const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
-        return countForStep(p0, scene, id, Math.floor((x - G.OX) / cw));
+        return countForStep(p0, scene, id, Math.floor((x - gutter - G.OX) / cw));
       };
       const place = (n2) => {
         const l = locate(p0, id);
         const items = [...l.node.t === "fn" ? [] : l.node.kids, ...l.list.slice(l.index + 1)];
         const lastItem = items[n2 - 1], sp = lastItem ? scene.span.get(lastItem.id) : void 0;
-        guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
+        guide.style.left = gutter + G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
       };
       let n = at(e);
       place(n);
       const move = (ev) => {
+        if (ev.pointerId !== e.pointerId) return;
         n = at(ev);
         place(n);
       };
-      const up = () => {
-        window.removeEventListener("pointermove", move);
-        window.removeEventListener("pointerup", up);
+      const up = (ev) => {
+        if (ev.pointerId !== e.pointerId) return;
+        hd.removeEventListener("pointermove", move);
+        hd.removeEventListener("pointerup", up);
+        hd.removeEventListener("pointercancel", up);
+        try {
+          hd.releasePointerCapture(e.pointerId);
+        } catch {
+        }
         guide.remove();
         if (n !== kids(id)) run({ type: "setScope", id, count: n }, false);
       };
-      window.addEventListener("pointermove", move);
-      window.addEventListener("pointerup", up);
+      hd.addEventListener("pointermove", move);
+      hd.addEventListener("pointerup", up);
+      hd.addEventListener("pointercancel", up);
     });
     const app = host.querySelector(".app"), splitter = $("#splitter"), PREFS_KEY = "flow-novo-ui-v1";
     let prefs = parsePrefs((() => {

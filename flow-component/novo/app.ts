@@ -5,7 +5,7 @@ import { contractOf, cubeName, FlowError, flowFile, fnsOf, kidsOf, type Node, is
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
-import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
+import { build, fnKind, clampCodeWidth, CODE_DEFAULT, esc, G, parsePrefs, planGutter, planHeight, planWidth, tableWidth, stateTools, toolsFor, toolsHtml, type Prefs, type Ui } from "./view";
 import { sampleProject, SAMPLE_TITLES } from "./sample";
 import { docExample } from "./docs-examples";
 
@@ -504,27 +504,33 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   });
   el.zoom.addEventListener("mouseout", e => { if ((e.target as HTMLElement).closest("[data-hover],[data-sthover]")) leaveBar(); });
 
-  // ───────── alça da etiqueta: arrastar na horizontal aumenta / diminui o bloco (e2e + cursor col-resize) ─────────
+  // ───────── alça da etiqueta: arrastar na horizontal aumenta / diminui o bloco (desktop + touch) ─────────
   el.zoom.addEventListener("pointerdown", e => {   // vale para o plano único e para cada função da vista de arquivo
-    const hd = (e.target as HTMLElement).closest<SVGElement>("[data-drag]"); if (!hd) return;
+    const hd = (e.target as Element).closest<SVGElement>("[data-drag]"); if (!hd) return;
     const id = hd.dataset["drag"]!, p0 = P(), loc = locate(p0, id), svg = hd.closest("svg"), plan = hd.closest<HTMLElement>(".gplan") ?? el.plan; if (!loc || !svg) return;
     e.preventDefault(); e.stopPropagation();
-    const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w;
+    try { hd.setPointerCapture(e.pointerId); } catch { /* Safari antigo */ }
+    const built = build(p0, loc.flow.id, ui), scene = built.scene, cw = built.w, gutter = planGutter(scene);
     const guide = host.ownerDocument.createElement("div"); guide.className = "guide"; plan.append(guide);
     const at = (ev: PointerEvent): number => {
       const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / ui.zoom;
-      return countForStep(p0, scene, id, Math.floor((x - G.OX) / cw));
+      return countForStep(p0, scene, id, Math.floor((x - gutter - G.OX) / cw));
     };
     const place = (n: number): void => {
       const l = locate(p0, id)!;
       const items = [...(l.node.t === "fn" ? [] : l.node.kids), ...l.list.slice(l.index + 1)];
       const lastItem = items[n - 1], sp = lastItem ? scene.span.get(lastItem.id) : undefined;
-      guide.style.left = G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
+      guide.style.left = gutter + G.OX + ((sp?.e ?? 0) + 1) * cw + "px";
     };
     let n = at(e); place(n);
-    const move = (ev: PointerEvent): void => { n = at(ev); place(n); };
-    const up = (): void => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); guide.remove(); if (n !== kids(id)) run({ type: "setScope", id, count: n }, false); };
-    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
+    const move = (ev: PointerEvent): void => { if (ev.pointerId !== e.pointerId) return; n = at(ev); place(n); };
+    const up = (ev: PointerEvent): void => {
+      if (ev.pointerId !== e.pointerId) return;
+      hd.removeEventListener("pointermove", move); hd.removeEventListener("pointerup", up); hd.removeEventListener("pointercancel", up);
+      try { hd.releasePointerCapture(e.pointerId); } catch { /* já solto */ }
+      guide.remove(); if (n !== kids(id)) run({ type: "setScope", id, count: n }, false);
+    };
+    hd.addEventListener("pointermove", move); hd.addEventListener("pointerup", up); hd.addEventListener("pointercancel", up);
   });
 
   // ───────── painel de código: abrir/fechar e arrastar a linha divisória ─────────

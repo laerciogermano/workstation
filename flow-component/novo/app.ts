@@ -48,6 +48,23 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const multiEl = host.ownerDocument.createElement("div"); multiEl.className = "multi"; multiEl.hidden = true; el.zoom.append(multiEl); multiEl.addEventListener("click", multiClick);
   // desfazer / refazer: só ao lado das opções do cabeçalho do Flow (nunca nas dicas dos componentes nem no topo da página)
   const themes = host.ownerDocument.createElement("div"); themes.id = "temas"; host.ownerDocument.querySelector(".topbar")?.append(themes); themes.hidden = true;   // seletor de temas escondido (o tema ainda vem de ?tema= ou do salvo)
+  // reset: canto direito do topbar (limpa localStorage e volta ao setup inicial)
+  const topbar = host.ownerDocument.querySelector(".topbar");
+  if (topbar && !host.ownerDocument.documentElement.classList.contains("embed")) {
+    const resetBtn = host.ownerDocument.createElement("button");
+    resetBtn.type = "button"; resetBtn.className = "top-reset"; resetBtn.id = "resetStorage";
+    resetBtn.title = "Reset to the initial setup and clear saved data (localStorage)";
+    resetBtn.setAttribute("aria-label", "Reset and clear storage");
+    resetBtn.innerHTML = icon("reset");
+    topbar.append(resetBtn);
+    resetBtn.addEventListener("click", () => {
+      void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then(ok => {
+        if (!ok) return;
+        try { for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k); } catch { /* privado / bloqueado */ }
+        host.ownerDocument.defaultView?.location.reload();
+      });
+    });
+  }
 
   // ───────── diálogos e avisos dentro da própria vista (prompt() do navegador pode ser bloqueado) ─────────
   const modal = <T,>(label: string, fill: (form: HTMLFormElement, done: (v: T) => void) => void): Promise<T> => new Promise(res => {
@@ -151,7 +168,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), files = new Map<string, Fn[]>(); for (const f of p.flows) { const k = flowFile(f); files.set(k, [...(files.get(k) ?? []), f]); }
     const curFile = (() => { const r = locate(p, ui.flow)?.flow; return r ? flowFile(r) : ""; })();
     const secOpen = !exClosed.has("sec:files");
-    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset to the initial setup and clear saved data (localStorage)" aria-label="Reset and clear storage">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
       const fid = "f:" + file, open = !exClosed.has(fid);
       const body = open ? fns.map(fn => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
       return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0]!.id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -175,14 +192,6 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       const file = add.dataset["exadd"]!, taken = new Set(P().flows.filter(f => flowFile(f) === file).map(f => f.title));
       let n = 1, title = "newFunction"; while (taken.has(title)) title = `newFunction${++n}`;
       run({ type: "newFlow", title, file }); return;
-    }
-    if (t.closest("[data-exreset]")) {
-      void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then(ok => {
-        if (!ok) return;
-        try { for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k); } catch { /* privado / bloqueado */ }
-        host.ownerDocument.defaultView?.location.reload();
-      });
-      return;
     }
     const delFile = t.closest<HTMLElement>("[data-exdelfile]");
     if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); const total = P().flows.filter(f => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0); void (total > 1 ? confirmAsk(`Remove the file “${file}” and its ${total} function(s)?`) : Promise.resolve(true)).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }

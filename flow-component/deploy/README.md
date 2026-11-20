@@ -15,7 +15,7 @@
 
 **Antes → depois (losango sN):** chips tinham losango entre quadro e linha → sem losango; `vg` do quadro de cima ao de baixo (`top+8`…`bot-8`), `bot=rowY+18`, base `planHeight` `+52`. Rollback: path `.dia` + offsets anteriores.
 
-**Antes → depois (reset / storage):** botão reset do Explorer só recarregava o sample em memória → apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega a página. Rollback: handler `data-exreset` só com `reset()` + `render()`.
+**Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.
 
 **Antes → depois (nome = referência / init):** entrada com literal (`text = "…"`) não contava como produção → quem usava o mesmo nome ficava vazado e nos estados como “de fora”. Agora init entra em `produced`/`made`/`dataLinks`. Rollback: só `outs` nesses conjuntos.
 

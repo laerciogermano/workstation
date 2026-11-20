@@ -2373,6 +2373,27 @@ ${given.map((g) => `  ${g},`).join("\n")}
     themes.id = "temas";
     host.ownerDocument.querySelector(".topbar")?.append(themes);
     themes.hidden = true;
+    const topbar = host.ownerDocument.querySelector(".topbar");
+    if (topbar && !host.ownerDocument.documentElement.classList.contains("embed")) {
+      const resetBtn = host.ownerDocument.createElement("button");
+      resetBtn.type = "button";
+      resetBtn.className = "top-reset";
+      resetBtn.id = "resetStorage";
+      resetBtn.title = "Reset to the initial setup and clear saved data (localStorage)";
+      resetBtn.setAttribute("aria-label", "Reset and clear storage");
+      resetBtn.innerHTML = icon("reset");
+      topbar.append(resetBtn);
+      resetBtn.addEventListener("click", () => {
+        void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then((ok) => {
+          if (!ok) return;
+          try {
+            for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k);
+          } catch {
+          }
+          host.ownerDocument.defaultView?.location.reload();
+        });
+      });
+    }
     const modal = (label, fill) => new Promise((res) => {
       host.querySelector(".dlg")?.remove();
       const dlg = host.ownerDocument.createElement("div");
@@ -2587,7 +2608,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return r ? flowFile(r) : "";
       })();
       const secOpen = !exClosed.has("sec:files");
-      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset to the initial setup and clear saved data (localStorage)" aria-label="Reset and clear storage">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
         const fid = "f:" + file, open = !exClosed.has(fid);
         const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
         return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -2628,17 +2649,6 @@ ${given.map((g) => `  ${g},`).join("\n")}
         let n = 1, title = "newFunction";
         while (taken.has(title)) title = `newFunction${++n}`;
         run({ type: "newFlow", title, file });
-        return;
-      }
-      if (t.closest("[data-exreset]")) {
-        void confirmAsk("Reset to the initial setup and clear all saved data in this browser (project + preferences)?").then((ok) => {
-          if (!ok) return;
-          try {
-            for (const k of FLOW_STORAGE_KEYS) localStorage.removeItem(k);
-          } catch {
-          }
-          host.ownerDocument.defaultView?.location.reload();
-        });
         return;
       }
       const delFile = t.closest("[data-exdelfile]");

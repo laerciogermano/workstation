@@ -123,7 +123,8 @@ test("source: choosing a browser lib in the select updates the code (wrapper cal
 });
 test("zoom, ajustar, modo text, abrir/fechar tudo e abas funcionam", async () => {
   await click("#zin"); assert.notEqual(await ev(`document.getElementById("zv").textContent`), "100%"); await click("#fit");
-  assert.ok(await ev(`!!document.querySelector(".plan .fbt")`), "o modo text já abre ligado"); await click("#txtIn"); assert.ok(await ev(`!document.querySelector(".plan .fbt")`)); await click("#txtIn"); assert.ok(await ev(`!!document.querySelector(".plan .fbt")`));
+  assert.ok(await ev(`!document.querySelector(".plan .fbt")`), "texto dentro da barra começa desligado"); await click("#txtIn"); assert.ok(await ev(`!!document.querySelector(".plan .fbt")`)); await click("#txtIn"); assert.ok(await ev(`!document.querySelector(".plan .fbt")`));
+  assert.equal(await ev(`document.getElementById("dataAll").getAttribute("aria-pressed")`), "false", "dados (todos) começa desligado");
   await click("#collapse"); await click("#expand"); await click('[data-tab=term]'); assert.ok(await ev(`document.getElementById("p-term").classList.contains("on")`)); await click('[data-tab=ts]');
 });
 test("desfazer/refazer no cabeçalho da página e junto das opções do Flow, com Ctrl+Z / Ctrl+Shift+Z nas dicas; nunca nas dicas dos componentes", async () => {

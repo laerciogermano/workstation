@@ -1726,7 +1726,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
 
   // novo/app.ts
   function mount(host, store, flow) {
-    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
+    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: false, allData: false, flow, zoom: 1, pan: { x: 8, y: 8 } };
     let fileCodeText = null, fileView = "*", multi = null, tab = "ts", hovT = 0, fitted = false, auto = true, last = null, gen = null;
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
@@ -1736,7 +1736,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
         <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-pressed="true" aria-label="Explorer">${icon("panel-left")}</button><span class="fx-t" id="flowName">Flow</span><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
+                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing only the new data (click for all available)" aria-pressed="false">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">

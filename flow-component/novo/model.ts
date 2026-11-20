@@ -134,8 +134,13 @@ export const altKids = (n: Node): Node[] | null => (n.t === "try" ? n.catchKids 
 export function walk(list: readonly Node[], f: (n: Node) => void): void { for (const n of list) { f(n); walk(kidsOf(n), f); } }
 export const fnsOf = (flow: Fn): Fn[] => { const out: Fn[] = []; walk(flow.kids, n => { if (n.t === "fn") out.push(n); }); return out; };
 
-/** Um lado (entrada ou saída) tem UM dado (quadrado); com mais de um vira um CUBO, que agrupa os dados. */
-export const isCube = (names: readonly string[]): boolean => names.length > 1;
+/**
+ * Forma do lado (entrada/saída) alinhada ao TypeScript gerado:
+ *  - `[]` → cubo (objeto/state vazio: o código manda/recebe `state` / `{}`);
+ *  - um nome → quadrado (dado único);
+ *  - dois ou mais → cubo (objeto com campos).
+ */
+export const isCube = (names: readonly string[]): boolean => names.length !== 1;
 /** Nome do cubo de uma função: `entrada_<função>` / `saida_<função>`. */
 export const cubeName = (f: Fn, side: "in" | "out"): string => `${side === "in" ? "input" : "output"}_${f.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "function"}`;
 

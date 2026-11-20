@@ -128,10 +128,11 @@ describe("plano (SVG)", () => {
     t.run({ type: "addInput", id: t.ids[2]!, name: "x" }); t.run({ type: "addInput", id: t.ids[2]!, name: "y" }); expect((t.view().plan.match(/class="dep"/g) ?? []).length).toBe(2);
   });
 
-  it("fantasmas de entrada/saída só onde falta; marcas onde há data (abstrata = vazada, concreta = cheia)", () => {
-    const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(10);   // 8 das funções + entrada e saída da função de primeira ordem
+  it("[] = cubo (state); um dado = quadrado (concreto ou abstrato vazado); sem fantasmas", () => {
+    const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(0);
+    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(10);   // cada função (raiz + 4) tem in+out vazios = cubos de state
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
-    const p = t.view().plan; expect((p.match(/class="ghost"/g) ?? []).length).toBe(10 - 3); expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="addIo"');
+    const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"'); expect(p).not.toContain('data-act="addIo"');
   });
   it("blocos: banda tracejada, etiqueta, alça e triângulo do if; catch com X; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
@@ -178,7 +179,7 @@ describe("quadrado do dado", () => {
   it("o nome do dado fica na altura do quadrado: entradas à esquerda dele, saídas à direita", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[1]!, name: "customer_data" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "draft" });
     const v = t.view(), g = planGutter(v.scene), fnRow = v.scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(fnRow) + G.RH / 2;
-    const names = [...v.plan.matchAll(/<text class="dn (in|out)"[^>]*? x="([\d.]+)" y="([\d.]+)" text-anchor="(\w+)">([^<]+)</g)].map(m => ({ side: m[1], x: Number(m[2]), y: Number(m[3]), anchor: m[4], n: m[5] }));
+    const names = [...v.plan.matchAll(/<text class="dn (in|out)"[^>]*? x="([\d.]+)" y="([\d.]+)" text-anchor="(\w+)">([^<]+)</g)].map(m => ({ side: m[1], x: Number(m[2]), y: Number(m[3]), anchor: m[4], n: m[5] })).filter(n => n.n === "customer_data" || n.n === "draft");
     expect(names.map(n => [n.side, n.anchor, n.n])).toEqual([["in", "end", "customer_data"], ["out", "start", "draft"]]);
     expect(names.map(n => n.x)).toEqual([colX(1, G.W, g) - G.GAP, colX(2, G.W, g) + G.GAP]); expect(names.every(n => Math.abs(n.y - 3.5 - cy) < 0.01)).toBe(true);   // mesma altura do quadrado
   });
@@ -215,21 +216,21 @@ describe("quadrado do dado", () => {
   });
 });
 
-describe("dado e cubo: cada lado tem UM dado (quadrado); mais de um vira CUBO", () => {
+describe("dado e cubo: [] = cubo (state); UM nome = quadrado; 2+ = cubo", () => {
   it("regras: isCube e nome do cubo (input_/output_ + função)", () => {
-    expect(isCube([])).toBe(false); expect(isCube(["a"])).toBe(false); expect(isCube(["a", "b"])).toBe(true);
+    expect(isCube([])).toBe(true); expect(isCube(["a"])).toBe(false); expect(isCube(["a", "b"])).toBe(true);
     const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "Gerar contrato" }); const f = locate(t.p, t.ids[0]!)!.node as Fn;
     expect(cubeName(f, "in")).toBe("input_gerar_contrato"); expect(cubeName(f, "out")).toBe("output_gerar_contrato");
   });
   it("um dado = quadrado; dois ou mais = cubo no plano (no mesmo ponto), com o nome do cubo e os campos no tooltip", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[1]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "y" });
-    let p = t.view().plan; expect((p.match(/class="dot/g) ?? []).length).toBe(2); expect(p).not.toContain('class="cube');
+    let p = t.view().plan; expect((p.match(/class="dot/g) ?? []).length).toBe(2);
     t.run({ type: "addInput", id: t.ids[1]!, name: "z" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "w" }); p = t.view().plan;
-    expect((p.match(/class="cube/g) ?? []).length).toBe(2); expect((p.match(/class="dot/g) ?? []).length).toBe(0);
+    expect((p.match(/class="dot/g) ?? []).length).toBe(0);
     expect(p).toContain(">input_b<"); expect(p).toContain(">output_b<"); expect(p).toContain("<title>x\nz</title>"); expect(p).toContain("<title>y, w</title>");
     const sc = t.view().scene, g = planGutter(sc), row = sc.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
     const ys = [...p.matchAll(/<path class="cube(?: a)?" transform="translate\(([\d.]+) ([\d.]+)\)"/g)].map(m => ({ x: Number(m[1]) + 5, y: Number(m[2]) + 5.5 }));
-    expect(ys.map(q => q.x)).toEqual([colX(1, G.W, g), colX(2, G.W, g)]); expect(ys.every(q => q.y === cy)).toBe(true);   // o cubo fica onde ficaria o quadrado
+    const onB = ys.filter(q => q.y === cy); expect(onB.map(q => q.x)).toEqual([colX(1, G.W, g), colX(2, G.W, g)]);   // cubos de B na mesma altura do antigo quadrado
   });
   it("entrada de fora (state) = cubo vazado; saída = cubo cheio", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "a" }); t.run({ type: "addInput", id: t.ids[0]!, name: "b" }); expect(t.view().plan).toContain('class="cube a"');
@@ -237,7 +238,7 @@ describe("dado e cubo: cada lado tem UM dado (quadrado); mais de um vira CUBO", 
   });
   it("clicar no marcador abre a caixa (editData): quadrado e cubo, no plano", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); let p = t.view().plan;
-    expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`); expect(p).not.toContain('class="cube');
+    expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`); expect(p).toContain('class="dot');
     t.run({ type: "addOutput", id: t.ids[0]!, name: "w" }); p = t.view().plan; expect(p).toContain('class="cube'); expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`);
   });
 
@@ -249,31 +250,33 @@ describe("dado e cubo: cada lado tem UM dado (quadrado); mais de um vira CUBO", 
 
 describe("valor só no estado embaixo (ao lado da marca: só o nome)", () => {
   const dn = (plan: string, side: "in" | "out"): string[] => [...plan.matchAll(new RegExp(`<text class="dn ${side}"[^>]*>([^<]*)<title>([^<]*)</title></text>`, "g"))].map(m => `${m[1]!.replace(/&quot;/g, '"')} | ${m[2]!.replace(/&quot;/g, '"')}`);
+  const dnFind = (plan: string, side: "in" | "out", pred: (s: string) => boolean): string => dn(plan, side).find(pred)!;
   const st = (plan: string): string[] => [...plan.matchAll(/<g class="stt[^"]*"[^>]*>[\s\S]*?<text class="dn st"[^>]*>([^<]*)/g)].map(m => m[1]!.replace(/&quot;/g, '"'));
   it("função de lib: ao lado só o nome; valor completo no tooltip e no estado embaixo", () => {
-    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); expect(dn(t.view().plan, "in")).toEqual(["text | text = (not filled in yet)"]);
-    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '"Hello, world"' }); expect(dn(t.view().plan, "in")).toEqual(['text | text = "Hello, world"']);
+    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); expect(dnFind(t.view().plan, "in", s => s.startsWith("text |"))).toBe("text | text = (not filled in yet)");
+    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '"Hello, world"' }); expect(dnFind(t.view().plan, "in", s => s.startsWith("text |"))).toBe('text | text = "Hello, world"');
     expect(st(t.view().plan)).toContain('text = "Hello, world"');
-    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "customer.name" }); expect(dn(t.view().plan, "in")[0]).toBe("text | text = customer.name");
+    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "customer.name" }); expect(dnFind(t.view().plan, "in", s => s.startsWith("text |"))).toBe("text | text = customer.name");
   });
   it("valor longo no estado é cortado com reticências; tooltip do estado fica inteiro", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); const long = '"' + "x".repeat(80) + '"'; t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: long });
-    expect(dn(t.view().plan, "in")[0]).toBe(`text | text = ${long}`);
+    expect(dnFind(t.view().plan, "in", s => s.startsWith("text |"))).toBe(`text | text = ${long}`);
     const shown = st(t.view().plan).find(s => s.startsWith("text ="))!; expect(shown.length).toBe(26); expect(shown.endsWith("…")).toBe(true);
     expect(t.view().plan).toContain(`<title>${esc(long)}</title>`);
   });
   it("vários parâmetros (cubo): ao lado só o nome do cubo; tooltip com valores", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[1]!, agent: "math" }); t.run({ type: "setTask", id: t.ids[1]!, task: "max" }); t.run({ type: "setArg", id: t.ids[1]!, name: "a", value: "3" });
-    const [row] = dn(t.view().plan, "in"); expect(row!.split(" | ")[0]).toBe("input_max"); expect(row!.split(" | ")[1]).toBe("a = 3\nb = (not filled in yet)");
+    const row = dnFind(t.view().plan, "in", s => s.startsWith("input_max")); expect(row.split(" | ")[0]).toBe("input_max"); expect(row.split(" | ")[1]).toBe("a = 3\nb = (not filled in yet)");
     expect(st(t.view().plan)).toContain("a = 3");
   });
   it("objeto literal: campos com valor no estado embaixo", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '{ field1: "sdfsfsdfds" }' });
-    expect(dn(t.view().plan, "in")[0]!.startsWith("text |")).toBe(true);
+    expect(dnFind(t.view().plan, "in", s => s.startsWith("text |")).startsWith("text |")).toBe(true);
     const labels = st(t.view().plan); expect(labels).toContain("text"); expect(labels).toContain('field1 = "sdfsfsdfds"');
   });
   it("função comum e saídas: só o nome (sem valor)", () => {
-    const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); const p = t.view().plan; expect(dn(p, "in")).toEqual(["x | x"]); expect(dn(p, "out")).toEqual(["y | y"]);
+    const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); const p = t.view().plan;
+    expect(dn(p, "in")).toContain("x | x"); expect(dn(p, "out")).toContain("y | y");
   });
 });
 

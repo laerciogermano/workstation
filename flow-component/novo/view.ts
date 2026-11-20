@@ -306,20 +306,24 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     // o quadrado do dado fica EXATAMENTE onde a caixa fantasma aparece: na linha da função, sobre a coluna de entrada / saída;
     // o nome do dado fica na linha de dados logo abaixo
     const lib = !!contractOf(p, f), inAbs = f.ins.some(n => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
-    const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => !list.length ? "" : (isCube(list) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? "")))   // vários dados ou um dado do tipo objeto = cubo
-      ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!)} · ${tip}</title></g>`
-      : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0]!)} · ${tip}</title></g>`;
+    // [] = cubo (state/{}); 1 nome = quadrado; 2+ ou valor objeto = cubo
+    const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => {
+      const asCube = isCube(list) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? ""));
+      const title = !list.length ? `${cubeName(f, kind)} (state)` : asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!;
+      return asCube
+        ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} · ${tip}</title></g>`
+        : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0]!)} · ${tip}</title></g>`;
+    };
     // a linha que liga o dado à função: da marca da entrada até a barra, e da barra até a marca da saída
-    if (f.ins.length) over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
-    if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
-    over.push(mark(colX(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX(r.e + 1), f.outs, "out", false, "output"));
-    // nome do dado na MESMA altura do quadrado: os da esquerda (entradas) à esquerda dele, os da direita (saídas) à direita; cubo mostra o nome do cubo
-    const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
-    if (f.ins.length) over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
-    if (f.outs.length) over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", "))}</title></text>`);
-    const ghost = (x: number, kind: "in" | "out", tip: string): string => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
-    if (!lib && !f.ins.length) over.push(ghost(colX(r.s), "in", "Add input"));
-    if (!lib && !f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Add output"));
+    over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
+    over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
+    // sem nomes declarados ([]): ainda assim há state — cubo abstrato; lib void também mostra cubo de saída
+    const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
+    over.push(mark(colX(r.s), f.ins, "in", inEmpty || inAbs, inEmpty || inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX(r.e + 1), f.outs, "out", outEmpty, outEmpty ? "state / empty object" : "output"));
+    // nome do dado na MESMA altura do marcador; cubo (incl. []) mostra o nome do cubo
+    const insLabel = inputLabel(p, f) || cubeName(f, "in"), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
+    over.push(`<text class="dn in"${!lib && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0]!)}"` : ""} x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip || cubeName(f, "in"))}</title></text>`);
+    over.push(`<text class="dn out"${f.outs.length === 1 ? ` data-act="${lib ? "renameOut" : "renameData"}" data-id="${esc(f.id)}" data-side="out" data-name="${esc(f.outs[0]!)}"` : ""} x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(dataText([outsLabel]))}<title>${esc(f.outs.join(", ") || cubeName(f, "out"))}</title></text>`);
   };
   const barX = new Map<string, { x1: number; x2: number }>();   // onde a barra de cada função começa e termina (as ligações saem e chegam nela)
   sc.rows.forEach((r, i) => {

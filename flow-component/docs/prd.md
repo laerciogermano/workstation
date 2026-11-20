@@ -86,6 +86,8 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Origem de uma entrada (editor do marcador):** além do valor literal, a entrada pode ligar-se a (1) um **estado do contexto** (`ref` / chip) ou (2) um **import de dado de outro arquivo** — outs das funções de 1ª ordem daquele `.ts`. Encoding em `args[name]`: `from:utils.ts#r`. Codegen: `import { helper } from "./utils.ts"` + `const { r } = await helper({})`. **Reverter:** no select Type/origin escolher de novo text/number/… (ou limpar o valor) e Save — some o `from:…` do `args`.
 
+**Quadrado vs cubo (alinhado ao TS):** `ins`/`outs` `[]` → cubo (state/`{}`); um nome → quadrado; 2+ → cubo. O código gerado sempre troca `state`, então o vazio também é caixa. **Antes:** `[]` sem marca + fantasma `+`. **Voltar:** `isCube = length > 1` e fantasmas em `ioMarks`.
+
 ### 5.4 Responsável · Task · catálogo — *must*
 
 | Interface | Efeito | Evidência IDE |

@@ -30,7 +30,13 @@
   }
   var need = (p, id) => locate(p, id) ?? fail("not_found", `Element ${id} does not exist`);
   var isRoot = (p, id) => p.flows.some((f) => f.id === id);
-  var agentOf = (p, id) => id ? p.agents.find((a) => a.id === id) : void 0;
+  var filesOf = (p) => [...new Set(p.flows.map((f) => flowFile(f)))];
+  var fileAgent = (p, file) => {
+    const fns = p.flows.filter((f) => flowFile(f) === file);
+    return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map((f) => f.title), contracts: Object.fromEntries(fns.map((f) => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : void 0;
+  };
+  var agentOf = (p, id) => id ? id.startsWith("file:") ? fileAgent(p, id.slice(5)) : p.agents.find((a) => a.id === id) : void 0;
+  var hasContract = (a) => a?.kind === "maquina" || a?.kind === "arquivo";
   var isComposite = (n) => n.kids.length > 0;
   var insideBlock = (p, id) => {
     const l = locate(p, id);
@@ -54,7 +60,7 @@
   var isCube = (names) => names.length > 1;
   var cubeName = (f, side) => `${side === "in" ? "input" : "output"}_${f.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "function"}`;
   var slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "flow";
-  var flowFile = (f) => `${slug(f.title)}.ts`;
+  var flowFile = (f) => f.file ?? `${slug(f.title)}.ts`;
   var nextId = (p) => `n${++p.seq}`;
   var newFn = (p, title = "New function") => ({ t: "fn", id: nextId(p), title, agent: null, resp: null, ins: [], outs: [], kids: [], par: false });
   var ident = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -103,7 +109,7 @@
   ];
   var contractOf = (p, f) => {
     const a = agentOf(p, f.agent);
-    return a?.kind === "maquina" ? a.contracts?.[f.title] ?? null : null;
+    return hasContract(a) ? a.contracts?.[f.title] ?? null : null;
   };
   function statesFor(p, id) {
     const l = locate(p, id);
@@ -174,6 +180,7 @@
     /** Novo fluxo (função raiz). */
     newFlow: (p, a) => {
       const f = newFn(p, a["title"] ? cleanText(a["title"], "Title", 80) : "New flow");
+      if (a["file"]) f.file = cleanText(a["file"], "File", 80);
       p.flows.push(f);
       return f.id;
     },
@@ -315,8 +322,8 @@
       const ag = a["agent"] ? agentOf(p, str(a, "agent")) ?? fail("not_found", `Source ${str(a, "agent")} does not exist`) : void 0;
       n.agent = ag?.id ?? null;
       if (ag?.kind !== "ia") n.resp = null;
-      if (ag?.kind === "maquina" && !ag.tasks.includes(n.title)) n.title = ag.tasks[0] ?? n.title;
-      if (ag?.kind === "maquina") applyContract(p, n);
+      if (hasContract(ag) && !ag.tasks.includes(n.title)) n.title = ag.tasks[0] ?? n.title;
+      if (hasContract(ag)) applyContract(p, n);
       if (n.args) {
         n.args = Object.fromEntries(Object.entries(n.args).filter(([k]) => n.ins.includes(k)));
         if (!Object.keys(n.args).length) delete n.args;
@@ -326,7 +333,7 @@
       const n = need(p, str(a, "id")).node;
       if (n.t !== "fn") return fail("invalid", "Only functions have a lib function");
       const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Function", 80);
-      if (ag?.kind === "maquina" && !ag.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag.name}`);
+      if (hasContract(ag) && !ag.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag.name}`);
       n.title = t;
       applyContract(p, n);
     },
@@ -511,10 +518,10 @@
       if (n.t === "fn") {
         if (typeof n.title !== "string") return fail("invalid", `Function ${n.id} without a name`);
         const agent = n.agent == null ? null : String(n.agent), resp = n.resp == null ? null : String(n.resp);
-        if (agent && !agents.some((a) => a.id === agent)) return fail("invalid", `Function ${n.id} uses a source that does not exist`);
+        if (agent && !agent.startsWith("file:") && !agents.some((a) => a.id === agent)) return fail("invalid", `Function ${n.id} uses a source that does not exist`);
         if (resp && !agents.some((a) => a.id === resp)) return fail("invalid", `Function ${n.id} uses a person that does not exist`);
         const args = n.args && typeof n.args === "object" ? Object.fromEntries(Object.entries(n.args).map(([k, v]) => [k, String(v)])) : void 0;
-        return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...args && Object.keys(args).length ? { args } : {} };
+        return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...args && Object.keys(args).length ? { args } : {}, ...typeof n.file === "string" && n.file ? { file: n.file } : {} };
       }
       if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
       if (n.t === "for") return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids) };
@@ -545,7 +552,7 @@
         delete n.args;
       }
       const a = agentOf(p, n.agent);
-      if (a?.kind === "maquina") {
+      if (hasContract(a)) {
         if (!a.tasks.includes(n.title)) {
           n.title = a.tasks[0] ?? n.title;
           applyContract(p, n);
@@ -922,14 +929,16 @@
     const nameOf = (f) => names.get(f.id) ?? camel(f.title);
     const kindOf = (f) => {
       const a = agentOf(p, f.agent);
-      return a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs";
+      return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs";
     };
     const isModule = (n) => /[:/@]/.test(n);
     const libVar = (n) => isModule(n) ? n.replace(/[^A-Za-z0-9_]/g, "_") : n;
     const produced = [...new Set(fns.flatMap((f) => f.outs))];
-    const needed = [...new Set(fns.flatMap((f) => f.ins.filter((i) => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i))))].filter((i) => !produced.includes(i));
+    const rootIns = flow.kids.length ? flow.ins : [];
+    const needed = [.../* @__PURE__ */ new Set([...rootIns, ...fns.flatMap((f) => f.ins.filter((i) => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter((i) => !produced.includes(i));
+    const returned = flow.kids.length && flow.outs.length ? flow.outs : produced;
     const abstract = fns.filter((f) => kindOf(f) === "abs").map(nameOf);
-    const libFns = fns.filter((f) => kindOf(f) === "lib"), callables = fns.filter((f) => kindOf(f) !== "pessoa").map(nameOf);
+    const libFns = fns.filter((f) => kindOf(f) === "lib"), callables = fns.filter((f) => kindOf(f) !== "pessoa" && kindOf(f) !== "file").map(nameOf);
     const libs = [...new Set(fns.filter((f) => kindOf(f) === "lib").map((f) => agentOf(p, f.agent).name))].filter(isModule);
     const hasHumans = fns.some((f) => kindOf(f) === "pessoa");
     const lines = [], map = {};
@@ -945,12 +954,19 @@
       for (const i of f.ins) if (produced.includes(i) || scope.includes(i)) entries.set(i, i);
       for (const i of f.ins) {
         const expr = f.args?.[i]?.trim();
-        if (expr) entries.set(i, expr);
+        if (expr) entries.set(i, initOf(f, i, scope) ? i : expr);
       }
       const args = `{ ...state${[...entries].map(([k, v]) => k === v ? `, ${k}` : `, ${k}: ${v}`).join("")}${err ? ", error" : ""} }`;
       const a = agentOf(p, f.agent);
-      return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a.name)}, ${JSON.stringify(f.title)}, ${opts.runnable ? `data(${args})` : args})` : `${nameOf(f)}(${args})`;
+      return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
     };
+    const HELPERS = /* @__PURE__ */ new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);
+    const isRef = (e) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e);
+    const initOf = (f, i, scope) => {
+      const e = f.args?.[i]?.trim();
+      return e && !isRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : void 0;
+    };
+    const initLines = (fs, scope, ind) => fs.flatMap((f) => f.ins.map((i) => [i, initOf(f, i, scope)]).filter((x) => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
     const assign = (f, expr) => f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`;
     const wrapperOf = (f) => {
       const a = agentOf(p, f.agent), c = contractOf(p, f), call = (args) => `${libVar(a.name)}.${f.title}(${args})`, ind = "    ";
@@ -962,51 +978,87 @@
       else body.push(`${ind}return (await ${expr})${ty(" as State")};`);
       return [head, ...body, "  },"];
     };
-    const list = (nodes, ind, scope, err) => {
+    const declared = /* @__PURE__ */ new Set();
+    const typeOf = (n) => inExpr.has(n) ? "any" : "unknown";
+    const letLine = (names2, ind) => {
+      const ns = names2.filter((n) => !declared.has(n));
+      if (!ns.length) return;
+      ns.forEach((n) => declared.add(n));
+      emit(`${ind}let ${ns.map((n) => `${n}${ty(`: ${typeOf(n)}`)}`).join(", ")};`);
+    };
+    const list = (nodes, ind, scope, err, key = "r") => {
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i], a = lines.length + 1;
         if (n.t === "fn" && n.kids.length === 0) {
           const group = [n];
           while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par && nodes[i + 1].kids.length === 0) group.push(nodes[++i]);
+          const ds = (declAt.get(`${key}|${n.id}`) ?? []).filter((x) => !declared.has(x));
           if (group.length === 1) {
-            emit(`${ind}${assign(n, callOf(n, scope, err))}`);
-            mark(n.id, a);
+            const inl = /* @__PURE__ */ new Set();
+            const pre = n.ins.flatMap((x) => {
+              const e = initOf(n, x, scope);
+              if (!e) return [];
+              if (ds.includes(x)) {
+                inl.add(x);
+                declared.add(x);
+                return [`${ind}${writers.get(x) === 1 ? "const" : "let"} ${x}${ty(`: ${typeOf(x)}`)} = ${e};`];
+              }
+              return [`${ind}${x} = ${e};`];
+            });
+            const constOut = n.outs.length > 0 && n.outs.every((o) => ds.includes(o) && writers.get(o) === 1);
+            letLine(ds.filter((x) => !inl.has(x) && !(constOut && n.outs.includes(x))), ind);
+            pre.forEach((l) => emit(l));
+            const a02 = lines.length + 1;
+            if (constOut) {
+              n.outs.forEach((o) => declared.add(o));
+              emit(`${ind}const { ${n.outs.join(", ")} }${ty(n.outs.some((o) => inExpr.has(o)) ? ": any" : "")} = await ${callOf(n, scope, err)};`);
+            } else emit(`${ind}${assign(n, callOf(n, scope, err))}`);
+            map[n.id] = [pre.length || ds.length ? a : a02, lines.length];
             continue;
           }
-          emit(`${ind}const par${a} = await Promise.all([  // parallel`);
+          letLine(ds, ind);
+          initLines(group, scope, ind).forEach((l) => emit(l));
+          const a0 = lines.length + 1;
+          emit(`${ind}const par${a0} = await Promise.all([  // parallel`);
           group.forEach((g) => emit(`${ind}  ${callOf(g, scope, err)},`));
           emit(`${ind}]);`);
           group.forEach((g, k) => {
-            if (g.outs.length) emit(kindOf(g) === "lib" && contractOf(p, g) && g.outs.length === 1 ? `${ind}${g.outs[0]} = par${a}[${k}];` : `${ind}({ ${g.outs.join(", ")} } = par${a}[${k}]${ty(" as State")});`);
+            if (g.outs.length) emit(kindOf(g) === "lib" && contractOf(p, g) && g.outs.length === 1 ? `${ind}${g.outs[0]} = par${a0}[${k}];` : `${ind}({ ${g.outs.join(", ")} } = par${a0}[${k}]${ty(" as State")});`);
           });
           group.forEach((g) => {
             map[g.id] = [a, lines.length];
           });
         } else if (n.t === "fn") {
-          list(n.kids, ind, scope, err);
+          list(n.kids, ind, scope, err, key);
           map[n.id] = [map[n.kids[0].id]?.[0] ?? a, lines.length];
         } else if (n.t === "if") {
+          letLine(declAt.get(`${key}|${n.id}`) ?? [], ind);
+          const a1 = lines.length + 1;
           emit(`${ind}if (${n.test}) {`);
-          list(n.kids, ind + "  ", scope, err);
+          list(n.kids, ind + "  ", scope, err, `${n.id}:k`);
           if (n.elseKids.length) {
             emit(`${ind}} else {`);
-            list(n.elseKids, ind + "  ", scope, err);
+            list(n.elseKids, ind + "  ", scope, err, `${n.id}:e`);
           }
           emit(`${ind}}`);
-          mark(n.id, a);
+          mark(n.id, a1);
         } else if (n.t === "for") {
+          letLine(declAt.get(`${key}|${n.id}`) ?? [], ind);
+          const a1 = lines.length + 1;
           emit(`${ind}for (const ${n.v} of ${n.coll}) {`);
-          list(n.kids, ind + "  ", [...scope, n.v], err);
+          list(n.kids, ind + "  ", [...scope, n.v], err, `${n.id}:k`);
           emit(`${ind}}`);
-          mark(n.id, a);
+          mark(n.id, a1);
         } else {
+          letLine(declAt.get(`${key}|${n.id}`) ?? [], ind);
+          const a1 = lines.length + 1;
           emit(`${ind}try {`);
-          list(n.kids, ind + "  ", scope, err);
+          list(n.kids, ind + "  ", scope, err, `${n.id}:k`);
           emit(`${ind}} catch (error) {`);
-          list(n.catchKids, ind + "  ", scope, true);
+          list(n.catchKids, ind + "  ", scope, true, `${n.id}:c`);
           emit(`${ind}  return { ...state, error };`);
           emit(`${ind}}`);
-          mark(n.id, a);
+          mark(n.id, a1);
         }
       }
     };
@@ -1042,8 +1094,81 @@
     };
     scan(flow.kids, []);
     const fromState = [...fromStateSet].filter((n) => !callables.includes(n) && n !== "humans");
+    const dataNamesLoop = /* @__PURE__ */ new Set();
+    walk(flow.kids, (n) => {
+      if (n.t === "for") dataNamesLoop.add(n.v);
+    });
+    const inits = [...new Set(fns.flatMap((f) => f.ins.filter((i) => initOf(f, i, []))))].filter((i) => !produced.includes(i) && !fromState.includes(i));
+    const declarable = /* @__PURE__ */ new Set([...produced, ...flow.kids.length ? flow.outs : [], ...inits]);
+    const usesOf = /* @__PURE__ */ new Map(), writers = /* @__PURE__ */ new Map();
+    let seq = 0;
+    const addUse = (name, trail) => {
+      if (!declarable.has(name)) return;
+      const l = usesOf.get(name) ?? [];
+      l.push({ keys: trail.map((t) => t[0]), ids: trail.map((t) => t[1]), seq: seq++ });
+      usesOf.set(name, l);
+    };
+    const scanDecl = (nodes, key, trail, scope) => {
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (n.t === "fn" && n.kids.length === 0) {
+          const group = [n];
+          while (nodes[i + 1]?.t === "fn" && nodes[i + 1].par && nodes[i + 1].kids.length === 0) group.push(nodes[++i]);
+          const here = [...trail, [key, n.id]];
+          for (const g of group) {
+            for (const x of g.ins) {
+              const e = g.args?.[x]?.trim();
+              if (e) {
+                idsOf(e).forEach((id) => addUse(id, here));
+                if (initOf(g, x, scope)) {
+                  addUse(x, here);
+                  writers.set(x, (writers.get(x) ?? 0) + 1);
+                }
+              } else if (produced.includes(x)) addUse(x, here);
+            }
+            for (const o of g.outs) {
+              addUse(o, here);
+              writers.set(o, (writers.get(o) ?? 0) + 1);
+            }
+          }
+        } else if (n.t === "fn") scanDecl(n.kids, key, trail, scope);
+        else {
+          const here = [...trail, [key, n.id]];
+          if (n.t === "if") {
+            idsOf(n.test).forEach((id) => addUse(id, here));
+            scanDecl(n.kids, `${n.id}:k`, here, scope);
+            scanDecl(n.elseKids, `${n.id}:e`, here, scope);
+          } else if (n.t === "for") {
+            idsOf(n.coll).forEach((id) => addUse(id, here));
+            scanDecl(n.kids, `${n.id}:k`, here, [...scope, n.v]);
+          } else {
+            scanDecl(n.kids, `${n.id}:k`, here, scope);
+            scanDecl(n.catchKids, `${n.id}:c`, here, scope);
+          }
+        }
+      }
+    };
+    scanDecl(flow.kids, "r", [], []);
+    returned.forEach((o) => addUse(o, [["r", "__ret"]]));
+    const declAt = /* @__PURE__ */ new Map();
+    for (const [name, us] of usesOf) {
+      const f0 = us[0];
+      let l = 0;
+      while (us.every((u) => u.keys.length > l + 1 && u.keys[l + 1] === f0.keys[l + 1] && u.ids[l] === f0.ids[l])) l++;
+      const firstUse = us.reduce((m, u) => u.seq < m.seq ? u : m), k = `${f0.keys[l]}|${firstUse.ids[l]}`;
+      declAt.set(k, [...declAt.get(k) ?? [], name]);
+    }
     emit(`// Generated by Flow \xB7 flow ${JSON.stringify(flow.title)}`);
     for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});   // module: only works if the browser can load it` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
+    const byFile = /* @__PURE__ */ new Map();
+    for (const f of fns.filter((x) => kindOf(x) === "file")) {
+      const k = agentOf(p, f.agent).name;
+      byFile.set(k, [...byFile.get(k) ?? [], f]);
+    }
+    for (const [file, list2] of byFile) {
+      const names2 = [...new Set(list2.map((f) => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
+      emit(opts.js ? `const { ${names2.map((n) => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});   // another file of the project` : `import { ${names2.join(", ")} } from ${JSON.stringify("./" + file)};`);
+    }
     if (lines.length > 1) emit("");
     if (ts) {
       emit("type State = Record<string, unknown>;");
@@ -1058,14 +1183,16 @@
     if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};  // people: come from the state`);
     if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map((n) => JSON.stringify(n)).join(" | ")}, Fn>`)};  // functions: come from the state (lib ones are the wrappers exported below)`);
     if (fromState.length) emit(`  const { ${fromState.join(", ")} } = state${ty(" as Record<string, any>")};  // data read in conditions and loops`);
-    if (produced.length) emit(`  let ${produced.map((o) => `${o}${ty(`: ${inExpr.has(o) ? "any" : "unknown"}`)}`).join(", ")};`);
     if (flow.kids.length) list(flow.kids, "  ", [], false);
     else {
+      letLine([...produced, ...inits], "  ");
+      initLines([flow], [], "  ").forEach((l) => emit(l));
       const a = lines.length + 1;
       emit(`  ${assign(flow, callOf(flow, [], false))}`);
       mark(flow.id, a);
     }
-    emit(produced.length ? `  return { ${produced.join(", ")} };` : "  return state;");
+    letLine(declAt.get("r|__ret") ?? [], "  ");
+    emit(returned.length ? `  return { ${returned.join(", ")} };` : "  return state;");
     emit("}");
     map[flow.id] = [startBody, lines.length - 1];
     emit("");
@@ -1082,23 +1209,53 @@
     }
     const fnName = camel(flow.title), runFile = `${slug(flow.title)}.mts`, runCommand = `node --experimental-strip-types ${runFile}`;
     if (opts.runnable) {
-      emit(opts.js ? "// \u2500\u2500 runs in the browser" : `// \u2500\u2500 local run: ${runCommand}  (Node \u2265 22.6; the flag is optional on 23.6+)`);
-      if (abstract.length) {
-        emit(`const stubs${ty(": Record<string, Fn>")} = {  // simulators of the abstract functions (in the real system they come from the state)`);
-        for (const f of fns.filter((x) => kindOf(x) === "abs")) emit(`  ${nameOf(f)}: async state => { console.log("[abstract] ${nameOf(f)}", data(state)); return {${f.outs.length ? " " : ""}${f.outs.map((o) => `${o}: ${JSON.stringify(`${o} (simulated)`)}`).join(", ")}${f.outs.length ? " " : ""}}; },`);
-        emit("};");
-      }
-      if (abstract.length || hasHumans || produced.length) emit(`function data(state${ty(": State")})${ty(": State")} { return Object.fromEntries(Object.entries(state).filter(([, v]) => typeof v !== "function")); }`);
-      if (hasHumans) emit(`const humans${ty(": Humans")} = { ask: async (who, what, args) => { console.log(\`[person] \${who}: \${what}\`, data(args)); return {}; } };`);
-      const given = [...libFns.length ? ["...wrappers"] : [], ...abstract.length ? ["...stubs"] : [], ...hasHumans ? ["humans"] : [], ...needed.map((n) => `${n}: ${JSON.stringify(`${n} (simulated)`)}`)];
-      if (produced.length) {
-        emit(`const result = await ${fnName}({ ${given.join(", ")} });`);
-        emit('console.log("result:", data(result));');
-      } else emit(`await ${fnName}({ ${given.join(", ")} });`);
+      emit(opts.js ? "// \u2500\u2500 runs in the browser" : `// \u2500\u2500 run: ${runCommand}  (Node \u2265 22.6)`);
+      const sim = (f) => `${nameOf(f)}: async () => (${f.outs.length ? `{ ${f.outs.map((o) => `${o}: ${JSON.stringify(`${o} (simulated)`)}`).join(", ")} }` : "{}"})`;
+      const given = [...libFns.length ? ["...wrappers"] : [], ...fns.filter((x) => kindOf(x) === "abs").map(sim), ...hasHumans ? [`humans: { ask: async (who${ty(": string")}, what${ty(": string")}) => (console.log(\`[person] \${who}: \${what}\`), {}) }`] : [], ...needed.map((n) => `${n}: ${flow.args?.[n]?.trim() || JSON.stringify(`${n} (simulated)`)}`)];
+      const arg = !given.length ? "" : given.length < 3 && given.every((g) => g.length < 30) ? `{ ${given.join(", ")} }` : `{
+${given.map((g) => `  ${g},`).join("\n")}
+}`;
+      if (returned.length) {
+        emit(`const result = await ${fnName}(${arg});`);
+        emit("console.log(result);");
+      } else emit(`await ${fnName}(${arg});`);
     } else emit(`// run: await ${fnName}({ ${[...libFns.length ? ["...wrappers"] : [], ...needed].join(", ")}${libFns.length || needed.length ? " " : ""}});`);
     void isComposite;
     void walk;
     return { code: lines.join("\n") + "\n", map, fileName: flowFile(flow), name: fnName, runFile, runCommand };
+  }
+  function generateFile(p, ids, options = {}) {
+    const imports = /* @__PURE__ */ new Set(), types = /* @__PURE__ */ new Set(), parts = [], wrappers = /* @__PURE__ */ new Map();
+    let wDoc = "", wOpen = "";
+    let fileName = "";
+    for (const id of ids) {
+      const g = generate(p, id, { ...options, runnable: false });
+      fileName ||= g.fileName;
+      const L = g.code.replace(/\n$/, "").split("\n"), docI = L.findIndex((l) => l.startsWith("/** ") && l.includes(" \xB7 ")), endI = L.findIndex((l) => l.startsWith("/** Lib function wrappers") || l.startsWith("// run:"));
+      for (const l of L.slice(1, Math.max(1, docI))) {
+        if (/^(import |const \{.*\} = await import)/.test(l)) imports.add(l);
+        else if (l.startsWith("type ")) types.add(l);
+      }
+      const stop = endI === -1 ? L.length : endI;
+      parts.push(L.slice(Math.max(0, docI), stop));
+      while (parts[parts.length - 1].length && !parts[parts.length - 1][parts[parts.length - 1].length - 1].trim()) parts[parts.length - 1].pop();
+      if (endI !== -1 && L[endI].startsWith("/** Lib function wrappers")) {
+        wDoc ||= L[endI];
+        wOpen ||= L[endI + 1];
+        let cur = null;
+        for (const l of L.slice(endI + 2)) {
+          if (l === "};") break;
+          if (/^  \w+: async/.test(l)) cur = wrappers.has(l) ? null : (wrappers.set(l, []), wrappers.get(l));
+          cur?.push(l);
+        }
+      }
+    }
+    const out = [`// Generated by Flow \xB7 file ${JSON.stringify(fileName)}`, ...imports, ...imports.size ? [""] : [], ...types, ...types.size ? [""] : []];
+    parts.forEach((pt) => {
+      out.push(...pt, "");
+    });
+    if (wrappers.size) out.push(wDoc, wOpen, ...[...wrappers.values()].flat(), "};", "");
+    return { code: out.join("\n"), fileName };
   }
 
   // novo/icons.ts
@@ -1128,6 +1285,9 @@
     users: ["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "circle:9,7,4", "M22 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"],
     code: ["m16 18 6-6-6-6", "m8 6-6 6 6 6"],
     "panel-right": ["rect:3,3,18,18,2", "M15 3v18"],
+    cube: ["M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z", "M3.5 7.5 12 12.5l8.5-5", "M12 12.5v9"],
+    eraser: ["m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21", "M22 21H7", "m5 11 9 9"],
+    "panel-left": ["rect:3,3,18,18,2", "M9 3v18"],
     play: ["M6 4v16l14-8z"],
     square: ["rect:6,6,12,12,1"],
     terminal: ["m4 17 6-6-6-6", "M12 19h8"],
@@ -1153,7 +1313,7 @@
     }).join("");
     return `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   }
-  var KIND_ICON = { maquina: "package", pessoa: "user", ia: "ia" };
+  var KIND_ICON = { maquina: "package", pessoa: "user", ia: "ia", arquivo: "file" };
 
   // novo/scope.ts
   function countForStep(p, scene, blockId, step) {
@@ -1258,7 +1418,7 @@
   }
 
   // novo/view.ts
-  var G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16 };
+  var G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16, WS: 100 };
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var valueOf = (f, n) => f.args?.[n]?.trim() || "";
@@ -1278,21 +1438,64 @@
   var rowY = (i) => G.HEAD + i * G.RH;
   var planWidth = (sc, w = G.W) => colX(sc.nSteps, w) + 160;
   var PAD = 12;
-  var colW = (sc, ui) => ui.txtIn ? Math.max(G.W, ...sc.leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.W;
-  function statesByStep(sc) {
-    const m = /* @__PURE__ */ new Map();
+  var colW = (sc, ui) => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
+  function objectFields(expr) {
+    const e = expr.trim();
+    if (!e.startsWith("{") || !e.endsWith("}")) return null;
+    const parts = [];
+    let depth = 0, cur = "", q = "";
+    for (const ch of e.slice(1, -1)) {
+      if (q) {
+        cur += ch;
+        if (ch === q) q = "";
+        continue;
+      }
+      if (ch === '"' || ch === "'" || ch === "`") {
+        q = ch;
+        cur += ch;
+        continue;
+      }
+      if ("{[(".includes(ch)) depth++;
+      else if ("}])".includes(ch)) depth--;
+      if (ch === "," && depth === 0) {
+        parts.push(cur);
+        cur = "";
+      } else cur += ch;
+    }
+    parts.push(cur);
+    return parts.map((x) => x.trim()).filter(Boolean).map((x) => /^([A-Za-z_$][\w$]*)\s*:/.exec(x)?.[1] ?? x.replace(/^\.\.\./, "").trim());
+  }
+  var isRefExpr = (e) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e.trim());
+  var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+  function statesByStep(sc, all = false) {
+    const m = /* @__PURE__ */ new Map(), add = (col, it) => {
+      const list = m.get(col) ?? [];
+      list.push(it);
+      m.set(col, list);
+    };
     for (const r of sc.rows) {
       if (r.kind !== "fn" || !r.leaf) continue;
       const f = r.node;
-      if (!f.outs.length) continue;
-      const col = r.e + 1, list = m.get(col) ?? [];
-      list.push({ name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs });
-      m.set(col, list);
+      for (const i of f.ins) {
+        const e = f.args?.[i]?.trim();
+        if (!e || isRefExpr(e)) continue;
+        const fields = objectFields(e);
+        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i] });
+      }
+      if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs });
     }
-    return m;
+    if (!all) return m;
+    const cols = [...m.keys()].sort((x, y) => x - y), out = /* @__PURE__ */ new Map();
+    let acc = [];
+    for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
+      const fresh = m.get(c) ?? [], names = new Set(fresh.map((i) => i.name));
+      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...i, old: true })), ...fresh];
+      if (acc.length) out.set(c, acc);
+    }
+    return out;
   }
   var STATE_ROW = 15;
-  var planHeight = (sc) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc).values()].map((l) => l.length)) * STATE_ROW;
+  var planHeight = (sc, all = false) => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
   var tableWidth = (sc) => 440 + sc.maxDepth * G.IND * 2;
   var CODE_MIN = 300;
   var CODE_DEFAULT = 480;
@@ -1356,20 +1559,22 @@
   };
   var fnKind = (p, f) => {
     const a = agentOf(p, f.agent);
-    return !a ? "nag" : a.kind === "maquina" ? "conc" : "abs";
+    return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs";
   };
   var circle = (cls, ic, title) => `<span class="fav ${cls}" title="${esc(title)}">${ic ? icon(ic) : ""}</span>`;
   function agentSelect(p, f, kind) {
     const cur = agentOf(p, kind === "agent" ? f.agent : f.resp), want = (a) => kind === "resp" ? a.kind === "pessoa" : true;
-    const groups = ["maquina", "pessoa", "ia"].map((k) => {
+    const groups = ["maquina"].map((k) => {
       const list = p.agents.filter((a) => a.kind === k && want(a));
       return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map((a) => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : "";
     }).join("");
-    return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">${cur ? "No source" : "Choose source"}</option>${groups}</select>`;
+    const own = locate(p, f.id)?.flow, files = kind === "agent" ? filesOf(p).filter((x) => !own || x !== flowFile(own)) : [];
+    const fileGroup = files.map((x) => `<optgroup label="${esc(x)}">${(agentOf(p, `file:${x}`)?.tasks ?? []).map((t) => `<option value="file:${esc(x)}#${esc(t)}"${f.agent === `file:${x}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("");
+    return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${fileGroup}</select>`;
   }
   function respCell(p, r) {
     const f = r.node;
-    if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f))}</span></span>`;
+    if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f).replace(/\.[^.]+$/, ""))}</span></span>`;
     if (!r.leaf) return `<span class="c-ag muted">\u2014</span>`;
     const a = agentOf(p, f.agent);
     if (a?.kind === "ia") {
@@ -1380,8 +1585,8 @@
   }
   function taskCell(p, r) {
     const f = r.node, a = agentOf(p, f.agent), pad = 10 + r.depth * G.IND * 2;
-    const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="gi">${icon("network")}</span>`;
-    const name = a?.kind === "maquina" && r.leaf ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a.name)}">${a.tasks.map((t) => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<b data-act="rename" data-id="${esc(f.id)}" title="Click to rename">${esc(f.title || "unnamed")}</b>`;
+    const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="fn-dot ${fnKind(p, f)}" title="Function"></span>`;
+    const name = hasContract(a) && r.leaf ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a.name)}">${a.tasks.map((t) => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<b data-act="rename" data-id="${esc(f.id)}" title="Click to rename">${esc(f.title || "unnamed")}</b>`;
     const iaTag = a?.kind === "ia" ? `<span class="agent-tag resp-pick">${icon("ia")}<span>${esc(a.name)}</span>${agentSelect(p, f, "agent")}</span>` : "";
     return `<span class="nm" style="padding-left:${pad}px">${lead}${name}${iaTag}${f.par ? '<span class="par-tag" title="Runs together with the previous one">\u2225</span>' : ""}</span>`;
   }
@@ -1397,7 +1602,7 @@
     }).join("");
   }
   function renderPlan(p, flow, sc, ui) {
-    const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc), by = /* @__PURE__ */ new Map();
+    const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = /* @__PURE__ */ new Map();
     const colX2 = (n) => G.OX + n * cw;
     sc.rows.forEach((r, i) => {
       if (r.kind === "fn" || r.kind === "block") by.set(r.id, i);
@@ -1408,12 +1613,18 @@
     sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="0" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
     const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
-    out.push(`<text class="ttl" x="${W / 2}" y="16" text-anchor="middle">${esc(flow.title)}</text>`);
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
-    for (const [col, items] of statesByStep(sc)) items.forEach((it, k) => {
-      const y = bot + 34 + k * STATE_ROW;
-      out.push(`<g class="stt"><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
-    });
+    for (const [col, items] of statesByStep(sc, ui.allData)) {
+      let row = 0;
+      for (const it of items) {
+        const y = bot + 34 + row++ * STATE_ROW;
+        out.push(`<g class="stt${it.old ? " old" : ""}"><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
+        if (it.cube) for (const fld of it.fields) {
+          const fy = bot + 34 + row++ * STATE_ROW;
+          out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX2(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX2(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`);
+        }
+      }
+    }
     out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
     sc.rows.forEach((r, i) => {
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
@@ -1428,21 +1639,11 @@
     });
     const produced = /* @__PURE__ */ new Set();
     sc.leaves.forEach((l) => l.node.outs.forEach((o) => produced.add(o)));
-    sc.rows.forEach((r, i) => {
-      if (r.kind !== "fn") return;
-      const f = r.node, selC = ui.sel === f.id ? " sel" : "";
-      if (!r.leaf) {
-        const x12 = colX2(r.s) + 8, x22 = colX2(r.e + 1) - 8;
-        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composition = layer</title></g><text class="lbl" x="${x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
-        return;
-      }
-      const k = fnKind(p, f), x1 = colX2(r.s) + G.INS, x2 = colX2(r.e + 1) - G.INS;
-      const shown = f.title;
-      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
-      const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
-      if (!ui.txtIn) over.push(`<text class="lbl" x="${colX2(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
+    const ioMarks = (f, r, i, x1, x2) => {
       const lib2 = !!contractOf(p, f), inAbs = f.ins.some((n) => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
-      const mark = (x, list, kind, abs, tip) => !list.length ? "" : isCube(list) ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(`${cubeName(f, kind)}: ${list.join(", ")}`)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
+      const mark = (x, list, kind, abs, tip) => !list.length ? "" : isCube(list) || kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]] ?? "") ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0])} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
+      if (f.ins.length) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
+      if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
       over.push(mark(colX2(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX2(r.e + 1), f.outs, "out", false, "output"));
       const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
       if (f.ins.length) over.push(`<text class="dn in"${!lib2 && f.ins.length === 1 ? ` data-act="renameData" data-id="${esc(f.id)}" data-side="in" data-name="${esc(f.ins[0])}"` : ""} x="${colX2(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(dataText([insLabel], 40))}<title>${esc(insTip)}</title></text>`);
@@ -1450,6 +1651,22 @@
       const ghost = (x, kind, tip) => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
       if (!lib2 && !f.ins.length) over.push(ghost(colX2(r.s), "in", "Add input"));
       if (!lib2 && !f.outs.length) over.push(ghost(colX2(r.e + 1), "out", "Add output"));
+    };
+    sc.rows.forEach((r, i) => {
+      if (r.kind !== "fn") return;
+      const f = r.node, selC = ui.sel === f.id ? " sel" : "";
+      if (!r.leaf) {
+        const x12 = colX2(r.s) + 8, x22 = colX2(r.e + 1) - 8;
+        over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x12}" y="${ym(i) - 3.5}" width="${x22 - x12}" height="7" rx="3.5"/><title>${esc(f.title)} \xB7 composition = layer</title></g><text class="lbl" x="${x22 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+        if (isRoot(p, f.id)) ioMarks(f, r, i, x12, x22);
+        return;
+      }
+      const k = fnKind(p, f), x1 = colX2(r.s) + G.INS, x2 = colX2(r.e + 1) - G.INS;
+      const shown = f.title;
+      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
+      const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
+      if (!ui.txtIn) over.push(`<text class="lbl" x="${colX2(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
+      ioMarks(f, r, i, x1, x2);
     });
     const elbow = (a, b) => `M${colX2(a.e + 1) - G.INS} ${ym(by.get(a.id))} H${colX2(a.e + 1)} V${ym(by.get(b.id))} H${colX2(b.s) + G.INS}`;
     const pairs = /* @__PURE__ */ new Map();
@@ -1478,56 +1695,44 @@
       return r.created ?? "";
     };
     const main = run({ type: "newFlow", title: "main" });
-    const onb = run({ type: "newFlow", title: "onboarding" });
-    const kid = (t) => run({ type: "addChild", id: onb, title: t });
-    const get = kid("get"), redigir = kid("draft_proposal"), revisar = kid("review_proposal"), translate = kid("translate"), gerar = kid("generate_contract"), post = kid("post"), get2 = kid("get");
-    for (const [id, agent] of [[redigir, "lia"], [revisar, "davi"], [translate, "teo"], [gerar, "lia"]]) run({ type: "assign", id, agent });
-    run({ type: "assign", id: get, agent: "web" });
-    run({ type: "setTask", id: get, task: "fetch" });
-    run({ type: "setArg", id: get, name: "url", value: '"https://api.example.com/customers/42"' });
-    run({ type: "renameData", id: get, to: "customer_data" });
-    run({ type: "assign", id: post, agent: "web" });
-    run({ type: "setTask", id: post, task: "fetch" });
-    run({ type: "setArg", id: post, name: "url", value: '"https://api.example.com/shipments"' });
-    run({ type: "setArg", id: post, name: "options", value: '{ method: "POST", body: JSON.stringify({ proposals, contract_package }) }' });
-    run({ type: "renameData", id: post, to: "shipment_id" });
-    run({ type: "assign", id: get2, agent: "web" });
-    run({ type: "setTask", id: get2, task: "fetch" });
-    run({ type: "setArg", id: get2, name: "url", value: "`https://api.example.com/shipments/${shipment_id}`" });
-    run({ type: "renameData", id: get2, to: "crm_record" });
-    const io2 = (id, ins, outs) => {
-      ins.forEach((name) => run({ type: "addInput", id, name }));
-      outs.forEach((name) => run({ type: "addOutput", id, name }));
+    const ex = run({ type: "newFlow", title: "example" });
+    run({ type: "addInput", id: ex, name: "threshold" });
+    run({ type: "setArg", id: ex, name: "threshold", value: "50" });
+    run({ type: "addOutput", id: ex, name: "score" });
+    run({ type: "addOutput", id: ex, name: "report" });
+    const step = (lib2, task, out, args = {}) => {
+      const id = run({ type: "addChild", id: ex, title: task });
+      run({ type: "assign", id, agent: lib2 });
+      run({ type: "setTask", id, task });
+      for (const [name, value] of Object.entries(args)) run({ type: "setArg", id, name, value });
+      if (out) run({ type: "renameData", id, to: out });
+      return id;
     };
-    io2(redigir, ["customer_data"], ["draft"]);
-    io2(revisar, ["draft"], ["proposal_approved"]);
-    io2(translate, ["proposal_approved"], ["proposals"]);
-    io2(gerar, ["proposal_approved", "customer_data"], ["contract_package"]);
-    run({ type: "setParallel", id: gerar, on: true });
-    const ifId = run({ type: "wrap", id: translate, kind: "if", test: "proposal_approved" });
-    const rej = run({ type: "addElse", id: ifId, title: "reject_proposal" });
-    run({ type: "assign", id: rej, agent: "lia" });
-    run({ type: "addInput", id: rej, name: "proposal_approved" });
-    run({ type: "setScope", id: ifId, count: 2 });
-    const forA = run({ type: "wrap", id: translate, kind: "for", v: "language", coll: '["en", "es"]' });
-    run({ type: "setScope", id: forA, count: 2 });
-    run({ type: "setScope", id: ifId, count: 2 });
-    run({ type: "wrap", id: post, kind: "for", v: "language", coll: '["en", "es"]' });
-    return { project: p, main, onboarding: onb };
+    step("crypto", "randomUUID", "id");
+    step("math", "random", "ratio");
+    step("math", "round", "score", { value: "ratio * 100" });
+    step("date", "now", "at");
+    const hi = step("console", "log", void 0, { text: "`High score: ${score}`" });
+    step("json", "stringify", "report", { value: "{ id, score, at }" });
+    const report = step("console", "log", void 0, { text: "report" });
+    run({ type: "wrap", id: hi, kind: "if", test: "score >= threshold" });
+    void report;
+    return { project: p, main, example: ex };
   }
 
   // novo/app.ts
   function mount(host, store, flow) {
-    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
-    let tab = "ts", hovT = 0, fitted = false, auto = true, last = null, gen = null;
+    const ui = { closed: /* @__PURE__ */ new Set(), sel: null, txtIn: true, allData: true, flow, zoom: 1, pan: { x: 8, y: 8 } };
+    let fileCodeText = null, fileView = "*", multi = null, tab = "ts", hovT = 0, fitted = false, auto = true, last = null, gen = null;
     const histBtns = `<button type="button" class="ib hist-btn" data-hist="undo" title="Undo (Ctrl+Z)" aria-label="Undo">${icon("undo")}</button><button type="button" class="ib hist-btn" data-hist="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">${icon("redo")}</button>`;
     host.innerHTML = `
   <div class="app">
+    <aside class="explorer" id="explorer" aria-label="File explorer"><div class="ex-head"><svg class="ex-logo" viewBox="0 0 30 28" aria-hidden="true"><path d="M2 2h26v3.2l-2.2-1.6H4.2L2 5.2z" fill="currentColor"/><rect x="2" y="8" width="8" height="3.6" rx="1" fill="currentColor"/><rect x="2.6" y="13.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 9.8H11V20H12M19.4 20H20.4V24.8H21.4" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".55"/><rect x="12.6" y="18.6" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="21.6" y="23.4" width="6.8" height="2.8" rx=".8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>Explorer</span><span class="sp"></span><button type="button" class="ib" id="agents" title="Sources: register libs, people and AI agents" aria-label="Sources">${icon("users")}</button><button type="button" class="ib" id="newFlow" title="New flow" aria-label="New flow">${icon("plus")}</button><button type="button" class="ib" id="exCollapse" title="Collapse all" aria-label="Collapse all">${icon("collapse")}</button></div><div class="ex-tree" id="exTree" role="tree"></div></aside>
+    <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <section class="fx" aria-label="Flow">
       <div class="fx-bar">
-        <span class="fx-t">Flow</span><select id="flowSel" aria-label="Flow"></select>
-        <button type="button" id="newFlow" class="btn">${icon("plus")}New flow</button><button type="button" class="ib danger" id="delFlow" title="Delete this flow" aria-label="Delete this flow">${icon("trash")}</button><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
-                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
+        <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-pressed="true" aria-label="Explorer">${icon("panel-left")}</button><span class="fx-t" id="flowName">Flow</span><span class="sp"></span><span class="hist-inline"><button type="button" class="ib run" id="exec" title="Run this flow in the browser (Ctrl+Enter)" aria-label="Run">${icon("play")}</button>${histBtns}</span><i class="vsep"></i>
+                <button type="button" class="ib" id="zout" title="Zoom out (\u2212)">${icon("minus")}</button><span id="zv" class="zv">100%</span><button type="button" class="ib" id="zin" title="Zoom in (+)">${icon("plus")}</button><button type="button" class="ib" id="fit" title="Fit to screen (0)">${icon("fit")}</button><i class="vsep"></i><button type="button" class="ib" id="txtIn" title="Name inside the bar" aria-pressed="false">${icon("text")}</button><button type="button" class="ib" id="dataAll" title="States: showing all available data (click for only the new ones)" aria-pressed="true">${icon("cube")}</button><button type="button" class="ib" id="expand" title="Expand all">${icon("expand")}</button><button type="button" class="ib" id="collapse" title="Collapse all">${icon("collapse")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the code (Ctrl+\\)" aria-pressed="true" aria-label="Code panel">${icon("panel-right")}</button>
       </div>
       <div class="fx-scroll" id="scroll"><div class="fx-sizer" id="sizer"><div class="fx-zoom" id="zoom"><div class="gtable" id="table"></div><div class="gplan" id="plan"></div></div></div></div>
       <div class="fx-legend" id="legend">
@@ -1538,19 +1743,33 @@
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the code panel" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span><span class="meta" id="meta"></span></div>
-      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="runhint" id="runhint"><code id="runcmd"></code><button type="button" id="cmdcopy">Copy command</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun">Run</button><button type="button" id="tClear">Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <div class="tabs" role="tablist"><button role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span></div>
+      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      <section class="pane term" id="p-term"><div class="thead"><span class="tstat" id="tstat">ready</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
-    const el = { sel: $("#flowSel"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), zv: $("#zv") };
+    const el = { flowName: $("#flowName"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), zv: $("#zv"), explorer: $("#exTree") };
+    const multiClick = (e) => {
+      const t = e.target;
+      if (t.closest("[data-act],[data-sel],[data-hover],[data-drag],button,select,input,.ghost,.bar-tools,.fl-tools")) return;
+      const id = t.closest("[data-fid]")?.dataset["fid"];
+      if (!id || ui.sel === id) return;
+      ui.sel = id;
+      ui.flow = id;
+      render();
+    };
+    const multiEl = host.ownerDocument.createElement("div");
+    multiEl.className = "multi";
+    multiEl.hidden = true;
+    el.zoom.append(multiEl);
+    multiEl.addEventListener("click", multiClick);
     const proj = host.ownerDocument.createElement("div");
     proj.id = "proj";
     proj.className = "proj";
     proj.setAttribute("role", "toolbar");
     proj.setAttribute("aria-label", "Project");
-    proj.innerHTML = `<button type="button" class="btn sm" id="agents" title="Register libs, people and AI agents">${icon("users")}Sources</button><button type="button" class="btn sm" id="open" title="Open a saved project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Save the project (.json)">${icon("download")}Save</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
+    proj.innerHTML = `<button type="button" class="btn sm" id="open" title="Open a saved project (.json)">${icon("upload")}Open</button><button type="button" class="btn sm" id="save" title="Save the project (.json)">${icon("download")}Save</button><input type="file" id="openFile" accept=".json,application/json" hidden>`;
     host.ownerDocument.querySelector(".topbar")?.append(proj);
     const themes = host.ownerDocument.createElement("div");
     themes.id = "temas";
@@ -1614,6 +1833,9 @@
         if (cmd.type === "newFlow" && id) {
           ui.flow = id;
           fitted = false;
+          const nf = locate(P2(), id)?.node;
+          if (fileView && fileView !== "*" && nf?.t === "fn" && flowFile(nf) !== fileView) fileView = null;
+          render();
         }
         return id;
       } catch (e) {
@@ -1622,38 +1844,169 @@
       }
     };
     const P2 = () => store.project;
+    const canRun = () => !fileView || !!(ui.sel && locate(P2(), ui.sel));
     function render() {
       const p = P2();
       if (!locate(p, ui.flow)) ui.flow = p.flows[0]?.id ?? ui.flow;
+      if (fileView && ui.sel) {
+        const r = locate(p, ui.sel)?.flow;
+        if (r) ui.flow = r.id;
+      }
       last = build(p, ui.flow, ui);
-      el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
-      el.plan.innerHTML = last.plan;
-      const tw0 = tableWidth(last.scene);
-      el.table.style.width = tw0 + "px";
-      el.table.style.setProperty("--tw", tw0 + "px");
-      const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene);
-      el.zoom.style.width = W + "px";
-      el.zoom.style.height = H + "px";
-      applyView();
-      el.sel.innerHTML = p.flows.map((f) => `<option value="${f.id}"${f.id === ui.flow ? " selected" : ""}>${esc(f.title)}</option>`).join("");
+      const star = fileView === "*", byFile = /* @__PURE__ */ new Map();
+      for (const f of p.flows) byFile.set(flowFile(f), [...byFile.get(flowFile(f)) ?? [], f]);
+      const groups = star ? [...byFile] : fileView && (byFile.get(fileView)?.length ?? 0) > 1 ? [[fileView, byFile.get(fileView)]] : [];
+      if (fileView && !star && !byFile.has(fileView)) fileView = null;
+      if (groups.length) {
+        const stack = (fns) => {
+          const first = fns.map((f) => build(p, f.id, ui)), minW = Math.max(...first.map((b) => b.w)), tw2 = Math.max(...first.map((b) => tableWidth(b.scene)));
+          let W2 = 0, H2 = 0;
+          const html = fns.map((f) => {
+            const b = build(p, f.id, { ...ui, minW }), h = planHeight(b.scene, ui.allData);
+            W2 = Math.max(W2, tw2 + planWidth(b.scene, b.w));
+            H2 += h + 34;
+            return `<div class="blk${ui.sel === f.id ? " on" : ""}" data-fid="${f.id}"><div class="blk-t"><span class="fn-dot ${fnKind(p, f)}"></span>${esc(f.title)}</div><div class="blk-r" style="height:${h}px"><div class="gtable" style="width:${tw2}px;--tw:${tw2}px"><div class="ghead"><span>source</span><span>function</span></div>${b.table}</div><div class="gplan">${b.plan}</div></div></div>`;
+          }).join("");
+          return { html, W: W2, H: H2 };
+        };
+        let W = 0, H = 0;
+        const GAP = 28;
+        multiEl.className = star ? "multi row" : "multi";
+        multiEl.innerHTML = groups.map(([file, fns]) => {
+          const st = stack(fns);
+          if (star) {
+            W += st.W + GAP;
+            H = Math.max(H, st.H + 34);
+            return `<div class="mcol" style="width:${st.W}px"><div class="mcol-t">${icon("file")}${esc(file.replace(/\.[^.]+$/, ""))}</div>${st.html}</div>`;
+          }
+          W = st.W;
+          H = st.H;
+          return st.html;
+        }).join("");
+        if (star) W -= GAP;
+        multiEl.hidden = false;
+        el.table.innerHTML = "";
+        el.plan.innerHTML = "";
+        el.table.hidden = el.plan.hidden = true;
+        multi = { W, H };
+        el.zoom.style.width = W + "px";
+        el.zoom.style.height = H + "px";
+        applyView();
+      } else {
+        multi = null;
+        multiEl.hidden = true;
+        multiEl.innerHTML = "";
+        el.table.hidden = el.plan.hidden = false;
+        el.table.innerHTML = last.scene.rows.length ? `<div class="ghead"><span>source</span><span>function</span></div>${last.table}` : "";
+        el.plan.innerHTML = last.plan;
+        const tw0 = tableWidth(last.scene);
+        el.table.style.width = tw0 + "px";
+        el.table.style.setProperty("--tw", tw0 + "px");
+        const W = tw0 + planWidth(last.scene, last.w), H = planHeight(last.scene, ui.allData);
+        el.zoom.style.width = W + "px";
+        el.zoom.style.height = H + "px";
+        applyView();
+      }
+      const bare = (f) => f.replace(/\.[^.]+$/, ""), fl = locate(p, ui.flow)?.flow;
+      el.flowName.textContent = fileView && !canRun() ? fileView === "*" ? "Files" : bare(fileView) : fl ? `${bare(flowFile(fl))} \u203A ${fl.title}` : "Flow";
       host.ownerDocument.querySelectorAll(".hist-btn").forEach((b) => {
         b.disabled = b.dataset["hist"] === "undo" ? !store.canUndo : !store.canRedo;
       });
       $("#txtIn").setAttribute("aria-pressed", String(ui.txtIn));
+      $("#dataAll").setAttribute("aria-pressed", String(ui.allData !== false));
       if (!fitted || auto) {
         fitted = true;
         fit();
       }
+      $("#exec").hidden = !canRun();
       renderCode();
+      renderExplorer();
     }
+    const exClosed = /* @__PURE__ */ new Set();
+    function renderExplorer() {
+      const p = P2(), chev = (open) => `<span class="ex-car${open ? "" : " shut"}">${icon("chevron")}</span>`;
+      const bare = (f) => f.replace(/\.[^.]+$/, ""), files = /* @__PURE__ */ new Map();
+      for (const f of p.flows) {
+        const k = flowFile(f);
+        files.set(k, [...files.get(k) ?? [], f]);
+      }
+      const curFile = (() => {
+        const r = locate(p, ui.flow)?.flow;
+        return r ? flowFile(r) : "";
+      })();
+      const secOpen = !exClosed.has("sec:files");
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>Files</span><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+        const fid = "f:" + file, open = !exClosed.has(fid);
+        const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
+        return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
+      }).join("") : "");
+    }
+    el.explorer.addEventListener("click", (e) => {
+      const t = e.target, add = t.closest("[data-exadd]");
+      if (add) {
+        {
+          const taken = new Set(P2().flows.map((f) => f.title));
+          let n = 1, t2 = "new_function";
+          while (taken.has(t2)) t2 = `new_function_${++n}`;
+          run({ type: "newFlow", title: t2, file: add.dataset["exadd"] });
+        }
+        return;
+      }
+      const delFile = t.closest("[data-exdelfile]");
+      if (delFile) {
+        const file = delFile.dataset["exdelfile"], ids = P2().flows.filter((f) => flowFile(f) === file).map((f) => f.id);
+        void confirmAsk(`Remove the file \u201C${file}\u201D and its ${ids.length} function(s)?`).then((ok) => {
+          if (ok) {
+            for (const id of ids) if (run({ type: "removeFlow", id }, false) === void 0 && P2().flows.length <= 1) break;
+          }
+        });
+        return;
+      }
+      const del = t.closest("[data-exdel]");
+      if (del) {
+        void delFlow(del.dataset["exdel"]);
+        return;
+      }
+      const fold = t.closest("[data-exfold]");
+      if (fold) {
+        const k = fold.dataset["exfold"];
+        if (exClosed.has(k)) exClosed.delete(k);
+        else exClosed.add(k);
+        renderExplorer();
+        return;
+      }
+      const row = t.closest("[data-ex]");
+      if (!row) return;
+      if (row.dataset["ex"] === "all") {
+        fileView = "*";
+        ui.sel = null;
+        fitted = false;
+        render();
+        return;
+      }
+      ui.flow = row.dataset["flow"];
+      ui.sel = null;
+      fitted = false;
+      fileView = row.dataset["ex"] === "file" ? row.dataset["file"] : null;
+      render();
+    });
+    $("#exCollapse").addEventListener("click", () => {
+      for (const f of P2().flows) exClosed.add("f:" + flowFile(f));
+      renderExplorer();
+    });
     function renderCode() {
       const p = P2();
       gen = generate(p, ui.flow, { runnable: true });
-      const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel ? gen.map[ui.sel] : void 0;
+      let fileCode;
+      const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel && !(fileView && multi) ? gen.map[ui.sel] : void 0;
+      fileCode = fileView && multi ? fileView === "*" ? { code: [...new Set(p.flows.map((f) => flowFile(f)))].map((file) => generateFile(p, p.flows.filter((f) => flowFile(f) === file).map((f) => f.id)).code).join("\n"), fileName: "project.ts" } : generateFile(p, p.flows.filter((f) => flowFile(f) === fileView).map((f) => f.id)) : null;
+      fileCodeText = fileCode?.code ?? null;
+      if (fileCode) {
+        lines.splice(0, lines.length, ...fileCode.code.replace(/\n$/, "").split("\n"));
+      }
       const hl = (l) => esc(l).replace(/(\/\/.*$)|(&quot;[^&]*?&quot;)|(\b\d+\b)|(\b[A-Za-z_$][\w$]*\b)(\()?/g, (m, c, s, n2, w, par) => c ? `<span class="tk-c">${c}</span>` : s ? `<span class="tk-s">${s}</span>` : n2 ? `<span class="tk-n">${n2}</span>` : /^(?:const|let|await|async|import|from|export|type|return|if|else|for|of|try|catch|function|as)$/.test(w) ? `<span class="tk-k">${w}</span>${par ?? ""}` : /^(?:State|Promise|Record|unknown|Fn)$/.test(w) ? `<span class="tk-t">${w}</span>${par ?? ""}` : par ? `<span class="tk-f">${w}</span>(` : m);
       el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
-      el.fname.textContent = gen.runFile;
-      $("#runcmd").textContent = gen.runCommand;
+      el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile;
       el.meta.textContent = `${lines.length} lines`;
       const n = ui.sel ? locate(p, ui.sel)?.node : void 0;
       el.selname.textContent = n ? n.t === "fn" ? n.title : n.t : "";
@@ -1670,7 +2023,7 @@
     }
     function fit() {
       if (!last) return;
-      const W = tableWidth(last.scene) + planWidth(last.scene, last.w), H = planHeight(last.scene), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
+      const W = multi?.W ?? tableWidth(last.scene) + planWidth(last.scene, last.w), H = multi?.H ?? planHeight(last.scene, ui.allData), cw = el.scroll.clientWidth, ch = el.scroll.clientHeight;
       const k = Math.max(0.2, Math.min(1, (cw - 16) / W, (ch - 16) / H));
       ui.zoom = Math.round(k * 100) / 100;
       ui.pan = { x: Math.max(8, (cw - W * ui.zoom) / 2), y: 8 };
@@ -1719,12 +2072,12 @@
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
     });
-    const KIND_NAME = { maquina: "Browser lib", pessoa: "Person", ia: "AI agent" };
+    const KIND_NAME = { maquina: "Browser lib", pessoa: "Person", ia: "AI agent", arquivo: "File" };
     const agentsDialog = () => modal("Sources", (form, done) => {
       const draw = () => {
         form.classList.add("wide");
-        form.innerHTML = `<label>Project sources</label><div class="agl">${P2().agents.map((a) => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` \xB7 ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remove ${esc(a.name)}" aria-label="Remove ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
-        <div class="agadd"><select name="kind" aria-label="Type"><option value="maquina">Browser lib</option><option value="pessoa">Person</option><option value="ia">AI agent</option></select><input name="name" placeholder="name (e.g. Math, Maria, Writer)" aria-label="Name" spellcheck="false"><input name="tasks" placeholder="functions: round(value) -> result; max(a, b) -> result" aria-label="Lib functions with inputs and outputs" spellcheck="false"><button type="submit" class="pri">Add</button></div>
+        form.innerHTML = `<label>Project sources</label><div class="agl">${P2().agents.filter((a) => a.kind === "maquina").map((a) => `<div class="agr"><span class="fav ${a.kind}">${icon(a.kind === "maquina" ? "package" : a.kind === "pessoa" ? "user" : "ia")}</span><b>${esc(a.name)}</b><span class="k">${KIND_NAME[a.kind]}${a.tasks.length ? ` \xB7 ${esc(a.tasks.join(", "))}` : ""}</span><button type="button" class="ib danger" data-rm-agent="${esc(a.id)}" title="Remove ${esc(a.name)}" aria-label="Remove ${esc(a.name)}">${icon("trash")}</button></div>`).join("")}</div>
+        <div class="agadd"><select name="kind" aria-label="Type"><option value="maquina">Browser lib</option></select><input name="name" placeholder="name (e.g. Math, Maria, Writer)" aria-label="Name" spellcheck="false"><input name="tasks" placeholder="functions: round(value) -> result; max(a, b) -> result" aria-label="Lib functions with inputs and outputs" spellcheck="false"><button type="submit" class="pri">Add</button></div>
         <div class="row"><button type="button" data-no>Close</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
         form.querySelectorAll("[data-rm-agent]").forEach((b) => b.addEventListener("click", () => {
@@ -1776,7 +2129,9 @@
     const draftHtml = (d, path, states, depth = 0, removable = false) => {
       const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>` : d.type === "ref" && states.some((x) => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>` : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">` : d.type === "object" ? "" : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
       const kids2 = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
-      return `<div class="argd d${depth}"><select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable)}</select>${val}</div>${kids2}`;
+      const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable)}</select>`;
+      if (depth === 0) return `<div class="argd d0"><span class="fl">Type</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids2}`;
+      return `<div class="argd d${depth}">${sel}${val}</div>${kids2}`;
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
       const lib2 = !!contractOf(P2(), n), editable = !lib2, withValue = side === "in";
@@ -1787,13 +2142,13 @@
       }
       const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id);
       form.classList.add("wide");
-      const fresh = names.map(() => false);
-      const nameEditable = (i) => editable && (!withValue || !!fresh[i]);
+      const fresh = names.map(() => false), orig = [...names];
+      const nameEditable = (i) => editable || side === "out" && i === 0;
       const canAdd = () => editable && (!withValue || names.length > 1);
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type and value. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${nameEditable(i) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable) : ""}</div>`).join("")}
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
@@ -1815,6 +2170,7 @@
             names.splice(i, 1);
             drafts.splice(i, 1);
             fresh.splice(i, 1);
+            orig.splice(i, 1);
             if (!names.length) {
               run({ type: "setData", id: n.id, side, names: [], values: [] }, false);
               done();
@@ -1847,12 +2203,14 @@
           names.splice(i, 1);
           drafts.splice(i, 1);
           fresh.splice(i, 1);
+          orig.splice(i, 1);
         } else {
           let i = names.length + 1;
           while (names.includes(`field${i}`)) i++;
           names.push(`field${i}`);
           drafts.push(emptyDraft());
           fresh.push(true);
+          orig.push("");
         }
         draw();
       });
@@ -1873,6 +2231,13 @@
         });
         try {
           const values = withValue ? drafts.map((d) => buildArg(d)) : [];
+          if (!editable && side === "out" && names[0] && orig[0] && names[0] !== orig[0]) store.dispatch({ type: "renameData", id: n.id, to: names[0] });
+          if (editable) {
+            names.forEach((nm, i) => {
+              if (nm && orig[i] && nm !== orig[i]) store.dispatch({ type: "renameIo", id: n.id, side, from: orig[i], to: nm });
+              orig[i] = nm;
+            });
+          }
           if (editable) {
             const keep = names.map((nm, i) => [nm, values[i] ?? ""]).filter(([nm]) => nm);
             run({ type: "setData", id: n.id, side, names: keep.map((k) => k[0]), values: keep.map((k) => k[1]) }, false);
@@ -1885,6 +2250,36 @@
         }
       });
       draw();
+    });
+    const forDialog = (id, v0, coll0, kids2) => modal("Repetition", (form, done) => {
+      const first = (ns) => {
+        for (const x of ns) {
+          if (x.t === "fn" && !x.kids.length) return x.id;
+          const r = first(kidsOf(x));
+          if (r) return r;
+        }
+        return void 0;
+      };
+      const fid = first(kids2), states = fid ? statesFor(P2(), fid) : [];
+      form.classList.add("wide");
+      form.innerHTML = `<label>Repetition (for)</label>
+      <div class="param"><span class="pn">Variable</span><input data-k="fv" value="${esc(v0)}" placeholder="item" spellcheck="false" aria-label="Variable"></div>
+      <div class="param"><span class="pn">Collection</span><input data-k="fe" list="forcoll" value="${esc(coll0)}" placeholder='["a", "b"]  or  a data name' spellcheck="false" aria-label="Collection"><datalist id="forcoll">${states.map((x) => `<option value="${esc(x.name)}">`).join("")}</datalist></div>
+      <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
+      const fv = form.querySelector("[data-k=fv]"), fe = form.querySelector("[data-k=fe]");
+      form.querySelector("[data-no]").addEventListener("click", () => done());
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") done();
+      });
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        try {
+          store.dispatch({ type: "setFor", id, v: fv.value.trim(), coll: fe.value.trim() });
+          done();
+        } catch (err) {
+          toast(err instanceof Error ? err.message : String(err));
+        }
+      });
     });
     const condDialog = (ifId, current, kids2) => modal("Condition", (form, done) => {
       const first = (ns) => {
@@ -2028,12 +2423,8 @@
       editBlock: async (d) => {
         const id = d["id"], n = locate(P2(), id)?.node;
         if (!n) return;
-        if (n.t === "for") {
-          const v = await ask("for variable (each item):", n.v);
-          if (!v) return;
-          const c = await ask("Collection to loop over:", n.coll);
-          if (c) run({ type: "setFor", id, v, coll: c }, false);
-        } else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
+        if (n.t === "for") await forDialog(n.id, n.v, n.coll, n.kids);
+        else if (n.t === "if") await condDialog(n.id, n.test, n.kids);
       },
       editData: async (d) => {
         const n = locate(P2(), d["id"])?.node;
@@ -2093,22 +2484,19 @@
     host.addEventListener("change", (e) => {
       const s = e.target, c = s.dataset["change"], id = s.dataset["id"];
       if (!c || !id) return;
-      if (c === "assign") run({ type: "assign", id, agent: s.value || null }, false);
+      if (c === "assign" && s.value.startsWith("file:")) {
+        const [agent, task] = s.value.split("#");
+        if (run({ type: "assign", id, agent }, false) !== void 0 || true) run({ type: "setTask", id, task }, false);
+      } else if (c === "assign") run({ type: "assign", id, agent: s.value || null }, false);
       else if (c === "setResp") run({ type: "setResp", id, resp: s.value || null }, false);
       else if (c === "setTask") run({ type: "setTask", id, task: s.value }, false);
     });
-    el.sel.addEventListener("change", () => {
-      ui.flow = el.sel.value;
-      ui.sel = null;
-      fitted = false;
-      render();
-    });
-    $("#delFlow").addEventListener("click", async () => {
-      const f = locate(P2(), ui.flow)?.node;
+    const delFlow = async (id) => {
+      const f = locate(P2(), id)?.node;
       if (!f || f.t !== "fn") return;
       if (!await confirmAsk(`Delete the flow \u201C${f.title}\u201D and everything inside it?`)) return;
       run({ type: "removeFlow", id: f.id }, false);
-    });
+    };
     proj.querySelector("#save").addEventListener("click", () => {
       const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([serialize(P2())], { type: "application/json" }));
       a.href = url;
@@ -2136,7 +2524,7 @@
         toast(e instanceof FlowError ? e.message : String(e));
       }
     });
-    proj.querySelector("#agents").addEventListener("click", () => void agentsDialog());
+    $("#agents").addEventListener("click", () => void agentsDialog());
     $("#newFlow").addEventListener("click", () => void run({ type: "newFlow" }));
     host.ownerDocument.addEventListener("click", (e) => {
       const b = e.target.closest(".hist-btn");
@@ -2155,15 +2543,26 @@
       ui.txtIn = !ui.txtIn;
       render();
     });
+    $("#dataAll").addEventListener("click", () => {
+      ui.allData = !ui.allData;
+      $("#dataAll").title = ui.allData ? "States: showing all available data (click for only the new ones)" : "States: showing only the new data (click for all available)";
+      render();
+    });
     $("#expand").addEventListener("click", () => {
       ui.closed.clear();
       render();
     });
     $("#collapse").addEventListener("click", () => {
       const f = locate(P2(), ui.flow)?.node;
-      if (f?.t === "fn") f.kids.forEach(function mark(n) {
-        if (n.t === "fn" && n.kids.length) ui.closed.add(n.id);
-      });
+      if (f?.t === "fn") {
+        const mark = (list) => list.forEach((n) => {
+          if (n.t === "fn" && n.kids.length) ui.closed.add(n.id);
+          mark(kidsOf(n));
+        });
+        mark(f.kids);
+        if (f.kids.length) ui.closed.add(f.id);
+      }
+      auto = true;
       render();
     });
     const showTab = (name) => {
@@ -2174,7 +2573,7 @@
     host.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset["tab"])));
     $("#dl").addEventListener("click", () => {
       if (!gen) return;
-      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([gen.code], { type: "text/plain" }));
+      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" }));
       a.href = url;
       a.download = gen.runFile;
       host.append(a);
@@ -2182,14 +2581,8 @@
       a.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
     });
-    $("#cmdcopy").addEventListener("click", async () => {
-      await navigator.clipboard?.writeText(gen?.runCommand ?? "").catch(() => {
-      });
-      $("#cmdcopy").textContent = "Copied";
-      setTimeout(() => $("#cmdcopy").textContent = "Copy command", 1200);
-    });
     $("#copy").addEventListener("click", async () => {
-      await navigator.clipboard?.writeText(gen?.code ?? "").catch(() => {
+      await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {
       });
       $("#copy").textContent = "Copied";
       setTimeout(() => $("#copy").textContent = "Copy", 1200);
@@ -2301,7 +2694,7 @@
     })());
     const total = () => app.clientWidth;
     const applyPrefs = (save = true) => {
-      prefs.codeW = clampCodeWidth(prefs.codeW, total());
+      prefs.codeW = clampCodeWidth(prefs.codeW, total() - (exPrefs.open ? exPrefs.w + 12 : 0));
       app.style.setProperty("--codew", prefs.codeW + "px");
       app.classList.toggle("code-off", !prefs.codeOpen);
       $("#codeToggle").setAttribute("aria-pressed", String(prefs.codeOpen));
@@ -2316,6 +2709,76 @@
         if (auto) fit();
       });
     };
+    const EX_KEY = "flow-novo-explorer-v1", EX_MIN = 160, EX_DEFAULT = 232;
+    const exPrefs = (() => {
+      try {
+        const o = JSON.parse(localStorage.getItem(EX_KEY) ?? "null");
+        return { w: typeof o?.w === "number" && Number.isFinite(o.w) ? o.w : EX_DEFAULT, open: typeof o?.open === "boolean" ? o.open : true };
+      } catch {
+        return { w: EX_DEFAULT, open: true };
+      }
+    })();
+    const exSplitter = $("#exSplitter");
+    const applyEx = (save = true) => {
+      exPrefs.w = Math.round(Math.min(Math.max(exPrefs.w, EX_MIN), Math.max(EX_MIN, total() * 0.4)));
+      app.style.setProperty("--exw", exPrefs.w + "px");
+      app.classList.toggle("ex-off", !exPrefs.open);
+      $("#exToggle").setAttribute("aria-pressed", String(exPrefs.open));
+      exSplitter.setAttribute("aria-valuenow", String(exPrefs.w));
+      exSplitter.setAttribute("aria-valuemin", String(EX_MIN));
+      exSplitter.hidden = !exPrefs.open;
+      if (save) try {
+        localStorage.setItem(EX_KEY, JSON.stringify(exPrefs));
+      } catch {
+      }
+      window.requestAnimationFrame(() => {
+        if (auto) fit();
+      });
+    };
+    const toggleEx = () => {
+      exPrefs.open = !exPrefs.open;
+      applyEx();
+    };
+    $("#exToggle").addEventListener("click", toggleEx);
+    exSplitter.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      app.classList.add("resizing");
+      const move = (ev) => {
+        const r = app.getBoundingClientRect();
+        exPrefs.w = ev.clientX - r.left - 12 - 6;
+        applyEx(false);
+      };
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+        window.removeEventListener("pointercancel", up);
+        app.classList.remove("resizing");
+        applyEx();
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+      window.addEventListener("pointercancel", up);
+    });
+    exSplitter.addEventListener("dblclick", () => {
+      exPrefs.w = EX_DEFAULT;
+      applyEx();
+    });
+    exSplitter.addEventListener("keydown", (e) => {
+      const step = e.shiftKey ? 80 : 24;
+      if (e.key === "ArrowLeft") exPrefs.w -= step;
+      else if (e.key === "ArrowRight") exPrefs.w += step;
+      else if (e.key === "Enter") toggleEx();
+      else return;
+      e.preventDefault();
+      applyEx();
+    });
+    host.ownerDocument.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        toggleEx();
+      }
+    });
     const toggleCode = () => {
       prefs.codeOpen = !prefs.codeOpen;
       applyPrefs();
@@ -2363,8 +2826,12 @@
     if (typeof ResizeObserver !== "undefined") new ResizeObserver(() => {
       if (auto && last) fit();
     }).observe(el.scroll);
-    window.addEventListener("resize", () => applyPrefs(false));
+    window.addEventListener("resize", () => {
+      applyPrefs(false);
+      applyEx(false);
+    });
     applyPrefs(false);
+    applyEx(false);
     let running = null;
     const tbody = $("#tbody"), tstat = $("#tstat");
     const addLine = (level, text, t) => {
@@ -2393,6 +2860,10 @@
       tstat.classList.toggle("busy", on);
     };
     const runFlow = () => {
+      if (!canRun()) {
+        toast("Select a function to run it");
+        return;
+      }
       if (running) {
         running.stop();
         return;

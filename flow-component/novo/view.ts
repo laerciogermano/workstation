@@ -1,11 +1,11 @@
 import { icon, KIND_ICON } from "./icons";
-import { agentOf, contractOf, cubeName, flowFile, insideBlock, isCube, isRoot, locate, type Agent, type Fn, type Node, type Project } from "./model";
+import { agentOf, contractOf, filesOf, hasContract,  cubeName, flowFile, insideBlock, isCube, isRoot, locate, type Agent, type Fn, type Node, type Project } from "./model";
 import { exprIdents } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
 /** Geometria do plano (px). */
-export const G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16 } as const;
-export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: boolean }
+export const G = { RH: 34, HEAD: 52, OX: 230, W: 160, INS: 28, BH: 22, IND: 14, GAP: 16, WS: 100 } as const;   // WS: largura da coluna com o texto fora da barra (a função fica pequena)
+export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: boolean; /** true = em cada estado, todos os dados disponíveis; ausente/false = só os novos (os que chegam naquele passo) */ allData?: boolean; /** largura mínima da coluna do plano (alinha as funções de um arquivo) */ minW?: number }
 
 export const esc = (s: unknown): string => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 const tw = (t: string, px = 6.1): number => Math.ceil(t.length * px);
@@ -24,19 +24,43 @@ export const rowY = (i: number): number => G.HEAD + i * G.RH;
 export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps, w) + 160;
 /** Largura da coluna de um passo: no modo texto cresce para o nome inteiro caber na barra, com folga dos dois lados. */
 export const PAD = 12;
-export const colW = (sc: Scene, ui: Pick<Ui, "txtIn">): number => (ui.txtIn ? Math.max(G.W, ...sc.leaves.map(l => tw((l.node as Fn).title, 6.2) + 2 * PAD + 2 * G.INS)) : G.W);
+export const colW = (sc: Scene, ui: Pick<Ui, "txtIn" | "minW">): number => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map(l => tw((l.node as Fn).title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
 /** Estados (dados produzidos) que aparecem embaixo de cada coluna, como no Flow IDE: quem termina no passo anterior à coluna. */
-export interface StateItem { name: string; cube: boolean; fields: string[] }
-export function statesByStep(sc: Scene): Map<number, StateItem[]> {
-  const m = new Map<number, StateItem[]>();
-  for (const r of sc.rows) {
-    if (r.kind !== "fn" || !r.leaf) continue; const f = r.node as Fn; if (!f.outs.length) continue;
-    const col = r.e + 1, list = m.get(col) ?? []; list.push({ name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs }); m.set(col, list);
+export interface StateItem { name: string; cube: boolean; fields: string[]; /** já existia em estado anterior (só aparece em "todos") */ old?: boolean }
+/** Campos de primeiro nível de um objeto literal (`{ a: 1, b, ...c }` → a, b, c); null se não for objeto. */
+export function objectFields(expr: string): string[] | null {
+  const e = expr.trim(); if (!e.startsWith("{") || !e.endsWith("}")) return null;
+  const parts: string[] = []; let depth = 0, cur = "", q = "";
+  for (const ch of e.slice(1, -1)) {
+    if (q) { cur += ch; if (ch === q) q = ""; continue; }
+    if (ch === '"' || ch === "'" || ch === "`") { q = ch; cur += ch; continue; }
+    if ("{[(".includes(ch)) depth++; else if ("}])".includes(ch)) depth--;
+    if (ch === "," && depth === 0) { parts.push(cur); cur = ""; } else cur += ch;
   }
-  return m;
+  parts.push(cur);
+  return parts.map(x => x.trim()).filter(Boolean).map(x => /^([A-Za-z_$][\w$]*)\s*:/.exec(x)?.[1] ?? x.replace(/^\.\.\./, "").trim());
+}
+const isRefExpr = (e: string): boolean => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e.trim());
+export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
+  const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; list.push(it); m.set(col, list); };
+  for (const r of sc.rows) {
+    if (r.kind !== "fn" || !r.leaf) continue; const f = r.node as Fn;
+    // dado inicializado com um valor logo antes da função (ex.: value = { id, score }): existe a partir do início dela; objeto = cubo com os campos
+    for (const i of f.ins) { const e = f.args?.[i]?.trim(); if (!e || isRefExpr(e)) continue; const fields = objectFields(e); add(r.s, { name: i, cube: !!fields, fields: fields ?? [i] }); }
+    if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs });
+  }
+  if (!all) return m;
+  // todos os disponíveis: cada estado repete o que já existia (um nome produzido de novo substitui o antigo)
+  const cols = [...m.keys()].sort((x, y) => x - y), out = new Map<number, StateItem[]>(); let acc: StateItem[] = [];
+  for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
+    const fresh = m.get(c) ?? [], names = new Set(fresh.map(i => i.name));
+    acc = [...acc.filter(i => !names.has(i.name)).map(i => ({ ...i, old: true })), ...fresh]; if (acc.length) out.set(c, acc);
+  }
+  return out;
 }
 export const STATE_ROW = 15;
-export const planHeight = (sc: Scene): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc).values()].map(l => l.length)) * STATE_ROW;
+export const planHeight = (sc: Scene, all = false): number => rowY(sc.rows.length) + 64 + Math.max(0, ...[...statesByStep(sc, all).values()].map(stateRows)) * STATE_ROW;
 /** A tabela cresce para a linha de dados caber, mas até um limite (o que passar vira reticências; a lista completa fica no tooltip). */
 export const tableWidth = (sc: Scene): number => 440 + sc.maxDepth * G.IND * 2;
 
@@ -104,18 +128,21 @@ export const blockLabel = (_p: Project, n: Node): string => {
   if (n.t === "for") return `for (${n.v} of ${n.coll})`;
   return "try";
 };
-export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { const a = agentOf(p, f.agent); return !a ? "nag" : a.kind === "maquina" ? "conc" : "abs"; };
+export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { const a = agentOf(p, f.agent); return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs"; };
 
 // ───────────────────────── tabela (esquerda) ─────────────────────────
 const circle = (cls: string, ic: string, title: string): string => `<span class="fav ${cls}" title="${esc(title)}">${ic ? icon(ic) : ""}</span>`;
 function agentSelect(p: Project, f: Fn, kind: "agent" | "resp"): string {
   const cur = agentOf(p, kind === "agent" ? f.agent : f.resp), want = (a: Agent): boolean => (kind === "resp" ? a.kind === "pessoa" : true);
-  const groups = (["maquina", "pessoa", "ia"] as const).map(k => { const list = p.agents.filter(a => a.kind === k && want(a)); return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map(a => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : ""; }).join("");
-  return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">${cur ? "No source" : "Choose source"}</option>${groups}</select>`;
+  const groups = (["maquina"] as const).map(k => { const list = p.agents.filter(a => a.kind === k && want(a)); return list.length ? `<optgroup label="${{ maquina: "Browser libs", pessoa: "People", ia: "AI agents" }[k]}">${list.map(a => `<option value="${a.id}"${cur?.id === a.id ? " selected" : ""}>${esc(a.name)}</option>`).join("")}</optgroup>` : ""; }).join("");
+  // fonte "arquivo": uma função de outro arquivo do projeto (a do próprio arquivo não entra: evita a chamada recursiva a si mesma)
+  const own = locate(p, f.id)?.flow, files = kind === "agent" ? filesOf(p).filter(x => !own || x !== flowFile(own)) : [];
+  const fileGroup = files.map(x => `<optgroup label="${esc(x)}">${(agentOf(p, `file:${x}`)?.tasks ?? []).map(t => `<option value="file:${esc(x)}#${esc(t)}"${f.agent === `file:${x}` && f.title === t ? " selected" : ""}>${esc(t)}</option>`).join("")}</optgroup>`).join("");
+  return `<select data-change="${kind === "agent" ? "assign" : "setResp"}" data-id="${esc(f.id)}" aria-label="Source of ${esc(f.title)}"><option value="">Abstract</option>${groups}${fileGroup}</select>`;
 }
 function respCell(p: Project, r: Row): string {
   const f = r.node as Fn;
-  if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f))}</span></span>`;
+  if (isRoot(p, f.id)) return `<span class="c-ag" title="Source: the file of this flow">${circle("arquivo", "file", "File")}<span class="rp-n">${esc(flowFile(f).replace(/\.[^.]+$/, ""))}</span></span>`;
   if (!r.leaf) return `<span class="c-ag muted">—</span>`;
   const a = agentOf(p, f.agent);
   if (a?.kind === "ia") { const pe = agentOf(p, f.resp); return `<span class="c-ag resp-pick">${pe ? circle("pessoa", "user", `Person: ${pe.name}`) + `<span class="rp-n">${esc(pe.name)}</span>` : circle("none", "plus", "Choose the person in charge") + `<span class="rp-n abs">abstract</span>`}${agentSelect(p, f, "resp")}</span>`; }
@@ -123,9 +150,9 @@ function respCell(p: Project, r: Row): string {
 }
 function taskCell(p: Project, r: Row): string {
   const f = r.node as Fn, a = agentOf(p, f.agent), pad = 10 + r.depth * G.IND * 2;
-  const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="gi">${icon("network")}</span>`;
-  const name = a?.kind === "maquina" && r.leaf
-    ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a.name)}">${a.tasks.map(t => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`
+  const lead = r.leaf ? `<span class="fn-dot ${fnKind(p, f)}" title="Function"></span>` : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(f.id)}" title="Open / close children">${icon("chevron")}</span><span class="fn-dot ${fnKind(p, f)}" title="Function"></span>`;
+  const name = hasContract(a) && r.leaf
+    ? `<select class="task-pick" data-change="setTask" data-id="${esc(f.id)}" aria-label="Function of ${esc(a!.name)}">${a!.tasks.map(t => `<option${t === f.title ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`
     : `<b data-act="rename" data-id="${esc(f.id)}" title="Click to rename">${esc(f.title || "unnamed")}</b>`;
   const iaTag = a?.kind === "ia" ? `<span class="agent-tag resp-pick">${icon("ia")}<span>${esc(a.name)}</span>${agentSelect(p, f, "agent")}</span>` : "";
   return `<span class="nm" style="padding-left:${pad}px">${lead}${name}${iaTag}${f.par ? '<span class="par-tag" title="Runs together with the previous one">∥</span>' : ""}</span>`;
@@ -146,7 +173,7 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
 
 // ───────────────────────── plano (direita, SVG) ─────────────────────────
 export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
-  const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc), by = new Map<string, number>();
+  const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = new Map<string, number>();
   const colX = (n: number): number => G.OX + n * cw;
   sc.rows.forEach((r, i) => { if (r.kind === "fn" || r.kind === "block") by.set(r.id, i); });
   const ym = (i: number): number => rowY(i) + G.RH / 2;
@@ -156,11 +183,17 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="0" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
   const chip = (s: number, y: number): string => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
   const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
-  out.push(`<text class="ttl" x="${W / 2}" y="16" text-anchor="middle">${esc(flow.title)}</text>`);
   for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
   // os estados embaixo de cada coluna (como no Flow IDE): um quadrado (ou cubo) e o nome do dado que chega ali
-  for (const [col, items] of statesByStep(sc)) items.forEach((it, k) => { const y = bot + 34 + k * STATE_ROW;
-    out.push(`<g class="stt"><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`); });
+  for (const [col, items] of statesByStep(sc, ui.allData)) {
+    let row = 0;
+    for (const it of items) {
+      const y = bot + 34 + row++ * STATE_ROW;
+      out.push(`<g class="stt${it.old ? " old" : ""}"><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
+      // o cubo mostra os campos logo abaixo, indentados
+      if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`); }
+    }
+  }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
   // bandas dos blocos + etiquetas (pills)
@@ -178,26 +211,18 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
 
   // funções
   const produced = new Set<string>(); sc.leaves.forEach(l => (l.node as Fn).outs.forEach(o => produced.add(o)));
-  sc.rows.forEach((r, i) => {
-    if (r.kind !== "fn") return;
-    const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
-    if (!r.leaf) {
-      const x1 = colX(r.s) + 8, x2 = colX(r.e + 1) - 8;
-      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x1}" y="${ym(i) - 3.5}" width="${x2 - x1}" height="7" rx="3.5"/><title>${esc(f.title)} · composition = layer</title></g><text class="lbl" x="${x2 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
-      return;
-    }
-    const k = fnKind(p, f), x1 = colX(r.s) + G.INS, x2 = colX(r.e + 1) - G.INS;
-    const shown = f.title;
-    over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
-    const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
-    if (!ui.txtIn) over.push(`<text class="lbl" x="${colX(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
+  /** Entradas e saídas de uma função (marca, linha até a barra, nome do dado e fantasma de adicionar): funções comuns e a função de primeira ordem. */
+  const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
     // entradas / saídas (marcas na linha de dados) e fantasmas
     // o quadrado do dado fica EXATAMENTE onde a caixa fantasma aparece: na linha da função, sobre a coluna de entrada / saída;
     // o nome do dado fica na linha de dados logo abaixo
     const lib = !!contractOf(p, f), inAbs = f.ins.some(n => !(produced.has(n) || f.args?.[n]?.trim() || contractOf(p, f)?.optional?.includes(n)));
-    const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => !list.length ? "" : isCube(list)
-      ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(`${cubeName(f, kind)}: ${list.join(", ")}`)} · ${tip}</title></g>`
+    const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => !list.length ? "" : (isCube(list) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? "")))   // vários dados ou um dado do tipo objeto = cubo
+      ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!)} · ${tip}</title></g>`
       : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0]!)} · ${tip}</title></g>`;
+    // a linha que liga o dado à função: da marca da entrada até a barra, e da barra até a marca da saída
+    if (f.ins.length) over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
+    if (f.outs.length) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
     over.push(mark(colX(r.s), f.ins, "in", inAbs, inAbs ? "abstract input (state / another layer)" : "concrete input (same layer)"), mark(colX(r.e + 1), f.outs, "out", false, "output"));
     // nome do dado na MESMA altura do quadrado: os da esquerda (entradas) à esquerda dele, os da direita (saídas) à direita; cubo mostra o nome do cubo
     const insLabel = inputLabel(p, f), insTip = inputTip(p, f), outsLabel = isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? "";
@@ -206,6 +231,22 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const ghost = (x: number, kind: "in" | "out", tip: string): string => `<g class="ghost" data-act="addIo" data-id="${esc(f.id)}" data-kind="${kind}"><circle class="hit" cx="${x}" cy="${ym(i)}" r="11"/><rect class="gh" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><path class="gp" d="M${x - 2} ${ym(i)} h4 M${x} ${ym(i) - 2} v4"/><title>${tip}</title></g>`;
     if (!lib && !f.ins.length) over.push(ghost(colX(r.s), "in", "Add input"));
     if (!lib && !f.outs.length) over.push(ghost(colX(r.e + 1), "out", "Add output"));
+  };
+  sc.rows.forEach((r, i) => {
+    if (r.kind !== "fn") return;
+    const f = r.node as Fn, selC = ui.sel === f.id ? " sel" : "";
+    if (!r.leaf) {
+      const x1 = colX(r.s) + 8, x2 = colX(r.e + 1) - 8;
+      over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="sum${selC}" x="${x1}" y="${ym(i) - 3.5}" width="${x2 - x1}" height="7" rx="3.5"/><title>${esc(f.title)} · composition = layer</title></g><text class="lbl" x="${x2 + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+      if (isRoot(p, f.id)) ioMarks(f, r, i, x1, x2);   // a função de primeira ordem também tem entradas e saídas
+      return;
+    }
+    const k = fnKind(p, f), x1 = colX(r.s) + G.INS, x2 = colX(r.e + 1) - G.INS;
+    const shown = f.title;
+    over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${ui.txtIn ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
+    const outsTxt = dataText([isCube(f.outs) ? cubeName(f, "out") : f.outs[0] ?? ""]);
+    if (!ui.txtIn) over.push(`<text class="lbl" x="${colX(r.e + 1) + 10 + (f.outs.length ? G.GAP - 10 + tw(outsTxt, 5.6) + 22 : 0)}" y="${ym(i) + 3.5}" data-act="rename" data-id="${esc(f.id)}">${esc(shown)}</text>`);
+    ioMarks(f, r, i, x1, x2);
   });
 
   // sequência: A termina no passo anterior ao início de B → cotovelo da saída de A até a barra de B

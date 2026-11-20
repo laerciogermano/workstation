@@ -6,13 +6,13 @@
  * precisa de marcas soltas (inLoop, inCatch, onError…): inserir, sair, ampliar e reduzir escopo são operações
  * sobre listas.
  */
-export type AgentKind = "maquina" | "ia" | "pessoa";
+export type AgentKind = "maquina" | "ia" | "pessoa" | "arquivo";
 /** Contrato de uma função de lib: as entradas (parâmetros, nesta ordem) e as saídas. Um lado com 1 nome é um dado (quadrado); com vários é um objeto (cubo). */
 export interface Contract { ins: string[]; outs: string[]; /** Entradas opcionais (escritas com ? na assinatura): não são exigidas do state. */ optional?: string[] }
 export interface Agent { id: string; kind: AgentKind; name: string; tasks: string[]; /** Contratos das funções da lib (por nome). */ contracts?: Record<string, Contract> }
 
 /** `args`: valor de cada entrada de uma função de lib — um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. */
-export interface Fn { t: "fn"; id: string; title: string; agent: string | null; resp: string | null; ins: string[]; outs: string[]; kids: Node[]; par: boolean; args?: Record<string, string> }
+export interface Fn { t: "fn"; id: string; title: string; agent: string | null; resp: string | null; ins: string[]; outs: string[]; kids: Node[]; par: boolean; args?: Record<string, string>; /** Só em função raiz: arquivo onde ela mora (várias funções podem dividir o mesmo arquivo). */ file?: string }
 /** `elseKids` vazio = sem else; com filhos o else aparece no flow como o catch do try (cabeçalho, faixa e lista própria). */
 export interface IfB { t: "if"; id: string; test: string; kids: Node[]; elseKids: Node[] }
 export interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[] }
@@ -50,7 +50,12 @@ export function locate(p: Project, id: string): Loc | null {
 }
 export const need = (p: Project, id: string): Loc => locate(p, id) ?? fail("not_found", `Element ${id} does not exist`);
 export const isRoot = (p: Project, id: string): boolean => p.flows.some(f => f.id === id);
-export const agentOf = (p: Project, id: string | null): Agent | undefined => (id ? p.agents.find(a => a.id === id) : undefined);
+/** Arquivos do projeto (uma fonte "arquivo" por .ts): as funções de primeira ordem de cada um são as tarefas que outra função pode referenciar. */
+export const filesOf = (p: Project): string[] => [...new Set(p.flows.map(f => flowFile(f)))];
+const fileAgent = (p: Project, file: string): Agent | undefined => { const fns = p.flows.filter(f => flowFile(f) === file); return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map(f => f.title), contracts: Object.fromEntries(fns.map(f => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : undefined; };
+export const agentOf = (p: Project, id: string | null): Agent | undefined => (id ? (id.startsWith("file:") ? fileAgent(p, id.slice(5)) : p.agents.find(a => a.id === id)) : undefined);
+/** Fonte com contrato (lib do navegador ou função de outro arquivo): entradas e saídas vêm dela. */
+export const hasContract = (a: Agent | undefined): boolean => a?.kind === "maquina" || a?.kind === "arquivo";
 export const isComposite = (n: Node): boolean => n.kids.length > 0;
 /** Está dentro de um bloco (if/for/try/catch), não só dentro de uma função composta. */
 export const insideBlock = (p: Project, id: string): boolean => { const l = locate(p, id); return !!l && !!l.parent && l.parent.t !== "fn"; };
@@ -67,7 +72,7 @@ export const cubeName = (f: Fn, side: "in" | "out"): string => `${side === "in" 
 
 /** Nome do arquivo gerado para o fluxo. */
 export const slug = (s: string): string => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "flow";
-export const flowFile = (f: Fn): string => `${slug(f.title)}.ts`;
+export const flowFile = (f: Fn): string => f.file ?? `${slug(f.title)}.ts`;
 
 // ───────────────────────── construção ─────────────────────────
 const nextId = (p: Project): string => `n${++p.seq}`;
@@ -104,7 +109,7 @@ export const DEFAULT_AGENTS: readonly Agent[] = [
   { id: "ana", kind: "pessoa", name: "Ana Souza", tasks: [] }, { id: "bruno", kind: "pessoa", name: "Bruno Lima", tasks: [] },
 ];
 /** Contrato da função de lib de `f` (ou nada, se não for uma função de lib com contrato). */
-export const contractOf = (p: Project, f: Fn): Contract | null => { const a = agentOf(p, f.agent); return a?.kind === "maquina" ? a.contracts?.[f.title] ?? null : null; };
+export const contractOf = (p: Project, f: Fn): Contract | null => { const a = agentOf(p, f.agent); return hasContract(a) ? a!.contracts?.[f.title] ?? null : null; };
 /**
  * Estados disponíveis para uma função: os dados produzidos pelas funções que rodam ANTES dela no fluxo
  * (inclusive dentro de blocos já fechados) e as variáveis dos `for` que a cercam. É o que a caixa de edição oferece.
@@ -160,7 +165,7 @@ function blockOf(kind: BlockKind, p: Project, a: Args, inner: Node): Block {
 
 export const HANDLERS = {
   /** Novo fluxo (função raiz). */
-  newFlow: (p, a) => { const f = newFn(p, a["title"] ? cleanText(a["title"], "Title", 80) : "New flow"); p.flows.push(f); return f.id; },
+  newFlow: (p, a) => { const f = newFn(p, a["title"] ? cleanText(a["title"], "Title", 80) : "New flow"); if (a["file"]) f.file = cleanText(a["file"], "File", 80); p.flows.push(f); return f.id; },
   /** Exclui um fluxo inteiro; o projeto sempre mantém pelo menos um. */
   removeFlow: (p, a) => {
     const l = need(p, str(a, "id")); if (!isRoot(p, l.node.id)) return fail("invalid", "Only a whole flow can be deleted");
@@ -245,14 +250,14 @@ export const HANDLERS = {
     const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have a source");
     const ag = a["agent"] ? agentOf(p, str(a, "agent")) ?? fail("not_found", `Source ${str(a, "agent")} does not exist`) : undefined;
     n.agent = ag?.id ?? null; if (ag?.kind !== "ia") n.resp = null;
-    if (ag?.kind === "maquina" && !ag.tasks.includes(n.title)) n.title = ag.tasks[0] ?? n.title;
-    if (ag?.kind === "maquina") applyContract(p, n);   // entradas e saídas passam a ser as do contrato da lib
+    if (hasContract(ag) && !ag!.tasks.includes(n.title)) n.title = ag!.tasks[0] ?? n.title;
+    if (hasContract(ag)) applyContract(p, n);   // entradas e saídas passam a ser as do contrato da lib
     if (n.args) { n.args = Object.fromEntries(Object.entries(n.args).filter(([k]) => n.ins.includes(k))); if (!Object.keys(n.args).length) delete n.args; }
   },
   setTask: (p, a) => {
     const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have a lib function");
     const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Function", 80);
-    if (ag?.kind === "maquina" && !ag.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag.name}`); n.title = t; applyContract(p, n);
+    if (hasContract(ag) && !ag!.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag!.name}`); n.title = t; applyContract(p, n);
   },
   /** Renomeia um dado de entrada ou saída de uma função comum (nas de lib o contrato manda). */
   renameIo: (p, a) => {
@@ -354,9 +359,9 @@ export function parseProject(text: string): Project {
     if (n.t === "fn") {
       if (typeof n.title !== "string") return fail("invalid", `Function ${n.id} without a name`);
       const agent = n.agent == null ? null : String(n.agent), resp = n.resp == null ? null : String(n.resp);
-      if (agent && !agents.some(a => a.id === agent)) return fail("invalid", `Function ${n.id} uses a source that does not exist`); if (resp && !agents.some(a => a.id === resp)) return fail("invalid", `Function ${n.id} uses a person that does not exist`);
+      if (agent && !agent.startsWith("file:") && !agents.some(a => a.id === agent)) return fail("invalid", `Function ${n.id} uses a source that does not exist`); if (resp && !agents.some(a => a.id === resp)) return fail("invalid", `Function ${n.id} uses a person that does not exist`);
       const args = n.args && typeof n.args === "object" ? Object.fromEntries(Object.entries(n.args as Record<string, unknown>).map(([k, v]) => [k, String(v)])) : undefined;
-      return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...(args && Object.keys(args).length ? { args } : {}) };
+      return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...(args && Object.keys(args).length ? { args } : {}), ...(typeof n.file === "string" && n.file ? { file: n.file } : {}) };
     }
     if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
     if (n.t === "for") return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids) };
@@ -381,7 +386,7 @@ export function migrate(p: Project): Project {
   if (gone.length) p.agents = p.agents.filter(a => !gone.includes(a.id));
   for (const f of p.flows) walk([f], n => {
     if (n.t !== "fn") return; if (n.agent && !p.agents.some(a => a.id === n.agent)) { n.agent = null; delete n.args; }
-    const a = agentOf(p, n.agent); if (a?.kind === "maquina") { if (!a.tasks.includes(n.title)) { n.title = a.tasks[0] ?? n.title; applyContract(p, n); } else if (!n.ins.length && !n.outs.length) applyContract(p, n); }   // só completa o que falta: nomes dados às saídas e valores preenchidos ficam
+    const a = agentOf(p, n.agent); if (hasContract(a)) { if (!a!.tasks.includes(n.title)) { n.title = a!.tasks[0] ?? n.title; applyContract(p, n); } else if (!n.ins.length && !n.outs.length) applyContract(p, n); }   // só completa o que falta: nomes dados às saídas e valores preenchidos ficam
   });
   return p;
 }

@@ -18,12 +18,16 @@ const exec = g => {
 const project = () => { let q = emptyProject("T"); q.agents = structuredClone([...DEFAULT_AGENTS]); const go = c => { const x = apply(q, c); q = x.project; return x.created ?? ""; }; return { go, get q() { return q; } }; };
 
 describe.skipIf(!nodeOk)("exportar o código e rodar no Node", () => {
+  it("o exemplo do projeto roda de verdade, só com libs do navegador", () => {
+    const sm = sampleProject(), g = generate(sm.project, sm.example, { runnable: true }), res = exec(g);
+    expect(res.status, res.err + "\n" + g.code).toBe(0); expect(res.out).toMatch(/\{"id":"/); expect(res.out).toContain('{"id":"');
+  });
   it("console.log de verdade: o wrapper recebe o text do flow e chama console.log(text)", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "main" }), a = d.go({ type: "addChild", id: m, title: "Montar mensagem" }); d.go({ type: "addOutput", id: a, name: "mensagem" });
     const b = d.go({ type: "addChild", id: m, title: "x" }); d.go({ type: "assign", id: b, agent: "console" }); d.go({ type: "setArg", id: b, name: "text", value: "mensagem" });
     const c = d.go({ type: "addChild", id: m, title: "y" }); d.go({ type: "assign", id: c, agent: "console" }); d.go({ type: "setArg", id: c, name: "text", value: '"Olá, mundo"' });
     const res = exec(generate(d.q, m, { runnable: true })); expect(res.status, res.err).toBe(0);
-    expect(res.out).toContain("[abstract] montarMensagem"); expect(res.out).toContain("mensagem (simulated)\n"); expect(res.out).toContain("Olá, mundo\n"); expect(res.out).toContain("result: { mensagem: 'mensagem (simulated)' }"); expect(res.out).not.toContain("AsyncFunction");
+    expect(res.out).toContain("mensagem (simulated)\n"); expect(res.out).toContain("Olá, mundo\n"); expect(res.out).toContain("{ mensagem: 'mensagem (simulated)' }"); expect(res.out).not.toContain("AsyncFunction");
   });
   it("libs do navegador com contrato (Math, JSON, Date, crypto, performance) devolvem o dado no formato do flow e o código seguinte usa o nome dele", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "libs" }), mk = (agent, task, args = {}, rename) => { const f = d.go({ type: "addChild", id: m, title: "f" }); d.go({ type: "assign", id: f, agent }); d.go({ type: "setTask", id: f, task }); for (const [k, v] of Object.entries(args)) d.go({ type: "setArg", id: f, name: k, value: v }); if (rename) d.go({ type: "renameData", id: f, to: rename }); return f; };
@@ -37,6 +41,6 @@ describe.skipIf(!nodeOk)("exportar o código e rodar no Node", () => {
     d.go({ type: "assign", id: b, agent: "console" }); d.go({ type: "setArg", id: b, name: "text", value: "itens" }); d.go({ type: "assign", id: c, agent: "ana" }); d.go({ type: "assign", id: e, agent: "console" }); d.go({ type: "setTask", id: e, task: "table" }); d.go({ type: "setArg", id: e, name: "data", value: "[1, 2]" });
     d.go({ type: "wrap", id: b, kind: "for", v: "item", coll: '["a", "b"]' }); d.go({ type: "wrap", id: c, kind: "try" }); const i = d.go({ type: "wrap", id: e, kind: "if", test: "true" }); d.go({ type: "addElse", id: i });
     d.go({ type: "setParallel", id: d.q.flows[0].kids[0].id, on: false });
-    const g = generate(d.q, m, { runnable: true }), res = exec(g); expect(res.status, res.err + "\n" + g.code).toBe(0); expect(res.out).toContain("[person] Ana Souza: Aprovar"); expect(res.out).toContain("result:");
+    const g = generate(d.q, m, { runnable: true }), res = exec(g); expect(res.status, res.err + "\n" + g.code).toBe(0); expect(res.out).toContain("[person] Ana Souza: Aprovar");
   });
 });

@@ -25,16 +25,19 @@ const mouse = async (type, x, y, extra = {}) => { await send("Input.dispatchMous
 const click = async sel => { const c = await center(sel); assert.ok(c, `não achei ${sel}`); await mouse("mouseMoved", ...c); await mouse("mousePressed", ...c, { button: "left", clickCount: 1 }); await mouse("mouseReleased", ...c, { button: "left", clickCount: 1 }); await wait(150); };
 const type = async text => { await send("Input.insertText", { text }); await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r" }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 }); await wait(250); };
 const code = () => ev(`document.getElementById("code").innerText`);
-const flowSel = v => ev(`(()=>{const s=document.getElementById("flowSel");s.value=[...s.options].find(o=>o.textContent==="${v}").value;s.dispatchEvent(new Event("change",{bubbles:true}))})()`);
+const exOpen = async on => { if ((await ev(`!document.querySelector(".app").classList.contains("ex-off")`)) !== on) { await click("#exToggle"); await wait(250); } };
+const delClick = async () => { await mouse("mouseMoved", ...(await center(".ex-fn.cur .ex-n"))); await wait(80); await click(".ex-fn.cur .ex-del"); };
+const reload = async () => { await send("Page.reload"); await wait(1500); await ev(`document.querySelector(".ex-fn")?.click()`); await wait(150); };
+const flowSel = v => ev(`(()=>{const f=[...document.querySelectorAll(".ex-file")].find(r=>r.querySelector(".ex-n").textContent===${JSON.stringify(v.replace(/\.ts$/,""))});document.querySelector('.ex-fn[data-flow="'+f.dataset.flow+'"]').click()})()`);
 const tests = []; const test = (name, fn) => tests.push([name, fn]);
 
 test("cabeçalho da tabela: source e function", async () => { assert.deepEqual(await ev(`[...document.querySelectorAll(".ghead span")].map(s=>s.textContent)`), ["source", "function"]); });
-test("abre com main (só a raiz) e onboarding; seletor lista os dois", async () => {
-  assert.deepEqual(await ev(`[...document.querySelectorAll("#flowSel option")].map(o=>o.textContent)`), ["main", "onboarding"]);
+test("abre com main (só a raiz) e example; seletor lista os dois", async () => {
+  assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main", "example"]);
   assert.match(await code(), /export async function main\(state: State\)/); assert.equal(await ev(`document.querySelectorAll(".grow").length`), 1);
 });
 test("ghost input: hovering and clicking opens the box and adds the input (marker appears at the same spot)", async () => {
-  await click(".ghost[data-kind=in]"); assert.ok(await ev(`!!document.querySelector(".dlg")`)); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 1, "only the value field"); await type("pedido");
+  await click(".ghost[data-kind=in]"); assert.ok(await ev(`!!document.querySelector(".dlg")`)); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); await ev(`document.querySelector(".dlg input[data-k=value]").focus()`); await type("pedido");
   assert.equal(await ev(`!!document.querySelector(".dlg")`), false); assert.ok(await ev(`!!document.querySelector(".plan .dm[data-side=in]")`), "square appears where the ghost was"); assert.equal(await ev(`document.querySelectorAll(".iorow").length`), 0, "no input/output rows anymore"); assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /input = "pedido"/);
 });
 test("ghost output creates the output at once (automatic name); the data box removes it with the trash", async () => {
@@ -50,7 +53,7 @@ test("círculo da função à esquerda do nome (na coluna function), e círculo 
   assert.equal(await ev(`document.querySelectorAll(".grow .nm .fn-dot").length`), 1); assert.ok(await ev(`!!document.querySelector(".grow .fav.arquivo")`));
 });
 test("botões do hover na tabela: filho, irmão, if, for, try; raiz só aceita filho", async () => {
-  await flowSel("onboarding"); await wait(200);
+  await flowSel("example"); await wait(200);
   const rootTools = await ev(`[...document.querySelectorAll(".grow")[0].querySelectorAll(".fl-tools .ib")].map(b=>b.dataset.act)`); assert.deepEqual(rootTools, ["toggle", "addChild"]);
   const rows0 = await ev(`document.querySelectorAll(".grow").length`);
   const hover = async idx => { const c = await ev(`(()=>{const r=document.querySelectorAll(".grow")[${idx}].getBoundingClientRect();return [r.x+r.width*0.55,r.y+r.height/2]})()`); await mouse("mouseMoved", ...c); await wait(100); };
@@ -67,7 +70,7 @@ test("nome do dado na altura do quadrado: entradas à esquerda dele, saídas à 
   assert.ok(ok, "entradas devem ficar à esquerda e saídas à direita do quadrado, na mesma altura");
 });
 test("one data is a square; Add child in its box makes it a cube at the same spot", async () => {
-  await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];a.ui.flow=f.id;const s=document.getElementById("flowSel");s.value=f.id;s.dispatchEvent(new Event("change",{bubbles:true}));const z=a.store.dispatch({type:"addChild",id:f.id,title:"z"});a.store.dispatch({type:"addOutput",id:z,name:"unico"})})()`); await wait(250);
+  await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];a.ui.flow=f.id;document.querySelector('.ex-file[data-flow="'+f.id+'"]').click();const z=a.store.dispatch({type:"addChild",id:f.id,title:"z"});a.store.dispatch({type:"addOutput",id:z,name:"unico"})})()`); await wait(250);
   const cubes0 = await ev(`document.querySelectorAll(".plan .cube").length`);
   const sel = `.plan .dm[data-side=out][data-id="${await ev(`flowApp.store.project.flows[1].kids.at(-1).id`)}"]`;
   await click(sel); assert.equal(await ev(`document.querySelectorAll(".dlg .param").length`), 1); assert.ok(await ev(`!!document.querySelector(".dlg [data-newrow]")`), "the data box has Add child"); await click(".dlg [data-newrow]");
@@ -80,15 +83,15 @@ test("condition box of the if: selects with the context states, every operator, 
   assert.deepEqual(await ev(`[...document.querySelectorAll('.dlg .cond:first-child select[data-k=op] option')].map(o=>o.textContent)`), ["is true / filled in", "is false / empty", "equals", "does not equal", "is greater than", "is greater than or equal to", "is less than", "is less than or equal to", "contains", "does not contain", "starts with", "ends with", "has no items / is blank", "has items / is not blank"]);
   assert.ok(await ev(`[...document.querySelectorAll('.dlg .cond:first-child select[data-k=left] optgroup[label="States available in the context"] option')].length`) > 0, "the left select lists the states of the context");
   assert.equal(await ev(`document.querySelector("#cpreview").textContent`), "condition");
-  await set('.dlg .cond:nth-child(1) select[data-k=left]', "state:draft"); await set('.dlg .cond:nth-child(1) select[data-k=op]', "eq"); await set('.dlg .cond:nth-child(1) select[data-k=rtype]', "text"); await set('.dlg .cond:nth-child(1) input[data-k=rvalue]', "yes");
-  assert.equal(await ev(`document.querySelector("#cpreview").textContent`), 'draft === "yes"');
+  await set('.dlg .cond:nth-child(1) select[data-k=left]', "state:ratio"); await set('.dlg .cond:nth-child(1) select[data-k=op]', "eq"); await set('.dlg .cond:nth-child(1) select[data-k=rtype]', "text"); await set('.dlg .cond:nth-child(1) input[data-k=rvalue]', "yes");
+  assert.equal(await ev(`document.querySelector("#cpreview").textContent`), 'ratio === "yes"');
   await click('.dlg [data-cadd="&&"]'); assert.equal(await ev(`document.querySelectorAll(".dlg .cond").length`), 2); assert.deepEqual(await ev(`[...document.querySelectorAll('.dlg .cond:nth-child(2) select[data-k=join] option')].map(o=>o.textContent)`), ["AND", "OR"]);
-  await set('.dlg .cond:nth-child(2) select[data-k=left]', "state:customer_data"); await set('.dlg .cond:nth-child(2) select[data-k=op]', "notEmpty");
-  await click('.dlg [data-cadd="||"]'); await set('.dlg .cond:nth-child(3) input[data-k=leftv]', "force"); assert.equal(await ev(`document.querySelector("#cpreview").textContent`), 'draft === "yes" && !!customer_data?.length || force');
-  await click(".dlg button.pri"); await wait(150); assert.match(await code(), /if \(draft === "yes" && !!customer_data\?\.length \|\| force\) \{/);
+  await set('.dlg .cond:nth-child(2) select[data-k=left]', "state:id"); await set('.dlg .cond:nth-child(2) select[data-k=op]', "notEmpty");
+  await click('.dlg [data-cadd="||"]'); await set('.dlg .cond:nth-child(3) input[data-k=leftv]', "force"); assert.equal(await ev(`document.querySelector("#cpreview").textContent`), 'ratio === "yes" && !!id?.length || force');
+  await click(".dlg button.pri"); await wait(150); assert.match(await code(), /if \(ratio === "yes" && !!id\?\.length \|\| force\) \{/);
   // reabrir lê a condição de volta nas 3 cláusulas; remover uma cláusula pela lixeira
   await click(".plan .pill.if[data-act=editBlock]"); assert.equal(await ev(`document.querySelectorAll(".dlg .cond").length`), 3); assert.equal(await ev(`document.querySelector('.dlg .cond:nth-child(2) select[data-k=join]').value`), "&&"); assert.equal(await ev(`document.querySelector('.dlg .cond:nth-child(3) select[data-k=join]').value`), "||");
-  await click('.dlg [data-cdel="2"]'); await click('.dlg [data-cdel="1"]'); await set('.dlg .cond:nth-child(1) select[data-k=op]', "truthy"); await click(".dlg button.pri"); await wait(150); assert.match(await code(), /if \(draft\) \{/);
+  await click('.dlg [data-cdel="2"]'); await click('.dlg [data-cdel="1"]'); await set('.dlg .cond:nth-child(1) select[data-k=op]', "truthy"); await click(".dlg button.pri"); await wait(150); assert.match(await code(), /if \(ratio\) \{/);
 });
 test("else do if: aparece no flow (tabela e plano) como o catch, com filho na primeira posição, e remove pela lixeira", async () => {
   const ifRow = ".grow.ifrow", n = sel => ev(`document.querySelectorAll(${JSON.stringify(sel)}).length`), rows0 = await n(".grow.elserow"), bands0 = await n(".plan .band.el"); const c = await center(ifRow); await mouse("mouseMoved", c[0] - 40, c[1]);
@@ -141,17 +144,16 @@ test("modo text: o nome cabe inteiro dentro da barra, com padding", async () => 
   await ev(`flowApp.store.dispatch({type:"rename",id:flowApp.store.project.flows[1].kids.flatMap(function f(n){return n.t==="fn"?[n]:[...n.kids].flatMap(f)})[0].id,title:"um_nome_de_funcao_bem_comprido_mesmo"})`); await wait(200);
   const ok = await ev(`[...document.querySelectorAll(".plan .fbt")].every(t=>{const b=t.getBBox(),r=t.parentNode.querySelector("rect.fn"),w=+r.getAttribute("width");return b.width+16<=w})`); assert.ok(ok, "text maior que a barra");
 });
-test("the play is the first icon on the right (before undo/redo); the flow select has room for its arrow", async () => {
+test("the play is the first icon on the right (before undo/redo); flows live only in the explorer", async () => {
   assert.deepEqual(await ev(`[...document.querySelectorAll(".fx-bar .hist-inline > *")].map(b=>b.id||b.dataset.hist)`), ["exec", "undo", "redo"]);
-  const r = await ev(`(()=>{const e=document.getElementById("flowSel"),c=getComputedStyle(e);return {pad:parseFloat(c.paddingRight),ap:c.appearance,bg:c.backgroundImage.includes("gradient")}})()`);
-  assert.ok(r.pad >= 26, `padding-right ${r.pad}`); assert.equal(r.ap, "none"); assert.ok(r.bg, "custom arrow");
-  const gap = await ev(`(()=>{const e=document.getElementById("flowSel"),c=getComputedStyle(e),w=e.getBoundingClientRect().width,pos=c.backgroundPositionX.split(",").map(x=>x.trim());return {w,pos}})()`); assert.ok(gap.w > 60, "select is wide enough");
+  assert.equal(await ev(`!!document.getElementById("flowSel") || !!document.getElementById("delFlow")`), false);
 });
 test("one trash only in each tooltip; data removal is in the type select; plan title is just the flow name; states under the columns; abstract source", async () => {
   await ev(`flowApp.reset()`); await wait(200);
-  await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];const s=document.getElementById("flowSel");s.value=f.id;s.dispatchEvent(new Event("change",{bubbles:true}))})()`); await wait(300);
-  assert.equal(await ev(`document.querySelector(".plan text.ttl").textContent`), "onboarding", "title: only the flow name");
-  assert.ok((await ev(`document.querySelectorAll(".plan .stt").length`)) >= 3, "states under the columns"); assert.ok(await ev(`!![...document.querySelectorAll(".plan .stt text")].find(t=>t.textContent==="customer_data")`), "customer_data state"); assert.ok(await ev(`!!document.querySelector(".plan .stt .scube")`), "cube state when a function returns several");
+  await ev(`(()=>{const a=flowApp;const f=a.store.project.flows[1];document.querySelector('.ex-file[data-flow="'+f.id+'"]').click()})()`); await wait(300);
+  assert.equal(await ev(`!!document.querySelector(".plan text.ttl")`), false, "no title on top of the plan: the name stays beside");
+  assert.ok((await ev(`document.querySelectorAll(".plan .stt").length`)) >= 3, "states under the columns"); assert.ok(await ev(`!![...document.querySelectorAll(".plan .stt text")].find(t=>t.textContent==="score")`), "score state");
+  await ev(`flowApp.store.dispatch({type:"addChild",id:flowApp.ui.flow,title:"zz"})`); await wait(150);
   assert.ok((await ev(`[...document.querySelectorAll(".grow .rp-n.abs")].filter(e=>e.textContent==="abstract").length`)) >= 1, "'abstract' as the source of abstract functions");
   const fn = await center(".plan .fn"); await mouse("mouseMoved", ...fn); await wait(150); assert.equal(await ev(`document.querySelectorAll(".bar-tools [data-act=remove]").length`), 1); assert.equal(await ev(`[...document.querySelectorAll(".bar-tools .ib")].filter(b=>b.querySelector("path[d^='M3 6h18']")).length`), 1, "one trash in the plan tooltip");
   const row = await ev(`(()=>{const r=document.querySelectorAll('.grow[data-i="2"]')[0].getBoundingClientRect();return [r.x+r.width*0.55,r.y+r.height/2]})()`); await mouse("mouseMoved", ...row); await wait(150);
@@ -165,6 +167,7 @@ test("one trash only in each tooltip; data removal is in the type select; plan t
   assert.equal(await ev(`!!document.querySelector(".dlg")`), false, "removing the only data applies at once"); assert.equal(await ev(`!!document.querySelector('.dm[data-id="${fid}"][data-side=in]')`), false);
 });
 test("zoom: roda do mouse aproxima/afasta no ponteiro; arrastar o fundo move; teclas + − 0", async () => {
+  await exOpen(false);
   await click("#fit"); const z = async () => Number((await ev(`document.getElementById("zv").textContent`)).replace("%", ""));
   const z0 = await z(), c = await ev(`(()=>{const r=document.getElementById("scroll").getBoundingClientRect();return [r.x+r.width*0.7,r.y+r.height*0.8]})()`);
   await send("Input.dispatchMouseEvent", { type: "mouseWheel", x: c[0], y: c[1], deltaX: 0, deltaY: -300 }); await wait(250); const z1 = await z(); assert.ok(z1 > z0, `roda para cima deveria aproximar (${z0} → ${z1})`);
@@ -187,7 +190,7 @@ test("zoom: roda do mouse aproxima/afasta no ponteiro; arrastar o fundo move; te
 });
 test("single complete code (no module/runnable toggle, no Call command tab); contract input is abstract until filled; wrappers; download", async () => {
   assert.equal(await ev(`document.querySelectorAll("[data-view]").length`), 0, "no code-version toggle"); assert.deepEqual(await ev(`[...document.querySelectorAll(".tabs [data-tab]")].map(b=>b.textContent)`), ["TypeScript", "Terminal"]); assert.equal(await ev(`!!document.getElementById("p-cmd")`), false);
-  await ev(`(()=>{const a=flowApp,f=a.store.project.flows[0];a.store.dispatch({type:"rename",id:f.id,title:"main"});const s=document.getElementById("flowSel");s.value=f.id;s.dispatchEvent(new Event("change",{bubbles:true}))})()`); await wait(300);
+  await ev(`(()=>{const a=flowApp,f=a.store.project.flows[0];a.store.dispatch({type:"rename",id:f.id,title:"main"});document.querySelector('.ex-file[data-flow="'+f.id+'"]').click()})()`); await wait(300);
   await ev(`(()=>{const a=flowApp,m=a.ui.flow;const x=a.store.dispatch({type:"addChild",id:m,title:"x"});a.store.dispatch({type:"assign",id:x,agent:"console"})})()`); await wait(250);
   assert.ok(await ev(`[...document.querySelectorAll('select[data-change=assign] optgroup[label="Browser libs"] option')].map(o=>o.textContent).includes("console")`), "console is among the sources");
   const fid = await ev(`flowApp.store.project.flows[0].kids.at(-1).id`), mk = `.plan .dm[data-act=editData][data-id="${fid}"][data-side=in]`;
@@ -196,10 +199,9 @@ test("single complete code (no module/runnable toggle, no Call command tab); con
   assert.match(await code(), /\/\/ expected inputs \(from another layer\): text/); assert.match(await code(), /await log\(\{ \.\.\.state \}\);/); assert.doesNotMatch(await code(), /call\(/);
   // click the marker: box with type + value; fill it in -> concrete, the value shows next to the data, code carries it
   await click(mk); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`)); await type("Hello, world"); await wait(150);
-  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /await log\(\{ \.\.\.state, text: "Hello, world" \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
+  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /text = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
   assert.equal(await ev(`document.querySelectorAll('.ghost[data-id="${fid}"]').length`), 0, "no ghost boxes on a lib function (the contract rules)");
-  assert.match(await code(), /export const wrappers/); assert.match(await code(), /await console\.log\(text as never\)/); assert.match(await code(), /const humans|await main\(\{ \.\.\.wrappers/); assert.equal(await ev(`document.getElementById("fname").textContent`), "main.mts"); assert.equal(await ev(`document.getElementById("runcmd").textContent`), "node --experimental-strip-types main.mts");
-  await ev(`window.__dl=[];HTMLAnchorElement.prototype.click=function(){window.__dl.push(this.download)}`); await click("#dl"); assert.deepEqual(await ev(`window.__dl`), ["main.mts"]);
+  assert.match(await code(), /export const wrappers/); assert.match(await code(), /await console\.log\(text as never\)/); assert.match(await code(), /const humans|await main\(\{ \.\.\.wrappers/); assert.equal(await ev(`document.getElementById("fname").textContent`), "main.mts"); assert.equal(await ev(`!document.getElementById("runcmd") && !document.getElementById("cmdcopy")`), true, "no run-command bar"); await ev(`window.__dl=[];HTMLAnchorElement.prototype.click=function(){window.__dl.push(this.download)}`); await click("#dl"); assert.deepEqual(await ev(`window.__dl`), ["main.mts"]);
 });
 test("clicar na entrada: value puro abre caixa com TIPO e VALOR; objeto abre caixa com filhos e Add child", async () => {
   const fid = await ev(`(()=>{const a=flowApp,m=a.ui.flow;const x=a.store.dispatch({type:"addChild",id:m,title:"tab"});a.store.dispatch({type:"assign",id:x,agent:"console"});a.store.dispatch({type:"setTask",id:x,task:"table"});return x})()`); await wait(250);
@@ -228,18 +230,19 @@ test("clicar na entrada: value puro abre caixa com TIPO e VALOR; objeto abre cai
   await click(sel); await set(".dlg select[data-k=type]", "ref"); assert.ok((await ev(`document.querySelectorAll("#refnames option").length`)) > 0, "lista de data disponíveis"); await set(".dlg input[data-k=value]", "customer_data"); await click(".dlg button.pri"); await wait(150); assert.equal(await value(), "customer_data");
 });
 test("abstract function data: ghost creates it (name + type + value + states); clicking it later opens the SAME box as console.log (static name, select and value only)", async () => {
+  await exOpen(false);
   const fid = await ev(`(()=>{const a=flowApp,m=a.ui.flow;const x=a.store.dispatch({type:"addChild",id:m,title:"common"});return x})()`); await wait(250);
   const node = () => ev(`flowApp.store.project.flows.flatMap(function w(n){return [n,...(n.kids||[]).flatMap(w)]}).find(n=>n.id==="${fid}")`);
   const set = (q, v) => ev(`(()=>{const e=document.querySelector(${JSON.stringify(q)});e.value=${JSON.stringify(v)};e.dispatchEvent(new Event("change",{bubbles:true}))})()`);
   // creating: the ghost box has the name too
-  await click(`.ghost[data-id="${fid}"][data-kind=in]`); assert.equal(await ev(`!!document.querySelector(".dlg input[data-k=pname]")`), false, "no name field even when creating"); assert.equal(await ev(`document.querySelector(".dlg .pn")?.textContent`), "input", "automatic name shown as a label"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "type"); assert.ok(await ev(`!!document.querySelector(".dlg input[data-k=value]")`), "value"); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 1, "only the value field"); assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no Add child");
+  await click(`.ghost[data-id="${fid}"][data-kind=in]`); assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "input", "the name is an editable field on top"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`), "type"); assert.ok(await ev(`!!document.querySelector(".dlg input[data-k=value]")`), "value"); assert.equal(await ev(`document.querySelectorAll(".dlg input").length`), 2, "name and value fields"); assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no Add child");
   await set(".dlg select[data-k=type]", "number"); await set(".dlg input[data-k=value]", "10"); await click(".dlg button.pri"); await wait(150);
-  assert.deepEqual((await node()).ins, ["input"]); assert.deepEqual((await node()).args, { input: "10" }); assert.match(await ev(`[...document.querySelectorAll("text.dn.in")].map(t=>t.textContent).join("|")`), /input = 10/, "the value shows next to the data"); assert.match(await code(), /common\(\{ \.\.\.state, input: 10 \}\)/);
+  assert.deepEqual((await node()).ins, ["input"]); assert.deepEqual((await node()).args, { input: "10" }); assert.match(await ev(`[...document.querySelectorAll("text.dn.in")].map(t=>t.textContent).join("|")`), /input = 10/, "the value shows next to the data"); assert.match(await code(), /input = 10;[\s\d]*await common\(\{ \.\.\.state, input \}\)/);
   // renaming: click the data text in the plan
   await click(`text.dn.in[data-id="${fid}"]`); assert.ok(await ev(`!!document.querySelector(".dlg")`)); await ev(`document.querySelector(".dlg input").value=""`); await type("price"); assert.deepEqual((await node()).ins, ["price"]); assert.deepEqual((await node()).args, { price: "10" });
   // later: same box as a lib function (console.log): name is static, only the select and the value
   await click(`.dm[data-id="${fid}"][data-side=in]`);
-  assert.equal(await ev(`!!document.querySelector(".dlg input[data-k=pname]")`), false, "no name field"); assert.equal(await ev(`document.querySelector(".dlg .pn")?.textContent`), "price", "name shown as a label"); assert.equal(await ev(`!!document.querySelector(".dlg [data-del]")`), false, "no trash");
+  assert.equal(await ev(`document.querySelector(".dlg input[data-k=pname]")?.value`), "price", "name is an editable field on top"); assert.equal(await ev(`!!document.querySelector(".dlg [data-del]")`), false, "no trash");
   assert.equal(await ev(`!!document.querySelector(".dlg [data-newrow]")`), false, "no Add child for a single value"); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`) && await ev(`!!document.querySelector(".dlg input[data-k=value]")`), "select and value");
   assert.ok(await ev(`[...document.querySelectorAll('.dlg select[data-k=type] optgroup[label="States available in the context"] option')].length`) >= 0);
   await set(".dlg input[data-k=value]", "20"); await click(".dlg button.pri"); await wait(150); assert.deepEqual((await node()).args, { price: "20" });
@@ -252,6 +255,7 @@ test("abstract function data: ghost creates it (name + type + value + states); c
   await ev(`flowApp.store.dispatch({type:"setData",id:"${fid}",side:"in",names:[],values:[]})`); await wait(150); assert.deepEqual((await node()).ins, []); assert.equal(await ev(`!!document.querySelector('.dm[data-id="${fid}"][data-side=in]')`), false);
 });
 test("cadastro de responsáveis: criar uma lib com contrato e usá-la; remover solta as funções", async () => {
+  await exOpen(true);
   await click("#agents"); assert.ok(await ev(`!!document.querySelector(".dlg .agl")`));
   await ev(`(()=>{const f=document.querySelector(".dlg form");f.elements.namedItem("kind").value="maquina";f.elements.namedItem("name").value="node:zlib";f.elements.namedItem("tasks").value="gzip(data) -> comprimido; gunzip(data) -> original"})()`); await click(".dlg .agadd button[type=submit]"); await wait(200);
   assert.ok(await ev(`[...document.querySelectorAll(".dlg .agr b")].some(b=>b.textContent==="node:zlib")`), "lib nova na lista");
@@ -262,30 +266,78 @@ test("cadastro de responsáveis: criar uma lib com contrato e usá-la; remover s
   await click("#agents"); await click('.dlg [data-rm-agent]:last-of-type'); await wait(100); await click(".dlg [data-no]");
 });
 test("excluir fluxo (lixeira) pede confirmação e mantém ao menos um", async () => {
-  const n0 = await ev(`document.querySelectorAll("#flowSel option").length`); await click("#delFlow"); assert.ok(await ev(`!!document.querySelector(".dlg")`)); await click(".dlg [data-no]"); assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), n0);
-  await click("#delFlow"); await click(".dlg button.pri"); await wait(200); assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), n0 - 1);
-  while ((await ev(`document.querySelectorAll("#flowSel option").length`)) > 1) { await click("#delFlow"); await click(".dlg button.pri"); await wait(150); }
-  await click("#delFlow"); await click(".dlg button.pri"); await wait(200); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /at least one flow/); assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), 1);
-  await ev(`flowApp.reset()`); await wait(200); assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), 2);
+  await exOpen(true);
+  const n0 = await ev(`document.querySelectorAll(".ex-file").length`); await delClick(); assert.ok(await ev(`!!document.querySelector(".dlg")`)); await click(".dlg [data-no]"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), n0);
+  await delClick(); await click(".dlg button.pri"); await wait(200); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), n0 - 1);
+  while ((await ev(`document.querySelectorAll(".ex-file").length`)) > 1) { await delClick(); await click(".dlg button.pri"); await wait(150); }
+  await delClick(); await click(".dlg button.pri"); await wait(200); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /at least one flow/); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 1);
+  await ev(`flowApp.reset()`); await wait(200); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 2);
 });
 test("salvar: baixa o projeto (.json); abrir: carrega o arquivo; arquivo inválido mostra o erro", async () => {
   await ev(`window.__dl=[];HTMLAnchorElement.prototype.click=function(){window.__dl.push(this.download)}`); await click("#save"); assert.deepEqual(await ev(`window.__dl`), ["flow-project.json"]);
   const json = await ev(`(()=>{const f=flowApp.store.project;return JSON.stringify({format:"flow-novo",version:1,project:{...f,name:"Vindo do arquivo",flows:[{t:"fn",id:"x1",title:"importado",agent:null,resp:null,ins:[],outs:[],kids:[],par:false}],seq:5}})})()`);
   const open = async text => { await ev(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(text)}],"p.json",{type:"application/json"}));const i=document.getElementById("openFile");i.files=dt.files;i.dispatchEvent(new Event("change"))})()`); await wait(300); };
-  await open(json); assert.deepEqual(await ev(`[...document.querySelectorAll("#flowSel option")].map(o=>o.textContent)`), ["importado"]); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /Vindo do arquivo/); assert.equal(await ev(`document.querySelector("[data-hist=undo]").disabled`), true);
-  await open("isto não é json"); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /valid JSON/); assert.deepEqual(await ev(`[...document.querySelectorAll("#flowSel option")].map(o=>o.textContent)`), ["importado"]);
+  await open(json); assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["importado"]); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /Vindo do arquivo/); assert.equal(await ev(`document.querySelector("[data-hist=undo]").disabled`), true);
+  await open("isto não é json"); assert.match(await ev(`document.querySelector(".toast")?.textContent ?? ""`), /valid JSON/); assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["importado"]);
   await ev(`flowApp.reset()`); await wait(200);
 });
 test("persistência: o projeto fica salvo no navegador e volta ao recarregar", async () => {
   await ev(`flowApp.store.dispatch({type:"rename",id:flowApp.store.project.flows[0].id,title:"persistido"})`); await wait(200);
   assert.match(await ev(`localStorage.getItem("flow-novo-projeto-v1")`), /persistido/);
-  await send("Page.reload"); await wait(1500); assert.equal(await ev(`document.querySelector("#flowSel option").textContent`), "persistido", "depois de recarregar o projeto continua o mesmo");
-  await ev(`localStorage.setItem("flow-novo-projeto-v1","corrompido")`); await send("Page.reload"); await wait(1500); assert.deepEqual(await ev(`[...document.querySelectorAll("#flowSel option")].map(o=>o.textContent)`), ["main", "onboarding"], "salvo inválido: volta ao exemplo");
+  await reload(); assert.equal(await ev(`document.querySelector(".ex-file .ex-n").textContent.replace(/\.ts$/,"")`), "persistido", "depois de recarregar o projeto continua o mesmo");
+  await ev(`localStorage.setItem("flow-novo-projeto-v1","corrompido")`); await reload(); assert.deepEqual(await ev(`[...document.querySelectorAll(".ex-file .ex-n")].map(o=>o.textContent.replace(/\.ts$/,""))`), ["main", "example"], "salvo inválido: volta ao exemplo");
+});
+test("explorador: arquivos .ts com funções e dados; toggle e resize como o painel de código", async () => {
+  await exOpen(true);
+  assert.ok(await ev(`document.querySelectorAll(".ex-file").length >= 2 && document.querySelectorAll(".ex-fn").length > 0 && document.querySelectorAll(".ex-data").length === 0`));
+  const w = () => ev(`document.querySelector(".explorer").getBoundingClientRect().width`);
+  const w0 = await w(); await ev(`document.getElementById("exSplitter").focus()`);
+  await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 }); await wait(150);
+  assert.equal(Math.round((await w()) - w0), 24);
+  await click("#exToggle"); assert.equal(await ev(`getComputedStyle(document.querySelector(".explorer")).display`), "none"); await click("#exToggle"); assert.ok((await w()) > 100);
+  const sp = await center("#exSplitter"); await mouse("mouseMoved", ...sp); await mouse("mousePressed", ...sp, { button: "left", clickCount: 2 }); await mouse("mouseReleased", ...sp, { button: "left", clickCount: 2 }); await wait(150); assert.equal(Math.round(await w()), 232);
+});
+test("explorador: + cria função no mesmo arquivo; cada função abre a própria visualização de fluxo", async () => {
+  await exOpen(true); await flowSel("main"); await wait(200);
+  const files0 = await ev(`document.querySelectorAll(".ex-file").length`);
+  await ev(`document.querySelector(".ex-file[data-file='main.ts']").dispatchEvent(new MouseEvent("mouseover",{bubbles:true}))`);
+  await ev(`document.querySelector(".ex-add[data-exadd='main.ts']").click()`); await wait(250);
+  assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), files0, "same file, no new file");
+  assert.equal(await ev(`document.querySelectorAll(".ex-file[data-file='main.ts'] ~ .ex-fn").length >= 2`), true);
+  assert.equal(await ev(`document.getElementById("flowName").textContent`), "main › new_function");
+  assert.equal(await ev(`flowApp.store.project.flows.filter(f=>f.file==="main.ts").length`), 1, "the new function records the file");
+  await ev(`document.querySelector(".ex-fn:not(.cur)").click()`); await wait(250);
+  assert.equal(await ev(`document.querySelectorAll(".ex-fn.cur").length`), 1);
+  await flowSel("example"); await wait(200);
+});
+test("explorador: clicar em Files abre todos os arquivos lado a lado, cada um com as funções empilhadas", async () => {
+  await exOpen(true); const files = await ev(`document.querySelectorAll(".ex-file").length`);
+  await click(".ex-sec-h .n"); await wait(300);
+  assert.equal(await ev(`document.querySelectorAll(".mcol").length`), files);
+  const xs = await ev(`[...document.querySelectorAll(".mcol")].map(c=>c.getBoundingClientRect().left)`); assert.ok(xs.every((x, i) => i === 0 || x > xs[i - 1]), "colunas uma ao lado da outra");
+  assert.match(await code(), /Generated by Flow/); assert.equal(await ev(`document.getElementById("flowName").textContent`), "Files");
+  await flowSel("example"); await wait(250); assert.equal(await ev(`document.querySelectorAll(".mcol").length`), 0);
+});
+test("o play só aparece com uma função de primeira ordem selecionada", async () => {
+  await exOpen(true); await flowSel("example"); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), false);
+  await ev(`document.querySelector(".ex-file").click()`); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), true, "arquivo selecionado: sem play");
+  await click(".ex-sec-h .n"); await wait(250); assert.equal(await ev(`document.getElementById("exec").hidden`), true, "Files: sem play");
+  await ev(`document.querySelector(".mcol .plan [data-sel]").dispatchEvent(new MouseEvent("click",{bubbles:true}))`); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), false, "clicou numa função em Files: play aparece"); assert.match(await ev(`document.getElementById("flowName").textContent`), / › /, "a função selecionada aparece no cabeçalho");
+  await ev(`document.querySelector(".ex-file").click()`); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), true);
+  await flowSel("example"); await wait(200); assert.equal(await ev(`document.getElementById("exec").hidden`), false);
+});
+test("página inicial é Files (todos os arquivos); Sources não fica mais no topo", async () => {
+  await send("Page.reload"); await wait(1500);
+  assert.equal(await ev(`document.getElementById("flowName").textContent`), "Files"); assert.ok((await ev(`document.querySelectorAll(".mcol").length`)) >= 2, "arquivos lado a lado");
+  assert.equal(await ev(`[...document.querySelectorAll(".mcol-t")].every(h=>!!h.querySelector("svg"))`), true, "ícone de arquivo em cada arquivo"); assert.equal(await ev(`[...document.querySelectorAll(".blk-t")].every(h=>!!h.querySelector(".fn-dot"))`), true, "círculo em cada função");
+  assert.equal(await ev(`!!document.querySelector(".topbar #agents")`), false, "sem Sources no header"); assert.equal(await ev(`!!document.querySelector(".explorer #agents, #explorer #agents")`), true);
+  await ev(`document.querySelector(".ex-fn")?.click()`); await wait(150);
 });
 test("o botão de mostrar/esconder o código é o último das opções do Flow", async () => { assert.equal(await ev(`[...document.querySelectorAll(".fx-bar > button, .fx-bar .hist-inline button")].at(-1).id`), "codeToggle"); });
 test("painel de código: linha divisória arrasta (hover destaca), duplo clique restaura, teclado ajusta, botão e Ctrl+\\ mostram/escondem, e tudo persiste", async () => {
+  await exOpen(false);
   const w = () => ev(`Math.round(document.querySelector(".side").getBoundingClientRect().width)`), open = () => ev(`!document.querySelector(".app").classList.contains("code-off")`);
-  await ev(`localStorage.removeItem("flow-novo-ui-v1")`); await send("Page.reload"); await wait(1500);
+  await ev(`localStorage.removeItem("flow-novo-ui-v1")`); await reload();
   assert.ok(await open()); const w0 = await w(); assert.ok(w0 >= 440 && w0 <= 500, `largura inicial ~480 (${w0})`);
   const sp = await center("#splitter"); await mouse("mouseMoved", ...sp); assert.equal(await ev(`getComputedStyle(document.getElementById("splitter")).cursor`), "col-resize");
   assert.ok((await ev(`document.querySelector("#splitter i").getBoundingClientRect().width`)) >= 5, "linha de destaque no hover");
@@ -295,14 +347,14 @@ test("painel de código: linha divisória arrasta (hover destaca), duplo clique 
   const w2 = await w(); assert.ok(w2 < w1 && w2 >= 300, `arrastar para a direita deveria diminuir, sem passar do mínimo (${w1} → ${w2})`);
   await mouse("mouseMoved", ...(await center("#splitter"))); await mouse("mousePressed", ...(await center("#splitter")), { button: "left", clickCount: 1 }); await mouse("mouseMoved", 5, 400, { buttons: 1 }); await mouse("mouseReleased", 5, 400, { button: "left", clickCount: 1 });
   const w3 = await w(), total = await ev(`document.querySelector(".app").clientWidth`); assert.ok(w3 <= total * 0.7 + 1, `o código não passa de 70% da área (${w3}/${total})`); assert.ok((await ev(`document.querySelector(".fx").getBoundingClientRect().width`)) > 200, "o fluxo nunca some");
-  await send("Page.reload"); await wait(1500); const w4 = await w(); assert.ok(Math.abs(w4 - w3) <= 1, `largura persistida (${w3} → ${w4})`);
+  await reload(); const w4 = await w(); assert.ok(Math.abs(w4 - w3) <= 1, `largura persistida (${w3} → ${w4})`);
   const sp3 = await center("#splitter"); await mouse("mouseMoved", ...sp3); await mouse("mousePressed", ...sp3, { button: "left", clickCount: 2 }); await mouse("mouseReleased", ...sp3, { button: "left", clickCount: 2 }); await wait(200);
   assert.ok(Math.abs((await w()) - 480) <= 1, "duplo clique volta aos 480px");
   await ev(`document.getElementById("splitter").focus()`); const key = async (k, mod = 0) => { await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: k, code: k, windowsVirtualKeyCode: k === "ArrowLeft" ? 37 : 39, modifiers: mod }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code: k, windowsVirtualKeyCode: k === "ArrowLeft" ? 37 : 39 }); await wait(150); };
   const k0 = await w(); await key("ArrowLeft"); assert.equal((await w()) - k0, 24); await key("ArrowRight", 8); assert.equal(Math.round(await ev(`document.getElementById("splitter").getAttribute("aria-valuenow")`)), 480 + 24 - 80);
   await click("#codeToggle"); assert.equal(await open(), false); assert.equal(await ev(`document.getElementById("codeToggle").getAttribute("aria-pressed")`), "false"); assert.equal(await ev(`getComputedStyle(document.querySelector(".side")).display`), "none");
   assert.ok((await ev(`document.querySelector(".fx").getBoundingClientRect().width`)) > (await ev(`document.querySelector(".app").clientWidth`)) - 40, "sem o código o fluxo ocupa tudo");
-  await send("Page.reload"); await wait(1500); assert.equal(await open(), false, "fechado persiste"); await ev(`document.activeElement.blur()`);
+  await reload(); assert.equal(await open(), false, "fechado persiste"); await ev(`document.activeElement.blur()`);
   await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "\\", code: "Backslash", windowsVirtualKeyCode: 220, modifiers: 2 }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "\\", code: "Backslash", windowsVirtualKeyCode: 220, modifiers: 2 }); await wait(200); assert.equal(await open(), true, "Ctrl+\\ reabre");
   await click("#fit"); const z0 = await ev(`flowApp.ui.zoom`); await click("#codeToggle"); await wait(300); const z1 = await ev(`flowApp.ui.zoom`); assert.ok(z1 >= z0, `sem o código o zoom ajustado não diminui (${z0} → ${z1})`); await click("#codeToggle");
 });
@@ -315,8 +367,9 @@ test("dicas rápidas: aparecem em ~50 ms e somem ao sair; a barra de ferramentas
   await mouse("mouseMoved", 5, 500); await wait(320); assert.equal(await ev(`!!document.querySelector(".bar-tools")`), false, "barra some logo depois de sair (≤ ~300 ms)");
 });
 test("nova função cria um fluxo e troca para ele; reiniciar volta ao exemplo", async () => {
-  await click("#newFlow"); assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), 3); await ev(`flowApp.reset()`); await wait(200);
-  assert.equal(await ev(`document.querySelectorAll("#flowSel option").length`), 2);
+  await exOpen(true);
+  await click("#newFlow"); assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 3); await ev(`flowApp.reset()`); await wait(200);
+  assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), 2);
 });
 test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
   await ev(`document.querySelector('.tb-temas button[data-id="eternos-black"]').click()`); assert.equal(await ev(`document.documentElement.dataset.tema`), "eternos-black");
@@ -325,6 +378,7 @@ test("temas: trocar de tema não quebra e usa as cores do tema", async () => {
 
 await send("Runtime.enable"); await send("Page.enable");
 await send("Page.navigate", { url: `http://127.0.0.1:${port}/flow-novo.html?tema=eternos-black` }); await wait(1800);
+await ev(`document.querySelector(".ex-fn")?.click()`); await wait(200);
 let failed = 0;
 for (const [name, fn] of tests) { if (process.env.ONLY && !name.includes(process.env.ONLY)) continue; try { await fn(); console.log("  ✓", name); } catch (e) { failed++; console.log("  ✗", name, "\n   ", String(e.message).split("\n").slice(0, 14).join(" | ")); } }
 if (errors.length) { failed++; console.log("  ✗ erros de console:", errors.join(" | ")); }

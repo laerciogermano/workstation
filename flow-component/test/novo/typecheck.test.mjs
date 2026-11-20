@@ -19,7 +19,7 @@ const project = () => { let q = emptyProject("T"); q.agents = structuredClone([.
 
 describe("o código gerado compila sem erros de TypeScript", () => {
   for (const runnable of [false, true]) {
-    it(`onboarding e main do exemplo (${runnable ? "executável" : "módulo"})`, () => {
+    it(`example e main do exemplo (${runnable ? "executável" : "módulo"})`, () => {
       const s = sampleProject();
       for (const f of s.project.flows) { const g = generate(s.project, f.id, { runnable }); expect(check(g.code, g.runFile), g.code).toEqual([]); }
     });
@@ -34,7 +34,7 @@ describe("o código gerado compila sem erros de TypeScript", () => {
     d.go({ type: "setArg", id: a, name: "text", value: '"{\\"n\\": 1}"' }); d.go({ type: "renameData", id: a, to: "parsed" });
     const b = d.go({ type: "addChild", id: m, title: "Show" }); d.go({ type: "assign", id: b, agent: "console" }); d.go({ type: "setArg", id: b, name: "text", value: "parsed" });
     const c = d.go({ type: "addChild", id: m, title: "Table" }); d.go({ type: "assign", id: c, agent: "console" }); d.go({ type: "setTask", id: c, task: "table" }); d.go({ type: "setArg", id: c, name: "data", value: "{ parsed, size: String(parsed).length }" });
-    for (const runnable of [false, true]) { const g = generate(d.q, m, { runnable }); expect(g.code).toContain("await parse({ ...state, text: "); expect(check(g.code, g.runFile), g.code).toEqual([]); }
+    for (const runnable of [false, true]) { const g = generate(d.q, m, { runnable }); expect(g.code).toContain("await parse({ ...state, text })"); expect(check(g.code, g.runFile), g.code).toEqual([]); }
   });
   it("condições e repetições citando data de fora, de dentro e da própria repetição", () => {
     const d = project(), m = d.go({ type: "newFlow", title: "exprs" });

@@ -44,16 +44,18 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     const n = (used.get(base) ?? 0) + 1; used.set(base, n); let name = n === 1 ? base : `${base}${n}`; while (dataNames.has(name) && name !== base) name = `${name}_`; names.set(f.id, name);
   }
   const nameOf = (f: Fn): string => names.get(f.id) ?? camel(f.title);
-  const kindOf = (f: Fn): "abs" | "lib" | "pessoa" => { const a = agentOf(p, f.agent); return a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs"; };
+  const kindOf = (f: Fn): "abs" | "lib" | "pessoa" | "file" => { const a = agentOf(p, f.agent); return a?.kind === "arquivo" ? "file" : a?.kind === "maquina" ? "lib" : a?.kind === "pessoa" ? "pessoa" : "abs"; };
   /** Lib global do navegador (`Math`, `console`…) é usada pelo nome; módulo (`node:zlib`, `pkg/sub`) vira import. */
   const isModule = (n: string): boolean => /[:/@]/.test(n);
   const libVar = (n: string): string => (isModule(n) ? n.replace(/[^A-Za-z0-9_]/g, "_") : n);
 
   const produced = [...new Set(fns.flatMap(f => f.outs))];
   // entradas que vêm de fora (state): as de funções comuns que ninguém produz e as de lib que não foram preenchidas
-  const needed = [...new Set(fns.flatMap(f => f.ins.filter(i => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i))))].filter(i => !produced.includes(i));
+  const rootIns = flow.kids.length ? flow.ins : [];   // entradas declaradas na própria função de primeira ordem: chegam pelo state
+  const needed = [...new Set([...rootIns, ...fns.flatMap(f => f.ins.filter(i => !f.args?.[i]?.trim() && !contractOf(p, f)?.optional?.includes(i)))])].filter(i => !produced.includes(i));
+  const returned = flow.kids.length && flow.outs.length ? flow.outs : produced;   // saídas declaradas na função de primeira ordem; sem elas, tudo o que o fluxo produz
   const abstract = fns.filter(f => kindOf(f) === "abs").map(nameOf);   // sem responsável (ou IA): só o nome; chegam pelo state
-  const libFns = fns.filter(f => kindOf(f) === "lib"), callables = fns.filter(f => kindOf(f) !== "pessoa").map(nameOf);   // as de lib também chegam pelo state, como wrappers
+  const libFns = fns.filter(f => kindOf(f) === "lib"), callables = fns.filter(f => kindOf(f) !== "pessoa" && kindOf(f) !== "file").map(nameOf);   // as de lib também chegam pelo state, como wrappers
   const libs = [...new Set(fns.filter(f => kindOf(f) === "lib").map(f => agentOf(p, f.agent)!.name))].filter(isModule);
   const hasHumans = fns.some(f => kindOf(f) === "pessoa");
 
@@ -67,11 +69,16 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     for (const v of scope) entries.set(v, v);
     for (const i of f.ins) if (produced.includes(i) || scope.includes(i)) entries.set(i, i);
     // entrada de lib preenchida: o valor fixo ou o dado escolhido vai pelo nome da entrada do contrato
-    for (const i of f.ins) { const expr = f.args?.[i]?.trim(); if (expr) entries.set(i, expr); }   // valor preenchido (qualquer função, lib ou abstrata)
+    for (const i of f.ins) { const expr = f.args?.[i]?.trim(); if (expr) entries.set(i, initOf(f, i, scope) ? i : expr); }   // valor preenchido: já inicializado antes da chamada (initLines); referência a um dado segue inline
     const args = `{ ...state${[...entries].map(([k, v]) => (k === v ? `, ${k}` : `, ${k}: ${v}`)).join("")}${err ? ", error" : ""} }`;
     const a = agentOf(p, f.agent);
-    return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a!.name)}, ${JSON.stringify(f.title)}, ${opts.runnable ? `data(${args})` : args})` : `${nameOf(f)}(${args})`;
+    return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a!.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
   };
+  /** Valor preenchido que não é só uma referência a outro dado (literal, objeto, template, chamada…): vira variável inicializada logo antes da função. */
+  const HELPERS = new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);   // nomes que o código gerado já usa: ficam inline
+  const isRef = (e: string): boolean => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e);
+  const initOf = (f: Fn, i: string, scope: string[]): string | undefined => { const e = f.args?.[i]?.trim(); return e && !isRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : undefined; };
+  const initLines = (fs: readonly Fn[], scope: string[], ind: string): string[] => fs.flatMap(f => f.ins.map(i => [i, initOf(f, i, scope)] as const).filter((x): x is readonly [string, string] => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
   const assign = (f: Fn, expr: string): string => (f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`);
   /** Wrapper de uma função de lib: converte o formato do flow (state com os nomes das entradas) para os argumentos da lib e devolve as saídas no formato do flow. */
   const wrapperOf = (f: Fn): string[] => {
@@ -85,29 +92,47 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     return [head, ...body, "  },"];
   };
 
-  const list = (nodes: readonly Node[], ind: string, scope: string[], err: boolean): void => {
+  const declared = new Set<string>();   // nomes já declarados (let / const) até o ponto da emissão
+  const typeOf = (n: string): string => (inExpr.has(n) ? "any" : "unknown");
+  const letLine = (names: readonly string[], ind: string): void => { const ns = names.filter(n => !declared.has(n)); if (!ns.length) return; ns.forEach(n => declared.add(n)); emit(`${ind}let ${ns.map(n => `${n}${ty(`: ${typeOf(n)}`)}`).join(", ")};`); };
+  const list = (nodes: readonly Node[], ind: string, scope: string[], err: boolean, key = "r"): void => {
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i]!, a = lines.length + 1;
       if (n.t === "fn" && n.kids.length === 0) {
         // função + as que rodam junto dela (par)
         const group: Fn[] = [n];
         while (nodes[i + 1]?.t === "fn" && (nodes[i + 1] as Fn).par && (nodes[i + 1] as Fn).kids.length === 0) group.push(nodes[++i] as Fn);
-        if (group.length === 1) { emit(`${ind}${assign(n, callOf(n, scope, err))}`); mark(n.id, a); continue; }
-        emit(`${ind}const par${a} = await Promise.all([  // parallel`);
+        const ds = (declAt.get(`${key}|${n.id}`) ?? []).filter(x => !declared.has(x));   // dados que nascem aqui: declarados logo antes do primeiro uso
+        if (group.length === 1) {
+          const inl = new Set<string>();
+          // valores preenchidos: `const x = ...` se só esta função o escreve, `let x = ...` se outras também escrevem; se já existe, só atribui
+          const pre = n.ins.flatMap(x => { const e = initOf(n, x, scope); if (!e) return []; if (ds.includes(x)) { inl.add(x); declared.add(x); return [`${ind}${writers.get(x) === 1 ? "const" : "let"} ${x}${ty(`: ${typeOf(x)}`)} = ${e};`]; } return [`${ind}${x} = ${e};`]; });
+          const constOut = n.outs.length > 0 && n.outs.every(o => ds.includes(o) && writers.get(o) === 1);
+          letLine(ds.filter(x => !inl.has(x) && !(constOut && n.outs.includes(x))), ind);
+          pre.forEach(l => emit(l)); const a0 = lines.length + 1;
+          if (constOut) { n.outs.forEach(o => declared.add(o)); emit(`${ind}const { ${n.outs.join(", ")} }${ty(n.outs.some(o => inExpr.has(o)) ? ": any" : "")} = await ${callOf(n, scope, err)};`); }
+          else emit(`${ind}${assign(n, callOf(n, scope, err))}`);
+          map[n.id] = [pre.length || ds.length ? a : a0, lines.length]; continue;
+        }
+        letLine(ds, ind); initLines(group, scope, ind).forEach(l => emit(l)); const a0 = lines.length + 1;
+        emit(`${ind}const par${a0} = await Promise.all([  // parallel`);
         group.forEach(g => emit(`${ind}  ${callOf(g, scope, err)},`));
         emit(`${ind}]);`);
-        group.forEach((g, k) => { if (g.outs.length) emit(kindOf(g) === "lib" && contractOf(p, g) && g.outs.length === 1 ? `${ind}${g.outs[0]} = par${a}[${k}];` : `${ind}({ ${g.outs.join(", ")} } = par${a}[${k}]${ty(" as State")});`); });
+        group.forEach((g, k) => { if (g.outs.length) emit(kindOf(g) === "lib" && contractOf(p, g) && g.outs.length === 1 ? `${ind}${g.outs[0]} = par${a0}[${k}];` : `${ind}({ ${g.outs.join(", ")} } = par${a0}[${k}]${ty(" as State")});`); });
         group.forEach(g => { map[g.id] = [a, lines.length]; });
-      } else if (n.t === "fn") { list(n.kids, ind, scope, err); map[n.id] = [map[n.kids[0]!.id]?.[0] ?? a, lines.length]; }
+      } else if (n.t === "fn") { list(n.kids, ind, scope, err, key); map[n.id] = [map[n.kids[0]!.id]?.[0] ?? a, lines.length]; }
       else if (n.t === "if") {
-        emit(`${ind}if (${n.test}) {`); list(n.kids, ind + "  ", scope, err);
-        if (n.elseKids.length) { emit(`${ind}} else {`); list(n.elseKids, ind + "  ", scope, err); }
-        emit(`${ind}}`); mark(n.id, a);
+        letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
+        emit(`${ind}if (${n.test}) {`); list(n.kids, ind + "  ", scope, err, `${n.id}:k`);
+        if (n.elseKids.length) { emit(`${ind}} else {`); list(n.elseKids, ind + "  ", scope, err, `${n.id}:e`); }
+        emit(`${ind}}`); mark(n.id, a1);
       } else if (n.t === "for") {
-        emit(`${ind}for (const ${n.v} of ${n.coll}) {`); list(n.kids, ind + "  ", [...scope, n.v], err); emit(`${ind}}`); mark(n.id, a);
+        letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
+        emit(`${ind}for (const ${n.v} of ${n.coll}) {`); list(n.kids, ind + "  ", [...scope, n.v], err, `${n.id}:k`); emit(`${ind}}`); mark(n.id, a1);
       } else {
-        emit(`${ind}try {`); list(n.kids, ind + "  ", scope, err); emit(`${ind}} catch (error) {`);
-        list(n.catchKids, ind + "  ", scope, true); emit(`${ind}  return { ...state, error };`); emit(`${ind}}`); mark(n.id, a);
+        letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
+        emit(`${ind}try {`); list(n.kids, ind + "  ", scope, err, `${n.id}:k`); emit(`${ind}} catch (error) {`);
+        list(n.catchKids, ind + "  ", scope, true, `${n.id}:c`); emit(`${ind}  return { ...state, error };`); emit(`${ind}}`); mark(n.id, a1);
       }
     }
   };
@@ -126,9 +151,51 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   };
   scan(flow.kids, []);
   const fromState = [...fromStateSet].filter(n => !callables.includes(n) && n !== "humans");
+  const dataNamesLoop = new Set<string>(); walk(flow.kids, n => { if (n.t === "for") dataNamesLoop.add(n.v); });
+  // dados que nascem de um valor preenchido no flow view: declarados no início, inicializados antes de cada função que os usa
+  const inits = [...new Set(fns.flatMap(f => f.ins.filter(i => initOf(f, i, []))))].filter(i => !produced.includes(i) && !fromState.includes(i));
+
+  // onde cada dado nasce: no menor bloco que cobre todos os usos, imediatamente antes da primeira instrução que o usa
+  const declarable = new Set<string>([...produced, ...(flow.kids.length ? flow.outs : []), ...inits]);
+  type Use = { keys: string[]; ids: string[]; seq: number };
+  const usesOf = new Map<string, Use[]>(), writers = new Map<string, number>(); let seq = 0;
+  const addUse = (name: string, trail: readonly (readonly [string, string])[]): void => { if (!declarable.has(name)) return; const l = usesOf.get(name) ?? []; l.push({ keys: trail.map(t => t[0]), ids: trail.map(t => t[1]), seq: seq++ }); usesOf.set(name, l); };
+  const scanDecl = (nodes: readonly Node[], key: string, trail: readonly (readonly [string, string])[], scope: string[]): void => {
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i]!;
+      if (n.t === "fn" && n.kids.length === 0) {
+        const group: Fn[] = [n]; while (nodes[i + 1]?.t === "fn" && (nodes[i + 1] as Fn).par && (nodes[i + 1] as Fn).kids.length === 0) group.push(nodes[++i] as Fn);
+        const here = [...trail, [key, n.id] as const];
+        for (const g of group) {
+          for (const x of g.ins) { const e = g.args?.[x]?.trim(); if (e) { idsOf(e).forEach(id => addUse(id, here)); if (initOf(g, x, scope)) { addUse(x, here); writers.set(x, (writers.get(x) ?? 0) + 1); } } else if (produced.includes(x)) addUse(x, here); }
+          for (const o of g.outs) { addUse(o, here); writers.set(o, (writers.get(o) ?? 0) + 1); }
+        }
+      } else if (n.t === "fn") scanDecl(n.kids, key, trail, scope);
+      else {
+        const here = [...trail, [key, n.id] as const];
+        if (n.t === "if") { idsOf(n.test).forEach(id => addUse(id, here)); scanDecl(n.kids, `${n.id}:k`, here, scope); scanDecl(n.elseKids, `${n.id}:e`, here, scope); }
+        else if (n.t === "for") { idsOf(n.coll).forEach(id => addUse(id, here)); scanDecl(n.kids, `${n.id}:k`, here, [...scope, n.v]); }
+        else { scanDecl(n.kids, `${n.id}:k`, here, scope); scanDecl(n.catchKids, `${n.id}:c`, here, scope); }
+      }
+    }
+  };
+  scanDecl(flow.kids, "r", [], []); returned.forEach(o => addUse(o, [["r", "__ret"]]));
+  const declAt = new Map<string, string[]>();
+  for (const [name, us] of usesOf) {
+    const f0 = us[0]!; let l = 0;
+    while (us.every(u => u.keys.length > l + 1 && u.keys[l + 1] === f0.keys[l + 1] && u.ids[l] === f0.ids[l])) l++;
+    const firstUse = us.reduce((m, u) => (u.seq < m.seq ? u : m)), k = `${f0.keys[l]}|${firstUse.ids[l]}`;
+    declAt.set(k, [...(declAt.get(k) ?? []), name]);
+  }
 
   emit(`// Generated by Flow · flow ${JSON.stringify(flow.title)}`);
   for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});   // module: only works if the browser can load it` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
+  // funções de outros arquivos: importadas pelo nome com que o outro arquivo as exporta
+  const byFile = new Map<string, Fn[]>(); for (const f of fns.filter(x => kindOf(x) === "file")) { const k = agentOf(p, f.agent)!.name; byFile.set(k, [...(byFile.get(k) ?? []), f]); }
+  for (const [file, list] of byFile) {
+    const names = [...new Set(list.map(f => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
+    emit(opts.js ? `const { ${names.map(n => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});   // another file of the project` : `import { ${names.join(", ")} } from ${JSON.stringify("./" + file)};`);
+  }
   if (lines.length > 1) emit("");
   if (ts) { emit("type State = Record<string, unknown>;"); if (callables.length) emit("type Fn = (state: State) => Promise<State>;"); if (hasHumans) emit("type Humans = { ask: (who: string, what: string, args: State) => Promise<State> };"); }
   emit("");
@@ -139,10 +206,10 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};  // people: come from the state`);
   if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map(n => JSON.stringify(n)).join(" | ")}, Fn>`)};  // functions: come from the state (lib ones are the wrappers exported below)`);
   if (fromState.length) emit(`  const { ${fromState.join(", ")} } = state${ty(" as Record<string, any>")};  // data read in conditions and loops`);
-  if (produced.length) emit(`  let ${produced.map(o => `${o}${ty(`: ${inExpr.has(o) ? "any" : "unknown"}`)}`).join(", ")};`);
   if (flow.kids.length) list(flow.kids, "  ", [], false);
-  else { const a = lines.length + 1; emit(`  ${assign(flow, callOf(flow, [], false))}`); mark(flow.id, a); }
-  emit(produced.length ? `  return { ${produced.join(", ")} };` : "  return state;");
+  else { letLine([...produced, ...inits], "  "); initLines([flow], [], "  ").forEach(l => emit(l)); const a = lines.length + 1; emit(`  ${assign(flow, callOf(flow, [], false))}`); mark(flow.id, a); }
+  letLine(declAt.get("r|__ret") ?? [], "  ");   // saída que nenhuma função produz: nasce antes do retorno
+  emit(returned.length ? `  return { ${returned.join(", ")} };` : "  return state;");
   emit("}");
   map[flow.id] = [startBody, lines.length - 1];
   emit("");
@@ -154,19 +221,38 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   }
   const fnName = camel(flow.title), runFile = `${slug(flow.title)}.mts`, runCommand = `node --experimental-strip-types ${runFile}`;
   if (opts.runnable) {
-    emit(opts.js ? "// ── runs in the browser" : `// ── local run: ${runCommand}  (Node ≥ 22.6; the flag is optional on 23.6+)`);
-    if (abstract.length) {
-      emit(`const stubs${ty(": Record<string, Fn>")} = {  // simulators of the abstract functions (in the real system they come from the state)`);
-      for (const f of fns.filter(x => kindOf(x) === "abs")) emit(`  ${nameOf(f)}: async state => { console.log("[abstract] ${nameOf(f)}", data(state)); return {${f.outs.length ? " " : ""}${f.outs.map(o => `${o}: ${JSON.stringify(`${o} (simulated)`)}`).join(", ")}${f.outs.length ? " " : ""}}; },`);
-      emit("};");
-    }
-    if (abstract.length || hasHumans || produced.length) emit(`function data(state${ty(": State")})${ty(": State")} { return Object.fromEntries(Object.entries(state).filter(([, v]) => typeof v !== "function")); }`);
-    if (hasHumans) emit(`const humans${ty(": Humans")} = { ask: async (who, what, args) => { console.log(\`[person] \${who}: \${what}\`, data(args)); return {}; } };`);
-    const given = [...(libFns.length ? ["...wrappers"] : []), ...(abstract.length ? ["...stubs"] : []), ...(hasHumans ? ["humans"] : []), ...needed.map(n => `${n}: ${JSON.stringify(`${n} (simulated)`)}`)];
-    // só imprime o que o fluxo produz (nunca o state inteiro, que carrega as funções); sem saídas, só o que as funções logam
-    if (produced.length) { emit(`const result = await ${fnName}({ ${given.join(", ")} });`); emit('console.log("result:", data(result));'); }
-    else emit(`await ${fnName}({ ${given.join(", ")} });`);
+    emit(opts.js ? "// ── runs in the browser" : `// ── run: ${runCommand}  (Node ≥ 22.6)`);
+    // simuladores inline: abstratas devolvem as saídas "(simulated)"; a pessoa só registra a pergunta; o que vem de fora entra com valor de exemplo
+    const sim = (f: Fn): string => `${nameOf(f)}: async () => (${f.outs.length ? `{ ${f.outs.map(o => `${o}: ${JSON.stringify(`${o} (simulated)`)}`).join(", ")} }` : "{}"})`;
+    const given = [...(libFns.length ? ["...wrappers"] : []), ...fns.filter(x => kindOf(x) === "abs").map(sim), ...(hasHumans ? [`humans: { ask: async (who${ty(": string")}, what${ty(": string")}) => (console.log(\`[person] \${who}: \${what}\`), {}) }`] : []), ...needed.map(n => `${n}: ${flow.args?.[n]?.trim() || JSON.stringify(`${n} (simulated)`)}`)];
+    const arg = !given.length ? "" : given.length < 3 && given.every(g => g.length < 30) ? `{ ${given.join(", ")} }` : `{\n${given.map(g => `  ${g},`).join("\n")}\n}`;
+    if (returned.length) { emit(`const result = await ${fnName}(${arg});`); emit("console.log(result);"); }
+    else emit(`await ${fnName}(${arg});`);
   } else emit(`// run: await ${fnName}({ ${[...(libFns.length ? ["...wrappers"] : []), ...needed].join(", ")}${libFns.length || needed.length ? " " : ""}});`);
   void isComposite; void walk;
   return { code: lines.join("\n") + "\n", map, fileName: flowFile(flow), name: fnName, runFile, runCommand };
+}
+
+/** Código do arquivo inteiro: cabeçalho (imports e tipos) uma vez, cada função uma embaixo da outra e os wrappers de lib juntos. */
+export function generateFile(p: Project, ids: readonly string[], options: GenOptions = {}): { code: string; fileName: string } {
+  const imports = new Set<string>(), types = new Set<string>(), parts: string[][] = [], wrappers = new Map<string, string[]>(); let wDoc = "", wOpen = "";
+  let fileName = "";
+  for (const id of ids) {
+    const g = generate(p, id, { ...options, runnable: false }); fileName ||= g.fileName;
+    const L = g.code.replace(/\n$/, "").split("\n"), docI = L.findIndex(l => l.startsWith("/** ") && l.includes(" · ")), endI = L.findIndex(l => l.startsWith("/** Lib function wrappers") || l.startsWith("// run:"));
+    for (const l of L.slice(1, Math.max(1, docI))) { if (/^(import |const \{.*\} = await import)/.test(l)) imports.add(l); else if (l.startsWith("type ")) types.add(l); }
+    const stop = endI === -1 ? L.length : endI; parts.push(L.slice(Math.max(0, docI), stop)); while (parts[parts.length - 1]!.length && !parts[parts.length - 1]![parts[parts.length - 1]!.length - 1]!.trim()) parts[parts.length - 1]!.pop();
+    if (endI !== -1 && L[endI]!.startsWith("/** Lib function wrappers")) {
+      wDoc ||= L[endI]!; wOpen ||= L[endI + 1]!; let cur: string[] | null = null;
+      for (const l of L.slice(endI + 2)) {
+        if (l === "};") break;
+        if (/^  \w+: async/.test(l)) cur = wrappers.has(l) ? null : (wrappers.set(l, []), wrappers.get(l)!);   // o mesmo wrapper de outra função não se repete
+        cur?.push(l);
+      }
+    }
+  }
+  const out: string[] = [`// Generated by Flow · file ${JSON.stringify(fileName)}`, ...imports, ...(imports.size ? [""] : []), ...types, ...(types.size ? [""] : [])];
+  parts.forEach(pt => { out.push(...pt, ""); });
+  if (wrappers.size) out.push(wDoc, wOpen, ...[...wrappers.values()].flat(), "};", "");
+  return { code: out.join("\n"), fileName };
 }

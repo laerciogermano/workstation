@@ -11,7 +11,7 @@ function base() {
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
   const root = run({ type: "newFlow", title: "R" });
   const ids = ["A", "B", "C", "D"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string, string];
-  const ui = (x: Partial<Ui> = {}): Ui => ({ closed: new Set(), sel: null, txtIn: false, ...x });
+  const ui = (x: Partial<Ui> = {}): Ui => ({ closed: new Set(), sel: null, txtIn: true, ...x });
   const view = (x: Partial<Ui> = {}) => build(p, root, ui(x));
   return { run, root, ids, ui, view, get p(): Project { return p; } };
 }
@@ -71,15 +71,15 @@ describe("remover: sempre o mesmo ícone de lixeira", () => {
 describe("tabela", () => {
   it("raiz mostra o arquivo; função sem responsável mostra círculo tracejado com +; concreta mostra a lib; todas têm o círculo da função", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[1]!, agent: "math" });
-    const h = t.view().table; expect(h).toContain("r.ts"); expect(h).toContain("fav arquivo"); expect(h).toContain("fav none"); expect(h).toContain("Math"); expect(h).toContain("fav maquina");
-    expect((h.match(/class="fn-dot /g) ?? []).length).toBe(4); expect(h).toContain("fn-dot conc"); expect(h).toContain("fn-dot nag");
+    const h = t.view().table; expect(h).toContain('class="rp-n">r<'); expect(h).toContain("fav arquivo"); expect(h).toContain("fav none"); expect(h).toContain("Math"); expect(h).toContain("fav maquina");
+    expect((h.match(/class="fn-dot /g) ?? []).length).toBe(5);   // as 4 folhas + a função de primeira ordem (círculo, não árvore) expect(h).toContain("fn-dot conc"); expect(h).toContain("fn-dot nag");
   });
   it("lib concreta mostra seletor de função; IA mostra a etiqueta do agente e a pessoa responsável", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "math" }); t.run({ type: "assign", id: t.ids[1]!, agent: "lia" }); t.run({ type: "setResp", id: t.ids[1]!, resp: "ana" });
     const h = t.view().table; expect(h).toContain('class="task-pick"'); expect(h).toContain("<option selected>random</option>"); expect(h).toContain("agent-tag"); expect(h).toContain("Ana Souza"); expect(h).toContain('data-change="setResp"');
   });
   it("clicar no text renomeia (data-act=rename); composta tem a sanfona", () => {
-    const t = base(); t.run({ type: "addChild", id: t.ids[0]!, title: "A1" }); const h = t.view().table; expect(h).toContain('data-act="rename"'); expect(h).toContain('data-act="toggle"'); expect(h).toContain("gi");
+    const t = base(); t.run({ type: "addChild", id: t.ids[0]!, title: "A1" }); const h = t.view().table; expect(h).toContain('data-act="rename"'); expect(h).toContain('data-act="toggle"'); expect(h).toContain("fn-dot");
     expect(t.view({ closed: new Set([t.ids[0]!]) }).table).not.toContain(">A1<"); expect(t.view({ closed: new Set([t.ids[0]!]) }).table).toContain("car shut");
   });
   it("blocos: linhas if/for/try/catch com rótulos e as mesmas ferramentas; indentam por profundidade", () => {
@@ -97,7 +97,7 @@ describe("tabela", () => {
 
 describe("plano (SVG)", () => {
   it("uma barra por função folha, nome ao lado (ou dentro com o modo text), colunas e passos", () => {
-    const t = base(), v = t.view(); expect((v.plan.match(/class="fn nag/g) ?? []).length).toBe(4); expect(v.plan).toContain("s0"); expect(v.plan).toContain("s3"); expect((v.plan.match(/class="lbl"/g) ?? []).length).toBe(5);   // 4 funções + o resumo da raiz
+    const t = base(), v = t.view({ txtIn: false }); expect((v.plan.match(/class="fn nag/g) ?? []).length).toBe(4); expect(v.plan).toContain("s0"); expect(v.plan).toContain("s3"); expect((v.plan.match(/class="lbl"/g) ?? []).length).toBe(5);   // 4 funções + o resumo da raiz
     const inside = t.view({ txtIn: true }).plan; expect(inside).toContain('class="fbt nag"'); expect((inside.match(/class="lbl"/g) ?? []).length).toBe(1);
   });
   it("função concreta e abstrata têm classes diferentes; selecionada ganha destaque", () => {
@@ -117,9 +117,9 @@ describe("plano (SVG)", () => {
   });
 
   it("fantasmas de entrada/saída só onde falta; marcas onde há data (abstrata = vazada, concreta = cheia)", () => {
-    const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(8);
+    const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(10);   // 8 das funções + entrada e saída da função de primeira ordem
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
-    const p = t.view().plan; expect((p.match(/class="ghost"/g) ?? []).length).toBe(8 - 3); expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="addIo"');
+    const p = t.view().plan; expect((p.match(/class="ghost"/g) ?? []).length).toBe(10 - 3); expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="addIo"');
   });
   it("blocos: banda tracejada, etiqueta, alça e losango do if; catch vermelho; edição só em if/for", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
@@ -158,10 +158,26 @@ describe("quadrado do dado", () => {
     expect(names.map(n => [n.side, n.anchor, n.n])).toEqual([["in", "end", "customer_data"], ["out", "start", "draft"]]);
     expect(names.map(n => n.x)).toEqual([colX(1) - G.GAP, colX(2) + G.GAP]); expect(names.every(n => Math.abs(n.y - 3.5 - cy) < 0.01)).toBe(true);   // mesma altura do quadrado
   });
+  it("um dado do tipo objeto aparece como cubo", () => {
+    const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "v" }); t.run({ type: "setArg", id: t.ids[0]!, name: "v", value: "{ a: 1 }" });
+    expect(t.view().plan).toContain('class="cube');
+  });
+  it("estados embaixo do plano: só os novos de cada passo, ou todos os disponíveis (os antigos ficam esmaecidos)", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "r1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "r2" });
+    const news = (t.view().plan.match(/class="stt"/g) ?? []).length, all = t.view({ allData: true }).plan;
+    expect(news).toBe(2); expect((all.match(/class="stt/g) ?? []).length).toBeGreaterThan(news); expect(all).toContain('class="stt old"');
+  });
+  it("dado inicializado com valor aparece nos estados: objeto vira cubo com os campos indentados embaixo", async () => {
+    const { objectFields, statesByStep, stateRows } = await import("../../novo/view");
+    expect(objectFields("{ id, score: 1, ...rest, nested: { a, b } }")).toEqual(["id", "score", "rest", "nested"]); expect(objectFields("ratio * 100")).toBeNull();
+    const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "value" }); t.run({ type: "setArg", id: t.ids[0]!, name: "value", value: "{ id, score }" });
+    const items = [...statesByStep(t.view().scene).values()].flat().find(i => i.name === "value")!; expect(items).toMatchObject({ cube: true, fields: ["id", "score"] }); expect(stateRows([items])).toBe(3);
+    const plan = t.view().plan; expect(plan).toContain('class="stt sub"'); expect(plan).toContain(">value<");
+  });
   it("listas longas viram reticências no plano (a lista inteira fica no tooltip) e o nome da função se afasta do dado da saída", () => {
     expect(dataText(["a", "b"])).toBe("a, b"); expect(dataText(["proposal_approved", "customer_data"])).toMatch(/…$/); expect(dataText(["proposal_approved", "customer_data"]).length).toBe(24);
-    const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "result" }); const p = t.view().plan;
-    const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>A</)![1]); expect(lbl).toBeGreaterThan(colX(1) + G.GAP + "result".length * 5.6);
+    const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "result" }); const p = t.view({ txtIn: false }).plan;
+    const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>A</)![1]); expect(lbl).toBeGreaterThan(colX(1, G.WS) + G.GAP + "result".length * 5.6);
   });
   it("entrada cujo dado alguém produz = quadrado cheio; vinda de fora = vazado; saída sempre cheia", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "de_fora" });
@@ -223,9 +239,9 @@ describe("o valor aparece ao lado do dado de entrada", () => {
 
 describe("modo text: barra na largura do text, com padding", () => {
   it("colW cresce com o nome mais comprido e só no modo text", () => {
-    const t = base(); expect(colW(t.view().scene, { txtIn: false })).toBe(G.W); expect(colW(t.view().scene, { txtIn: true })).toBe(G.W);
+    const t = base(); expect(colW(t.view().scene, { txtIn: false })).toBe(G.WS); expect(colW(t.view().scene, { txtIn: true })).toBe(G.W);
     t.run({ type: "rename", id: t.ids[0]!, title: "um_nome_de_funcao_bem_comprido_mesmo_de_verdade" });
-    const big = colW(t.view().scene, { txtIn: true }); expect(big).toBeGreaterThan(G.W); expect(colW(t.view().scene, { txtIn: false })).toBe(G.W);
+    const big = colW(t.view().scene, { txtIn: true }); expect(big).toBeGreaterThan(G.W); expect(colW(t.view().scene, { txtIn: false })).toBe(G.WS);
   });
   it("a barra tem folga dos dois lados e as colunas acompanham", () => {
     const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "um_nome_de_funcao_bem_comprido_mesmo_de_verdade" });

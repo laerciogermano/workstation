@@ -1,9 +1,14 @@
-# Deploy — eternos-mutaveis.laerciogermano.com
+# Deploy — Eternos Mutáveis
 
-**URL:** https://eternos-mutaveis.laerciogermano.com/  
-**Host:** Contabo `185.250.37.82` · root `/opt/eternos-mutaveis` · nginx site `eternos-mutaveis`  
-**DNS:** Hostinger (zona `laerciogermano.com`) · A `eternos-mutaveis` → `185.250.37.82`  
-**Nota:** hPanel não tem plano de hospedagem; o domínio só aponta DNS. CDP Germano `:9230` para editar zona.
+**URL:** https://eternosmutaveis.com/ · https://www.eternosmutaveis.com/ · https://eternos-mutaveis.laerciogermano.com/  
+**Host:** Contabo `185.250.37.82` · root `/opt/eternos-mutaveis` · nginx [`nginx-eternos-mutaveis.conf`](nginx-eternos-mutaveis.conf)  
+**DNS Hostinger**
+- zona `eternosmutaveis.com`: A `@` → `185.250.37.82` (TTL 300); CNAME `www` → `eternosmutaveis.com`
+- zona `laerciogermano.com`: A `eternos-mutaveis` → `185.250.37.82`
+**Cert LE:** `eternos-mutaveis.laerciogermano.com` (SAN: apex + www)  
+**Nota:** hPanel só DNS (sem plano de hospedagem). CDP Germano `:9230` para editar zona.
+
+**Antes → depois (apex 2026-11-20):** parking A `@` `2.57.91.91` → Contabo `185.250.37.82`; nginx/`certbot --expand` com `eternosmutaveis.com` + `www`. Rollback: A `@` → `2.57.91.91`; tirar os hostnames do `server_name`/cert; `nginx -t && systemctl reload nginx`.
 
 ## Republicar (todas as versões, com seletor)
 
@@ -17,6 +22,6 @@ Rollback para a 3.0 sozinha: `cp livro-v3.html /tmp/x/index.html` + arquivos ref
 
 ## Rollback
 
-1. hPanel → DNS `laerciogermano.com` → excluir A `eternos-mutaveis`
+1. hPanel → DNS `eternosmutaveis.com` → A `@` de volta a `2.57.91.91` (ou excluir); DNS `laerciogermano.com` → excluir A `eternos-mutaveis`
 2. No Contabo: `rm /etc/nginx/sites-enabled/eternos-mutaveis /etc/nginx/sites-available/eternos-mutaveis; rm -rf /opt/eternos-mutaveis; nginx -t && systemctl reload nginx`
 3. `certbot delete --cert-name eternos-mutaveis.laerciogermano.com`

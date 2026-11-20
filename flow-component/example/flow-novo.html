@@ -37,7 +37,8 @@
   .topbar .brand{display:inline-flex;align-items:flex-start;gap:9px;color:var(--ink)}.topbar .brand .mark{width:22px;height:22px;flex:none;margin-top:1px}
   .topbar .brand-text{display:flex;flex-direction:column;gap:2px;min-width:0}
   .topbar .brand-row{display:inline-flex;align-items:center;gap:8px}
-  .topbar .beta{font:700 9px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-2);border-radius:99px;padding:1px 7px;line-height:1.5}
+  .topbar .beta,.topbar .ver{font:700 9px var(--mono);letter-spacing:.06em;color:var(--muted);border:1px solid var(--line-2);border-radius:99px;padding:1px 7px;line-height:1.5}
+  .topbar .beta{text-transform:uppercase}
   .topbar .epigraph{font:500 11px var(--font);color:var(--muted);line-height:1.3}
   .topbar .epigraph em{font-style:normal;color:var(--body)}
   .topbar .docs-link{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}.topbar .docs-link:hover{color:var(--ink);background:var(--wash)}
@@ -230,7 +231,7 @@
 </style>
 </head>
 <body>
-<header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="beta" title="Under development" aria-label="Prototype — under development">prototype</span></span><span class="epigraph">"Everything flows, except flow" - Heraclitus</span></span></span><span class="sp"></span></header>
+<header class="topbar"><span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="ver" title="Version 0.1" aria-label="Version 0.1">0.1</span><span class="beta" title="Under development" aria-label="Prototype — under development">prototype</span></span><span class="epigraph">"Everything flows, except flow" - Heraclitus</span></span></span><span class="sp"></span></header>
 <div id="app"></div>
 <footer class="site-foot"><span>FOP</span><span class="sep">·</span><a href="/LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contato@laerciogermano.com">contato@laerciogermano.com</a></footer>
 <script>document.write(`<script src="flow-novo.js?v=${Date.now()}"><\/script>`);</script>

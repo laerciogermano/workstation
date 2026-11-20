@@ -17,6 +17,8 @@
 
 **Antes → depois (faixa 1ª ordem / leaf):** `bande co` ignorava raiz e folhas → raiz cobre filhos; cada leaf ganha traço na própria linha; `planGutter = (maxDepth+1)×IND` e `x = depth×IND`. Rollback: só composição `!leaf && depth>0`; `x = (depth-1)×IND`; gutter `maxDepth×IND`.
 
+**Antes → depois (cor do traço):** `bande.co` usava `--ink` → agora `--fn` (azul da função); if/else=`--wrn`, for=`--loop`, try=`--okc`, catch=`--fail` (iguais às pills). Rollback: `.bande.co{stroke:color-mix(…var(--ink)…)}`.
+
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.
 
 **Antes → depois (nome = referência / init):** entrada com literal (`text = "…"`) não contava como produção → quem usava o mesmo nome ficava vazado e nos estados como “de fora”. Agora init entra em `produced`/`made`/`dataLinks`. Rollback: só `outs` nesses conjuntos.

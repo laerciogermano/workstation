@@ -34,13 +34,13 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button type="button" role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button type="button" role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
-      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts"${SHOW_CODE ? "" : " hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      ${SHOW_CODE ? `<div class="tabs" role="tablist"><button type="button" role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button type="button" role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span></div>
+      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>` : ""}
       <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><button type="button" class="term-toggle" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}<span class="tstat" id="tstat">Terminal</span></button><button type="button" id="tRun" class="tbtn" title="Run (Ctrl+Enter)" aria-label="Run">${icon("play")}</button><button type="button" id="tClear" class="tbtn" title="Clear" aria-label="Clear">${icon("eraser")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
   const $ = <T extends HTMLElement = HTMLElement>(s: string): T => host.querySelector(s) as T;
-  const el = { flowName: $("#flowName"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), zv: $("#zv"), explorer: $("#exTree") };
+  const el = { flowName: $("#flowName"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: host.querySelector<HTMLElement>("#code"), meta: host.querySelector<HTMLElement>("#meta"), fname: host.querySelector<HTMLElement>("#fname"), selname: host.querySelector<HTMLElement>("#selname"), zv: $("#zv"), explorer: $("#exTree") };
   const multiClick = (e: Event): void => {   // clicar em qualquer ponto da área da função (vista de arquivo / Files) a seleciona
     const t = e.target as HTMLElement; if (t.closest("[data-act],[data-sel],[data-hover],[data-drag],button,select,input,.ghost,.bar-tools,.fl-tools")) return;
     const id = t.closest<HTMLElement>("[data-fid]")?.dataset["fid"]; if (!id || ui.sel === id) return; ui.sel = id; ui.flow = id; render();
@@ -186,6 +186,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     let fileCode: ReturnType<typeof generateFile> | null; const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel && !(fileView && multi) ? gen.map[ui.sel] : undefined;
     fileCode = fileView && multi ? (fileView === "*" ? { code: [...new Set(p.flows.map(f => flowFile(f)))].map(file => generateFile(p, p.flows.filter(f => flowFile(f) === file).map(f => f.id)).code).join("\n"), fileName: "project.ts" } : generateFile(p, p.flows.filter(f => flowFile(f) === fileView).map(f => f.id))) : null;
     fileCodeText = fileCode?.code ?? null;
+    if (!SHOW_CODE || !el.code) return;   // sem ?dev=true não há painel TypeScript
     if (fileCode) { lines.splice(0, lines.length, ...fileCode.code.replace(/\n$/, "").split("\n")); }
     // cores do plano: if âmbar · for branco · try verde · catch/dado vermelho · função azul
     // highlight no texto cru e só depois esc — escapar antes quebrava &lt;/&gt; (o regex coloria "lt"/"gt")
@@ -209,10 +210,11 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       return out + esc(l.slice(i));
     };
     el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
-    el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile; el.meta.textContent = `${lines.length} lines`;
-    const n = ui.sel ? locate(p, ui.sel)?.node : undefined; el.selname.textContent = n ? (n.t === "fn" ? n.title : n.t) : "";
+    if (el.fname) el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile;
+    if (el.meta) el.meta.textContent = `${lines.length} lines`;
+    const n = ui.sel ? locate(p, ui.sel)?.node : undefined; if (el.selname) el.selname.textContent = n ? (n.t === "fn" ? n.title : n.t) : "";
   }
-  const scrollToSel = (): void => { const r = ui.sel && gen?.map[ui.sel]; if (!r) return; const e = el.code.querySelector<HTMLElement>(`[data-n="${r[0]}"]`); if (e) el.code.scrollTo({ top: Math.max(0, e.offsetTop - 60), behavior: "smooth" }); };
+  const scrollToSel = (): void => { if (!el.code) return; const r = ui.sel && gen?.map[ui.sel]; if (!r) return; const e = el.code.querySelector<HTMLElement>(`[data-n="${r[0]}"]`); if (e) el.code.scrollTo({ top: Math.max(0, e.offsetTop - 60), behavior: "smooth" }); };
   /** Posição e escala da vista (a "câmera"): arrastar o fundo mexe no pan, a roda mexe no zoom. */
   function applyView(): void { el.zoom.style.transform = `translate(${ui.pan.x}px, ${ui.pan.y}px) scale(${ui.zoom})`; el.zv.textContent = Math.round(ui.zoom * 100) + "%"; }
   function fit(): void {
@@ -511,8 +513,10 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     host.querySelectorAll(".pane").forEach(pn => { const on = pn.id === `p-${name}`; pn.classList.toggle("on", on); if (pn.id === "p-ts") pn.hidden = !SHOW_CODE || !on; });
   };
   host.querySelectorAll<HTMLElement>("[data-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset["tab"] as "ts" | "term")));
-  $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
-  $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });
+  if (SHOW_CODE) {
+    $("#dl").addEventListener("click", () => { if (!gen) return; const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" })); a.href = url; a.download = gen.runFile; host.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); });
+    $("#copy").addEventListener("click", async () => { await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {}); $("#copy").textContent = "Copied"; setTimeout(() => ($("#copy").textContent = "Copy"), 1200); });
+  }
   const reset = (): void => { const s = sampleProject(); store.load(s.project); ui.flow = s.main; ui.sel = null; (ui.closed as Set<string>).clear(); auto = true; };
   host.ownerDocument.addEventListener("keydown", e => {
     const tg = e.target as HTMLElement; if (/input|textarea|select/i.test(tg.tagName)) return;

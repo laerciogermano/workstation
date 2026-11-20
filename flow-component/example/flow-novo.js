@@ -2176,13 +2176,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
     </section>
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
-      <div class="tabs" role="tablist"${SHOW_CODE ? "" : " hidden"}><button type="button" role="tab" data-tab="ts" aria-selected="${SHOW_CODE}">TypeScript</button><button type="button" role="tab" data-tab="term" aria-selected="${!SHOW_CODE}">Terminal</button><span class="sp"></span></div>
-      <section class="pane${SHOW_CODE ? " on" : ""}" id="p-ts"${SHOW_CODE ? "" : " hidden"}><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
+      ${SHOW_CODE ? `<div class="tabs" role="tablist"><button type="button" role="tab" data-tab="ts" aria-selected="true">TypeScript</button><button type="button" role="tab" data-tab="term" aria-selected="false">Terminal</button><span class="sp"></span></div>
+      <section class="pane on" id="p-ts"><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>` : ""}
       <section class="pane term${!SHOW_CODE ? " on" : ""}" id="p-term"><div class="thead"><button type="button" class="term-toggle" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}<span class="tstat" id="tstat">Terminal</span></button><button type="button" id="tRun" class="tbtn" title="Run (Ctrl+Enter)" aria-label="Run">${icon("play")}</button><button type="button" id="tClear" class="tbtn" title="Clear" aria-label="Clear">${icon("eraser")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
-    const el = { flowName: $("#flowName"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: $("#code"), meta: $("#meta"), fname: $("#fname"), selname: $("#selname"), zv: $("#zv"), explorer: $("#exTree") };
+    const el = { flowName: $("#flowName"), scroll: $("#scroll"), sizer: $("#sizer"), zoom: $("#zoom"), table: $("#table"), plan: $("#plan"), code: host.querySelector("#code"), meta: host.querySelector("#meta"), fname: host.querySelector("#fname"), selname: host.querySelector("#selname"), zv: $("#zv"), explorer: $("#exTree") };
     const multiClick = (e) => {
       const t = e.target;
       if (t.closest("[data-act],[data-sel],[data-hover],[data-drag],button,select,input,.ghost,.bar-tools,.fl-tools")) return;
@@ -2523,6 +2523,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const lines = gen.code.replace(/\n$/, "").split("\n"), r = ui.sel && !(fileView && multi) ? gen.map[ui.sel] : void 0;
       fileCode = fileView && multi ? fileView === "*" ? { code: [...new Set(p.flows.map((f) => flowFile(f)))].map((file) => generateFile(p, p.flows.filter((f) => flowFile(f) === file).map((f) => f.id)).code).join("\n"), fileName: "project.ts" } : generateFile(p, p.flows.filter((f) => flowFile(f) === fileView).map((f) => f.id)) : null;
       fileCodeText = fileCode?.code ?? null;
+      if (!SHOW_CODE || !el.code) return;
       if (fileCode) {
         lines.splice(0, lines.length, ...fileCode.code.replace(/\n$/, "").split("\n"));
       }
@@ -2548,12 +2549,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return out + esc(l.slice(i));
       };
       el.code.innerHTML = lines.map((l, i) => `<div class="ln${r && i + 1 >= r[0] && i + 1 <= r[1] ? " hl" : ""}" data-n="${i + 1}"><span class="g">${i + 1}</span><span class="t">${hl(l) || " "}</span></div>`).join("");
-      el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile;
-      el.meta.textContent = `${lines.length} lines`;
+      if (el.fname) el.fname.textContent = fileCode ? fileCode.fileName.replace(/\.ts$/, ".mts") : gen.runFile;
+      if (el.meta) el.meta.textContent = `${lines.length} lines`;
       const n = ui.sel ? locate(p, ui.sel)?.node : void 0;
-      el.selname.textContent = n ? n.t === "fn" ? n.title : n.t : "";
+      if (el.selname) el.selname.textContent = n ? n.t === "fn" ? n.title : n.t : "";
     }
     const scrollToSel = () => {
+      if (!el.code) return;
       const r = ui.sel && gen?.map[ui.sel];
       if (!r) return;
       const e = el.code.querySelector(`[data-n="${r[0]}"]`);
@@ -3141,22 +3143,24 @@ ${given.map((g) => `  ${g},`).join("\n")}
       });
     };
     host.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset["tab"])));
-    $("#dl").addEventListener("click", () => {
-      if (!gen) return;
-      const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" }));
-      a.href = url;
-      a.download = gen.runFile;
-      host.append(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
-    });
-    $("#copy").addEventListener("click", async () => {
-      await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {
+    if (SHOW_CODE) {
+      $("#dl").addEventListener("click", () => {
+        if (!gen) return;
+        const a = host.ownerDocument.createElement("a"), url = URL.createObjectURL(new Blob([fileCodeText ?? gen.code], { type: "text/plain" }));
+        a.href = url;
+        a.download = gen.runFile;
+        host.append(a);
+        a.click();
+        a.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
       });
-      $("#copy").textContent = "Copied";
-      setTimeout(() => $("#copy").textContent = "Copy", 1200);
-    });
+      $("#copy").addEventListener("click", async () => {
+        await navigator.clipboard?.writeText(fileCodeText ?? gen?.code ?? "").catch(() => {
+        });
+        $("#copy").textContent = "Copied";
+        setTimeout(() => $("#copy").textContent = "Copy", 1200);
+      });
+    }
     const reset = () => {
       const s = sampleProject();
       store.load(s.project);

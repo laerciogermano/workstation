@@ -14,6 +14,16 @@ export interface ArgDraft { type: ArgType; value: string; fields: { name: string
 export const emptyDraft = (type: ArgType = "text"): ArgDraft => ({ type, value: type === "boolean" ? "false" : "", fields: [] });
 
 const IDENT = /^[A-Za-z_$][\w$]*$/, PATH = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/, NUM = /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i;
+/** Literais JS que parecem identificador — NÃO são referência a dado do fluxo. */
+const LITERAL_IDENTS = new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+/**
+ * Expressão é só um nome de dado (ou caminho `a.b` / `a[0]`)?
+ * `true`/`false`/`null`/… são literais: viram valor inicializado, não referência.
+ */
+export const isDataRef = (e: string): boolean => {
+  const v = e.trim(); if (!v || LITERAL_IDENTS.has(v)) return false;
+  return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
+};
 
 /** Expressão TypeScript do valor; vazio = sem valor (a entrada volta a ficar abstrata). */
 export function buildArg(d: ArgDraft): string {

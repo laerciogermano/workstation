@@ -1,6 +1,6 @@
 import { icon, KIND_ICON } from "./icons";
 import { agentOf, contractOf, filesOf, hasContract,  cubeName, flowFile, insideBlock, isCube, isRoot, locate, type Agent, type Fn, type Node, type Project } from "./model";
-import { exprIdents } from "./args";
+import { exprIdents, isDataRef } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
 /** Geometria do plano (px). IND = degrau de indentação; no diagrama, cada barra lateral tem largura IND. */
@@ -12,15 +12,17 @@ export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: bo
 export const esc = (s: unknown): string => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 const tw = (t: string, px = 6.1): number => Math.ceil(t.length * px);
 /** Lista de dados em uma linha só, com reticências quando passa de `max` caracteres (a lista completa vai no tooltip). */
-/** Texto do dado de entrada ao lado do marcador: o nome E o valor (`text = "Hello"`; `?` quando ainda não foi preenchido). Cubo: nome do cubo + os campos com valores. */
+/** Valor preenchido de uma entrada (vazio = abstrata / ainda sem valor). */
 const valueOf = (f: Fn, n: string): string => f.args?.[n]?.trim() || "";
-export function inputLabel(p: Project, f: Fn): string {
-  const lib = !!contractOf(p, f), one = (n: string): string => (lib ? `${n} = ${valueOf(f, n) || "?"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n);
-  return isCube(f.ins) ? (lib || f.ins.some(n => valueOf(f, n)) ? `${cubeName(f, "in")} { ${f.ins.map(one).join(", ")} }` : cubeName(f, "in")) : one(f.ins[0] ?? "");
+/** Nome do dado ao lado do marcador — sem valor; o valor fica só no estado embaixo. Cubo: só o nome do cubo. */
+export function inputLabel(_p: Project, f: Fn): string {
+  return isCube(f.ins) ? cubeName(f, "in") : (f.ins[0] ?? "");
 }
 /** Tooltip do dado de entrada: todos os campos, com valores completos. */
 export const inputTip = (p: Project, f: Fn): string => { const lib = !!contractOf(p, f); return f.ins.map(n => (lib ? `${n} = ${valueOf(f, n) || "(not filled in yet)"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n)).join("\n"); };
 export const dataText = (names: readonly string[], max = 24): string => { const t = names.join(", "); return t.length > max ? `${t.slice(0, max - 1)}…` : t; };
+/** Rótulo do estado embaixo: `nome` ou `nome = valor` (cortado). */
+export const stateLabel = (name: string, value?: string, max = 26): string => value != null && value !== "" ? dataText([`${name} = ${value}`], max) : dataText([name], max);
 export const colX = (s: number, w: number = G.W, gutter = 0): number => gutter + G.OX + s * w;
 export const rowY = (i: number): number => G.HEAD + i * G.RH;
 export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps, w, planGutter(sc)) + 160;
@@ -28,9 +30,18 @@ export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps,
 export const PAD = 12;
 export const colW = (sc: Scene, ui: Pick<Ui, "txtIn" | "minW">): number => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map(l => tw((l.node as Fn).title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
 /** Estados (dados produzidos) que aparecem embaixo de cada coluna, como no Flow IDE: quem termina no passo anterior à coluna. */
-export interface StateItem { name: string; cube: boolean; fields: string[]; /** já existia em estado anterior (só aparece em "todos") */ old?: boolean; /** dado de fora (state): entrada que ninguém produz */ abs?: boolean; /** função dona do dado e lado (para o menu do estado) */ owner?: string; side?: "in" | "out" }
-/** Campos de primeiro nível de um objeto literal (`{ a: 1, b, ...c }` → a, b, c); null se não for objeto. */
-export function objectFields(expr: string): string[] | null {
+export interface StateItem {
+  name: string; cube: boolean; fields: string[];
+  /** valor inicializado (literal/expr); no rodapé aparece como `nome = valor` */
+  value?: string;
+  /** valor de cada campo quando o valor é um objeto literal */
+  fieldValues?: Readonly<Record<string, string>>;
+  /** já existia em estado anterior (só aparece em "todos") */ old?: boolean;
+  /** dado de fora (state): entrada que ninguém produz */ abs?: boolean;
+  /** função dona do dado e lado (para o menu do estado) */ owner?: string; side?: "in" | "out";
+}
+/** Pares nome/valor de um objeto literal (`{ a: 1, b, ...c }` → a=1, b, c); null se não for objeto. */
+export function objectPairs(expr: string): { name: string; value?: string }[] | null {
   const e = expr.trim(); if (!e.startsWith("{") || !e.endsWith("}")) return null;
   const parts: string[] = []; let depth = 0, cur = "", q = "";
   for (const ch of e.slice(1, -1)) {
@@ -40,17 +51,29 @@ export function objectFields(expr: string): string[] | null {
     if (ch === "," && depth === 0) { parts.push(cur); cur = ""; } else cur += ch;
   }
   parts.push(cur);
-  return parts.map(x => x.trim()).filter(Boolean).map(x => /^([A-Za-z_$][\w$]*)\s*:/.exec(x)?.[1] ?? x.replace(/^\.\.\./, "").trim());
+  return parts.map(x => x.trim()).filter(Boolean).map(x => {
+    const m = /^([A-Za-z_$][\w$]*)\s*:\s*(.+)$/s.exec(x);
+    if (m) return { name: m[1]!, value: m[2]!.trim() };
+    return { name: x.replace(/^\.\.\./, "").trim() };
+  });
 }
-const isRefExpr = (e: string): boolean => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e.trim());
+/** Campos de primeiro nível de um objeto literal; null se não for objeto. */
+export function objectFields(expr: string): string[] | null {
+  const p = objectPairs(expr); return p && p.map(x => x.name);
+}
 export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
 export function statesByStep(sc: Scene, all = false): Map<number, StateItem[]> {
   // composição (não-folha) também entra: as entradas/saídas da camada aparecem no rodapé como as marcas no diagrama
   const m = new Map<number, StateItem[]>(), add = (col: number, it: StateItem): void => { const list = m.get(col) ?? []; if (list.some(x => x.name === it.name)) return; list.push(it); m.set(col, list); };
   for (const r of sc.rows) {
     if (r.kind !== "fn") continue; const f = r.node as Fn;
-    // dado inicializado com um valor logo antes da função (ex.: value = { id, score }): existe a partir do início dela; objeto = cubo com os campos
-    for (const i of f.ins) { const e = f.args?.[i]?.trim(); if (!e || isRefExpr(e)) continue; const fields = objectFields(e); add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], owner: f.id, side: "in" }); }
+    // dado inicializado com um valor logo antes da função (ex.: value = { id, score } / text = false): existe a partir do início dela; o valor vai só no rodapé
+    for (const i of f.ins) {
+      const e = f.args?.[i]?.trim(); if (!e || isDataRef(e)) continue;
+      const pairs = objectPairs(e), fields = pairs?.map(p => p.name) ?? null;
+      const fieldValues = pairs ? Object.fromEntries(pairs.filter(p => p.value != null).map(p => [p.name, p.value!])) : undefined;
+      add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
+    }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
   }
   // dados abstratos (entradas de fora: as do flow, das composições e das folhas que ninguém produz): aparecem no estado em que são usados, como a marca no diagrama
@@ -230,9 +253,9 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     let row = 0;
     for (const it of items) {
       const y = bot + 34 + row++ * STATE_ROW;
-      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
-      // o cubo mostra os campos logo abaixo, indentados
-      if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`); }
+      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+      // o cubo mostra os campos (com valor, se houver) logo abaixo, indentados
+      if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld]; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`); }
     }
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);

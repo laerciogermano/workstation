@@ -149,6 +149,10 @@ describe("valor preenchido em função abstrata", () => {
     run({ type: "setArg", id: s, name: "preco", value: "10" }); const { code } = gen(); expect(code).toContain("const preco: number = 10;"); expect(code).toContain("separarItens({ ...state, pedido, preco })"); expect(code).not.toContain("expected inputs (from another layer): preco");
     run({ type: "setArg", id: s, name: "preco", value: '{ moeda: "BRL", valor: pedido }' }); expect(gen().code).toContain('const preco: Record<string, unknown> = { moeda: "BRL", valor: pedido };');
   });
+  it("booleano/literal: declara antes e passa pelo nome — nunca text: false inline", () => {
+    const t = base(); t.run({ type: "assign", id: t.s, agent: "console" }); t.run({ type: "setArg", id: t.s, name: "text", value: "false" });
+    const code = t.gen().code; expect(code).toContain("const text: boolean = false;"); expect(code).toContain("await log({ ...state, text });"); expect(code).not.toMatch(/text:\s*false/);
+  });
 });
 
 describe("nomes de funções e de dados nunca colidem", () => {

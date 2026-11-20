@@ -586,6 +586,12 @@
   var IDENT = /^[A-Za-z_$][\w$]*$/;
   var PATH = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
   var NUM = /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i;
+  var LITERAL_IDENTS = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+  var isDataRef = (e) => {
+    const v = e.trim();
+    if (!v || LITERAL_IDENTS.has(v)) return false;
+    return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
+  };
   function buildArg(d) {
     switch (d.type) {
       case "text":
@@ -970,17 +976,16 @@
       for (const i of f.ins) if (produced.includes(i) || scope.includes(i) || needed.includes(i)) entries.set(i, i);
       for (const i of f.ins) {
         const expr = f.args?.[i]?.trim();
-        if (expr) entries.set(i, initOf(f, i, scope) ? i : expr);
+        if (expr) entries.set(i, initOf(f, i, scope) || !isDataRef(expr) ? i : expr);
       }
       const args = `{ ...state${[...entries].map(([k, v]) => k === v ? `, ${k}` : `, ${k}: ${v}`).join("")}${err ? ", error" : ""} }`;
       const a = agentOf(p, f.agent);
       return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
     };
     const HELPERS = /* @__PURE__ */ new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);
-    const isRef = (e) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e);
     const initOf = (f, i, scope) => {
       const e = f.args?.[i]?.trim();
-      return e && !isRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : void 0;
+      return e && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : void 0;
     };
     const initLines = (fs, scope, ind) => fs.flatMap((f) => f.ins.map((i) => [i, initOf(f, i, scope)]).filter((x) => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
     const assign = (f, expr) => f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`;
@@ -1455,9 +1460,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var valueOf = (f, n) => f.args?.[n]?.trim() || "";
-  function inputLabel(p, f) {
-    const lib3 = !!contractOf(p, f), one = (n) => lib3 ? `${n} = ${valueOf(f, n) || "?"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n;
-    return isCube(f.ins) ? lib3 || f.ins.some((n) => valueOf(f, n)) ? `${cubeName(f, "in")} { ${f.ins.map(one).join(", ")} }` : cubeName(f, "in") : one(f.ins[0] ?? "");
+  function inputLabel(_p, f) {
+    return isCube(f.ins) ? cubeName(f, "in") : f.ins[0] ?? "";
   }
   var inputTip = (p, f) => {
     const lib3 = !!contractOf(p, f);
@@ -1467,12 +1471,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const t = names.join(", ");
     return t.length > max ? `${t.slice(0, max - 1)}\u2026` : t;
   };
+  var stateLabel = (name, value, max = 26) => value != null && value !== "" ? dataText([`${name} = ${value}`], max) : dataText([name], max);
   var colX = (s, w = G.W, gutter = 0) => gutter + G.OX + s * w;
   var rowY = (i) => G.HEAD + i * G.RH;
   var planWidth = (sc, w = G.W) => colX(sc.nSteps, w, planGutter(sc)) + 160;
   var PAD = 12;
   var colW = (sc, ui) => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
-  function objectFields(expr) {
+  function objectPairs(expr) {
     const e = expr.trim();
     if (!e.startsWith("{") || !e.endsWith("}")) return null;
     const parts = [];
@@ -1496,9 +1501,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
       } else cur += ch;
     }
     parts.push(cur);
-    return parts.map((x) => x.trim()).filter(Boolean).map((x) => /^([A-Za-z_$][\w$]*)\s*:/.exec(x)?.[1] ?? x.replace(/^\.\.\./, "").trim());
+    return parts.map((x) => x.trim()).filter(Boolean).map((x) => {
+      const m = /^([A-Za-z_$][\w$]*)\s*:\s*(.+)$/s.exec(x);
+      if (m) return { name: m[1], value: m[2].trim() };
+      return { name: x.replace(/^\.\.\./, "").trim() };
+    });
   }
-  var isRefExpr = (e) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e.trim());
   var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
   function statesByStep(sc, all = false) {
     const m = /* @__PURE__ */ new Map(), add = (col, it) => {
@@ -1512,9 +1520,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const f = r.node;
       for (const i of f.ins) {
         const e = f.args?.[i]?.trim();
-        if (!e || isRefExpr(e)) continue;
-        const fields = objectFields(e);
-        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], owner: f.id, side: "in" });
+        if (!e || isDataRef(e)) continue;
+        const pairs = objectPairs(e), fields = pairs?.map((p) => p.name) ?? null;
+        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) : void 0;
+        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
       }
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
     }
@@ -1693,10 +1702,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       let row = 0;
       for (const it of items) {
         const y = bot + 34 + row++ * STATE_ROW;
-        out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.fields.join(", "))}</title></g>`);
+        out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-sthover="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.cube ? "" : it.name)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX2(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX2(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX2(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
         if (it.cube) for (const fld of it.fields) {
-          const fy = bot + 34 + row++ * STATE_ROW;
-          out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX2(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX2(col) + 18}" y="${fy + 3.2}">${esc(dataText([fld], 24))}</text></g>`);
+          const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld];
+          out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX2(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX2(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`);
         }
       }
     }

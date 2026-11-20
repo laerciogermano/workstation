@@ -1,4 +1,4 @@
-import { exprIdents } from "./args";
+import { exprIdents, isDataRef } from "./args";
 import { agentOf, contractOf, fnsOf, flowFile, isComposite, kidsOf, locate, slug, walk, type Fn, type Node, type Project } from "./model";
 
 /**
@@ -78,15 +78,15 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     if (kindOf(f) === "local") for (const d of declared) entries.set(d, d);   // a função local não enxerga as variáveis do pai: recebe pelo state tudo o que já nasceu
     for (const i of f.ins) if (produced.includes(i) || scope.includes(i) || needed.includes(i)) entries.set(i, i);   // entrada definida no flow e vinda de fora: lida do state e repassada
     // entrada de lib preenchida: o valor fixo ou o dado escolhido vai pelo nome da entrada do contrato
-    for (const i of f.ins) { const expr = f.args?.[i]?.trim(); if (expr) entries.set(i, initOf(f, i, scope) ? i : expr); }   // valor preenchido: já inicializado antes da chamada (initLines); referência a um dado segue inline
+    // valor literal já virou variável (initOf); referência a outro dado usa o nome; NUNCA literais inline (`text: false`)
+    for (const i of f.ins) { const expr = f.args?.[i]?.trim(); if (expr) entries.set(i, initOf(f, i, scope) || !isDataRef(expr) ? i : expr); }
     const args = `{ ...state${[...entries].map(([k, v]) => (k === v ? `, ${k}` : `, ${k}: ${v}`)).join("")}${err ? ", error" : ""} }`;
     const a = agentOf(p, f.agent);
     return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a!.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
   };
   /** Valor preenchido que não é só uma referência a outro dado (literal, objeto, template, chamada…): vira variável inicializada logo antes da função. */
   const HELPERS = new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);   // nomes que o código gerado já usa: ficam inline
-  const isRef = (e: string): boolean => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(e);
-  const initOf = (f: Fn, i: string, scope: string[]): string | undefined => { const e = f.args?.[i]?.trim(); return e && !isRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : undefined; };
+  const initOf = (f: Fn, i: string, scope: string[]): string | undefined => { const e = f.args?.[i]?.trim(); return e && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : undefined; };
   const initLines = (fs: readonly Fn[], scope: string[], ind: string): string[] => fs.flatMap(f => f.ins.map(i => [i, initOf(f, i, scope)] as const).filter((x): x is readonly [string, string] => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
   const assign = (f: Fn, expr: string): string => (f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`);
   /** Wrapper de uma função de lib: converte o formato do flow (state com os nomes das entradas) para os argumentos da lib e devolve as saídas no formato do flow. */

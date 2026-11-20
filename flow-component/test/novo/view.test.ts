@@ -234,20 +234,30 @@ describe("dado e cubo: cada lado tem UM dado (quadrado); mais de um vira CUBO", 
   });
 });
 
-describe("o valor aparece ao lado do dado de entrada", () => {
+describe("valor só no estado embaixo (ao lado da marca: só o nome)", () => {
   const dn = (plan: string, side: "in" | "out"): string[] => [...plan.matchAll(new RegExp(`<text class="dn ${side}"[^>]*>([^<]*)<title>([^<]*)</title></text>`, "g"))].map(m => `${m[1]!.replace(/&quot;/g, '"')} | ${m[2]!.replace(/&quot;/g, '"')}`);
-  it("função de lib: nome = valor (ou ? quando não foi preenchido); tooltip com o valor completo", () => {
-    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); expect(dn(t.view().plan, "in")).toEqual(["text = ? | text = (not filled in yet)"]);
-    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '"Hello, world"' }); expect(dn(t.view().plan, "in")).toEqual(['text = "Hello, world" | text = "Hello, world"']);
-    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "customer.name" }); expect(dn(t.view().plan, "in")[0]).toBe("text = customer.name | text = customer.name");
+  const st = (plan: string): string[] => [...plan.matchAll(/<g class="stt[^"]*"[^>]*>[\s\S]*?<text class="dn st"[^>]*>([^<]*)/g)].map(m => m[1]!.replace(/&quot;/g, '"'));
+  it("função de lib: ao lado só o nome; valor completo no tooltip e no estado embaixo", () => {
+    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); expect(dn(t.view().plan, "in")).toEqual(["text | text = (not filled in yet)"]);
+    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '"Hello, world"' }); expect(dn(t.view().plan, "in")).toEqual(['text | text = "Hello, world"']);
+    expect(st(t.view().plan)).toContain('text = "Hello, world"');
+    t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "customer.name" }); expect(dn(t.view().plan, "in")[0]).toBe("text | text = customer.name");
   });
-  it("valor longo é cortado com reticências no plano e fica inteiro no tooltip", () => {
+  it("valor longo no estado é cortado com reticências; tooltip do estado fica inteiro", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); const long = '"' + "x".repeat(80) + '"'; t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: long });
-    const [row] = dn(t.view().plan, "in"); const [shown, tip] = row!.split(" | "); expect(shown!.length).toBe(40); expect(shown!.endsWith("…")).toBe(true); expect(tip).toBe(`text = ${long}`);
+    expect(dn(t.view().plan, "in")[0]).toBe(`text | text = ${long}`);
+    const shown = st(t.view().plan).find(s => s.startsWith("text ="))!; expect(shown.length).toBe(26); expect(shown.endsWith("…")).toBe(true);
+    expect(t.view().plan).toContain(`<title>${esc(long)}</title>`);
   });
-  it("vários parâmetros (objeto): nome do objeto com os campos e valores", () => {
+  it("vários parâmetros (cubo): ao lado só o nome do cubo; tooltip com valores", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[1]!, agent: "math" }); t.run({ type: "setTask", id: t.ids[1]!, task: "max" }); t.run({ type: "setArg", id: t.ids[1]!, name: "a", value: "3" });
-    const [row] = dn(t.view().plan, "in"); expect(row).toContain("input_max { a = 3, b = ? }"); expect(row!.split(" | ")[1]).toBe("a = 3\nb = (not filled in yet)");
+    const [row] = dn(t.view().plan, "in"); expect(row!.split(" | ")[0]).toBe("input_max"); expect(row!.split(" | ")[1]).toBe("a = 3\nb = (not filled in yet)");
+    expect(st(t.view().plan)).toContain("a = 3");
+  });
+  it("objeto literal: campos com valor no estado embaixo", () => {
+    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: '{ field1: "sdfsfsdfds" }' });
+    expect(dn(t.view().plan, "in")[0]!.startsWith("text |")).toBe(true);
+    const labels = st(t.view().plan); expect(labels).toContain("text"); expect(labels).toContain('field1 = "sdfsfsdfds"');
   });
   it("função comum e saídas: só o nome (sem valor)", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); const p = t.view().plan; expect(dn(p, "in")).toEqual(["x | x"]); expect(dn(p, "out")).toEqual(["y | y"]);
@@ -313,6 +323,11 @@ describe("estados embaixo das colunas e título do plano", () => {
     const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 64 + 2 * STATE_ROW);
   });
   it("sem dados não há estados embaixo", () => { const t = base(); expect(statesByStep(t.view().scene).size).toBe(0); expect(t.view().plan).not.toContain("sdot"); });
+  it("entrada com literal (text = false) aparece embaixo no estado do passo", () => {
+    const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "false" });
+    const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("text");
+    expect(t.view().plan).toMatch(/class="stt"[^>]*>[\s\S]*?>text</);
+  });
   it("entrada de uma composição (função com filhas) aparece no estado embaixo", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
     const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("y");

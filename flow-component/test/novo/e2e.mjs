@@ -200,11 +200,11 @@ test("single complete code (no module/runnable toggle, no Call command tab); con
   assert.ok(await ev(`[...document.querySelectorAll('select[data-change=assign] optgroup[label="Browser libs"] option')].map(o=>o.textContent).includes("console")`), "console is among the sources");
   const fid = await ev(`flowApp.store.project.flows[0].kids.at(-1).id`), mk = `.plan .dm[data-act=editData][data-id="${fid}"][data-side=in]`;
   assert.ok(await ev(`!!document.querySelector('.plan .dm .dot.a')`), "abstract (hollow) marker"); assert.equal(await ev(`document.querySelectorAll(".iorow").length`), 0, "no input/output rows");
-  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = \?/, "shows the name and ? while not filled");
+  assert.equal(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), "text", "ao lado da marca: só o nome");
   assert.doesNotMatch(await code(), /\/\/|\/\*/); assert.match(await code(), /await log\(\{ \.\.\.state \}\);/); assert.doesNotMatch(await code(), /call\(/);
-  // click the marker: box with type + value; fill it in -> concrete, the value shows next to the data, code carries it
+  // click the marker: box with type + value; fill it in -> concrete, value goes to the state footer, code carries it
   await click(mk); assert.ok(await ev(`!!document.querySelector(".dlg select[data-k=type]")`)); await type("Hello, world"); await wait(150);
-  assert.match(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), /text = "Hello, world"/); assert.match(await code(), /const text: unknown = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
+  assert.equal(await ev(`document.querySelector(".plan text.dn.in")?.textContent ?? ""`), "text"); assert.match(await ev(`[...document.querySelectorAll(".plan text.dn.st")].map(t=>t.textContent).join("|")`), /text = "Hello, world"/); assert.match(await code(), /const text: unknown = "Hello, world";[\s\d]*await log\(\{ \.\.\.state, text \}\);/); assert.doesNotMatch(await code(), /expected inputs/);
   assert.equal(await ev(`document.querySelectorAll('.ghost[data-id="${fid}"]').length`), 0, "no ghost boxes on a lib function (the contract rules)");
   assert.match(await code(), /export const wrappers/); assert.match(await code(), /await console\.log\(text as never\)/); assert.match(await code(), /const humans|await main\(\{ \.\.\.wrappers/); assert.equal(await ev(`document.getElementById("fname").textContent`), "main.mts"); assert.equal(await ev(`!document.getElementById("runcmd") && !document.getElementById("cmdcopy")`), true, "no run-command bar"); await ev(`window.__dl=[];HTMLAnchorElement.prototype.click=function(){window.__dl.push(this.download)}`); await click("#dl"); assert.deepEqual(await ev(`window.__dl`), ["main.mts"]);
 });

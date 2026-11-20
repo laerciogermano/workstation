@@ -140,7 +140,7 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <tr><td><span class="sym dia"></span>losango · faixa <code>if</code></td><td>selection</td></tr>
 <tr><td>↻ · faixa <code>for</code></td><td>repetition</td></tr>
 <tr><td>faixas <code>try</code> / <code>catch</code> / <code>else</code></td><td>caminho do erro e do else</td></tr>
-<tr><td><code>s0…sN</code></td><td>estados: colunas do diagrama; abaixo de cada um, os dados novos (ou todos, com o botão <i>cubo</i>) — inclui entradas/saídas de folhas <b>e</b> de composições (camadas)</td></tr>
+<tr><td><code>s0…sN</code></td><td>estados: colunas do diagrama; abaixo de cada um, os dados novos (ou todos, com o botão <i>cubo</i>) — inclui entradas/saídas de folhas <b>e</b> de composições; <b>valores</b> de entrada (<code>nome = expr</code>) aparecem só aqui, não ao lado da marca</td></tr>
 </table>
 <h3>Source</h3>
 <table>
@@ -243,13 +243,13 @@ run({ type: "setArg",  id: s, name: "value", value: "price * 0.85" });
 run({ type: "renameData", id: s, to: "total" });</code></pre>
 
 <h2 id="valores"><span class="n">7</span>Valores e condições</h2>
-<p><b>Valor</b> = expressão TypeScript em <code>Fn.args[entrada]</code>. Rascunho (<code>args.ts</code>): <code>ArgType</code> ∈ <code>text</code> · <code>number</code> · <code>boolean</code> · <code>ref</code> · <code>expr</code> · <code>object</code>; <code>buildArg</code> → expressão; <code>inferArg</code> → rascunho. <code>exprIdents(expr)</code> devolve os identificadores livres (ignora strings, chaves de objeto e <code>.campo</code>).</p>
+<p><b>Valor</b> = expressão TypeScript em <code>Fn.args[entrada]</code>. Rascunho (<code>args.ts</code>): <code>ArgType</code> ∈ <code>text</code> · <code>number</code> · <code>boolean</code> · <code>ref</code> · <code>expr</code> · <code>object</code>; <code>buildArg</code> → expressão; <code>inferArg</code> → rascunho. <code>exprIdents(expr)</code> devolve os identificadores livres (ignora strings, chaves de objeto e <code>.campo</code>). <code>isDataRef(expr)</code> = só referência a dado (<code>total</code>, <code>xs[0]</code>); <code>true</code>/<code>false</code>/<code>null</code>/<code>undefined</code> e demais literais/expressões <b>não</b> são ref — o codegen declara <code>const text = false</code>. No plano: ao lado da marca só o <b>nome</b>; o valor (<code>text = false</code>, <code>field1 = "…"</code>) fica <b>só no rodapé</b> do estado.</p>
 <table>
 <tr><th>Escrito</th><th>Significado</th></tr>
-<tr><td><code>100</code> · <code>"txt"</code> · <code>true</code></td><td>literal (texto entre aspas)</td></tr>
-<tr><td><code>total</code></td><td>dado produzido antes</td></tr>
-<tr><td><code>price * (100 - percent) / 100</code></td><td>expressão</td></tr>
-<tr><td><code>{ id, score }</code></td><td>objeto</td></tr>
+<tr><td><code>100</code> · <code>"txt"</code> · <code>true</code> · <code>false</code></td><td>literal → <code>const</code> + <code>nome = valor</code> no estado</td></tr>
+<tr><td><code>total</code></td><td>dado produzido antes (ref)</td></tr>
+<tr><td><code>price * (100 - percent) / 100</code></td><td>expressão → estado com valor</td></tr>
+<tr><td><code>{ field1: "x" }</code></td><td>objeto → cubo no estado + campos com valor</td></tr>
 </table>
 <p><b>Condição</b> (<code>cond.ts</code>): cláusulas <code>esquerda op direita</code> ligadas por <code>&amp;&amp;</code> / <code>||</code>; <code>buildCond</code> / <code>inferCond</code>; <code>splitTop</code> divide só nos conectores de nível mais alto.</p>
 <table>

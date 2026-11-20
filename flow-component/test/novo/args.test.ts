@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft } from "../../novo/args";
+import { ARG_TYPES, buildArg, emptyDraft, inferArg, isDataRef, type ArgDraft } from "../../novo/args";
 
 const d = (type: ArgDraft["type"], value = "", fields: ArgDraft["fields"] = []): ArgDraft => ({ type, value, fields });
 const f = (name: string, draft: ArgDraft) => ({ name, draft });
 const fails = (fn: () => unknown, msg: RegExp): void => { try { fn(); } catch (e) { expect((e as Error).message).toMatch(msg); return; } throw new Error("deveria falhar"); };
+
+describe("isDataRef", () => {
+  it("nome de dado / caminho = ref; literais true/false/null não", () => {
+    expect(isDataRef("mensagem")).toBe(true); expect(isDataRef("cliente.nome")).toBe(true); expect(isDataRef("xs[0]")).toBe(true);
+    expect(isDataRef("true")).toBe(false); expect(isDataRef("false")).toBe(false); expect(isDataRef("null")).toBe(false); expect(isDataRef("undefined")).toBe(false);
+    expect(isDataRef('"oi"')).toBe(false); expect(isDataRef("1 + 2")).toBe(false); expect(isDataRef("")).toBe(false);
+  });
+});
 
 describe("value de uma entrada: tipo e value", () => {
   it("os seis tipos existem e o draft vazio de cada um é válido", () => { expect(ARG_TYPES.map(t => t.type)).toEqual(["text", "number", "boolean", "ref", "expr", "object"]); for (const t of ARG_TYPES) expect(() => buildArg(emptyDraft(t.type))).not.toThrow(); });

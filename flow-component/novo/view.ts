@@ -3,8 +3,10 @@ import { agentOf, contractOf, filesOf, hasContract,  cubeName, flowFile, insideB
 import { exprIdents } from "./args";
 import { layout, type Row, type Scene } from "./layout";
 
-/** Geometria do plano (px). */
+/** Geometria do plano (px). IND = degrau de indentação; no diagrama, cada barra lateral tem largura IND. */
 export const G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 } as const;   // WS: largura da coluna com o texto fora da barra (a função fica pequena)
+/** Gutter do plano (só SVG à direita) = maxDepth × IND. */
+export const planGutter = (sc: Pick<Scene, "maxDepth">): number => sc.maxDepth * G.IND;
 export interface Ui { closed: ReadonlySet<string>; sel: string | null; txtIn: boolean; /** true = em cada estado, todos os dados disponíveis; ausente/false = só os novos (os que chegam naquele passo) */ allData?: boolean; /** largura mínima da coluna do plano (alinha as funções de um arquivo) */ minW?: number }
 
 export const esc = (s: unknown): string => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
@@ -19,9 +21,9 @@ export function inputLabel(p: Project, f: Fn): string {
 /** Tooltip do dado de entrada: todos os campos, com valores completos. */
 export const inputTip = (p: Project, f: Fn): string => { const lib = !!contractOf(p, f); return f.ins.map(n => (lib ? `${n} = ${valueOf(f, n) || "(not filled in yet)"}` : valueOf(f, n) ? `${n} = ${valueOf(f, n)}` : n)).join("\n"); };
 export const dataText = (names: readonly string[], max = 24): string => { const t = names.join(", "); return t.length > max ? `${t.slice(0, max - 1)}…` : t; };
-export const colX = (s: number, w: number = G.W): number => G.OX + s * w;
+export const colX = (s: number, w: number = G.W, gutter = 0): number => gutter + G.OX + s * w;
 export const rowY = (i: number): number => G.HEAD + i * G.RH;
-export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps, w) + 160;
+export const planWidth = (sc: Scene, w: number = G.W): number => colX(sc.nSteps, w, planGutter(sc)) + 160;
 /** Largura da coluna de um passo: no modo texto cresce para o nome inteiro caber na barra, com folga dos dois lados. */
 export const PAD = 12;
 export const colW = (sc: Scene, ui: Pick<Ui, "txtIn" | "minW">): number => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map(l => tw((l.node as Fn).title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
@@ -87,7 +89,7 @@ export function tableWidth(sc: Scene, p: Project): number {
     const part = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main", menu = toolsFor(p, r.id, part).length * 25 + 12 + 24;
     need = Math.max(need, w + menu);
   }
-  // piso extra pelo maxDepth: mesmo com rótulos curtos, cada nível de aninhamento empurra a coluna
+  // piso: aninhamento empurra a coluna — não engole o plano
   need = Math.max(need, 90 + sc.maxDepth * G.IND * 2 + 48);
   return Math.round(TABLE_CHROME + need);
 }
@@ -211,14 +213,14 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
 
 // ───────────────────────── plano (direita, SVG) ─────────────────────────
 export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
-  const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = new Map<string, number>();
-  const colX = (n: number): number => G.OX + n * cw;
+  const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = new Map<string, number>();
+  const colX = (n: number): number => gutter + G.OX + n * cw;
   sc.rows.forEach((r, i) => { if (r.kind === "fn" || r.kind === "block") by.set(r.id, i); });
   const ym = (i: number): number => rowY(i) + G.RH / 2;
   const out: string[] = [], bands: string[] = [], over: string[] = [];
-  // grade e passos
+  // grade e passos (deslocados pelo gutter das barras de indentação)
   for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX(s)}" y1="${G.HEAD - 8}" x2="${colX(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
-  sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="0" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
+  sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
   const chip = (s: number, y: number): string => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
   const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
   for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
@@ -234,17 +236,24 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
 
-  // composição (pai): faixa lateral sobre as linhas dos filhos, como a dos blocos if/for — identifica pai e filho (a raiz não precisa: tudo é filho dela)
+  /** Fundo da banda + barra lateral (width IND): estilo suave tipo trilho (wash + borda direita). */
+  const rail = (cls: string, depth: number, y0: number, h: number): void => {
+    if (depth <= 0 || h <= 0) return;
+    const x = (depth - 1) * G.IND;
+    bands.push(`<rect class="band ${cls}" x="${x}" y="${y0}" width="${W - x}" height="${h}"/>`);
+    bands.push(`<rect class="bandl ${cls}" x="${x}" y="${y0}" width="${G.IND}" height="${h}"/>`);
+    bands.push(`<line class="bande ${cls}" x1="${x + G.IND - 0.5}" y1="${y0}" x2="${x + G.IND - 0.5}" y2="${y0 + h}"/>`);
+  };
+  // composição (pai): faixa lateral sobre as linhas dos filhos
   sc.rows.forEach((r, i) => {
     if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
-    const x0 = r.depth * G.IND;
-    bands.push(`<rect class="band co" x="${x0}" y="${rowY(i + 1)}" width="${W - x0}" height="${(r.last - i) * G.RH}"/><line class="bandl co" x1="${x0 + 1}" y1="${rowY(i + 1)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+    rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
   });
   // bandas dos blocos + etiquetas (pills)
   sc.rows.forEach((r, i) => {
     if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
-    const n = r.node as Exclude<Node, Fn>, x0 = r.depth * G.IND, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
-    bands.push(`<rect class="band ${cls}" x="${x0}" y="${rowY(i)}" width="${W - x0}" height="${(r.last - i + 1) * G.RH}"/><line class="bandl ${cls}" x1="${x0 + 1}" y1="${rowY(i)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+    const n = r.node as Exclude<Node, Fn>, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+    rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
     const diamond = r.kind === "block" && n.t === "if", px = colX(r.s) + (diamond ? 11 : 4);
     const txt = r.kind === "catch" ? "catch · if the try fails" : r.kind === "else" ? "else" : n.t === "for" ? `↻ ${blockLabel(p, n)}` : n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
     const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");

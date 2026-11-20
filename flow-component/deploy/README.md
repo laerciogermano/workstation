@@ -8,11 +8,12 @@
 **Conteúdo:** [`../example/`](../example/) · marca: logo no header + **Flow** (regra [`.cursor/rules/fop-flow-language.mdc`](../../../.cursor/rules/fop-flow-language.mdc))  
 **Projeto padrão:** só o fluxo `main` (raiz vazia). Os samples (11 funções de front) ficam em `fop-samples.json` (abrir com Open) e na documentação. **Docs:** `/fop-docs.html` (link “Docs” no header). O antigo `example` (demo de libs) saiu do sample — fica em `browserDemoProject()` só para testes.
 
-**Antes → depois:** `/` redirecionava para `/flow-novo.html?tema=eternos-black` → `/` serve `index.html` e `/flow-novo.html` vira 301 `/`. Sample `main`+`example` → só `main`. Sem PWA/headers → metas app + manifest + SW + headers de segurança no nginx. Alça do bloco lia `clientY`/`countForRow` (não crescia ao arrastar pra direita) → de novo `countForStep` no eixo X + guia vertical. Aninhamento fundo engolia o plano (tableWidth curta) → `tableWidth` sobe com `maxDepth` + chrome real; `.gtable` com `overflow:hidden`.  
+**Antes → depois:** `/` redirecionava para `/flow-novo.html?tema=eternos-black` → `/` serve `index.html` e `/flow-novo.html` vira 301 `/`. Sample `main`+`example` → só `main`. Sem PWA/headers → metas app + manifest + SW + headers de segurança no nginx. Alça do bloco lia `clientY`/`countForRow` (não crescia ao arrastar pra direita) → de novo `countForStep` no eixo X + guia vertical. Aninhamento fundo engolia o plano (tableWidth curta) → `tableWidth` sobe com `maxDepth` + chrome real; `.gtable` com `overflow:hidden`. Diagrama: `bandl` com largura `IND` + wash suave (estilo trilho) e `planGutter`; tabela segue só `padding-left` (sem trilhos HTML).  
 **Rollback PWA:** remover `manifest.webmanifest` / `sw.js` / ícones do `example/`, tirar metas e registro SW do `flow-novo.html`, voltar `nginx-fop.conf` sem `add_header`/locations PWA, republicar.  
 **Rollback alça:** em `novo/app.ts` voltar o handler `pointerdown` da alça para `countForRow` + `guide h` (commit anterior à correção).  
 **Rollback largura:** restaurar `tableWidth` com `138 + need` e tirar `overflow:hidden` do `.gtable`.  
-**Rollback lixeira de bloco:** em `toolsFor` voltar a ação `unwrap` no trash dos blocos (devolve filhos em vez de apagar a subárvore).
+**Rollback lixeira de bloco:** em `toolsFor` voltar a ação `unwrap` no trash dos blocos (devolve filhos em vez de apagar a subárvore).  
+**Rollback trilhos do plano:** voltar `bandl` como `<line stroke-width=2>` sem `planGutter` / rect `width=IND`.
 
 > Pedido: **só FOP** em `fop.lesgermano.com`. `lesgermano.com` não está na conta Hostinger Germano. Publicado em `fop.laerciogermano.com`. nginx também lista `fop.lesgermano.com` se o domínio for registrado depois.
 

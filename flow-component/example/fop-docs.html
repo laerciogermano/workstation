@@ -281,7 +281,7 @@ interface Scene { rows: Row[]; nSteps: number; span: Map&lt;string,{s,e}&gt;; ma
   <li>Bloco: <code>e</code> = fim dos filhos. Catch/else: linha própria com <code>s = max(step, next − count)</code>, terminando com o bloco.</li>
   <li><code>nSteps</code> = nº de colunas; <code>leaves</code> = folhas fora de catch (usadas em <code>links()</code>); <code>maxDepth</code> dimensiona a tabela.</li>
 </ul>
-<p>Geometria (<code>view.ts</code>): origem do diagrama <code>G.OX</code>; coluna <code>G.W</code> (maior quando o nome fica dentro da barra); linha <code>G.RH</code> = 34; recuo <code>G.IND</code> = 14 por nível (×2 na tabela). <code>tableWidth(sc, p)</code> = 138 + max<sub>linhas</sub>(recuo + texto + menu da linha), mín. 228.</p>
+<p>Geometria (<code>view.ts</code>): origem do diagrama <code>G.OX</code>; coluna <code>G.W</code> (maior quando o nome fica dentro da barra); linha <code>G.RH</code> = 34; recuo da tabela <code>G.IND</code> = 14 por nível (×2 no padding). No plano (direita), cada nível tem barra lateral de largura <code>IND</code> + <code>planGutter</code>. <code>tableWidth(sc, p)</code> = chrome + max<sub>linhas</sub>(recuo + texto + menu).</p>
 
 <h2 id="codegen"><span class="n">10</span>Código gerado</h2>
 <p><code>generate(p, rootId, opts)</code> → <code>{ code, map, fileName, name, runFile, runCommand }</code>; <code>map</code>: id → <code>[linhaIni, linhaFim]</code> (destaque ao selecionar). <code>generateFile(p, ids)</code> gera o arquivo com várias funções.</p>

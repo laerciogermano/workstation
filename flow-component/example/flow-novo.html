@@ -123,14 +123,16 @@
   .plan .axis{stroke:var(--muted);stroke-width:1.3}
   .plan .chip rect{fill:var(--wash);stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.3}.plan .chip text{font:600 9px var(--mono);fill:var(--ink)}
   .plan .dia{fill:var(--paper);stroke:var(--muted);stroke-width:1.3}.plan .ttl{font:600 10px var(--mono);fill:var(--ink)}
-  .plan .band{stroke-dasharray:3 3;stroke-width:1}
-  .plan .band.if{fill:color-mix(in srgb,var(--wrn) 7%,transparent);stroke:color-mix(in srgb,var(--wrn) 45%,transparent)}
-  .plan .band.lp{fill:color-mix(in srgb,var(--loop) 7%,transparent);stroke:color-mix(in srgb,var(--loop) 45%,transparent)}
-  .plan .band.tr{fill:color-mix(in srgb,var(--okc) 5%,transparent);stroke:color-mix(in srgb,var(--okc) 45%,transparent)}
-  .plan .band.el{fill:color-mix(in srgb,var(--wrn) 5%,transparent);stroke:color-mix(in srgb,var(--wrn) 45%,transparent)}
-  .plan .band.ca{fill:color-mix(in srgb,var(--fail) 5%,transparent);stroke:color-mix(in srgb,var(--fail) 45%,transparent)}
-  .plan .band.co{fill:color-mix(in srgb,var(--ink) 4%,transparent);stroke:color-mix(in srgb,var(--ink) 35%,transparent)}.plan .bandl.co{stroke:var(--ink);stroke-opacity:.8}
-  .plan .bandl{stroke-width:2}.plan .bandl.if{stroke:var(--wrn)}.plan .bandl.lp{stroke:var(--loop)}.plan .bandl.tr{stroke:var(--okc)}.plan .bandl.ca{stroke:var(--fail)}.plan .bandl.el{stroke:var(--wrn)}
+  .plan .band{stroke:none}
+  .plan .band.if{fill:color-mix(in srgb,var(--wrn) 7%,transparent)}
+  .plan .band.lp{fill:color-mix(in srgb,var(--loop) 7%,transparent)}
+  .plan .band.tr{fill:color-mix(in srgb,var(--okc) 5%,transparent)}
+  .plan .band.el{fill:color-mix(in srgb,var(--wrn) 5%,transparent)}
+  .plan .band.ca{fill:color-mix(in srgb,var(--fail) 5%,transparent)}
+  .plan .band.co{fill:color-mix(in srgb,var(--ink) 4%,transparent)}
+  /* trilho do diagrama: wash suave + borda direita (mesmo espírito das barras que estavam nas colunas) */
+  .plan .bandl{stroke:none}.plan .bandl.co{fill:color-mix(in srgb,var(--ink) 3.5%,transparent)}.plan .bandl.if,.plan .bandl.el{fill:color-mix(in srgb,var(--wrn) 16%,transparent)}.plan .bandl.lp{fill:color-mix(in srgb,var(--loop) 16%,transparent)}.plan .bandl.tr{fill:color-mix(in srgb,var(--okc) 14%,transparent)}.plan .bandl.ca{fill:color-mix(in srgb,var(--fail) 14%,transparent)}
+  .plan .bande{stroke-width:1}.plan .bande.co{stroke:color-mix(in srgb,var(--ink) 40%,transparent)}.plan .bande.if,.plan .bande.el{stroke:var(--wrn)}.plan .bande.lp{stroke:var(--loop)}.plan .bande.tr{stroke:var(--okc)}.plan .bande.ca{stroke:var(--fail)}
   :root[data-tema="eternos-black"] .plan .band.if,:root[data-tema="eternos-black"] .plan .band.lp{fill:rgba(255,255,255,.04)}
   .plan .dlk{stroke:var(--muted);stroke-width:1.2}
   .plan .dep{fill:none;stroke:#9a9a9a;stroke-width:1.2}

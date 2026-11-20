@@ -1451,6 +1451,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
 
   // novo/view.ts
   var G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 };
+  var planGutter = (sc) => sc.maxDepth * G.IND;
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var valueOf = (f, n) => f.args?.[n]?.trim() || "";
@@ -1466,9 +1467,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const t = names.join(", ");
     return t.length > max ? `${t.slice(0, max - 1)}\u2026` : t;
   };
-  var colX = (s, w = G.W) => G.OX + s * w;
+  var colX = (s, w = G.W, gutter = 0) => gutter + G.OX + s * w;
   var rowY = (i) => G.HEAD + i * G.RH;
-  var planWidth = (sc, w = G.W) => colX(sc.nSteps, w) + 160;
+  var planWidth = (sc, w = G.W) => colX(sc.nSteps, w, planGutter(sc)) + 160;
   var PAD = 12;
   var colW = (sc, ui) => Math.max(ui.minW ?? 0, ui.txtIn ? Math.max(G.W, ...sc.leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS);
   function objectFields(expr) {
@@ -1676,15 +1677,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
     }).join("");
   }
   function renderPlan(p, flow, sc, ui) {
-    const cw = colW(sc, ui), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = /* @__PURE__ */ new Map();
-    const colX2 = (n) => G.OX + n * cw;
+    const cw = colW(sc, ui), gutter = planGutter(sc), W = planWidth(sc, cw), H = planHeight(sc, ui.allData), by = /* @__PURE__ */ new Map();
+    const colX2 = (n) => gutter + G.OX + n * cw;
     sc.rows.forEach((r, i) => {
       if (r.kind === "fn" || r.kind === "block") by.set(r.id, i);
     });
     const ym = (i) => rowY(i) + G.RH / 2;
     const out = [], bands = [], over = [];
     for (let s = 0; s <= sc.nSteps; s++) out.push(`<line class="vg" x1="${colX2(s)}" y1="${G.HEAD - 8}" x2="${colX2(s)}" y2="${rowY(sc.rows.length) + 4}"/>`);
-    sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="0" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
+    sc.rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     const chip = (s, y) => `<g class="chip"><rect x="${colX2(s) - 12}" y="${y - 8}" width="24" height="16" rx="3"/><text x="${colX2(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g><path class="dia" d="M${colX2(s)} ${y + 12} l4 4 l-4 4 l-4 -4z"/>`;
     const top = G.HEAD - 18, bot = rowY(sc.rows.length) + 18;
     for (let s = 0; s <= sc.nSteps; s++) out.push(chip(s, top), chip(s, bot));
@@ -1700,15 +1701,21 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
     }
     out.push(`<line class="axis" x1="${colX2(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX2(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);
+    const rail = (cls, depth, y0, h) => {
+      if (depth <= 0 || h <= 0) return;
+      const x = (depth - 1) * G.IND;
+      bands.push(`<rect class="band ${cls}" x="${x}" y="${y0}" width="${W - x}" height="${h}"/>`);
+      bands.push(`<rect class="bandl ${cls}" x="${x}" y="${y0}" width="${G.IND}" height="${h}"/>`);
+      bands.push(`<line class="bande ${cls}" x1="${x + G.IND - 0.5}" y1="${y0}" x2="${x + G.IND - 0.5}" y2="${y0 + h}"/>`);
+    };
     sc.rows.forEach((r, i) => {
       if (r.kind !== "fn" || r.leaf || r.depth === 0 || r.last <= i) return;
-      const x0 = r.depth * G.IND;
-      bands.push(`<rect class="band co" x="${x0}" y="${rowY(i + 1)}" width="${W - x0}" height="${(r.last - i) * G.RH}"/><line class="bandl co" x1="${x0 + 1}" y1="${rowY(i + 1)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+      rail("co", r.depth, rowY(i + 1), (r.last - i) * G.RH);
     });
     sc.rows.forEach((r, i) => {
       if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
-      const n = r.node, x0 = r.depth * G.IND, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
-      bands.push(`<rect class="band ${cls}" x="${x0}" y="${rowY(i)}" width="${W - x0}" height="${(r.last - i + 1) * G.RH}"/><line class="bandl ${cls}" x1="${x0 + 1}" y1="${rowY(i)}" x2="${x0 + 1}" y2="${rowY(r.last + 1)}"/>`);
+      const n = r.node, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+      rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
       const diamond = r.kind === "block" && n.t === "if", px = colX2(r.s) + (diamond ? 11 : 4);
       const txt = r.kind === "catch" ? "catch \xB7 if the try fails" : r.kind === "else" ? "else" : n.t === "for" ? `\u21BB ${blockLabel(p, n)}` : n.t === "try" ? `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
       const w = Math.max(tw(txt) + 12, colX2(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");

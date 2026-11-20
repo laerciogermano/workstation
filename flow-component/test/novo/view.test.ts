@@ -4,7 +4,7 @@ import { layout } from "../../novo/layout";
 import { apply, cubeName, DEFAULT_AGENTS, emptyProject, isCube, locate, type Command, type Fn, type Project } from "../../novo/model";
 import { sampleProject } from "../../novo/sample";
 import { countForRow, countForStep } from "../../novo/scope";
-import { build, planHeight, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
+import { build, planHeight, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, CODE_DEFAULT, CODE_MIN, parsePrefs, colW, tableWidth, dataText, colX, esc, G, planGutter, planWidth, renderPlan, renderTable, rowY, toolsFor, toolsHtml, type Ui } from "../../novo/view";
 
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
@@ -96,7 +96,7 @@ describe("tabela", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "addElse", id: i });
     t.run({ type: "wrap", id: t.ids[1]!, kind: "for", v: "x", coll: "xs" }); t.run({ type: "wrap", id: t.ids[3]!, kind: "try" });
     const h = t.view().table; expect(h).toContain("if (ok)"); expect(h).toContain('class="trd e">else'); expect(h).toContain("elserow"); expect(h).toContain("for (x of xs)"); expect(h).toContain('class="trd">try'); expect(h).toContain('class="trd c">catch'); expect(h).toContain("if the try fails");
-    for (const k of ["ifrow", "forrow", "tryrow", "catchrow"]) expect(h).toContain(k); expect(h).toMatch(/padding-left:\d+px/);
+    for (const k of ["ifrow", "forrow", "tryrow", "catchrow"]) expect(h).toContain(k); expect(h).toMatch(/padding-left:\d+px/); expect(h).not.toContain('class="rails"');
   });
   it("a tabela não tem linhas de input/output; só a linha escolhida fica marcada", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); const h = t.view({ sel: t.ids[0]! }).table;
@@ -135,10 +135,11 @@ describe("plano (SVG)", () => {
     const t = base(); t.run({ type: "wrap", id: t.ids[0]!, kind: "if", test: "ok" }); t.run({ type: "wrap", id: t.ids[1]!, kind: "for" }); t.run({ type: "wrap", id: t.ids[2]!, kind: "try" });
     const p = t.view().plan; for (const c of ["band if", "band lp", "band tr", "band ca"]) expect(p).toContain(c); expect(p).toContain('class="fif"'); expect(p).toContain("data-drag="); expect(p).toContain("catch · if the try fails");
     expect((p.match(/data-act="editBlock"/g) ?? []).length).toBe(2); expect(p).toContain("↻ for (item of items)");
+    expect(p).toMatch(new RegExp(`<rect class="bandl if"[^>]*width="${G.IND}"`));   // barra com largura IND (não line 2px)
   });
   it("etiqueta do if começa depois do losango e cobre os passos do bloco", () => {
-    const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); const p = t.view().plan;
-    const m = p.match(/<g class="pill if"[^>]*><rect x="([\d.]+)" y="[\d.]+" width="([\d.]+)"/)!; expect(Number(m[1])).toBe(colX(1) + 11); expect(Number(m[2])).toBeGreaterThan(G.W);
+    const t = base(); const i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "setScope", id: i, count: 2 }); const v = t.view(), g = planGutter(v.scene);
+    const m = v.plan.match(/<g class="pill if"[^>]*><rect x="([\d.]+)" y="[\d.]+" width="([\d.]+)"/)!; expect(Number(m[1])).toBe(colX(1, G.W, g) + 11); expect(Number(m[2])).toBeGreaterThan(G.W);
   });
   it("composta mostra a barra-resumo; fechada continua com o resumo", () => {
     const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); expect(t.view().plan).toContain('class="sum"'); expect(t.view({ closed: new Set([t.ids[1]!]) }).plan).toContain('class="sum"');
@@ -155,18 +156,18 @@ describe("plano (SVG)", () => {
 describe("quadrado do dado", () => {
   it("fica na linha da função, na coluna de entrada / saída (onde nasce a caixa fantasma), e não na linha de baixo", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[1]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "y" });
-    const v = t.view(), row = v.scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
+    const v = t.view(), g = planGutter(v.scene), row = v.scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
     const squares = [...v.plan.matchAll(/<rect class="dot(?: a)?" x="([\d.]+)" y="([\d.]+)" width="8" height="8"\/>/g)].map(m => ({ x: Number(m[1]) + 4, y: Number(m[2]) + 4 }));
-    expect(squares).toHaveLength(2); expect(squares.every(q => q.y === cy)).toBe(true); expect(squares.map(q => q.x)).toEqual([colX(1), colX(2)]);
+    expect(squares).toHaveLength(2); expect(squares.every(q => q.y === cy)).toBe(true); expect(squares.map(q => q.x)).toEqual([colX(1, G.W, g), colX(2, G.W, g)]);
     // o fantasma que existia no mesmo ponto some quando o dado é criado
     expect(v.plan).not.toMatch(new RegExp(`data-act="addIo" data-id="${t.ids[1]}" data-kind="in"`));
   });
   it("o nome do dado fica na altura do quadrado: entradas à esquerda dele, saídas à direita", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[1]!, name: "customer_data" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "draft" });
-    const v = t.view(), fnRow = v.scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(fnRow) + G.RH / 2;
+    const v = t.view(), g = planGutter(v.scene), fnRow = v.scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(fnRow) + G.RH / 2;
     const names = [...v.plan.matchAll(/<text class="dn (in|out)"[^>]*? x="([\d.]+)" y="([\d.]+)" text-anchor="(\w+)">([^<]+)</g)].map(m => ({ side: m[1], x: Number(m[2]), y: Number(m[3]), anchor: m[4], n: m[5] }));
     expect(names.map(n => [n.side, n.anchor, n.n])).toEqual([["in", "end", "customer_data"], ["out", "start", "draft"]]);
-    expect(names.map(n => n.x)).toEqual([colX(1) - G.GAP, colX(2) + G.GAP]); expect(names.every(n => Math.abs(n.y - 3.5 - cy) < 0.01)).toBe(true);   // mesma altura do quadrado
+    expect(names.map(n => n.x)).toEqual([colX(1, G.W, g) - G.GAP, colX(2, G.W, g) + G.GAP]); expect(names.every(n => Math.abs(n.y - 3.5 - cy) < 0.01)).toBe(true);   // mesma altura do quadrado
   });
   it("um dado do tipo objeto aparece como cubo", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "v" }); t.run({ type: "setArg", id: t.ids[0]!, name: "v", value: "{ a: 1 }" });
@@ -213,9 +214,9 @@ describe("dado e cubo: cada lado tem UM dado (quadrado); mais de um vira CUBO", 
     t.run({ type: "addInput", id: t.ids[1]!, name: "z" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "w" }); p = t.view().plan;
     expect((p.match(/class="cube/g) ?? []).length).toBe(2); expect((p.match(/class="dot/g) ?? []).length).toBe(0);
     expect(p).toContain(">input_b<"); expect(p).toContain(">output_b<"); expect(p).toContain("<title>x\nz</title>"); expect(p).toContain("<title>y, w</title>");
-    const row = t.view().scene.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
+    const sc = t.view().scene, g = planGutter(sc), row = sc.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
     const ys = [...p.matchAll(/<path class="cube(?: a)?" transform="translate\(([\d.]+) ([\d.]+)\)"/g)].map(m => ({ x: Number(m[1]) + 5, y: Number(m[2]) + 5.5 }));
-    expect(ys.map(q => q.x)).toEqual([colX(1), colX(2)]); expect(ys.every(q => q.y === cy)).toBe(true);   // o cubo fica onde ficaria o quadrado
+    expect(ys.map(q => q.x)).toEqual([colX(1, G.W, g), colX(2, G.W, g)]); expect(ys.every(q => q.y === cy)).toBe(true);   // o cubo fica onde ficaria o quadrado
   });
   it("entrada de fora (state) = cubo vazado; saída = cubo cheio", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[0]!, name: "a" }); t.run({ type: "addInput", id: t.ids[0]!, name: "b" }); expect(t.view().plan).toContain('class="cube a"');

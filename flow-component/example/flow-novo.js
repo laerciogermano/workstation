@@ -185,8 +185,9 @@
   var slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "flow";
   var flowFile = (f) => f.file ?? `${slug(f.title)}.ts`;
   var nextId = (p) => `n${++p.seq}`;
-  var newFn = (p, title = "New function") => ({ t: "fn", id: nextId(p), title, agent: null, resp: null, ins: [], outs: [], kids: [], par: false });
+  var newFn = (p, title = "newFunction") => ({ t: "fn", id: nextId(p), title, agent: null, resp: null, ins: [], outs: [], kids: [], par: false });
   var ident = /^[A-Za-z_][A-Za-z0-9_]*$/;
+  var CAMEL_FN = /^[a-z][a-zA-Z0-9]*$/;
   var RESERVED = new Set("break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield let static await".split(" "));
   var cleanName = (s, what) => {
     const v = String(s ?? "").trim();
@@ -196,6 +197,70 @@
   var cleanText = (s, what, max = 120) => {
     const v = String(s ?? "").trim();
     return v && v.length <= max ? v : fail("invalid", `${what} cannot be empty`);
+  };
+  var cleanFnTitle = (s, what = "Function name") => {
+    const v = String(s ?? "").trim();
+    if (!v || v.length > 80) return fail("invalid", `${what} cannot be empty`);
+    if (RESERVED.has(v)) return fail("invalid", `${what} cannot be the reserved word \u201C${v}\u201D`);
+    if (!CAMEL_FN.test(v)) return fail("invalid", `${what} must be lowerCamelCase (e.g. processOrder)`);
+    return v;
+  };
+  function dataNamesInFlow(flow) {
+    const out = /* @__PURE__ */ new Set([...flow.ins, ...flow.outs]);
+    walk(flow.kids, (n) => {
+      if (n.t === "fn") {
+        for (const x of n.ins) out.add(x);
+        for (const x of n.outs) out.add(x);
+      } else if (n.t === "for") out.add(n.v);
+    });
+    return out;
+  }
+  function fnTitlesInFlow(flow, exceptId) {
+    const out = /* @__PURE__ */ new Set();
+    if (flow.id !== exceptId) out.add(flow.title);
+    walk(flow.kids, (n) => {
+      if (n.t === "fn" && n.id !== exceptId) out.add(n.title);
+    });
+    return out;
+  }
+  var claimAbstractTitle = (p, flow, raw, exceptId) => {
+    const name = cleanFnTitle(raw);
+    if (dataNamesInFlow(flow).has(name)) return fail("invalid", `\u201C${name}\u201D is already a data name in this flow`);
+    const hit = (n) => n.id !== exceptId && n.title === name && !contractOf(p, n);
+    if (hit(flow)) return fail("invalid", `Function \u201C${name}\u201D already exists in this flow`);
+    let clash = false;
+    walk(flow.kids, (n) => {
+      if (n.t === "fn" && hit(n)) clash = true;
+    });
+    if (clash) return fail("invalid", `Function \u201C${name}\u201D already exists in this flow`);
+    return name;
+  };
+  var claimRenameAbstract = (p, flow, raw, exceptId) => {
+    const name = cleanFnTitle(raw);
+    if (dataNamesInFlow(flow).has(name)) return fail("invalid", `\u201C${name}\u201D is already a data name in this flow`);
+    const hitLib = (n) => n.id !== exceptId && n.title === name && !!contractOf(p, n);
+    if (hitLib(flow)) return fail("invalid", `\u201C${name}\u201D is already a lib function in this flow`);
+    let lib3 = false;
+    walk(flow.kids, (n) => {
+      if (n.t === "fn" && hitLib(n)) lib3 = true;
+    });
+    if (lib3) return fail("invalid", `\u201C${name}\u201D is already a lib function in this flow`);
+    return name;
+  };
+  var claimDataInFlow = (flow, raw, what = "Data name") => {
+    const name = cleanName(raw, what);
+    if (fnTitlesInFlow(flow).has(name)) return fail("invalid", `\u201C${name}\u201D is already a function name in this flow`);
+    return name;
+  };
+  var freshFnTitle = (flow, base = "newFunction") => {
+    const taken = fnTitlesInFlow(flow), data = dataNamesInFlow(flow);
+    if (!taken.has(base) && !data.has(base) && CAMEL_FN.test(base)) return base;
+    let n = 2;
+    for (; ; ) {
+      const t = `${base}${n}`;
+      if (!taken.has(t) && !data.has(t)) return t;
+      n++;
+    }
   };
   function emptyProject(name = "New project") {
     return { name, flows: [], agents: [], seq: 0 };
@@ -297,13 +362,16 @@
     const id = nextId(p);
     if (kind === "if") return { t: "if", id, test: a["test"] ? cleanText(a["test"], "Condition") : "condition", kids: [inner], elseKids: [] };
     if (kind === "for") return { t: "for", id, v: a["v"] ? cleanName(a["v"], "Variable") : "item", coll: a["coll"] ? cleanText(a["coll"], "Collection") : "items", kids: [inner] };
-    return { t: "try", id, kids: [inner], catchKids: [newFn(p, "Handle error")] };
+    return { t: "try", id, kids: [inner], catchKids: [newFn(p, "handleError")] };
   }
   var HANDLERS = {
     /** Novo fluxo (função raiz). */
     newFlow: (p, a) => {
-      const f = newFn(p, a["title"] ? cleanText(a["title"], "Title", 80) : "New flow");
-      if (a["file"]) f.file = cleanText(a["file"], "File", 80);
+      const file = a["file"] ? cleanText(a["file"], "File", 80) : void 0;
+      const title = a["title"] ? cleanFnTitle(a["title"], "Title") : "newFlow";
+      if (p.flows.some((x) => x.title === title && flowFile(x) === (file ?? `${slug(title)}.ts`))) return fail("invalid", `Function \u201C${title}\u201D already exists in this file`);
+      const f = newFn(p, title);
+      if (file) f.file = file;
       p.flows.push(f);
       return f.id;
     },
@@ -350,12 +418,16 @@
     rename: (p, a) => {
       const l = need(p, str(a, "id"));
       if (l.node.t !== "fn") return fail("invalid", "Only functions have a name");
-      const to = cleanText(a["title"], "Name", 80), from = l.node.title;
-      if (from === to) return;
+      const from = l.node.title;
       if (contractOf(p, l.node)) {
-        l.node.title = to;
+        const to2 = cleanFnTitle(a["title"], "Name");
+        if (from === to2) return;
+        if (dataNamesInFlow(l.flow).has(to2)) return fail("invalid", `\u201C${to2}\u201D is already a data name in this flow`);
+        l.node.title = to2;
         return;
       }
+      const to = claimRenameAbstract(p, l.flow, a["title"], l.node.id);
+      if (from === to) return;
       renameFnTitleInFlow(p, l.flow, from, to);
     },
     /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
@@ -371,7 +443,7 @@
     },
     /** Filho: função → no fim da lista dela; bloco → na PRIMEIRA posição (o lugar do cabeçalho); `catch` → primeira posição do catch. */
     addChild: (p, a) => {
-      const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : void 0);
+      const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow));
       if (n.t === "fn") n.kids.push(f);
       else if (n.t === "try" && a["catch"]) n.catchKids.unshift(f);
       else if (n.t === "if" && a["else"]) n.elseKids.unshift(f);
@@ -382,7 +454,7 @@
     addSibling: (p, a) => {
       const l = need(p, str(a, "id"));
       if (isRoot(p, l.node.id)) return fail("root", "The flow root cannot have siblings");
-      const f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : void 0);
+      const f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow));
       l.list.splice(l.index + (a["before"] ? 0 : 1), 0, f);
       return f.id;
     },
@@ -399,6 +471,7 @@
       if (!["if", "for", "try"].includes(kind)) return fail("invalid", `Unknown block: ${kind}`);
       if (isRoot(p, l.node.id)) return fail("root", `The root flow does not accept ${kind}`);
       const b = blockOf(kind, p, a, l.node);
+      if (b.t === "try" && b.catchKids[0]?.t === "fn") b.catchKids[0].title = freshFnTitle(l.flow, "handleError");
       l.list.splice(l.index, 1, b);
       return b.id;
     },
@@ -427,9 +500,9 @@
       else if (target < b.kids.length) l.list.splice(l.index + 1, 0, ...b.kids.splice(target));
     },
     setFor: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "for") return fail("invalid", "Not a for");
-      n.v = cleanName(a["v"], "Variable");
+      n.v = claimDataInFlow(l.flow, a["v"], "Variable");
       n.coll = cleanText(a["coll"], "Collection");
     },
     setIf: (p, a) => {
@@ -439,10 +512,10 @@
     },
     /** Cria o else do if (uma função dentro dele, como o try cria o catch). */
     addElse: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "if") return fail("invalid", "Only an if has an else");
       if (n.elseKids.length) return fail("invalid", "This if already has an else");
-      const f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : void 0);
+      const f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow));
       n.elseKids.push(f);
       return f.id;
     },
@@ -457,12 +530,16 @@
     removeOutput: (p, a) => io(p, a, "outs", false),
     /** Responsável: lib (concreta), pessoa ou IA (abstrata). Concreta força uma função do catálogo da lib. */
     assign: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have a source");
       const ag = a["agent"] ? agentOf(p, str(a, "agent")) ?? fail("not_found", `Source ${str(a, "agent")} does not exist`) : void 0;
       n.agent = ag?.id ?? null;
       if (ag?.kind !== "ia") n.resp = null;
-      if (hasContract(ag) && !ag.tasks.includes(n.title)) n.title = ag.tasks[0] ?? n.title;
+      if (hasContract(ag) && !ag.tasks.includes(n.title)) {
+        const task = ag.tasks[0] ?? n.title;
+        if (dataNamesInFlow(l.flow).has(task)) return fail("invalid", `\u201C${task}\u201D is already a data name in this flow`);
+        n.title = task;
+      }
       if (hasContract(ag)) applyContract(p, n);
       if (n.args) {
         n.args = Object.fromEntries(Object.entries(n.args).filter(([k]) => n.ins.includes(k)));
@@ -470,10 +547,11 @@
       }
     },
     setTask: (p, a) => {
-      const n = need(p, str(a, "id")).node;
+      const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have a lib function");
-      const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Function", 80);
+      const ag = agentOf(p, n.agent), t = cleanFnTitle(a["task"], "Function");
       if (hasContract(ag) && !ag.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag.name}`);
+      if (dataNamesInFlow(l.flow).has(t)) return fail("invalid", `\u201C${t}\u201D is already a data name in this flow`);
       n.title = t;
       applyContract(p, n);
     },
@@ -482,7 +560,7 @@
       const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-      const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = cleanName(a["to"], "Data name");
+      const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
       if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
       if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
       renameDatumInFlow(l.flow, from, to);
@@ -492,7 +570,7 @@
       const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-      const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map((x) => cleanName(x, "Data name")), values = Array.isArray(a["values"]) ? a["values"].map((x) => String(x ?? "").trim()) : [];
+      const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map((x) => claimDataInFlow(l.flow, x)), values = Array.isArray(a["values"]) ? a["values"].map((x) => String(x ?? "").trim()) : [];
       if (new Set(names).size !== names.length) return fail("invalid", "Duplicate data name");
       if (values.some((v) => v.length > 300)) return fail("invalid", "Value too large");
       const prev = side === "out" ? [...n.outs] : [...n.ins];
@@ -515,7 +593,7 @@
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
       const c = contractOf(p, n);
       if (!c) return fail("invalid", "The data name can only change on lib functions");
-      const side = str(a, "side") === "in" ? "in" : "out", to = cleanName(a["to"], "Data name");
+      const side = str(a, "side") === "in" ? "in" : "out", to = claimDataInFlow(l.flow, a["to"]);
       if (side === "out") {
         if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
         const from2 = n.outs[0] ?? c.outs[0];
@@ -560,7 +638,8 @@
     const n = need(p, str(a, "id")).node;
     if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
     if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-    const name = cleanName(a["name"], "Data name");
+    const l = need(p, str(a, "id"));
+    const name = add ? claimDataInFlow(l.flow, a["name"]) : cleanName(a["name"], "Data name");
     if (add) {
       if (!n[key].includes(name)) n[key].push(name);
     } else {
@@ -2000,7 +2079,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       return r.created ?? "";
     };
     const main = run({ type: "newFlow", title: "main" });
-    const log = run({ type: "addChild", id: main, title: "log" });
+    const log = run({ type: "addChild", id: main });
     run({ type: "assign", id: log, agent: "console" });
     run({ type: "setTask", id: log, task: "log" });
     run({ type: "setArg", id: log, name: "text", value: '"Hello World"' });
@@ -2028,7 +2107,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       for (const name of outs) run({ type: "addOutput", id, name });
       steps((lib3, task, out, args = {}) => {
-        const sid = run({ type: "addChild", id, title: task });
+        const sid = run({ type: "addChild", id });
         run({ type: "assign", id: sid, agent: lib3 });
         run({ type: "setTask", id: sid, task });
         for (const [name, value] of Object.entries(args)) run({ type: "setArg", id: sid, name, value });
@@ -2111,7 +2190,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     return id;
   };
   var lib2 = (run, parent, agent, task, out, args = {}) => {
-    const id = run({ type: "addChild", id: parent, title: task });
+    const id = run({ type: "addChild", id: parent });
     run({ type: "assign", id, agent });
     run({ type: "setTask", id, task });
     for (const [k, v] of Object.entries(args)) run({ type: "setArg", id, name: k, value: v });
@@ -2128,82 +2207,82 @@ ${given.map((g) => `  ${g},`).join("\n")}
     /** Sequência: cada passo começa quando o anterior termina; o dado de mesmo nome liga os passos. */
     sequencia: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Fazer pedido" });
-      step(run, root, "Receber pedido", [], ["pedido"]);
-      step(run, root, "Cobrar cliente", ["pedido"], ["pagamento"]);
-      step(run, root, "Enviar produto", ["pedido", "pagamento"], ["envio"]);
+      const root = run({ type: "newFlow", title: "fazerPedido" });
+      step(run, root, "receberPedido", [], ["pedido"]);
+      step(run, root, "cobrarCliente", ["pedido"], ["pagamento"]);
+      step(run, root, "enviarProduto", ["pedido", "pagamento"], ["envio"]);
       return { project: p(), flow: root };
     },
     /** Paralelo: as duas funções ocupam o mesmo estado. */
     paralelo: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Ativar cliente" });
-      step(run, root, "Gerar credenciais", [], ["credenciais"]);
-      step(run, root, "Agendar kickoff", [], ["kickoff"], "lia");
-      step(run, root, "Criar conta", [], ["conta"], void 0, { par: true });
+      const root = run({ type: "newFlow", title: "ativarCliente" });
+      step(run, root, "gerarCredenciais", [], ["credenciais"]);
+      step(run, root, "agendarKickoff", [], ["kickoff"], "lia");
+      step(run, root, "criarConta", [], ["conta"], void 0, { par: true });
       return { project: p(), flow: root };
     },
     /** Seleção: if com else. */
     selecao: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Revisar proposta" });
-      step(run, root, "Rascunhar proposta", [], ["proposta"], "lia");
-      const rev = step(run, root, "Revisar proposta", ["proposta"], ["aprovada"], "ana");
-      const send = step(run, root, "Enviar ao cliente", ["proposta"], ["envio"]);
+      const root = run({ type: "newFlow", title: "revisarProposta" });
+      step(run, root, "rascunharProposta", [], ["proposta"], "lia");
+      const rev = step(run, root, "revisarComAna", ["proposta"], ["aprovada"], "ana");
+      const send = step(run, root, "enviarAoCliente", ["proposta"], ["envio"]);
       const w = run({ type: "wrap", id: send, kind: "if", test: "aprovada" });
       void rev;
-      run({ type: "addElse", id: w, title: "Pedir nova revisao" });
+      run({ type: "addElse", id: w, title: "pedirNovaRevisao" });
       return { project: p(), flow: root };
     },
     /** Repetição: for … of. */
     repeticao: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Traduzir proposta" });
+      const root = run({ type: "newFlow", title: "traduzirProposta" });
       run({ type: "addInput", id: root, name: "idiomas" });
-      const t = step(run, root, "Traduzir texto", ["idioma"], ["traducao"], "teo");
-      step(run, root, "Publicar traducoes", ["traducao"], [], void 0);
+      const t = step(run, root, "traduzirTexto", ["idioma"], ["traducao"], "teo");
+      step(run, root, "publicarTraducoes", ["traducao"], [], void 0);
       run({ type: "wrap", id: t, kind: "for", v: "idioma", coll: "idiomas" });
       return { project: p(), flow: root };
     },
     /** try / catch: a função de tratamento é o catch. */
     trycatch: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Cobrar com seguranca" });
-      const c = step(run, root, "Cobrar cliente", ["pedido"], ["pagamento"]);
-      step(run, root, "Emitir recibo", ["pagamento"], ["recibo"]);
+      const root = run({ type: "newFlow", title: "cobrarComSeguranca" });
+      const c = step(run, root, "cobrarCliente", ["pedido"], ["pagamento"]);
+      step(run, root, "emitirRecibo", ["pagamento"], ["recibo"]);
       run({ type: "wrap", id: c, kind: "try" });
       return { project: p(), flow: root };
     },
     /** Paralelo entre uma composição e a função seguinte. */
     "paralelo-composicao": () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Preparar e avisar" });
-      const c = step(run, root, "Preparar conta", [], ["conta"]);
-      step(run, c, "Criar usuario", [], ["usuario"]);
-      step(run, root, "Avisar time", [], ["aviso"], void 0, { par: true });
+      const root = run({ type: "newFlow", title: "prepararEAvisar" });
+      const c = step(run, root, "prepararConta", [], ["conta"]);
+      step(run, c, "criarUsuario", [], ["usuario"]);
+      step(run, root, "avisarTime", [], ["aviso"], void 0, { par: true });
       return { project: p(), flow: root };
     },
     /** Composição: função com filhas (camadas). */
     composicao: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Fazer onboarding" });
-      const a = step(run, root, "Preparar conta", [], ["conta"]);
-      step(run, a, "Criar usuario", [], ["usuario"]);
-      step(run, a, "Gerar senha", ["usuario"], ["credenciais"]);
-      step(run, root, "Enviar boas-vindas", ["credenciais"], []);
+      const root = run({ type: "newFlow", title: "fazerOnboarding" });
+      const a = step(run, root, "prepararConta", [], ["conta"]);
+      step(run, a, "criarUsuario", [], ["usuario"]);
+      step(run, a, "gerarSenha", ["usuario"], ["credenciais"]);
+      step(run, root, "enviarBoasVindas", ["credenciais"], []);
       return { project: p(), flow: root };
     },
     /** Exemplo completo do livro / Flow Language: seleção + paralelo + repetição, com IA, pessoa e libs. */
     onboarding: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Fazer onboarding da Acme" });
-      step(run, root, "Coletar dados do cliente", [], ["dados_cliente"]);
-      step(run, root, "Rascunhar proposta", ["dados_cliente"], ["rascunho"], "lia");
-      step(run, root, "Revisar proposta", ["rascunho"], ["proposta_aprovada"], "ana");
-      const trad = step(run, root, "Traduzir proposta", ["proposta_aprovada", "idioma"], ["proposta_traduzida"], "teo");
-      const ctr = step(run, root, "Gerar contrato", ["proposta_aprovada", "dados_cliente"], ["contrato"]);
-      step(run, root, "Registrar auditoria", ["dados_cliente"], [], void 0, { par: true });
-      const env = step(run, root, "Enviar ao cliente", ["proposta_traduzida", "contrato"], ["envio_id"]);
+      const root = run({ type: "newFlow", title: "fazerOnboardingDaAcme" });
+      step(run, root, "coletarDadosDoCliente", [], ["dados_cliente"]);
+      step(run, root, "rascunharProposta", ["dados_cliente"], ["rascunho"], "lia");
+      step(run, root, "revisarProposta", ["rascunho"], ["proposta_aprovada"], "ana");
+      const trad = step(run, root, "traduzirProposta", ["proposta_aprovada", "idioma"], ["proposta_traduzida"], "teo");
+      const ctr = step(run, root, "gerarContrato", ["proposta_aprovada", "dados_cliente"], ["contrato"]);
+      step(run, root, "registrarAuditoria", ["dados_cliente"], [], void 0, { par: true });
+      const env = step(run, root, "enviarAoCliente", ["proposta_traduzida", "contrato"], ["envio_id"]);
       run({ type: "wrap", id: trad, kind: "for", v: "idioma", coll: '["en", "es"]' });
       void ctr;
       void env;
@@ -2212,7 +2291,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     /** Uma função só de libs do navegador (concretas), com valores e um if. */
     libs: () => {
       const { p, run } = fresh();
-      const root = run({ type: "newFlow", title: "Aplicar cupom" });
+      const root = run({ type: "newFlow", title: "aplicarCupom" });
       run({ type: "addInput", id: root, name: "price" });
       run({ type: "setArg", id: root, name: "price", value: "250" });
       run({ type: "addInput", id: root, name: "percent" });
@@ -2226,8 +2305,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
   var DOC_EXAMPLE_IDS = Object.keys(BUILDERS);
   function docExample(id) {
     if (id.startsWith("sample:")) {
-      const s = samplesProject(), f = s.project.flows.find((x) => x.title === id.slice(7));
-      return f ? { project: s.project, flow: f.id } : null;
+      const title = id.slice(7), p = samplesProject().project, flow = p.flows.find((f) => f.title === title);
+      return flow ? { project: p, flow: flow.id } : null;
     }
     return BUILDERS[id]?.() ?? null;
   }
@@ -2490,7 +2569,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         return r ? flowFile(r) : "";
       })();
       const secOpen = !exClosed.has("sec:files");
-      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+      el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
         const fid = "f:" + file, open = !exClosed.has(fid);
         const body = open ? fns.map((fn) => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
         return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0].id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -2519,17 +2598,18 @@ ${given.map((g) => `  ${g},`).join("\n")}
     el.explorer.addEventListener("click", (e) => {
       const t = e.target;
       if (t.closest("[data-exnew]")) {
-        void run({ type: "newFlow" });
+        const taken = /* @__PURE__ */ new Set([...filesOf(P2())]);
+        let n = 1, file = "newFile.ts";
+        while (taken.has(file)) file = `newFile${++n}.ts`;
+        run({ type: "newFlow", title: "main", file });
         return;
       }
       const add = t.closest("[data-exadd]");
       if (add) {
-        {
-          const taken = new Set(P2().flows.map((f) => f.title));
-          let n = 1, t2 = "new_function";
-          while (taken.has(t2)) t2 = `new_function_${++n}`;
-          run({ type: "newFlow", title: t2, file: add.dataset["exadd"] });
-        }
+        const file = add.dataset["exadd"], taken = new Set(P2().flows.filter((f) => flowFile(f) === file).map((f) => f.title));
+        let n = 1, title = "newFunction";
+        while (taken.has(title)) title = `newFunction${++n}`;
+        run({ type: "newFlow", title, file });
         return;
       }
       if (t.closest("[data-exreset]")) {

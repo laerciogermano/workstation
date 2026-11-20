@@ -109,7 +109,7 @@ test("else do if: aparece no flow (tabela e plano) como o catch, com filho na pr
 test("filho de um bloco entra na primeira posição; sair do bloco; desfazer/refazer pelos botões", async () => {
   const blockRow = `.grow.ifrow`; const c = await center(blockRow); await mouse("mouseMoved", c[0] - 40, c[1]);
   const before = await ev(`document.querySelectorAll(".grow").length`); await click(`${blockRow} .fl-tools [data-act=addChild]`); assert.equal(await ev(`document.querySelectorAll(".grow").length`), before + 1);
-  assert.match(await ev(`document.querySelectorAll(".grow")[${await ev(`[...document.querySelectorAll(".grow")].findIndex(r=>r.classList.contains("ifrow"))`)} + 1].innerText`), /New function/);
+  assert.match(await ev(`document.querySelectorAll(".grow")[${await ev(`[...document.querySelectorAll(".grow")].findIndex(r=>r.classList.contains("ifrow"))`)} + 1].innerText`), /newFunction/);
   const key = async (k, mod = 2) => { await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: k, code: "Key" + k.toUpperCase(), windowsVirtualKeyCode: k.toUpperCase().charCodeAt(0), modifiers: mod }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code: "Key" + k.toUpperCase(), windowsVirtualKeyCode: k.toUpperCase().charCodeAt(0), modifiers: mod }); await wait(250); };
   await ev(`document.activeElement.blur()`); await key("z"); assert.equal(await ev(`document.querySelectorAll(".grow").length`), before); await key("z", 2 | 8); assert.equal(await ev(`document.querySelectorAll(".grow").length`), before + 1);   // Ctrl+Z / Ctrl+Shift+Z
 });
@@ -309,7 +309,7 @@ test("explorador: + cria função no mesmo arquivo; cada função abre a própri
   await ev(`document.querySelector(".ex-add[data-exadd='main.ts']").click()`); await wait(250);
   assert.equal(await ev(`document.querySelectorAll(".ex-file").length`), files0, "same file, no new file");
   assert.equal(await ev(`document.querySelectorAll(".ex-file[data-file='main.ts'] ~ .ex-fn").length >= 2`), true);
-  assert.equal(await ev(`document.getElementById("flowName").textContent`), "main › new_function");
+  assert.equal(await ev(`document.getElementById("flowName").textContent`), "main › newFunction");
   assert.equal(await ev(`flowApp.store.project.flows.filter(f=>f.file==="main.ts").length`), 1, "the new function records the file");
   await ev(`document.querySelector(".ex-fn:not(.cur)").click()`); await wait(250);
   assert.equal(await ev(`document.querySelectorAll(".ex-fn.cur").length`), 1);

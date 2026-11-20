@@ -167,7 +167,7 @@ export function renameDatumInFlow(flow: Fn, from: string, to: string): void {
     else if (n.t === "for") { if (n.v === from) n.v = to; n.coll = renameIdentInExpr(n.coll, from, to); }
   });
 }
-/** Título abstrato = referência no fluxo: renomear uma atualiza todas as funções (sem contrato de lib) com o mesmo nome. */
+/** Título abstrato = referência no fluxo (como dado): renomear uma atualiza todas as abstratas com o mesmo nome. lowerCamelCase; não colide com dado. */
 export function renameFnTitleInFlow(p: Project, flow: Fn, from: string, to: string): void {
   if (from === to) return;
   const apply = (n: Fn): void => { if (n.title === from && !contractOf(p, n)) n.title = to; };
@@ -191,11 +191,69 @@ export const flowFile = (f: Fn): string => f.file ?? `${slug(f.title)}.ts`;
 
 // ───────────────────────── construção ─────────────────────────
 const nextId = (p: Project): string => `n${++p.seq}`;
-export const newFn = (p: Project, title = "New function"): Fn => ({ t: "fn", id: nextId(p), title, agent: null, resp: null, ins: [], outs: [], kids: [], par: false });
+export const newFn = (p: Project, title = "newFunction"): Fn => ({ t: "fn", id: nextId(p), title, agent: null, resp: null, ins: [], outs: [], kids: [], par: false });
 const ident = /^[A-Za-z_][A-Za-z0-9_]*$/;
+/** Nome de função/método: lowerCamelCase (começa minúscula, sem _ nem espaços). */
+const CAMEL_FN = /^[a-z][a-zA-Z0-9]*$/;
 const RESERVED = new Set("break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield let static await".split(" "));
 const cleanName = (s: unknown, what: string): string => { const v = String(s ?? "").trim(); if (RESERVED.has(v)) return fail("invalid", `${what} cannot be the reserved word “${v}”`); return ident.test(v) ? v : fail("invalid", `${what} is invalid: use letters, numbers and _ (e.g. customer_data)`); };
 const cleanText = (s: unknown, what: string, max = 120): string => { const v = String(s ?? "").trim(); return v && v.length <= max ? v : fail("invalid", `${what} cannot be empty`); };
+/** Valida lowerCamelCase de função (ex.: processOrder, newId). */
+export const cleanFnTitle = (s: unknown, what = "Function name"): string => {
+  const v = String(s ?? "").trim();
+  if (!v || v.length > 80) return fail("invalid", `${what} cannot be empty`);
+  if (RESERVED.has(v)) return fail("invalid", `${what} cannot be the reserved word “${v}”`);
+  if (!CAMEL_FN.test(v)) return fail("invalid", `${what} must be lowerCamelCase (e.g. processOrder)`);
+  return v;
+};
+/** Nomes de dados no fluxo (ins/outs + variáveis de for). */
+export function dataNamesInFlow(flow: Fn): Set<string> {
+  const out = new Set<string>([...flow.ins, ...flow.outs]);
+  walk(flow.kids, n => {
+    if (n.t === "fn") { for (const x of n.ins) out.add(x); for (const x of n.outs) out.add(x); }
+    else if (n.t === "for") out.add(n.v);
+  });
+  return out;
+}
+/** Títulos de função no fluxo (raiz + árvore), opcionalmente ignorando um id. */
+export function fnTitlesInFlow(flow: Fn, exceptId?: string): Set<string> {
+  const out = new Set<string>();
+  if (flow.id !== exceptId) out.add(flow.title);
+  walk(flow.kids, n => { if (n.t === "fn" && n.id !== exceptId) out.add(n.title); });
+  return out;
+}
+/** Título livre (abstrato) no fluxo: camelCase, único entre abstratas; não colide com dado. Libs podem repetir o nome da task (vários `log`). */
+const claimAbstractTitle = (p: Project, flow: Fn, raw: unknown, exceptId?: string): string => {
+  const name = cleanFnTitle(raw);
+  if (dataNamesInFlow(flow).has(name)) return fail("invalid", `“${name}” is already a data name in this flow`);
+  const hit = (n: Fn): boolean => n.id !== exceptId && n.title === name && !contractOf(p, n);
+  if (hit(flow)) return fail("invalid", `Function “${name}” already exists in this flow`);
+  let clash = false; walk(flow.kids, n => { if (n.t === "fn" && hit(n)) clash = true; });
+  if (clash) return fail("invalid", `Function “${name}” already exists in this flow`);
+  return name;
+};
+/** Ao renomear abstrata: camelCase; não colide com dado; se outra abstrata já tem o nome, funde (mesma referência); se lib tem o nome, recusa. */
+const claimRenameAbstract = (p: Project, flow: Fn, raw: unknown, exceptId: string): string => {
+  const name = cleanFnTitle(raw);
+  if (dataNamesInFlow(flow).has(name)) return fail("invalid", `“${name}” is already a data name in this flow`);
+  const hitLib = (n: Fn): boolean => n.id !== exceptId && n.title === name && !!contractOf(p, n);
+  if (hitLib(flow)) return fail("invalid", `“${name}” is already a lib function in this flow`);
+  let lib = false; walk(flow.kids, n => { if (n.t === "fn" && hitLib(n)) lib = true; });
+  if (lib) return fail("invalid", `“${name}” is already a lib function in this flow`);
+  return name;
+};
+/** Dado não pode ter o mesmo nome de uma função no fluxo. */
+const claimDataInFlow = (flow: Fn, raw: unknown, what = "Data name"): string => {
+  const name = cleanName(raw, what);
+  if (fnTitlesInFlow(flow).has(name)) return fail("invalid", `“${name}” is already a function name in this flow`);
+  return name;
+};
+/** Próximo título camelCase livre no fluxo (newFunction, newFunction2…). */
+export const freshFnTitle = (flow: Fn, base = "newFunction"): string => {
+  const taken = fnTitlesInFlow(flow), data = dataNamesInFlow(flow);
+  if (!taken.has(base) && !data.has(base) && CAMEL_FN.test(base)) return base;
+  let n = 2; for (;;) { const t = `${base}${n}`; if (!taken.has(t) && !data.has(t)) return t; n++; }
+};
 
 export function emptyProject(name = "New project"): Project { return { name, flows: [], agents: [], seq: 0 }; }
 
@@ -275,12 +333,17 @@ function blockOf(kind: BlockKind, p: Project, a: Args, inner: Node): Block {
   const id = nextId(p);
   if (kind === "if") return { t: "if", id, test: a["test"] ? cleanText(a["test"], "Condition") : "condition", kids: [inner], elseKids: [] };
   if (kind === "for") return { t: "for", id, v: a["v"] ? cleanName(a["v"], "Variable") : "item", coll: a["coll"] ? cleanText(a["coll"], "Collection") : "items", kids: [inner] };
-  return { t: "try", id, kids: [inner], catchKids: [newFn(p, "Handle error")] };
+  return { t: "try", id, kids: [inner], catchKids: [newFn(p, "handleError")] };
 }
 
 export const HANDLERS = {
   /** Novo fluxo (função raiz). */
-  newFlow: (p, a) => { const f = newFn(p, a["title"] ? cleanText(a["title"], "Title", 80) : "New flow"); if (a["file"]) f.file = cleanText(a["file"], "File", 80); p.flows.push(f); return f.id; },
+  newFlow: (p, a) => {
+    const file = a["file"] ? cleanText(a["file"], "File", 80) : undefined;
+    const title = a["title"] ? cleanFnTitle(a["title"], "Title") : "newFlow";
+    if (p.flows.some(x => x.title === title && flowFile(x) === (file ?? `${slug(title)}.ts`))) return fail("invalid", `Function “${title}” already exists in this file`);
+    const f = newFn(p, title); if (file) f.file = file; p.flows.push(f); return f.id;
+  },
   /** Exclui um fluxo inteiro; o projeto sempre mantém pelo menos um. */
   removeFlow: (p, a) => {
     const l = need(p, str(a, "id")); if (!isRoot(p, l.node.id)) return fail("invalid", "Only a whole flow can be deleted");
@@ -304,8 +367,13 @@ export const HANDLERS = {
   },
   rename: (p, a) => {
     const l = need(p, str(a, "id")); if (l.node.t !== "fn") return fail("invalid", "Only functions have a name");
-    const to = cleanText(a["title"], "Name", 80), from = l.node.title; if (from === to) return;
-    if (contractOf(p, l.node)) { l.node.title = to; return; }   // lib: título = task desta chamada
+    const from = l.node.title;
+    if (contractOf(p, l.node)) {
+      const to = cleanFnTitle(a["title"], "Name"); if (from === to) return;
+      if (dataNamesInFlow(l.flow).has(to)) return fail("invalid", `“${to}” is already a data name in this flow`);
+      l.node.title = to; return;   // lib: título = task desta chamada (instâncias podem repetir o nome da task)
+    }
+    const to = claimRenameAbstract(p, l.flow, a["title"], l.node.id); if (from === to) return;
     renameFnTitleInFlow(p, l.flow, from, to);   // abstratas com o mesmo nome = mesma referência
   },
   /** Renomeia um arquivo: todas as funções dele passam ao novo nome e quem o usa como fonte (file:nome) acompanha. */
@@ -319,7 +387,7 @@ export const HANDLERS = {
 
   /** Filho: função → no fim da lista dela; bloco → na PRIMEIRA posição (o lugar do cabeçalho); `catch` → primeira posição do catch. */
   addChild: (p, a) => {
-    const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : undefined);
+    const l = need(p, str(a, "id")), n = l.node, f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow));
     if (n.t === "fn") n.kids.push(f);
     else if (n.t === "try" && a["catch"]) n.catchKids.unshift(f);
     else if (n.t === "if" && a["else"]) n.elseKids.unshift(f);
@@ -329,7 +397,7 @@ export const HANDLERS = {
   /** Irmão: entra na lista de quem o recebe (dentro do bloco, se for o caso). Num bloco = irmão à direita, fora dele. */
   addSibling: (p, a) => {
     const l = need(p, str(a, "id")); if (isRoot(p, l.node.id)) return fail("root", "The flow root cannot have siblings");
-    const f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : undefined);
+    const f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow));
     l.list.splice(l.index + (a["before"] ? 0 : 1), 0, f); return f.id;
   },
   remove: (p, a) => {
@@ -341,7 +409,9 @@ export const HANDLERS = {
     const l = need(p, str(a, "id")), kind = str(a, "kind") as BlockKind;
     if (!["if", "for", "try"].includes(kind)) return fail("invalid", `Unknown block: ${kind}`);
     if (isRoot(p, l.node.id)) return fail("root", `The root flow does not accept ${kind}`);
-    const b = blockOf(kind, p, a, l.node); l.list.splice(l.index, 1, b); return b.id;
+    const b = blockOf(kind, p, a, l.node);
+    if (b.t === "try" && b.catchKids[0]?.t === "fn") (b.catchKids[0] as Fn).title = freshFnTitle(l.flow, "handleError");
+    l.list.splice(l.index, 1, b); return b.id;
   },
   /** Remove o bloco e devolve os filhos à lista de fora (no try, o catch some). */
   unwrap: (p, a) => {
@@ -361,12 +431,13 @@ export const HANDLERS = {
     if (target > b.kids.length) b.kids.push(...l.list.splice(l.index + 1, target - b.kids.length));
     else if (target < b.kids.length) l.list.splice(l.index + 1, 0, ...b.kids.splice(target));
   },
-  setFor: (p, a) => { const n = need(p, str(a, "id")).node; if (n.t !== "for") return fail("invalid", "Not a for"); n.v = cleanName(a["v"], "Variable"); n.coll = cleanText(a["coll"], "Collection"); },
+  setFor: (p, a) => { const l = need(p, str(a, "id")), n = l.node; if (n.t !== "for") return fail("invalid", "Not a for"); n.v = claimDataInFlow(l.flow, a["v"], "Variable"); n.coll = cleanText(a["coll"], "Collection"); },
   setIf: (p, a) => { const n = need(p, str(a, "id")).node; if (n.t !== "if") return fail("invalid", "Not an if"); n.test = cleanText(a["test"], "Condition"); },
   /** Cria o else do if (uma função dentro dele, como o try cria o catch). */
   addElse: (p, a) => {
-    const n = need(p, str(a, "id")).node; if (n.t !== "if") return fail("invalid", "Only an if has an else");
-    if (n.elseKids.length) return fail("invalid", "This if already has an else"); const f = newFn(p, a["title"] ? cleanText(a["title"], "Name", 80) : undefined); n.elseKids.push(f); return f.id;
+    const l = need(p, str(a, "id")), n = l.node; if (n.t !== "if") return fail("invalid", "Only an if has an else");
+    if (n.elseKids.length) return fail("invalid", "This if already has an else");
+    const f = newFn(p, a["title"] ? claimAbstractTitle(p, l.flow, a["title"]) : freshFnTitle(l.flow)); n.elseKids.push(f); return f.id;
   },
   removeElse: (p, a) => { const n = need(p, str(a, "id")).node; if (n.t !== "if") return fail("invalid", "Only an if has an else"); n.elseKids = []; },
 
@@ -375,22 +446,28 @@ export const HANDLERS = {
 
   /** Responsável: lib (concreta), pessoa ou IA (abstrata). Concreta força uma função do catálogo da lib. */
   assign: (p, a) => {
-    const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have a source");
+    const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have a source");
     const ag = a["agent"] ? agentOf(p, str(a, "agent")) ?? fail("not_found", `Source ${str(a, "agent")} does not exist`) : undefined;
     n.agent = ag?.id ?? null; if (ag?.kind !== "ia") n.resp = null;
-    if (hasContract(ag) && !ag!.tasks.includes(n.title)) n.title = ag!.tasks[0] ?? n.title;
+    if (hasContract(ag) && !ag!.tasks.includes(n.title)) {
+      const task = ag!.tasks[0] ?? n.title;
+      if (dataNamesInFlow(l.flow).has(task)) return fail("invalid", `“${task}” is already a data name in this flow`);
+      n.title = task;
+    }
     if (hasContract(ag)) applyContract(p, n);   // entradas e saídas passam a ser as do contrato da lib
     if (n.args) { n.args = Object.fromEntries(Object.entries(n.args).filter(([k]) => n.ins.includes(k))); if (!Object.keys(n.args).length) delete n.args; }
   },
   setTask: (p, a) => {
-    const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have a lib function");
-    const ag = agentOf(p, n.agent), t = cleanText(a["task"], "Function", 80);
-    if (hasContract(ag) && !ag!.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag!.name}`); n.title = t; applyContract(p, n);
+    const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have a lib function");
+    const ag = agentOf(p, n.agent), t = cleanFnTitle(a["task"], "Function");
+    if (hasContract(ag) && !ag!.tasks.includes(t)) return fail("invalid", `Function "${t}" does not exist in ${ag!.name}`);
+    if (dataNamesInFlow(l.flow).has(t)) return fail("invalid", `“${t}” is already a data name in this flow`);
+    n.title = t; applyContract(p, n);
   },
   /** Renomeia um dado (referência no fluxo inteiro): entrada ou saída de função comum. */
   renameIo: (p, a) => {
     const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs"); if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-    const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = cleanName(a["to"], "Data name");
+    const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
     if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
     if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
     renameDatumInFlow(l.flow, from, to);
@@ -398,7 +475,7 @@ export const HANDLERS = {
   /** Troca de uma vez todos os dados de um lado (entrada ou saída) de uma função comum: nomes e, nas entradas, os valores. */
   setData: (p, a) => {
     const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs"); if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-    const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map(x => cleanName(x, "Data name")), values = Array.isArray(a["values"]) ? a["values"].map(x => String(x ?? "").trim()) : [];
+    const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map(x => claimDataInFlow(l.flow, x)), values = Array.isArray(a["values"]) ? a["values"].map(x => String(x ?? "").trim()) : [];
     if (new Set(names).size !== names.length) return fail("invalid", "Duplicate data name"); if (values.some(v => v.length > 300)) return fail("invalid", "Value too large");
     const prev = side === "out" ? [...n.outs] : [...n.ins];
     for (let i = 0; i < Math.min(prev.length, names.length); i++) if (prev[i] !== names[i]) renameDatumInFlow(l.flow, prev[i]!, names[i]!);
@@ -409,7 +486,7 @@ export const HANDLERS = {
   renameData: (p, a) => {
     const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
     const c = contractOf(p, n); if (!c) return fail("invalid", "The data name can only change on lib functions");
-    const side = str(a, "side") === "in" ? "in" : "out", to = cleanName(a["to"], "Data name");
+    const side = str(a, "side") === "in" ? "in" : "out", to = claimDataInFlow(l.flow, a["to"]);
     if (side === "out") {
       if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
       const from = n.outs[0] ?? c.outs[0]!; renameDatumInFlow(l.flow, from, to); return;
@@ -440,7 +517,8 @@ export const HANDLERS = {
 function io(p: Project, a: Args, key: "ins" | "outs", add: boolean): void {
   const n = need(p, str(a, "id")).node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
   if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
-  const name = cleanName(a["name"], "Data name");
+  const l = need(p, str(a, "id"));
+  const name = add ? claimDataInFlow(l.flow, a["name"]) : cleanName(a["name"], "Data name");
   if (add) { if (!n[key].includes(name)) n[key].push(name); } else { n[key] = n[key].filter(x => x !== name); if (key === "ins" && n.args) { delete n.args[name]; if (!Object.keys(n.args).length) delete n.args; } }
 }
 

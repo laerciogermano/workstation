@@ -9,8 +9,8 @@ import { build, planHeight, STATE_ROW, statesByStep, dataLinks, clampCodeWidth, 
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
-  const root = run({ type: "newFlow", title: "R" });
-  const ids = ["A", "B", "C", "D"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string, string];
+  const root = run({ type: "newFlow", title: "root" });
+  const ids = ["fa", "fb", "fc", "fd"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string, string];
   const ui = (x: Partial<Ui> = {}): Ui => ({ closed: new Set(), sel: null, txtIn: true, ...x });
   const view = (x: Partial<Ui> = {}) => build(p, root, ui(x));
   return { run, root, ids, ui, view, get p(): Project { return p; } };
@@ -82,7 +82,7 @@ describe("remover: sempre o mesmo ícone de lixeira", () => {
 describe("tabela", () => {
   it("raiz mostra o arquivo; função sem responsável mostra círculo tracejado com +; concreta mostra a lib; todas têm o círculo da função", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[1]!, agent: "math" });
-    const h = t.view().table; expect(h).toContain('class="rp-n">r<'); expect(h).toContain("fav arquivo"); expect(h).toContain("fav none"); expect(h).toContain("Math"); expect(h).toContain("fav maquina");
+    const h = t.view().table; expect(h).toContain('class="rp-n">root<'); expect(h).toContain("fav arquivo"); expect(h).toContain("fav none"); expect(h).toContain("Math"); expect(h).toContain("fav maquina");
     expect((h.match(/class="fn-dot /g) ?? []).length).toBe(5);   // as 4 folhas + a função de primeira ordem (círculo, não árvore) expect(h).toContain("fn-dot conc"); expect(h).toContain("fn-dot nag");
   });
   it("lib concreta mostra seletor de função; IA mostra a etiqueta do agente e a pessoa responsável", () => {
@@ -90,7 +90,7 @@ describe("tabela", () => {
     const h = t.view().table; expect(h).toContain('class="task-pick"'); expect(h).toContain("<option selected>random</option>"); expect(h).toContain("agent-tag"); expect(h).toContain("Ana Souza"); expect(h).toContain('data-change="setResp"');
   });
   it("clicar no text renomeia (data-act=rename); composta tem a sanfona", () => {
-    const t = base(); t.run({ type: "addChild", id: t.ids[0]!, title: "A1" }); const h = t.view().table; expect(h).toContain('data-act="rename"'); expect(h).toContain('data-act="toggle"'); expect(h).toContain("fn-dot");
+    const t = base(); t.run({ type: "addChild", id: t.ids[0]!, title: "a1" }); const h = t.view().table; expect(h).toContain('data-act="rename"'); expect(h).toContain('data-act="toggle"'); expect(h).toContain("fn-dot");
     expect(t.view({ closed: new Set([t.ids[0]!]) }).table).not.toContain(">A1<"); expect(t.view({ closed: new Set([t.ids[0]!]) }).table).toContain("car shut");
   });
   it("blocos: linhas if/for/try/catch com rótulos e as mesmas ferramentas; indentam por profundidade", () => {
@@ -168,7 +168,7 @@ describe("plano (SVG)", () => {
     expect(v.plan).toContain('class="ftr"'); expect(v.plan).toContain('class="fca"');
   });
   it("composta mostra a barra-resumo; fechada continua com o resumo", () => {
-    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); expect(t.view().plan).toContain('class="sum"'); expect(t.view({ closed: new Set([t.ids[1]!]) }).plan).toContain('class="sum"');
+    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); expect(t.view().plan).toContain('class="sum"'); expect(t.view({ closed: new Set([t.ids[1]!]) }).plan).toContain('class="sum"');
   });
   it("geometria: colunas e linhas", () => { const t = base(), s = t.view().scene; expect(colX(1) - colX(0)).toBe(G.W); expect(rowY(2) - rowY(1)).toBe(G.RH); expect(planWidth(s)).toBeGreaterThan(colX(s.nSteps)); expect(renderPlan(t.p, locate(t.p, t.root)!.node as Fn, layout(locate(t.p, t.root)!.node as Fn), t.ui())).toContain("<svg"); });
   it("esc escapa HTML e ícones são SVG", () => { expect(esc('<a href="x">&')).toBe("&lt;a href=&quot;x&quot;&gt;&amp;"); expect(icon("plus")).toContain("<svg"); expect(icon("package")).toContain("<path"); expect(icon("naoexiste")).toContain("<svg"); });
@@ -214,7 +214,7 @@ describe("quadrado do dado", () => {
   it("listas longas viram reticências no plano (a lista inteira fica no tooltip) e o nome da função se afasta do dado da saída", () => {
     expect(dataText(["a", "b"])).toBe("a, b"); expect(dataText(["proposal_approved", "customer_data"])).toMatch(/…$/); expect(dataText(["proposal_approved", "customer_data"]).length).toBe(24);
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "result" }); const p = t.view({ txtIn: false }).plan;
-    const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>A</)![1]); expect(lbl).toBeGreaterThan(colX(1, G.WS) + G.GAP + "result".length * 5.6);
+    const lbl = Number(p.match(/<text class="lbl" x="([\d.]+)"[^>]*>fa</)![1]); expect(lbl).toBeGreaterThan(colX(1, G.WS) + G.GAP + "result".length * 5.6);
   });
   it("função de primeira ordem: o nome fica centrado em cima da barra (não à direita)", () => {
     const t = base(); t.run({ type: "addOutput", id: t.root, name: "report" });
@@ -233,15 +233,15 @@ describe("quadrado do dado", () => {
 describe("dado e cubo: [] = cubo (state); UM nome = quadrado; 2+ = cubo", () => {
   it("regras: isCube e nome do cubo (input_/output_ + função)", () => {
     expect(isCube([])).toBe(true); expect(isCube(["a"])).toBe(false); expect(isCube(["a", "b"])).toBe(true);
-    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "Gerar contrato" }); const f = locate(t.p, t.ids[0]!)!.node as Fn;
-    expect(cubeName(f, "in")).toBe("input_gerar_contrato"); expect(cubeName(f, "out")).toBe("output_gerar_contrato");
+    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "gerarContrato" }); const f = locate(t.p, t.ids[0]!)!.node as Fn;
+    expect(cubeName(f, "in")).toBe("input_gerarcontrato"); expect(cubeName(f, "out")).toBe("output_gerarcontrato");
   });
   it("um dado = quadrado; dois ou mais = cubo no plano (no mesmo ponto), com o nome do cubo e os campos no tooltip", () => {
     const t = base(); t.run({ type: "addInput", id: t.ids[1]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "y" });
     let p = t.view().plan; expect((p.match(/class="dot/g) ?? []).length).toBe(2);
     t.run({ type: "addInput", id: t.ids[1]!, name: "z" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "w" }); p = t.view().plan;
     expect((p.match(/class="dot/g) ?? []).length).toBe(0);
-    expect(p).toContain(">input_b<"); expect(p).toContain(">output_b<"); expect(p).toContain("<title>x\nz</title>"); expect(p).toContain("<title>y, w</title>");
+    expect(p).toContain(">input_fb<"); expect(p).toContain(">output_fb<"); expect(p).toContain("<title>x\nz</title>"); expect(p).toContain("<title>y, w</title>");
     const sc = t.view().scene, g = planGutter(sc), row = sc.rows.findIndex(r => r.id === t.ids[1] && r.kind === "fn"), cy = rowY(row) + G.RH / 2;
     const ys = [...p.matchAll(/<path class="cube(?: a)?" transform="translate\(([\d.]+) ([\d.]+)\)"/g)].map(m => ({ x: Number(m[1]) + 5, y: Number(m[2]) + 5.5 }));
     const onB = ys.filter(q => q.y === cy); expect(onB.map(q => q.x)).toEqual([colX(1, G.W, g), colX(2, G.W, g)]);   // cubos de B na mesma altura do antigo quadrado
@@ -312,13 +312,13 @@ describe("tabela: largura acompanha o aninhamento", () => {
 describe("modo text: barra na largura do text, com padding", () => {
   it("colW cresce com o nome mais comprido e só no modo text", () => {
     const t = base(); expect(colW(t.view().scene, { txtIn: false })).toBe(G.WS); expect(colW(t.view().scene, { txtIn: true })).toBe(G.W);
-    t.run({ type: "rename", id: t.ids[0]!, title: "um_nome_de_funcao_bem_comprido_mesmo_de_verdade" });
+    t.run({ type: "rename", id: t.ids[0]!, title: "umNomeDeFuncaoBemCompridoMesmoDeVerdade" });
     const big = colW(t.view().scene, { txtIn: true }); expect(big).toBeGreaterThan(G.W); expect(colW(t.view().scene, { txtIn: false })).toBe(G.WS);
   });
   it("a barra tem folga dos dois lados e as colunas acompanham", () => {
-    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "um_nome_de_funcao_bem_comprido_mesmo_de_verdade" });
+    const t = base(); t.run({ type: "rename", id: t.ids[0]!, title: "umNomeDeFuncaoBemCompridoMesmoDeVerdade" });
     const v = t.view({ txtIn: true }), m = v.plan.match(/<rect class="fn nag" x="([\d.]+)" y="[\d.]+" width="([\d.]+)"/)!;
-    expect(Number(m[2])).toBeGreaterThanOrEqual("um_nome_de_funcao_bem_comprido_mesmo_de_verdade".length * 6.2 + 24); expect(v.w).toBe(Number(m[2]) + 2 * G.INS);
+    expect(Number(m[2])).toBeGreaterThanOrEqual("umNomeDeFuncaoBemCompridoMesmoDeVerdade".length * 6.2 + 24); expect(v.w).toBe(Number(m[2]) + 2 * G.INS);
     expect(planWidth(v.scene, v.w)).toBeGreaterThan(planWidth(v.scene));
   });
 });
@@ -327,13 +327,13 @@ describe("else no flow (mesmo princípio do catch)", () => {
   it("aparece linha de else na tabela e faixa + etiqueta no plano, e some quando o else some", () => {
     const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if", test: "ok" });
     let v = t.view(); expect(v.table).not.toContain("elserow"); expect(v.plan).not.toContain("band el");
-    t.run({ type: "addElse", id: i, title: "Plano B" }); v = t.view();
-    expect(v.table).toContain("elserow"); expect(v.table).toContain('class="trd e">else'); expect(v.table).toContain("Plano B"); expect(v.plan).toContain("bande el"); expect(v.plan).toContain("else"); expect(v.plan).toContain('data-part="else"');
+    t.run({ type: "addElse", id: i, title: "planoB" }); v = t.view();
+    expect(v.table).toContain("elserow"); expect(v.table).toContain('class="trd e">else'); expect(v.table).toContain("planoB"); expect(v.plan).toContain("bande el"); expect(v.plan).toContain("else"); expect(v.plan).toContain('data-part="else"');
     expect(v.scene.rows.filter(r => r.kind === "else")).toHaveLength(1);
     t.run({ type: "removeElse", id: i }); expect(t.view().table).not.toContain("elserow");
   });
   it("o else cobre as mesmas linhas que o conteúdo dele (faixa até a última função do else)", () => {
-    const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "addElse", id: i }); t.run({ type: "addChild", id: i, else: true, title: "Antes" });
+    const t = base(), i = t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); t.run({ type: "addElse", id: i }); t.run({ type: "addChild", id: i, else: true, title: "antes" });
     const v = t.view(), el = v.scene.rows.findIndex(r => r.kind === "else"), row = v.scene.rows[el]!, h = (row.last - el + 1) * G.RH;
     expect(row.last).toBeGreaterThan(el); expect((v.plan.match(/class="bande el"/g) ?? []).length).toBe(1);
     const m = v.plan.match(/<line class="bande el" x1="[\d.]+" y1="([\d.]+)" x2="[\d.]+" y2="([\d.]+)"/)!; expect(Number(m[2]) - Number(m[1])).toBe(h);
@@ -341,11 +341,11 @@ describe("else no flow (mesmo princípio do catch)", () => {
 });
 
 describe("estados embaixo das colunas e título do plano", () => {
-  it("o título do plano é só o nome do fluxo (sem o nome do projeto)", () => { const t = base(); const p = t.view().plan; expect(p).toContain(">R</text>"); expect(p).not.toContain("T · R"); expect(p).not.toContain("New project"); });
+  it("o título do plano é só o nome do fluxo (sem o nome do projeto)", () => { const t = base(); const p = t.view().plan; expect(p).toContain(">root</text>"); expect(p).not.toContain("T · root"); expect(p).not.toContain("New project"); });
   it("embaixo de cada coluna aparecem os dados (estados) que chegam nela: quadrado, ou cubo quando a função devolve vários", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "p" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" });
-    const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_b", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
-    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(1); expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_b</text>");
+    const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_fb", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
+    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(1); expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
     expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 64);
   });
   it("funções do mesmo passo empilham os estados na mesma coluna e a altura cresce", () => {
@@ -359,7 +359,7 @@ describe("estados embaixo das colunas e título do plano", () => {
     expect(t.view().plan).toMatch(/class="stt"[^>]*>[\s\S]*?>text</);
   });
   it("entrada de uma composição (função com filhas) aparece no estado embaixo", () => {
-    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "B1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
+    const t = base(); t.run({ type: "addChild", id: t.ids[1]!, title: "b1" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" });
     const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("y");
     expect(m.get(1)).toMatchObject([{ name: "y", abs: true, side: "in", owner: t.ids[1] }]); expect(t.view().plan).toContain('class="sdot a"');
   });
@@ -414,14 +414,14 @@ describe("traços de ligação: só entre passos vizinhos (nunca pulam uma colun
   });
   it("função do else/catch (após o bloco) ganha o traço do dado do passo vizinho, contínuo (sem tracejado)", () => {
     // else começa no passo seguinte ao último do if → o produtor vizinho é o último do if (C), não o anterior (B)
-    const t = base(); const i = t.run({ type: "wrap", id: t.ids[2]!, kind: "if", test: "ok" }); const e = t.run({ type: "addElse", id: i, title: "Plan B" }); t.run({ type: "addOutput", id: t.ids[2]!, name: "dados" }); t.run({ type: "addInput", id: e, name: "dados" });
-    const v = t.view(), links = dataLinks(t.p, v.scene); expect(links).toHaveLength(1); expect([(links[0]!.from.node as Fn).title, (links[0]!.to.node as Fn).title]).toEqual(["C", "Plan B"]); expect(links[0]!.to.s - links[0]!.from.e).toBe(1);
+    const t = base(); const i = t.run({ type: "wrap", id: t.ids[2]!, kind: "if", test: "ok" }); const e = t.run({ type: "addElse", id: i, title: "planB" }); t.run({ type: "addOutput", id: t.ids[2]!, name: "dados" }); t.run({ type: "addInput", id: e, name: "dados" });
+    const v = t.view(), links = dataLinks(t.p, v.scene); expect(links).toHaveLength(1); expect([(links[0]!.from.node as Fn).title, (links[0]!.to.node as Fn).title]).toEqual(["fc", "planB"]); expect(links[0]!.to.s - links[0]!.from.e).toBe(1);
     expect(v.plan).toContain('class="dep"'); expect(v.plan).not.toMatch(/stroke-dasharray/);
   });
   it("catch usando o dado do último do try liga; dado que ninguém produz não liga; valor preenchido citando um dado liga", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" }); const h = (locate(t.p, tr)!.node as { catchKids: { id: string }[] }).catchKids[0]!.id;
     t.run({ type: "addInput", id: h, name: "q" }); t.run({ type: "addInput", id: t.ids[2]!, name: "nobody" }); const name = (l: { from: { node: unknown }; to: { node: unknown }; name: string }): string => `${(l.from.node as Fn).title}>${(l.to.node as Fn).title}:${l.name}`;
-    expect(dataLinks(t.p, t.view().scene).map(name)).toEqual(["B>Handle error:q"]);
-    t.run({ type: "addInput", id: t.ids[1]!, name: "extra" }); t.run({ type: "setArg", id: t.ids[1]!, name: "extra", value: "q + 1" }); expect(dataLinks(t.p, t.view().scene).map(name)).toContain("B>Handle error:q");
+    expect(dataLinks(t.p, t.view().scene).map(name)).toEqual(["fb>handleError:q"]);
+    t.run({ type: "addInput", id: t.ids[1]!, name: "extra" }); t.run({ type: "setArg", id: t.ids[1]!, name: "extra", value: "q + 1" }); expect(dataLinks(t.p, t.view().scene).map(name)).toContain("fb>handleError:q");
   });
 });

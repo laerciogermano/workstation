@@ -96,7 +96,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **I/O da 1ª ordem:** sem `ins`/`outs` declarados → sem marca (não inventa `input_main`/`output_main`). Só aparece quando houver nome. **Antes:** `[]` virava cubo também na raiz.
 
-**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas com o mesmo título idem (`rename`). Libs (contrato) não propagam título. **Voltar:** rename só no nó local.
+**Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas: título lowerCamelCase, único na criação; renomear para um nome já usado funde a referência (`renameFnTitleInFlow`). Dado e função não podem compartilhar o mesmo nome no fluxo. Libs (contrato) podem repetir o nome da task (vários `log`); rename de lib não propaga. **Voltar:** `cleanText` livre + rename só no nó local + sem checagem dado/função.
 
 ### 5.4 Responsável · Task · catálogo — *must*
 

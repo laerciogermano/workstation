@@ -151,7 +151,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const bare = (f: string): string => f.replace(/\.[^.]+$/, ""), files = new Map<string, Fn[]>(); for (const f of p.flows) { const k = flowFile(f); files.set(k, [...(files.get(k) ?? []), f]); }
     const curFile = (() => { const r = locate(p, ui.flow)?.flow; return r ? flowFile(r) : ""; })();
     const secOpen = !exClosed.has("sec:files");
-    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New function" aria-label="New function">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
+    el.explorer.innerHTML = `<div class="ex-sec-h${fileView === "*" && multi ? " sel" : ""}" data-ex="all" title="Open all files side by side"><span data-exfold="sec:files">${chev(secOpen)}</span><span>src</span><button type="button" class="ex-new" data-exnew title="New file" aria-label="New file">${icon("plus")}</button><button type="button" class="ex-reset" data-exreset title="Reset everything to the initial setup" aria-label="Reset to the initial setup">${icon("reset")}</button><span class="n">${files.size}</span></div>` + (secOpen ? [...files].map(([file, fns]) => {
       const fid = "f:" + file, open = !exClosed.has(fid);
       const body = open ? fns.map(fn => `<div class="ex-row ex-fn${ui.flow === fn.id && !(fileView && multi) ? " sel cur" : ""}" role="treeitem" style="--lv:2" data-ex="fn" data-flow="${fn.id}" title="Open the flow of ${esc(fn.title)}"><span class="fn-dot ${fnKind(p, fn)}"></span><span class="ex-n">${esc(fn.title)}</span><span class="ex-tools"><button type="button" class="ib danger ex-del" data-exdel="${fn.id}" title="Delete this function" aria-label="Delete ${esc(fn.title)}">${icon("trash")}</button></span></div>`).join("") : "";
       return `<div class="ex-row ex-file${file === curFile ? " cur" : ""}${file === fileView && multi ? " sel" : ""}" role="treeitem" style="--lv:1" data-ex="file" data-file="${esc(file)}" data-flow="${fns[0]!.id}"><span data-exfold="${esc(fid)}">${chev(open)}</span><span class="ex-fi">${icon("file")}</span><span class="ex-n">${esc(bare(file))}</span><span class="ex-c">${fns.length}</span><span class="ex-tools"><button type="button" class="ib ex-add" data-exadd="${esc(file)}" title="New function in ${esc(file)}" aria-label="New function in ${esc(file)}">${icon("plus")}</button><button type="button" class="ib danger ex-delfile" data-exdelfile="${esc(file)}" title="Remove ${esc(file)}" aria-label="Remove ${esc(file)}">${icon("trash")}</button></span></div>${body}`;
@@ -167,8 +167,15 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   el.explorer.addEventListener("dblclick", e => { const t = e.target as HTMLElement, nameEl = t.closest<HTMLElement>(".ex-n"), row = t.closest<HTMLElement>("[data-ex]"); if (nameEl && row && row.dataset["ex"] !== "all" && onText(nameEl, e)) void editExName(row, nameEl); });
   el.explorer.addEventListener("click", e => {
     const t = e.target as HTMLElement;
-    if (t.closest("[data-exnew]")) { void run({ type: "newFlow" }); return; }
-    const add = t.closest<HTMLElement>("[data-exadd]"); if (add) { { const taken = new Set(P().flows.map(f => f.title)); let n = 1, t = "new_function"; while (taken.has(t)) t = `new_function_${++n}`; run({ type: "newFlow", title: t, file: add.dataset["exadd"]! }); } return; }
+    if (t.closest("[data-exnew]")) {
+      const taken = new Set([...filesOf(P())]); let n = 1, file = "newFile.ts"; while (taken.has(file)) file = `newFile${++n}.ts`;
+      run({ type: "newFlow", title: "main", file }); return;
+    }
+    const add = t.closest<HTMLElement>("[data-exadd]"); if (add) {
+      const file = add.dataset["exadd"]!, taken = new Set(P().flows.filter(f => flowFile(f) === file).map(f => f.title));
+      let n = 1, title = "newFunction"; while (taken.has(title)) title = `newFunction${++n}`;
+      run({ type: "newFlow", title, file }); return;
+    }
     if (t.closest("[data-exreset]")) { void confirmAsk("Reset everything to the initial setup? All files and functions you created will be removed.").then(ok => { if (!ok) return; exClosed.clear(); fileView = "*"; fitted = false; reset(); render(); }); return; }
     const delFile = t.closest<HTMLElement>("[data-exdelfile]");
     if (delFile) { const file = delFile.dataset["exdelfile"]!, ids = P().flows.filter(f => flowFile(f) === file).map(f => f.id); const total = P().flows.filter(f => flowFile(f) === file).reduce((n, f) => n + 1 + innerFns(f), 0); void (total > 1 ? confirmAsk(`Remove the file “${file}” and its ${total} function(s)?`) : Promise.resolve(true)).then(ok => { if (ok) for (const id of ids) if (run({ type: "removeFlow", id }, false) === undefined && P().flows.length <= 1) break; }); return; }

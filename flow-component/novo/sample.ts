@@ -5,7 +5,7 @@ export function sampleProject(): { project: Project; main: string } {
   let p = emptyProject("New project"); p.agents = structuredClone([...DEFAULT_AGENTS]);
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
   const main = run({ type: "newFlow", title: "main" });
-  const log = run({ type: "addChild", id: main, title: "log" });
+  const log = run({ type: "addChild", id: main });
   run({ type: "assign", id: log, agent: "console" }); run({ type: "setTask", id: log, task: "log" }); run({ type: "setArg", id: log, name: "text", value: '"Hello World"' });
   return { project: p, main };
 }
@@ -33,7 +33,7 @@ export function addSamples(run: (c: Command) => string): void {
     for (const [name, value] of Object.entries(ins)) { run({ type: "addInput", id, name }); run({ type: "setArg", id, name, value }); }
     for (const name of outs) run({ type: "addOutput", id, name });
     steps((lib, task, out, args = {}) => {
-      const sid = run({ type: "addChild", id, title: task }); run({ type: "assign", id: sid, agent: lib }); run({ type: "setTask", id: sid, task });
+      const sid = run({ type: "addChild", id }); run({ type: "assign", id: sid, agent: lib }); run({ type: "setTask", id: sid, task });
       for (const [name, value] of Object.entries(args)) run({ type: "setArg", id: sid, name, value });
       if (out) run({ type: "renameData", id: sid, to: out }); return sid;
     });
@@ -121,7 +121,7 @@ export function browserDemoProject(): { project: Project; main: string; example:
   const ex = run({ type: "newFlow", title: "example" });
   run({ type: "addInput", id: ex, name: "threshold" }); run({ type: "setArg", id: ex, name: "threshold", value: "50" }); run({ type: "addOutput", id: ex, name: "score" }); run({ type: "addOutput", id: ex, name: "report" });
   const step = (lib: string, task: string, out?: string, args: Record<string, string> = {}): string => {
-    const id = run({ type: "addChild", id: ex, title: task }); run({ type: "assign", id, agent: lib }); run({ type: "setTask", id, task });
+    const id = run({ type: "addChild", id: ex }); run({ type: "assign", id, agent: lib }); run({ type: "setTask", id, task });
     for (const [name, value] of Object.entries(args)) run({ type: "setArg", id, name, value });
     if (out) run({ type: "renameData", id, to: out }); return id;
   };

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
 
-/** Projeto de teste: raiz "R" com filhos A, B, C, D (todos folhas). */
+/** Projeto de teste: raiz "root" com filhos a, b, c, d (todos folhas). */
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
-  const root = run({ type: "newFlow", title: "R" });
-  const [a, b, c, d] = ["A", "B", "C", "D"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string, string];
+  const root = run({ type: "newFlow", title: "root" });
+  const [a, b, c, d] = ["fa", "fb", "fc", "fd"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string, string];
   const titles = (list: readonly Node[]): string[] => list.map(n => (n.t === "fn" ? n.title : n.t));
   const kids = (id: string): Node[] => { const n = locate(p, id)!.node; return n.t === "try" ? n.kids : n.kids; };
   return { run, root, a, b, c, d, get p() { return p; }, set: (np: Project) => { p = np; }, titles, kids, rootKids: () => titles(locate(p, root)!.node.kids as Node[]) };
@@ -16,25 +16,25 @@ const kinds = ["if", "for", "try"] as const;
 
 describe("fluxos e funções", () => {
   it("newFlow cria uma raiz; renomear só vale para funções", () => {
-    const t = base(); expect(t.p.flows.map(f => f.title)).toEqual(["R"]);
-    const n = t.run({ type: "newFlow" }); expect(locate(t.p, n)!.node).toMatchObject({ t: "fn", title: "New flow" });
-    t.run({ type: "rename", id: t.a, title: "Renomeada" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("Renomeada");
+    const t = base(); expect(t.p.flows.map(f => f.title)).toEqual(["root"]);
+    const n = t.run({ type: "newFlow" }); expect(locate(t.p, n)!.node).toMatchObject({ t: "fn", title: "newFlow" });
+    t.run({ type: "rename", id: t.a, title: "renomeada" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("renomeada");
     const ifId = t.run({ type: "wrap", id: t.b, kind: "if" }); fails(() => apply(t.p, { type: "rename", id: ifId, title: "x" }), "invalid");
     fails(() => apply(t.p, { type: "rename", id: t.a, title: "  " }), "invalid");
   });
   it("addChild em função: no fim; função folha vira composta", () => {
-    const t = base(); const x = t.run({ type: "addChild", id: t.a, title: "A1" });
-    expect(locate(t.p, t.a)!.node.kids.map(k => k.id)).toEqual([x]); expect(t.rootKids()).toEqual(["A", "B", "C", "D"]);
-    const y = t.run({ type: "addChild", id: t.root, title: "E" }); expect(t.rootKids().at(-1)).toBe("E"); expect(y).toBeTruthy();
+    const t = base(); const x = t.run({ type: "addChild", id: t.a, title: "a1" });
+    expect(locate(t.p, t.a)!.node.kids.map(k => k.id)).toEqual([x]); expect(t.rootKids()).toEqual(["fa", "fb", "fc", "fd"]);
+    const y = t.run({ type: "addChild", id: t.root, title: "e" }); expect(t.rootKids().at(-1)).toBe("e"); expect(y).toBeTruthy();
   });
   it("addSibling entra logo depois, na mesma lista; a raiz não ganha irmão", () => {
-    const t = base(); t.run({ type: "addSibling", id: t.b, title: "B2" }); expect(t.rootKids()).toEqual(["A", "B", "B2", "C", "D"]);
-    t.run({ type: "addSibling", id: t.b, title: "B0", before: true }); expect(t.rootKids()).toEqual(["A", "B0", "B", "B2", "C", "D"]);
+    const t = base(); t.run({ type: "addSibling", id: t.b, title: "b2" }); expect(t.rootKids()).toEqual(["fa", "fb", "b2", "fc", "fd"]);
+    t.run({ type: "addSibling", id: t.b, title: "b0", before: true }); expect(t.rootKids()).toEqual(["fa", "b0", "fb", "b2", "fc", "fd"]);
     fails(() => apply(t.p, { type: "addSibling", id: t.root }), "root");
   });
   it("remove tira a subárvore; a raiz não pode ser removida; blocos vazios somem", () => {
     const t = base(); const ifId = t.run({ type: "wrap", id: t.b, kind: "if" });
-    t.run({ type: "remove", id: t.a }); expect(t.rootKids()).toEqual(["if", "C", "D"]);
+    t.run({ type: "remove", id: t.a }); expect(t.rootKids()).toEqual(["if", "fc", "fd"]);
     t.run({ type: "remove", id: t.b }); expect(locate(t.p, ifId)).toBeNull();
     fails(() => apply(t.p, { type: "remove", id: t.root }), "root");
     fails(() => apply(t.p, { type: "remove", id: "zzz" }), "not_found");
@@ -44,34 +44,34 @@ describe("fluxos e funções", () => {
 describe.each(kinds)("bloco %s: regras compartilhadas", kind => {
   const mk = () => { const t = base(), id = t.run({ type: "wrap", id: t.b, kind }); return Object.assign(t, { id }); };
   it("wrap cerca a função e mantém a posição", () => {
-    const t = mk(); expect(t.rootKids()).toEqual(["A", kind, "C", "D"]); expect(locate(t.p, t.b)!.parent!.id).toBe(t.id); expect(insideBlock(t.p, t.b)).toBe(true);
+    const t = mk(); expect(t.rootKids()).toEqual(["fa", kind, "fc", "fd"]); expect(locate(t.p, t.b)!.parent!.id).toBe(t.id); expect(insideBlock(t.p, t.b)).toBe(true);
   });
   it("addChild entra na PRIMEIRA posição do bloco (o lugar do cabeçalho)", () => {
-    const t = mk(); t.run({ type: "addChild", id: t.id, title: "N" }); expect(t.titles(t.kids(t.id))).toEqual(["N", "B"]);
+    const t = mk(); t.run({ type: "addChild", id: t.id, title: "n" }); expect(t.titles(t.kids(t.id))).toEqual(["n", "fb"]);
   });
   it("addSibling no bloco = irmão à direita, FORA do bloco", () => {
-    const t = mk(); t.run({ type: "addSibling", id: t.id, title: "X" }); expect(t.rootKids()).toEqual(["A", kind, "X", "C", "D"]); expect(t.titles(t.kids(t.id))).toEqual(["B"]);
+    const t = mk(); t.run({ type: "addSibling", id: t.id, title: "x" }); expect(t.rootKids()).toEqual(["fa", kind, "x", "fc", "fd"]); expect(t.titles(t.kids(t.id))).toEqual(["fb"]);
   });
   it("irmão de quem está dentro do bloco continua dentro do bloco", () => {
-    const t = mk(); t.run({ type: "addSibling", id: t.b, title: "Y" }); expect(t.titles(t.kids(t.id))).toEqual(["B", "Y"]);
+    const t = mk(); t.run({ type: "addSibling", id: t.b, title: "y" }); expect(t.titles(t.kids(t.id))).toEqual(["fb", "y"]);
   });
   it("setScope aumenta (adota os seguintes) e diminui (devolve os últimos para fora)", () => {
-    const t = mk(); t.run({ type: "setScope", id: t.id, count: 3 }); expect(t.titles(t.kids(t.id))).toEqual(["B", "C", "D"]); expect(t.rootKids()).toEqual(["A", kind]);
-    t.run({ type: "setScope", id: t.id, count: 1 }); expect(t.titles(t.kids(t.id))).toEqual(["B"]); expect(t.rootKids()).toEqual(["A", kind, "C", "D"]);
+    const t = mk(); t.run({ type: "setScope", id: t.id, count: 3 }); expect(t.titles(t.kids(t.id))).toEqual(["fb", "fc", "fd"]); expect(t.rootKids()).toEqual(["fa", kind]);
+    t.run({ type: "setScope", id: t.id, count: 1 }); expect(t.titles(t.kids(t.id))).toEqual(["fb"]); expect(t.rootKids()).toEqual(["fa", kind, "fc", "fd"]);
     t.run({ type: "setScope", id: t.id, count: 0 }); expect(t.kids(t.id).length).toBe(1);        // nunca esvazia
     t.run({ type: "setScope", id: t.id, count: 99 }); expect(t.kids(t.id).length).toBe(3);        // limitado ao que existe
   });
   it("exitScope tira o item e os seguintes do bloco, para depois dele", () => {
-    const t = mk(); t.run({ type: "addSibling", id: t.b, title: "B2" }); t.run({ type: "addSibling", id: t.b, title: "B3" });
+    const t = mk(); t.run({ type: "addSibling", id: t.b, title: "b2" }); t.run({ type: "addSibling", id: t.b, title: "b3" });
     const b3 = t.kids(t.id)[1]!.id; t.run({ type: "exitScope", id: b3 });   // [B, B3, B2]: sai B3 e a seguinte (B2)
-    expect(t.titles(t.kids(t.id))).toEqual(["B"]); expect(t.rootKids()).toEqual(["A", kind, "B3", "B2", "C", "D"]);
+    expect(t.titles(t.kids(t.id))).toEqual(["fb"]); expect(t.rootKids()).toEqual(["fa", kind, "b3", "b2", "fc", "fd"]);
     fails(() => apply(t.p, { type: "exitScope", id: t.a }), "invalid");
   });
   it("exitScope do primeiro item esvazia e remove o bloco", () => {
-    const t = mk(); t.run({ type: "exitScope", id: t.b }); expect(locate(t.p, t.id)).toBeNull(); expect(t.rootKids()).toEqual(["A", "B", "C", "D"]);
+    const t = mk(); t.run({ type: "exitScope", id: t.b }); expect(locate(t.p, t.id)).toBeNull(); expect(t.rootKids()).toEqual(["fa", "fb", "fc", "fd"]);
   });
   it("unwrap devolve os filhos à lista de fora; remover o último filho remove o bloco", () => {
-    const t = mk(); t.run({ type: "addChild", id: t.id, title: "N" }); t.run({ type: "unwrap", id: t.id }); expect(t.rootKids()).toEqual(["A", "N", "B", "C", "D"]);
+    const t = mk(); t.run({ type: "addChild", id: t.id, title: "n" }); t.run({ type: "unwrap", id: t.id }); expect(t.rootKids()).toEqual(["fa", "n", "fb", "fc", "fd"]);
     const u = mk(); u.run({ type: "remove", id: u.b }); expect(locate(u.p, u.id)).toBeNull();
   });
   it("blocos aninham: wrap de um bloco cria bloco dentro de bloco; e a raiz não aceita", () => {
@@ -95,25 +95,25 @@ describe("if, for e try: particularidades", () => {
   it("else do if: mesmo princípio do catch (lista própria, primeira posição, sair do bloco, vazio some)", () => {
     const t = base(); const i = t.run({ type: "wrap", id: t.b, kind: "if" }); const node = () => locate(t.p, i)!.node as { elseKids: Node[]; kids: Node[] };
     expect(node().elseKids).toEqual([]);                                             // sem else até alguém pedir
-    const e1 = t.run({ type: "addElse", id: i, title: "E1" }); expect(t.titles(node().elseKids)).toEqual(["E1"]); expect(locate(t.p, e1)!.slot).toBe("else"); expect(locate(t.p, e1)!.parent!.id).toBe(i);
+    const e1 = t.run({ type: "addElse", id: i, title: "e1" }); expect(t.titles(node().elseKids)).toEqual(["e1"]); expect(locate(t.p, e1)!.slot).toBe("else"); expect(locate(t.p, e1)!.parent!.id).toBe(i);
     fails(() => apply(t.p, { type: "addElse", id: i }), "invalid"); fails(() => apply(t.p, { type: "addElse", id: t.a }), "invalid");
-    t.run({ type: "addChild", id: i, else: true, title: "E0" }); expect(t.titles(node().elseKids)).toEqual(["E0", "E1"]);   // primeira posição do else
-    t.run({ type: "addChild", id: i, title: "T0" }); expect(t.titles(node().kids)).toEqual(["T0", "B"]); expect(t.titles(node().elseKids)).toEqual(["E0", "E1"]);
-    t.run({ type: "addSibling", id: e1, title: "E2" }); expect(t.titles(node().elseKids)).toEqual(["E0", "E1", "E2"]);                    // irmão de quem está no else fica no else
-    t.run({ type: "exitScope", id: e1 }); expect(t.titles(node().elseKids)).toEqual(["E0"]); expect(t.rootKids()).toEqual(["A", "if", "E1", "E2", "C", "D"]);
+    t.run({ type: "addChild", id: i, else: true, title: "e0" }); expect(t.titles(node().elseKids)).toEqual(["e0", "e1"]);   // primeira posição do else
+    t.run({ type: "addChild", id: i, title: "t0" }); expect(t.titles(node().kids)).toEqual(["t0", "fb"]); expect(t.titles(node().elseKids)).toEqual(["e0", "e1"]);
+    t.run({ type: "addSibling", id: e1, title: "e2" }); expect(t.titles(node().elseKids)).toEqual(["e0", "e1", "e2"]);                    // irmão de quem está no else fica no else
+    t.run({ type: "exitScope", id: e1 }); expect(t.titles(node().elseKids)).toEqual(["e0"]); expect(t.rootKids()).toEqual(["fa", "if", "e1", "e2", "fc", "fd"]);
     t.run({ type: "remove", id: node().elseKids[0]!.id }); expect(node().elseKids).toEqual([]);                                            // else vazio some
     t.run({ type: "addElse", id: i }); t.run({ type: "removeElse", id: i }); expect(node().elseKids).toEqual([]); fails(() => apply(t.p, { type: "removeElse", id: t.a }), "invalid");
   });
   it("desfazer o if descarta o else; remover o último filho do if remove o if inteiro", () => {
-    const t = base(); const i = t.run({ type: "wrap", id: t.b, kind: "if" }); t.run({ type: "addElse", id: i }); t.run({ type: "unwrap", id: i }); expect(t.rootKids()).toEqual(["A", "B", "C", "D"]);
+    const t = base(); const i = t.run({ type: "wrap", id: t.b, kind: "if" }); t.run({ type: "addElse", id: i }); t.run({ type: "unwrap", id: i }); expect(t.rootKids()).toEqual(["fa", "fb", "fc", "fd"]);
     const j = t.run({ type: "wrap", id: t.b, kind: "if" }); t.run({ type: "addElse", id: j }); t.run({ type: "remove", id: t.b }); expect(locate(t.p, j)).toBeNull();
   });
   it("try nasce com um catch contendo a função de tratamento; addChild catch entra na primeira posição do catch", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.b, kind: "try" }); const node = () => locate(t.p, tr)!.node as { catchKids: Node[] };
-    expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Handle error"]);
-    t.run({ type: "addChild", id: tr, catch: true, title: "Primeiro do catch" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Handle error"]);
-    const h = node().catchKids[1]!.id; t.run({ type: "addSibling", id: h, title: "Depois" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["Primeiro do catch", "Handle error", "Depois"]);
-    t.run({ type: "exitScope", id: h }); expect(t.rootKids()).toEqual(["A", "try", "Handle error", "Depois", "C", "D"]);
+    expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["handleError"]);
+    t.run({ type: "addChild", id: tr, catch: true, title: "primeiroDoCatch" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["primeiroDoCatch", "handleError"]);
+    const h = node().catchKids[1]!.id; t.run({ type: "addSibling", id: h, title: "depois" }); expect(node().catchKids.map(k => (k as Fn).title)).toEqual(["primeiroDoCatch", "handleError", "depois"]);
+    t.run({ type: "exitScope", id: h }); expect(t.rootKids()).toEqual(["fa", "try", "handleError", "depois", "fc", "fd"]);
   });
   it("a raiz não aceita try/if/for nem irmãos", () => { const t = base(); for (const k of kinds) fails(() => apply(t.p, { type: "wrap", id: t.root, kind: k }), "root"); expect(isRoot(t.p, t.root)).toBe(true); });
 });
@@ -129,7 +129,7 @@ describe("entradas, saídas, responsável e paralelo", () => {
   it("assign: lib concreta força uma task do catálogo; setTask só aceita tasks da lib; IA/pessoa mantêm o nome", () => {
     const t = base(); t.run({ type: "assign", id: t.a, agent: "math" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("random");
     t.run({ type: "setTask", id: t.a, task: "round" }); expect((locate(t.p, t.a)!.node as Fn).title).toBe("round"); fails(() => apply(t.p, { type: "setTask", id: t.a, task: "voar" }), "invalid");
-    t.run({ type: "assign", id: t.b, agent: "lia" }); expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ title: "B", agent: "lia" });
+    t.run({ type: "assign", id: t.b, agent: "lia" }); expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ title: "fb", agent: "lia" });
     t.run({ type: "assign", id: t.b, agent: null }); expect((locate(t.p, t.b)!.node as Fn).agent).toBeNull(); fails(() => apply(t.p, { type: "assign", id: t.b, agent: "nao-existe" }), "not_found");
   });
   it("setResp: só pessoa; trocar de IA para outro responsável limpa a pessoa", () => {
@@ -149,18 +149,18 @@ describe("infraestrutura", () => {
   });
   it("Store: dispatch, desfazer, refazer e notificação", () => {
     const t = base(), s = new Store(t.p); let n = 0; const off = s.subscribe(() => n++);
-    const id = s.dispatch({ type: "addChild", id: t.a, title: "X" }); expect(id).toBeTruthy(); expect(n).toBe(1); expect(s.canUndo).toBe(true);
+    const id = s.dispatch({ type: "addChild", id: t.a, title: "x" }); expect(id).toBeTruthy(); expect(n).toBe(1); expect(s.canUndo).toBe(true);
     s.undo(); expect(locate(s.project, t.a)!.node.kids.length).toBe(0); expect(s.canRedo).toBe(true); s.redo(); expect(locate(s.project, t.a)!.node.kids.length).toBe(1);
-    s.dispatch({ type: "rename", id: t.a, title: "Z" }); expect(s.canRedo).toBe(false); off(); s.undo(); expect(n).toBe(4);
+    s.dispatch({ type: "rename", id: t.a, title: "z" }); expect(s.canRedo).toBe(false); off(); s.undo(); expect(n).toBe(4);
     let seen = 0; walk(s.project.flows[0]!.kids, () => seen++); expect(seen).toBeGreaterThan(0);
   });
 });
 
 describe("fluxos: excluir", () => {
   it("removeFlow exclui só fluxos inteiros e o projeto sempre mantém um", () => {
-    const t = base(); const f2 = t.run({ type: "newFlow", title: "Outro" }); expect(t.p.flows).toHaveLength(2);
+    const t = base(); const f2 = t.run({ type: "newFlow", title: "outro" }); expect(t.p.flows).toHaveLength(2);
     fails(() => apply(t.p, { type: "removeFlow", id: t.a }), "invalid");                       // função, não fluxo
-    t.run({ type: "removeFlow", id: f2 }); expect(t.p.flows.map(f => f.title)).toEqual(["R"]); fails(() => apply(t.p, { type: "removeFlow", id: t.root }), "invalid");   // o último fica
+    t.run({ type: "removeFlow", id: f2 }); expect(t.p.flows.map(f => f.title)).toEqual(["root"]); fails(() => apply(t.p, { type: "removeFlow", id: t.root }), "invalid");   // o último fica
     fails(() => apply(t.p, { type: "removeFlow", id: "zzz" }), "not_found");
   });
 });
@@ -276,7 +276,7 @@ describe("estados disponíveis no contexto de uma função (o que a caixa de edi
   it("só o que vem antes: saídas das funções anteriores e as variáveis dos for que cercam a função", () => {
     const t = flow(); expect(t.st(t.a)).toEqual([]); expect(t.st(t.b)).toEqual(["x", "item"]); expect(t.st(t.c)).toEqual(["x", "y", "y2", "item"]);
     expect(t.st(t.d)).toEqual(["x", "y", "y2"]);                       // fora do for: a variável item não vale
-    const s = statesFor(t.p, t.d); expect(s.map(r => r.from)).toEqual(["A", "B", "B"]); expect(statesFor(t.p, t.c).at(-1)).toEqual({ name: "item", from: "for", kind: "loop" });
+    const s = statesFor(t.p, t.d); expect(s.map(r => r.from)).toEqual(["fa", "fb", "fb"]); expect(statesFor(t.p, t.c).at(-1)).toEqual({ name: "item", from: "for", kind: "loop" });
   });
   it("funções dentro de composta, do if/else e do catch também contam; raiz e id desconhecido não têm estados", () => {
     const t = base(); t.run({ type: "addOutput", id: t.a, name: "x" }); const k = t.run({ type: "addChild", id: t.b, title: "filho" }); t.run({ type: "addOutput", id: k, name: "k" });

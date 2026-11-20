@@ -158,7 +158,7 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <table>
 <tr><th>Área</th><th>Conteúdo</th></tr>
 <tr><td>Cabeçalho</td><td>título FOP + badges (sem Open/Export; projeto grava no navegador)</td></tr>
-<tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> em <code>src</code> cria função/arquivo novo; <b>+</b> no arquivo adiciona nele; recolher no cabeçalho (sem cadastro de Sources)</td></tr>
+<tr><td>Explorer</td><td><code>src</code> → arquivos → funções; <b>+</b> em <code>src</code> cria arquivo (<code>newFile.ts</code>); <b>+</b> no arquivo cria função (<code>newFunction</code>, lowerCamelCase); recolher no cabeçalho (sem cadastro de Sources)</td></tr>
 <tr><td>Barra do diagrama</td><td>Explorer on/off, fluxo em foco, <b>Run</b>, undo/redo, zoom (20–250%), fit, nome dentro da barra, estados todos/novos, expandir/recolher, código on/off</td></tr>
 <tr><td>Tabela <i>Source · Function</i></td><td>uma linha por função; recuo = profundidade</td></tr>
 <tr><td>Diagrama</td><td>barras, dados, blocos, ligações em <code>s0…sN</code></td></tr>
@@ -237,7 +237,7 @@ interface Project { name: string; flows: Fn[]; agents: Agent[]; seq: number }</c
 <pre><code>let p = emptyProject("Demo"); p.agents = structuredClone([...DEFAULT_AGENTS]);
 const run = c =&gt; { const r = apply(p, c); p = r.project; return r.created; };
 
-const root = run({ type: "newFlow", title: "Aplicar cupom" });
+const root = run({ type: "newFlow", title: "aplicarCupom" });
 const s = run({ type: "addChild", id: root, title: "round" });
 run({ type: "assign", id: s, agent: "math" });
 run({ type: "setTask", id: s, task: "round" });

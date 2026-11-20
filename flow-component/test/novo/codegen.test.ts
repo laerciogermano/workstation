@@ -7,8 +7,8 @@ import { browserDemoProject, sampleProject } from "../../novo/sample";
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
   const run = (c: Command): string => { const r = apply(p, c); p = r.project; return r.created ?? ""; };
-  const root = run({ type: "newFlow", title: "Atender pedido" });
-  const [r, s, e] = ["Receber pedido", "Separar itens", "Enviar pedido"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string];
+  const root = run({ type: "newFlow", title: "atenderPedido" });
+  const [r, s, e] = ["receberPedido", "separarItens", "enviarPedido"].map(t => run({ type: "addChild", id: root, title: t })) as [string, string, string];
   run({ type: "addOutput", id: r, name: "pedido" }); run({ type: "addInput", id: s, name: "pedido" }); run({ type: "addOutput", id: s, name: "itens" }); run({ type: "addInput", id: e, name: "itens" });
   return { run, root, r, s, e, gen: () => generate(p, root) };
 }
@@ -18,7 +18,7 @@ describe("transpilador Flow → TypeScript", () => {
   it("camel: acentos, símbolos e números", () => { expect(camel("Receber pedido")).toBe("receberPedido"); expect(camel("onboarding")).toBe("onboarding"); expect(camel("1a função")).toBe("_1aFuncao"); expect(camel("???")).toBe("flow"); });
   it("sequência: função abstrata vem do state, saídas hoistadas e repassadas", () => {
     const { gen } = base(), { code, fileName } = gen();
-    expect(fileName).toBe("atender-pedido.ts"); expect(code).toContain("export async function atenderPedido(state: State): Promise<void> {"); expect(code).toContain("type Fn = (state: State) => Promise<State>;");
+    expect(fileName).toBe("atenderpedido.ts"); expect(code).toContain("export async function atenderPedido(state: State): Promise<void> {"); expect(code).toContain("type Fn = (state: State) => Promise<State>;");
     expect(code).toContain('const { receberPedido, separarItens, enviarPedido } = state as Record<"receberPedido" | "separarItens" | "enviarPedido", Fn>;'); expect(code).not.toMatch(/^  let pedido/m);   // declarados no uso, não no topo
     expect(code).toMatch(/const \{ pedido \} = await receberPedido\(\{ \.\.\.state \}\);/); expect(code).toMatch(/const \{ itens \} = await separarItens\(\{ \.\.\.state, pedido \}\);/);
     expect(code).not.toContain("return"); expect(code).not.toMatch(/async function receberPedido/);   // sem saída declarada no flow, não há return
@@ -33,7 +33,7 @@ describe("transpilador Flow → TypeScript", () => {
     const { run, r, s, e, gen } = base(); run({ type: "assign", id: r, agent: "math" }); run({ type: "assign", id: s, agent: "ana" }); run({ type: "assign", id: e, agent: "lia" });
     const { code } = gen(); expect(code).not.toContain("import "); expect(code).toContain("type Humans = {"); expect(code).toContain("const { humans } = state as { humans: Humans };"); expect(code).not.toContain("@flow/runtime");
     expect(code).toContain('const { random, enviarPedido } = state as Record<"random" | "enviarPedido", Fn>;'); expect(code).toContain("await random({ ...state })"); expect(code).not.toContain("call(");
-    expect(code).toContain("export const wrappers: Record<string, Fn> = {"); expect(code).toContain("return { number: await Math.random() };"); expect(code).toContain('humans.ask("Ana Souza", "Separar itens"');
+    expect(code).toContain("export const wrappers: Record<string, Fn> = {"); expect(code).toContain("return { number: await Math.random() };"); expect(code).toContain('humans.ask("Ana Souza", "separarItens"');
   });
   it("lib que é módulo (nome com : / @) vira import; lib global do navegador não", () => {
     const { run, r, gen } = base(); run({ type: "addAgent", kind: "maquina", name: "node:zlib", tasks: "gzip(data) -> comprimido" }); const id = run({ type: "addAgent", kind: "maquina", name: "@x/util", tasks: "dobrar(n) -> dobro" });
@@ -45,14 +45,14 @@ describe("transpilador Flow → TypeScript", () => {
     expect(f).toBeGreaterThan(-1); expect(c).toBeGreaterThan(f); expect(c).toBeLessThan(end); expect(code).toMatch(/separarItens\(\{ \.\.\.state, item, pedido \}\)/);
   });
   it("irmão criado dentro do for roda dentro do mesmo for (uma só vez)", () => {
-    const { run, s, gen } = base(); run({ type: "wrap", id: s, kind: "for", v: "item", coll: "pedidos" }); run({ type: "addSibling", id: s, title: "Embalar item" });
+    const { run, s, gen } = base(); run({ type: "wrap", id: s, kind: "for", v: "item", coll: "pedidos" }); run({ type: "addSibling", id: s, title: "embalarItem" });
     const { code } = gen(), l = code.split("\n"), f = at(l, /for \(const item/), x = at(l, /embalarItem\(/), end = at(l, /^  \}$/, f);
     expect(x).toBeGreaterThan(f); expect(x).toBeLessThan(end); expect(code.match(/for \(const item/g)).toHaveLength(1);
   });
   it("if protege a chamada; com else gera `} else { … }` com as funções do else", () => {
     const { run, s, e, gen } = base(); const i = run({ type: "wrap", id: s, kind: "if", test: "estoque_ok" });
     expect(gen().code).toContain("if (estoque_ok) {"); expect(gen().code).not.toContain("else");
-    const x = run({ type: "addElse", id: i, title: "Avisar falta" }); run({ type: "addChild", id: i, else: true, title: "Repor estoque" }); void e;
+    const x = run({ type: "addElse", id: i, title: "avisarFalta" }); run({ type: "addChild", id: i, else: true, title: "reporEstoque" }); void e;
     const { code } = gen(), l = code.split("\n"), a = at(l, /if \(estoque_ok\) \{/), el = at(l, /\} else \{/, a), r = at(l, /reporEstoque\(/, el), v = at(l, /avisarFalta\(/, el);
     expect(el).toBeGreaterThan(a); expect(r).toBeGreaterThan(el); expect(v).toBeGreaterThan(r);         // Repor estoque (primeira posição) vem antes de Avisar falta
     expect(at(l, /separarItens\(/, a)).toBeLessThan(el); expect(gen().map[x]![0]).toBeGreaterThan(el);
@@ -72,7 +72,7 @@ describe("transpilador Flow → TypeScript", () => {
     const { code } = gen(); expect(code).toContain("await Promise.all(["); expect(code).toMatch(/\(\{ itens \} = par\d+\[0\] as State\);/); expect(code).toContain("separarItens({ ...state, pedido }),");
   });
   it("nomes repetidos ganham sufixo; fluxo de um elemento só chama a si mesmo", () => {
-    const { run, root, gen } = base(); run({ type: "addChild", id: root, title: "Receber pedido" }); expect(gen().code).toContain("receberPedido2");
+    const { run, root, r, gen } = base(); run({ type: "rename", id: r, title: "enviarPedido" }); expect(gen().code).toContain("enviarPedido2");
     const p2 = apply(emptyProject("X"), { type: "newFlow", title: "main" }); const g = generate(p2.project, p2.created!); expect(g.fileName).toBe("main.ts"); expect(g.code).toContain("export async function main(state: State)"); expect(g.code).not.toContain("return");
   });
   it("o mapa de linhas aponta a função, o bloco e a raiz", () => {
@@ -100,9 +100,9 @@ describe("projeto de partida", () => {
 /** Fluxo "main": Montar mensagem (abstrata, produz `mensagem`) → log (node:console, text = mensagem) → Aprovar (pessoa). */
 function demo() {
   let q = emptyProject("T"); q.agents = structuredClone([...DEFAULT_AGENTS]); const go = (c: Command): string => { const x = apply(q, c); q = x.project; return x.created ?? ""; };
-  const m = go({ type: "newFlow", title: "main" }), a = go({ type: "addChild", id: m, title: "Montar mensagem" }); go({ type: "addOutput", id: a, name: "mensagem" });
+  const m = go({ type: "newFlow", title: "main" }), a = go({ type: "addChild", id: m, title: "montarMensagem" }); go({ type: "addOutput", id: a, name: "mensagem" });
   const b = go({ type: "addChild", id: m, title: "x" }); go({ type: "assign", id: b, agent: "console" }); go({ type: "setArg", id: b, name: "text", value: "mensagem" });
-  const c = go({ type: "addChild", id: m, title: "Aprovar" }); go({ type: "assign", id: c, agent: "ana" });
+  const c = go({ type: "addChild", id: m, title: "aprovar" }); go({ type: "assign", id: c, agent: "ana" });
   return { get q() { return q; }, m, a, b, c, go };
 }
 describe("funções de lib: contrato, wrapper e código", () => {
@@ -128,7 +128,7 @@ describe("funções de lib: contrato, wrapper e código", () => {
   it("executável (Node): wrappers e simuladores passados no state, pessoa simulada, chamada no fim e comando", () => {
     const d = demo(), g = generate(d.q, d.m, { runnable: true });
     expect(g.runFile).toBe("main.mts"); expect(g.runCommand).toBe("node --experimental-strip-types main.mts"); expect(g.code).not.toContain("import "); expect(g.code).not.toContain("@flow/runtime"); expect(g.code).toContain("humans: { ask: async (who: string, what: string) =>");
-    expect(g.code).toContain('montarMensagem: async () => ({ mensagem: "mensagem (simulated)" })'); expect(g.code).toContain('humans.ask("Ana Souza", "Aprovar", { ...state })');
+    expect(g.code).toContain('montarMensagem: async () => ({ mensagem: "mensagem (simulated)" })'); expect(g.code).toContain('humans.ask("Ana Souza", "aprovar", { ...state })');
     expect(g.code).toMatch(/await main\(\{\n  \.\.\.wrappers,\n[\s\S]*\n\}\);\n$/); expect(g.code).not.toContain("function data(state: State)"); expect(g.code).not.toContain("const stubs");
   });
   it("sem abstratas nem pessoas não há stubs nem data(); expected inputs ganham value simulado", () => {
@@ -139,7 +139,7 @@ describe("funções de lib: contrato, wrapper e código", () => {
   it("o módulo exporta a função e os wrappers, sem rodar nada", () => {
     const d = demo(), g = generate(d.q, d.m); expect(g.code).toContain("export async function main"); expect(g.code).toContain("export const wrappers"); expect(g.code).not.toContain("const result = await"); expect(g.code).not.toMatch(/\/\/|\/\*/);
     expect(g.runFile).toBe("main.mts");
-    const { gen } = base(); expect(gen().code).not.toContain("export const wrappers"); expect(gen().runCommand).toBe("node --experimental-strip-types atender-pedido.mts");
+    const { gen } = base(); expect(gen().code).not.toContain("export const wrappers"); expect(gen().runCommand).toBe("node --experimental-strip-types atenderpedido.mts");
   });
 });
 
@@ -156,11 +156,13 @@ describe("valor preenchido em função abstrata", () => {
 });
 
 describe("nomes de funções e de dados nunca colidem", () => {
-  it("dado com o nome de uma função (ex.: saída `now` de Date.now e performance.now) renomeia a função, não o dado", () => {
+  it("dado não pode ter o mesmo nome de uma função no fluxo; libs com o mesmo task geram sufixo no código", () => {
     let q = emptyProject("T"); q.agents = structuredClone([...DEFAULT_AGENTS]); const go = (c: Command): string => { const x = apply(q, c); q = x.project; return x.created ?? ""; };
     const m = go({ type: "newFlow", title: "clash" }), a = go({ type: "addChild", id: m, title: "a" }), b = go({ type: "addChild", id: m, title: "b" });
-    go({ type: "assign", id: a, agent: "date" }); go({ type: "setTask", id: a, task: "now" }); go({ type: "renameData", id: a, to: "now" }); go({ type: "assign", id: b, agent: "perf" }); go({ type: "setTask", id: b, task: "now" }); go({ type: "renameData", id: b, to: "elapsed" });
-    const code = generate(q, m).code; expect(code).toContain("const { now } = await nowFn({ ...state });"); expect(code).toContain("const { nowFn, nowFn2 } = state as");  expect(code).toContain("nowFn2: async (state: State)");
+    go({ type: "assign", id: a, agent: "date" }); go({ type: "setTask", id: a, task: "now" });
+    expect(() => apply(q, { type: "renameData", id: a, to: "now" })).toThrow(/already a function name/);
+    go({ type: "renameData", id: a, to: "timestamp" }); go({ type: "assign", id: b, agent: "perf" }); go({ type: "setTask", id: b, task: "now" }); go({ type: "renameData", id: b, to: "elapsed" });
+    const code = generate(q, m).code; expect(code).toContain("const { timestamp } = await now({ ...state });"); expect(code).toContain("const { elapsed } = await now2({ ...state });");
   });
   it("palavras reservadas do JavaScript não servem de nome de dado, de campo ou de variável", () => {
     let q = emptyProject("T"); const go = (c: Command): string => { const x = apply(q, c); q = x.project; return x.created ?? ""; };

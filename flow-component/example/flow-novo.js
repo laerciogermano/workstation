@@ -2046,7 +2046,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     <div class="splitter" id="splitter" role="separator" aria-orientation="horizontal" aria-label="Resize the terminal" tabindex="0" title="Drag to resize \xB7 double-click to reset"><i></i></div>
     <aside class="side">
       <section class="pane" id="p-ts" hidden><div class="fhead"><span class="tsb">TS</span><span id="fname">flow.ts</span><span class="selname" id="selname"></span><span class="meta" id="meta"></span><button type="button" id="dl" title="Download the file">Download</button><button type="button" id="copy">Copy</button></div><div class="code" id="code" tabindex="0" aria-label="Generated TypeScript code"></div></section>
-      <section class="pane term on" id="p-term"><div class="thead"><span class="tstat" id="tstat">Terminal</span><span class="sp"></span><button type="button" id="tRun" class="tbtn">${icon("play")}Run</button><button type="button" id="tClear" class="tbtn">${icon("eraser")}Clear</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
+      <section class="pane term on" id="p-term"><div class="thead"><span class="tstat" id="tstat">Terminal</span><span class="sp"></span><button type="button" id="tRun" class="tbtn" title="Run (Ctrl+Enter)" aria-label="Run">${icon("play")}</button><button type="button" id="tClear" class="tbtn" title="Clear" aria-label="Clear">${icon("eraser")}</button><button type="button" class="ib" id="codeToggle" title="Show / hide the terminal (Ctrl+\\)" aria-pressed="false" aria-label="Terminal panel">${icon("terminal")}</button></div><div class="tbody" id="tbody" role="log" aria-live="polite" tabindex="0" aria-label="Terminal"><div class="tline system">Click Run to execute the flow here in the browser.</div></div></section>
     </aside>
   </div>`;
     const $ = (s) => host.querySelector(s);
@@ -3290,7 +3290,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       $("#exec").title = on ? "Stop the run (Ctrl+Enter)" : "Run this flow in the browser (Ctrl+Enter)";
       $("#exec").setAttribute("aria-label", on ? "Stop" : "Run");
       $("#exec").classList.toggle("on", on);
-      $("#tRun").textContent = on ? "Stop" : "Run";
+      const tRun = $("#tRun");
+      tRun.innerHTML = icon(on ? "square" : "play");
+      tRun.title = on ? "Stop (Ctrl+Enter)" : "Run (Ctrl+Enter)";
+      tRun.setAttribute("aria-label", on ? "Stop" : "Run");
+      tRun.classList.toggle("on", on);
       tstat.textContent = on ? "running\u2026" : tstat.textContent;
       tstat.classList.toggle("busy", on);
     };

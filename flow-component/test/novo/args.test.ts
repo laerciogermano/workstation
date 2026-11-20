@@ -10,6 +10,7 @@ describe("isDataRef", () => {
     expect(isDataRef("mensagem")).toBe(true); expect(isDataRef("cliente.nome")).toBe(true); expect(isDataRef("xs[0]")).toBe(true);
     expect(isDataRef("true")).toBe(false); expect(isDataRef("false")).toBe(false); expect(isDataRef("null")).toBe(false); expect(isDataRef("undefined")).toBe(false);
     expect(isDataRef('"oi"')).toBe(false); expect(isDataRef("1 + 2")).toBe(false); expect(isDataRef("")).toBe(false);
+    expect(isDataRef("from:utils.ts#r")).toBe(false);
   });
 });
 
@@ -32,6 +33,7 @@ describe("value de uma entrada: tipo e value", () => {
   it("inferArg lê de volta cada tipo (reabrir a caixa mostra o que foi salvo)", () => {
     expect(inferArg('"Olá"')).toEqual(d("text", "Olá")); expect(inferArg("42")).toEqual(d("number", "42")); expect(inferArg("-1.5")).toEqual(d("number", "-1.5")); expect(inferArg("true")).toEqual(d("boolean", "true"));
     expect(inferArg("pedido")).toEqual(d("ref", "pedido")); expect(inferArg("cliente.nome")).toEqual(d("ref", "cliente.nome")); expect(inferArg("a + b")).toEqual(d("expr", "a + b")); expect(inferArg("`url/${x}`")).toEqual(d("expr", "`url/${x}`")); expect(inferArg("")).toEqual(d("text"));
+    expect(inferArg("from:utils.ts#r")).toEqual(d("import", "utils.ts#r")); expect(buildArg(d("import", "utils.ts#r"))).toBe("from:utils.ts#r");
   });
   it("ida e volta de objetos (inclusive aninhados e vazios) é exata", () => {
     const o = d("object", "", [f("nome", d("text", "Ana, \"a\"")), f("n", d("number", "1")), f("sub", d("object", "", [f("ok", d("boolean", "true")), f("ref", d("ref", "x.y"))])), f("vazio", d("object"))]);

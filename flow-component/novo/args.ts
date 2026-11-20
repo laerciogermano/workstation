@@ -5,8 +5,9 @@ import { FlowError } from "./model";
  *  texto · número · booleano · referência (dado de outra função) · expressão · objeto (com filhos: campo → valor).
  * O que vai para o projeto é só a TypeScript expression (`buildArg`); `inferArg` lê de volta a expressão para reabrir a caixa de edição.
  */
-export type ArgType = "text" | "number" | "boolean" | "ref" | "expr" | "object";
-export const ARG_TYPES: readonly { type: ArgType; label: string }[] = [
+export type ArgType = "text" | "number" | "boolean" | "ref" | "expr" | "object" | "import";
+/** Tipos editáveis no select (import só via optgroup “From file”). */
+export const ARG_TYPES: readonly { type: Exclude<ArgType, "import">; label: string }[] = [
   { type: "text", label: "text" }, { type: "number", label: "number" }, { type: "boolean", label: "boolean" },
   { type: "ref", label: "data from another function" }, { type: "expr", label: "expression" }, { type: "object", label: "object" },
 ];
@@ -14,24 +15,30 @@ export interface ArgDraft { type: ArgType; value: string; fields: { name: string
 export const emptyDraft = (type: ArgType = "text"): ArgDraft => ({ type, value: type === "boolean" ? "false" : "", fields: [] });
 
 const IDENT = /^[A-Za-z_$][\w$]*$/, PATH = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/, NUM = /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i;
+const FROM_FILE = /^([^#\s]+)#([A-Za-z_$][\w$]*)$/;
 /** Literais JS que parecem identificador — NÃO são referência a dado do fluxo. */
 const LITERAL_IDENTS = new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
 /**
  * Expressão é só um nome de dado (ou caminho `a.b` / `a[0]`)?
- * `true`/`false`/`null`/… são literais: viram valor inicializado, não referência.
+ * `true`/`false`/`null`/… e `from:file#name` NÃO são ref local.
  */
 export const isDataRef = (e: string): boolean => {
-  const v = e.trim(); if (!v || LITERAL_IDENTS.has(v)) return false;
+  const v = e.trim(); if (!v || LITERAL_IDENTS.has(v) || v.startsWith("from:")) return false;
   return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
 };
 
-/** Expressão TypeScript do valor; vazio = sem valor (a entrada volta a ficar abstrata). */
+/** Expressão TypeScript do valor; vazio = sem valor (a entrada volta a ficar abstrata). Import → `from:file#name`. */
 export function buildArg(d: ArgDraft): string {
   switch (d.type) {
     case "text": return d.value === "" ? "" : JSON.stringify(d.value);
     case "number": { const v = d.value.trim(); if (!v) return ""; if (!NUM.test(v)) throw new FlowError("invalid", `“${v}” is not a number`); return String(Number(v)); }
     case "boolean": return d.value === "true" ? "true" : "false";
     case "ref": { const v = d.value.trim(); if (v && !PATH.test(v)) throw new FlowError("invalid", `“${v}” is not a data name (use letters, numbers and _; e.g. customer.name)`); return v; }
+    case "import": {
+      const v = d.value.trim(), m = FROM_FILE.exec(v);
+      if (!m) throw new FlowError("invalid", `“${v}” is not a file data origin (use file.ts#name)`);
+      return `from:${m[1]}#${m[2]}`;
+    }
     case "expr": return d.value.trim();
     case "object": {
       const seen = new Set<string>();
@@ -44,6 +51,10 @@ export function buildArg(d: ArgDraft): string {
 /** Lê uma expressão guardada de volta para o formato editável (o que não reconhece vira expressão). */
 export function inferArg(expr: string): ArgDraft {
   const e = expr.trim(); if (!e) return emptyDraft();
+  if (e.startsWith("from:")) {
+    const m = FROM_FILE.exec(e.slice(5));
+    if (m) return { type: "import", value: `${m[1]}#${m[2]}`, fields: [] };
+  }
   if (/^"(?:[^"\\]|\\.)*"$/.test(e)) { try { return { type: "text", value: JSON.parse(e) as string, fields: [] }; } catch { /* cai em expressão */ } }
   if (NUM.test(e)) return { type: "number", value: e, fields: [] };
   if (e === "true" || e === "false") return { type: "boolean", value: e, fields: [] };

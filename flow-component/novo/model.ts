@@ -53,6 +53,23 @@ export const isRoot = (p: Project, id: string): boolean => p.flows.some(f => f.i
 /** Arquivos do projeto (uma fonte "arquivo" por .ts): as funções de primeira ordem de cada um são as tarefas que outra função pode referenciar. */
 export const filesOf = (p: Project): string[] => [...new Set(p.flows.map(f => flowFile(f)))];
 const fileAgent = (p: Project, file: string): Agent | undefined => { const fns = p.flows.filter(f => flowFile(f) === file); return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map(f => f.title), contracts: Object.fromEntries(fns.map(f => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : undefined; };
+/** Encoding de origem importada: `from:utils.ts#r` (arquivo + out de uma função de 1ª ordem). */
+const FROM_ARG = /^from:([^#\s]+)#([A-Za-z_$][\w$]*)$/;
+export const isFromArg = (expr: string): boolean => FROM_ARG.test(expr.trim());
+export const parseFromArg = (expr: string): { file: string; name: string } | null => {
+  const m = FROM_ARG.exec(expr.trim()); return m ? { file: m[1]!, name: m[2]! } : null;
+};
+/** Dados exportados por um arquivo = outs das funções de primeira ordem nesse `.ts`. */
+export function fileData(p: Project, file: string): { name: string; from: string }[] {
+  const out: { name: string; from: string }[] = [], seen = new Set<string>();
+  for (const f of p.flows.filter(x => flowFile(x) === file)) for (const name of f.outs) {
+    if (seen.has(name)) continue; seen.add(name); out.push({ name, from: f.title });
+  }
+  return out;
+}
+/** Função raiz que produz o out `name` no arquivo (primeira que declarar). */
+export const fileDataProducer = (p: Project, file: string, name: string): Fn | null =>
+  p.flows.find(f => flowFile(f) === file && f.outs.includes(name)) ?? null;
 /**
  * Tipo semântico do retorno de uma lib (`agentId:task` → tipo).
  * Objetos desse tipo, quando estão no estado, podem ser source com os métodos de `OBJ_TYPE_SIGS`.

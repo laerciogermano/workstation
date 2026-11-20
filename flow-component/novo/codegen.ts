@@ -1,5 +1,5 @@
 import { exprIdents, isDataRef } from "./args";
-import { agentOf, contractOf, fnsOf, flowFile, isComposite, kidsOf, locate, slug, walk, type Fn, type Node, type Project } from "./model";
+import { agentOf, contractOf, fileDataProducer, fnsOf, flowFile, isComposite, isFromArg, kidsOf, locate, parseFromArg, slug, walk, type Fn, type Node, type Project } from "./model";
 
 /**
  * Fluxo → TypeScript.
@@ -77,16 +77,27 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     for (const v of scope) entries.set(v, v);
     if (kindOf(f) === "local") for (const d of declared) entries.set(d, d);   // a função local não enxerga as variáveis do pai: recebe pelo state tudo o que já nasceu
     for (const i of f.ins) if (produced.includes(i) || scope.includes(i) || needed.includes(i)) entries.set(i, i);   // entrada definida no flow e vinda de fora: lida do state e repassada
-    // entrada de lib preenchida: o valor fixo ou o dado escolhido vai pelo nome da entrada do contrato
-    // valor literal já virou variável (initOf); referência a outro dado usa o nome; NUNCA literais inline (`text: false`)
-    for (const i of f.ins) { const expr = f.args?.[i]?.trim(); if (expr) entries.set(i, initOf(f, i, scope) || !isDataRef(expr) ? i : expr); }
+    // entrada preenchida: literal → variável local; ref → nome do dado; from:file#name → nome importado;
+    // se o nome colide com HELPERS do gerador, a expressão fica inline na chamada
+    for (const i of f.ins) {
+      const expr = f.args?.[i]?.trim(); if (!expr) continue;
+      const from = parseFromArg(expr);
+      if (from) { entries.set(i, from.name); continue; }
+      if (initOf(f, i, scope)) entries.set(i, i);
+      else if (isDataRef(expr)) entries.set(i, expr);
+      else if (HELPERS.has(i)) entries.set(i, expr);
+      else entries.set(i, i);
+    }
     const args = `{ ...state${[...entries].map(([k, v]) => (k === v ? `, ${k}` : `, ${k}: ${v}`)).join("")}${err ? ", error" : ""} }`;
     const a = agentOf(p, f.agent);
     return kindOf(f) === "pessoa" ? `humans.ask(${JSON.stringify(a!.name)}, ${JSON.stringify(f.title)}, ${args})` : `${nameOf(f)}(${args})`;
   };
   /** Valor preenchido que não é só uma referência a outro dado (literal, objeto, template, chamada…): vira variável inicializada logo antes da função. */
   const HELPERS = new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);   // nomes que o código gerado já usa: ficam inline
-  const initOf = (f: Fn, i: string, scope: string[]): string | undefined => { const e = f.args?.[i]?.trim(); return e && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : undefined; };
+  const initOf = (f: Fn, i: string, scope: string[]): string | undefined => {
+    const e = f.args?.[i]?.trim();
+    return e && !isFromArg(e) && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : undefined;
+  };
   const initLines = (fs: readonly Fn[], scope: string[], ind: string): string[] => fs.flatMap(f => f.ins.map(i => [i, initOf(f, i, scope)] as const).filter((x): x is readonly [string, string] => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
   const assign = (f: Fn, expr: string): string => (f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`);
   /** Wrapper de uma função de lib: converte o formato do flow (state com os nomes das entradas) para os argumentos da lib e devolve as saídas no formato do flow. */
@@ -192,7 +203,13 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
         const group: Fn[] = [n]; while (nodes[i + 1]?.t === "fn" && (nodes[i + 1] as Fn).par) group.push(nodes[++i] as Fn);
         const here = [...trail, [key, n.id] as const];
         for (const g of group) {
-          for (const x of g.ins) { const e = g.args?.[x]?.trim(); if (e) { idsOf(e).forEach(id => addUse(id, here)); if (initOf(g, x, scope)) { addUse(x, here); writers.set(x, (writers.get(x) ?? 0) + 1); } } else if (produced.includes(x)) addUse(x, here); }
+          for (const x of g.ins) {
+            const e = g.args?.[x]?.trim();
+            if (e) {
+              if (isFromArg(e)) { /* origem de outro arquivo: binding emitido no início do body */ }
+              else { idsOf(e).forEach(id => addUse(id, here)); if (initOf(g, x, scope)) { addUse(x, here); writers.set(x, (writers.get(x) ?? 0) + 1); } }
+            } else if (produced.includes(x)) addUse(x, here);
+          }
           for (const o of g.outs) { addUse(o, here); writers.set(o, (writers.get(o) ?? 0) + 1); }
         }
       } else {
@@ -212,13 +229,35 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
     declAt.set(k, [...(declAt.get(k) ?? []), name]);
   }
 
+  // origem `from:file#name`: produtoras de outros arquivos a importar e chamar no início do body
+  const fromImps: { file: string; name: string; producer: Fn }[] = [];
+  const seenFrom = new Set<string>();
+  const collectFrom = (f: Fn): void => {
+    for (const i of f.ins) {
+      const parsed = parseFromArg(f.args?.[i]?.trim() ?? ""); if (!parsed) continue;
+      const key = `${parsed.file}#${parsed.name}`; if (seenFrom.has(key)) continue;
+      const producer = fileDataProducer(p, parsed.file, parsed.name); if (!producer) continue;
+      seenFrom.add(key); fromImps.push({ file: parsed.file, name: parsed.name, producer });
+    }
+  };
+  for (const f of allFns) collectFrom(f);
+  if (flow.kids.length) collectFrom(flow);
+  const fromNames = new Set(fromImps.map(x => x.name));
+
   if (!opts.inner) {
     for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
-    // funções de outros arquivos: importadas pelo nome com que o outro arquivo as exporta
-    const byFile = new Map<string, Fn[]>(); for (const f of allFns.filter(x => kindOf(x) === "file")) { const k = agentOf(p, f.agent)!.name; byFile.set(k, [...(byFile.get(k) ?? []), f]); }
+    // funções de outros arquivos: fonte `file:` e produtoras de dados `from:file#name`
+    const byFile = new Map<string, string[]>();
+    for (const f of allFns.filter(x => kindOf(x) === "file")) {
+      const k = agentOf(p, f.agent)!.name, exp = `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`;
+      byFile.set(k, [...new Set([...(byFile.get(k) ?? []), exp])]);
+    }
+    for (const imp of fromImps) {
+      const exp = camel(imp.producer.title);
+      byFile.set(imp.file, [...new Set([...(byFile.get(imp.file) ?? []), exp])]);
+    }
     for (const [file, list] of byFile) {
-      const names = [...new Set(list.map(f => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
-      emit(opts.js ? `const { ${names.map(n => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});` : `import { ${names.join(", ")} } from ${JSON.stringify("./" + file)};`);
+      emit(opts.js ? `const { ${list.map(n => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});` : `import { ${list.join(", ")} } from ${JSON.stringify("./" + file)};`);
     }
     if (lines.length > 0) emit("");
     if (ts) { emit("type State = Record<string, unknown>;"); if (needFn) emit("type Fn = (state: State) => Promise<State>;"); if (hasHumansAll) emit("type Humans = { ask: (who: string, what: string, args: State) => Promise<State> };"); }
@@ -228,10 +267,15 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
   const startBody = lines.length + 1;
   if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};`);
   if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map(n => JSON.stringify(n)).join(" | ")}, Fn>`)};`);
-  const stateNames = [...new Set([...fromState, ...needed.filter(n => !callables.includes(n) && n !== "humans")])];   // lidas do state: as das condições/laços e as entradas definidas no flow que ninguém produz
+  const stateNames = [...new Set([...fromState, ...needed.filter(n => !callables.includes(n) && n !== "humans")])].filter(n => !fromNames.has(n));   // lidas do state; nomes já vindos de from: ficam de fora
   if (stateNames.length) emit(`  const { ${stateNames.join(", ")} } = state${ty(" as Record<string, any>")};`);
-  if (flow.kids.length) list(flow.kids, "  ", [], false);
-  else { letLine([...produced, ...inits], "  "); initLines([flow], [], "  ").forEach(l => emit(l)); const a = lines.length + 1; emit(`  ${assign(flow, callOf(flow, [], false))}`); mark(flow.id, a); }
+  for (const imp of fromImps) {
+    const fn = camel(imp.producer.title);
+    emit(`  const { ${imp.name} } = await ${fn}({})${ty(" as State")};`);
+    declared.add(imp.name);
+  }
+  if (flow.kids.length) list(flow.kids, "  ", [...fromNames], false);
+  else { letLine([...produced, ...inits].filter(n => !fromNames.has(n)), "  "); initLines([flow], [...fromNames], "  ").forEach(l => emit(l)); const a = lines.length + 1; emit(`  ${assign(flow, callOf(flow, [...fromNames], false))}`); mark(flow.id, a); }
   letLine(declAt.get("r|__ret") ?? [], "  ");   // saída que nenhuma função produz: nasce antes do retorno
   if (returned.length) emit(`  return { ${returned.join(", ")} };`);   // só há return quando o flow define saídas
   emit("}");

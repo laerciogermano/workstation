@@ -35,6 +35,22 @@
     const fns = p.flows.filter((f) => flowFile(f) === file);
     return fns.length ? { id: `file:${file}`, kind: "arquivo", name: file, tasks: fns.map((f) => f.title), contracts: Object.fromEntries(fns.map((f) => [f.title, { ins: [...f.ins], outs: [...f.outs] }])) } : void 0;
   };
+  var FROM_ARG = /^from:([^#\s]+)#([A-Za-z_$][\w$]*)$/;
+  var isFromArg = (expr) => FROM_ARG.test(expr.trim());
+  var parseFromArg = (expr) => {
+    const m = FROM_ARG.exec(expr.trim());
+    return m ? { file: m[1], name: m[2] } : null;
+  };
+  function fileData(p, file) {
+    const out = [], seen = /* @__PURE__ */ new Set();
+    for (const f of p.flows.filter((x) => flowFile(x) === file)) for (const name of f.outs) {
+      if (seen.has(name)) continue;
+      seen.add(name);
+      out.push({ name, from: f.title });
+    }
+    return out;
+  }
+  var fileDataProducer = (p, file, name) => p.flows.find((f) => flowFile(f) === file && f.outs.includes(name)) ?? null;
   var LIB_RETURN_TYPE = { "web:fetch": "Response" };
   var OBJ_TYPE_SIGS = {
     Response: ["json() -> value", "text() -> text", "blob() -> blob", "arrayBuffer() -> buffer", "formData() -> formData"]
@@ -647,10 +663,11 @@
   var IDENT = /^[A-Za-z_$][\w$]*$/;
   var PATH = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
   var NUM = /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i;
+  var FROM_FILE = /^([^#\s]+)#([A-Za-z_$][\w$]*)$/;
   var LITERAL_IDENTS = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
   var isDataRef = (e) => {
     const v = e.trim();
-    if (!v || LITERAL_IDENTS.has(v)) return false;
+    if (!v || LITERAL_IDENTS.has(v) || v.startsWith("from:")) return false;
     return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
   };
   function buildArg(d) {
@@ -670,6 +687,11 @@
         if (v && !PATH.test(v)) throw new FlowError("invalid", `\u201C${v}\u201D is not a data name (use letters, numbers and _; e.g. customer.name)`);
         return v;
       }
+      case "import": {
+        const v = d.value.trim(), m = FROM_FILE.exec(v);
+        if (!m) throw new FlowError("invalid", `\u201C${v}\u201D is not a file data origin (use file.ts#name)`);
+        return `from:${m[1]}#${m[2]}`;
+      }
       case "expr":
         return d.value.trim();
       case "object": {
@@ -686,6 +708,10 @@
   function inferArg(expr) {
     const e = expr.trim();
     if (!e) return emptyDraft();
+    if (e.startsWith("from:")) {
+      const m = FROM_FILE.exec(e.slice(5));
+      if (m) return { type: "import", value: `${m[1]}#${m[2]}`, fields: [] };
+    }
     if (/^"(?:[^"\\]|\\.)*"$/.test(e)) {
       try {
         return { type: "text", value: JSON.parse(e), fields: [] };
@@ -1038,7 +1064,16 @@
       for (const i of f.ins) if (produced.includes(i) || scope.includes(i) || needed.includes(i)) entries.set(i, i);
       for (const i of f.ins) {
         const expr = f.args?.[i]?.trim();
-        if (expr) entries.set(i, initOf(f, i, scope) || !isDataRef(expr) ? i : expr);
+        if (!expr) continue;
+        const from = parseFromArg(expr);
+        if (from) {
+          entries.set(i, from.name);
+          continue;
+        }
+        if (initOf(f, i, scope)) entries.set(i, i);
+        else if (isDataRef(expr)) entries.set(i, expr);
+        else if (HELPERS.has(i)) entries.set(i, expr);
+        else entries.set(i, i);
       }
       const args = `{ ...state${[...entries].map(([k, v]) => k === v ? `, ${k}` : `, ${k}: ${v}`).join("")}${err ? ", error" : ""} }`;
       const a = agentOf(p, f.agent);
@@ -1047,7 +1082,7 @@
     const HELPERS = /* @__PURE__ */ new Set(["data", "humans", "state", "error", "stubs", "wrappers", "result"]);
     const initOf = (f, i, scope) => {
       const e = f.args?.[i]?.trim();
-      return e && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : void 0;
+      return e && !isFromArg(e) && !isDataRef(e) && !scope.includes(i) && !fromStateSet.has(i) && !callables.includes(i) && !dataNamesLoop.has(i) && !HELPERS.has(i) ? e : void 0;
     };
     const initLines = (fs, scope, ind) => fs.flatMap((f) => f.ins.map((i) => [i, initOf(f, i, scope)]).filter((x) => !!x[1]).map(([i, e]) => `${ind}${i} = ${e};`));
     const assign = (f, expr) => f.outs.length ? `({ ${f.outs.join(", ")} } = await ${expr});` : `await ${expr};`;
@@ -1215,10 +1250,13 @@
             for (const x of g.ins) {
               const e = g.args?.[x]?.trim();
               if (e) {
-                idsOf(e).forEach((id) => addUse(id, here));
-                if (initOf(g, x, scope)) {
-                  addUse(x, here);
-                  writers.set(x, (writers.get(x) ?? 0) + 1);
+                if (isFromArg(e)) {
+                } else {
+                  idsOf(e).forEach((id) => addUse(id, here));
+                  if (initOf(g, x, scope)) {
+                    addUse(x, here);
+                    writers.set(x, (writers.get(x) ?? 0) + 1);
+                  }
                 }
               } else if (produced.includes(x)) addUse(x, here);
             }
@@ -1253,16 +1291,36 @@
       const firstUse = us.reduce((m, u) => u.seq < m.seq ? u : m), k = `${f0.keys[l]}|${firstUse.ids[l]}`;
       declAt.set(k, [...declAt.get(k) ?? [], name]);
     }
+    const fromImps = [];
+    const seenFrom = /* @__PURE__ */ new Set();
+    const collectFrom = (f) => {
+      for (const i of f.ins) {
+        const parsed = parseFromArg(f.args?.[i]?.trim() ?? "");
+        if (!parsed) continue;
+        const key = `${parsed.file}#${parsed.name}`;
+        if (seenFrom.has(key)) continue;
+        const producer = fileDataProducer(p, parsed.file, parsed.name);
+        if (!producer) continue;
+        seenFrom.add(key);
+        fromImps.push({ file: parsed.file, name: parsed.name, producer });
+      }
+    };
+    for (const f of allFns) collectFrom(f);
+    if (flow.kids.length) collectFrom(flow);
+    const fromNames = new Set(fromImps.map((x) => x.name));
     if (!opts.inner) {
       for (const l of libs) emit(opts.js ? `const ${libVar(l)} = await import(${JSON.stringify(l)});` : `import * as ${libVar(l)} from ${JSON.stringify(l)};`);
       const byFile = /* @__PURE__ */ new Map();
       for (const f of allFns.filter((x) => kindOf(x) === "file")) {
-        const k = agentOf(p, f.agent).name;
-        byFile.set(k, [...byFile.get(k) ?? [], f]);
+        const k = agentOf(p, f.agent).name, exp = `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`;
+        byFile.set(k, [.../* @__PURE__ */ new Set([...byFile.get(k) ?? [], exp])]);
+      }
+      for (const imp of fromImps) {
+        const exp = camel(imp.producer.title);
+        byFile.set(imp.file, [.../* @__PURE__ */ new Set([...byFile.get(imp.file) ?? [], exp])]);
       }
       for (const [file, list2] of byFile) {
-        const names2 = [...new Set(list2.map((f) => `${camel(f.title)}${camel(f.title) === nameOf(f) ? "" : ` as ${nameOf(f)}`}`))];
-        emit(opts.js ? `const { ${names2.map((n) => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});` : `import { ${names2.join(", ")} } from ${JSON.stringify("./" + file)};`);
+        emit(opts.js ? `const { ${list2.map((n) => n.replace(" as ", ": ")).join(", ")} } = await import(${JSON.stringify("./" + file)});` : `import { ${list2.join(", ")} } from ${JSON.stringify("./" + file)};`);
       }
       if (lines.length > 0) emit("");
       if (ts) {
@@ -1276,14 +1334,19 @@
     const startBody = lines.length + 1;
     if (hasHumans) emit(`  const { humans } = state${ty(" as { humans: Humans }")};`);
     if (callables.length) emit(`  const { ${callables.join(", ")} } = state${ty(` as Record<${callables.map((n) => JSON.stringify(n)).join(" | ")}, Fn>`)};`);
-    const stateNames = [.../* @__PURE__ */ new Set([...fromState, ...needed.filter((n) => !callables.includes(n) && n !== "humans")])];
+    const stateNames = [.../* @__PURE__ */ new Set([...fromState, ...needed.filter((n) => !callables.includes(n) && n !== "humans")])].filter((n) => !fromNames.has(n));
     if (stateNames.length) emit(`  const { ${stateNames.join(", ")} } = state${ty(" as Record<string, any>")};`);
-    if (flow.kids.length) list(flow.kids, "  ", [], false);
+    for (const imp of fromImps) {
+      const fn = camel(imp.producer.title);
+      emit(`  const { ${imp.name} } = await ${fn}({})${ty(" as State")};`);
+      declared.add(imp.name);
+    }
+    if (flow.kids.length) list(flow.kids, "  ", [...fromNames], false);
     else {
-      letLine([...produced, ...inits], "  ");
-      initLines([flow], [], "  ").forEach((l) => emit(l));
+      letLine([...produced, ...inits].filter((n) => !fromNames.has(n)), "  ");
+      initLines([flow], [...fromNames], "  ").forEach((l) => emit(l));
       const a = lines.length + 1;
-      emit(`  ${assign(flow, callOf(flow, [], false))}`);
+      emit(`  ${assign(flow, callOf(flow, [...fromNames], false))}`);
       mark(flow.id, a);
     }
     letLine(declAt.get("r|__ret") ?? [], "  ");
@@ -2612,9 +2675,16 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const f = locate(P2(), n.id)?.flow;
       return f ? [...new Set(fnsOf(f).flatMap((x) => x.outs))] : [];
     };
-    const typeOpts = (d, states, removable = false) => {
+    const fileOrigins = (n) => {
+      const own = locate(P2(), n.id)?.flow, ownFile = own ? flowFile(own) : "";
+      return filesOf(P2()).filter((f) => f !== ownFile).flatMap((file) => fileData(P2(), file).map((d) => ({ file, ...d })));
+    };
+    const typeOpts = (d, states, removable = false, files = []) => {
       const isState = d.type === "ref" && states.some((s) => s.name === d.value);
-      return ARG_TYPES.map((t) => `<option value="${t.type}"${t.type === d.type && !isState ? " selected" : ""}>${t.label}</option>`).join("") + (states.length ? `<optgroup label="States available in the context">${states.map((s) => `<option value="state:${esc(s.name)}"${isState && d.value === s.name ? " selected" : ""}>${esc(s.name)} \u2014 ${s.kind === "loop" ? "for variable" : `from ${esc(s.from)}`}</option>`).join("")}</optgroup>` : "") + (removable ? `<optgroup label="Data"><option value="__remove">remove this data</option></optgroup>` : "");
+      const isImport = d.type === "import";
+      const byFile = /* @__PURE__ */ new Map();
+      for (const x of files) byFile.set(x.file, [...byFile.get(x.file) ?? [], x]);
+      return ARG_TYPES.map((t) => `<option value="${t.type}"${t.type === d.type && !isState && !isImport ? " selected" : ""}>${t.label}</option>`).join("") + (states.length ? `<optgroup label="States available in the context">${states.map((s) => `<option value="state:${esc(s.name)}"${isState && d.value === s.name ? " selected" : ""}>${esc(s.name)} \u2014 ${s.kind === "loop" ? "for variable" : `from ${esc(s.from)}`}</option>`).join("")}</optgroup>` : "") + [...byFile].map(([file, list]) => `<optgroup label="From file \xB7 ${esc(file.replace(/\.[^.]+$/, ""))}">${list.map((x) => `<option value="from:${esc(x.file)}#${esc(x.name)}"${isImport && d.value === `${x.file}#${x.name}` ? " selected" : ""}>${esc(x.name)} \u2014 from ${esc(x.from)}</option>`).join("")}</optgroup>`).join("") + (removable ? `<optgroup label="Data"><option value="__remove">remove this data</option></optgroup>` : "");
     };
     const draftAt = (root, path) => {
       const seg = path.split("/");
@@ -2632,11 +2702,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
       }
       return { d: cur, ...field ? { field } : {}, ...parent ? { parent } : {}, ...idx !== void 0 ? { idx } : {} };
     };
-    const draftHtml = (d, path, states, depth = 0, removable = false) => {
-      const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>` : d.type === "ref" && states.some((x) => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>` : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">` : d.type === "object" ? "" : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
-      const kids2 = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
-      const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable)}</select>`;
-      if (depth === 0) return `<div class="argd d0"><span class="fl">Type</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids2}`;
+    const draftHtml = (d, path, states, depth = 0, removable = false, files = []) => {
+      const importChip = () => {
+        const [file, name] = d.value.split("#"), bare = (file ?? "").replace(/\.[^.]+$/, "");
+        return `<span class="statechip" title="Imported from ${esc(file ?? "")}">${icon("file", "mini")}${esc(bare)} \u203A ${esc(name ?? "")}</span>`;
+      };
+      const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>` : d.type === "import" ? importChip() : d.type === "ref" && states.some((x) => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>` : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">` : d.type === "object" ? "" : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
+      const kids2 = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1, false, files)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
+      const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable, depth === 0 ? files : [])}</select>`;
+      if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids2}`;
       return `<div class="argd d${depth}">${sel}${val}</div>${kids2}`;
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
@@ -2646,15 +2720,15 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const base = side === "in" ? "input" : "output";
         names.push(base);
       }
-      const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id);
+      const drafts = names.map((nm) => withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft()), refs = refNames(n), states = statesFor(P2(), n.id), files = withValue ? fileOrigins(n) : [];
       form.classList.add("wide");
       const fresh2 = names.map(() => false), orig = [...names];
       const nameEditable = (i) => editable || side === "out" && i === 0;
       const canAdd = () => editable && (!withValue || names.length > 1);
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
-        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type and value. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable) : ""}</div>`).join("")}
+        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
@@ -2686,7 +2760,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
             return;
           }
           if (t.value.startsWith("state:")) Object.assign(hit.d, emptyDraft("ref"), { value: t.value.slice(6) });
-          else {
+          else if (t.value.startsWith("from:")) {
+            const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
+            const prod = fileDataProducer(P2(), file, name);
+            if (prod && prod.ins.some((i) => !prod.args?.[i]?.trim())) toast(`\u201C${prod.title}\u201D still has abstract inputs; the generated call will use {}.`);
+            Object.assign(hit.d, emptyDraft("import"), { value: `${file}#${name}` });
+          } else {
             const keep = hit.d.value;
             Object.assign(hit.d, emptyDraft(t.value), t.value === "expr" || t.value === "text" ? { value: keep } : {});
           }

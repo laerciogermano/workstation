@@ -1,7 +1,7 @@
 import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft, type ArgType } from "./args";
 import { buildCond, COND_OPS, emptyClause, inferCond, JOINERS, needsRight, type CondDraft, type CondOp, type Joiner } from "./cond";
 import { runInWorker, type LogLevel, type Running } from "./runner";
-import { contractOf, cubeName, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
+import { contractOf, cubeName, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
@@ -270,11 +270,20 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
 
   // ───────── caixas de edição das entradas ─────────
   const refNames = (n: Fn): string[] => { const f = locate(P(), n.id)?.flow; return f ? [...new Set(fnsOf(f).flatMap(x => x.outs))] : []; };
-  /** O select de tipo: os tipos e, em outro grupo, TODOS os estados disponíveis no contexto (escolher um liga a entrada a ele). */
-  const typeOpts = (d: ArgDraft, states: StateRef[], removable = false): string => {
+  /** Dados de outros arquivos (outs das roots), para origem import no editor. */
+  const fileOrigins = (n: Fn): { file: string; name: string; from: string }[] => {
+    const own = locate(P(), n.id)?.flow, ownFile = own ? flowFile(own) : "";
+    return filesOf(P()).filter(f => f !== ownFile).flatMap(file => fileData(P(), file).map(d => ({ file, ...d })));
+  };
+  /** O select de tipo: tipos, estados do contexto e dados de outros arquivos (origem). */
+  const typeOpts = (d: ArgDraft, states: StateRef[], removable = false, files: { file: string; name: string; from: string }[] = []): string => {
     const isState = d.type === "ref" && states.some(s => s.name === d.value);
-    return ARG_TYPES.map(t => `<option value="${t.type}"${t.type === d.type && !isState ? " selected" : ""}>${t.label}</option>`).join("")
+    const isImport = d.type === "import";
+    const byFile = new Map<string, { file: string; name: string; from: string }[]>();
+    for (const x of files) byFile.set(x.file, [...(byFile.get(x.file) ?? []), x]);
+    return ARG_TYPES.map(t => `<option value="${t.type}"${t.type === d.type && !isState && !isImport ? " selected" : ""}>${t.label}</option>`).join("")
       + (states.length ? `<optgroup label="States available in the context">${states.map(s => `<option value="state:${esc(s.name)}"${isState && d.value === s.name ? " selected" : ""}>${esc(s.name)} — ${s.kind === "loop" ? "for variable" : `from ${esc(s.from)}`}</option>`).join("")}</optgroup>` : "")
+      + [...byFile].map(([file, list]) => `<optgroup label="From file · ${esc(file.replace(/\.[^.]+$/, ""))}">${list.map(x => `<option value="from:${esc(x.file)}#${esc(x.name)}"${isImport && d.value === `${x.file}#${x.name}` ? " selected" : ""}>${esc(x.name)} — from ${esc(x.from)}</option>`).join("")}</optgroup>`).join("")
       + (removable ? `<optgroup label="Data"><option value="__remove">remove this data</option></optgroup>` : "");
   };
   /** Acha o rascunho por caminho: "0" = o parâmetro 0; "0/fields/2" = o campo 2 dele (nome); "0/fields/2/draft" = o valor desse campo. */
@@ -287,16 +296,21 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     return { d: cur, ...(field ? { field } : {}), ...(parent ? { parent } : {}), ...(idx !== undefined ? { idx } : {}) };
   };
   /** Um valor editável: tipo + valor; objeto mostra os filhos (campo, tipo, valor) e "Add child". */
-  const draftHtml = (d: ArgDraft, path: string, states: StateRef[], depth = 0, removable = false): string => {
+  const draftHtml = (d: ArgDraft, path: string, states: StateRef[], depth = 0, removable = false, files: { file: string; name: string; from: string }[] = []): string => {
+    const importChip = (): string => {
+      const [file, name] = d.value.split("#"), bare = (file ?? "").replace(/\.[^.]+$/, "");
+      return `<span class="statechip" title="Imported from ${esc(file ?? "")}">${icon("file", "mini")}${esc(bare)} › ${esc(name ?? "")}</span>`;
+    };
     const val = d.type === "boolean" ? `<select data-k="value" data-path="${path}" aria-label="Value"><option value="true"${d.value === "true" ? " selected" : ""}>true</option><option value="false"${d.value !== "true" ? " selected" : ""}>false</option></select>`
+      : d.type === "import" ? importChip()
       : d.type === "ref" && states.some(x => x.name === d.value) ? `<span class="statechip" title="Bound to this state">${icon("diamond", "mini")}${esc(d.value)}</span>`
       : d.type === "ref" ? `<input data-k="value" data-path="${path}" list="refnames" value="${esc(d.value)}" placeholder="data name (e.g. customer.name)" spellcheck="false" aria-label="Data">`
       : d.type === "object" ? ""
       : `<input data-k="value" data-path="${path}" value="${esc(d.value)}" placeholder="${d.type === "text" ? "text (e.g. Hello)" : d.type === "number" ? "number (e.g. 42)" : "TypeScript expression"}" spellcheck="false" aria-label="Value">`;
-    const kids = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
-    const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable)}</select>`;
+    const kids = d.type === "object" ? `<div class="argkids">${d.fields.map((f, i) => `<div class="argf"><input data-k="name" data-path="${path}/fields/${i}" value="${esc(f.name)}" placeholder="field" spellcheck="false" aria-label="Field name"><div class="argcell">${draftHtml(f.draft, `${path}/fields/${i}/draft`, states, depth + 1, false, files)}</div><button type="button" class="ib danger" data-rm="${path}/fields/${i}" title="Remove the field ${esc(f.name)}" aria-label="Remove the field ${esc(f.name)}">${icon("trash")}</button></div>`).join("")}<button type="button" class="addkid" data-add="${path}">${icon("plus")}Add child</button></div>` : "";
+    const sel = `<select data-k="type" data-path="${path}" aria-label="Type">${typeOpts(d, states, removable, depth === 0 ? files : [])}</select>`;
     // dado de primeiro nível: nome em cima (cabeçalho do bloco), depois o tipo e, embaixo, "Value" com o valor
-    if (depth === 0) return `<div class="argd d0"><span class="fl">Type</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids}`;
+    if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids}`;
     return `<div class="argd d${depth}">${sel}${val}</div>${kids}`;
   };
   /**
@@ -307,7 +321,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
   const dataEditor = (n: Fn, side: "in" | "out", opts: { names?: string[]; start?: boolean } = {}): Promise<void> => modal<void>(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
     const lib = !!contractOf(P(), n), editable = !lib, withValue = side === "in";
     const names: string[] = opts.names ? [...opts.names] : [...(side === "in" ? n.ins : n.outs)]; if (opts.start && !names.length) { const base = side === "in" ? "input" : "output"; names.push(base); }   // dado novo: nome automático (renomeia-se clicando no texto do dado)
-    const drafts: ArgDraft[] = names.map(nm => (withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft())), refs = refNames(n), states = statesFor(P(), n.id); form.classList.add("wide");
+    const drafts: ArgDraft[] = names.map(nm => (withValue ? inferArg(n.args?.[nm] ?? "") : emptyDraft())), refs = refNames(n), states = statesFor(P(), n.id), files = withValue ? fileOrigins(n) : []; form.classList.add("wide");
     // o nome só é editável em linhas NOVAS (e nas saídas, que só têm nome); uma entrada que já existe abre igual à de lib: nome fixo, select de tipo e valor
     const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];   // orig: nome de cada linha ao abrir ("" = linha nova)
     // qualquer dado tem o campo de nome; só o parâmetro de entrada de uma lib é fixo (vem do contrato dela)
@@ -315,8 +329,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const canAdd = (): boolean => editable && (!withValue || names.length > 1);   // "Add child": numa saída, num objeto (cubo) com vários dados ou ao criar
     const title = (): string => (names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
-      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type and value. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || (withValue && drafts[i]!.type === "object") ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i]!, String(i), states, 0, editable) : ""}</div>`).join("")}
+      form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name, type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || (withValue && drafts[i]!.type === "object") ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i]!, String(i), states, 0, editable, files) : ""}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
       form.querySelector("[data-no]")!.addEventListener("click", () => done());
@@ -332,6 +346,12 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
           if (!names.length) { run({ type: "setData", id: n.id, side, names: [], values: [] }, false); done(); return; } draw(); return;
         }
         if (t.value.startsWith("state:")) Object.assign(hit.d, emptyDraft("ref"), { value: t.value.slice(6) });   // um estado do contexto
+        else if (t.value.startsWith("from:")) {   // import de out de outro arquivo
+          const rest = t.value.slice(5), hash = rest.indexOf("#"), file = hash >= 0 ? rest.slice(0, hash) : rest, name = hash >= 0 ? rest.slice(hash + 1) : "";
+          const prod = fileDataProducer(P(), file, name);
+          if (prod && prod.ins.some(i => !(prod.args?.[i]?.trim()))) toast(`“${prod.title}” still has abstract inputs; the generated call will use {}.`);
+          Object.assign(hit.d, emptyDraft("import"), { value: `${file}#${name}` });
+        }
         else { const keep = hit.d.value; Object.assign(hit.d, emptyDraft(t.value as ArgType), t.value === "expr" || t.value === "text" ? { value: keep } : {}); }
         draw();
       }

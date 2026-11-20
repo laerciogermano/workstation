@@ -135,9 +135,9 @@ describe("plano (SVG)", () => {
   });
   it("geometria: colunas e linhas", () => { const t = base(), s = t.view().scene; expect(colX(1) - colX(0)).toBe(G.W); expect(rowY(2) - rowY(1)).toBe(G.RH); expect(planWidth(s)).toBeGreaterThan(colX(s.nSteps)); expect(renderPlan(t.p, locate(t.p, t.root)!.node as Fn, layout(locate(t.p, t.root)!.node as Fn), t.ui())).toContain("<svg"); });
   it("esc escapa HTML e ícones são SVG", () => { expect(esc('<a href="x">&')).toBe("&lt;a href=&quot;x&quot;&gt;&amp;"); expect(icon("plus")).toContain("<svg"); expect(icon("package")).toContain("<path"); expect(icon("naoexiste")).toContain("<svg"); });
-  it("projeto padrão (main) renderiza tabela e plano sem erro", () => {
+  it("exemplo completo renderiza tabela e plano sem erro nos dois fluxos", () => {
     const s = sampleProject(); for (const f of s.project.flows) { const v = build(s.project, f.id, { closed: new Set(), sel: null, txtIn: false }); expect(v.table.length).toBeGreaterThan(50); expect(v.plan).toContain("</svg>"); }
-    expect(renderTable(s.project, layout(s.project.flows[0]!), { closed: new Set(), sel: null, txtIn: false })).toContain("main");
+    expect(renderTable(s.project, layout(s.project.flows[1]!), { closed: new Set(), sel: null, txtIn: false })).toContain("Math");
     expect(() => build(s.project, "nope", { closed: new Set(), sel: null, txtIn: false })).toThrow();
   });
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { camel, generate } from "../../novo/codegen";
 import { apply, DEFAULT_AGENTS, emptyProject, locate, type Command } from "../../novo/model";
-import { browserDemoProject, sampleProject } from "../../novo/sample";
+import { sampleProject } from "../../novo/sample";
 
 function base() {
   let p = emptyProject("T"); p.agents = structuredClone([...DEFAULT_AGENTS]);
@@ -81,12 +81,9 @@ describe("transpilador Flow → TypeScript", () => {
 });
 
 describe("projeto de partida", () => {
-  it("só main (raiz vazia); gera código sem erro", () => {
-    const s = sampleProject(); expect(s.project.flows.map(f => f.title)).toEqual(["main"]); expect(s.project.flows[0]!.kids).toHaveLength(0);
-    expect(generate(s.project, s.main).code).toContain("export async function main");
-  });
-  it("demo de browser (main + example) gera if e crypto sem import", () => {
-    const s = browserDemoProject(); expect(s.project.flows.map(f => f.title)).toEqual(["main", "example"]);
+  it("tem dois fluxos: main (só a raiz) e example (roda no navegador); gera código sem erro nos dois", () => {
+    const s = sampleProject(); expect(s.project.flows.map(f => f.title)).toEqual(["main", "example"]); expect(s.project.flows[0]!.kids).toHaveLength(0);
+    for (const f of s.project.flows) { const g = generate(s.project, f.id); expect(g.code).toContain("export async function"); }
     const code = generate(s.project, s.example).code; expect(code).not.toMatch(/^import /m); expect(code).toContain("if (score >= threshold) {"); expect(code).toContain("await crypto.randomUUID()");
     expect(generate(s.project, s.example, { runnable: true }).code).toContain("const result = await example(");
   });

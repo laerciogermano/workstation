@@ -19,7 +19,7 @@ const project = () => { let q = emptyProject("T"); q.agents = structuredClone([.
 
 describe("o código gerado compila sem erros de TypeScript", () => {
   for (const runnable of [false, true]) {
-    it(`main do projeto padrão (${runnable ? "executável" : "módulo"})`, () => {
+    it(`example e main do exemplo (${runnable ? "executável" : "módulo"})`, () => {
       const s = sampleProject();
       for (const f of s.project.flows) { const g = generate(s.project, f.id, { runnable }); expect(check(g.code, g.runFile), g.code).toEqual([]); }
     });

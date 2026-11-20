@@ -132,12 +132,12 @@ export function parsePrefs(raw: string | null): Prefs {
 // ───────────────────────── ferramentas (regras ÚNICAS, usadas pela tabela e pelo plano) ─────────────────────────
 export interface Tool { act: string; id: string; icon: string; title: string; danger?: boolean; data?: Record<string, string> }
 
-/** Menu de um dado listado nos estados: renomear / remover (função comum), editar (cubo ou entrada de lib) ou renomear a saída (lib). */
+/** Menu de um dado listado nos estados: renomear / remover (função comum), editar (entrada de lib) ou renomear a saída (lib). */
 export function stateTools(p: Project, owner: string, side: "in" | "out", name: string): Tool[] {
   const n = locate(p, owner)?.node; if (!n || n.t !== "fn") return [];
   const t = (act: string, icon: string, title: string, extra: Partial<Tool> = {}): Tool => ({ act, id: owner, icon, title, data: { side, name }, ...extra });
-  if (!name) return [t("editData", "cube", "Edit the data")];
-  if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "cube", "Set the value")];
+  if (!name) return [t("editData", "pencil", "Edit the data")];
+  if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "pencil", "Set the value")];
   return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
 }
 

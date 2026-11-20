@@ -1385,6 +1385,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
     code: ["m16 18 6-6-6-6", "m8 6-6 6 6 6"],
     "panel-right": ["rect:3,3,18,18,2", "M15 3v18"],
     cube: ["M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z", "M3.5 7.5 12 12.5l8.5-5", "M12 12.5v9"],
+    pencil: ["M12 20h9", "M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"],
     eraser: ["m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21", "M22 21H7", "m5 11 9 9"],
     "panel-left": ["rect:3,3,18,18,2", "M9 3v18"],
     play: ["M6 4v16l14-8z"],
@@ -1647,8 +1648,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
     const n = locate(p, owner)?.node;
     if (!n || n.t !== "fn") return [];
     const t = (act, icon2, title, extra = {}) => ({ act, id: owner, icon: icon2, title, data: { side, name }, ...extra });
-    if (!name) return [t("editData", "cube", "Edit the data")];
-    if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "cube", "Set the value")];
+    if (!name) return [t("editData", "pencil", "Edit the data")];
+    if (contractOf(p, n)) return side === "out" ? [t("renameOut", "text", "Rename the data")] : [t("editData", "pencil", "Set the value")];
     return [t("renameData", "text", "Rename the data"), t("removeIo", "trash", side === "in" ? "Remove the input" : "Remove the output", { danger: true })];
   }
   function toolsFor(p, id, part = "main") {

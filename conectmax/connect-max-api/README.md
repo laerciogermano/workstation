@@ -22,7 +22,7 @@ Públicos: `/health`, `/docs`, `/openapi.json`, `/openapi.yaml`. Demais rotas ex
 CORS: `Access-Control-Allow-Origin: *` (qualquer domínio).
 
 **Isolamento:** só **ConnectMax Campinas** (`FRANQUIA_ID=9`). Query `franquia_id` / `id_franqueado*` é ignorada; `/db/*` só Campinas; pedido de outra unidade → 403.  
-**Extração (portal):** a partir da pág. 1 (mais novos), ordenado último→primeiro, teto `EXTRACT_LIMIT` (default **100**) — sem varredura/paginação exposta.
+**Extração (portal):** a partir da pág. 1 (mais novos), ordenado último→primeiro, teto `EXTRACT_LIMIT` (default **50**) — sem varredura/paginação exposta.
 
 ## Local
 

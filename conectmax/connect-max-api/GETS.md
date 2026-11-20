@@ -3,7 +3,7 @@
 **Produção:** https://connect-max-api.laerciogermano.com · UI Swagger [`/docs`](https://connect-max-api.laerciogermano.com/docs) (auth API key)  
 **Contrato OpenAPI (entradas/saídas):** [`openapi.yaml`](openapi.yaml) · [`openapi.json`](openapi.json)  
 **Dashboard funil:** [`/dashboard`](https://connect-max-api.laerciogermano.com/dashboard) (Orçamento → Pedido → NF → Contas a receber → Atrasados)  
-**Escopo:** só **ConnectMax Campinas** (`franquia_id=9`); teto **100** itens/resposta (`EXTRACT_LIMIT`, sem query)
+**Escopo:** só **ConnectMax Campinas** (`franquia_id=9`); teto **50** itens/resposta (`EXTRACT_LIMIT`, sem query)
 
 Fonte viva: `https://franqueado.conectmax.com/franqueado/?page=…` (HTML + sessão `PHPSESSID`).  
 Não há REST JSON oficial; a “API” prática é **GET na página** (ou export ajax). Mutações (status, quitar, duplicar) ficam de fora deste mapa.

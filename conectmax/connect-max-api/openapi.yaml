@@ -3,7 +3,7 @@ info:
   title: Connect Max API
   description: |
     API que autentica no Portal do Franqueado
-    (`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON. Isolada em ConnectMax Campinas (franquia 9); teto EXTRACT_LIMIT=100 por resposta (sem query/paginação).
+    (`https://franqueado.conectmax.com/`) e expõe GETs de busca em JSON. Isolada em ConnectMax Campinas (franquia 9); teto EXTRACT_LIMIT=50 por resposta (sem query/paginação).
 
     Autenticação de aplicação: `Authorization: Bearer <API_KEY>` ou `X-API-Key`.
     `/health` é público. Demais rotas exigem a chave.

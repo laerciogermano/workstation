@@ -298,6 +298,18 @@ describe("nome = referência no fluxo", () => {
     expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ ins: ["score"], args: { score: "score + 1" } });
     expect((locate(t.p, i)!.node as { test: string }).test).toBe("score > 0");
   });
+  it("entrada para nome já usado: só reassocia o porto (referência); não renomeia o produtor", () => {
+    const t = base(); t.run({ type: "addOutput", id: t.a, name: "score" }); t.run({ type: "addInput", id: t.b, name: "x" }); t.run({ type: "setArg", id: t.b, name: "x", value: "1" });
+    t.run({ type: "renameIo", id: t.b, side: "in", from: "x", to: "score" });
+    expect((locate(t.p, t.a)!.node as Fn).outs).toEqual(["score"]);
+    expect((locate(t.p, t.b)!.node as Fn)).toMatchObject({ ins: ["score"] });
+    expect((locate(t.p, t.b)!.node as Fn).args).toBeUndefined();
+  });
+  it("saída pode igualar o nome da entrada (mesmo dado)", () => {
+    const t = base(); t.run({ type: "addInput", id: t.a, name: "text" }); t.run({ type: "addOutput", id: t.a, name: "result" });
+    t.run({ type: "renameIo", id: t.a, side: "out", from: "result", to: "text" });
+    expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["text"], outs: ["text"] });
+  });
   it("renomear função abstrata atualiza todas com o mesmo título; lib não propaga", () => {
     const t = base(); t.run({ type: "rename", id: t.a, title: "passo" }); t.run({ type: "rename", id: t.b, title: "passo" });
     t.run({ type: "rename", id: t.a, title: "etapa" });

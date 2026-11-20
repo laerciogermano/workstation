@@ -464,12 +464,22 @@ export const HANDLERS = {
     if (dataNamesInFlow(l.flow).has(t)) return fail("invalid", `“${t}” is already a data name in this flow`);
     n.title = t; applyContract(p, n);
   },
-  /** Renomeia um dado (referência no fluxo inteiro): entrada ou saída de função comum. */
+  /**
+   * Renomeia um dado. Nome novo → propaga no fluxo. Entrada para um nome que já existe → só reassocia
+   * este porto (referência pelo nome; não renomeia produtores/outros consumidores). Saída para nome
+   * já existente (ex.: igual à entrada) → funde via renameDatumInFlow (mesmo dado).
+   */
   renameIo: (p, a) => {
     const l = need(p, str(a, "id")), n = l.node; if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs"); if (contractOf(p, n)) return fail("invalid", `The inputs and outputs of ${n.title} come from the lib contract`);
     const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
     if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
     if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
+    if (from === to) return;
+    if (key === "ins" && dataNamesInFlow(l.flow).has(to)) {
+      n.ins = n.ins.map(x => (x === from ? to : x));
+      if (n.args) { delete n.args[from]; delete n.args[to]; if (!Object.keys(n.args).length) delete n.args; }
+      return;
+    }
     renameDatumInFlow(l.flow, from, to);
   },
   /** Troca de uma vez todos os dados de um lado (entrada ou saída) de uma função comum: nomes e, nas entradas, os valores. */
@@ -478,7 +488,12 @@ export const HANDLERS = {
     const side = str(a, "side") === "out" ? "out" : "in", names = (Array.isArray(a["names"]) ? a["names"] : []).map(x => claimDataInFlow(l.flow, x)), values = Array.isArray(a["values"]) ? a["values"].map(x => String(x ?? "").trim()) : [];
     if (new Set(names).size !== names.length) return fail("invalid", "Duplicate data name"); if (values.some(v => v.length > 300)) return fail("invalid", "Value too large");
     const prev = side === "out" ? [...n.outs] : [...n.ins];
-    for (let i = 0; i < Math.min(prev.length, names.length); i++) if (prev[i] !== names[i]) renameDatumInFlow(l.flow, prev[i]!, names[i]!);
+    for (let i = 0; i < Math.min(prev.length, names.length); i++) {
+      const from = prev[i]!, to = names[i]!; if (from === to) continue;
+      // entrada → nome já usado: referência local (não propaga). saída → funde (pode igualar à entrada)
+      if (side === "in" && dataNamesInFlow(l.flow).has(to)) continue;
+      renameDatumInFlow(l.flow, from, to);
+    }
     if (side === "out") { n.outs = names; return; }
     n.ins = names; const args: Record<string, string> = {}; names.forEach((nm, i) => { if (values[i]) args[nm] = values[i]!; }); if (Object.keys(args).length) n.args = args; else delete n.args;
   },
@@ -489,10 +504,16 @@ export const HANDLERS = {
     const side = str(a, "side") === "in" ? "in" : "out", to = claimDataInFlow(l.flow, a["to"]);
     if (side === "out") {
       if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
-      const from = n.outs[0] ?? c.outs[0]!; renameDatumInFlow(l.flow, from, to); return;
+      const from = n.outs[0] ?? c.outs[0]!; if (from !== to) renameDatumInFlow(l.flow, from, to); return;
     }
     if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
-    const from = n.ins[0] ?? c.ins[0]!; renameDatumInFlow(l.flow, from, to);
+    const from = n.ins[0] ?? c.ins[0]!; if (from === to) return;
+    if (dataNamesInFlow(l.flow).has(to)) {
+      n.ins = n.ins.map(x => (x === from ? to : x));
+      if (n.args) { delete n.args[from]; delete n.args[to]; if (!Object.keys(n.args).length) delete n.args; }
+      return;
+    }
+    renameDatumInFlow(l.flow, from, to);
   },
   /** Preenche uma entrada de função de lib: um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. Vazio limpa. */
   setArg: (p, a) => {

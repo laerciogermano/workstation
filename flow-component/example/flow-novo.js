@@ -555,7 +555,11 @@
       n.title = t;
       applyContract(p, n);
     },
-    /** Renomeia um dado (referência no fluxo inteiro): entrada ou saída de função comum. */
+    /**
+     * Renomeia um dado. Nome novo → propaga no fluxo. Entrada para um nome que já existe → só reassocia
+     * este porto (referência pelo nome; não renomeia produtores/outros consumidores). Saída para nome
+     * já existente (ex.: igual à entrada) → funde via renameDatumInFlow (mesmo dado).
+     */
     renameIo: (p, a) => {
       const l = need(p, str(a, "id")), n = l.node;
       if (n.t !== "fn") return fail("invalid", "Only functions have inputs and outputs");
@@ -563,6 +567,16 @@
       const key = str(a, "side") === "out" ? "outs" : "ins", from = str(a, "from"), to = claimDataInFlow(l.flow, a["to"]);
       if (!n[key].includes(from)) return fail("not_found", `${from} does not exist`);
       if (from !== to && n[key].includes(to)) return fail("invalid", `${to} already exists`);
+      if (from === to) return;
+      if (key === "ins" && dataNamesInFlow(l.flow).has(to)) {
+        n.ins = n.ins.map((x) => x === from ? to : x);
+        if (n.args) {
+          delete n.args[from];
+          delete n.args[to];
+          if (!Object.keys(n.args).length) delete n.args;
+        }
+        return;
+      }
       renameDatumInFlow(l.flow, from, to);
     },
     /** Troca de uma vez todos os dados de um lado (entrada ou saída) de uma função comum: nomes e, nas entradas, os valores. */
@@ -574,7 +588,12 @@
       if (new Set(names).size !== names.length) return fail("invalid", "Duplicate data name");
       if (values.some((v) => v.length > 300)) return fail("invalid", "Value too large");
       const prev = side === "out" ? [...n.outs] : [...n.ins];
-      for (let i = 0; i < Math.min(prev.length, names.length); i++) if (prev[i] !== names[i]) renameDatumInFlow(l.flow, prev[i], names[i]);
+      for (let i = 0; i < Math.min(prev.length, names.length); i++) {
+        const from = prev[i], to = names[i];
+        if (from === to) continue;
+        if (side === "in" && dataNamesInFlow(l.flow).has(to)) continue;
+        renameDatumInFlow(l.flow, from, to);
+      }
       if (side === "out") {
         n.outs = names;
         return;
@@ -597,11 +616,21 @@
       if (side === "out") {
         if (c.outs.length !== 1) return fail("invalid", "Renaming only works when the lib returns a single data");
         const from2 = n.outs[0] ?? c.outs[0];
-        renameDatumInFlow(l.flow, from2, to);
+        if (from2 !== to) renameDatumInFlow(l.flow, from2, to);
         return;
       }
       if (c.ins.length !== 1) return fail("invalid", "Renaming only works when the lib takes a single parameter");
       const from = n.ins[0] ?? c.ins[0];
+      if (from === to) return;
+      if (dataNamesInFlow(l.flow).has(to)) {
+        n.ins = n.ins.map((x) => x === from ? to : x);
+        if (n.args) {
+          delete n.args[from];
+          delete n.args[to];
+          if (!Object.keys(n.args).length) delete n.args;
+        }
+        return;
+      }
       renameDatumInFlow(l.flow, from, to);
     },
     /** Preenche uma entrada de função de lib: um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. Vazio limpa. */
@@ -3061,11 +3090,16 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const fresh2 = names.map(() => false), orig = [...names];
       const nameEditable = (i) => editable || side === "out" && i === 0 || side === "in" && names.length === 1;
       const canAdd = () => editable && (!withValue || names.length > 1);
+      const knownNames = () => {
+        const f = locate(P2(), n.id)?.flow;
+        return f ? [...dataNamesInFlow(f)] : [.../* @__PURE__ */ new Set([...refs, ...states.map((s) => s.name)])];
+      };
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
-        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state). One input: a single data or an object (type object + Add child)." : "One output: a single data this function produces."}${!withValue && canAdd() ? " Add child adds one more field (it becomes an object)." : ""}</p>
-        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
-        ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
+        const known = knownNames();
+        form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Same name = same data. Type an existing name to reference it (no Type/origin select needed); value clears and it inherits that data. Or set a literal / object on a new name." : "One output: a single data this function produces. Same name as an input = the same data."}${!withValue && canAdd() ? " Add child adds one more field (it becomes an object)." : ""}</p>
+        ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || withValue && drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && (!withValue || fresh2[i]) ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${withValue ? draftHtml(drafts[i], String(i), states, 0, editable, files) : ""}</div>`).join("")}
+        ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map((r) => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
         form.querySelector("[data-no]").addEventListener("click", () => done());
       };
@@ -3073,7 +3107,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const t = e.target, path = t.dataset["path"], k = t.dataset["k"];
         if (!k) return;
         if (k === "pname") {
-          names[Number(t.dataset["i"])] = t.value.trim();
+          const i = Number(t.dataset["i"]), nm = t.value.trim();
+          names[i] = nm;
+          if (withValue && nm && nm !== orig[i] && knownNames().includes(nm)) {
+            Object.assign(drafts[i], emptyDraft());
+            draw();
+          }
           return;
         }
         if (!path) return;
@@ -3154,14 +3193,13 @@ ${given.map((g) => `  ${g},`).join("\n")}
           if (k === "name" && hit.field) hit.field.name = i.value;
         });
         try {
-          const values = withValue ? drafts.map((d) => buildArg(d)) : [];
+          const known = new Set(knownNames());
+          const values = withValue ? drafts.map((d, i) => {
+            const nm = names[i];
+            if (nm && nm !== orig[i] && known.has(nm)) return "";
+            return buildArg(d);
+          }) : [];
           if (!editable && names[0] && orig[0] && names[0] !== orig[0] && (side === "out" || names.length === 1)) store.dispatch({ type: "renameData", id: n.id, side, to: names[0] });
-          if (editable) {
-            names.forEach((nm, i) => {
-              if (nm && orig[i] && nm !== orig[i]) store.dispatch({ type: "renameIo", id: n.id, side, from: orig[i], to: nm });
-              orig[i] = nm;
-            });
-          }
           if (editable) {
             const keep = names.map((nm, i) => [nm, values[i] ?? ""]).filter(([nm]) => nm);
             run({ type: "setData", id: n.id, side, names: keep.map((k) => k[0]), values: keep.map((k) => k[1]) }, false);

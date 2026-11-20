@@ -324,7 +324,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     // nome do dado: editável sempre que for o parâmetro único (dado puro ou objeto) ou saída única de lib; multi-campo de contrato de lib fica fixo
     const fresh: boolean[] = names.map(() => false), orig: string[] = [...names];   // orig: nome de cada linha ao abrir ("" = linha nova)
     const nameEditable = (i: number): boolean => editable || (side === "out" && i === 0) || (side === "in" && names.length === 1);
-    const canAdd = (): boolean => editable && (!withValue || names.length > 1);   // "Add child": numa saída, num objeto (cubo) com vários dados ou ao criar
+    const canAdd = (): boolean => editable && names.length >= 1;   // "Add child": a partir do 1º dado (vira objeto/cubo)
     const title = (): string => (names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
       form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
@@ -469,7 +469,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     editData: async d => {
       const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const side = d["side"] === "out" ? "out" : "in", list = side === "in" ? n.ins : n.outs;
       if (contractOf(P(), n)) { if (side === "in") await dataEditor(n, "in"); else if (list.length === 1) await ACT["renameOut"]!(d); else toast("This function’s outputs come from the lib contract"); return; }
-      await dataEditor(n, side);
+      await dataEditor(n, side, list.length ? {} : { start: true });   // I/O vazio: já abre com um dado (`input`/`output`) para conseguir salvar
     },
     removeIo: d => { const n = locate(P(), d["id"]!)?.node; if (n?.t !== "fn") return; run({ type: d["side"] === "out" ? "removeOutput" : "removeInput", id: n.id, name: d["name"]! }, false); },
     renameOut: async d => { const n = locate(P(), d["id"]!)?.node; if (!n || n.t !== "fn") return; const v = await editInline(n.outs[0] ?? "", "Output data name"); if (v) run({ type: "renameData", id: n.id, to: v }, false); },

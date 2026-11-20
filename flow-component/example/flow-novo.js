@@ -1796,7 +1796,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
       }
       if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
-      if (p && !r.leaf && !isRoot(p, f.id) && !contractOf(p, f)) {
+      if (p && !contractOf(p, f) && (!r.leaf || isRoot(p, f.id))) {
         if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
         if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
       }
@@ -2021,7 +2021,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
         const title = !list.length ? `${cubeName(f, kind)} (state)` : asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0];
         return asCube ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} \xB7 ${tip}</title></g>` : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0])} \xB7 ${tip}</title></g>`;
       };
-      const root = isRoot(p, f.id), showIn = f.ins.length > 0 || !root && !lib3, showOut = f.outs.length > 0 || !root && !lib3;
+      const showIn = f.ins.length > 0 || !lib3, showOut = f.outs.length > 0 || !lib3;
       if (showIn) over.push(`<line class="dlk" x1="${colX2(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
       if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX2(r.e + 1) - 4}" y2="${ym(i)}"/>`);
       const inEmpty = !f.ins.length, outEmpty = !f.outs.length;
@@ -2869,7 +2869,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       form.classList.add("wide");
       const fresh2 = names.map(() => false), orig = [...names];
       const nameEditable = (i) => editable || side === "out" && i === 0 || side === "in" && names.length === 1;
-      const canAdd = () => editable && (!withValue || names.length > 1);
+      const canAdd = () => editable && names.length >= 1;
       const title = () => names.length > 1 ? `${side === "in" ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(cubeName(n, side))}` : `${side === "in" ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         form.innerHTML = `<label>${title()}</label><p class="hint">${withValue ? "Name (reference in the parent), type/origin and value. Origin can be a literal, a state in the context, or a data import from another file. Left blank, the input stays abstract (it comes from the state)." : "Name of the data this function produces."}${canAdd() ? " Add child adds one more data (it becomes an object)." : ""}</p>
@@ -3175,7 +3175,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
           else toast("This function\u2019s outputs come from the lib contract");
           return;
         }
-        await dataEditor(n, side);
+        await dataEditor(n, side, list.length ? {} : { start: true });
       },
       removeIo: (d) => {
         const n = locate(P2(), d["id"])?.node;

@@ -75,8 +75,8 @@ export function statesByStep(sc: Scene, all = false, p?: Project): Map<number, S
       add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
     }
     if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0]!, cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
-    // composição com I/O vazio ([] = cubo state): mesma marca do diagrama (`input_<fn>` / `output_<fn>`) no rodapé
-    if (p && !r.leaf && !isRoot(p, f.id) && !contractOf(p, f)) {
+    // I/O vazio ([] = cubo state): mesma marca do diagrama (`input_<fn>` / `output_<fn>`) no rodapé — raiz e composições
+    if (p && !contractOf(p, f) && (!r.leaf || isRoot(p, f.id))) {
       if (!f.ins.length) add(r.s, { name: cubeName(f, "in"), cube: true, fields: [], abs: true, owner: f.id, side: "in" });
       if (!f.outs.length) add(r.e + 1, { name: cubeName(f, "out"), cube: true, fields: [], abs: true, owner: f.id, side: "out" });
     }
@@ -318,8 +318,8 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
         ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} · ${tip}</title></g>`
         : `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><rect class="${abs ? "dot a" : "dot"}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(list[0]!)} · ${tip}</title></g>`;
     };
-    // 1ª ordem sem I/O declarado: sem marca (main do exemplo não inventa input_/output_); lib void idem na saída; demais [] = cubo de state
-    const root = isRoot(p, f.id), showIn = f.ins.length > 0 || (!root && !lib), showOut = f.outs.length > 0 || (!root && !lib);
+    // [] = cubo de state (clicável para declarar I/O); lib void não inventa saída; concreto com contrato só o que o contrato manda
+    const showIn = f.ins.length > 0 || !lib, showOut = f.outs.length > 0 || !lib;
     if (showIn) over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
     if (showOut) over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
     const inEmpty = !f.ins.length, outEmpty = !f.outs.length;

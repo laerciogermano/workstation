@@ -94,7 +94,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Nome da 1ª ordem:** centrado em cima da barra-resumo (`text-anchor=middle`), não à direita das saídas. Compostas internas continuam à direita. **Voltar:** `lblAfterOuts` também na raiz.
 
-**I/O da 1ª ordem:** sem `ins`/`outs` declarados → sem marca (não inventa `input_main`/`output_main`). Só aparece quando houver nome. **Antes:** `[]` virava cubo também na raiz.
+**I/O da 1ª ordem (e de qualquer abstrata):** sem `ins`/`outs` → cubo vazio clicável (`editData` com `start: true` já abre um `input`/`output` para salvar). Aparece no diagrama e no rodapé de estados (`input_<fn>` / `output_<fn>`). **Antes:** raiz sem marca quando `[]` (impedia adicionar entrada/saída no main). **Voltar:** em `ioMarks` exigir `list.length` (ou excluir `isRoot`) e em `editData` não passar `{ start: true }` no vazio.
 
 **Nome = referência no fluxo:** no mesmo flow, dado com o mesmo nome é o mesmo (renomear via `renameIo`/`renameData`/`setData` propaga ins/outs/args/if/for/`obj:`). Funções abstratas: título lowerCamelCase, único na criação; renomear para um nome já usado funde a referência (`renameFnTitleInFlow`). Dado e função não podem compartilhar o mesmo nome no fluxo. Libs (contrato) podem repetir o nome da task (vários `log`); rename de lib não propaga. **Voltar:** `cleanText` livre + rename só no nó local + sem checagem dado/função.
 

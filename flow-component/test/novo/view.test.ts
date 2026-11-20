@@ -128,10 +128,11 @@ describe("plano (SVG)", () => {
     t.run({ type: "addInput", id: t.ids[2]!, name: "x" }); t.run({ type: "addInput", id: t.ids[2]!, name: "y" }); expect((t.view().plan.match(/class="dep"/g) ?? []).length).toBe(2);
   });
 
-  it("[] = cubo (state) nas funções internas; 1ª ordem sem I/O não inventa marcas; sem fantasmas", () => {
+  it("[] = cubo (state) nas folhas e na 1ª ordem (clicável para declarar I/O); sem fantasmas", () => {
     const t = base(); expect((t.view().plan.match(/class="ghost"/g) ?? []).length).toBe(0);
-    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(8);   // 4 folhas × in+out; raiz sem I/O = sem cubo
-    expect(t.view().plan).not.toContain("input_r"); expect(t.view().plan).not.toContain("output_r");
+    expect((t.view().plan.match(/class="cube/g) ?? []).length).toBe(10);   // 4 folhas × in+out + raiz in+out
+    expect(t.view().plan).toContain(`data-act="editData" data-id="${t.root}" data-side="in"`);
+    expect(t.view().plan).toContain(`data-act="editData" data-id="${t.root}" data-side="out"`);
     t.run({ type: "addOutput", id: t.ids[0]!, name: "y" }); t.run({ type: "addInput", id: t.ids[1]!, name: "y" }); t.run({ type: "addInput", id: t.ids[2]!, name: "externo" });
     const p = t.view().plan; expect(p).toContain('class="dot"'); expect(p).toContain('class="dot a"'); expect(p).toContain('data-act="editData"'); expect(p).not.toContain('data-act="addIo"');
   });
@@ -141,8 +142,8 @@ describe("plano (SVG)", () => {
     expect(p).not.toContain("output_log"); expect(p).not.toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="out"`);
     expect(p).toContain(`data-act="editData" data-id="${t.ids[0]}" data-side="in"`); expect(p).toContain(">text<");
   });
-  it("1ª ordem só mostra I/O quando declarado", () => {
-    const t = base(); expect(t.view().plan).not.toMatch(new RegExp(`data-act="editData" data-id="${t.root}"`));
+  it("1ª ordem com I/O declarado troca o cubo vazio pelos nomes", () => {
+    const t = base();
     t.run({ type: "addInput", id: t.root, name: "x" }); t.run({ type: "addOutput", id: t.root, name: "y" });
     const p = t.view().plan; expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="in"`); expect(p).toContain(`data-act="editData" data-id="${t.root}" data-side="out"`); expect(p).toContain(">x<"); expect(p).toContain(">y<");
   });
@@ -202,7 +203,8 @@ describe("quadrado do dado", () => {
   it("estados embaixo do plano: só os novos de cada passo, ou todos os disponíveis (os antigos ficam esmaecidos)", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "r1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "r2" });
     const news = (t.view().plan.match(/class="stt"/g) ?? []).length, all = t.view({ allData: true }).plan;
-    expect(news).toBe(2); expect((all.match(/class="stt/g) ?? []).length).toBeGreaterThan(news); expect(all).toContain('class="stt old"');
+    expect(news).toBe(4);   // r1 + r2 + cubos vazios da raiz (input_/output_)
+    expect((all.match(/class="stt/g) ?? []).length).toBeGreaterThan(news); expect(all).toContain('class="stt old"');
   });
   it("dado inicializado com valor aparece nos estados: objeto vira cubo com os campos indentados embaixo", async () => {
     const { objectFields, statesByStep, stateRows } = await import("../../novo/view");
@@ -345,14 +347,19 @@ describe("estados embaixo das colunas e título do plano", () => {
   it("embaixo de cada coluna aparecem os dados (estados) que chegam nela: quadrado, ou cubo quando a função devolve vários", () => {
     const t = base(); t.run({ type: "addOutput", id: t.ids[0]!, name: "x" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "p" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "q" });
     const m = statesByStep(t.view().scene); expect([...m.keys()]).toEqual([1, 2]); expect(m.get(1)).toMatchObject([{ name: "x", cube: false, fields: ["x"], side: "out" }]); expect(m.get(2)).toMatchObject([{ name: "output_fb", cube: true, fields: ["p", "q"], side: "out" }]); expect(m.get(1)![0]!.owner).toBeTruthy();   // cada dado sabe a função dona (menu do estado)
-    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(1); expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
+    const plan = t.view().plan; expect((plan.match(/class="sdot"/g) ?? []).length).toBe(1); expect((plan.match(/class="scube"/g) ?? []).length).toBe(3);   // output_fb + input_/output_ vazios da raiz
+    expect(plan).toContain(">x</text>"); expect(plan).toContain(">output_fb</text>");
     expect(planHeight(t.view().scene)).toBeGreaterThan(rowY(t.view().scene.rows.length) + 64);
   });
   it("funções do mesmo passo empilham os estados na mesma coluna e a altura cresce", () => {
     const t = base(); t.run({ type: "setParallel", id: t.ids[1]!, on: true }); t.run({ type: "addOutput", id: t.ids[0]!, name: "a1" }); t.run({ type: "addOutput", id: t.ids[1]!, name: "a2" });
     const sc = t.view().scene; expect(statesByStep(sc).get(1)!.map(x => x.name)).toEqual(["a1", "a2"]); expect(planHeight(sc)).toBe(rowY(sc.rows.length) + 64 + 2 * STATE_ROW);
   });
-  it("sem dados não há estados embaixo", () => { const t = base(); expect(statesByStep(t.view().scene).size).toBe(0); expect(t.view().plan).not.toContain("sdot"); });
+  it("sem dados não há estados embaixo", () => {
+    const t = base(); expect(statesByStep(t.view().scene).size).toBe(0);   // sem Project: só dados declarados
+    expect(statesByStep(t.view().scene, false, t.p).size).toBeGreaterThan(0);   // com Project: cubos vazios da raiz
+    expect(t.view().plan).not.toContain("sdot"); expect(t.view().plan).toContain("scube");
+  });
   it("entrada com literal (text = false) aparece embaixo no estado do passo", () => {
     const t = base(); t.run({ type: "assign", id: t.ids[0]!, agent: "console" }); t.run({ type: "setArg", id: t.ids[0]!, name: "text", value: "false" });
     const m = statesByStep(t.view().scene); expect([...m.values()].flat().map(x => x.name)).toContain("text");

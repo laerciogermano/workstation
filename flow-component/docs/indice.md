@@ -1,0 +1,14 @@
+- Flow
+  - linguagem de programacao visual
+  - Linguagem universal -> transpila para quaquer linguagem
+  - Gerenciador de tarefas
+  - Possui as features das linguagens de programacao
+  - torna codigo em visao, aumentando facilidade de analise
+  - visao logistica de todos os fluxos
+- Funcoes
+- Dados
+- Agentes
+- Selecao
+- Repeticao
+- Solidos x abstratos
+- Files

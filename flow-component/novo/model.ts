@@ -201,6 +201,21 @@ export function resolveDataOrigin(p: Project, id: string, side: "in" | "out", na
   if (!key) return null;
   return originPort(loc.flow, key);
 }
+/**
+ * Expressão do valor canônico do nome no fluxo (mesmo nome = mesmo dado).
+ * Ignora `exceptId` (o porto que só referencia). Null se ainda não há valor na origem.
+ */
+export function argExprOfName(p: Project, flow: Fn, name: string, exceptId?: string): string | null {
+  const origin = originPort(flow, name);
+  if (origin && origin.id !== exceptId && origin.side === "in") {
+    const on = locate(p, origin.id)?.node;
+    if (on?.t === "fn") { const v = on.args?.[name]?.trim(); if (v) return v; }
+  }
+  let hit: string | null = null;
+  const seek = (f: Fn): void => { if (hit || f.id === exceptId) return; const v = f.args?.[name]?.trim(); if (v) hit = v; };
+  seek(flow); walk(flow.kids, n => { if (n.t === "fn") seek(n); });
+  return hit;
+}
 /** Renomeia só este porto (filho): desvincula do pai; não propaga. */
 export function renamePortLocal(n: Fn, side: "in" | "out", from: string, to: string, clearValue = false): void {
   if (from === to) return;

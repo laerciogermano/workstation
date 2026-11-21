@@ -1,7 +1,7 @@
 import { ARG_TYPES, buildArg, emptyDraft, inferArg, type ArgDraft, type ArgType } from "./args";
 import { buildCond, COND_OPS, emptyClause, inferCond, JOINERS, needsRight, type CondDraft, type CondOp, type Joiner } from "./cond";
 import { runInWorker, type LogLevel, type Running } from "./runner";
-import { contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, originPort, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
+import { argExprOfName, contractOf, cubeName, dataNamesInFlow, fileData, fileDataProducer, filesOf, FlowError, flowFile, fnsOf, kidsOf, type Node, isCube, locate, originPort, parseProject, serialize, statesFor, Store, type Command, type Fn, type Project, type StateRef } from "./model";
 import { generate, generateFile } from "./codegen";
 import { icon } from "./icons";
 import { countForStep } from "./scope";
@@ -328,13 +328,14 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     if (depth === 0) return `<div class="argd d0"><span class="fl">Type / origin</span>${sel}${val ? `<span class="fl">Value</span>${val}` : ""}</div>${kids}`;
     return `${sel}${val}${kids}`;
   };
-  /** Draft da entrada: valor local, ou (só exibição) o da origem quando este porto só referencia o nome. */
+  /** Draft da entrada: valor local, ou o do mesmo nome no fluxo (referência = mesmo elemento). */
   const draftForIn = (fn: Fn, nm: string): ArgDraft => {
     const local = fn.args?.[nm]?.trim() ?? ""; if (local) return inferArg(local);
-    const loc = locate(P(), fn.id); if (!loc) return emptyDraft();
-    const origin = originPort(loc.flow, nm); if (!origin || origin.side !== "in" || origin.id === fn.id) return emptyDraft();
-    const on = locate(P(), origin.id)?.node; if (on?.t !== "fn") return emptyDraft();
-    const ov = on.args?.[nm]?.trim() ?? ""; return ov ? inferArg(ov) : emptyDraft();
+    const loc = locate(P(), fn.id); if (!loc || !nm) return emptyDraft();
+    const shared = argExprOfName(P(), loc.flow, nm, fn.id);
+    if (shared) return inferArg(shared);
+    if (dataNamesInFlow(loc.flow).has(nm)) return Object.assign(emptyDraft("ref"), { value: nm });
+    return emptyDraft();
   };
   /**
    * Mesmo modal para entrada e saída: nome + tipo/origem + valor (objeto = filhos via Add child).
@@ -360,7 +361,7 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
     const title = (): string => (drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} — object ${esc(names[0] && names.length === 1 ? names[0]! : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`);
     const draw = (): void => {
       const known = knownNames();
-      form.innerHTML = `<label>${title()}</label><p class="hint">Origin (left/first): save updates every reference. Reference (right): save changes only this port — rename unlinks; editing the value keeps a local copy.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+      form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data (shared reference). Edit the origin to update all; edit a reference to change only that port (rename unlinks; changing the value keeps a local copy).${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i]!.type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i]!, String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map(r => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map(r => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -370,7 +371,8 @@ export function mount(host: HTMLElement, store: Store, flow: string): App {
       const t = e.target as HTMLInputElement | HTMLSelectElement, path = t.dataset["path"], k = t.dataset["k"]; if (!k) return;
       if (k === "pname") {
         const i = Number(t.dataset["i"]), nm = t.value.trim(); names[i] = nm;
-        if (nm && nm !== orig[i] && knownNames().includes(nm)) { Object.assign(drafts[i]!, emptyDraft()); draw(); }
+        // mesmo nome = mesma referência: herda tipo/valor da origem (não zera para text vazio)
+        if (nm && knownNames().includes(nm)) { Object.assign(drafts[i]!, draftForIn({ ...n, args: undefined } as Fn, nm)); draw(); }
         return;
       }
       if (!path) return; const hit = draftAt(drafts, path);

@@ -195,6 +195,27 @@
     visit(flow.kids);
     return found;
   }
+  function argExprOfName(p, flow, name, exceptId) {
+    const origin = originPort(flow, name);
+    if (origin && origin.id !== exceptId && origin.side === "in") {
+      const on = locate(p, origin.id)?.node;
+      if (on?.t === "fn") {
+        const v = on.args?.[name]?.trim();
+        if (v) return v;
+      }
+    }
+    let hit = null;
+    const seek = (f) => {
+      if (hit || f.id === exceptId) return;
+      const v = f.args?.[name]?.trim();
+      if (v) hit = v;
+    };
+    seek(flow);
+    walk(flow.kids, (n) => {
+      if (n.t === "fn") seek(n);
+    });
+    return hit;
+  }
   function renamePortLocal(n, side, from, to, clearValue = false) {
     if (from === to) return;
     const key = side === "out" ? "outs" : "ins";
@@ -3168,13 +3189,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const local = fn.args?.[nm]?.trim() ?? "";
       if (local) return inferArg(local);
       const loc = locate(P2(), fn.id);
-      if (!loc) return emptyDraft();
-      const origin = originPort(loc.flow, nm);
-      if (!origin || origin.side !== "in" || origin.id === fn.id) return emptyDraft();
-      const on = locate(P2(), origin.id)?.node;
-      if (on?.t !== "fn") return emptyDraft();
-      const ov = on.args?.[nm]?.trim() ?? "";
-      return ov ? inferArg(ov) : emptyDraft();
+      if (!loc || !nm) return emptyDraft();
+      const shared = argExprOfName(P2(), loc.flow, nm, fn.id);
+      if (shared) return inferArg(shared);
+      if (dataNamesInFlow(loc.flow).has(nm)) return Object.assign(emptyDraft("ref"), { value: nm });
+      return emptyDraft();
     };
     const dataEditor = (n, side, opts = {}) => modal(side === "in" ? `Input of ${n.title}` : `Output of ${n.title}`, (form, done) => {
       const lib3 = !!contractOf(P2(), n), editable = !lib3, isIn = side === "in";
@@ -3203,7 +3222,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
       const title = () => drafts[0]?.type === "object" || names.length > 1 ? `${isIn ? "Input" : "Output"} of ${esc(n.title)} \u2014 object ${esc(names[0] && names.length === 1 ? names[0] : cubeName(n, side))}` : `${isIn ? "Input" : "Output"} data of ${esc(n.title)}`;
       const draw = () => {
         const known = knownNames();
-        form.innerHTML = `<label>${title()}</label><p class="hint">Origin (left/first): save updates every reference. Reference (right): save changes only this port \u2014 rename unlinks; editing the value keeps a local copy.${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
+        form.innerHTML = `<label>${title()}</label><p class="hint">Same name = same data (shared reference). Edit the origin to update all; edit a reference to change only that port (rename unlinks; changing the value keeps a local copy).${side === "out" ? " Output stores names only (object fields become the produced data)." : ""}</p>
         ${names.map((nm, i) => `<div class="param"><div class="prow">${names.length > 1 || drafts[i].type === "object" ? `<span class="cubei" title="object (cube)">${icon("cube")}</span>` : ""}${nameEditable(i) ? `<input data-k="pname" data-i="${i}" list="datanames" value="${esc(nm)}" placeholder="name" spellcheck="false" aria-label="Data name">` : `<b class="pn">${esc(nm)}</b>`}${editable && fresh2[i] ? `<button type="button" class="ib danger" data-del="${i}" title="Remove this data" aria-label="Remove this data">${icon("trash")}</button>` : ""}</div>${draftHtml(drafts[i], String(i), states, 0, editable, files)}</div>`).join("")}
         ${canAdd() ? `<button type="button" class="addkid" data-newrow>${icon("plus")}Add child</button>` : ""}<datalist id="datanames">${known.map((r) => `<option value="${esc(r)}">`).join("")}</datalist><datalist id="refnames">${refs.map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
         <div class="row"><button type="button" data-no>Cancel</button><button type="submit" class="pri">Save</button></div>`;
@@ -3215,8 +3234,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
         if (k === "pname") {
           const i = Number(t.dataset["i"]), nm = t.value.trim();
           names[i] = nm;
-          if (nm && nm !== orig[i] && knownNames().includes(nm)) {
-            Object.assign(drafts[i], emptyDraft());
+          if (nm && knownNames().includes(nm)) {
+            Object.assign(drafts[i], draftForIn({ ...n, args: void 0 }, nm));
             draw();
           }
           return;

@@ -29,6 +29,8 @@
 
 **Antes → depois (esquerda/direita):** `resolveDataEdit` mandava todo clique para a origem → editar a direita mudava a esquerda. Agora: edita o porto clicado; origem propaga nome; referência só local (draft herda só na UI; save sem mudança não materializa). Estado em coluna do consumidor aponta `owner` para ele. Rollback: redirect no `editData`.
 
+**Antes → depois (mesmo nome no modal):** digitar nome já usado zerava o draft para `text` vazio → `argExprOfName` / `draftForIn` herda tipo e valor da origem (objeto, text, …). Rollback: `emptyDraft()` no `change` de `pname`.
+
 **Antes → depois (modal out = in):** saída tinha só nome + Add child top-level → mesmo `dataEditor` da entrada (tipo/valor/objeto); objeto na out vira `outs` = campos. Rollback: `withValue = side === "in"`.
 
 **Antes → depois (reset / storage):** botão reset no Explorer (`src`) → canto direito do **header** (`#resetStorage`); apaga `flow-novo-projeto-v1`, `flow-novo-ui-v2`, `flow-novo-explorer-v1` e recarrega. Rollback: devolver `data-exreset` no `ex-sec-h` e tirar o botão do topbar.

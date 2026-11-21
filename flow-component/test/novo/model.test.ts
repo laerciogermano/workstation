@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, resolveDataOrigin, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
+import { apply, argExprOfName, COMMAND_NAMES, contractOf, statesFor, DEFAULT_AGENTS, emptyProject, FlowError, insideBlock, isRoot, locate, parseProject, parseSignature, resolveDataOrigin, serialize, Store, walk, type Command, type Fn, type Node, type Project } from "../../novo/model";
 
 /** Projeto de teste: raiz "root" com filhos a, b, c, d (todos folhas). */
 function base() {
@@ -341,6 +341,10 @@ describe("nome = referência no fluxo", () => {
     t.run({ type: "addInput", id: t.a, name: "teste" }); t.run({ type: "setArg", id: t.a, name: "teste", value: '{ field1: "aaa" }' });
     t.run({ type: "addOutput", id: t.a, name: "output" }); t.run({ type: "addInput", id: t.b, name: "teste" });
     expect(resolveDataOrigin(t.p, t.b, "in")).toEqual({ id: t.a, side: "in" });
+    // mesmo nome = mesmo elemento: a referência lê o valor da origem
+    const flow = locate(t.p, t.a)!.flow;
+    expect(argExprOfName(t.p, flow, "teste", t.b)).toBe('{ field1: "aaa" }');
+    expect(argExprOfName(t.p, flow, "teste", t.a)).toBeNull();   // origem não herda de si
     // direita: renomeia só o filho
     t.run({ type: "renameIo", id: t.b, side: "in", from: "teste", to: "outro" });
     expect((locate(t.p, t.a)!.node as Fn)).toMatchObject({ ins: ["teste"], args: { teste: '{ field1: "aaa" }' } });

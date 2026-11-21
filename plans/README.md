@@ -7,7 +7,8 @@
 Derivados: [`docs/`](docs/).  
 Fundamentos de fluxo: [`inputs/`](inputs/README.md) (quando houver).
 
-**URL protótipo:** https://plans.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
+**URL protótipo:** https://plans.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)  
+**Marca / logo:** [`marca/`](marca/README.md) · especificação [`marca/logo/LOGO.md`](marca/logo/LOGO.md) (Plans + Flow IDE)
 
 ---
 

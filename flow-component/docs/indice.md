@@ -18,8 +18,9 @@
   - softwares sao feitos de fluxos de esxecucao
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
 - Funcoes
+  - 1. [`main`](indice-ast.html) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - funcoes sao unidades de transformacao
-  - toda funcao de primeiro grau é sódio e ertence ao arquivo de origem comoresponsavel
+  - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas
   - uma funcao pode ter funcoes irmas
   - as funcoes podem ser sequenciais
@@ -95,7 +96,7 @@
 
 Roteiro (capítulos): [`roteiro.md`](roteiro.md)
 
-Função `main` — código JS + AST + plano SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
+Exemplos AST/SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
 
 "A picture is worth a thousand words." – Confucius, 552–479 BCE
 

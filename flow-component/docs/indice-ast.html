@@ -93,8 +93,17 @@ footer {
 </header>
 
 <main>
-  <h1>Função <code>main</code></h1>
-  <p class="lead">Definição mínima: função de primeira ordem sem entrada e sem saída. Código JavaScript, AST ESTree, AST Flow e plano SVG (<code>renderFnSvg</code>).</p>
+  <h1><span style="font:600 .85rem/1 var(--mono);color:var(--accent);margin-right:.45rem">1.</span>Função <code>main</code></h1>
+  <p class="lead">Índice · funções · 1ª ordem sólida, sem entrada e sem saída. Código JavaScript, AST ESTree, AST Flow e plano SVG (<code>renderFnSvg</code>).</p>
+
+  <nav class="toc" aria-label="Índice" style="margin:0 0 1.75rem;padding:.85rem 1rem;border:1px solid var(--line);border-radius:6px;font:600 .85rem/1.5 Archivo,sans-serif">
+    <div style="font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--body);margin-bottom:.35rem">Índice</div>
+    <ol style="margin:0;padding-left:1.25rem;color:var(--ink)">
+      <li><a href="#main">Função <code>main</code></a> — 1ª ordem, sólida, sem I/O</li>
+    </ol>
+  </nav>
+
+  <section id="main">
 
   <div class="lab"><span class="kind">JS</span> Código</div>
   <div class="pane">
@@ -120,6 +129,7 @@ footer {
     <div class="svg-host" id="plan"></div>
     <div class="err" id="plan-err" hidden></div>
   </div>
+  </section>
 
   <footer>
     Lib: <a href="../novo/ast/fn-svg.ts">novo/ast/fn-svg.ts</a> ·

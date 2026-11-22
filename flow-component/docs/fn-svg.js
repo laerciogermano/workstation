@@ -208,6 +208,8 @@ var FlowAst = (() => {
       if (!Object.keys(n.args).length) delete n.args;
     }
   }
+  var isCube = (names) => names.length !== 1;
+  var cubeName = (f, side) => `${side === "in" ? "input" : "output"}_${f.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "function"}`;
   var slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "flow";
   var flowFile = (f) => f.file ?? `${slug(f.title)}.ts`;
   var nextId = (p) => `n${++p.seq}`;
@@ -753,7 +755,7 @@ var FlowAst = (() => {
             row.e = sp.e;
           }
           let end = next;
-          if (alt && alt.length) end = placeAlt(b, alt, next, emit, isClosed);
+          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, opts.elseParallel && b.t === "if" ? step : next, emit, isClosed));
           if (emit) row.last = rows.length - 1;
           step = Math.max(step, end);
         }
@@ -776,6 +778,135 @@ var FlowAst = (() => {
     return { rows, nSteps: n, span, maxDepth, leaves };
   }
 
+  // novo/args.ts
+  var LITERAL_IDENTS2 = /* @__PURE__ */ new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+  var isDataRef = (e) => {
+    const v = e.trim();
+    if (!v || LITERAL_IDENTS2.has(v) || v.startsWith("from:")) return false;
+    return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[\d+\])*$/.test(v);
+  };
+
+  // novo/view.ts
+  var dataText = (names, max = 24) => {
+    const t = names.join(", ");
+    return t.length > max ? `${t.slice(0, max - 1)}\u2026` : t;
+  };
+  var stateLabel = (name, value, max = 26) => value != null && value !== "" ? dataText([`${name} = ${value}`], max) : dataText([name], max);
+  function objectPairs(expr) {
+    const e = expr.trim();
+    if (!e.startsWith("{") || !e.endsWith("}")) return null;
+    const parts = [];
+    let depth = 0, cur = "", q = "";
+    for (const ch of e.slice(1, -1)) {
+      if (q) {
+        cur += ch;
+        if (ch === q) q = "";
+        continue;
+      }
+      if (ch === '"' || ch === "'" || ch === "`") {
+        q = ch;
+        cur += ch;
+        continue;
+      }
+      if ("{[(".includes(ch)) depth++;
+      else if ("}])".includes(ch)) depth--;
+      if (ch === "," && depth === 0) {
+        parts.push(cur);
+        cur = "";
+      } else cur += ch;
+    }
+    parts.push(cur);
+    return parts.map((x) => x.trim()).filter(Boolean).map((x) => {
+      const m = /^([A-Za-z_$][\w$]*)\s*:\s*(.+)$/s.exec(x);
+      if (m) return { name: m[1], value: m[2].trim() };
+      return { name: x.replace(/^\.\.\./, "").trim() };
+    });
+  }
+  var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+  var initsName = (f, n) => {
+    const e = f.args?.[n]?.trim();
+    return e && !isDataRef(e) ? e : void 0;
+  };
+  function cubeInfoByName(sc) {
+    const m = /* @__PURE__ */ new Map();
+    for (const r of sc.rows) {
+      if (r.kind !== "fn") continue;
+      const f = r.node;
+      if (f.outs.length > 1) m.set(cubeName(f, "out"), { fields: [...f.outs] });
+      if (f.ins.length > 1) m.set(cubeName(f, "in"), { fields: [...f.ins] });
+      for (const i of f.ins) {
+        const e = initsName(f, i);
+        if (!e) continue;
+        const pairs = objectPairs(e);
+        if (!pairs || m.has(i)) continue;
+        m.set(i, { fields: pairs.map((p) => p.name), value: e, fieldValues: Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) });
+      }
+    }
+    return m;
+  }
+  var inheritCube = (it, cubes) => {
+    const c = cubes.get(it.name);
+    if (!c) return it;
+    return { ...it, cube: true, fields: c.fields, ...c.value != null && it.value == null ? { value: c.value } : {}, ...c.fieldValues && !it.fieldValues ? { fieldValues: c.fieldValues } : {} };
+  };
+  function statesByStep(sc, all = false, _p) {
+    const cubes = cubeInfoByName(sc);
+    const m = /* @__PURE__ */ new Map(), add = (col, it) => {
+      const list = m.get(col) ?? [];
+      if (list.some((x) => x.name === it.name)) return;
+      list.push(inheritCube(it, cubes));
+      m.set(col, list);
+    };
+    for (const r of sc.rows) {
+      if (r.kind !== "fn") continue;
+      const f = r.node;
+      for (const i of f.ins) {
+        const e = initsName(f, i);
+        if (!e) continue;
+        const pairs = objectPairs(e), fields = pairs?.map((p) => p.name) ?? null;
+        const fieldValues = pairs ? Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value])) : void 0;
+        add(r.s, { name: i, cube: !!fields, fields: fields ?? [i], value: e, fieldValues, owner: f.id, side: "in" });
+      }
+      if (f.outs.length) add(r.e + 1, { name: isCube(f.outs) ? cubeName(f, "out") : f.outs[0], cube: isCube(f.outs), fields: f.outs, owner: f.id, side: "out" });
+    }
+    const made = /* @__PURE__ */ new Set();
+    for (const r of sc.rows) if (r.kind === "fn") {
+      const f = r.node;
+      f.outs.forEach((o) => made.add(o));
+      for (const i of f.ins) if (initsName(f, i)) made.add(i);
+    }
+    const loopVars = /* @__PURE__ */ new Set();
+    for (const r of sc.rows) if (r.kind === "block" && r.node.t === "for") loopVars.add(r.node.v);
+    const ext = /* @__PURE__ */ new Map();
+    for (const r of sc.rows) if (r.kind === "fn") {
+      for (const n of r.node.ins) if (!r.node.args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id });
+      else if (ext.has(n) && r.s < ext.get(n).col) ext.set(n, { col: r.s, owner: ext.get(n).owner });
+    }
+    for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
+    if (!all) return m;
+    const consumerAt = (col, name) => {
+      for (const r of sc.rows) {
+        if (r.kind !== "fn" || !r.leaf || r.s !== col) continue;
+        const f = r.node;
+        if (f.ins.includes(name) && !initsName(f, name)) return { id: f.id, side: "in" };
+      }
+      return null;
+    };
+    const cols = [...m.keys()].sort((x, y) => x - y), out = /* @__PURE__ */ new Map();
+    let acc = [];
+    for (let c = cols[0] ?? 0; c <= sc.nSteps; c++) {
+      const fresh = (m.get(c) ?? []).map((it) => inheritCube(it, cubes)), names = new Set(fresh.map((i) => i.name));
+      acc = [...acc.filter((i) => !names.has(i.name)).map((i) => ({ ...inheritCube(i, cubes), old: true })), ...fresh].map((it) => {
+        const cons = consumerAt(c, it.name);
+        return cons ? { ...it, owner: cons.id, side: cons.side } : it;
+      });
+      if (acc.length) out.set(c, acc);
+    }
+    return out;
+  }
+  var STATE_ROW = 15;
+  var TABLE_CHROME = 18 + 120 + 14;
+
   // novo/ast/fn-svg.ts
   var G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 };
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -783,28 +914,105 @@ var FlowAst = (() => {
   var rowY = (i) => G.HEAD + i * G.RH;
   var planGutter = (sc) => (sc.maxDepth + 1) * G.IND;
   function fnRows(sc) {
-    return sc.rows.filter((r) => r.kind === "fn");
+    return sc.rows;
   }
   var PAD = 12;
   function colW(sc, opts) {
-    const leaves = fnRows(sc).filter((r) => r.leaf);
+    const leaves = fnRows(sc).filter((r) => r.leaf && r.kind === "fn");
     const txt = opts.txtIn !== false;
     const fromTitle = txt && leaves.length ? Math.max(...leaves.map((l) => tw(l.node.title, 6.2) + 2 * PAD + 2 * G.INS)) : G.WS;
     return Math.max(opts.minW ?? 0, txt ? Math.max(G.W, fromTitle) : G.WS);
   }
-  function assertFnsOnly(n) {
-    if (n.t !== "fn") throw new Error(`fn-svg: esperado t:"fn", recebeu t:"${n.t}"`);
-    for (const k of n.kids) assertFnsOnly(k);
+  var KINDS = /* @__PURE__ */ new Set(["fn", "if", "for", "try"]);
+  function assertKnown(n) {
+    if (!KINDS.has(n.t)) throw new Error(`fn-svg: n\xF3 desconhecido t:"${n.t}"`);
+    for (const k of n.kids) assertKnown(k);
+    if (n.t === "if") for (const k of n.elseKids) assertKnown(k);
+    if (n.t === "try") for (const k of n.catchKids) assertKnown(k);
   }
+  var blockText = (n) => n.t === "if" ? `if (${n.test})` : n.t === "for" ? `for (${n.v} of ${n.coll})` : `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
   function renderFnSvg(flow, opts = {}) {
-    assertFnsOnly(flow);
-    const scene = layout(flow, { closed: opts.closed });
-    const rows = fnRows(scene);
+    assertKnown(flow);
+    const L = opts.lang === "en" ? { machine: "machine", ai: "AI", person: "person", abstract: "abstract", source: "SOURCE", func: "FUNCTION", catchTxt: "catch \xB7 if the try fails", elseTxt: "else \xB7 otherwise", sol: "solid", abs: "abstract", eternal: "function (eternal)" } : { machine: "m\xE1quina", ai: "IA", person: "pessoa", abstract: "abstrato", source: "SOURCE", func: "FUN\xC7\xC3O", catchTxt: "catch \xB7 se o try falhar", elseTxt: "else \xB7 sen\xE3o", sol: "s\xF3lida", abs: "abstrata", eternal: "fun\xE7\xE3o (eterna)" };
+    const scene = layout(flow, { ...opts.closed ? { closed: opts.closed } : {}, ...opts.elseParallel ? { elseParallel: true } : {} });
+    const hide = opts.hideRoot === true && flow.kids.length > 0;
+    const off = hide ? 1 : 0;
+    const rows = fnRows(scene).slice(off);
     const cw = colW(scene, opts);
     const gutter = planGutter(scene);
-    const colX = (s) => gutter + G.OX + s * cw;
+    const rootFile = flowFile(flow).replace(/\.[^.]+$/, "");
+    const SRC = {
+      maquina: { name: L.machine, cls: "maq" },
+      ia: { name: L.ai, cls: "ia" },
+      pessoa: { name: L.person, cls: "pes" }
+    };
+    const source = (f, depth, leaf) => {
+      if (depth === 0 || !leaf) return { name: rootFile, cls: "arq" };
+      if (!f.agent) return { name: L.abstract, cls: "abs" };
+      if (f.agent === "arquivo") return { name: rootFile, cls: "arq" };
+      if (f.agent.startsWith("obj:")) return { name: f.agent.slice(4), cls: "obj" };
+      return SRC[f.agent] ?? { name: f.agent, cls: "maq" };
+    };
+    const labelOf = (r) => r.kind !== "fn" ? r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(r.node) : r.node.title;
+    const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 34)) : 0;
+    const funcX = opts.table ? srcW + 6 : 0;
+    const funcW = opts.table ? Math.max(40, ...rows.map((r) => r.depth * 12 + tw(labelOf(r), 6.1))) : 0;
+    const TW = opts.table ? Math.ceil(funcX + funcW + 16) : 0;
+    const colX = (s) => TW + gutter + G.OX + s * cw;
     const W = colX(scene.nSteps) + 160;
-    const H = rowY(rows.length) + 80;
+    const base = opts.states !== false ? statesByStep(scene, false) : /* @__PURE__ */ new Map();
+    for (const list of base.values()) list.forEach((it, n) => {
+      const v = it.value?.trim();
+      if (!it.cube && v && v.startsWith("[") && v.endsWith("]") && it.owner) list[n] = { ...localItem(it.name, v, it.owner), side: it.side ?? "in", ...it.old ? { old: true } : {} };
+    });
+    if (opts.states !== false) for (const r of rows) {
+      if (r.kind !== "fn") continue;
+      const f = r.node;
+      const list = base.get(r.s) ?? [];
+      const locals = Object.entries(f.args ?? {}).filter(([k, v]) => !f.ins.includes(k) && !f.outs.includes(k) && v.trim() && !list.some((x) => x.name === k)).map(([k, v]) => localItem(k, v.trim(), f.id));
+      if (!locals.length) continue;
+      const at = list.findIndex((x) => x.side === "in");
+      list.splice(at < 0 ? list.length : at, 0, ...locals);
+      base.set(r.s, list);
+    }
+    for (const r of rows) {
+      if (r.kind !== "fn") continue;
+      const f = r.node;
+      for (const o of f.outs) {
+        const v = f.args?.[o]?.trim();
+        const list = base.get(r.e + 1), at = v && list ? list.findIndex((x) => x.name === o) : -1;
+        if (!v || !list || at < 0) continue;
+        if (/^[{[]/.test(v)) list[at] = { ...localItem(o, v, f.id), side: "out" };
+        else list[at].value = v;
+      }
+    }
+    const states = /* @__PURE__ */ new Map();
+    if (opts.allData === false) base.forEach((v, k) => states.set(k, v));
+    else {
+      let acc = [];
+      for (let c = 0; c <= scene.nSteps; c++) {
+        const fresh = base.get(c) ?? [], names = new Set(fresh.map((x) => x.name));
+        acc = [...acc.filter((x) => !names.has(x.name)).map((x) => ({ ...x, old: true })), ...fresh];
+        if (acc.length) states.set(c, acc);
+      }
+    }
+    const kindOf = (f, depth) => {
+      if (depth === 0) return "conc";
+      if (f.kids.length) return "conc";
+      if (!f.agent) return "nag";
+      return f.agent === "ia" || f.agent === "pessoa" ? "abs" : "conc";
+    };
+    const fnKinds = /* @__PURE__ */ new Map();
+    if (opts.states !== false && opts.fnStates !== false) {
+      for (const r of rows) if (r.kind === "fn") {
+        const f = r.node, k = kindOf(f, r.depth);
+        if (!fnKinds.has(f.title) || k === "conc") fnKinds.set(f.title, k);
+      }
+    }
+    const fnNames = [...fnKinds.keys()];
+    const stateCols = fnNames.length ? Array.from({ length: scene.nSteps + 1 }, (_, c) => c) : [...states.keys()];
+    const maxSt = Math.max(0, ...stateCols.map((c) => fnNames.length + stateRows(states.get(c) ?? [])));
+    const H = maxSt > 0 ? rowY(rows.length) + 66 + maxSt * STATE_ROW + 28 : rowY(rows.length) + 80;
     const ym = (i) => rowY(i) + G.RH / 2;
     const txtIn = opts.txtIn !== false;
     const sel = opts.sel ?? null;
@@ -816,35 +1024,59 @@ var FlowAst = (() => {
     const bot = rowY(rows.length) + 32;
     const chip = (s, y) => `<g class="chip"><rect x="${colX(s) - 12}" y="${y - CHIP}" width="24" height="16" rx="3"/><text x="${colX(s)}" y="${y + 3.5}" text-anchor="middle">s${s}</text></g>`;
     for (let s = 0; s <= scene.nSteps; s++) {
-      out.push(`<line class="vg" x1="${colX(s)}" y1="${top + CHIP}" x2="${colX(s)}" y2="${bot - CHIP}"/>`);
-      out.push(chip(s, top), chip(s, bot));
+      if (opts.grid !== false) out.push(`<line class="vg" x1="${colX(s)}" y1="${top + CHIP}" x2="${colX(s)}" y2="${bot - CHIP}"/>`);
+      if (opts.chips !== false) out.push(chip(s, top), chip(s, bot));
     }
-    rows.forEach((_, i) => out.push(`<line class="hg" x1="${gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
-    out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(rows.length) + 4}" x2="${colX(scene.nSteps)}" y2="${rowY(rows.length) + 4}"/>`);
-    const rail = (depth, y0, h) => {
-      if (depth < 0 || h <= 0) return;
-      bands.push(`<line class="bande co" x1="${depth * G.IND + 0.5}" y1="${y0}" x2="${depth * G.IND + 0.5}" y2="${y0 + h}"/>`);
+    if (opts.grid !== false) rows.forEach((_, i) => out.push(`<line class="hg" x1="${opts.table ? 0 : gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
+    if (opts.table) {
+      out.push(`<text class="th" x="12" y="${top + 3}">${L.source}</text><text class="th" x="${funcX}" y="${top + 3}">${L.func}</text>`);
+      rows.forEach((r, i) => {
+        const y = ym(i);
+        if (r.kind !== "fn") {
+          const n = r.node;
+          const txt = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(n);
+          out.push(`<text class="tb mut" x="${funcX + r.depth * 12}" y="${y + 3.5}">${esc(txt)}</text>`);
+          return;
+        }
+        const f = r.node, src = source(f, r.depth, r.leaf);
+        out.push(`<circle class="so ${src.cls}" cx="18" cy="${y}" r="4.5"/><text class="tb" x="30" y="${y + 3.5}">${esc(src.name)}</text>`);
+        out.push(`<text class="tb" x="${funcX + r.depth * 12}" y="${y + 3.5}">${esc(f.title)}</text>`);
+      });
+      out.push(`<line class="vg" x1="${funcX - 4}" y1="${top + CHIP}" x2="${funcX - 4}" y2="${rowY(rows.length)}"/>`);
+    }
+    for (const col of stateCols) {
+      const items = states.get(col) ?? [];
+      let row = 0;
+      for (const nm of fnNames) {
+        const y = bot + 34 + row++ * STATE_ROW;
+        out.push(`<g class="stt fnst${col > stateCols[0] ? " old" : ""}"><circle class="sfn${fnKinds.get(nm) === "conc" ? "" : " a"}" cx="${colX(col)}" cy="${y}" r="4.5"/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([nm], 26))}</text><title>${esc(nm)} \xB7 ${L.eternal} \xB7 ${fnKinds.get(nm) === "conc" ? L.sol : L.abs}</title></g>`);
+      }
+      for (const it of items) {
+        const y = bot + 34 + row++ * STATE_ROW;
+        const isFn = !it.cube && /^function\b/.test(it.value ?? "");
+        out.push(`<g class="stt${it.old ? " old" : ""}">${isFn ? `<circle class="sfn" cx="${colX(col)}" cy="${y}" r="4.5"/>` : it.cube ? `<path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/>` : `<rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"/>`}<text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube || isFn ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+        if (it.cube) for (const fld of it.fields) {
+          const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld];
+          out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`);
+        }
+      }
+    }
+    const rail = (depth, y0, h, cls = "co") => {
+      if (opts.rails !== true || depth < 0 || h <= 0) return;
+      bands.push(`<line class="bande ${cls}" x1="${depth * G.IND + 0.5}" y1="${y0}" x2="${depth * G.IND + 0.5}" y2="${y0 + h}"/>`);
     };
     const byId = new Map(rows.map((r, i) => [r.id, i]));
     rows.forEach((r, i) => {
-      if (r.leaf) rail(r.depth, rowY(i), G.RH);
-      else if (r.last > 0) {
-        const childIs = rows.map((x, j) => x.id !== r.id && scene.span.get(x.id) && x.depth > r.depth ? j : -1).filter((j) => j > i);
-        const lastVis = childIs.length ? Math.max(...childIs) : i;
-        if (lastVis > i) rail(r.depth, rowY(i + 1), (lastVis - i) * G.RH);
-      }
+      const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : r.kind === "block" ? r.node.t === "if" ? "if" : r.node.t === "for" ? "lp" : "tr" : "co";
+      if (r.leaf) rail(r.depth, rowY(i), G.RH, cls);
+      else if (r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
     });
-    const kindOf = (f, depth) => {
-      if (depth === 0) return "conc";
-      if (f.kids.length) return "conc";
-      if (!f.agent) return "nag";
-      return "conc";
-    };
     const ioMarks = (f, r, i, x1, x2) => {
       const mark = (x, list, side) => {
         if (!list.length) return "";
-        const cube = list.length !== 1;
+        const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]] ?? "");
         const tip = list.join(", ");
+        if (!cube && /^function\b/.test(f.args?.[list[0]] ?? "")) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;
         return cube ? `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><path class="cube" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(tip)}</title></g>` : `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><rect class="dot" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(tip)}</title></g>`;
       };
       if (f.ins.length) {
@@ -859,6 +1091,27 @@ var FlowAst = (() => {
       }
     };
     rows.forEach((r, i) => {
+      if (r.kind !== "fn") {
+        const n = r.node;
+        const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+        const txt = r.kind === "catch" ? L.catchTxt : r.kind === "else" ? L.elseTxt : blockText(n);
+        const cx2 = colX(r.s), cy = ym(i), px = cx2 + 11;
+        const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6);
+        if (cls === "if") over.push(`<path class="fif" d="M${cx2} ${cy - 7} L${cx2 + 6.5} ${cy + 5} H${cx2 - 6.5} Z"/>`);
+        if (cls === "lp") over.push(`<text class="flp" x="${cx2}" y="${cy + 3.5}" text-anchor="middle">\u21BB</text>`);
+        if (cls === "tr") over.push(`<path class="ftr" d="M${cx2} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx2 - 3.5} ${cy - 6.1} ${cx2 - 1.8} ${cy - 7} ${cx2} ${cy - 7}z"/>`);
+        if (cls === "ca") over.push(`<path class="fca" d="M${cx2 - 5} ${cy - 5} L${cx2 + 5} ${cy + 5} M${cx2 + 5} ${cy - 5} L${cx2 - 5} ${cy + 5}"/>`);
+        const brow = r.kind === "else" ? rows.find((x) => x.kind === "block" && x.node === r.node && x.s === r.s) : void 0;
+        let px2 = cls === "el" ? cx2 + 4 : px, wPill = w;
+        if (brow) {
+          const ifLeft = colX(brow.s) + 11;
+          const ifRight = ifLeft + Math.max(tw(blockText(brow.node)) + 12, colX(brow.e + 1) - ifLeft - 6);
+          px2 = ifLeft;
+          wPill = Math.max(w, ifRight - ifLeft);
+        }
+        over.push(`<g class="pill ${cls}"><rect x="${px2}" y="${cy - 8}" width="${wPill}" height="16"/><text x="${px2 + 6}" y="${cy + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);
+        return;
+      }
       const f = r.node;
       const selC = sel === f.id ? " sel" : "";
       if (!r.leaf) {
@@ -867,7 +1120,7 @@ var FlowAst = (() => {
         const x22 = colX(r.e + 1) - inset;
         over.push(`<g data-id="${esc(f.id)}"><path class="sum${selC}" d="M${x12} ${ym(i) - 3.5}H${x22}V${ym(i) + 7.5}L${x22 - 5} ${ym(i) + 3.5}H${x12 + 5}L${x12} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} \xB7 composition</title></g>`);
         ioMarks(f, r, i, x12, x22);
-        if (i === 0) over.push(`<text class="lbl" x="${(x12 + x22) / 2}" y="${ym(i) - 22}" text-anchor="middle">${esc(f.title)}</text>`);
+        if (i === 0 && !hide) over.push(`<text class="lbl" x="${(x12 + x22) / 2}" y="${ym(i) - 10}" text-anchor="middle">${esc(f.title)}</text>`);
         else over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
         return;
       }
@@ -879,25 +1132,62 @@ var FlowAst = (() => {
       over.push(`<g data-id="${esc(f.id)}"><rect class="fn ${k}${selC}" x="${x1}" y="${ym(i) - G.BH / 2}" width="${x2 - x1}" height="${G.BH}" rx="${G.BH / 2}"/>${hasText ? `<text class="fbt ${k}" x="${(x1 + x2) / 2}" y="${ym(i) + 3.5}" text-anchor="middle">${esc(f.title)}</text>` : ""}<title>${esc(f.title)}</title></g>`);
       ioMarks(f, r, i, x1, x2);
       if (!hasText) over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
-      if (f.par) over.push(`<text class="par" x="${x2 + 6}" y="${ym(i) + 3.5}">\u2225</text>`);
+      if (hasText && opts.fnIcon) over.push(`<circle class="fic" cx="${x1 + 11}" cy="${ym(i)}" r="4"/>`);
+      if (opts.agentLabels === true && f.agent && f.agent !== "arquivo") over.push(`<text class="ag" x="${x1}" y="${ym(i) - G.BH / 2 - 3}" >${esc(f.agent)}</text>`);
+      if (opts.parMark === true && f.par) over.push(`<text class="par" x="${x2 + 6}" y="${ym(i) + 3.5}">\u2225</text>`);
       void byId;
     });
     const style = `<style>
-.vg,.hg,.axis{stroke:#e7e3db;stroke-width:1}
-.chip rect{fill:#f4f1ea;stroke:#e7e3db}
-.chip text{font:600 9px ui-monospace,Menlo,monospace;fill:#14120f}
-.bande.co{stroke:#2563eb;stroke-width:2}
-.fn{fill:#2563eb}.fn.abs{fill:#dbeafe;stroke:#2563eb;stroke-width:1.5}.fn.nag{fill:transparent;stroke:#2563eb;stroke-width:1.5}
-.fn.sel,.sum.sel{stroke:#14120f;stroke-width:2.5}
-.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:#2563eb}
-.sum{fill:#2563eb}
-.lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:#14120f}
+.vg,.hg,.axis{stroke:var(--line,#e7e3db);stroke-width:1}
+.chip rect{fill:var(--paper-2,#f4f1ea);stroke:var(--line,#e7e3db)}
+.chip text{font:600 9px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
+.bande.co{stroke:var(--fn,#dc2626);stroke-width:2}
+.fn{fill:var(--fn,#dc2626)}.fn.abs{fill:color-mix(in srgb,var(--fn,#dc2626) 22%,var(--paper,#fff));stroke:var(--fn,#dc2626);stroke-width:1.5}.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
+.fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
+.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--fn,#dc2626)}
+.sum{fill:var(--fn,#dc2626)}
+.lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
-.dot{fill:#dc2626;stroke:#dc2626}.cube{fill:#dc2626;stroke:#14120f;stroke-width:.6}
-.par{font:600 11px ui-monospace,Menlo,monospace;fill:#44423d}
+.dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
+.bande.if,.bande.el{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
+.fif{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
+.pill text{font:600 9px ui-monospace,Menlo,monospace}
+.pill.if rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.if text{fill:#d97706}.pill.el rect{fill:color-mix(in srgb,#d97706 12%,var(--paper,#fff))}.pill.el text{fill:#d97706}
+.pill.lp rect{fill:color-mix(in srgb,#8b5cf6 20%,var(--paper,#fff))}.pill.lp text{fill:#8b5cf6}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
+.ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
+.dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}
+.sfn{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
+.sdot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#2563eb);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}
+.fic{fill:#fff;opacity:.9;pointer-events:none}
+.th{font:700 8px ui-monospace,Menlo,monospace;letter-spacing:.08em;fill:var(--body,#44423d)}.tb{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}.tb.mut{fill:var(--body,#44423d)}
+.so{stroke-width:1.5}.so.arq{fill:var(--body,#44423d);stroke:var(--body,#44423d)}.so.maq{fill:#22c55e;stroke:#22c55e}.so.obj{fill:#f59e0b;stroke:#f59e0b}.so.ia{fill:var(--paper,#fff);stroke:#a855f7}.so.pes{fill:var(--paper,#fff);stroke:#3b82f6}.so.abs{fill:var(--paper,#fff);stroke:var(--body,#44423d);stroke-dasharray:2 2}
+.par{font:600 11px ui-monospace,Menlo,monospace;fill:var(--body,#44423d)}
 </style>`;
     const svg = `<svg class="plan fn-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano ${esc(flow.title)}">${style}<g class="bands">${bands.join("")}</g>${out.join("")}${over.join("")}</svg>`;
     return { svg, scene, width: W, height: H };
+  }
+  function localItem(name, value, owner) {
+    const pairs = objectPairs(value);
+    if (pairs) {
+      const fieldValues = Object.fromEntries(pairs.filter((p) => p.value != null).map((p) => [p.name, p.value]));
+      return { name, cube: true, fields: pairs.map((p) => p.name), value, fieldValues, owner, side: "in" };
+    }
+    if (value.startsWith("[") && value.endsWith("]")) {
+      const parts = [];
+      let depth = 0, cur = "";
+      for (const ch of value.slice(1, -1)) {
+        if ("{[(".includes(ch)) depth++;
+        else if ("}])".includes(ch)) depth--;
+        if (ch === "," && depth === 0) {
+          parts.push(cur);
+          cur = "";
+        } else cur += ch;
+      }
+      parts.push(cur);
+      const vals = parts.map((x) => x.trim()).filter(Boolean);
+      return { name, cube: true, fields: vals.map((_, i) => `[${i}]`), value, fieldValues: Object.fromEntries(vals.map((v, i) => [`[${i}]`, v])), owner, side: "in" };
+    }
+    return { name, cube: false, fields: [name], value, owner, side: "in" };
   }
   var fnAstToSvg = (flow, opts) => renderFnSvg(flow, opts).svg;
   return __toCommonJS(fn_svg_exports);

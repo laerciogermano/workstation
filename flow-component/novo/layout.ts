@@ -17,7 +17,7 @@ export interface Row {
 }
 export interface Scene { rows: Row[]; nSteps: number; span: Map<string, Span>; maxDepth: number; leaves: Row[] }
 
-export interface LayoutOpts { closed?: ReadonlySet<string> }
+export interface LayoutOpts { closed?: ReadonlySet<string>; /** else começa no mesmo passo do if (ramos lado a lado), em vez de depois dele. */ elseParallel?: boolean }
 
 export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
   const closed = opts.closed ?? new Set<string>();
@@ -59,7 +59,7 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
         const next = place(b.kids, depth + 1, step, emit && !isClosed, inAlt), sp: Span = { s: step, e: Math.max(step, next - 1) };
         if (emit) { span.set(b.id, sp); row.s = sp.s; row.e = sp.e; }
         let end = next;
-        if (alt && alt.length) end = placeAlt(b, alt, next, emit, isClosed);
+        if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, opts.elseParallel && b.t === "if" ? step : next, emit, isClosed));
         if (emit) row.last = rows.length - 1;
         step = Math.max(step, end);
       }

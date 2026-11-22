@@ -50,7 +50,8 @@ describe("ast/fn-svg", () => {
     const leaves = scene.leaves;
     expect(leaves).toHaveLength(2);
     expect(leaves[0]!.s).toBe(leaves[1]!.s);
-    expect(svg).toContain("∥");
+    expect(svg).not.toContain("∥");                                  // padrão: o passo já mostra o paralelismo
+    expect(renderFnSvg(flow, { parMark: true }).svg).toContain("∥");  // opcional
   });
 
   it("irmãs sequenciais ocupam passos consecutivos", () => {

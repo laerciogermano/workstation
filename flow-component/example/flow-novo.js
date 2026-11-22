@@ -1803,7 +1803,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
             row.e = sp.e;
           }
           let end = next;
-          if (alt && alt.length) end = placeAlt(b, alt, next, emit, isClosed);
+          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, opts.elseParallel && b.t === "if" ? step2 : next, emit, isClosed));
           if (emit) row.last = rows.length - 1;
           step2 = Math.max(step2, end);
         }

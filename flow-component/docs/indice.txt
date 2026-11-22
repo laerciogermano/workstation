@@ -1,21 +1,30 @@
 - Flow
-  - linguagem de programação visual
-  - linguagem universal → transpila para qualquer linguagem
-  - gerenciador de tarefas
-  - features das linguagens de programação
-  - código → visão (análise mais fácil)
-  - visão logística de todos os fluxos
-  - similar a n8n / orquestrador de processos
-  - componentes substituíveis (desacoplamento)
-  - imagem > texto para entender
-  - conceitos confusos só com texto (xadrez sem tabuleiro)
-  - dá face ao software
-  - visão única entre linguagens e paradigmas
-  - também descreve a realidade
-  - tudo = funções (eternas) + estados (mutáveis)
-  - software = fluxos de execução
-  - fluxo = dados + funções
-  - capítulo intro: indice-ast.html#flow
+  - Problema
+     - conceitos confusos só com texto (xadrez sem tabuleiro)
+     - diferentes linguagens de programacao
+     - diferentes formas de se fazer a mesma coisa
+     - todos estao fazendo a mesma coisa de formas diferntes
+     - redundancia de formas para se fazer a mesma coisa
+
+  - Proposta
+    - paradigma de desenvolvimento
+    - linguagem de programação visual
+    - tudo = funções (eternas) + estados (mutáveis)
+
+  - Beneficios
+    - o flow, difernte a oop, foca nos fluxos e nao nos objetos
+    - funcona como um gerenciador de tarefas (funcao é tarefa)
+    - possui as mesmas features das linguagens de programação
+      - linguagem universal → transpila para qualquer linguagem
+    - código → visão (análise mais fácil)
+    - visão logística de todos os fluxos
+    - similar a n8n / orquestrador de processos
+    - componentes substituíveis (desacoplamento)
+    - imagem > texto para entender
+    - os conceitos do flow nao se tratam apenas de software
+    - visão única entre linguagens e paradigmas
+    - software = fluxos de execução
+    - fluxo = dados + funções
 
 - Softwares
   - ● círculo = função (eterna, imutável)

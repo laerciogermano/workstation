@@ -1,3 +1,36 @@
+
+# Flow
+    - criar arvore de componentes
+        - AST (Abstract Syntax Tree)
+        - AST par visao
+        - visao para AST
+        - codigo para AST
+        - AST para codigo
+    - criar flow component
+        - escrver artigo com representacoes
+        - criar visualizacao com funcao
+            - solidos e abstratos
+            - publico e privado
+        - criar visualizacao com dado
+            - solidos e abstratos
+            - publico e privado
+        - criar visualizacao com agentes
+            - arquivos, pessoas, ias, agentes como um todo
+            - solidos e abstratos
+        - criar visualizacao com estruturas de repeticao
+        - criar visualizacao com try catch
+        - criar visualizacao com estruturas de condicao
+        - criar visualizacao com estruturas de loop
+        - criar visualizacao com estruturas de switch
+        - criar visualziacao com solidos e abstratos
+
+
+----
+- criar robo tinder
+- criar robo instagram
+- criar robo ometv
+- criar robo wpp
+- criar cobo 
 # Compras
     - Orçamento automatizado (preços portal + PNCP) → card Trello Connect/Backlog
 

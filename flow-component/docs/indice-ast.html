@@ -94,7 +94,7 @@ footer {
 
 <main>
   <h1>Função <code>main</code></h1>
-  <p class="lead">Definição mínima: uma função de primeira ordem. Código JavaScript, AST ESTree, AST Flow e plano SVG (<code>renderFnSvg</code>).</p>
+  <p class="lead">Definição mínima: função de primeira ordem sem entrada e sem saída. Código JavaScript, AST ESTree, AST Flow e plano SVG (<code>renderFnSvg</code>).</p>
 
   <div class="lab"><span class="kind">JS</span> Código</div>
   <div class="pane">
@@ -131,8 +131,7 @@ footer {
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";
 
-const CODE = `export async function main(state) {
-  return { ...state };
+const CODE = `export async function main() {
 }`;
 
 const FLOW_AST = {

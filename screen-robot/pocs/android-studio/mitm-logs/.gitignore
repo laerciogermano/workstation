@@ -1,0 +1,4 @@
+*.mitm
+*.log
+mitm-conf/
+CURRENT_STAMP

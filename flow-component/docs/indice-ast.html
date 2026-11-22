@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow · Índice — código e AST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #ffffff;
+  --paper-2: #f4f1ea;
+  --ink: #14120f;
+  --body: #44423d;
+  --accent: #e0402b;
+  --line: #e7e3db;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.05rem/1.58 Newsreader, Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--ink); }
+code, pre, kbd { font-family: var(--mono); }
+:not(pre) > code {
+  font-size: .86em;
+  padding: .08em .35em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper-2);
+}
+
+.top {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 1rem;
+  height: 3.5rem; padding: 0 1.25rem;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  font-family: Archivo, sans-serif;
+}
+.brand { font-weight: 800; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
+.brand span { color: var(--accent); }
+.top nav { display: flex; gap: .35rem; flex-wrap: wrap; }
+.top nav a {
+  font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--body); text-decoration: none; padding: .35rem .5rem; border-radius: 6px;
+}
+.top nav a:hover { background: var(--paper-2); color: var(--ink); }
+.sp { flex: 1; }
+.meta { font-size: .75rem; font-weight: 600; color: var(--body); }
+
+.shell {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 46rem);
+  gap: 2rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+}
+@media (max-width: 820px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { display: none; }
+}
+
+.side {
+  position: sticky; top: 4.5rem;
+  align-self: start;
+  max-height: calc(100vh - 5rem);
+  overflow: auto;
+  font-family: Archivo, sans-serif;
+  font-size: .78rem;
+}
+.side h6 {
+  margin: 1.1rem 0 .35rem;
+  font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--body);
+}
+.side h6:first-child { margin-top: 0; }
+.side a {
+  display: block; padding: .28rem .4rem; margin: 1px 0; border-radius: 6px;
+  color: var(--body); text-decoration: none; line-height: 1.35;
+}
+.side a:hover, .side a.on { background: var(--paper-2); color: var(--ink); }
+
+main h1 {
+  margin: 0 0 .5rem;
+  font: 800 clamp(1.8rem, 4vw, 2.6rem)/1.12 Archivo, sans-serif;
+  letter-spacing: -.02em;
+}
+.lead { margin: 0 0 1.75rem; color: var(--body); max-width: 38rem; }
+.lead code { font-size: .8em; }
+
+.sec {
+  margin: 0 0 2.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+.sec:first-of-type { border-top: 0; padding-top: 0; }
+.sec h2 {
+  margin: 0 0 .4rem;
+  font: 700 1.35rem/1.2 Archivo, sans-serif;
+  letter-spacing: -.015em;
+}
+.sec h2 .n {
+  font: 600 .75rem/1 var(--mono);
+  color: var(--accent);
+  margin-right: .45rem;
+}
+.sec > p { margin: 0 0 1rem; color: var(--body); max-width: 40rem; }
+
+.block { margin: 0 0 1.15rem; }
+.block .lab {
+  display: flex; align-items: baseline; gap: .5rem;
+  margin: 0 0 .35rem;
+  font: 700 .68rem/1 Archivo, sans-serif;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--body);
+}
+.block .lab .kind {
+  color: var(--accent);
+}
+.pane {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.pane + .pane { margin-top: .55rem; }
+.pane .hd {
+  display: flex; align-items: center; gap: .5rem;
+  height: 2rem; padding: 0 .85rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-2);
+  font: 600 .72rem/1 Archivo, sans-serif;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--body);
+}
+.pane .hd .tag { margin-left: auto; font-weight: 700; color: var(--accent); font-size: .65rem; }
+.pane pre {
+  margin: 0;
+  padding: .85rem 1rem;
+  overflow: auto;
+  font-size: .78rem;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre;
+}
+.pane.ast pre { color: var(--body); max-height: 22rem; }
+.err { color: var(--accent); font-family: var(--mono); font-size: .78rem; padding: .85rem 1rem; }
+
+footer.doc {
+  margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line);
+  font: 600 .75rem/1.45 Archivo, sans-serif; color: var(--body);
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="indice.md">Flow <span>·</span> Índice AST</a>
+  <nav>
+    <a href="indice.md">índice</a>
+    <a href="apresentacao.md">apresentação</a>
+    <a href="roteiro.md">roteiro</a>
+  </nav>
+  <div class="sp"></div>
+  <div class="meta">JS · ESTree</div>
+</header>
+
+<div class="shell">
+<aside class="side" id="nav">
+  <h6>Conceitos</h6>
+</aside>
+
+<main>
+  <h1>Código e árvore sintática</h1>
+  <p class="lead">Cada representação de <a href="indice.md">indice.md</a> em JavaScript, com a AST ESTree abaixo (<code>type</code> / filhos). A árvore é gerada no browser com Acorn.</p>
+
+  <!-- 1 Flow -->
+  <section class="sec" id="flow">
+    <h2><span class="n">01</span>Flow</h2>
+    <p>Fluxo de execução: dados + funções. Código universal que o canvas desenha.</p>
+    <div class="block" data-title="Fluxo simples">
+      <pre class="src">async function atenderPedido(state) {
+  const { pedido } = await receberPedido({ ...state });
+  const { itens } = await separarItens({ ...state, pedido });
+  return { pedido, itens };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 2 Funções -->
+  <section class="sec" id="funcoes">
+    <h2><span class="n">02</span>Funções</h2>
+    <p>Unidade de transformação. Filhas, irmãs, sequência, paralelo, entrada e saída.</p>
+
+    <div class="block" data-title="Função com entrada e saída">
+      <pre class="src">function calcularTotal({ preco, quantidade }) {
+  return { total: preco * quantidade };
+}</pre>
+    </div>
+
+    <div class="block" data-title="Função filha (composição)">
+      <pre class="src">async function venderProduto(state) {
+  async function cobrarCliente(s) {
+    return { pagamento: s.cliente };
+  }
+  const { pagamento } = await cobrarCliente(state);
+  return { pagamento };
+}</pre>
+    </div>
+
+    <div class="block" data-title="Funções irmãs (sequenciais)">
+      <pre class="src">async function pipeline(state) {
+  const a = await passoA(state);
+  const b = await passoB({ ...state, ...a });
+  return b;
+}</pre>
+    </div>
+
+    <div class="block" data-title="Funções paralelas">
+      <pre class="src">async function carregarPainel(state) {
+  const [user, feed] = await Promise.all([
+    buscarUser(state),
+    buscarFeed(state),
+  ]);
+  return { user, feed };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 3 Dados -->
+  <section class="sec" id="dados">
+    <h2><span class="n">03</span>Dados</h2>
+    <p>Unidades transformáveis: input / output. Texto, número, booleano, função, array, objeto.</p>
+
+    <div class="block" data-title="Texto">
+      <pre class="src">const nome = "Ana";</pre>
+    </div>
+    <div class="block" data-title="Número">
+      <pre class="src">const preco = 1999.9;</pre>
+    </div>
+    <div class="block" data-title="Booleano">
+      <pre class="src">const ativo = true;</pre>
+    </div>
+    <div class="block" data-title="Função como dado">
+      <pre class="src">const transformar = (x) => x * 2;</pre>
+    </div>
+    <div class="block" data-title="Array (posicional)">
+      <pre class="src">const itens = ["a", "b", "c"];</pre>
+    </div>
+    <div class="block" data-title="Objeto (chaveado)">
+      <pre class="src">const cliente = { nome: "Ana", idade: 30 };</pre>
+    </div>
+  </section>
+
+  <!-- 4 Estados -->
+  <section class="sec" id="estados">
+    <h2><span class="n">04</span>Estados</h2>
+    <p>Dados disponíveis em cada passo. Estado inicial entra; estado final sai.</p>
+    <div class="block" data-title="Estado que cresce">
+      <pre class="src">async function fluxo(state) {
+  const s1 = { ...state, pedido: await receber(state) };
+  const s2 = { ...s1, total: s1.pedido.preco * s1.pedido.qtd };
+  return s2;
+}</pre>
+    </div>
+  </section>
+
+  <!-- 5 Agentes -->
+  <section class="sec" id="agentes">
+    <h2><span class="n">05</span>Agentes</h2>
+    <p>Fonte da execução: arquivo, pessoa, IA, biblioteca — quem realiza o trabalho.</p>
+    <div class="block" data-title="Source como parâmetro (agente injetado)">
+      <pre class="src">async function enviarProposta(state, agents) {
+  const rascunho = await agents.arquivo.ler(state.cliente);
+  const texto = await agents.ia.redigir(rascunho);
+  return agents.pessoa.revisar(texto);
+}</pre>
+    </div>
+  </section>
+
+  <!-- 6 Seleção -->
+  <section class="sec" id="selecao">
+    <h2><span class="n">06</span>Seleção</h2>
+    <p>Condiciona o caminho do fluxo conforme o dado: if/else e switch.</p>
+    <div class="block" data-title="if / else">
+      <pre class="src">function aplicarDesconto({ preco, vip }) {
+  if (vip) {
+    return { total: preco * 0.9 };
+  } else {
+    return { total: preco };
+  }
+}</pre>
+    </div>
+    <div class="block" data-title="switch">
+      <pre class="src">function rota({ status }) {
+  switch (status) {
+    case "novo":
+      return { passo: "cobrar" };
+    case "pago":
+      return { passo: "enviar" };
+    default:
+      return { passo: "aguardar" };
+  }
+}</pre>
+    </div>
+  </section>
+
+  <!-- 7 Repetição -->
+  <section class="sec" id="repeticao">
+    <h2><span class="n">07</span>Repetição</h2>
+    <p>Estruturas repetíveis: for, while, do-while.</p>
+    <div class="block" data-title="for…of">
+      <pre class="src">function somar({ itens }) {
+  let total = 0;
+  for (const item of itens) {
+    total += item.preco;
+  }
+  return { total };
+}</pre>
+    </div>
+    <div class="block" data-title="while">
+      <pre class="src">function esperar({ pronto }) {
+  let n = 0;
+  while (!pronto && n < 10) {
+    n += 1;
+  }
+  return { tentativas: n };
+}</pre>
+    </div>
+    <div class="block" data-title="do…while">
+      <pre class="src">function lerAteOk({ ler }) {
+  let pagina;
+  do {
+    pagina = ler();
+  } while (!pagina.ok);
+  return pagina;
+}</pre>
+    </div>
+  </section>
+
+  <!-- 8 try/catch -->
+  <section class="sec" id="try-catch">
+    <h2><span class="n">08</span>try / catch</h2>
+    <p>Tratamento de erro: o fluxo continua no ramo catch com o dado <code>error</code>.</p>
+    <div class="block" data-title="try / catch">
+      <pre class="src">async function buscarSeguro(state) {
+  try {
+    return await buscar(state);
+  } catch (error) {
+    return { error, fallback: true };
+  }
+}</pre>
+    </div>
+  </section>
+
+  <!-- 9 Files / Layers -->
+  <section class="sec" id="files">
+    <h2><span class="n">09</span>Files (Layers)</h2>
+    <p>Todo dado e toda função têm endereço. Quem se conhece mora na mesma camada.</p>
+    <div class="block" data-title="Import entre arquivos (endereços)">
+      <pre class="src">import { formatPrice } from "./utils.js";
+
+export async function checkout(state) {
+  const { total } = await formatPrice(state);
+  return { total };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 10 Sólidos x abstratos -->
+  <section class="sec" id="solidos-abstratos">
+    <h2><span class="n">10</span>Sólidos × abstratos</h2>
+    <p>Sólido tem endereço físico (valor/produtor). Abstrato ainda não — chega pelo state.</p>
+    <div class="block" data-title="Concreto (sólido) vs parâmetro abstrato">
+      <pre class="src">function rotular({ titulo }) {
+  const selo = "oficial";
+  return { rotulo: titulo + " · " + selo };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 11 Público / privado -->
+  <section class="sec" id="publico-privado">
+    <h2><span class="n">11</span>Público / privado</h2>
+    <p>Público: export / acesso de fora. Privado: só o módulo/caixa enxerga.</p>
+    <div class="block" data-title="export público + helper privado">
+      <pre class="src">function normalizar(nome) {
+  return nome.trim().toLowerCase();
+}
+
+export function criarCliente({ nome }) {
+  return { nome: normalizar(nome) };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 12 SOLID -->
+  <section class="sec" id="solid">
+    <h2><span class="n">12</span>Boas práticas — SOLID</h2>
+    <p>Responsabilidade única: um verbo, uma transformação.</p>
+    <div class="block" data-title="Single responsibility">
+      <pre class="src">function calcularFrete({ peso, distancia }) {
+  return { frete: peso * distancia * 0.12 };
+}
+
+function emitirNota({ pedido, frete }) {
+  return { nota: { pedido, frete } };
+}</pre>
+    </div>
+  </section>
+
+  <!-- 13 Padrões -->
+  <section class="sec" id="padroes">
+    <h2><span class="n">13</span>Padrões de projeto</h2>
+    <p>Factory e singleton — como no Flow a criação e a fonte única se isolam do roteiro.</p>
+    <div class="block" data-title="Factory">
+      <pre class="src">function criarAgente(kind) {
+  if (kind === "pessoa") return { ask: (t) => t };
+  if (kind === "ia") return { ask: (t) => "ia:" + t };
+  return { ask: (t) => "lib:" + t };
+}</pre>
+    </div>
+    <div class="block" data-title="Singleton">
+      <pre class="src">const Store = (function () {
+  let instance;
+  return {
+    get() {
+      if (!instance) instance = { state: {} };
+      return instance;
+    },
+  };
+})();</pre>
+    </div>
+  </section>
+
+  <!-- 14 OOP x Flow -->
+  <section class="sec" id="oop-flow">
+    <h2><span class="n">14</span>OOP × Flow</h2>
+    <p>Na OO, dado e comportamento acoplam na classe. No Flow, função e estado separam — a “instância” é o state entre verbos.</p>
+    <div class="block" data-title="Classe (OOP)">
+      <pre class="src">class Pedido {
+  constructor(itens) {
+    this.itens = itens;
+  }
+  total() {
+    return this.itens.reduce((s, i) => s + i.preco, 0);
+  }
+}</pre>
+    </div>
+    <div class="block" data-title="Mesmo roteiro no Flow (funções + state)">
+      <pre class="src">function total({ itens }) {
+  return { total: itens.reduce((s, i) => s + i.preco, 0) };
+}</pre>
+    </div>
+  </section>
+
+  <footer class="doc">
+    Fonte: <a href="indice.md">indice.md</a> · AST: ESTree via Acorn ·
+    refs <a href="https://github.com/estree/estree">estree</a> ·
+    <a href="https://github.com/laerciogermano/flow-oriented-programming">FOP</a>
+  </footer>
+</main>
+</div>
+
+<script type="module">
+import * as acorn from "https://esm.sh/acorn@8.14.0";
+
+const prune = (node) => {
+  if (!node || typeof node !== "object") return node;
+  if (Array.isArray(node)) return node.map(prune);
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    if (k === "start" || k === "end" || k === "loc" || k === "range") continue;
+    out[k] = prune(v);
+  }
+  return out;
+};
+
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const renderBlock = (el) => {
+  const title = el.dataset.title || "Exemplo";
+  const srcEl = el.querySelector("pre.src");
+  const code = srcEl.textContent.replace(/^\n/, "").replace(/\n$/, "");
+  srcEl.remove();
+
+  let astJson = "";
+  let err = "";
+  try {
+    const ast = acorn.parse(code, { ecmaVersion: "latest", sourceType: "module", allowReturnOutsideFunction: true });
+    astJson = JSON.stringify(prune(ast), null, 2);
+  } catch (e) {
+    err = e.message;
+  }
+
+  el.innerHTML = `
+    <div class="lab"><span class="kind">JS</span> ${esc(title)}</div>
+    <div class="pane">
+      <div class="hd">Código <span class="tag">JavaScript</span></div>
+      <pre>${esc(code)}</pre>
+    </div>
+    <div class="pane ast">
+      <div class="hd">Árvore sintática <span class="tag">ESTree</span></div>
+      ${err ? `<div class="err">${esc(err)}</div>` : `<pre>${esc(astJson)}</pre>`}
+    </div>`;
+};
+
+document.querySelectorAll(".block").forEach(renderBlock);
+
+const nav = document.getElementById("nav");
+document.querySelectorAll("main .sec").forEach((sec) => {
+  const a = document.createElement("a");
+  a.href = `#${sec.id}`;
+  a.textContent = sec.querySelector("h2").textContent.replace(/^\d+\s*/, "");
+  nav.appendChild(a);
+});
+
+const mark = () => {
+  const y = window.scrollY + 90;
+  let cur = null;
+  document.querySelectorAll("main .sec").forEach((s) => {
+    if (s.offsetTop <= y) cur = s.id;
+  });
+  nav.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === `#${cur}`));
+};
+window.addEventListener("scroll", mark, { passive: true });
+mark();
+</script>
+</body>
+</html>

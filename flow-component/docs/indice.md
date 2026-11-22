@@ -12,12 +12,21 @@
   - é necessario de muito esforco cognitivo par entender codigo
   - ate o prosente momento mnao existia uma forma de enxergar software tao fidedigna, é dar face ao que antes n foi visto, com todos os recursos de programacao
   servico.
-- Softwares
+- atualmente, existem diferentes linguagens, diferentes paradigmas, todas com suas nuances, suas formas de se fazer a mesma coisa, o flow é a visualiacaounica, a linguagem ubiqua, o codigo universal.
+- flow nao se trata apenas de uma forma unificada de ver software, mas tambem de ver a propria realidade
+- tudo é composto por funcoes (eternos) e estados (mutáveis)
   - softwares sao feitos de fluxos de esxecucao
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
 - Funcoes
--- funcoes sao unidades de transformacao
--- podem possuir entrada, processamento e saida
+  - funcoes sao unidades de transformacao
+  - toda funcao de primeiro grau é sódio e ertence ao arquivo de origem comoresponsavel
+  - uma funcao pode ter funcao filhas
+  - uma funcao pode ter funcoes irmas
+  - as funcoes podem ser sequenciais
+  - as funcoes podem ser paralelas
+  - podem possuir entrada e saida
+  - apenas podem ter uma entrada e uma saida
+  - a entrada e saida sao dados
 - Dados
   - os dados sao unidades transformaveis
     input
@@ -30,7 +39,23 @@
     - objetos (caixas)
       - seres que possuem dados e funcao,
       - array
+        - posicionais []
       - obj
+        - chaveados {}
+      - arquivo (futuramente)
+      - imagem (futuramente)
+- Estados
+  - estados sao os dados que estao disponiveis
+  - os estados iniciais sempre serao 
+- Agentes
+  - Estruturas fonte da execucao
+  - responsavrl por realizar o trabalho
+  - a fonte, a origem da execucao
+  - fonte do trabalho
+  - podem ser arquivos, pessoas, ias, agentes como um todo
+  - toda estrutuar que comporta funcao é um agente
+    - objetos
+    - funcoes
 - Selecao
   - estruturas de conidcao, definem para onde vai o fluxo conforme
   o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
@@ -41,6 +66,7 @@
   - for
   - while
   - do-while
+- try catch
 - Files (Layers)
   - todo dado tem um endereco
   - toda funcao tem um endereco
@@ -50,12 +76,26 @@
   - abstrato nao possuinendereco fisico
     - estruturas universais
 - publico / privado
-  - 
+  - dados e funcoes podem ser publicas ou privadas
+  - publicas queme sta de forma possui acesso
+    - public ou export
+  - privada sao os que apenas dentro da caixa, estado tem acesso
+    - private ou dados ou fucnoes especificadas no arquivo/contexto
+-------------------
+- boas praticas de desenvlvimenot
+  - solid
+- padroes de projeto
+  - factory
+  - singleton
+- similares a OOP x flow
+  - instaciacao de uma classe similar ao flow..
 
 
 
 
 Roteiro (capítulos): [`roteiro.md`](roteiro.md)
+
+Código JS + AST ESTree por representação: [`indice-ast.html`](indice-ast.html)
 
 "A picture is worth a thousand words." – Confucius, 552–479 BCE
 

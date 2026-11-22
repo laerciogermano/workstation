@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flow · função main</title>
+<title>Flow · Índice AST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
@@ -45,6 +45,14 @@ h1 {
   letter-spacing: -.02em;
 }
 .lead { margin: 0 0 1.75rem; color: var(--body); max-width: 36rem; }
+h2 {
+  margin: 2rem 0 .75rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+  font: 700 1.35rem/1.2 Archivo, sans-serif; letter-spacing: -.015em;
+}
+h2:first-of-type { border-top: 0; padding-top: 0; }
+h3 { margin: 1.5rem 0 .5rem; font: 700 1.1rem/1.25 Archivo, sans-serif; }
+h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); color: var(--accent); margin-right: .4rem; }
+.sec-lead { margin: 0 0 1rem; color: var(--body); }
 
 .lab {
   margin: 0 0 .35rem;
@@ -74,6 +82,15 @@ h1 {
 .pane.plan .svg-host { overflow: auto; }
 .err { color: var(--accent); font-family: var(--mono); font-size: .78rem; padding: .5rem 0; }
 
+.toc {
+  margin: 0 0 1.75rem; padding: .85rem 1rem;
+  border: 1px solid var(--line); border-radius: 6px;
+  font: 600 .85rem/1.5 Archivo, sans-serif;
+}
+.toc .t { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--body); margin-bottom: .35rem; }
+.toc ol { margin: 0; padding-left: 1.25rem; }
+.toc ul { list-style: none; margin: .25rem 0 0; padding-left: 1rem; }
+
 footer {
   margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line);
   font: 600 .75rem/1.45 Archivo, sans-serif; color: var(--body);
@@ -83,7 +100,7 @@ footer {
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="indice.md">Flow <span>·</span> main</a>
+  <a class="brand" href="indice.md">Flow <span>·</span> Índice AST</a>
   <nav>
     <a href="indice.md">índice</a>
     <a href="apresentacao.md">apresentação</a>
@@ -96,49 +113,23 @@ footer {
   <h1>Índice · AST e visão</h1>
   <p class="lead">Exemplos alinhados ao <a href="indice.md">indice.md</a>: código JavaScript, AST ESTree, AST Flow e plano SVG.</p>
 
-  <nav class="toc" aria-label="Índice" style="margin:0 0 1.75rem;padding:.85rem 1rem;border:1px solid var(--line);border-radius:6px;font:600 .85rem/1.5 Archivo,sans-serif">
-    <div style="font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--body);margin-bottom:.35rem">Índice</div>
-    <ol style="margin:0;padding-left:1.25rem;color:var(--ink)">
+  <nav class="toc" aria-label="Índice">
+    <div class="t">Índice</div>
+    <ol>
       <li>
         <a href="#funcoes">Funções</a>
-        <ul style="list-style:none;margin:.25rem 0 0;padding-left:1rem">
+        <ul>
           <li><a href="#main">1.1 A função <code>main</code></a> — 1ª ordem, sólida, sem I/O</li>
+          <li><a href="#filha">1.2 Função filha</a> — composição: filho dentro de <code>main</code></li>
         </ul>
       </li>
     </ol>
   </nav>
 
-  <h2 id="funcoes" style="margin:0 0 .75rem;font:700 1.35rem/1.2 Archivo,sans-serif;letter-spacing:-.015em"><span style="font:600 .85rem/1 var(--mono);color:var(--accent);margin-right:.45rem">1.</span>Funções</h2>
+  <h2 id="funcoes"><span class="n">1.</span>Funções</h2>
 
-  <section id="main">
-  <h3 style="margin:0 0 .75rem;font:700 1.1rem/1.25 Archivo,sans-serif"><span style="font:600 .8rem/1 var(--mono);color:var(--accent);margin-right:.4rem">1.1</span>A função <code>main</code></h3>
-  <p style="margin:0 0 1rem;color:var(--body)">1ª ordem, sólida, sem entrada e sem saída.</p>
-
-  <div class="lab"><span class="kind">JS</span> Código</div>
-  <div class="pane">
-    <div class="hd">JavaScript <span class="tag">fonte</span></div>
-    <pre id="code-js"></pre>
-  </div>
-
-  <div class="lab"><span class="kind">ESTree</span> Árvore sintática</div>
-  <div class="pane ast">
-    <div class="hd">AST do código <span class="tag">Acorn</span></div>
-    <pre id="code-estree"></pre>
-  </div>
-
-  <div class="lab"><span class="kind">Flow</span> AST do fluxo</div>
-  <div class="pane ast">
-    <div class="hd">IR flow-novo <span class="tag">Fn</span></div>
-    <pre id="code-flow"></pre>
-  </div>
-
-  <div class="lab"><span class="kind">Plano</span> Visão</div>
-  <div class="pane plan">
-    <div class="hd">SVG <span class="tag">renderFnSvg</span></div>
-    <div class="svg-host" id="plan"></div>
-    <div class="err" id="plan-err" hidden></div>
-  </div>
-  </section>
+  <section id="main" data-ex="main"></section>
+  <section id="filha" data-ex="filha"></section>
 
   <footer>
     Lib: <a href="../novo/ast/fn-svg.ts">novo/ast/fn-svg.ts</a> ·
@@ -150,20 +141,34 @@ footer {
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";
 
-const CODE = `async function main() {
-}`;
+const fn = (id, title, extra = {}) => ({
+  t: "fn", id, title, agent: null, resp: null,
+  ins: [], outs: [], kids: [], par: false, ...extra,
+});
 
-const FLOW_AST = {
-  t: "fn",
-  id: "n1",
-  title: "main",
-  agent: null,
-  resp: null,
-  ins: [],
-  outs: [],
-  kids: [],
-  par: false,
-  file: "main.ts",
+const EXAMPLES = {
+  main: {
+    num: "1.1",
+    title: "A função <code>main</code>",
+    lead: "1ª ordem, sólida, sem entrada e sem saída.",
+    code: `async function main() {
+}`,
+    flow: fn("n1", "main", { file: "main.ts" }),
+  },
+  filha: {
+    num: "1.2",
+    title: "Função filha",
+    lead: "Criação de um elemento filho: <code>hello</code> dentro de <code>main</code> (composição).",
+    code: `async function main() {
+  async function hello() {
+  }
+  await hello();
+}`,
+    flow: fn("n1", "main", {
+      file: "main.ts",
+      kids: [fn("n2", "hello")],
+    }),
+  },
 };
 
 const prune = (node) => {
@@ -177,25 +182,45 @@ const prune = (node) => {
   return out;
 };
 
-document.getElementById("code-js").textContent = CODE;
-document.getElementById("code-flow").textContent = JSON.stringify(FLOW_AST, null, 2);
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-try {
-  const estree = acorn.parse(CODE, { ecmaVersion: "latest", sourceType: "module" });
-  document.getElementById("code-estree").textContent = JSON.stringify(prune(estree), null, 2);
-} catch (e) {
-  document.getElementById("code-estree").textContent = String(e.message);
-}
+const paint = (key, ex) => {
+  const el = document.querySelector(`[data-ex="${key}"]`);
+  if (!el) return;
 
-const host = document.getElementById("plan");
-const err = document.getElementById("plan-err");
-if (typeof FlowAst?.renderFnSvg === "function") {
-  const { svg } = FlowAst.renderFnSvg(FLOW_AST);
-  host.innerHTML = svg;
-} else {
-  err.hidden = false;
-  err.textContent = "fn-svg.js ausente — rode: npm run example:build";
-}
+  let estree = "";
+  try {
+    estree = JSON.stringify(prune(acorn.parse(ex.code, { ecmaVersion: "latest", sourceType: "module" })), null, 2);
+  } catch (e) {
+    estree = e.message;
+  }
+
+  let plan = "";
+  let planErr = "";
+  if (typeof FlowAst?.renderFnSvg === "function") {
+    plan = FlowAst.renderFnSvg(ex.flow).svg;
+  } else {
+    planErr = "fn-svg.js ausente — rode: npm run example:build";
+  }
+
+  el.innerHTML = `
+    <h3><span class="n">${esc(ex.num)}</span>${ex.title}</h3>
+    <p class="sec-lead">${ex.lead}</p>
+    <div class="lab"><span class="kind">JS</span> Código</div>
+    <div class="pane"><div class="hd">JavaScript <span class="tag">fonte</span></div><pre>${esc(ex.code)}</pre></div>
+    <div class="lab"><span class="kind">ESTree</span> Árvore sintática</div>
+    <div class="pane ast"><div class="hd">AST do código <span class="tag">Acorn</span></div><pre>${esc(estree)}</pre></div>
+    <div class="lab"><span class="kind">Flow</span> AST do fluxo</div>
+    <div class="pane ast"><div class="hd">IR flow-novo <span class="tag">Fn</span></div><pre>${esc(JSON.stringify(ex.flow, null, 2))}</pre></div>
+    <div class="lab"><span class="kind">Plano</span> Visão</div>
+    <div class="pane plan">
+      <div class="hd">SVG <span class="tag">renderFnSvg</span></div>
+      <div class="svg-host">${plan}</div>
+      ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
+    </div>`;
+};
+
+for (const [key, ex] of Object.entries(EXAMPLES)) paint(key, ex);
 </script>
 </body>
 </html>

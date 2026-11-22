@@ -26,6 +26,17 @@ describe("ast/fn-svg", () => {
     expect(fnAstToSvg(main()).startsWith("<svg")).toBe(true);
   });
 
+  it("main com filha: composição + barra da filha", () => {
+    const flow: Fn = {
+      ...main(),
+      kids: [{ t: "fn", id: "n2", title: "hello", agent: null, resp: null, ins: [], outs: [], kids: [], par: false }],
+    };
+    const { svg, scene } = renderFnSvg(flow);
+    expect(scene.rows.filter(r => r.kind === "fn")).toHaveLength(2);
+    expect(svg).toContain("hello");
+    expect(svg).toContain("sum"); // barra de composição da main
+  });
+
   it("recusa bloco if (lote só funções)", () => {
     const bad = {
       ...main(),

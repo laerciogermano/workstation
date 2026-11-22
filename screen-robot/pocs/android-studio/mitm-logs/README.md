@@ -7,3 +7,5 @@
 - Parar: `./stop.sh`
 
 Device **sem root** → só tráfego que respeita proxy do sistema.
+
+- Ao vivo no terminal: `./watch.sh`

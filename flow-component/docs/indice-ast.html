@@ -140,6 +140,11 @@ h3 .n { color: var(--dado); }
 .rplan { margin: .35rem 0 1rem; }
 .rules .ix { flex: none; box-sizing: border-box; width: 4.4rem; padding-right: .5rem; text-align: left; white-space: nowrap; font: 600 .75rem/1.9 var(--mono); font-variant-numeric: tabular-nums; color: var(--dado); }
 .sec-lead { margin: 0 0 1rem; color: var(--body); }
+.page-index { margin: 0 0 2.5rem; padding: 0; list-style: none; }
+.page-index li { margin: .35rem 0; }
+.page-index a { display: inline-flex; align-items: center; gap: .5rem; color: var(--body); text-decoration: none; }
+.page-index a:hover { color: var(--ink); }
+.page-index .gn { font: 600 .8rem/1 var(--mono); color: var(--fn); min-width: 1.6rem; }
 
 .lab {
   margin: 0 0 .35rem;
@@ -532,7 +537,7 @@ const ICONS = {
 };
 
 const GROUPS = [
-  { id: "flow", n: "0.", title: "Flow", html: `<div class="prose"><p>O Flow é uma linguagem de programação visual e universal. Adicionalmente, pode ser empregado como notação de diagramação, permitindo a representação gráfica de sistemas e de processos. O programa é um fluxo desenhado, que pode ser transpilado para qualquer linguagem, e a linguagem oferece os recursos usuais: funções, dados, seleção, repetição e tratamento de erros.</p>
+  { id: "flow", n: "", title: "Flow", preface: true, html: `<div class="prose"><p>O Flow é uma linguagem de programação visual e universal. Adicionalmente, pode ser empregado como notação de diagramação, permitindo a representação gráfica de sistemas e de processos. O programa é um fluxo desenhado, que pode ser transpilado para qualquer linguagem, e a linguagem oferece os recursos usuais: funções, dados, seleção, repetição e tratamento de erros.</p>
 <p>Todo sistema é composto, essencialmente, de unidades de processamento e de unidades processáveis, isto é, de funções e de estados. A função é a unidade de processamento, eterna e imutável, e por essa natureza é representada por um círculo. O estado é a unidade processável, o dado que atravessa a função, mutável e transitório, e por essa natureza é representado por um quadrado. Um software é um conjunto de fluxos de execução.</p>
 <p>O desenho substitui a leitura linear do código-fonte, e a ordem de execução, o paralelismo e o caminho dos dados ficam explícitos, o que reduz o esforço de análise. Todos os fluxos de um sistema podem ser vistos em conjunto, e os componentes, por serem desacoplados, podem ser substituídos em qualquer contexto. A representação visual também facilita o aprendizado de programação por iniciantes, pois permite expressar a lógica sem depender da sintaxe de uma linguagem.</p>
 <p>O modelo se aplica aos processos de software, ou seja, ao código, e à gestão de processos em geral, incluindo o gerenciamento de tarefas. Nesse segundo uso, o responsável por cada passo pode ser uma pessoa, um agente de IA, uma máquina ou outro sistema.</p>
@@ -709,7 +714,19 @@ const applyStatic = () => {
 const renderAll = () => {
   const out = document.getElementById("out"), toc = document.getElementById("toc");
   out.innerHTML = ""; toc.innerHTML = ""; if (searchInput) searchInput.value = "";
-  for (const g of GROUPS.filter((x) => !x.hidden)) {
+  const visible = GROUPS.filter((x) => !x.hidden);
+  const preface = visible.filter((g) => g.preface);
+  const indexed = visible.filter((g) => !g.preface);
+  for (const g of preface) {
+    const gt = grp(g), title = gt.t ?? g.title;
+    out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}">${esc(title)}</h2>${trHtml(g.html ?? "")}`);
+  }
+  const idxTitle = ui("Índice", "Contents");
+  out.insertAdjacentHTML("beforeend", `<h2 id="indice">${esc(idxTitle)}</h2><ol class="page-index">${indexed.map((g) => {
+    const title = grp(g).t ?? g.title;
+    return `<li><a href="#${g.id}"><span class="gn">${esc(g.n)}</span>${esc(title)}</a></li>`;
+  }).join("")}</ol>`);
+  for (const g of indexed) {
     const gt = grp(g), title = gt.t ?? g.title, lead = gt.lead ?? g.lead, rl = gt.rules ?? g.rules;
     const keys = g.keys.filter((k) => EXAMPLES[k]);
     out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(title)}</h2>${lead ? `<p class="sec-lead">${lead}</p>` : ""}${rl ? `<ol class="rules">${rl.map((t, i) => `<li><span class="ix">${esc(g.n)}${i + 1}</span><span>${t}</span></li>`).join("")}</ol>` : ""}${trHtml(g.html ?? "")}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);

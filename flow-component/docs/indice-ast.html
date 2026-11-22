@@ -87,8 +87,11 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
   grid-template-areas: "side content";
 }
 .side { grid-area: side; }
-.content-col { grid-area: content; min-width: 0; max-width: 74rem; margin: 0 auto; width: 100%; box-sizing: border-box; }
-.flow-preface { padding: 2rem 2.5rem 0; box-sizing: border-box; }
+.content-col {
+  grid-area: content; min-width: 0; width: 100%; box-sizing: border-box;
+  max-width: 52rem; margin: 0 auto; padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+}
+.flow-preface { padding: 2rem 0 0; box-sizing: border-box; }
 .flow-preface h2 { border-top: 0; padding-top: 0; }
 .main-col { min-width: 0; }
 .side {
@@ -109,12 +112,12 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 @media (max-width: 62rem) {
   .layout { display: flex; flex-direction: column; }
   .content-col { display: contents; }
-  .flow-preface { order: 1; }
+  .flow-preface { order: 1; padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 0; }
+  .main-col { order: 3; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
   .side { order: 2; position: static; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .main-col { order: 3; }
   .side ul { display: block; }
 }
-main { padding: 2rem 2.5rem 4rem; }
+main { padding: 2rem 0 4rem; }
 h1 {
   margin: 0 0 .4rem;
   font: 800 clamp(1.8rem, 4vw, 2.4rem)/1.12 "IBM Plex Sans", sans-serif;

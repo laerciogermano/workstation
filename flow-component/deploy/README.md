@@ -1,7 +1,7 @@
 # Deploy — FOP (fop.laerciogermano.com · flow-oriented-programming.com)
 
-**URL:** https://flow-oriented-programming.com/ · https://www.flow-oriented-programming.com/ · https://fop.laerciogermano.com/ (URL limpa — sem `flow-novo.html` nem `?tema=`)  
-**Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop` · `index.html` (= editor)  
+**URL:** https://flow-oriented-programming.com/ · https://www.flow-oriented-programming.com/ · https://fop.laerciogermano.com/  
+**Host:** Contabo `185.250.37.82` · root `/opt/fop` · nginx site `fop` · `index.html` (= índice AST / landing) · editor oculto em `/flow-novo.html`  
 **DNS Hostinger**
 - zona `flow-oriented-programming.com`: A `@` → `185.250.37.82`; CNAME `www` → `flow-oriented-programming.com`
 - zona `laerciogermano.com`: A `fop` → `185.250.37.82` (também coberto pelo wildcard `*` → `185.250.37.82`)
@@ -58,6 +58,8 @@
 **Explorer sem Sources:** removido o ícone/users de cadastrar libs no cabeçalho. Libs padrão seguem em `DEFAULT_AGENTS`. Rollback: restaurar `#agents` + `agentsDialog` em `novo/app.ts`.
 
 **Arquivos no Explorer:** `+` e lixeira sempre visíveis (não só no hover), no mesmo espírito do `src`. Rollback: CSS `.ex-file .ex-tools` de volta a `display:none` + hover.
+
+**Antes → depois (landing 2026-11-22):** `/` = editor (`flow-novo` copiado para `index.html`) → `/` = [`docs/indice-ast.html`](../docs/indice-ast.html) (logo `favicon.svg`); editor fica em `/flow-novo.html` (sem 301 para `/`). Rollback: em `publicar.sh` voltar `cp flow-novo.html → index.html` e o `location = /flow-novo.html { return 301 /; }` (com exceção `?demo=`).
 
 **Antes → depois:** `/` redirecionava para `/flow-novo.html?tema=eternos-black` → `/` serve `index.html` e `/flow-novo.html` vira 301 `/`. Sample `main`+`example` → só `main`. Sem PWA/headers → metas app + manifest + SW + headers de segurança no nginx. Alça do bloco lia `clientY`/`countForRow` (não crescia ao arrastar pra direita) → de novo `countForStep` no eixo X + guia vertical. Aninhamento fundo engolia o plano (tableWidth curta) → `tableWidth` sobe com `maxDepth` + chrome real; `.gtable` com `overflow:hidden`. Diagrama: `bandl` com largura `IND` + wash suave (estilo trilho) e `planGutter`; tabela segue só `padding-left` (sem trilhos HTML). Seleção da barra (`.fn.sel` / `.sum.sel`) usava `stroke: var(--ink)` → borda branca no `eternos-black`; agora stroke = cor da função (`--f-conc-s` / `--fn`). Função azul; for branco no `eternos-black` (`--fc-loop: #f2f2f2`, preto no `eternos` claro). Pill do for: `↻` ia dentro da etiqueta (desalinhava do if) → ícone `.flp` na linha + pill em `colX+11` como o if. Highlight do código: `esc` antes do regex quebrava `&lt;`/`&gt;` (coloria `lt`/`gt`) → tokeniza o texto cru e só então escapa.  
 **Rollback PWA:** remover `manifest.webmanifest` / `sw.js` / ícones do `example/`, tirar metas e registro SW do `flow-novo.html`, voltar `nginx-fop.conf` sem `add_header`/locations PWA, republicar.  

@@ -25,7 +25,6 @@ server {
     root /opt/fop;
     index index.html;
     location ^~ /.well-known/acme-challenge/ { root /var/www/html; }
-    location = /flow-novo.html { return 301 /; }
     location / { try_files $uri $uri/ /index.html; }
 }
 HTTPONLY
@@ -37,9 +36,16 @@ sshpass -e rsync -az --delete \
   -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
   "$SRC/" "root@$HOST:/opt/fop/"
 
-# Entrada canônica: / → index.html (= editor), sem flow-novo nem ?tema= na URL
-sshpass -e ssh -o StrictHostKeyChecking=no "root@$HOST" \
-  'cp -f /opt/fop/flow-novo.html /opt/fop/index.html'
+# Página principal = índice AST; editor permanece em /flow-novo.html (oculto)
+sshpass -e rsync -az \
+  -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
+  "$ROOT/docs/indice-ast.html" "root@$HOST:/opt/fop/index.html"
+sshpass -e rsync -az \
+  -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
+  "$ROOT/docs/fn-svg.js" "root@$HOST:/opt/fop/fn-svg.js"
+sshpass -e rsync -az \
+  -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \
+  "$ROOT/docs/img/" "root@$HOST:/opt/fop/img/"
 
 sshpass -e rsync -az \
   -e 'sshpass -e ssh -o StrictHostKeyChecking=no' \

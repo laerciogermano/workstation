@@ -1097,8 +1097,8 @@ var FlowAst = (() => {
         const txt = r.kind === "catch" ? L.catchTxt : r.kind === "else" ? L.elseTxt : blockText(n);
         const cx2 = colX(r.s), cy = ym(i), px = cx2 + 11;
         const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6);
-        if (cls === "if") over.push(`<path class="fif" d="M${cx2} ${cy - 7} L${cx2 + 6.5} ${cy + 5} H${cx2 - 6.5} Z"/>`);
-        if (cls === "el") over.push(`<path class="fel" d="M${cx2} ${cy + 7} L${cx2 + 6.5} ${cy - 5} H${cx2 - 6.5} Z"/>`);
+        if (cls === "if") over.push(`<path class="fif" d="M${cx2} ${cy + 7} L${cx2 + 6.5} ${cy - 5} H${cx2 - 6.5} Z"/>`);
+        if (cls === "el") over.push(`<path class="fel" d="M${cx2} ${cy - 7} L${cx2 + 6.5} ${cy + 5} H${cx2 - 6.5} Z"/>`);
         if (cls === "lp") over.push(`<text class="flp" x="${cx2}" y="${cy + 3.5}" text-anchor="middle">\u21BB</text>`);
         if (cls === "tr") over.push(`<path class="ftr" d="M${cx2} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx2 - 3.5} ${cy - 6.1} ${cx2 - 1.8} ${cy - 7} ${cx2} ${cy - 7}z"/>`);
         if (cls === "ca") over.push(`<path class="fca" d="M${cx2 - 5} ${cy - 5} L${cx2 + 5} ${cy + 5} M${cx2 + 5} ${cy - 5} L${cx2 - 5} ${cy + 5}"/>`);

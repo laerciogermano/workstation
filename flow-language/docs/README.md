@@ -8,6 +8,14 @@ Config IA: [`../config/config-ia.md`](../config/config-ia.md) · Prompts: [`../p
 
 ---
 
+## Artigo
+
+| Artefato | Arquivo | Papel |
+|----------|---------|-------|
+| Estrutura do artigo (12 capítulos) | [`artigo.md`](artigo.md) · [`artigo.html`](artigo.html) | Roteiro de [`flow-component/docs/roteiro.md`](../../flow-component/docs/roteiro.md) + acréscimos das Meditações |
+
+---
+
 ## Fundamentos (inputs)
 
 PDFs de origem do modelo FOP. Não são artefatos da esteira; orientam visão, épicos e specs.

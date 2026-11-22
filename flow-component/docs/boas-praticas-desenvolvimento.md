@@ -1,1 +1,1 @@
-- criar funcao
+- criar frontend como grids, onde cada elemento consiga atuar de forma indenpendente, por exemplo, criar o flow diagram, ao inves de criar elementos irmaos, filhos e que cada alteracao vai impactar em cada um, voce separa a tela em grid, e cada componente possui um espaco nesse grid, recalculado de acordo com o tamanho do grid mudar. Esses componentes tambem podem se referenciar em posicao por outros components.

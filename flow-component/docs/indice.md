@@ -17,8 +17,8 @@
 - tudo é composto por funcoes (eternos) e estados (mutáveis)
   - softwares sao feitos de fluxos de esxecucao
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
-- Funcoes
-  - 1. [`main`](indice-ast.html) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+- 1. Funcoes
+  - 1.1 [`main`](indice-ast.html) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - funcoes sao unidades de transformacao
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas

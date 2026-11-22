@@ -70,13 +70,25 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 .rail a { display: block; padding: 4px 0 4px var(--s3); margin-left: -1px; border-left: 1px solid transparent; color: var(--body); text-decoration: none; }
 .rail a:hover { color: var(--ink); }
 .rail a.on { color: var(--ink); border-left-color: var(--ink); }
-@media (min-width: 1500px) { .layout { grid-template-columns: 17rem minmax(0, 1fr) 15rem; } .rail { display: block; } }
+@media (min-width: 1500px) {
+  .layout {
+    grid-template-columns: 17rem minmax(0, 1fr) 15rem;
+    grid-template-areas: "side flow rail" "side main rail";
+  }
+  .rail { display: block; grid-area: rail; }
+}
 @media (max-width: 62rem) { .rail { display: none !important; } }
 /* botão de copiar código */
 .tabpanel.code { position: relative; }
 .copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--paper-2); color: var(--body); font: 600 10px "IBM Plex Sans", sans-serif; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
 .copy:hover { color: var(--ink); border-color: var(--body); }
-.layout { display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; max-width: none; margin: 0; }
+.layout {
+  display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; max-width: none; margin: 0;
+  grid-template-areas: "side flow" "side main";
+}
+.side { grid-area: side; }
+.flow-preface { grid-area: flow; min-width: 0; max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 0; width: 100%; box-sizing: border-box; }
+.main-col { grid-area: main; min-width: 0; }
 .side {
   position: sticky; top: 3.5rem; height: calc(100vh - 3.5rem); overflow-y: auto;
   padding: 1.5rem .75rem 2rem 1.25rem; border-right: 1px solid var(--line);
@@ -94,8 +106,9 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 .side a.on { color: var(--accent); border-left-color: var(--accent); background: var(--paper-2); }
 @media (max-width: 62rem) {
   .layout { display: flex; flex-direction: column; }
-  .side { order: 2; position: static; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 0; }
-  main { order: 1; }
+  .flow-preface { order: 1; }
+  .side { order: 2; position: static; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .main-col { order: 3; }
   .side ul { display: block; }
 }
 main { max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
@@ -296,9 +309,9 @@ footer {
   </blockquote>
 </section>
 <div class="layout">
+<div class="flow-preface" id="flow-preface"></div>
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
-<main id="conteudo">
-
+<main class="main-col" id="conteudo">
   <div id="out"></div>
 </main>
 <aside class="rail" id="rail" aria-label="Nesta página"></aside>
@@ -708,12 +721,15 @@ const applyStatic = () => {
 };
 
 const renderAll = () => {
-  const out = document.getElementById("out"), toc = document.getElementById("toc");
-  out.innerHTML = ""; toc.innerHTML = ""; if (searchInput) searchInput.value = "";
+  const out = document.getElementById("out"), toc = document.getElementById("toc"), preface = document.getElementById("flow-preface");
+  out.innerHTML = ""; toc.innerHTML = ""; if (preface) preface.innerHTML = ""; if (searchInput) searchInput.value = "";
   for (const g of GROUPS.filter((x) => !x.hidden)) {
     const gt = grp(g), title = gt.t ?? g.title, lead = gt.lead ?? g.lead, rl = gt.rules ?? g.rules;
     const keys = g.keys.filter((k) => EXAMPLES[k]);
-    out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(title)}</h2>${lead ? `<p class="sec-lead">${lead}</p>` : ""}${rl ? `<ol class="rules">${rl.map((t, i) => `<li><span class="ix">${esc(g.n)}${i + 1}</span><span>${t}</span></li>`).join("")}</ol>` : ""}${trHtml(g.html ?? "")}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
+    const block = `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(title)}</h2>${lead ? `<p class="sec-lead">${lead}</p>` : ""}${rl ? `<ol class="rules">${rl.map((t, i) => `<li><span class="ix">${esc(g.n)}${i + 1}</span><span>${t}</span></li>`).join("")}</ol>` : ""}${trHtml(g.html ?? "")}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`;
+    // Flow fora do main no DOM para no mobile ficar: Flow → índice → resto (desktop: coluna única com Flow em cima)
+    if (g.id === "flow" && preface) preface.insertAdjacentHTML("beforeend", block);
+    else out.insertAdjacentHTML("beforeend", block);
     toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}">${ICONS[g.id] ?? `<span class="gn">${esc(g.n)}</span>`}${esc(title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li${EXAMPLES[k].sub ? ' class="sub"' : ""}><a href="#${anchor(k)}">${EXAMPLES[k].num} ${exTitle(k, EXAMPLES[k])}</a></li>`).join("")}</ul>` : ""}</li>`);
     for (const k of keys) paint(k, EXAMPLES[k], g.id === "funcoes", false, g.id === "responsaveis");
   }

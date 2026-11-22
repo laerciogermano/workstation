@@ -19,8 +19,8 @@
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
 - 1. Funcoes
   - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
-  - 1.2 [`função filha`](indice-ast.html#filha) — filho dentro de main (composição)
-  - 1.3 [`função paralela`](indice-ast.html#paralela) — irmã no mesmo passo (par / Promise.all)
+  - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
+  - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
   - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmã no passo seguinte (await em sequência)
   - 1.5 [`entrada`](indice-ast.html#entrada) · 1.6 [`saída`](indice-ast.html#saida) · 1.7 [`entrada e saída ligadas`](indice-ast.html#entradaSaida)
   - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista)

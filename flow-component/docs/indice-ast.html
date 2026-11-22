@@ -73,7 +73,7 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 @media (min-width: 1500px) {
   .layout {
     grid-template-columns: 17rem minmax(0, 1fr) 15rem;
-    grid-template-areas: "side flow rail" "side main rail";
+    grid-template-areas: "side content rail";
   }
   .rail { display: block; grid-area: rail; }
 }
@@ -84,12 +84,13 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 .copy:hover { color: var(--ink); border-color: var(--body); }
 .layout {
   display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; max-width: none; margin: 0;
-  grid-template-areas: "side flow" "side main";
+  grid-template-areas: "side content";
 }
 .side { grid-area: side; }
-.flow-preface { grid-area: flow; min-width: 0; max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 0; width: 100%; box-sizing: border-box; }
+.content-col { grid-area: content; min-width: 0; max-width: 74rem; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.flow-preface { padding: 2rem 2.5rem 0; box-sizing: border-box; }
 .flow-preface h2 { border-top: 0; padding-top: 0; }
-.main-col { grid-area: main; min-width: 0; }
+.main-col { min-width: 0; }
 .side {
   position: sticky; top: 3.5rem; height: calc(100vh - 3.5rem); overflow-y: auto;
   padding: 1.5rem .75rem 2rem 1.25rem; border-right: 1px solid var(--line);
@@ -107,12 +108,13 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 .side a.on { color: var(--accent); border-left-color: var(--accent); background: var(--paper-2); }
 @media (max-width: 62rem) {
   .layout { display: flex; flex-direction: column; }
+  .content-col { display: contents; }
   .flow-preface { order: 1; }
   .side { order: 2; position: static; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .main-col { order: 3; }
   .side ul { display: block; }
 }
-main { max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
+main { padding: 2rem 2.5rem 4rem; }
 h1 {
   margin: 0 0 .4rem;
   font: 800 clamp(1.8rem, 4vw, 2.4rem)/1.12 "IBM Plex Sans", sans-serif;
@@ -310,11 +312,13 @@ footer {
   </blockquote>
 </section>
 <div class="layout">
-<div class="flow-preface" id="flow-preface"></div>
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
+<div class="content-col">
+<div class="flow-preface" id="flow-preface"></div>
 <main class="main-col" id="conteudo">
   <div id="out"></div>
 </main>
+</div>
 <aside class="rail" id="rail" aria-label="Nesta página"></aside>
 </div>
 <footer class="site-foot">

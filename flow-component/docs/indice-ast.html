@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flow Oriented Programming</title>
+<link%20rel="icon"%20type="image/svg+xml"%20href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%20fill=%22none%22%3E%3Crect%20width=%2232%22%20height=%2232%22%20rx=%227%22%20fill=%22%230b0b0b%22/%3E%3Crect%20x=%22.5%22%20y=%22.5%22%20width=%2231%22%20height=%2231%22%20rx=%226.5%22%20stroke=%22%23262626%22/%3E%3Cg%20stroke=%22%23f6f6f6%22%20stroke-width=%221.4%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Cpath%20d=%22M10.2%2016H13M13%2016V9.5M13%2016v6.5M13%209.5h3M13%2022.5h3%22/%3E%3Cpath%20d=%22M21%209.5h3.4v13H21M24.4%2016h2%22/%3E%3C/g%3E%3Ccircle%20cx=%227%22%20cy=%2216%22%20r=%223.2%22%20fill=%22%23f07167%22/%3E%3Crect%20x=%2216%22%20y=%227%22%20width=%225%22%20height=%225%22%20fill=%22%235b8cff%22/%3E%3Crect%20x=%2216%22%20y=%2220%22%20width=%225%22%20height=%225%22%20fill=%22%235b8cff%22/%3E%3Cpath%20d=%22M28.6%2013.4l2%203.4h-4z%22%20fill=%22%23d97706%22/%3E%3C/svg%3E">
+<meta name="description" content="Flow Oriented Programming: uma linguagem de programação visual e universal, baseada em funções e estados.">
+<meta property="og:title" content="Flow Oriented Programming">
+<meta property="og:description" content="Funções e estados, num só desenho. Linguagem visual e universal.">
+<meta property="og:type" content="article">
+<meta name="color-scheme" content="dark light">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Flow Oriented Programming","inLanguage":["pt-BR","en"],"about":"Linguagem de programação visual baseada em funções e estados","license":"https://opensource.org/license/mit"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -107,8 +114,8 @@ code, pre { font-family: var(--mono); }
   height: 56px; padding: 6px 16px;
   border-bottom: 1px solid var(--line); background: var(--paper);
 }
-.brand { display: inline-flex; align-items: flex-start; gap: 9px; color: var(--ink); text-decoration: none; }
-.brand .mark { width: 22px; height: 22px; flex: none; margin-top: 1px; border-radius: 6px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; }
+.brand .mark { width: 32px; height: 32px; flex: none; margin-top: 1px; border-radius: 6px; }
 .brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .brand-row { display: inline-flex; align-items: center; gap: 8px; }
 .ttl { font-weight: 700; font-size: 12px; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
@@ -127,6 +134,34 @@ code, pre { font-family: var(--mono); }
 .meta { font-size: .75rem; font-weight: 600; color: var(--body); }
 
 html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+/* tokens de espaçamento (escala de base 4), raio e curva de movimento */
+:root { --s1: 4px; --s2: 8px; --s3: 16px; --s4: 32px; --s5: 64px; --r1: 6px; --r2: 10px; --ease: cubic-bezier(.16, 1, .3, 1); }
+html { text-rendering: optimizeLegibility; -webkit-text-size-adjust: 100%; }
+body { line-height: 1.65; letter-spacing: .003em; font-optical-sizing: auto; }
+:focus-visible { outline: 2px solid var(--fn); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: -999px; top: var(--s2); z-index: 20; padding: var(--s2) var(--s3); background: var(--ink); color: var(--paper); border-radius: var(--r1); text-decoration: none; font: 600 12px "IBM Plex Sans", sans-serif; }
+.skip:focus { left: var(--s3); }
+a, button { transition: color .15s var(--ease), background-color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+/* busca na barra lateral */
+.search { position: relative; margin: 0 .5rem var(--s3) .25rem; }
+.search input { width: 100%; box-sizing: border-box; padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--paper-2); color: var(--ink); font: 500 12px "IBM Plex Sans", sans-serif; }
+.search input::placeholder { color: var(--muted, #8a8a8a); }
+.search kbd { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; font: 600 10px var(--mono); color: var(--muted, #8a8a8a); pointer-events: none; }
+.side li.hide { display: none; }
+/* coluna "nesta página" (telas largas) */
+.rail { display: none; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1rem 2rem .25rem; font: 500 12px/1.4 "IBM Plex Sans", sans-serif; }
+.rail .t { margin: 0 0 var(--s2); font: 700 10px/1 "IBM Plex Sans", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted, #8a8a8a); }
+.rail ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
+.rail a { display: block; padding: 4px 0 4px var(--s3); margin-left: -1px; border-left: 1px solid transparent; color: var(--body); text-decoration: none; }
+.rail a:hover { color: var(--ink); }
+.rail a.on { color: var(--ink); border-left-color: var(--ink); }
+@media (min-width: 1500px) { .layout { grid-template-columns: 17rem minmax(0, 1fr) 15rem; } .rail { display: block; } }
+@media (max-width: 62rem) { .rail { display: none !important; } }
+/* botão de copiar código */
+.tabpanel.code { position: relative; }
+.copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--paper-2); color: var(--body); font: 600 10px "IBM Plex Sans", sans-serif; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.copy:hover { color: var(--ink); border-color: var(--body); }
 .layout { display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; max-width: none; margin: 0; }
 .side {
   position: sticky; top: 3.5rem; height: calc(100vh - 3.5rem); overflow-y: auto;
@@ -244,7 +279,7 @@ h3 .n { color: var(--dado); }
 .toc ul { list-style: none; margin: .25rem 0 0; padding-left: 1rem; }
 
 
-.hero { position: relative; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 1.5rem; padding: .6rem;
+.hero { position: relative; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 0 auto 2.5rem; padding: .6rem;
   border: 0; border-radius: 10px; overflow: hidden; background: var(--paper); }
 .hero h1 { margin: .1rem .25rem .6rem; font: 800 1.35rem/1.1 "IBM Plex Sans", sans-serif; letter-spacing: -.02em; color: var(--ink); }
 .hero h1 span { color: var(--accent); }
@@ -272,12 +307,17 @@ h3 .n { color: var(--dado); }
 .lang button:first-child { border-radius: 99px 0 0 99px; }
 .lang button:last-child { border-radius: 0 99px 99px 0; }
 .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.page-title { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.6rem auto .4rem;
-  font: 600 clamp(2rem, 4.6vw, 3.1rem)/1.04 "IBM Plex Sans", sans-serif; letter-spacing: -.04em; color: var(--muted, #8a8a8a); }
-.page-title span { color: var(--ink); }
+.page-title { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 3.5rem auto 1.75rem;
+  font: 600 clamp(2rem, 4.6vw, 3.1rem)/1.04 "IBM Plex Sans", sans-serif; letter-spacing: -.04em; text-align: center; color: var(--muted, #8a8a8a); }
+.page-title { display: flex; align-items: center; justify-content: center; gap: .55em; }
+.page-title .pt-t span { color: var(--ink); }
+.page-title i { flex: none; display: inline-block; width: .5em; height: .5em; border: 1px solid; }
+.page-title .pt-c { border-radius: 50%; border-color: var(--fn); }
+.page-title .pt-s { border-radius: 0; border-color: var(--dado); background: var(--dado); }
+.epigraph-top { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 2.25rem auto 1.25rem; text-align: center; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
 .athens { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 0; }
 .athens img { display: block; width: 100%; height: clamp(220px, 38vw, 440px); object-fit: cover; object-position: 50% 52%; border-radius: 6px; }
-.athens figcaption { margin: .6rem 0 0; font-size: 11.5px; line-height: 1.55; letter-spacing: .01em; color: var(--muted, #8a8a8a); }
+.athens figcaption { margin: 1rem auto 0; max-width: 56rem; text-align: center; font-size: 11.5px; line-height: 1.55; letter-spacing: .01em; color: var(--muted, #8a8a8a); }
 .site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 8px 16px; border-top: 1px solid var(--line); background: var(--paper); color: var(--muted, #8a8a8a); font: 500 11px/1.4 "IBM Plex Sans", sans-serif; }
 .site-foot .foot-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 10px; margin-left: auto; flex: none; }
 .site-foot a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--line-2, #3a3a3a); }
@@ -312,7 +352,8 @@ footer {
     document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === t)));
   };
   const ok = ["black", "black-azul", "black-vermelho", "eternos-black", "tablet-black", "noite", "gantt", "graphite", "ardosia", "white", "eternos", "papel", "teal", "indigo", "cobalto", "musgo"];
-  let t = "eternos-black"; try { t = localStorage.getItem("flow-docs-theme") || "eternos-black"; } catch {}
+  let saved = null; try { saved = localStorage.getItem("flow-docs-theme"); } catch {}
+  let t = saved || (matchMedia("(prefers-color-scheme: light)").matches ? "eternos" : "eternos-black");
   if (!ok.includes(t)) t = "eternos-black";
   document.documentElement.dataset.theme = t;
   addEventListener("DOMContentLoaded", () => {
@@ -324,8 +365,9 @@ footer {
 <script src="fn-svg.js"></script>
 </head>
 <body>
+<a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
 <header class="top">
-  <span class="brand"><svg class="mark" viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0b0b0b"/><rect x="6" y="7" width="9" height="7" rx="1.5" stroke="#f6f6f6" stroke-width="1.6"/><rect x="17" y="18" width="9" height="7" rx="1.5" stroke="#f6f6f6" stroke-width="1.6"/><path d="M10.5 14v3.5h11V18" stroke="#f6f6f6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="ver" title="Version 0.1">0.1</span><span class="beta" title="Under development">prototype</span></span><span class="epigraph">"Everything flows, except flow" - Heraclitus</span></span></span>
+  <span class="brand"><svg class="mark" viewBox="0 0 40 40" width="32" height="32" fill="none" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#0b0b0b"/><rect x=".5" y=".5" width="39" height="39" rx="8.5" stroke="#262626"/><g stroke="#262626" stroke-width=".8"><path d="M4 12.6h32M4 21h32M4 29.4h32M19.6 4.5v31"/></g><circle cx="7.6" cy="8.5" r="2.1" fill="#22c55e"/><circle cx="7.6" cy="17" r="1.9" stroke="#a855f7" stroke-width="1.3"/><circle cx="7.6" cy="25.5" r="1.9" stroke="#3b82f6" stroke-width="1.3"/><circle cx="7.6" cy="34" r="2.1" fill="#8a8a8a"/><g fill="#c4c4c4"><rect x="12" y="7.6" width="5.2" height="1.8" rx=".9"/><rect x="12" y="16.1" width="4.4" height="1.8" rx=".9"/><rect x="12" y="24.6" width="5.2" height="1.8" rx=".9"/><rect x="12" y="33.1" width="3.6" height="1.8" rx=".9"/></g><g stroke="#f6f6f6" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M29.7 10.3V25.5H31.6M29.7 18.6V34H31.6"/></g><rect x="22.2" y="6.4" width="5.4" height="4.2" rx="2.1" fill="#f07167"/><rect x="22.2" y="14.9" width="5.4" height="4.2" rx="2.1" fill="#f07167"/><rect x="28.4" y="7.2" width="2.6" height="2.6" fill="#5b8cff"/><rect x="28.4" y="15.7" width="2.6" height="2.6" fill="#5b8cff"/><rect x="31.8" y="23.4" width="5.4" height="4.2" rx="2.1" stroke="#f07167" stroke-width="1.3"/><rect x="31.8" y="31.9" width="5.4" height="4.2" rx="2.1" fill="#f07167"/></svg><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span></span></span></span>
   <div class="sp"></div>
   <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
   <div class="themes" role="group" aria-label="Tema">
@@ -348,20 +390,22 @@ footer {
   </div>
 </header>
 
-  <figure class="athens">
+  <p class="epigraph-top">"Everything flows" - Heraclitus</p>
+<figure class="athens">
     <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
-    <figcaption><span class="tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo em transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the world in transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo em transformação.</span></figcaption>
+    <figcaption><span class="tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, imperfect and in transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação.</span></figcaption>
   </figure>
-<h1 class="page-title">Flow Oriented <span>Programming</span></h1>
+<h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
 <section class="hero" aria-label="Exemplo de fluxo">
   <div class="hero-plan" id="hero-plan"></div>
 </section>
 <div class="layout">
-<nav class="side" aria-label="Índice"><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
-<main>
+<nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
+<main id="conteudo">
 
   <div id="out"></div>
 </main>
+<aside class="rail" id="rail" aria-label="Nesta página"></aside>
 </div>
 <footer class="site-foot">
   <div class="fx-legend" aria-label="Legend">
@@ -435,10 +479,10 @@ const EXAMPLES = {
   array: { num: "3.7", title: "Dado: array (caixa posicional)", lead: [["D","Array é a caixa de campos posicionais."],["P","Os campos do array são acessados pela posição."]],
     code: J("async function main() {", "  const lista = [1, 2, 3];", "  const total = await contar(lista);", "}", "", "async function contar(lista) {", "  const total = lista.length;", "  return total;", "}"),
     flow: main([F("n2", "contar", { ins: ["lista"], outs: ["total"], args: { lista: '[1, 2, 3]', total: '3' } })]) },
-  dadoConcreto: { num: "10.3", title: "Dado concreto", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]], opts: { fnStates: false },
+  dadoConcreto: { num: "9.3", title: "Dado concreto", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]], opts: { fnStates: false },
     code: J("async function main() {", "  const idade = 30;", "}"),
     flow: main([], { args: { idade: '30' } }) },
-  dadoAbstrato: { num: "10.4", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]], opts: { fnStates: false },
+  dadoAbstrato: { num: "9.4", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]], opts: { fnStates: false },
     code: J("async function main(idade) {", "}"),
     flow: main([], { ins: ["idade"] }) },
   todosDados: { num: "3.1", title: "Visão: todos os tipos de dado", lead: [["D","Dados são as unidades mutáveis do fluxo."],["D","A visão de dados reúne todos os tipos de dado no mesmo estado."],["P","O identificador de um dado é um substantivo, como <code>mesa</code> ou <code>cadeira</code>."],["P","Todo dado tem um endereço, representado pelo seu nome."],["P","Em um mesmo contexto, ou bloco, endereços diferentes não podem ter nomes iguais."],["P","Todo dado simples é representado por um quadrado."],["P","Texto, número, booleano e nulo são dados simples."],["P","Toda caixa é representada por um cubo."],["P","Objeto e array são caixas, com os seus campos."],["P","A função usada como dado continua sendo função, representada por um círculo."]], opts: { fnStates: false },
@@ -451,7 +495,7 @@ const EXAMPLES = {
   estado: { num: "4.1", title: "Estado do fluxo", lead: [["D","Estado é o conjunto de funções e dados disponíveis num passo."],["P","O estado é listado abaixo do passo."],["P","Os dados de passos anteriores permanecem, esmaecidos."],["T","<code>enviar</code> recebe <code>pedido</code> e <code>pagamento</code>, produzidos antes."]],
     code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "", "  async function receber() {", "    const id = 1;", "    const pedido = { id };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pedido, pagamento) {", "  }", "}"),
     flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
-  estadoInicial: { num: "10.5", title: "Estado inicial com valor", lead: [["D","Estado inicial é o que existe antes da primeira função."],["P","Um dado inicializado existe desde o início do passo."],["T","<code>nome = \"Ana\"</code> está no estado de <code>saudar</code>."]],
+  estadoInicial: { num: "9.5", title: "Estado inicial com valor", lead: [["D","Estado inicial é o que existe antes da primeira função."],["P","Um dado inicializado existe desde o início do passo."],["T","<code>nome = \"Ana\"</code> está no estado de <code>saudar</code>."]],
     code: J("async function main() {", "  const nome = \"Ana\";", "  const saudacao = await saudar(nome);", "", "  async function saudar(nome) {", "    const saudacao = nome;", "    return saudacao;", "  }", "}"),
     flow: main([F("n2", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { nome: '"Ana"' } })]) },
   estadoCaixa: { num: "4.2", title: "Estado com caixa (objeto)", lead: [["P","Um objeto no estado é um cubo, com os campos e valores logo abaixo."]],
@@ -460,7 +504,7 @@ const EXAMPLES = {
   estadoSubstitui: { num: "4.3", title: "Estado substituído", lead: [["P","Se um nome já existente é produzido de novo, o valor novo substitui o antigo."]],
     code: J("async function main() {", "  let total = await ler();", "  total = await somar(total);", "", "  async function ler() {", "    const total = 1;", "    return total;", "  }", "  async function somar(total) {", "    const novo = total + 1;", "    return novo;", "  }", "}"),
     flow: main([F("n2", "ler", { outs: ["total"] }), F("n3", "somar", { ins: ["total"], outs: ["total"] })]) },
-  estadoAbstrato: { num: "10.6", title: "Estado abstrato (vem de fora)", lead: [["D","Estado abstrato é o dado que nenhuma função do fluxo produz."],["P","Quem chama o fluxo o fornece."],["T","O seu quadrado é vazado."]],
+  estadoAbstrato: { num: "9.6", title: "Estado abstrato (vem de fora)", lead: [["D","Estado abstrato é o dado que nenhuma função do fluxo produz."],["P","Quem chama o fluxo o fornece."],["T","O seu quadrado é vazado."]],
     code: J("async function main(pedido) {", "  await cobrar(pedido);", "", "  async function cobrar(pedido) {", "  }", "}"),
     flow: main([F("n2", "cobrar", { ins: ["pedido"] })]) },
   se: { num: "5.1", title: "Seleção: if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."],["P","A seleção é usada quando não se sabe o que executar antes de ter a informação."]],
@@ -518,17 +562,17 @@ const EXAMPLES = {
     code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  abstrata: { num: "10.2", title: "Camada (= abstrato)", lead: [["D","Camada é o abstrato, ou seja, o que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
+  abstrata: { num: "9.2", title: "Camada (= abstrato)", lead: [["D","Camada é o abstrato, ou seja, o que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
     code: J("async function main() {", "  const { hello } = state;", "  await hello();", "}"),
     flow: main([F("n2", "hello", { agent: null })]) },
 
-  solida: { num: "10.1", title: "Sólido", lead: [["D","Sólido é o que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","O endereço físico de um sólido pode ser um responsável, um valor ou um arquivo."],["P","Para executar, a camada abstrata precisa se tornar sólida."]],
+  solida: { num: "9.1", title: "Sólido", lead: [["D","Sólido é o que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","O endereço físico de um sólido pode ser um responsável, um valor ou um arquivo."],["P","Para executar, a camada abstrata precisa se tornar sólida."],["P","As funções não devem possuir sólidos, apenas abstratos."]],
     code: J("async function main() {", "  await maquina.hello();", "}"),
     flow: main([F("n2", "hello", { agent: "maquina" })]) },
 
-  publica: { num: "11.1", title: "Pública", lead: [["D","Função pública é a que pode ser acessada fora do arquivo."],["P","Dados e funções podem ser públicos ou privados."]],
+  publica: { num: "10.1", title: "Pública", lead: [["D","Função pública é a que pode ser acessada fora do arquivo."],["P","Dados e funções podem ser públicos ou privados."]],
     code: J("export async function main() {", "}"), flow: main([]) },
-  privada: { num: "11.2", title: "Privada", lead: [["D","Função privada é a que existe só dentro do arquivo ou da caixa."],["P","O privado só é acessado dentro da caixa."],["P","A função privada aninhada é chamada primeiro e definida fora de <code>main</code>."]],
+  privada: { num: "10.2", title: "Privada", lead: [["D","Função privada é a que existe só dentro do arquivo ou da caixa."],["P","O privado só é acessado dentro da caixa."],["P","A função privada aninhada é chamada primeiro e definida fora de <code>main</code>."]],
     code: J("async function main() {", "  await interna();", "", "  async function interna() {", "  }", "}"), flow: main([F("n2", "interna")]) },
 
   seAninhado: { num: "5.4", title: "Seleção: if / else aninhados", lead: [["P","Um <code>if</code> pode estar no <code>else</code> de outro."],["T","Há três caminhos possíveis, e só um executa."]],
@@ -558,16 +602,16 @@ const EXAMPLES = {
     code: J("class Carrinho {", "  async adicionar() {", "  }", "}", "", "async function main() {", "  const carrinho = new Carrinho();", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  folha: { num: "15.1", title: "Folha (*leaf*)", lead: [["D","Folha é a função sem filhas."],["P","Só a folha ocupa um passo no plano."],["T","<code>hello</code> é folha, com uma barra e um passo."]],
+  folha: { num: "11.1", title: "Folha (*leaf*)", lead: [["D","Folha é a função sem filhas."],["P","Só a folha ocupa um passo no plano."],["T","<code>hello</code> é folha, com uma barra e um passo."]],
     code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
     flow: main([F("n2", "hello")]) },
-  folhaVsComp: { num: "15.2", title: "Folha × composição", lead: [["D","Composição é a função que contém filhas."],["P","A composição não ocupa passo próprio e cobre o tempo das folhas."],["T","<code>pedido</code> é composição; <code>validar</code> e <code>cobrar</code> são folhas."]],
+  folhaVsComp: { num: "11.2", title: "Folha × composição", lead: [["D","Composição é a função que contém filhas."],["P","A composição não ocupa passo próprio e cobre o tempo das folhas."],["T","<code>pedido</code> é composição; <code>validar</code> e <code>cobrar</code> são folhas."]],
     code: J("async function main() {", "  await pedido();", "}", "", "async function pedido() {", "  await validar();", "  await cobrar();", "}", "", "async function validar() {", "}", "", "async function cobrar() {", "}"),
     flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
-  useCase: { num: "15.3", title: "Use case", lead: [["D","Use case é o fluxo de 1ª ordem que entrega um resultado ao usuário ou ao sistema."],["P","Todo sistema é um conjunto de use cases."],["T","<code>vender</code> é um use case, o entry point de um cenário completo."]],
+  useCase: { num: "11.3", title: "Use case", lead: [["D","Use case é o fluxo de 1ª ordem que entrega um resultado ao usuário ou ao sistema."],["P","Todo sistema é um conjunto de use cases."],["T","<code>vender</code> é um use case, o entry point de um cenário completo."]],
     code: J("// vendas.ts", "async function vender() {", "  const pedido = await receber();", "  await cobrar(pedido);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "}"),
     flow: F("n1", "vender", { file: "vendas.ts", kids: [F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"] })] }) },
-  useCaseFolhas: { num: "15.4", title: "Use case feito de folhas", lead: [["P","Um use case é feito de folhas (e composições)."],["T","A <code>main</code> é o use case de entrada; as folhas fazem o trabalho."]],
+  useCaseFolhas: { num: "11.4", title: "Use case feito de folhas", lead: [["P","Um use case é feito de folhas (e composições)."],["T","A <code>main</code> é o use case de entrada; as folhas fazem o trabalho."]],
     code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pagamento);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "  const pagamento = \"pago\";", "  return pagamento;", "}", "", "async function enviar(pagamento) {", "}"),
     flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pagamento"] })]) },
 };
@@ -615,13 +659,13 @@ const GROUPS = [
   { id: "repeticao", n: "6.", title: "Repetição", keys: ["repFor","repFor2","repWhile","repDoWhile"] },
   { id: "trycatch", n: "7.", title: "try / catch", keys: ["tryCatch","tryFor"] },
   { id: "responsaveis", n: "8.", title: "Responsáveis", lead: "Quem executa o passo. Pode ser sólido (arquivo, máquina, objeto) ou abstrato (IA ou pessoa, até alguém assumir).", keys: ["respArquivo","respMaquina","respIa","respPessoa","respObjeto"] },
-  { id: "files", n: "9.", title: "Files", keys: ["fileMesmo","fileOutro","fileObjeto"] },
-  { id: "solidos", n: "10.", title: "Sólidos × abstratos", keys: ["solida","abstrata","dadoConcreto","dadoAbstrato","estadoInicial","estadoAbstrato"] },
-  { id: "publico", n: "11.", title: "Público / privado", keys: ["publica","privada"] },
-  { id: "praticas", n: "12.", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp","solidDip"] },
-  { id: "padroes", n: "13.", title: "Padrões de projeto", keys: ["padFactory","padSingleton"] },
-  { id: "oop", n: "14.", title: "OOP × Flow", keys: ["oopFlow"] },
-  { id: "folhas", n: "15.", title: "Folhas e use cases", lead: "Folha = função sem filhas (ocupa o passo). Use case = fluxo de 1ª ordem que entrega um resultado.", keys: ["folha", "folhaVsComp", "useCase", "useCaseFolhas"] }];
+  { id: "files", hidden: true, n: "", title: "Files", keys: ["fileMesmo","fileOutro","fileObjeto"] },
+  { id: "solidos", n: "9.", title: "Sólidos × abstratos", lead: "As funções não devem possuir sólidos, apenas abstratos.", keys: ["solida","abstrata","dadoConcreto","dadoAbstrato","estadoInicial","estadoAbstrato"] },
+  { id: "publico", n: "10.", title: "Público / privado", keys: ["publica","privada"] },
+  { id: "praticas", hidden: true, n: "", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp","solidDip"] },
+  { id: "padroes", hidden: true, n: "", title: "Padrões de projeto", keys: ["padFactory","padSingleton"] },
+  { id: "oop", hidden: true, n: "", title: "OOP × Flow", keys: ["oopFlow"] },
+  { id: "folhas", n: "11.", title: "Folhas e use cases", lead: "Folha = função sem filhas (ocupa o passo). Use case = fluxo de 1ª ordem que entrega um resultado.", keys: ["folha", "folhaVsComp", "useCase", "useCaseFolhas"] }];
 const ANCHOR = { main: "main", filha: "filha", paralela: "paralela", sequencial: "sequencial" };
 const anchor = (k) => ANCHOR[k] ?? k;
 
@@ -639,7 +683,7 @@ const prune = (node) => {
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // ── idioma (EN / PT-BR) ──
-const EN = {"examples": {"main": {"t": "Function: the unit of processing", "r": ["A function is the unit of processing, whose purpose is to transform an initial state into a final state.", "Functions may have an input and an output.", "The input is the data that the function receives.", "The output is the data that the function returns.", "A function has, at most, one input and one output."]}, "filha": {"t": "Child function", "r": ["A function may have child functions, by composition."]}, "irma": {"t": "Sibling function", "r": ["Functions may have sibling functions.", "A sibling function is one that shares the same parent with another function.", "Sibling functions may be sequential or parallel."]}, "paralela": {"t": "Parallel function", "r": ["Parallel functions are siblings that occupy the same step.", "Parallel functions execute together.", "Parallel functions finish before the next step begins."]}, "sequencial": {"t": "Sequential function", "r": ["Functions may be sequential.", "Sequential functions are siblings in consecutive steps.", "A sequential function starts when the previous one finishes.", "Parallel and sequential functions may be combined in the same flow."]}, "texto": {"t": "Data: text", "r": ["Text is a sequence of characters treated as data."]}, "numero": {"t": "Data: number", "r": ["A number is data that expresses quantity."]}, "booleano": {"t": "Data: boolean", "r": ["A boolean is data that admits two values: true and false.", "The boolean is what decides a selection."]}, "funcaoDado": {"t": "Data: function", "r": ["A function is also data.", "A function stored in a variable is treated as data."]}, "objeto": {"t": "Data: object (keyed box)", "r": ["An object is a box of keyed fields.", "An object is data that can hold state and function."]}, "array": {"t": "Data: array (positional box)", "r": ["An array is a box of positional fields.", "The fields of an array are accessed by position."]}, "dadoConcreto": {"t": "Concrete data", "r": ["Concrete data is data that has a value.", "Its square is filled, and the value appears in the state."]}, "dadoAbstrato": {"t": "Abstract data", "r": ["Abstract data is data that does not have a value yet.", "Its square is hollow."]}, "todosDados": {"t": "Overview: all data types", "r": ["Data are the mutable units of the flow.", "The data overview gathers all data types in the same state.", "The identifier of a piece of data is a noun, such as <code>mesa</code> or <code>cadeira</code>.", "Every piece of data has an address, represented by its name.", "Within the same context, or block, different addresses cannot have the same name.", "Every simple data is represented by a square.", "Text, number, boolean and null are simple data.", "Every box is represented by a cube.", "Object and array are boxes, with their fields.", "A function used as data remains a function, represented by a circle."]}, "tipoNulo": {"t": "Data: null (absence of value)", "r": ["Null is data that represents the absence of a value.", "A function returns null when it does not find what it is looking for."]}, "estado": {"t": "Flow state", "r": ["The state is the set of functions and data available in a step.", "The state is listed below the step.", "Data from previous steps remain, faded.", "<code>enviar</code> receives <code>pedido</code> and <code>pagamento</code>, produced earlier."]}, "estadoInicial": {"t": "Initial state with a value", "r": ["The initial state is what exists before the first function.", "Initialized data exists from the beginning of the step.", "<code>nome = \"Ana\"</code> is in the state of <code>saudar</code>."]}, "estadoCaixa": {"t": "State with a box (object)", "r": ["An object in the state is a cube, with its fields and values right below."]}, "estadoSubstitui": {"t": "Replaced state", "r": ["If an existing name is produced again, the new value replaces the old one."]}, "estadoAbstrato": {"t": "Abstract state (comes from outside)", "r": ["The abstract state is data that no function of the flow produces.", "Whoever calls the flow provides it.", "Its square is hollow."]}, "se": {"t": "Selection: if", "r": ["Selection is the structure that decides, based on data, where the flow goes.", "The condition is assigned to a variable before the <code>if</code>.", "<code>enviar</code> only executes if the condition is true.", "Selection is used when it is not known what to execute before having the information."]}, "seSenao": {"t": "Selection: if / else", "r": ["<code>if</code> and <code>else</code> occupy the same step.", "Only one of the branches executes."]}, "switchEx": {"t": "Selection: switch", "r": ["Each <code>case</code> of the <code>switch</code> is equivalent to an <code>if</code>.", "There is one <code>if</code> per value."]}, "repFor": {"t": "Repetition: for", "r": ["Repetition is the structure that executes a block several times.", "The collection is assigned to a variable before the loop.", "<code>notificar</code> executes once per item.", "The possible repetitions are <code>for</code>, <code>while</code> and <code>do-while</code>."]}, "repFor2": {"t": "Repetition with several steps", "r": ["The body of a loop may have sequential and parallel steps."]}, "repWhile": {"t": "Repetition: while / do-while", "r": ["For now, the <code>while</code> uses the <code>for</code> block.", "The block label shows the condition."]}, "tryCatch": {"t": "try / catch", "r": ["<code>try/catch</code> is the structure that handles failure.", "If <code>cobrar</code> fails, the flow goes to the <code>catch</code>.", "<code>avisar</code> executes in the <code>catch</code>.", "The <code>try/catch</code> comes first; the functions are defined outside <code>main</code>."]}, "tryFor": {"t": "Combined blocks", "r": ["Blocks may be nested.", "Here there is a <code>try/catch</code> inside a <code>for</code>."]}, "fileMesmo": {"t": "Two functions in the same file", "r": ["A file is the physical address of a first-order function.", "Several functions may share the same file.", "Every piece of data and every function has an address.", "The file organizes the solid addresses."]}, "fileOutro": {"t": "Different files", "r": ["Distinct files are distinct physical addresses.", "A file is not a layer."]}, "fileObjeto": {"t": "File as object / state", "r": ["The file is also an object and a state.", "It is a box with a physical address, which holds data and functions."]}, "respArquivo": {"t": "Responsible: file (solid)", "r": ["The responsible party is whoever executes the step.", "Every responsible party has an agent name.", "An agent is the name of the responsible party, such as <code>Jardineiro</code>, <code>Agente</code> or <code>Paulo</code>.", "The agent name begins with a capital letter.", "The file is a solid responsible party.", "The responsible party may be a file, machine, AI, person or object.", "The responsible party may be solid or abstract.", "The bar of a solid responsible party is filled, and that of an abstract one is light.", "A responsible party is not a layer, since the layer is the plan and the responsible party is who fills it.", "Changing the responsible party does not change the flow."]}, "respMaquina": {"t": "Responsible: machine (solid)", "r": ["The machine, or library, is a solid responsible party."]}, "respIa": {"t": "Responsible: AI (abstract)", "r": ["The AI is an abstract responsible party until someone takes over."]}, "respPessoa": {"t": "Responsible: person (abstract)", "r": ["The person is an abstract responsible party until defined."]}, "respObjeto": {"t": "Responsible: object (solid)", "r": ["The object is a solid responsible party.", "The object already contains the functions."]}, "abstrata": {"t": "Layer (= abstract)", "r": ["A layer is the abstract, that is, what has no physical address.", "Its bar is only an outline.", "It is the only case of a hollow bar in the examples.", "Universal structures stay in the abstract plan, still empty.", "What is known in the abstract plan forms the same layer.", "A layer is not a file."]}, "solida": {"t": "Solid", "r": ["A solid is what has a physical address.", "Every first-order function is solid.", "The abstract layer becomes solid when it receives an address.", "The bar is filled, and someone executes it.", "The physical address of a solid may be a responsible party, a value or a file.", "To execute, the abstract layer needs to become solid."]}, "publica": {"t": "Public", "r": ["A public function is one that can be accessed outside the file.", "Data and functions may be public or private."]}, "privada": {"t": "Private", "r": ["A private function is one that exists only inside the file or the box.", "Private members are accessed only inside the box.", "A nested private function is called first and defined outside <code>main</code>."]}, "seAninhado": {"t": "Selection: nested if / else", "r": ["An <code>if</code> may be inside the <code>else</code> of another.", "There are three possible paths, and only one executes."]}, "repDoWhile": {"t": "Repetition: do-while", "r": ["The <code>do-while</code> executes at least once.", "It repeats while the condition holds.", "For now, it uses the <code>for</code> block."]}, "solidSrp": {"t": "SOLID: single responsibility", "r": ["Single responsibility means that each function takes care of one thing only.", "<code>pedido</code> only composes.", "The work is in <code>validar</code>, <code>cobrar</code> and <code>enviar</code>.", "Flow applies the SOLID principles."]}, "solidDip": {"t": "SOLID: depend on the abstract", "r": ["The flow depends on the abstract, not on whoever implements it.", "<code>cobrar</code> is an abstract layer.", "Changing the responsible party does not change the rest of the flow."]}, "padFactory": {"t": "Pattern: factory", "r": ["A factory is the function that creates and returns an already assembled object."]}, "padSingleton": {"t": "Pattern: singleton", "r": ["A singleton is the single, shared instance.", "<code>usarA</code> and <code>usarB</code> read the same <code>config</code>.", "Design patterns (factory, singleton) have their own form in the plan."]}, "oopFlow": {"t": "OOP × Flow: instantiation", "r": ["Instantiating a class corresponds to a responsible object.", "Each method is a step.", "Instantiating a class is equivalent to instantiating a flow."]}, "folha": {"t": "Leaf (*leaf*)", "r": ["A leaf is a function without children.", "Only the leaf occupies a step in the plan.", "<code>hello</code> is a leaf, with one bar and one step."]}, "folhaVsComp": {"t": "Leaf × composition", "r": ["A composition is a function that contains children.", "The composition does not occupy a step of its own and covers the time of its leaves.", "<code>pedido</code> is a composition; <code>validar</code> and <code>cobrar</code> are leaves."]}, "useCase": {"t": "Use case", "r": ["A use case is the first-order flow that delivers a result to the user or to the system.", "Every system is a set of use cases.", "<code>vender</code> is a use case, the entry point of a complete scenario."]}, "useCaseFolhas": {"t": "Use case made of leaves", "r": ["A use case is made of leaves (and compositions).", "<code>main</code> is the entry use case; the leaves do the work."]}}, "groups": {"flow": {"t": "Flow"}, "sistema": {"t": "System", "rules": ["A system is a set of execution flows.", "The system is formed by units of processing, the functions, and by processable units, the states.", "The function is eternal and immutable; the state is mutable and transient."]}, "funcoes": {"t": "Functions"}, "dados": {"t": "Data"}, "estados": {"t": "States", "lead": "What is available at each step. In the plan, the state lists functions and data together."}, "selecao": {"t": "Selection"}, "repeticao": {"t": "Repetition"}, "trycatch": {"t": "try / catch"}, "responsaveis": {"t": "Responsible parties", "lead": "Who executes the step. May be solid (file, machine, object) or abstract (AI or person, until someone takes over)."}, "files": {"t": "Files"}, "solidos": {"t": "Solid × abstract"}, "publico": {"t": "Public / private"}, "praticas": {"t": "Development best practices", "lead": "The SOLID principles applied to the plan."}, "padroes": {"t": "Design patterns"}, "oop": {"t": "OOP × Flow"}, "folhas": {"t": "Leaves and use cases", "lead": "Leaf = function without children (occupies the step). Use case = first-order flow that delivers a result."}}};
+const EN = {"examples": {"main": {"t": "Function: the unit of processing", "r": ["A function is the unit of processing, whose purpose is to transform an initial state into a final state.", "Functions may have an input and an output.", "The input is the data that the function receives.", "The output is the data that the function returns.", "A function has, at most, one input and one output."]}, "filha": {"t": "Child function", "r": ["A function may have child functions, by composition."]}, "irma": {"t": "Sibling function", "r": ["Functions may have sibling functions.", "A sibling function is one that shares the same parent with another function.", "Sibling functions may be sequential or parallel."]}, "paralela": {"t": "Parallel function", "r": ["Parallel functions are siblings that occupy the same step.", "Parallel functions execute together.", "Parallel functions finish before the next step begins."]}, "sequencial": {"t": "Sequential function", "r": ["Functions may be sequential.", "Sequential functions are siblings in consecutive steps.", "A sequential function starts when the previous one finishes.", "Parallel and sequential functions may be combined in the same flow."]}, "texto": {"t": "Data: text", "r": ["Text is a sequence of characters treated as data."]}, "numero": {"t": "Data: number", "r": ["A number is data that expresses quantity."]}, "booleano": {"t": "Data: boolean", "r": ["A boolean is data that admits two values: true and false.", "The boolean is what decides a selection."]}, "funcaoDado": {"t": "Data: function", "r": ["A function is also data.", "A function stored in a variable is treated as data."]}, "objeto": {"t": "Data: object (keyed box)", "r": ["An object is a box of keyed fields.", "An object is data that can hold state and function."]}, "array": {"t": "Data: array (positional box)", "r": ["An array is a box of positional fields.", "The fields of an array are accessed by position."]}, "dadoConcreto": {"t": "Concrete data", "r": ["Concrete data is data that has a value.", "Its square is filled, and the value appears in the state."]}, "dadoAbstrato": {"t": "Abstract data", "r": ["Abstract data is data that does not have a value yet.", "Its square is hollow."]}, "todosDados": {"t": "Overview: all data types", "r": ["Data are the mutable units of the flow.", "The data overview gathers all data types in the same state.", "The identifier of a piece of data is a noun, such as <code>mesa</code> or <code>cadeira</code>.", "Every piece of data has an address, represented by its name.", "Within the same context, or block, different addresses cannot have the same name.", "Every simple data is represented by a square.", "Text, number, boolean and null are simple data.", "Every box is represented by a cube.", "Object and array are boxes, with their fields.", "A function used as data remains a function, represented by a circle."]}, "tipoNulo": {"t": "Data: null (absence of value)", "r": ["Null is data that represents the absence of a value.", "A function returns null when it does not find what it is looking for."]}, "estado": {"t": "Flow state", "r": ["The state is the set of functions and data available in a step.", "The state is listed below the step.", "Data from previous steps remain, faded.", "<code>enviar</code> receives <code>pedido</code> and <code>pagamento</code>, produced earlier."]}, "estadoInicial": {"t": "Initial state with a value", "r": ["The initial state is what exists before the first function.", "Initialized data exists from the beginning of the step.", "<code>nome = \"Ana\"</code> is in the state of <code>saudar</code>."]}, "estadoCaixa": {"t": "State with a box (object)", "r": ["An object in the state is a cube, with its fields and values right below."]}, "estadoSubstitui": {"t": "Replaced state", "r": ["If an existing name is produced again, the new value replaces the old one."]}, "estadoAbstrato": {"t": "Abstract state (comes from outside)", "r": ["The abstract state is data that no function of the flow produces.", "Whoever calls the flow provides it.", "Its square is hollow."]}, "se": {"t": "Selection: if", "r": ["Selection is the structure that decides, based on data, where the flow goes.", "The condition is assigned to a variable before the <code>if</code>.", "<code>enviar</code> only executes if the condition is true.", "Selection is used when it is not known what to execute before having the information."]}, "seSenao": {"t": "Selection: if / else", "r": ["<code>if</code> and <code>else</code> occupy the same step.", "Only one of the branches executes."]}, "switchEx": {"t": "Selection: switch", "r": ["Each <code>case</code> of the <code>switch</code> is equivalent to an <code>if</code>.", "There is one <code>if</code> per value."]}, "repFor": {"t": "Repetition: for", "r": ["Repetition is the structure that executes a block several times.", "The collection is assigned to a variable before the loop.", "<code>notificar</code> executes once per item.", "The possible repetitions are <code>for</code>, <code>while</code> and <code>do-while</code>."]}, "repFor2": {"t": "Repetition with several steps", "r": ["The body of a loop may have sequential and parallel steps."]}, "repWhile": {"t": "Repetition: while / do-while", "r": ["For now, the <code>while</code> uses the <code>for</code> block.", "The block label shows the condition."]}, "tryCatch": {"t": "try / catch", "r": ["<code>try/catch</code> is the structure that handles failure.", "If <code>cobrar</code> fails, the flow goes to the <code>catch</code>.", "<code>avisar</code> executes in the <code>catch</code>.", "The <code>try/catch</code> comes first; the functions are defined outside <code>main</code>."]}, "tryFor": {"t": "Combined blocks", "r": ["Blocks may be nested.", "Here there is a <code>try/catch</code> inside a <code>for</code>."]}, "fileMesmo": {"t": "Two functions in the same file", "r": ["A file is the physical address of a first-order function.", "Several functions may share the same file.", "Every piece of data and every function has an address.", "The file organizes the solid addresses."]}, "fileOutro": {"t": "Different files", "r": ["Distinct files are distinct physical addresses.", "A file is not a layer."]}, "fileObjeto": {"t": "File as object / state", "r": ["The file is also an object and a state.", "It is a box with a physical address, which holds data and functions."]}, "respArquivo": {"t": "Responsible: file (solid)", "r": ["The responsible party is whoever executes the step.", "Every responsible party has an agent name.", "An agent is the name of the responsible party, such as <code>Jardineiro</code>, <code>Agente</code> or <code>Paulo</code>.", "The agent name begins with a capital letter.", "The file is a solid responsible party.", "The responsible party may be a file, machine, AI, person or object.", "The responsible party may be solid or abstract.", "The bar of a solid responsible party is filled, and that of an abstract one is light.", "A responsible party is not a layer, since the layer is the plan and the responsible party is who fills it.", "Changing the responsible party does not change the flow."]}, "respMaquina": {"t": "Responsible: machine (solid)", "r": ["The machine, or library, is a solid responsible party."]}, "respIa": {"t": "Responsible: AI (abstract)", "r": ["The AI is an abstract responsible party until someone takes over."]}, "respPessoa": {"t": "Responsible: person (abstract)", "r": ["The person is an abstract responsible party until defined."]}, "respObjeto": {"t": "Responsible: object (solid)", "r": ["The object is a solid responsible party.", "The object already contains the functions."]}, "abstrata": {"t": "Layer (= abstract)", "r": ["A layer is the abstract, that is, what has no physical address.", "Its bar is only an outline.", "It is the only case of a hollow bar in the examples.", "Universal structures stay in the abstract plan, still empty.", "What is known in the abstract plan forms the same layer.", "A layer is not a file."]}, "solida": {"t": "Solid", "r": ["A solid is what has a physical address.", "Every first-order function is solid.", "The abstract layer becomes solid when it receives an address.", "The bar is filled, and someone executes it.", "The physical address of a solid may be a responsible party, a value or a file.", "To execute, the abstract layer needs to become solid.", "Functions must not have solids, only abstracts."]}, "publica": {"t": "Public", "r": ["A public function is one that can be accessed outside the file.", "Data and functions may be public or private."]}, "privada": {"t": "Private", "r": ["A private function is one that exists only inside the file or the box.", "Private members are accessed only inside the box.", "A nested private function is called first and defined outside <code>main</code>."]}, "seAninhado": {"t": "Selection: nested if / else", "r": ["An <code>if</code> may be inside the <code>else</code> of another.", "There are three possible paths, and only one executes."]}, "repDoWhile": {"t": "Repetition: do-while", "r": ["The <code>do-while</code> executes at least once.", "It repeats while the condition holds.", "For now, it uses the <code>for</code> block."]}, "solidSrp": {"t": "SOLID: single responsibility", "r": ["Single responsibility means that each function takes care of one thing only.", "<code>pedido</code> only composes.", "The work is in <code>validar</code>, <code>cobrar</code> and <code>enviar</code>.", "Flow applies the SOLID principles."]}, "solidDip": {"t": "SOLID: depend on the abstract", "r": ["The flow depends on the abstract, not on whoever implements it.", "<code>cobrar</code> is an abstract layer.", "Changing the responsible party does not change the rest of the flow."]}, "padFactory": {"t": "Pattern: factory", "r": ["A factory is the function that creates and returns an already assembled object."]}, "padSingleton": {"t": "Pattern: singleton", "r": ["A singleton is the single, shared instance.", "<code>usarA</code> and <code>usarB</code> read the same <code>config</code>.", "Design patterns (factory, singleton) have their own form in the plan."]}, "oopFlow": {"t": "OOP × Flow: instantiation", "r": ["Instantiating a class corresponds to a responsible object.", "Each method is a step.", "Instantiating a class is equivalent to instantiating a flow."]}, "folha": {"t": "Leaf (*leaf*)", "r": ["A leaf is a function without children.", "Only the leaf occupies a step in the plan.", "<code>hello</code> is a leaf, with one bar and one step."]}, "folhaVsComp": {"t": "Leaf × composition", "r": ["A composition is a function that contains children.", "The composition does not occupy a step of its own and covers the time of its leaves.", "<code>pedido</code> is a composition; <code>validar</code> and <code>cobrar</code> are leaves."]}, "useCase": {"t": "Use case", "r": ["A use case is the first-order flow that delivers a result to the user or to the system.", "Every system is a set of use cases.", "<code>vender</code> is a use case, the entry point of a complete scenario."]}, "useCaseFolhas": {"t": "Use case made of leaves", "r": ["A use case is made of leaves (and compositions).", "<code>main</code> is the entry use case; the leaves do the work."]}}, "groups": {"flow": {"t": "Flow"}, "sistema": {"t": "System", "rules": ["A system is a set of execution flows.", "The system is formed by units of processing, the functions, and by processable units, the states.", "The function is eternal and immutable; the state is mutable and transient."]}, "funcoes": {"t": "Functions"}, "dados": {"t": "Data"}, "estados": {"t": "States", "lead": "What is available at each step. In the plan, the state lists functions and data together."}, "selecao": {"t": "Selection"}, "repeticao": {"t": "Repetition"}, "trycatch": {"t": "try / catch"}, "responsaveis": {"t": "Responsible parties", "lead": "Who executes the step. May be solid (file, machine, object) or abstract (AI or person, until someone takes over)."}, "files": {"t": "Files"}, "solidos": {"t": "Solid × abstract", "lead": "Functions must not have solids, only abstracts."}, "publico": {"t": "Public / private"}, "praticas": {"t": "Development best practices", "lead": "The SOLID principles applied to the plan."}, "padroes": {"t": "Design patterns"}, "oop": {"t": "OOP × Flow"}, "folhas": {"t": "Leaves and use cases", "lead": "Leaf = function without children (occupies the step). Use case = first-order flow that delivers a result."}}};
 const EN_REPL = [["O Flow é uma linguagem de programação visual e universal. Adicionalmente, pode ser empregado como notação de diagramação, permitindo a representação gráfica de sistemas e de processos. O programa é um fluxo desenhado, que pode ser transpilado para qualquer linguagem, e a linguagem oferece os recursos usuais: funções, dados, seleção, repetição e tratamento de erros.", "Flow is a visual and universal programming language. Additionally, it can be used as a diagramming notation, allowing the graphical representation of systems and processes. The program is a drawn flow, which can be transpiled to any language, and the language offers the usual resources: functions, data, selection, repetition and error handling."], ["Todo sistema é composto, essencialmente, de unidades de processamento e de unidades processáveis, isto é, de funções e de estados. A função é a unidade de processamento, eterna e imutável, e por essa natureza é representada por um círculo. O estado é a unidade processável, o dado que atravessa a função, mutável e transitório, e por essa natureza é representado por um quadrado. Um software é um conjunto de fluxos de execução.", "Every system is composed, essentially, of units of processing and processable units, that is, of functions and states. The function is the unit of processing, eternal and immutable, and by that nature is represented by a circle. The state is the processable unit, the data that crosses the function, mutable and transient, and by that nature is represented by a square. A software is a set of execution flows."], ["O desenho substitui a leitura linear do código-fonte, e a ordem de execução, o paralelismo e o caminho dos dados ficam explícitos, o que reduz o esforço de análise. Todos os fluxos de um sistema podem ser vistos em conjunto, e os componentes, por serem desacoplados, podem ser substituídos em qualquer contexto, independentemente de linguagem ou paradigma. A representação visual também facilita o aprendizado de programação por iniciantes, pois permite expressar a lógica sem depender da sintaxe de uma linguagem.", "The drawing replaces the linear reading of the source code, and the order of execution, the parallelism and the path of the data become explicit, which reduces the analysis effort. All the flows of a system can be seen together, and the components, being decoupled, can be replaced in any context, regardless of language or paradigm. The visual representation also makes it easier for beginners to learn programming, since it allows logic to be expressed without depending on the syntax of a language."], ["O modelo se aplica aos processos de software, ou seja, ao código, e à gestão de processos em geral, incluindo o gerenciamento de tarefas. Nesse segundo uso, o responsável por cada passo pode ser uma pessoa, um agente de IA, uma máquina ou outro sistema.", "The model applies to software processes, that is, to code, and to process management in general, including task management. In this second use, the party responsible for each step can be a person, an AI agent, a machine or another system."], ["<strong>Observação.</strong> O Flow (Flow Oriented Programming) não deve ser confundido com a programação baseada em fluxo (Flow-Based Programming, FBP). Embora o nome seja semelhante e alguns conceitos sejam compartilhados, não há relação direta entre os dois.", "<strong>Note.</strong> Flow (Flow Oriented Programming) should not be confused with Flow-Based Programming (FBP). Although the names are similar and some concepts are shared, there is no direct relationship between the two."], ["Uma imagem vale mais que mil palavras.", "A picture is worth a thousand words."], ["Confúcio, 552–479 a.C.", "Confucius, 552–479 BCE"], ["<b>● Função</b>", "<b>● Function</b>"], ["<b>■ Dado</b>", "<b>■ Data</b>"], ["O círculo. Eterna e imutável, processa os dados e continua a mesma.", "The circle. Eternal and immutable, it processes the data and remains the same."], ["O quadrado. Mutável e transitório, nasce, muda e some durante o fluxo.", "The square. Mutable and transient, it is born, changes and disappears during the flow."], ["<p>Dados podem ser:</p>", "<p>Data can be:</p>"], ["<span>texto</span>", "<span>text</span>"], ["<span>número</span>", "<span>number</span>"], ["<span>booleano</span>", "<span>boolean</span>"], ["<span>função</span>", "<span>function</span>"], ["<span>objeto, uma caixa de campos chaveados</span>", "<span>object, a box of keyed fields</span>"], ["<span>array, uma caixa de campos posicionais</span>", "<span>array, a box of positional fields</span>"], ["<span>nulo, a ausência de valor</span>", "<span>null, the absence of value</span>"]];
 let LANG = "pt"; try { LANG = localStorage.getItem("flow-docs-lang") === "en" ? "en" : "pt"; } catch {}
 const ui = (pt, en) => (LANG === "en" ? en : pt);
@@ -655,9 +699,15 @@ const planOf = (flow, opts) => typeof FlowAst?.renderFnSvg === "function" ? Flow
 const tabsHtml = (flowHtml, code) => `<div class="tabs">
   <div class="tablist" role="tablist"><button type="button" role="tab" data-tab="flow" aria-selected="true">Flow</button><button type="button" role="tab" data-tab="code" aria-selected="false">${ui("Código", "Code")}</button></div>
   <div class="tabpanel flow" role="tabpanel" data-panel="flow">${flowHtml}</div>
-  <div class="tabpanel code" role="tabpanel" data-panel="code" hidden><pre>${esc(code)}</pre></div>
+  <div class="tabpanel code" role="tabpanel" data-panel="code" hidden><button type="button" class="copy" data-copy>${ui("Copiar", "Copy")}</button><pre>${esc(code)}</pre></div>
 </div>`;
 document.addEventListener("click", (e) => {
+  const c = e.target.closest?.("[data-copy]");
+  if (c) {
+    const txt = c.parentElement.querySelector("pre")?.textContent ?? "";
+    navigator.clipboard?.writeText(txt).then(() => { c.textContent = ui("Copiado", "Copied"); setTimeout(() => { c.textContent = ui("Copiar", "Copy"); }, 1400); });
+    return;
+  }
   const b = e.target.closest?.("[data-tab]"); if (!b) return;
   const box = b.closest(".tabs"); if (!box) return;
   box.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
@@ -719,7 +769,18 @@ const renderHero = () => {
 };
 
 // menu lateral: marca a seção visível e abre os itens do capítulo corrente
-let spyMark = null;
+let spyMark = null, railFor = null;
+const updateRail = (curId) => {
+  const rail = document.getElementById("rail"); if (!rail) return;
+  const li = document.querySelector(`#toc a[href="#${curId}"]`)?.closest("li[data-g]");
+  const gid = li?.dataset.g; if (!gid) return;
+  if (railFor !== gid + LANG) {
+    railFor = gid + LANG;
+    const items = [...li.querySelectorAll(":scope > ul > li > a")];
+    rail.innerHTML = items.length ? `<div class="t">${ui("Nesta página", "On this page")}</div><ul>${items.map((a) => `<li><a href="${a.getAttribute("href")}">${a.innerHTML}</a></li>`).join("")}</ul>` : "";
+  }
+  rail.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === `#${curId}`));
+};
 const initSpy = () => {
   const links = new Map([...document.querySelectorAll(".side a")].map((a) => [a.getAttribute("href").slice(1), a]));
   const heads = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean);
@@ -735,6 +796,7 @@ const initSpy = () => {
     const a = links.get(cur); a.classList.add("on");
     groupOf(cur)?.classList.add("open");
     a.scrollIntoView({ block: "nearest" });
+    updateRail(cur);
   };
   spyMark();
 };
@@ -745,13 +807,14 @@ addEventListener("resize", () => spyMark?.());
 const applyStatic = () => {
   document.documentElement.lang = LANG === "en" ? "en" : "pt-BR";
   document.querySelectorAll("[data-pt]").forEach((el) => { el.textContent = LANG === "en" ? el.dataset.en : el.dataset.pt; });
+  document.querySelectorAll("[data-ph-pt]").forEach((el) => { el.placeholder = LANG === "en" ? el.dataset.phEn : el.dataset.phPt; });
   document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG)));
 };
 
 const renderAll = () => {
   const out = document.getElementById("out"), toc = document.getElementById("toc");
-  out.innerHTML = ""; toc.innerHTML = "";
-  for (const g of GROUPS) {
+  out.innerHTML = ""; toc.innerHTML = ""; if (searchInput) searchInput.value = "";
+  for (const g of GROUPS.filter((x) => !x.hidden)) {
     const gt = grp(g), title = gt.t ?? g.title, lead = gt.lead ?? g.lead, rl = gt.rules ?? g.rules;
     const keys = g.keys.filter((k) => EXAMPLES[k]);
     out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(title)}</h2>${lead ? `<p class="sec-lead">${lead}</p>` : ""}${rl ? `<ol class="rules">${rl.map((t, i) => `<li><span class="ix">${esc(g.n)}${i + 1}</span><span>${t}</span></li>`).join("")}</ol>` : ""}${trHtml(g.html ?? "")}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
@@ -763,12 +826,36 @@ const renderAll = () => {
   initSpy();
 };
 
+// busca: filtra capítulos e exemplos do menu; Enter vai ao primeiro resultado; "/" foca o campo
+const searchInput = document.getElementById("q");
+const norm = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const filterToc = () => {
+  const q = norm(searchInput?.value ?? "").trim();
+  document.querySelectorAll("#toc li").forEach((li) => li.classList.remove("hide"));
+  if (!q) return;
+  document.querySelectorAll("#toc > li").forEach((ch) => {
+    const subs = [...ch.querySelectorAll(":scope > ul > li")];
+    const chHit = norm(ch.querySelector(":scope > a")?.textContent ?? "").includes(q);
+    let any = chHit;
+    subs.forEach((li) => { const hit = chHit || norm(li.textContent).includes(q); li.classList.toggle("hide", !hit); any = any || hit; });
+    ch.classList.toggle("hide", !any);
+  });
+};
+searchInput?.addEventListener("input", filterToc);
+searchInput?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { document.querySelector("#toc li:not(.hide) ul li:not(.hide) a, #toc li:not(.hide) > a")?.click(); searchInput.blur(); }
+  if (e.key === "Escape") { searchInput.value = ""; filterToc(); searchInput.blur(); }
+});
+addEventListener("keydown", (e) => {
+  if (e.key === "/" && !/^(input|textarea)$/i.test(document.activeElement?.tagName ?? "")) { e.preventDefault(); searchInput?.focus(); }
+});
+
 // botões EN | PT-BR
 document.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => {
   if (LANG === b.dataset.lang) return;
   LANG = b.dataset.lang;
   try { localStorage.setItem("flow-docs-lang", LANG); } catch {}
-  const y = scrollY; renderAll(); scrollTo(0, y);
+  railFor = null; const y = scrollY; renderAll(); scrollTo(0, y);
 }));
 
 renderAll();

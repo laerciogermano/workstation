@@ -17,7 +17,11 @@
 - tudo é composto por funcoes (eternos) e estados (mutáveis)
   - softwares sao feitos de fluxos de esxecucao
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
-- Flow e software: exemplos [código vira visão](indice-ast.html#flowVisao) · [software = fluxos](indice-ast.html#softwareFluxo) · [visão logística](indice-ast.html#visaoLogistica) · [substituível](indice-ast.html#substituivel) · [realidade](indice-ast.html#realidade)
+- Flow e software: capítulo só de texto, em [indice-ast.html](indice-ast.html#flow)
+1. softwares
+  - ícones: ● círculo = função (eterna, imutável) · ■ quadrado = dado (mutável, transitório)
+  - softwares sao fluxos de execucao
+  - um fluxo de execucao e formado basicamente por dado e funcao (icones)
 - 1. Funcoes
   - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
@@ -64,8 +68,10 @@
   - exemplos: [estado do fluxo](indice-ast.html#estado) · [inicial](indice-ast.html#estadoInicial) · [caixa](indice-ast.html#estadoCaixa) · [substituído](indice-ast.html#estadoSubstitui) · [abstrato](indice-ast.html#estadoAbstrato) · [paralelas](indice-ast.html#estadoParalelo) · [dentro do for](indice-ast.html#estadoBloco)
   - estados sao os dados que estao disponiveis
   - os estados iniciais sempre serao
+  - o estado deve mostrar funções e estados (não só dados): o que está disponível e o que pode ser chamado
   - **regras**
     - estado que alimenta chamada: variável já atribuída (nunca literal na chamada)
+    - na visão, o estado lista funções e estados juntos
 - Selecao
   - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx) · [aninhados](indice-ast.html#seAninhado)
   - estruturas de conidcao, definem para onde vai o fluxo conforme

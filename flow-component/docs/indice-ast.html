@@ -204,9 +204,9 @@ h3 .n { color: var(--dado); }
 .quote { margin: 0 0 1.5rem; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); max-width: 40rem; }
 .quote p { margin: 0; font: italic 400 1.3rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); }
-.hero .quote { margin: .85rem auto .15rem; max-width: 40rem; padding: .1rem 0; border-left: 0; text-align: center; }
-.hero .quote p { font-size: 1.05rem; }
-.hero .quote cite { text-align: center; }
+.quote-title { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: -.5rem auto 1.5rem; padding: .1rem 0; border-left: 0; text-align: center; }
+.quote-title p { font-size: 1.05rem; }
+.quote-title cite { text-align: center; }
 .prose + .quote { margin: 1.75rem 0 0; }
 .prose { max-width: 42rem; margin: 0 0 1.5rem; font: 400 1.05rem/1.65 "IBM Plex Sans", sans-serif; color: var(--body); }
 .prose p { margin: 0 0 .9rem; }
@@ -398,12 +398,12 @@ footer {
     <figcaption><span class="tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, imperfect and in transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação.</span></figcaption>
   </figure>
 <h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
+<blockquote class="quote quote-title">
+  <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+  <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
+</blockquote>
 <section class="hero" aria-label="Exemplo de fluxo">
   <div class="hero-plan" id="hero-plan"></div>
-  <blockquote class="quote">
-    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
-    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
-  </blockquote>
 </section>
 <div class="layout">
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>

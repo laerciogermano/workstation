@@ -20,6 +20,7 @@
 - 1. Funcoes
   - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - 1.2 [`função filha`](indice-ast.html#filha) — filho dentro de main (composição)
+  - 1.3 [`função paralela`](indice-ast.html#paralela) — irmã no mesmo passo (par / Promise.all)
   - funcoes sao unidades de transformacao
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas

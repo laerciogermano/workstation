@@ -121,6 +121,7 @@ footer {
         <ul>
           <li><a href="#main">1.1 A função <code>main</code></a> — 1ª ordem, sólida, sem I/O</li>
           <li><a href="#filha">1.2 Função filha</a> — composição: filho dentro de <code>main</code></li>
+          <li><a href="#paralela">1.3 Função paralela</a> — irmã no mesmo passo (<code>par</code>)</li>
         </ul>
       </li>
     </ol>
@@ -130,6 +131,7 @@ footer {
 
   <section id="main" data-ex="main"></section>
   <section id="filha" data-ex="filha"></section>
+  <section id="paralela" data-ex="paralela"></section>
 
   <footer>
     Lib: <a href="../novo/ast/fn-svg.ts">novo/ast/fn-svg.ts</a> ·
@@ -167,6 +169,25 @@ const EXAMPLES = {
     flow: fn("n1", "main", {
       file: "main.ts",
       kids: [fn("n2", "hello")],
+    }),
+  },
+  paralela: {
+    num: "1.3",
+    title: "Função paralela",
+    lead: "Irmã no mesmo passo: <code>b</code> roda junto com <code>a</code> (<code>par: true</code> → <code>Promise.all</code>).",
+    code: `async function main() {
+  async function a() {
+  }
+  async function b() {
+  }
+  await Promise.all([a(), b()]);
+}`,
+    flow: fn("n1", "main", {
+      file: "main.ts",
+      kids: [
+        fn("n2", "a"),
+        fn("n3", "b", { par: true }),
+      ],
     }),
   },
 };

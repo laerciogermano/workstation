@@ -37,6 +37,21 @@ describe("ast/fn-svg", () => {
     expect(svg).toContain("sum"); // barra de composição da main
   });
 
+  it("irmãs paralelas compartilham o mesmo passo", () => {
+    const flow: Fn = {
+      ...main(),
+      kids: [
+        { t: "fn", id: "n2", title: "a", agent: null, resp: null, ins: [], outs: [], kids: [], par: false },
+        { t: "fn", id: "n3", title: "b", agent: null, resp: null, ins: [], outs: [], kids: [], par: true },
+      ],
+    };
+    const { svg, scene } = renderFnSvg(flow);
+    const leaves = scene.leaves;
+    expect(leaves).toHaveLength(2);
+    expect(leaves[0]!.s).toBe(leaves[1]!.s);
+    expect(svg).toContain("∥");
+  });
+
   it("recusa bloco if (lote só funções)", () => {
     const bad = {
       ...main(),

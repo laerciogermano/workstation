@@ -293,10 +293,12 @@ h3 .n { color: var(--dado); }
 .tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
 .hero-plan { overflow-x: auto; margin: 0; padding: .25rem; }
 .hero-plan svg { display: block; width: 100%; max-width: 1180px; margin: 0 auto; height: auto; }
-.hero-quotes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5rem 3rem; margin: .85rem auto .15rem; width: 100%; }
-.hero-quotes .quote { display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; width: 22rem; max-width: 100%; min-height: 4.2rem; padding: .1rem 0; border-left: 0; text-align: center; }
-.hero-quotes .quote p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); text-align: center; }
-.hero-quotes .quote cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
+.quote-solo { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: -.25rem auto 1.5rem; padding: .1rem 0; border-left: 0; text-align: center; }
+.quote-solo p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.quote-solo cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
+.hero .quote-close { display: flex; flex-direction: column; align-items: center; margin: .85rem auto .15rem; padding: .1rem 0; border-left: 0; text-align: center; max-width: 40rem; }
+.hero .quote-close p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.hero .quote-close cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
 .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0 0 1.5rem; }
 .legend .it { flex: 1 1 15rem; display: flex; gap: .85rem; align-items: flex-start; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
 .legend svg { flex: none; margin-top: .15rem; }
@@ -403,18 +405,16 @@ footer {
     </figcaption>
   </figure>
 <h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
+<blockquote class="quote quote-solo">
+  <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
+  <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+</blockquote>
 <section class="hero" aria-label="Exemplo de fluxo">
   <div class="hero-plan" id="hero-plan"></div>
-  <div class="hero-quotes">
-    <blockquote class="quote">
-      <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
-      <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
-    </blockquote>
-    <blockquote class="quote">
-      <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
-      <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
-    </blockquote>
-  </div>
+  <blockquote class="quote quote-close">
+    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
+  </blockquote>
 </section>
 <div class="layout">
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>

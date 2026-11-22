@@ -23,8 +23,9 @@
   - softwares sao fluxos de execucao
   - um fluxo de execucao e formado basicamente por dado e funcao (icones)
 - 1. Funcoes
-  - 1.1 [`main`](indice-ast.html#main) — entry point do sistema; 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
-  - todo sistema tem um entry point; aqui chama-se `main`
+  - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+  - Definição I. entry point é a primeira chamada de um sistema
+  - Definição II. `main` é o nome dado ao entry point de um sistema
   - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
   - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
   - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmãs sólidas no passo seguinte (await em sequência)

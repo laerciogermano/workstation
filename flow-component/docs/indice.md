@@ -22,6 +22,8 @@
   - 1.2 [`função filha`](indice-ast.html#filha) — filho dentro de main (composição)
   - 1.3 [`função paralela`](indice-ast.html#paralela) — irmã no mesmo passo (par / Promise.all)
   - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmã no passo seguinte (await em sequência)
+  - 1.5 [`entrada`](indice-ast.html#entrada) · 1.6 [`saída`](indice-ast.html#saida) · 1.7 [`entrada e saída ligadas`](indice-ast.html#entradaSaida)
+  - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista)
   - funcoes sao unidades de transformacao
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas
@@ -32,6 +34,7 @@
   - apenas podem ter uma entrada e uma saida
   - a entrada e saida sao dados
 - Dados
+  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
   - os dados sao unidades transformaveis
     input
   - output
@@ -49,9 +52,11 @@
       - arquivo (futuramente)
       - imagem (futuramente)
 - Estados
+  - exemplo: [estado do fluxo](indice-ast.html#estado)
   - estados sao os dados que estao disponiveis
   - os estados iniciais sempre serao 
 - Agentes
+  - exemplos: [arquivo](indice-ast.html#agArquivo) · [máquina](indice-ast.html#agMaquina) · [IA](indice-ast.html#agIa) · [pessoa](indice-ast.html#agPessoa) · [objeto](indice-ast.html#agObjeto)
   - Estruturas fonte da execucao
   - responsavrl por realizar o trabalho
   - a fonte, a origem da execucao
@@ -61,25 +66,36 @@
     - objetos
     - funcoes
 - Selecao
+  - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx)
   - estruturas de conidcao, definem para onde vai o fluxo conforme
   o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
   - if/else
   - switch
 - Repeticao
+  - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while/do-while](indice-ast.html#repWhile)
   - estuturas repetíveis
   - for
   - while
   - do-while
 - try catch
-- Files (Layers)
+  - exemplos: [try/catch](indice-ast.html#tryCatch) · [blocos combinados](indice-ast.html#tryFor)
+- Files
+  - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro)
   - todo dado tem um endereco
   - toda funcao tem um endereco
-  - os enderecos podem ser sólidos ou abstratos
-- Solidos x abstratos
-  - sólido o que tem endreco fisico
-  - abstrato nao possuinendereco fisico
-    - estruturas universais
+  - o arquivo organiza endereços sólidos (físicos)
+- Camadas (= abstratos)
+  - exemplos: [camada / abstrato](indice-ast.html#abstrata)
+  - a camada é o abstrato: não possui endereço físico
+  - estruturas universais (plano ainda vazio)
+  - quem se conhece no plano abstrato forma a mesma camada
+  - a camada é substituível: preenche-se o endereço e vira sólido
+- Solidos
+  - exemplos: [sólido](indice-ast.html#solida)
+  - sólido: tem endereço físico (agente, valor, arquivo)
+  - para executar, a camada abstrata precisa solidificar
 - publico / privado
+  - exemplos: [pública](indice-ast.html#publica) · [privada](indice-ast.html#privada)
   - dados e funcoes podem ser publicas ou privadas
   - publicas queme sta de forma possui acesso
     - public ou export

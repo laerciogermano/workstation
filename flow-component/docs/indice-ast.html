@@ -49,7 +49,6 @@ h2 {
   margin: 2rem 0 .75rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
   font: 700 1.35rem/1.2 Archivo, sans-serif; letter-spacing: -.015em;
 }
-h2:first-of-type { border-top: 0; padding-top: 0; }
 h3 { margin: 1.5rem 0 .5rem; font: 700 1.1rem/1.25 Archivo, sans-serif; }
 h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); color: var(--accent); margin-right: .4rem; }
 .sec-lead { margin: 0 0 1rem; color: var(--body); }
@@ -113,27 +112,9 @@ footer {
   <h1>Índice · AST e visão</h1>
   <p class="lead">Exemplos alinhados ao <a href="indice.md">indice.md</a>: código JavaScript, AST ESTree, AST Flow e plano SVG.</p>
 
-  <nav class="toc" aria-label="Índice">
-    <div class="t">Índice</div>
-    <ol>
-      <li>
-        <a href="#funcoes">Funções</a>
-        <ul>
-          <li><a href="#main">1.1 A função <code>main</code></a> — 1ª ordem, sólida, sem I/O</li>
-          <li><a href="#filha">1.2 Função filha</a> — composição: filho dentro de <code>main</code></li>
-          <li><a href="#paralela">1.3 Função paralela</a> — irmã no mesmo passo (<code>par</code>)</li>
-          <li><a href="#sequencial">1.4 Função sequencial</a> — irmã no passo seguinte</li>
-        </ul>
-      </li>
-    </ol>
-  </nav>
+  <nav class="toc" aria-label="Índice"><div class="t">Índice</div><ol id="toc"></ol></nav>
 
-  <h2 id="funcoes"><span class="n">1.</span>Funções</h2>
-
-  <section id="main" data-ex="main"></section>
-  <section id="filha" data-ex="filha"></section>
-  <section id="paralela" data-ex="paralela"></section>
-  <section id="sequencial" data-ex="sequencial"></section>
+  <div id="out"></div>
 
   <footer>
     Lib: <a href="../novo/ast/fn-svg.ts">novo/ast/fn-svg.ts</a> ·
@@ -150,69 +131,143 @@ const fn = (id, title, extra = {}) => ({
   ins: [], outs: [], kids: [], par: false, ...extra,
 });
 
+const F = fn;
+const J = (...l) => l.join("\n");
+const main = (kids, extra = {}) => F("n1", "main", { file: "main.ts", kids, ...extra });
+
 const EXAMPLES = {
-  main: {
-    num: "1.1",
-    title: "A função <code>main</code>",
-    lead: "1ª ordem, sólida, sem entrada e sem saída.",
-    code: `async function main() {
-}`,
-    flow: fn("n1", "main", { file: "main.ts" }),
-  },
-  filha: {
-    num: "1.2",
-    title: "Função filha",
-    lead: "Criação de um elemento filho: <code>hello</code> dentro de <code>main</code> (composição).",
-    code: `async function main() {
-  async function hello() {
-  }
-  await hello();
-}`,
-    flow: fn("n1", "main", {
-      file: "main.ts",
-      kids: [fn("n2", "hello")],
-    }),
-  },
-  paralela: {
-    num: "1.3",
-    title: "Função paralela",
-    lead: "Irmã no mesmo passo: <code>b</code> roda junto com <code>a</code> (<code>par: true</code> → <code>Promise.all</code>).",
-    code: `async function main() {
-  async function a() {
-  }
-  async function b() {
-  }
-  await Promise.all([a(), b()]);
-}`,
-    flow: fn("n1", "main", {
-      file: "main.ts",
-      kids: [
-        fn("n2", "a"),
-        fn("n3", "b", { par: true }),
-      ],
-    }),
-  },
-  sequencial: {
-    num: "1.4",
-    title: "Função sequencial",
-    lead: "Irmã no passo seguinte: <code>b</code> roda depois de <code>a</code> (<code>par: false</code>).",
-    code: `async function main() {
-  async function a() {
-  }
-  async function b() {
-  }
-  await a();
-  await b();
-}`,
-    flow: fn("n1", "main", {
-      file: "main.ts",
-      kids: [
-        fn("n2", "a"),
-        fn("n3", "b"),
-      ],
-    }),
-  },
+  main: { num: "1.1", title: "A função <code>main</code>", lead: "1ª ordem, sólida, sem entrada e sem saída.",
+    code: J("async function main() {", "}"), flow: main([]) },
+  filha: { num: "1.2", title: "Função filha", lead: "Criação de um elemento filho: <code>hello</code> dentro de <code>main</code> (composição).",
+    code: J("async function main() {", "  async function hello() {", "  }", "  await hello();", "}"), flow: main([F("n2", "hello")]) },
+  paralela: { num: "1.3", title: "Função paralela", lead: "Irmã no mesmo passo: <code>b</code> roda junto com <code>a</code> (<code>par: true</code> → <code>Promise.all</code>).",
+    code: J("async function main() {", "  async function a() {", "  }", "  async function b() {", "  }", "  await Promise.all([a(), b()]);", "}"),
+    flow: main([F("n2", "a"), F("n3", "b", { par: true })]) },
+  sequencial: { num: "1.4", title: "Função sequencial", lead: "Irmã no passo seguinte: <code>b</code> roda depois de <code>a</code> (<code>par: false</code>).",
+    code: J("async function main() {", "  async function a() {", "  }", "  async function b() {", "  }", "  await a();", "  await b();", "}"),
+    flow: main([F("n2", "a"), F("n3", "b")]) },
+  entrada: { num: "1.5", title: "Função com entrada", lead: "<code>saudar</code> recebe um dado: o quadrado vermelho à esquerda da barra.",
+    code: J("async function main() {", "  async function saudar(nome) {", "  }", "  await saudar(\"Ana\");", "}"),
+    flow: main([F("n2", "saudar", { ins: ["nome"] })]) },
+  saida: { num: "1.6", title: "Função com saída", lead: "<code>ler</code> devolve um dado: o quadrado à direita da barra.",
+    code: J("async function main() {", "  async function ler() {", "    return \"Ana\";", "  }", "  const nome = await ler();", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome"] })]) },
+  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: "A saída de uma função é a entrada da próxima: o dado <code>nome</code> viaja entre os passos.",
+    code: J("async function main() {", "  async function ler() {", "    return \"Ana\";", "  }", "  async function saudar(nome) {", "    return \"Olá, \" + nome;", "  }", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome"] }), F("n3", "saudar", { ins: ["nome"], outs: ["saudacao"] })]) },
+  neta: { num: "1.8", title: "Filhas aninhadas", lead: "Uma filha também pode ter filhas: <code>pedido</code> é composição de <code>validar</code> e <code>cobrar</code>.",
+    code: J("async function main() {", "  async function pedido() {", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "    await validar();", "    await cobrar();", "  }", "  await pedido();", "}"),
+    flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
+  mista: { num: "1.9", title: "Paralela e depois sequencial", lead: "<code>a</code> e <code>b</code> juntas no passo 0; <code>c</code> só começa quando as duas terminam.",
+    code: J("async function main() {", "  async function a() {", "  }", "  async function b() {", "  }", "  async function c() {", "  }", "  await Promise.all([a(), b()]);", "  await c();", "}"),
+    flow: main([F("n2", "a"), F("n3", "b", { par: true }), F("n4", "c")]) },
+
+  texto: { num: "2.1", title: "Dado: texto", lead: "Um texto trafega como dado único (quadrado).",
+    code: J("async function main() {", "  async function ler() {", "    return \"Ana\";", "  }", "  const nome = await ler();", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome"] })]) },
+  numero: { num: "2.2", title: "Dado: número", lead: "Um número, também um dado único.",
+    code: J("async function main() {", "  async function contar() {", "    return 42;", "  }", "  const total = await contar();", "}"),
+    flow: main([F("n2", "contar", { outs: ["total"] })]) },
+  booleano: { num: "2.3", title: "Dado: booleano", lead: "Um verdadeiro/falso, normalmente usado para decidir um desvio.",
+    code: J("async function main() {", "  async function validar() {", "    return true;", "  }", "  const ok = await validar();", "}"),
+    flow: main([F("n2", "validar", { outs: ["ok"] })]) },
+  funcaoDado: { num: "2.4", title: "Dado: função", lead: "Funções também são dados: <code>aplicar</code> recebe a função <code>dobrar</code>.",
+    code: J("async function main() {", "  const dobrar = (x) => x * 2;", "  async function aplicar(fn) {", "    return fn(21);", "  }", "  const r = await aplicar(dobrar);", "}"),
+    flow: main([F("n2", "aplicar", { ins: ["dobrar"], outs: ["r"] })]) },
+  objeto: { num: "2.5", title: "Dado: objeto (caixa chaveada)", lead: "Várias saídas formam uma <em>caixa</em> (cubo): <code>{ nome, idade }</code>.",
+    code: J("async function main() {", "  async function ler() {", "    return { nome: \"Ana\", idade: 30 };", "  }", "  const { nome, idade } = await ler();", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome", "idade"] })]) },
+  array: { num: "2.6", title: "Dado: array (caixa posicional)", lead: "Caixa posicional: <code>[a, b]</code>.",
+    code: J("async function main() {", "  async function ler() {", "    return [1, 2];", "  }", "  const [a, b] = await ler();", "}"),
+    flow: main([F("n2", "ler", { outs: ["a", "b"] })]) },
+
+  estado: { num: "3.1", title: "Estado do fluxo", lead: "Estado = os dados disponíveis. <code>enviar</code> enxerga <code>pedido</code> e <code>pagamento</code> produzidos antes.",
+    code: J("async function main() {", "  async function receber() {", "    return { id: 1 };", "  }", "  async function cobrar(pedido) {", "    return \"pago\";", "  }", "  async function enviar(pedido, pagamento) {", "  }", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "}"),
+    flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
+
+  agArquivo: { num: "4.1", title: "Agente: arquivo", lead: "A função de 1ª ordem tem o arquivo como fonte: <code>main.ts</code>.",
+    code: J("// main.ts", "async function main() {", "}"), flow: main([]) },
+  agMaquina: { num: "4.2", title: "Agente: máquina", lead: "Uma máquina (biblioteca/serviço) executa o trabalho.",
+    code: J("async function main() {", "  await maquina.enviarEmail();", "}"),
+    flow: main([F("n2", "enviarEmail", { agent: "maquina" })]) },
+  agIa: { num: "4.3", title: "Agente: IA", lead: "Uma IA realiza o trabalho (barra clara = abstrata até alguém assumir).",
+    code: J("async function main() {", "  await ia.resumirTexto();", "}"),
+    flow: main([F("n2", "resumirTexto", { agent: "ia" })]) },
+  agPessoa: { num: "4.4", title: "Agente: pessoa", lead: "Uma pessoa é a responsável pelo passo.",
+    code: J("async function main() {", "  await pessoa.aprovar();", "}"),
+    flow: main([F("n2", "aprovar", { agent: "pessoa" })]) },
+  agObjeto: { num: "4.5", title: "Agente: objeto", lead: "Todo objeto que comporta funções é um agente.",
+    code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
+    flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
+
+  se: { num: "5.1", title: "Seleção: if", lead: "<code>enviar</code> só roda se a condição for verdadeira.",
+    code: J("async function main() {", "  async function enviar() {", "  }", "  if (ok) {", "    await enviar();", "  }", "}"),
+    flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
+  seSenao: { num: "5.2", title: "Seleção: if / else", lead: "O fluxo escolhe entre dois caminhos, lado a lado: <code>if</code> e <code>else</code> ocupam o mesmo passo (só um deles executa).", opts: { elseParallel: true },
+    code: J("async function main() {", "  async function enviar() {", "  }", "  async function revisar() {", "  }", "  if (aprovada) {", "    await enviar();", "  } else {", "    await revisar();", "  }", "}"),
+    flow: main([{ t: "if", id: "i1", test: "aprovada", kids: [F("n2", "enviar")], elseKids: [F("n3", "revisar")] }]) },
+  switchEx: { num: "5.3", title: "Seleção: switch", lead: "Vários casos = <code>if</code> em sequência (um por valor).",
+    code: J("async function main() {", "  async function pagarPix() {", "  }", "  async function pagarCartao() {", "  }", "  switch (meio) {", "    case \"pix\":", "      await pagarPix();", "      break;", "    case \"cartao\":", "      await pagarCartao();", "      break;", "  }", "}"),
+    flow: main([
+      { t: "if", id: "i1", test: "meio === 'pix'", kids: [F("n2", "pagarPix")], elseKids: [] },
+      { t: "if", id: "i2", test: "meio === 'cartao'", kids: [F("n3", "pagarCartao")], elseKids: [] },
+    ]) },
+
+  repFor: { num: "6.1", title: "Repetição: for", lead: "<code>notificar</code> roda uma vez para cada item da coleção.",
+    code: J("async function main() {", "  async function notificar(item) {", "  }", "  for (const item of itens) {", "    await notificar(item);", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "notificar", { ins: ["item"] })] }]) },
+  repFor2: { num: "6.2", title: "Repetição com vários passos", lead: "O corpo do <code>for</code> pode ter passos em sequência e em paralelo.",
+    code: J("async function main() {", "  async function validar(item) {", "  }", "  async function salvar(item) {", "  }", "  for (const item of itens) {", "    await validar(item);", "    await salvar(item);", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "validar", { ins: ["item"] }), F("n3", "salvar", { ins: ["item"] })] }]) },
+  repWhile: { num: "6.3", title: "Repetição: while / do-while", lead: "No modelo atual, <code>while</code> e <code>do-while</code> são expressos com o mesmo bloco de repetição (<code>for</code>) — o rótulo mostra a coleção/condição.",
+    code: J("async function main() {", "  async function tentar() {", "  }", "  while (pendente) {", "    await tentar();", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", kids: [F("n2", "tentar")] }]) },
+
+  tryCatch: { num: "7.1", title: "try / catch", lead: "Se <code>cobrar</code> falhar, o fluxo segue para o <code>catch</code> e executa <code>avisar</code>.",
+    code: J("async function main() {", "  async function cobrar() {", "  }", "  async function avisar() {", "  }", "  try {", "    await cobrar();", "  } catch (error) {", "    await avisar();", "  }", "}"),
+    flow: main([{ t: "try", id: "t1", kids: [F("n2", "cobrar")], catchKids: [F("n3", "avisar")] }]) },
+  tryFor: { num: "7.2", title: "Blocos combinados", lead: "Blocos se aninham: um <code>try/catch</code> dentro de um <code>for</code>.",
+    code: J("async function main() {", "  async function enviar(item) {", "  }", "  async function registrarFalha() {", "  }", "  for (const item of itens) {", "    try {", "      await enviar(item);", "    } catch (error) {", "      await registrarFalha();", "    }", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [
+      { t: "try", id: "t1", kids: [F("n2", "enviar", { ins: ["item"] })], catchKids: [F("n3", "registrarFalha")] },
+    ] }]) },
+
+  fileMesmo: { num: "8.1", title: "Duas funções no mesmo arquivo", lead: "Cada função de 1ª ordem tem endereço físico: <code>main</code> e <code>util</code> em <code>app.ts</code>.",
+    code: J("// app.ts", "async function main() {", "}", "async function util() {", "}"),
+    flows: [F("n1", "main", { file: "app.ts" }), F("n2", "util", { file: "app.ts" })] },
+  fileOutro: { num: "8.2", title: "Arquivos diferentes", lead: "Arquivos distintos organizam endereços: <code>main.ts</code> e <code>pagamento.ts</code> (não confundir arquivo com camada).",
+    code: J("// main.ts", "import { pagar } from \"./pagamento\";", "async function main() {", "  await pagar();", "}", "", "// pagamento.ts", "export async function pagar() {", "}"),
+    flows: [main([F("n2", "pagar")]), F("n3", "pagar", { file: "pagamento.ts" })] },
+
+  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: "A camada é o abstrato: sem endereço físico — barra só contorno (plano universal a preencher).",
+    code: J("async function main() {", "  async function hello() {", "    // camada: ainda abstrata", "  }", "  await hello();", "}"),
+    flow: main([F("n2", "hello")]) },
+
+  solida: { num: "10.1", title: "Sólido", lead: "Tem endereço físico: a barra é preenchida (um agente executa). A camada abstrata solidifica.",
+    code: J("async function main() {", "  await maquina.hello();", "}"),
+    flow: main([F("n2", "hello", { agent: "maquina" })]) },
+
+  publica: { num: "11.1", title: "Pública", lead: "Acessível de fora do arquivo: <code>export</code>.",
+    code: J("export async function main() {", "}"), flow: main([]) },
+  privada: { num: "11.2", title: "Privada", lead: "Só existe dentro do arquivo/caixa: sem <code>export</code>.",
+    code: J("async function main() {", "  async function interna() {", "  }", "  await interna();", "}"), flow: main([F("n2", "interna")]) },
 };
+
+const GROUPS = [
+  { id: "funcoes", n: "1.", title: "Funções", keys: ["main", "filha", "paralela", "sequencial", "entrada", "saida", "entradaSaida", "neta", "mista"] },
+  { id: "dados", n: "2.", title: "Dados", keys: ["texto", "numero", "booleano", "funcaoDado", "objeto", "array"] },
+  { id: "estados", n: "3.", title: "Estados", keys: ["estado"] },
+  { id: "agentes", n: "4.", title: "Agentes", keys: ["agArquivo", "agMaquina", "agIa", "agPessoa", "agObjeto"] },
+  { id: "selecao", n: "5.", title: "Seleção", keys: ["se", "seSenao", "switchEx"] },
+  { id: "repeticao", n: "6.", title: "Repetição", keys: ["repFor", "repFor2", "repWhile"] },
+  { id: "trycatch", n: "7.", title: "try / catch", keys: ["tryCatch", "tryFor"] },
+  { id: "files", n: "8.", title: "Files", keys: ["fileMesmo", "fileOutro"] },
+  { id: "camadas", n: "9.", title: "Camadas (= abstratos)", keys: ["abstrata"] },
+  { id: "solidos", n: "10.", title: "Sólidos", keys: ["solida"] },
+  { id: "publico", n: "11.", title: "Público / privado", keys: ["publica", "privada"] },
+];
+const ANCHOR = { main: "main", filha: "filha", paralela: "paralela", sequencial: "sequencial" };
+const anchor = (k) => ANCHOR[k] ?? k;
 
 const prune = (node) => {
   if (!node || typeof node !== "object") return node;
@@ -227,10 +282,10 @@ const prune = (node) => {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-const paint = (key, ex) => {
-  const el = document.querySelector(`[data-ex="${key}"]`);
-  if (!el) return;
+const planOf = (flow, opts) => typeof FlowAst?.renderFnSvg === "function" ? FlowAst.renderFnSvg(flow, opts).svg : "";
 
+const paint = (key, ex) => {
+  const el = document.getElementById(anchor(key));
   let estree = "";
   try {
     estree = JSON.stringify(prune(acorn.parse(ex.code, { ecmaVersion: "latest", sourceType: "module" })), null, 2);
@@ -238,13 +293,10 @@ const paint = (key, ex) => {
     estree = e.message;
   }
 
-  let plan = "";
-  let planErr = "";
-  if (typeof FlowAst?.renderFnSvg === "function") {
-    plan = FlowAst.renderFnSvg(ex.flow).svg;
-  } else {
-    planErr = "fn-svg.js ausente — rode: npm run example:build";
-  }
+  const flows = ex.flows ?? [ex.flow];
+  const planErr = typeof FlowAst?.renderFnSvg === "function" ? "" : "fn-svg.js ausente — rode: npm run example:build";
+  const flowJson = flows.map((f) => JSON.stringify(f, null, 2)).join("\n");
+  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, ex.opts)}</div>`).join("");
 
   el.innerHTML = `
     <h3><span class="n">${esc(ex.num)}</span>${ex.title}</h3>
@@ -254,16 +306,22 @@ const paint = (key, ex) => {
     <div class="lab"><span class="kind">ESTree</span> Árvore sintática</div>
     <div class="pane ast"><div class="hd">AST do código <span class="tag">Acorn</span></div><pre>${esc(estree)}</pre></div>
     <div class="lab"><span class="kind">Flow</span> AST do fluxo</div>
-    <div class="pane ast"><div class="hd">IR flow-novo <span class="tag">Fn</span></div><pre>${esc(JSON.stringify(ex.flow, null, 2))}</pre></div>
+    <div class="pane ast"><div class="hd">IR flow-novo <span class="tag">Fn</span></div><pre>${esc(flowJson)}</pre></div>
     <div class="lab"><span class="kind">Plano</span> Visão</div>
     <div class="pane plan">
       <div class="hd">SVG <span class="tag">renderFnSvg</span></div>
-      <div class="svg-host">${plan}</div>
+      ${plans}
       ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
     </div>`;
 };
 
-for (const [key, ex] of Object.entries(EXAMPLES)) paint(key, ex);
+const out = document.getElementById("out"), toc = document.getElementById("toc");
+for (const g of GROUPS) {
+  const keys = g.keys.filter((k) => EXAMPLES[k]);
+  out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(g.title)}</h2>${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
+  toc.insertAdjacentHTML("beforeend", `<li><a href="#${g.id}">${esc(g.title)}</a><ul>${keys.map((k) => `<li><a href="#${anchor(k)}">${EXAMPLES[k].num} ${EXAMPLES[k].title}</a></li>`).join("")}</ul></li>`);
+  for (const k of keys) paint(k, EXAMPLES[k]);
+}
 </script>
 </body>
 </html>

@@ -38,7 +38,7 @@
     - chamadas e atribuições primeiro; definições das funções no fim do corpo
     - entrada na chamada: sempre variável — nunca literal (`saudar("Ana")` ❌ → `const nome = "Ana"; await saudar(nome)` ✅)
     - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
-    - concatenação: sempre função — nunca `+` / template na expressão (`"Olá, " + nome` ❌ → `await concatenar(nome)` ✅)
+    - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅)
 - Dados
   - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
   - os dados sao unidades transformaveis

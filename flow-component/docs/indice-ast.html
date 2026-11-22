@@ -127,7 +127,7 @@ footer {
 import * as acorn from "https://esm.sh/acorn@8.14.0";
 
 const fn = (id, title, extra = {}) => ({
-  t: "fn", id, title, agent: null, resp: null,
+  t: "fn", id, title, agent: "arquivo", resp: null,
   ins: [], outs: [], kids: [], par: false, ...extra,
 });
 
@@ -140,27 +140,27 @@ const EXAMPLES = {
     code: J("async function main() {", "}"), flow: main([]) },
   filha: { num: "1.2", title: "Função filha", lead: "Filho sólido dentro de <code>main</code>: <code>hello</code> tem endereço no arquivo (barra preenchida).",
     code: J("async function main() {", "  // sólido", "  async function hello() {", "  }", "  await hello();", "}"),
-    flow: main([F("n2", "hello", { agent: "arquivo" })]) },
+    flow: main([F("n2", "hello")]) },
   paralela: { num: "1.3", title: "Função paralela", lead: "Irmãs sólidas no mesmo passo: <code>a</code> e <code>b</code> juntas (<code>par: true</code> → <code>Promise.all</code>).",
     code: J("async function main() {", "  // sólido", "  async function a() {", "  }", "  // sólido", "  async function b() {", "  }", "  await Promise.all([a(), b()]);", "}"),
-    flow: main([F("n2", "a", { agent: "arquivo" }), F("n3", "b", { agent: "arquivo", par: true })]) },
+    flow: main([F("n2", "a"), F("n3", "b", { par: true })]) },
   sequencial: { num: "1.4", title: "Função sequencial", lead: "Irmãs sólidas no passo seguinte: <code>b</code> roda depois de <code>a</code> (<code>par: false</code>).",
     code: J("async function main() {", "  // sólido", "  async function a() {", "  }", "  // sólido", "  async function b() {", "  }", "  await a();", "  await b();", "}"),
-    flow: main([F("n2", "a", { agent: "arquivo" }), F("n3", "b", { agent: "arquivo" })]) },
-  entrada: { num: "1.5", title: "Função com entrada", lead: "<code>saudar</code> recebe um dado: o quadrado vermelho à esquerda da barra.",
-    code: J("async function main() {", "  async function saudar(nome) {", "  }", "  await saudar(\"Ana\");", "}"),
+    flow: main([F("n2", "a"), F("n3", "b")]) },
+  entrada: { num: "1.5", title: "Função com entrada", lead: "Sólida: <code>saudar</code> recebe um dado (quadrado à esquerda da barra).",
+    code: J("async function main() {", "  // sólido", "  async function saudar(nome) {", "  }", "  await saudar(\"Ana\");", "}"),
     flow: main([F("n2", "saudar", { ins: ["nome"] })]) },
-  saida: { num: "1.6", title: "Função com saída", lead: "<code>ler</code> devolve um dado: o quadrado à direita da barra.",
-    code: J("async function main() {", "  async function ler() {", "    return \"Ana\";", "  }", "  const nome = await ler();", "}"),
+  saida: { num: "1.6", title: "Função com saída", lead: "Sólida: <code>ler</code> devolve um dado (quadrado à direita da barra).",
+    code: J("async function main() {", "  // sólido", "  async function ler() {", "    return \"Ana\";", "  }", "  const nome = await ler();", "}"),
     flow: main([F("n2", "ler", { outs: ["nome"] })]) },
-  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: "A saída de uma função é a entrada da próxima: o dado <code>nome</code> viaja entre os passos.",
-    code: J("async function main() {", "  async function ler() {", "    return \"Ana\";", "  }", "  async function saudar(nome) {", "    return \"Olá, \" + nome;", "  }", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "}"),
+  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: "Sólidas: a saída de uma é a entrada da próxima — o dado <code>nome</code> viaja entre os passos.",
+    code: J("async function main() {", "  // sólido", "  async function ler() {", "    return \"Ana\";", "  }", "  // sólido", "  async function saudar(nome) {", "    return \"Olá, \" + nome;", "  }", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "}"),
     flow: main([F("n2", "ler", { outs: ["nome"] }), F("n3", "saudar", { ins: ["nome"], outs: ["saudacao"] })]) },
-  neta: { num: "1.8", title: "Filhas aninhadas", lead: "Uma filha também pode ter filhas: <code>pedido</code> é composição de <code>validar</code> e <code>cobrar</code>.",
-    code: J("async function main() {", "  async function pedido() {", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "    await validar();", "    await cobrar();", "  }", "  await pedido();", "}"),
+  neta: { num: "1.8", title: "Filhas aninhadas", lead: "Sólidas: <code>pedido</code> é composição de <code>validar</code> e <code>cobrar</code>.",
+    code: J("async function main() {", "  // sólido", "  async function pedido() {", "    // sólido", "    async function validar() {", "    }", "    // sólido", "    async function cobrar() {", "    }", "    await validar();", "    await cobrar();", "  }", "  await pedido();", "}"),
     flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
-  mista: { num: "1.9", title: "Paralela e depois sequencial", lead: "<code>a</code> e <code>b</code> juntas no passo 0; <code>c</code> só começa quando as duas terminam.",
-    code: J("async function main() {", "  async function a() {", "  }", "  async function b() {", "  }", "  async function c() {", "  }", "  await Promise.all([a(), b()]);", "  await c();", "}"),
+  mista: { num: "1.9", title: "Paralela e depois sequencial", lead: "Sólidas: <code>a</code> e <code>b</code> juntas no passo 0; <code>c</code> só começa quando as duas terminam.",
+    code: J("async function main() {", "  // sólido", "  async function a() {", "  }", "  // sólido", "  async function b() {", "  }", "  // sólido", "  async function c() {", "  }", "  await Promise.all([a(), b()]);", "  await c();", "}"),
     flow: main([F("n2", "a"), F("n3", "b", { par: true }), F("n4", "c")]) },
 
   texto: { num: "2.1", title: "Dado: texto", lead: "Um texto trafega como dado único (quadrado).",
@@ -240,9 +240,9 @@ const EXAMPLES = {
     code: J("// main.ts", "import { pagar } from \"./pagamento\";", "async function main() {", "  await pagar();", "}", "", "// pagamento.ts", "export async function pagar() {", "}"),
     flows: [main([F("n2", "pagar")]), F("n3", "pagar", { file: "pagamento.ts" })] },
 
-  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: "A camada é o abstrato: sem endereço físico — barra só contorno (plano universal a preencher).",
-    code: J("async function main() {", "  async function hello() {", "    // camada: ainda abstrata", "  }", "  await hello();", "}"),
-    flow: main([F("n2", "hello")]) },
+  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: "Assunto abstrato: sem endereço físico — barra só contorno (plano universal a preencher). Único caso vazado de propósito.",
+    code: J("async function main() {", "  // abstrata: chega pelo state, sem corpo no arquivo", "  const { hello } = state;", "  await hello();", "}"),
+    flow: main([F("n2", "hello", { agent: null })]) },
 
   solida: { num: "10.1", title: "Sólido", lead: "Tem endereço físico: a barra é preenchida (um agente executa). A camada abstrata solidifica.",
     code: J("async function main() {", "  await maquina.hello();", "}"),
@@ -250,8 +250,8 @@ const EXAMPLES = {
 
   publica: { num: "11.1", title: "Pública", lead: "Acessível de fora do arquivo: <code>export</code>.",
     code: J("export async function main() {", "}"), flow: main([]) },
-  privada: { num: "11.2", title: "Privada", lead: "Só existe dentro do arquivo/caixa: sem <code>export</code>.",
-    code: J("async function main() {", "  async function interna() {", "  }", "  await interna();", "}"), flow: main([F("n2", "interna")]) },
+  privada: { num: "11.2", title: "Privada", lead: "Sólida e só existe dentro do arquivo/caixa: sem <code>export</code>.",
+    code: J("async function main() {", "  // sólido", "  async function interna() {", "  }", "  await interna();", "}"), flow: main([F("n2", "interna")]) },
 };
 
 const GROUPS = [

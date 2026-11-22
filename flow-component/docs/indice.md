@@ -26,6 +26,7 @@
   - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista) — sólidas
   - funcoes sao unidades de transformacao
   - exemplos do índice são sólidos por padrão; só o assunto abstrato (camada) fica vazado
+  - no JS: atribuições e chamadas primeiro; definições das funções no fim do corpo; entrada sempre por variável (nunca literal na chamada)
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas
   - uma funcao pode ter funcoes irmas

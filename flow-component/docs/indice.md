@@ -25,8 +25,6 @@
   - 1.5 [`entrada`](indice-ast.html#entrada) · 1.6 [`saída`](indice-ast.html#saida) · 1.7 [`entrada e saída ligadas`](indice-ast.html#entradaSaida) — sólidas
   - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista) — sólidas
   - funcoes sao unidades de transformacao
-  - exemplos do índice são sólidos por padrão; só o assunto abstrato (camada) fica vazado
-  - no JS: atribuições e chamadas primeiro; definições das funções no fim do corpo; entrada sempre por variável (nunca literal na chamada)
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas
   - uma funcao pode ter funcoes irmas
@@ -35,6 +33,12 @@
   - podem possuir entrada e saida
   - apenas podem ter uma entrada e uma saida
   - a entrada e saida sao dados
+  - **regras (exemplos JS)**
+    - sólido por padrão; só o assunto abstrato (camada) fica vazado
+    - chamadas e atribuições primeiro; definições das funções no fim do corpo
+    - entrada na chamada: sempre variável — nunca literal (`saudar("Ana")` ❌ → `const nome = "Ana"; await saudar(nome)` ✅)
+    - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
+    - concatenação: sempre função — nunca `+` / template na expressão (`"Olá, " + nome` ❌ → `await concatenar(nome)` ✅)
 - Dados
   - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
   - os dados sao unidades transformaveis
@@ -53,10 +57,14 @@
         - chaveados {}
       - arquivo (futuramente)
       - imagem (futuramente)
+  - **regras**
+    - valor de dado: atribuir antes de usar / retornar (nunca literal solto em call ou return)
 - Estados
   - exemplo: [estado do fluxo](indice-ast.html#estado)
   - estados sao os dados que estao disponiveis
-  - os estados iniciais sempre serao 
+  - os estados iniciais sempre serao
+  - **regras**
+    - estado que alimenta chamada: variável já atribuída (nunca literal na chamada)
 - Agentes
   - exemplos: [arquivo](indice-ast.html#agArquivo) · [máquina](indice-ast.html#agMaquina) · [IA](indice-ast.html#agIa) · [pessoa](indice-ast.html#agPessoa) · [objeto](indice-ast.html#agObjeto)
   - Estruturas fonte da execucao
@@ -67,35 +75,52 @@
   - toda estrutuar que comporta funcao é um agente
     - objetos
     - funcoes
+  - **regras**
+    - arquivo/máquina/objeto = sólido; IA/pessoa = barra clara (abstrato até assumir)
 - Selecao
   - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx)
   - estruturas de conidcao, definem para onde vai o fluxo conforme
   o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
   - if/else
   - switch
+  - **regras**
+    - condição: atribuir antes (`const ok = true; if (ok)`)
+    - definições das funções do ramo no fim do corpo
 - Repeticao
   - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while/do-while](indice-ast.html#repWhile)
   - estuturas repetíveis
   - for
   - while
   - do-while
+  - **regras**
+    - coleção/condição: atribuir antes do loop
+    - definições das funções do corpo no fim
 - try catch
   - exemplos: [try/catch](indice-ast.html#tryCatch) · [blocos combinados](indice-ast.html#tryFor)
+  - **regras**
+    - try/catch primeiro; definições das funções no fim
 - Files
   - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro)
   - todo dado tem um endereco
   - toda funcao tem um endereco
   - o arquivo organiza endereços sólidos (físicos)
+  - **regras**
+    - arquivo ≠ camada: arquivo é endereço físico; camada é o abstrato
 - Camadas (= abstratos)
   - exemplos: [camada / abstrato](indice-ast.html#abstrata)
   - a camada é o abstrato: não possui endereço físico
   - estruturas universais (plano ainda vazio)
   - quem se conhece no plano abstrato forma a mesma camada
   - a camada é substituível: preenche-se o endereço e vira sólido
+  - **regras**
+    - camadas = abstratos (não confundir com files)
+    - único assunto com barra vazada de propósito nos exemplos
 - Solidos
   - exemplos: [sólido](indice-ast.html#solida)
   - sólido: tem endereço físico (agente, valor, arquivo)
   - para executar, a camada abstrata precisa solidificar
+  - **regras**
+    - sólido = endereço preenchido (barra preenchida)
 - publico / privado
   - exemplos: [pública](indice-ast.html#publica) · [privada](indice-ast.html#privada)
   - dados e funcoes podem ser publicas ou privadas
@@ -103,6 +128,8 @@
     - public ou export
   - privada sao os que apenas dentro da caixa, estado tem acesso
     - private ou dados ou fucnoes especificadas no arquivo/contexto
+  - **regras**
+    - privada aninhada: chamada primeiro; definição no fim; sólida por padrão
 -------------------
 - boas praticas de desenvlvimenot
   - solid

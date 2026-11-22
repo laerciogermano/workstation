@@ -14,10 +14,35 @@
   --accent: #ff6a52; --line: #262626;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 }
+[data-theme="graphite"] {
+  color-scheme: dark;
+  --paper: #1c1c1e; --paper-2: #26262a; --ink: #ececec; --body: #a6a6ab;
+  --accent: #ff8a5c; --line: #34343a;
+}
 [data-theme="white"] {
   color-scheme: light;
   --paper: #fff; --paper-2: #f4f1ea; --ink: #14120f; --body: #44423d;
   --accent: #e0402b; --line: #e7e3db;
+}
+[data-theme="sepia"] {
+  color-scheme: light;
+  --paper: #f6ecd9; --paper-2: #ecdfc6; --ink: #2e2416; --body: #5f5238;
+  --accent: #b5471f; --line: #dccdb0;
+}
+[data-theme="sage"] {
+  color-scheme: light;
+  --paper: #eef3ec; --paper-2: #e0e9dd; --ink: #16231a; --body: #46584b;
+  --accent: #2f7d4f; --line: #cfdccb;
+}
+[data-theme="ocean"] {
+  color-scheme: dark;
+  --paper: #0a1a1f; --paper-2: #11262d; --ink: #e4f1f3; --body: #8fb0b7;
+  --accent: #3cc7b4; --line: #1b3640;
+}
+[data-theme="rose"] {
+  color-scheme: light;
+  --paper: #fbf1f1; --paper-2: #f4e0e1; --ink: #2a1416; --body: #6b4a4d;
+  --accent: #c0334d; --line: #ebcfd1;
 }
 :root {
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
@@ -45,12 +70,14 @@ code, pre { font-family: var(--mono); }
   color: var(--body); text-decoration: none; margin-right: .75rem;
 }
 .sp { flex: 1; }
-.themes { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; margin-right: .75rem; }
+.themes { display: flex; gap: .45rem; align-items: center; margin-right: .75rem; }
 .themes button {
-  font: 600 .68rem/1 Archivo, sans-serif; letter-spacing: .05em; text-transform: uppercase;
-  padding: .45rem .8rem; border: 0; background: transparent; color: var(--body); cursor: pointer;
+  width: 1.05rem; height: 1.05rem; padding: 0; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--body); background: var(--c); position: relative;
 }
-.themes button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.themes button::after { content: ""; position: absolute; inset: 3px 3px 3px 50%; border-radius: 0 50% 50% 0; background: var(--a); }
+.themes button:hover { transform: scale(1.15); }
+.themes button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink); }
 .meta { font-size: .75rem; font-weight: 600; color: var(--body); }
 
 html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
@@ -65,8 +92,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
 .side a { display: block; padding: .3rem .5rem; border-left: 2px solid transparent; color: var(--body); text-decoration: none; border-radius: 0 4px 4px 0; }
 .side a:hover { color: var(--ink); background: var(--paper-2); }
 .side > ol > li > a { color: var(--ink); font-weight: 700; margin-top: .25rem; }
-.side ul { display: none; margin-left: .75rem; }
-.side li.open > ul { display: block; }
+.side ul { display: block; margin-left: .75rem; }
 .side ul a { font-weight: 500; font-size: .78rem; padding: .2rem .5rem; }
 .side a.on { color: var(--accent); border-left-color: var(--accent); background: var(--paper-2); }
 @media (max-width: 62rem) {
@@ -122,6 +148,8 @@ h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); color: var(--accent); margin-right
   margin: 0; padding: .85rem 1rem; overflow: auto;
   font-size: .78rem; line-height: 1.55; color: var(--ink); white-space: pre;
 }
+/* ESTree e AST do fluxo ocultos; para exibir de novo, apague esta regra */
+.pane.ast { display: none; }
 .pane.ast pre { color: var(--body); max-height: 18rem; }
 .pane.plan .body { padding: 1rem; overflow: auto; background: var(--paper-2); }
 .pane.plan .svg-host { overflow: auto; }
@@ -156,7 +184,9 @@ footer {
     try { localStorage.setItem("flow-docs-theme", t); } catch {}
     document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === t)));
   };
+  const ok = ["black","graphite","ocean","white","sepia","sage","rose"];
   let t = "black"; try { t = localStorage.getItem("flow-docs-theme") || "black"; } catch {}
+  if (!ok.includes(t)) t = "black";
   document.documentElement.dataset.theme = t;
   addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-theme-set]").forEach((b) => b.addEventListener("click", () => set(b.dataset.themeSet)));
@@ -175,8 +205,13 @@ footer {
   </nav>
   <div class="sp"></div>
   <div class="themes" role="group" aria-label="Tema">
-    <button type="button" data-theme-set="white" aria-pressed="false">White</button>
-    <button type="button" data-theme-set="black" aria-pressed="true">Black</button>
+    <button type="button" data-theme-set="black" aria-pressed="true" title="Black" aria-label="Tema Black" style="--c:#000;--a:#ff6a52"></button>
+    <button type="button" data-theme-set="graphite" aria-pressed="false" title="Graphite" aria-label="Tema Graphite" style="--c:#1c1c1e;--a:#ff8a5c"></button>
+    <button type="button" data-theme-set="ocean" aria-pressed="false" title="Ocean" aria-label="Tema Ocean" style="--c:#0a1a1f;--a:#3cc7b4"></button>
+    <button type="button" data-theme-set="white" aria-pressed="false" title="White" aria-label="Tema White" style="--c:#fff;--a:#e0402b"></button>
+    <button type="button" data-theme-set="sepia" aria-pressed="false" title="Sepia" aria-label="Tema Sepia" style="--c:#f6ecd9;--a:#b5471f"></button>
+    <button type="button" data-theme-set="sage" aria-pressed="false" title="Sage" aria-label="Tema Sage" style="--c:#eef3ec;--a:#2f7d4f"></button>
+    <button type="button" data-theme-set="rose" aria-pressed="false" title="Rose" aria-label="Tema Rose" style="--c:#fbf1f1;--a:#c0334d"></button>
   </div>
   <div class="meta">AST → SVG</div>
 </header>
@@ -209,31 +244,31 @@ const J = (...l) => l.join("\n");
 const main = (kids, extra = {}) => F("n1", "main", { file: "main.ts", kids, ...extra });
 
 const EXAMPLES = {
-  main: { num: "1.1", title: "A função <code>main</code>", lead: "1ª ordem, sólida, sem entrada e sem saída.",
+  main: { num: "1.1", title: "A função <code>main</code>", lead: "Todo sistema tem um <em>entry point</em> — aqui chama-se <code>main</code>. 1ª ordem, sólida, sem entrada e sem saída.",
     code: J("async function main() {", "}"), flow: main([]) },
   filha: { num: "1.2", title: "Função filha", lead: "<code>hello</code> é filha de <code>main</code>. Tem endereço no arquivo, por isso a barra é preenchida.",
-    code: J("async function main() {", "  await hello();", "", "  async function hello() {", "  }", "}"),
+    code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
     flow: main([F("n2", "hello")]) },
   paralela: { num: "1.3", title: "Função paralela", lead: "<code>a</code> e <code>b</code> executam no mesmo passo (<code>par: true</code>, que vira <code>Promise.all</code>).",
-    code: J("async function main() {", "  await Promise.all([a(), b()]);", "", "  async function a() {", "  }", "  async function b() {", "  }", "}"),
+    code: J("async function main() {", "  await Promise.all([a(), b()]);", "}", "", "async function a() {", "}", "", "async function b() {", "}"),
     flow: main([F("n2", "a"), F("n3", "b", { par: true })]) },
   sequencial: { num: "1.4", title: "Função sequencial", lead: "<code>b</code> executa no passo seguinte a <code>a</code> (<code>par: false</code>).",
-    code: J("async function main() {", "  await a();", "  await b();", "", "  async function a() {", "  }", "  async function b() {", "  }", "}"),
+    code: J("async function main() {", "  await a();", "  await b();", "}", "", "async function a() {", "}", "", "async function b() {", "}"),
     flow: main([F("n2", "a"), F("n3", "b")]) },
-  entrada: { num: "1.5", title: "Função com entrada", lead: "<code>saudar</code> recebe um dado, que aparece como quadrado à esquerda da barra. A entrada é sempre uma variável.",
-    code: J("async function main() {", "  const nome = \"Ana\";", "  await saudar(nome);", "", "  async function saudar(nome) {", "  }", "}"),
-    flow: main([F("n2", "saudar", { ins: ["nome"] })]) },
+  entrada: { num: "1.5", title: "Função com entrada", lead: "<code>saudar</code> recebe um dado, que aparece como quadrado à esquerda da barra. <code>nome</code> já tem valor, então é sólido e o quadrado é preenchido. A entrada é sempre uma variável.",
+    code: J("async function main() {", "  const nome = \"Ana\";", "  await saudar(nome);", "}", "", "async function saudar(nome) {", "}"),
+    flow: main([F("n2", "saudar", { ins: ["nome"], args: { nome: '"Ana"' } })]) },
   saida: { num: "1.6", title: "Função com saída", lead: "<code>ler</code> devolve um dado, quadrado à direita da barra. O valor é atribuído a uma variável antes do <code>return</code>.",
-    code: J("async function main() {", "  const nome = await ler();", "", "  async function ler() {", "    const nome = \"Ana\";", "    return nome;", "  }", "}"),
+    code: J("async function main() {", "  const nome = await ler();", "}", "", "async function ler() {", "  const nome = \"Ana\";", "  return nome;", "}"),
     flow: main([F("n2", "ler", { outs: ["nome"] })]) },
-  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: "A saída de uma função é a entrada da próxima. Concatenação é uma função: <code>ola</code> e <code>nome</code> vão juntos em um array e <code>concatenar</code> retorna o resultado.",
-    code: J("async function main() {", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "", "  async function ler() {", "    const nome = \"Ana\";", "    return nome;", "  }", "  async function saudar(nome) {", "    const ola = \"Olá, \";", "    const partes = [ola, nome];", "    const saudacao = await concatenar(partes);", "    return saudacao;", "", "    async function concatenar(partes) {", "      const saudacao = partes;", "      return saudacao;", "    }", "  }", "}"),
-    flow: main([F("n2", "ler", { outs: ["nome"] }), F("n3", "saudar", { ins: ["nome"], outs: ["saudacao"], kids: [F("n4", "concatenar", { ins: ["ola", "nome"], outs: ["saudacao"] })] })]) },
+  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: "A saída de uma função é a entrada da próxima. Concatenação é uma função: <code>ola</code> e <code>nome</code> vão juntos em um array e <code>concatenar</code> é uma função nativa (sem implementação no código): recebe o array e devolve só a string.",
+    code: J("async function main() {", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "}", "", "async function ler() {", "  const nome = \"Ana\";", "  return nome;", "}", "", "async function saudar(nome) {", "  const ola = \"Olá, \";", "  const partes = [ola, nome];", "  const saudacao = await concatenar(partes);", "  return saudacao;", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome"], args: { nome: '"Ana"' } }), F("n3", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { ola: '"Olá, "', saudacao: '"Olá, Ana"' }, kids: [F("n4", "concatenar", { agent: "maquina", ins: ["partes"], outs: ["saudacao"], args: { saudacao: '"Olá, Ana"', partes: '{ ola: "Olá, ", nome: "Ana" }' } })] })]) },
   neta: { num: "1.8", title: "Filhas aninhadas", lead: "<code>pedido</code> é composta por <code>validar</code> e <code>cobrar</code>.",
-    code: J("async function main() {", "  await pedido();", "", "  async function pedido() {", "    await validar();", "    await cobrar();", "", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "  }", "}"),
+    code: J("async function main() {", "  await pedido();", "}", "", "async function pedido() {", "  await validar();", "  await cobrar();", "}", "", "async function validar() {", "}", "", "async function cobrar() {", "}"),
     flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
   mista: { num: "1.9", title: "Paralela e depois sequencial", lead: "<code>a</code> e <code>b</code> executam no passo 0; <code>c</code> só começa depois das duas.",
-    code: J("async function main() {", "  await Promise.all([a(), b()]);", "  await c();", "", "  async function a() {", "  }", "  async function b() {", "  }", "  async function c() {", "  }", "}"),
+    code: J("async function main() {", "  await Promise.all([a(), b()]);", "  await c();", "}", "", "async function a() {", "}", "", "async function b() {", "}", "", "async function c() {", "}"),
     flow: main([F("n2", "a"), F("n3", "b", { par: true }), F("n4", "c")]) },
 
   texto: { num: "2.1", title: "Dado: texto", lead: "Texto: um dado simples, representado por um quadrado.",

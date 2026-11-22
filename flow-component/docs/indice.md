@@ -23,7 +23,8 @@
   - softwares sao fluxos de execucao
   - um fluxo de execucao e formado basicamente por dado e funcao (icones)
 - 1. Funcoes
-  - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+  - 1.1 [`main`](indice-ast.html#main) — entry point do sistema; 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+  - todo sistema tem um entry point; aqui chama-se `main`
   - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
   - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
   - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmãs sólidas no passo seguinte (await em sequência)
@@ -40,7 +41,7 @@
   - a entrada e saida sao dados
   - **regras (exemplos JS)**
     - sólido por padrão; só o assunto abstrato (camada) fica vazado
-    - chamadas e atribuições primeiro; definições das funções no fim do corpo
+    - chamadas e atribuições primeiro; as funções são definidas fora do escopo de `main` (capítulo 1)
     - entrada na chamada: sempre variável — nunca literal (`saudar("Ana")` ❌ → `const nome = "Ana"; await saudar(nome)` ✅)
     - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
     - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅); `concatenar` deve ter `return` (atribuir depois retornar)

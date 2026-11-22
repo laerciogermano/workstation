@@ -204,8 +204,9 @@ h3 .n { color: var(--dado); }
 .quote { margin: 0 0 1.5rem; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); max-width: 40rem; }
 .quote p { margin: 0; font: italic 400 1.3rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); }
-.hero .quote { margin: 0 .25rem .8rem; }
+.hero .quote { margin: .85rem .25rem .15rem; }
 .hero .quote p { font-size: 1.05rem; }
+.hero .quote cite { text-align: inherit; }
 .prose + .quote { margin: 1.75rem 0 0; }
 .prose { max-width: 42rem; margin: 0 0 1.5rem; font: 400 1.05rem/1.65 "IBM Plex Sans", sans-serif; color: var(--body); }
 .prose p { margin: 0 0 .9rem; }
@@ -399,6 +400,10 @@ footer {
 <h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
 <section class="hero" aria-label="Exemplo de fluxo">
   <div class="hero-plan" id="hero-plan"></div>
+  <blockquote class="quote">
+    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
+  </blockquote>
 </section>
 <div class="layout">
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
@@ -642,7 +647,7 @@ const GROUPS = [
 <p>Todo sistema é composto, essencialmente, de unidades de processamento e de unidades processáveis, isto é, de funções e de estados. A função é a unidade de processamento, eterna e imutável, e por essa natureza é representada por um círculo. O estado é a unidade processável, o dado que atravessa a função, mutável e transitório, e por essa natureza é representado por um quadrado. Um software é um conjunto de fluxos de execução.</p>
 <p>O desenho substitui a leitura linear do código-fonte, e a ordem de execução, o paralelismo e o caminho dos dados ficam explícitos, o que reduz o esforço de análise. Todos os fluxos de um sistema podem ser vistos em conjunto, e os componentes, por serem desacoplados, podem ser substituídos em qualquer contexto, independentemente de linguagem ou paradigma. A representação visual também facilita o aprendizado de programação por iniciantes, pois permite expressar a lógica sem depender da sintaxe de uma linguagem.</p>
 <p>O modelo se aplica aos processos de software, ou seja, ao código, e à gestão de processos em geral, incluindo o gerenciamento de tarefas. Nesse segundo uso, o responsável por cada passo pode ser uma pessoa, um agente de IA, uma máquina ou outro sistema.</p>
-<p class="note"><strong>Observação.</strong> O Flow (Flow Oriented Programming) não deve ser confundido com a programação baseada em fluxo (Flow-Based Programming, FBP). Embora o nome seja semelhante e alguns conceitos sejam compartilhados, não há relação direta entre os dois.</p></div><blockquote class="quote"><p>Uma imagem vale mais que mil palavras.</p><cite>Confúcio, 552–479 a.C.</cite></blockquote>`, keys: [] },
+<p class="note"><strong>Observação.</strong> O Flow (Flow Oriented Programming) não deve ser confundido com a programação baseada em fluxo (Flow-Based Programming, FBP). Embora o nome seja semelhante e alguns conceitos sejam compartilhados, não há relação direta entre os dois.</p></div>`, keys: [] },
   { id: "sistema", n: "1.", title: "Sistema", html: `<div class="legend" aria-label="Ícones">
   <div class="it">
     <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle class="fnc" cx="11" cy="11" r="9"/></svg>

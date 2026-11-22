@@ -321,8 +321,8 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
       const x2 = colX(r.e + 1) - inset;
       over.push(`<g data-id="${esc(f.id)}"><path class="sum${selC}" d="M${x1} ${ym(i) - 3.5}H${x2}V${ym(i) + 7.5}L${x2 - 5} ${ym(i) + 3.5}H${x1 + 5}L${x1} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} · composition</title></g>`);
       ioMarks(f, r, i, x1, x2);
-      if (i === 0 && !hide) over.push(`<text class="lbl" x="${(x1 + x2) / 2}" y="${ym(i) - 10}" text-anchor="middle">${esc(f.title)}</text>`);
-      else over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+      // funções pai (composição): nome em cima, no mesmo padrão da 1ª ordem
+      over.push(`<text class="lbl" x="${(x1 + x2) / 2}" y="${ym(i) - 10}" text-anchor="middle">${esc(f.title)}</text>`);
       return;
     }
     const k = kindOf(f, r.depth);

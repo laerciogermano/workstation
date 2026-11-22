@@ -92,7 +92,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. **Antes:** em paralelo à última célula. **Voltar:** `cs = max(step, next - count)` no layout.
 
-**Nome da 1ª ordem:** centrado em cima da barra-resumo (`text-anchor=middle`), não à direita das saídas. Compostas internas continuam à direita. **Voltar:** `lblAfterOuts` também na raiz.
+**Nome da função pai (composição):** centrado em cima da barra-resumo (`text-anchor=middle`) — 1ª ordem e compostas internas. **Antes:** só a 1ª ordem em cima; internas à direita das saídas. **Voltar:** `lblAfterOuts` nas compostas internas (`view.ts` / `fn-svg.ts`).
 
 **I/O padrão:** função nova nasce sem entrada nem retorno (`ins`/`outs` `[]`). No diagrama: fantasma `+` (`addIo`); só há marca/rótulo/`states` depois de declarar. **Antes:** `[]` virava cubo `input_<fn>`/`output_<fn>` inventado. **Voltar:** `showIn/Out = length || !lib` e ramo de I/O vazio em `statesByStep`.
 

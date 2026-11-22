@@ -1121,8 +1121,7 @@ var FlowAst = (() => {
         const x22 = colX(r.e + 1) - inset;
         over.push(`<g data-id="${esc(f.id)}"><path class="sum${selC}" d="M${x12} ${ym(i) - 3.5}H${x22}V${ym(i) + 7.5}L${x22 - 5} ${ym(i) + 3.5}H${x12 + 5}L${x12} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} \xB7 composition</title></g>`);
         ioMarks(f, r, i, x12, x22);
-        if (i === 0 && !hide) over.push(`<text class="lbl" x="${(x12 + x22) / 2}" y="${ym(i) - 10}" text-anchor="middle">${esc(f.title)}</text>`);
-        else over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+        over.push(`<text class="lbl" x="${(x12 + x22) / 2}" y="${ym(i) - 10}" text-anchor="middle">${esc(f.title)}</text>`);
         return;
       }
       const k = kindOf(f, r.depth);

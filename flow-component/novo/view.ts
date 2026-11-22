@@ -382,9 +382,8 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
       const inset = 21, x1 = colX(r.s) + inset, x2 = colX(r.e + 1) - inset;   // mesmo recuo em toda composição: a barra pai nunca é menor que a filha (igual quando cobrem os mesmos estados) e nunca maior que ela por recuo
       over.push(`<g data-hover="${esc(f.id)}" data-sel="${esc(f.id)}"><path class="sum${selC}" d="M${x1} ${ym(i) - 3.5}H${x2}V${ym(i) + 7.5}L${x2 - 5} ${ym(i) + 3.5}H${x1 + 5}L${x1} ${ym(i) + 7.5}Z"/><title>${esc(f.title)} · composition = layer</title></g>`);
       ioMarks(f, r, i, x1, x2);   // toda composição (a raiz e as internas) também tem entradas e saídas
-      // 1ª ordem: nome centrado em cima da barra; composição interna: à direita das saídas
-      if (isRoot(p, f.id)) over.push(`<text class="lbl" x="${(x1 + x2) / 2}" y="${ym(i) - 22}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(f.title)}</text>`);
-      else over.push(`<text class="lbl" x="${lblAfterOuts(f)}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
+      // função pai (composição, 1ª ordem ou interna): nome centrado em cima da barra
+      over.push(`<text class="lbl" x="${(x1 + x2) / 2}" y="${ym(i) - 22}" text-anchor="middle" data-act="rename" data-id="${esc(f.id)}">${esc(f.title)}</text>`);
       return;
     }
     const k = fnKind(p, f), shown = f.title;

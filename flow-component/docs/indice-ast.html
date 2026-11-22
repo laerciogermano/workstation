@@ -87,7 +87,9 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
   grid-template-areas: "side flow" "side main";
 }
 .side { grid-area: side; }
-.flow-preface { grid-area: flow; min-width: 0; max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 0; width: 100%; box-sizing: border-box; }
+.flow-preface { grid-area: flow; min-width: 0; max-width: 74rem; margin: 0 auto; padding: 2rem 2.5rem 0; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+.flow-preface h2 { border-top: 0; padding-top: 0; text-align: center; }
+.flow-preface .prose { margin-left: auto; margin-right: auto; width: 100%; }
 .main-col { grid-area: main; min-width: 0; }
 .side {
   position: sticky; top: 3.5rem; height: calc(100vh - 3.5rem); overflow-y: auto;

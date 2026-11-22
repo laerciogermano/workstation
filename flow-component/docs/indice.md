@@ -1,177 +1,140 @@
 - Flow
-  - muitos conceitos confusos
-  - linguagem de programacao visual
-  - Linguagem universal -> transpila para quaquer linguagem
-  - Gerenciador de tarefas
-  - Possui as features das linguagens de programacao
-  - torna codigo em visao, aumentando facilidade de analise
-  - visao logistica de todos os fluxos
-  - similar a u m n8n, orquestrador de processos
-  - components substituiveis em qualquer contexto, desacoplamento a nivel de
-  - visulizar imagem é mais facil do que visualizar texto, uma imagem fala mais que mil palavras
-  - os conceitos sao confusos vendo apenas texto, ;e como jogar xadrez sem ver o tabuleiro, apenas com posicoes de texto
-  - é necessario de muito esforco cognitivo par entender codigo
-  - ate o prosente momento mnao existia uma forma de enxergar software tao fidedigna, é dar face ao que antes n foi visto, com todos os recursos de programacao
-  servico.
-- atualmente, existem diferentes linguagens, diferentes paradigmas, todas com suas nuances, suas formas de se fazer a mesma coisa, o flow é a visualiacaounica, a linguagem ubiqua, o codigo universal.
-- flow nao se trata apenas de uma forma unificada de ver software, mas tambem de ver a propria realidade
-- tudo é composto por funcoes (eternos) e estados (mutáveis)
-  - softwares sao feitos de fluxos de esxecucao
-  - resumidamente, um fluxo de exduccao é formado por dados e funcoes
-- Flow e software: capítulo só de texto, em [indice-ast.html](indice-ast.html#flow)
-1. softwares
-  - ícones: ● círculo = função (eterna, imutável) · ■ quadrado = dado (mutável, transitório)
-  - softwares sao fluxos de execucao
-  - um fluxo de execucao e formado basicamente por dado e funcao (icones)
-- 1. Funcoes
-  - 1.1 [`função: a unidade de transformação`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
-  - Definição I. entry point é a primeira chamada de um sistema
-  - Definição II. `main` é o nome dado ao entry point de um sistema
-  - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
-  - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
-  - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmãs sólidas no passo seguinte (await em sequência)
-  - funcoes sao unidades de transformacao
-  - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
-  - uma funcao pode ter funcao filhas
-  - uma funcao pode ter funcoes irmas
-  - as funcoes podem ser sequenciais
-  - as funcoes podem ser paralelas
-  - podem possuir entrada e saida
-  - apenas podem ter uma entrada e uma saida
-  - a entrada e saida sao dados
-  - **regras (exemplos JS)**
-    - sólido por padrão; só o assunto abstrato (camada) fica vazado
-    - chamadas e atribuições primeiro; as funções são definidas fora do escopo de `main` (capítulo 1)
-    - entrada na chamada: sempre variável — nunca literal (`saudar("Ana")` ❌ → `const nome = "Ana"; await saudar(nome)` ✅)
-    - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
-    - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅); `concatenar` deve ter `return` (atribuir depois retornar)
-- Dados
-  - entradas e saídas (primeira parte do capítulo): 2.1 [`funções têm entrada e saída`](indice-ast.html#ioGeral) · 2.2 [`entrada`](indice-ast.html#entrada) · 2.3 [`saída`](indice-ast.html#saida) · 2.4 [`entrada e saída ligadas`](indice-ast.html#entradaSaida)
-  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
-  - os dados sao unidades transformaveis
-    input
-  - output
-  - podem ser
-    - texto
-    - numero
-    - boleano
-    - funcoes
-    - objetos (caixas)
-      - seres que possuem dados e funcao,
-      - array
-        - posicionais []
-      - obj
-        - chaveados {}
-      - arquivo (também objeto/estado)
-      - imagem (futuramente)
-  - **regras**
-    - valor de dado: atribuir antes de usar / retornar (nunca literal solto em call ou return)
-- Estados
-  - exemplos: [estado do fluxo](indice-ast.html#estado) · [inicial](indice-ast.html#estadoInicial) · [caixa](indice-ast.html#estadoCaixa) · [substituído](indice-ast.html#estadoSubstitui) · [abstrato](indice-ast.html#estadoAbstrato) · [paralelas](indice-ast.html#estadoParalelo) · [dentro do for](indice-ast.html#estadoBloco)
-  - estados sao os dados que estao disponiveis
-  - os estados iniciais sempre serao
-  - o estado deve mostrar funções e estados (não só dados): o que está disponível e o que pode ser chamado
-  - **regras**
-    - estado que alimenta chamada: variável já atribuída (nunca literal na chamada)
-    - na visão, o estado lista funções e estados juntos
-- Selecao
-  - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx) · [aninhados](indice-ast.html#seAninhado)
-  - estruturas de conidcao, definem para onde vai o fluxo conforme
-  o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
-  - if/else
-  - if/else aninhados
-  - switch
-  - **regras**
-    - condição: atribuir antes (`const ok = true; if (ok)`)
-    - definições das funções do ramo no fim do corpo
-- Repeticao
-  - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while](indice-ast.html#repWhile) · [do-while](indice-ast.html#repDoWhile)
-  - estuturas repetíveis
-  - for
-  - while
-  - do-while
-  - **regras**
-    - coleção/condição: atribuir antes do loop
-    - definições das funções do corpo no fim
-- try catch
-  - exemplos: [try/catch](indice-ast.html#tryCatch) · [blocos combinados](indice-ast.html#tryFor)
-  - **regras**
-    - try/catch primeiro; definições das funções no fim
-- Files
-  - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro) · [arquivo como objeto/estado](indice-ast.html#fileObjeto)
-  - todo dado tem um endereco
-  - toda funcao tem um endereco
-  - o arquivo organiza endereços sólidos (físicos)
-  - o arquivo também é objeto/estado: caixa com dados e funções, endereço físico
-  - **regras**
-    - arquivo ≠ camada: arquivo é endereço físico; camada é o abstrato
-    - arquivo = objeto/estado (não só “pasta de código”)
-- Responsáveis
-  - exemplos: [arquivo](indice-ast.html#respArquivo) · [máquina](indice-ast.html#respMaquina) · [IA](indice-ast.html#respIa) · [pessoa](indice-ast.html#respPessoa) · [objeto](indice-ast.html#respObjeto)
-  - quem executa o passo (source): a origem do trabalho
-  - podem ser: arquivo, máquina/lib, IA, pessoa, objeto
-  - o responsável também pode ser sólido ou abstrato
-    - sólido: endereço preenchido (arquivo, máquina, objeto) → barra preenchida
-    - abstrato: ainda sem quem assumiu (IA, pessoa até escolher) → barra clara
-  - **regras**
-    - responsável ≠ camada: a camada é o plano; o responsável preenche quem executa
-    - trocar responsável não muda o fluxo (substituível)
-- Camadas (= abstratos)
-  - exemplos: [camada / abstrato](indice-ast.html#abstrata)
-  - a camada é o abstrato: não possui endereço físico
-  - estruturas universais (plano ainda vazio)
-  - quem se conhece no plano abstrato forma a mesma camada
-  - a camada é substituível: preenche-se o endereço e vira sólido
-  - **regras**
-    - camadas = abstratos (não confundir com files)
-    - único assunto com barra vazada de propósito nos exemplos (função sem source)
-- Solidos
-  - exemplos: [sólido](indice-ast.html#solida) · [dado concreto](indice-ast.html#dadoConcreto) · [dado abstrato](indice-ast.html#dadoAbstrato)
-  - sólido: tem endereço físico (responsável, valor, arquivo)
-  - para executar, a camada abstrata precisa solidificar
-  - **regras**
-    - sólido = endereço preenchido (barra preenchida)
-- publico / privado
-  - exemplos: [pública](indice-ast.html#publica) · [privada](indice-ast.html#privada)
-  - dados e funcoes podem ser publicas ou privadas
-  - publicas queme sta de forma possui acesso
-    - public ou export
-  - privada sao os que apenas dentro da caixa, estado tem acesso
-    - private ou dados ou fucnoes especificadas no arquivo/contexto
-  - **regras**
-    - privada aninhada: chamada primeiro; definição no fim; sólida por padrão
--------------------
-- boas praticas de desenvlvimenot
-  - exemplos: [responsabilidade única](indice-ast.html#solidSrp) · [depender do abstrato](indice-ast.html#solidDip)
-  - solid
-- padroes de projeto
-  - exemplos: [factory](indice-ast.html#padFactory) · [singleton](indice-ast.html#padSingleton)
-  - factory
-  - singleton
-- similares a OOP x flow
-  - exemplo: [instanciar](indice-ast.html#oopFlow)
-  - instaciacao de uma classe similar ao flow..
-- Folhas e use cases
-  - exemplos: [folha](indice-ast.html#folha) · [folha × composição](indice-ast.html#folhaVsComp) · [use case](indice-ast.html#useCase) · [use case com folhas](indice-ast.html#useCaseFolhas)
-  - folha (*leaf*): função sem filhas — ocupa um passo no plano; é a unidade de execução
-  - composição: função com filhas — não ocupa passo próprio; cobre o tempo das folhas
-  - use case: fluxo de 1ª ordem que entrega um resultado (cenário de uso do sistema)
-  - um use case é feito de folhas (e composições); a `main` / entry point costuma ser o use case de entrada
-  - **regras**
-    - Definição. folha é a função sem filhas
-    - Definição. use case é o fluxo de 1ª ordem que entrega um resultado ao usuário ou ao sistema
-    - Postulado. só a folha ocupa passo; composição cobre as folhas
-    - Postulado. todo sistema é um conjunto de use cases
+  - linguagem de programação visual
+  - linguagem universal → transpila para qualquer linguagem
+  - gerenciador de tarefas
+  - features das linguagens de programação
+  - código → visão (análise mais fácil)
+  - visão logística de todos os fluxos
+  - similar a n8n / orquestrador de processos
+  - componentes substituíveis (desacoplamento)
+  - imagem > texto para entender
+  - conceitos confusos só com texto (xadrez sem tabuleiro)
+  - dá face ao software
+  - visão única entre linguagens e paradigmas
+  - também descreve a realidade
+  - tudo = funções (eternas) + estados (mutáveis)
+  - software = fluxos de execução
+  - fluxo = dados + funções
+  - capítulo intro: [indice-ast.html#flow](indice-ast.html#flow)
 
+- Softwares
+  - ● círculo = função (eterna, imutável)
+  - ■ quadrado = dado (mutável, transitório)
+  - software = fluxos de execução
+  - fluxo = dado + função
 
+- 1. Funções
+  - 1.1 [função / main](indice-ast.html#main) — unidade de processamento; entry point
+  - Definição I. entry point = primeira chamada de um sistema
+  - Definição II. `main` = nome do entry point de um sistema
+  - 1.2 [função filha](indice-ast.html#filha) — composição
+  - 1.3 [função paralela](indice-ast.html#paralela) — mesmo passo / Promise.all
+  - 1.4 [função sequencial](indice-ast.html#sequencial) — passos consecutivos
+  - unidade de processamento
+  - 1ª ordem = sólida, responsável = arquivo de origem
+  - pode ter filhas
+  - pode ter irmãs
+  - sequenciais ou paralelas
+  - no máximo uma entrada e uma saída (dados)
+  - sólido por padrão; abstrato (camada) = vazado
+  - JS: chamadas primeiro; funções fora de `main`
+  - JS: entrada/return sempre variável (nunca literal)
+  - JS: concatenação = função + partes em `[]`
 
+- 2. Dados
+  - [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
+  - unidades transformáveis
+  - input / output
+  - tipos: texto, número, booleano, função
+  - objetos (caixas): dados + funções
+    - array = posicional `[]`
+    - obj = chaveado `{}`
+    - arquivo = também objeto/estado
+    - imagem (futuro)
+  - valor: atribuir antes de usar / retornar
 
-Roteiro (capítulos): [`roteiro.md`](roteiro.md)
+- 3. Estados
+  - [estado do fluxo](indice-ast.html#estado) · [inicial](indice-ast.html#estadoInicial) · [caixa](indice-ast.html#estadoCaixa) · [substituído](indice-ast.html#estadoSubstitui) · [abstrato](indice-ast.html#estadoAbstrato) · [paralelas](indice-ast.html#estadoParalelo) · [dentro do for](indice-ast.html#estadoBloco)
+  - dados disponíveis no passo
+  - visão do estado mostra funções e estados juntos
+  - o que alimenta a chamada já é variável atribuída
 
-Exemplos AST/SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
+- 4. Entrada e saída
+  - 4.1 [funções têm entrada e saída](indice-ast.html#ioGeral)
+  - 4.2 [entrada](indice-ast.html#entrada)
+  - 4.3 [saída](indice-ast.html#saida)
+  - 4.4 [entrada e saída ligadas](indice-ast.html#entradaSaida)
 
-"A picture is worth a thousand words." – Confucius, 552–479 BCE
+- 5. Seleção
+  - [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx) · [aninhados](indice-ast.html#seAninhado)
+  - decide o caminho conforme o dado
+  - if / else / if aninhados / switch
+  - condição: atribuir antes do if
 
-ref
-https://github.com/laerciogermano/flow-oriented-programming
-https://flow-ide.laerciogermano.com/#T-60
+- 6. Repetição
+  - [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while](indice-ast.html#repWhile) · [do-while](indice-ast.html#repDoWhile)
+  - for / while / do-while
+  - coleção/condição: atribuir antes do loop
+
+- 7. try / catch
+  - [try/catch](indice-ast.html#tryCatch) · [blocos combinados](indice-ast.html#tryFor)
+  - try/catch primeiro; definições depois
+
+- 8. Files
+  - [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro) · [arquivo como objeto/estado](indice-ast.html#fileObjeto)
+  - todo dado e toda função têm endereço
+  - arquivo organiza endereços sólidos (físicos)
+  - arquivo = também objeto/estado
+  - arquivo ≠ camada
+
+- 9. Responsáveis
+  - [arquivo](indice-ast.html#respArquivo) · [máquina](indice-ast.html#respMaquina) · [IA](indice-ast.html#respIa) · [pessoa](indice-ast.html#respPessoa) · [objeto](indice-ast.html#respObjeto)
+  - quem executa o passo (source)
+  - arquivo | máquina/lib | IA | pessoa | objeto
+  - sólido: arquivo, máquina, objeto → barra preenchida
+  - abstrato: IA, pessoa (até assumir) → barra clara
+  - trocar responsável não muda o fluxo
+
+- 10. Camadas (= abstratos)
+  - [camada / abstrato](indice-ast.html#abstrata)
+  - sem endereço físico
+  - plano universal vazio
+  - substituível → preenche endereço → vira sólido
+  - camada ≠ file
+
+- 11. Sólidos
+  - [sólido](indice-ast.html#solida) · [dado concreto](indice-ast.html#dadoConcreto) · [dado abstrato](indice-ast.html#dadoAbstrato)
+  - tem endereço físico (responsável, valor, arquivo)
+  - camada precisa solidificar para executar
+
+- 12. Público / privado
+  - [pública](indice-ast.html#publica) · [privada](indice-ast.html#privada)
+  - público = `export` / acesso de fora
+  - privado = só dentro do arquivo/caixa/estado
+
+- 13. Boas práticas
+  - [responsabilidade única](indice-ast.html#solidSrp) · [depender do abstrato](indice-ast.html#solidDip)
+  - SOLID
+
+- 14. Padrões de projeto
+  - [factory](indice-ast.html#padFactory) · [singleton](indice-ast.html#padSingleton)
+
+- 15. OOP × Flow
+  - [instanciar](indice-ast.html#oopFlow)
+  - instanciar classe ≈ fluxo com objeto responsável
+
+- 16. Folhas e use cases
+  - [folha](indice-ast.html#folha) · [folha × composição](indice-ast.html#folhaVsComp) · [use case](indice-ast.html#useCase) · [use case com folhas](indice-ast.html#useCaseFolhas)
+  - folha (*leaf*) = função sem filhas → ocupa o passo
+  - composição = tem filhas → cobre o tempo das folhas
+  - use case = fluxo de 1ª ordem que entrega um resultado
+  - sistema = conjunto de use cases
+  - use case = folhas (+ composições); `main` costuma ser o de entrada
+
+---
+
+- Roteiro: [`roteiro.md`](roteiro.md)
+- Exemplos AST/SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
+- “A picture is worth a thousand words.” – Confucius
+- ref: https://github.com/laerciogermano/flow-oriented-programming
+- ref: https://flow-ide.laerciogermano.com/#T-60

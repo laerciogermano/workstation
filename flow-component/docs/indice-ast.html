@@ -204,9 +204,6 @@ h3 .n { color: var(--dado); }
 .quote { margin: 0 0 1.5rem; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); max-width: 40rem; }
 .quote p { margin: 0; font: italic 400 1.3rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); }
-.quote-title { margin: .85rem auto .15rem; max-width: 40rem; padding: .1rem 0; border-left: 0; text-align: center; }
-.quote-title p { font-size: 1.05rem; }
-.quote-title cite { text-align: center; }
 .prose + .quote { margin: 1.75rem 0 0; }
 .prose { max-width: 42rem; margin: 0 0 1.5rem; font: 400 1.05rem/1.65 "IBM Plex Sans", sans-serif; color: var(--body); }
 .prose p { margin: 0 0 .9rem; }
@@ -294,14 +291,14 @@ h3 .n { color: var(--dado); }
 .tabpanel.flow svg { display: block; margin: 0 auto; }
 .tabpanel.flow { overflow: auto; padding: .5rem; border: 0; border-radius: 6px; background: transparent; }
 .tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
-.hero-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 1.25rem; align-items: center; }
-.hero-plan { overflow-x: auto; margin: 0; padding: .25rem; min-width: 0; }
+.hero-plan { overflow-x: auto; margin: 0; padding: .25rem; }
 .hero-plan svg { display: block; width: 100%; max-width: 1180px; margin: 0 auto; height: auto; }
-.hero-epigraph { margin: 0; padding: 0 .5rem 0 0; max-width: 9.5rem; text-align: right; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
-@media (max-width: 52rem) {
-  .hero-row { grid-template-columns: 1fr; }
-  .hero-epigraph { max-width: none; text-align: center; padding: 0; }
-}
+.hero-quotes { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1.5rem 3rem; margin: .85rem .25rem .15rem; }
+.hero-quotes .quote { margin: 0; max-width: 22rem; padding: .1rem 0; border-left: 0; text-align: center; flex: 1 1 14rem; }
+.hero-quotes .quote p { font-size: 1.05rem; }
+.hero-quotes .quote cite { text-align: center; }
+.hero-quotes .epigraph { margin: 0; max-width: 22rem; flex: 1 1 14rem; text-align: center; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.hero-quotes .epigraph cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); }
 .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0 0 1.5rem; }
 .legend .it { flex: 1 1 15rem; display: flex; gap: .85rem; align-items: flex-start; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
 .legend svg { flex: none; margin-top: .15rem; }
@@ -409,14 +406,17 @@ footer {
   </figure>
 <h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
 <section class="hero" aria-label="Exemplo de fluxo">
-  <div class="hero-row">
-    <div class="hero-plan" id="hero-plan"></div>
-    <p class="hero-epigraph tl" data-pt="Tudo flui — Heráclito" data-en="Πάντα ῥεῖ — Heraclitus">Tudo flui — Heráclito</p>
+  <div class="hero-plan" id="hero-plan"></div>
+  <div class="hero-quotes">
+    <blockquote class="quote">
+      <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+      <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
+    </blockquote>
+    <blockquote class="epigraph">
+      <p class="tl" data-pt="Tudo flui." data-en="Πάντα ῥεῖ.">Tudo flui.</p>
+      <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+    </blockquote>
   </div>
-  <blockquote class="quote quote-title">
-    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
-    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
-  </blockquote>
 </section>
 <div class="layout">
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>

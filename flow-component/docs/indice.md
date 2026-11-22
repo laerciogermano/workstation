@@ -1,148 +1,150 @@
 - Flow
-  - visual programming language
-  - universal language → transpiles to any language
-  - task manager
-  - has the features of programming languages
-  - turns code into vision, making analysis easier
-  - logistics view of every flow
-  - similar to n8n, a process orchestrator
-  - replaceable components in any context, service-level decoupling
-  - seeing an image is easier than reading text; a picture is worth a thousand words
-  - concepts are confusing from text alone; like playing chess without a board, only with text positions
-  - understanding code takes a lot of cognitive effort
-  - until now there was no way to see software so faithfully — giving a face to what was unseen, with all programming resources
-- today there are different languages and paradigms, each with nuances and ways to do the same thing; Flow is the single visualization, the ubiquitous language, the universal code
-- Flow is not only a unified way to see software, but also a way to see reality itself
-- everything is made of functions (eternals) and states (mutables)
-  - software is made of execution flows
-  - briefly, an execution flow is formed by data and functions
-- 1. Functions
-  - 1.1 [`main`](indice-ast.html#main) — first-order, solid, no input or output (JS + AST + SVG plan)
-  - 1.2 [`child function`](indice-ast.html#filha) — solid child inside main (composition)
-  - 1.3 [`parallel function`](indice-ast.html#paralela) — solid siblings on the same step (par / Promise.all)
-  - 1.4 [`sequential function`](indice-ast.html#sequencial) — solid siblings on the next step (await in sequence)
-  - 1.5 [`input`](indice-ast.html#entrada) · 1.6 [`output`](indice-ast.html#saida) · 1.7 [`linked input and output`](indice-ast.html#entradaSaida) — solid
-  - 1.8 [`nested children`](indice-ast.html#neta) · 1.9 [`parallel then sequential`](indice-ast.html#mista) — solid
-  - functions are transformation units
-  - every first-order function is solid and belongs to the source file as responsible
-  - a function can have child functions
-  - a function can have sibling functions
-  - functions can be sequential
-  - functions can be parallel
-  - they may have input and output
-  - only one input and one output
-  - input and output are data
-  - **rules (JS examples)**
-    - solid by default; only the abstract topic (layer) is hollow
-    - calls and assignments first; function definitions at the bottom of the body
-    - call input: always a variable — never a literal (`greet("Ana")` ❌ → `const name = "Ana"; await greet(name)` ✅)
-    - `return`: always a variable — never a literal (`return "Ana"` ❌ → `const name = "Ana"; return name` ✅)
-    - concatenation: always a function — never `+` / template; distinct parts in variables passed in `[]` (`const parts = [hello, name]; await concat(parts)` ✅); `concat` itself must `return` (assign then return)
-- Data
-  - examples: [text](indice-ast.html#texto) · [number](indice-ast.html#numero) · [boolean](indice-ast.html#booleano) · [function](indice-ast.html#funcaoDado) · [object](indice-ast.html#objeto) · [array](indice-ast.html#array)
-  - data are transformable units
+  - linguagem de programacao visual
+  - Linguagem universal -> transpila para quaquer linguagem
+  - Gerenciador de tarefas
+  - Possui as features das linguagens de programacao
+  - torna codigo em visao, aumentando facilidade de analise
+  - visao logistica de todos os fluxos
+  - similar a u m n8n, orquestrador de processos
+  - components substituiveis em qualquer contexto, desacoplamento a nivel de
+  - visulizar imagem é mais facil do que visualizar texto, uma imagem fala mais que mil palavras
+  - os conceitos sao confusos vendo apenas texto, ;e como jogar xadrez sem ver o tabuleiro, apenas com posicoes de texto
+  - é necessario de muito esforco cognitivo par entender codigo
+  - ate o prosente momento mnao existia uma forma de enxergar software tao fidedigna, é dar face ao que antes n foi visto, com todos os recursos de programacao
+  servico.
+- atualmente, existem diferentes linguagens, diferentes paradigmas, todas com suas nuances, suas formas de se fazer a mesma coisa, o flow é a visualiacaounica, a linguagem ubiqua, o codigo universal.
+- flow nao se trata apenas de uma forma unificada de ver software, mas tambem de ver a propria realidade
+- tudo é composto por funcoes (eternos) e estados (mutáveis)
+  - softwares sao feitos de fluxos de esxecucao
+  - resumidamente, um fluxo de exduccao é formado por dados e funcoes
+- 1. Funcoes
+  - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+  - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
+  - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
+  - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmãs sólidas no passo seguinte (await em sequência)
+  - 1.5 [`entrada`](indice-ast.html#entrada) · 1.6 [`saída`](indice-ast.html#saida) · 1.7 [`entrada e saída ligadas`](indice-ast.html#entradaSaida) — sólidas
+  - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista) — sólidas
+  - funcoes sao unidades de transformacao
+  - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
+  - uma funcao pode ter funcao filhas
+  - uma funcao pode ter funcoes irmas
+  - as funcoes podem ser sequenciais
+  - as funcoes podem ser paralelas
+  - podem possuir entrada e saida
+  - apenas podem ter uma entrada e uma saida
+  - a entrada e saida sao dados
+  - **regras (exemplos JS)**
+    - sólido por padrão; só o assunto abstrato (camada) fica vazado
+    - chamadas e atribuições primeiro; definições das funções no fim do corpo
+    - entrada na chamada: sempre variável — nunca literal (`saudar("Ana")` ❌ → `const nome = "Ana"; await saudar(nome)` ✅)
+    - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
+    - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅); `concatenar` deve ter `return` (atribuir depois retornar)
+- Dados
+  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
+  - os dados sao unidades transformaveis
     input
   - output
-  - may be
-    - text
-    - number
-    - boolean
-    - functions
-    - objects (boxes)
-      - beings that hold data and functions
+  - podem ser
+    - texto
+    - numero
+    - boleano
+    - funcoes
+    - objetos (caixas)
+      - seres que possuem dados e funcao,
       - array
-        - positional []
+        - posicionais []
       - obj
-        - keyed {}
-      - file (future)
-      - image (future)
-  - **rules**
-    - datum value: assign before use / return (never a bare literal in a call or return)
-- State
-  - example: [flow state](indice-ast.html#estado)
-  - state is the data that is available
-  - initial states always will be
-  - **rules**
-    - state that feeds a call: already assigned variable (never a literal in the call)
-- Agents
-  - examples: [file](indice-ast.html#agArquivo) · [machine](indice-ast.html#agMaquina) · [AI](indice-ast.html#agIa) · [person](indice-ast.html#agPessoa) · [object](indice-ast.html#agObjeto)
-  - structures that are the source of execution
-  - responsible for doing the work
-  - the source, the origin of execution
-  - source of the work
-  - may be files, people, AIs, agents as a whole
-  - every structure that holds a function is an agent
-    - objects
-    - functions
-  - **rules**
-    - file/machine/object = solid; AI/person = light bar (abstract until assumed)
-- Selection
-  - examples: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx)
-  - condition structures; they choose where the flow goes given the data. Used when what to run is unknown before having the information.
+        - chaveados {}
+      - arquivo (futuramente)
+      - imagem (futuramente)
+  - **regras**
+    - valor de dado: atribuir antes de usar / retornar (nunca literal solto em call ou return)
+- Estados
+  - exemplo: [estado do fluxo](indice-ast.html#estado)
+  - estados sao os dados que estao disponiveis
+  - os estados iniciais sempre serao
+  - **regras**
+    - estado que alimenta chamada: variável já atribuída (nunca literal na chamada)
+- Agentes
+  - exemplos: [arquivo](indice-ast.html#agArquivo) · [máquina](indice-ast.html#agMaquina) · [IA](indice-ast.html#agIa) · [pessoa](indice-ast.html#agPessoa) · [objeto](indice-ast.html#agObjeto)
+  - Estruturas fonte da execucao
+  - responsavrl por realizar o trabalho
+  - a fonte, a origem da execucao
+  - fonte do trabalho
+  - podem ser arquivos, pessoas, ias, agentes como um todo
+  - toda estrutuar que comporta funcao é um agente
+    - objetos
+    - funcoes
+  - **regras**
+    - arquivo/máquina/objeto = sólido; IA/pessoa = barra clara (abstrato até assumir)
+- Selecao
+  - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx)
+  - estruturas de conidcao, definem para onde vai o fluxo conforme
+  o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
   - if/else
   - switch
-  - **rules**
-    - condition: assign first (`const ok = true; if (ok)`)
-    - branch function definitions at the bottom of the body
-- Loops
-  - examples: [for](indice-ast.html#repFor) · [several steps](indice-ast.html#repFor2) · [while/do-while](indice-ast.html#repWhile)
-  - repeatable structures
+  - **regras**
+    - condição: atribuir antes (`const ok = true; if (ok)`)
+    - definições das funções do ramo no fim do corpo
+- Repeticao
+  - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while/do-while](indice-ast.html#repWhile)
+  - estuturas repetíveis
   - for
   - while
   - do-while
-  - **rules**
-    - collection/condition: assign before the loop
-    - body function definitions at the bottom
+  - **regras**
+    - coleção/condição: atribuir antes do loop
+    - definições das funções do corpo no fim
 - try catch
-  - examples: [try/catch](indice-ast.html#tryCatch) · [combined blocks](indice-ast.html#tryFor)
-  - **rules**
-    - try/catch first; function definitions at the bottom
+  - exemplos: [try/catch](indice-ast.html#tryCatch) · [blocos combinados](indice-ast.html#tryFor)
+  - **regras**
+    - try/catch primeiro; definições das funções no fim
 - Files
-  - examples: [same file](indice-ast.html#fileMesmo) · [different files](indice-ast.html#fileOutro)
-  - every datum has an address
-  - every function has an address
-  - the file organizes solid (physical) addresses
-  - **rules**
-    - file ≠ layer: file is a physical address; layer is the abstract
-- Layers (= abstracts)
-  - examples: [layer / abstract](indice-ast.html#abstrata)
-  - the layer is the abstract: it has no physical address
-  - universal structures (still-empty plan)
-  - who knows each other on the abstract plan form the same layer
-  - the layer is replaceable: fill the address and it becomes solid
-  - **rules**
-    - layers = abstracts (do not confuse with files)
-    - only topic with an intentionally hollow bar in the examples
-- Solids
-  - examples: [solid](indice-ast.html#solida)
-  - solid: has a physical address (agent, value, file)
-  - to run, the abstract layer must solidify
-  - **rules**
-    - solid = filled address (filled bar)
-- public / private
-  - examples: [public](indice-ast.html#publica) · [private](indice-ast.html#privada)
-  - data and functions may be public or private
-  - public: whoever is outside has access
-    - public or export
-  - private: only inside the box/state has access
-    - private or data/functions specified in the file/context
-  - **rules**
-    - nested private: call first; definition at the bottom; solid by default
+  - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro)
+  - todo dado tem um endereco
+  - toda funcao tem um endereco
+  - o arquivo organiza endereços sólidos (físicos)
+  - **regras**
+    - arquivo ≠ camada: arquivo é endereço físico; camada é o abstrato
+- Camadas (= abstratos)
+  - exemplos: [camada / abstrato](indice-ast.html#abstrata)
+  - a camada é o abstrato: não possui endereço físico
+  - estruturas universais (plano ainda vazio)
+  - quem se conhece no plano abstrato forma a mesma camada
+  - a camada é substituível: preenche-se o endereço e vira sólido
+  - **regras**
+    - camadas = abstratos (não confundir com files)
+    - único assunto com barra vazada de propósito nos exemplos
+- Solidos
+  - exemplos: [sólido](indice-ast.html#solida)
+  - sólido: tem endereço físico (agente, valor, arquivo)
+  - para executar, a camada abstrata precisa solidificar
+  - **regras**
+    - sólido = endereço preenchido (barra preenchida)
+- publico / privado
+  - exemplos: [pública](indice-ast.html#publica) · [privada](indice-ast.html#privada)
+  - dados e funcoes podem ser publicas ou privadas
+  - publicas queme sta de forma possui acesso
+    - public ou export
+  - privada sao os que apenas dentro da caixa, estado tem acesso
+    - private ou dados ou fucnoes especificadas no arquivo/contexto
+  - **regras**
+    - privada aninhada: chamada primeiro; definição no fim; sólida por padrão
 -------------------
-- development best practices
+- boas praticas de desenvlvimenot
   - solid
-- design patterns
+- padroes de projeto
   - factory
   - singleton
-- OOP vs flow similarities
-  - instantiating a class is similar to flow..
+- similares a OOP x flow
+  - instaciacao de uma classe similar ao flow..
 
 
 
 
-Outline (chapters): [`roteiro.md`](roteiro.md)
+Roteiro (capítulos): [`roteiro.md`](roteiro.md)
 
-AST/SVG examples: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
+Exemplos AST/SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
 
 "A picture is worth a thousand words." – Confucius, 552–479 BCE
 

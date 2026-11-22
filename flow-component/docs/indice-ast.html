@@ -152,8 +152,7 @@ footer {
 </header>
 
 <main>
-  <h1>Índice · AST e visão</h1>
-  <p class="lead">Exemplos alinhados ao <a href="indice.md">indice.md</a>: JavaScript, AST ESTree, AST Flow e plano SVG.</p>
+  <h1>Flow</h1>
 
   <nav class="toc" aria-label="Índice"><div class="t">Índice</div><ol id="toc"></ol></nav>
 
@@ -291,32 +290,100 @@ const EXAMPLES = {
   fileOutro: { num: "7.2", title: "Arquivos diferentes", lead: "Arquivos distintos organizam endereços: <code>main.ts</code> e <code>pagamento.ts</code> (não confundir arquivo com camada).",
     code: J("// main.ts", "import { pagar } from \"./pagamento\";", "async function main() {", "  await pagar();", "}", "", "// pagamento.ts", "export async function pagar() {", "}"),
     flows: [main([F("n2", "pagar")]), F("n3", "pagar", { file: "pagamento.ts" })] },
+  fileObjeto: { num: "7.3", title: "Arquivo como objeto / estado", lead: "O arquivo também é objeto/estado: caixa com endereço físico que comporta dados e funções (não é só pasta de código).",
+    code: J("// pedidos.json como estado/objeto", "async function main() {", "  const pedidos = await lerArquivo();", "  await salvarArquivo(pedidos);", "", "  async function lerArquivo() {", "    const pedidos = { itens: [] };", "    return pedidos;", "  }", "  async function salvarArquivo(pedidos) {", "  }", "}"),
+    flow: main([F("n2", "lerArquivo", { outs: ["pedidos"], agent: "arquivo" }), F("n3", "salvarArquivo", { ins: ["pedidos"], agent: "arquivo" })]) },
 
-  abstrata: { num: "8.1", title: "Camada (= abstrato)", lead: "Assunto abstrato: sem endereço físico — barra só contorno (plano universal a preencher). Único caso vazado de propósito.",
+  respArquivo: { num: "8.1", title: "Responsável: arquivo (sólido)", lead: "Source = arquivo. Responsável sólido: barra preenchida.",
+    code: J("// main.ts", "async function main() {", "}"), flow: main([]) },
+  respMaquina: { num: "8.2", title: "Responsável: máquina (sólido)", lead: "Source = máquina/lib. Responsável sólido.",
+    code: J("async function main() {", "  await maquina.enviarEmail();", "}"),
+    flow: main([F("n2", "enviarEmail", { agent: "maquina" })]) },
+  respIa: { num: "8.3", title: "Responsável: IA (abstrato)", lead: "Source = IA. Responsável abstrato até alguém assumir — barra clara.",
+    code: J("async function main() {", "  await ia.resumirTexto();", "}"),
+    flow: main([F("n2", "resumirTexto", { agent: "ia" })]) },
+  respPessoa: { num: "8.4", title: "Responsável: pessoa (abstrato)", lead: "Source = pessoa. Responsável abstrato (barra clara) até a pessoa estar definida.",
+    code: J("async function main() {", "  await pessoa.aprovar();", "}"),
+    flow: main([F("n2", "aprovar", { agent: "pessoa" })]) },
+  respObjeto: { num: "8.5", title: "Responsável: objeto (sólido)", lead: "Source = objeto (caixa). Responsável sólido: o objeto comporta as funções.",
+    code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
+    flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
+
+  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: "Assunto abstrato: sem endereço físico — barra só contorno (plano universal a preencher). Único caso vazado de propósito.",
     code: J("async function main() {", "  const { hello } = state;", "  await hello();", "}"),
     flow: main([F("n2", "hello", { agent: null })]) },
 
-  solida: { num: "9.1", title: "Sólido", lead: "Tem endereço físico: a barra é preenchida (um agente executa). A camada abstrata solidifica.",
+  solida: { num: "10.1", title: "Sólido", lead: "Tem endereço físico: a barra é preenchida (um responsável executa). A camada abstrata solidifica.",
     code: J("async function main() {", "  await maquina.hello();", "}"),
     flow: main([F("n2", "hello", { agent: "maquina" })]) },
 
-  publica: { num: "10.1", title: "Pública", lead: "Acessível de fora do arquivo: <code>export</code>.",
+  publica: { num: "11.1", title: "Pública", lead: "Acessível de fora do arquivo: <code>export</code>.",
     code: J("export async function main() {", "}"), flow: main([]) },
-  privada: { num: "10.2", title: "Privada", lead: "Sólida e só existe dentro do arquivo/caixa: sem <code>export</code>.",
+  privada: { num: "11.2", title: "Privada", lead: "Sólida e só existe dentro do arquivo/caixa: sem <code>export</code>.",
     code: J("async function main() {", "  await interna();", "", "  async function interna() {", "  }", "}"), flow: main([F("n2", "interna")]) },
+
+  // ── 0. Flow e software ──
+  flowVisao: { num: "0.1", title: "Código vira visão", lead: "O mesmo programa em duas formas: texto (esforço cognitivo) e imagem (um relance). É como jogar xadrez vendo o tabuleiro, em vez de ler posições em texto.",
+    code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pagamento);", "", "  async function receber() {", "    const pedido = { id: 1 };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pagamento) {", "  }", "}"),
+    flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pagamento"] })]) },
+  softwareFluxo: { num: "0.2", title: "Software = fluxos de execução", lead: "Todo software é feito de fluxos; cada fluxo é formado por <strong>funções</strong> (as barras, eternas) e <strong>dados</strong> (os estados, mutáveis).",
+    code: J("async function main() {", "  const [a, b] = await Promise.all([buscar(), calcular()]);", "  await salvar(a, b);", "", "  async function buscar() {", "    const a = 1;", "    return a;", "  }", "  async function calcular() {", "    const b = 2;", "    return b;", "  }", "  async function salvar(a, b) {", "  }", "}"),
+    flow: main([F("n2", "buscar", { outs: ["a"] }), F("n3", "calcular", { outs: ["b"], par: true }), F("n4", "salvar", { ins: ["a", "b"] })]) },
+  visaoLogistica: { num: "0.3", title: "Visão logística de todos os fluxos", lead: "Como um orquestrador de processos (estilo n8n): vários fluxos de 1ª ordem lado a lado, cada um com o seu arquivo.",
+    code: J("// vendas.ts", "async function vender() {", "  await cobrar();", "", "  async function cobrar() {", "  }", "}", "", "// estoque.ts", "async function repor() {", "  await pedirAoFornecedor();", "", "  async function pedirAoFornecedor() {", "  }", "}"),
+    flows: [F("n1", "vender", { file: "vendas.ts", kids: [F("n2", "cobrar")] }), F("n3", "repor", { file: "estoque.ts", kids: [F("n4", "pedirAoFornecedor")] })] },
+  substituivel: { num: "0.4", title: "Componentes substituíveis", lead: "O mesmo encaixe pode ser preenchido por qualquer agente — máquina, IA ou pessoa — sem mexer no resto do fluxo (desacoplamento).",
+    code: J("async function main() {", "  const texto = \"longo\";", "  const resumo = await ia.resumir(texto);", "}"),
+    flow: main([F("n2", "resumir", { ins: ["texto"], outs: ["resumo"], agent: "ia", args: { texto: '"longo"' } })]) },
+  realidade: { num: "0.5", title: "Funções e estados: a realidade", lead: "Não é só software: tudo é função (o que transforma, eterno) e estado (o que muda). Aqui, o ciclo de uma planta: água entra, crescimento sai.",
+    code: J("async function main() {", "  const agua = 1;", "  const altura = await crescer(agua);", "", "  async function crescer(agua) {", "    const altura = agua;", "    return altura;", "  }", "}"),
+    flow: main([F("n2", "crescer", { ins: ["agua"], outs: ["altura"], args: { agua: "1" } })]) },
+
+  seAninhado: { num: "4.4", title: "Seleção: if / else aninhados", lead: "Um <code>if</code> dentro do <code>else</code> de outro: três caminhos possíveis, só um executa.",
+    code: J("async function main() {", "  const nota = 7;", "  const aprovado = nota >= 7;", "  if (aprovado) {", "    await publicar();", "  } else {", "    const recuperacao = nota >= 5;", "    if (recuperacao) {", "      await refazer();", "    } else {", "      await reprovar();", "    }", "  }", "", "  async function publicar() {", "  }", "  async function refazer() {", "  }", "  async function reprovar() {", "  }", "}"),
+    opts: { elseParallel: true },
+    flow: main([{ t: "if", id: "i1", test: "aprovado", kids: [F("n2", "publicar")], elseKids: [
+      { t: "if", id: "i2", test: "recuperacao", kids: [F("n3", "refazer")], elseKids: [F("n4", "reprovar")] },
+    ] }]) },
+  repDoWhile: { num: "5.4", title: "Repetição: do-while", lead: "Executa ao menos uma vez e repete enquanto a condição valer (no modelo, também um bloco de repetição).",
+    code: J("async function main() {", "  let pendente = true;", "  do {", "    pendente = await tentar();", "  } while (pendente);", "", "  async function tentar() {", "    const pendente = false;", "    return pendente;", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", kids: [F("n2", "tentar", { outs: ["pendente"] })] }]) },
+
+  solidSrp: { num: "12.1", title: "SOLID: responsabilidade única", lead: "Cada função faz uma coisa: <code>pedido</code> só compõe, quem trabalha são <code>validar</code>, <code>cobrar</code> e <code>enviar</code>.",
+    code: J("async function main() {", "  await pedido();", "", "  async function pedido() {", "    await validar();", "    await cobrar();", "    await enviar();", "", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "    async function enviar() {", "    }", "  }", "}"),
+    flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar"), F("n5", "enviar")] })]) },
+  solidDip: { num: "12.2", title: "SOLID: depender do abstrato", lead: "O fluxo depende do encaixe <code>cobrar</code> (camada abstrata), não de quem cobra. Trocar de máquina para IA ou pessoa não muda o resto.",
+    code: J("async function main() {", "  const { cobrar } = state;", "  await cobrar();", "}"),
+    flow: main([F("n2", "cobrar", { agent: null })]) },
+
+  padFactory: { num: "13.1", title: "Padrão: factory", lead: "Uma função cria e devolve a caixa (objeto) pronta para uso.",
+    code: J("async function main() {", "  const cliente = await criarCliente();", "", "  async function criarCliente() {", "    const id = 1;", "    const nome = \"Ana\";", "    const cliente = { id, nome };", "    return cliente;", "  }", "}"),
+    flow: main([F("n2", "criarCliente", { outs: ["id", "nome"] })]) },
+  padSingleton: { num: "13.2", title: "Padrão: singleton", lead: "Uma única instância compartilhada: o mesmo dado <code>config</code> é lido pelos dois passos seguintes.",
+    code: J("async function main() {", "  const config = await carregar();", "  await usarA(config);", "  await usarB(config);", "", "  async function carregar() {", "    const config = { tema: \"black\" };", "    return config;", "  }", "  async function usarA(config) {", "  }", "  async function usarB(config) {", "  }", "}"),
+    flow: main([F("n2", "carregar", { outs: ["config"] }), F("n3", "usarA", { ins: ["config"] }), F("n4", "usarB", { ins: ["config"], par: true })]) },
+
+  oopFlow: { num: "14.1", title: "OOP × Flow: instanciar", lead: "Instanciar uma classe é parecido com o Flow: o objeto é um responsável que comporta funções, e cada método é um passo.",
+    code: J("class Carrinho {", "  async adicionar() {", "  }", "}", "", "async function main() {", "  const carrinho = new Carrinho();", "  await carrinho.adicionar();", "}"),
+    flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 };
 
 const GROUPS = [
+  { id: "flow", n: "0.", title: "Flow e software", lead: "Flow é uma linguagem de programação visual e universal: transpila para qualquer linguagem e torna código em visão. Software são fluxos de execução; cada fluxo é formado por dados e funções.", keys: ["flowVisao", "softwareFluxo", "visaoLogistica", "substituivel", "realidade"] },
   { id: "funcoes", n: "1.", title: "Funções", keys: ["main", "filha", "paralela", "sequencial", "entrada", "saida", "entradaSaida", "neta", "mista"] },
   { id: "dados", n: "2.", title: "Dados", keys: ["texto", "numero", "booleano", "funcaoDado", "objeto", "array", "dadoConcreto", "dadoAbstrato"] },
   { id: "estados", n: "3.", title: "Estados", keys: ["estado", "estadoInicial", "estadoCaixa", "estadoSubstitui", "estadoAbstrato", "estadoParalelo", "estadoBloco"] },
-  { id: "selecao", n: "4.", title: "Seleção", keys: ["se", "seSenao", "switchEx"] },
-  { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor", "repFor2", "repWhile"] },
+  { id: "selecao", n: "4.", title: "Seleção", keys: ["se", "seSenao", "switchEx", "seAninhado"] },
+  { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor", "repFor2", "repWhile", "repDoWhile"] },
   { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch", "tryFor"] },
-  { id: "files", n: "7.", title: "Files", keys: ["fileMesmo", "fileOutro"] },
-  { id: "camadas", n: "8.", title: "Camadas (= abstratos)", keys: ["abstrata"] },
-  { id: "solidos", n: "9.", title: "Sólidos", keys: ["solida"] },
-  { id: "publico", n: "10.", title: "Público / privado", keys: ["publica", "privada"] },
+  { id: "files", n: "7.", title: "Files", keys: ["fileMesmo", "fileOutro", "fileObjeto"] },
+  { id: "responsaveis", n: "8.", title: "Responsáveis", lead: "Quem executa o passo. Também pode ser sólido (arquivo, máquina, objeto) ou abstrato (IA, pessoa até assumir).", keys: ["respArquivo", "respMaquina", "respIa", "respPessoa", "respObjeto"] },
+  { id: "camadas", n: "9.", title: "Camadas (= abstratos)", keys: ["abstrata"] },
+  { id: "solidos", n: "10.", title: "Sólidos", keys: ["solida"] },
+  { id: "publico", n: "11.", title: "Público / privado", keys: ["publica", "privada"] },
+  { id: "praticas", n: "12.", title: "Boas práticas de desenvolvimento", lead: "SOLID visto no plano.", keys: ["solidSrp", "solidDip"] },
+  { id: "padroes", n: "13.", title: "Padrões de projeto", keys: ["padFactory", "padSingleton"] },
+  { id: "oop", n: "14.", title: "OOP × Flow", keys: ["oopFlow"] },
 ];
 const ANCHOR = { main: "main", filha: "filha", paralela: "paralela", sequencial: "sequencial" };
 const anchor = (k) => ANCHOR[k] ?? k;
@@ -353,6 +420,13 @@ const paint = (key, ex) => {
   el.innerHTML = `
     <h3><span class="n">${esc(ex.num)}</span>${ex.title}</h3>
     <p class="sec-lead">${ex.lead}</p>
+    <details class="pane plan" open>
+      <summary class="hd"><span class="kind">Plano</span> Visão <span class="tag">renderFnSvg</span></summary>
+      <div class="body">
+        ${plans}
+        ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
+      </div>
+    </details>
     <details class="pane" open>
       <summary class="hd"><span class="kind">JS</span> Código <span class="tag">fonte</span></summary>
       <div class="body"><pre>${esc(ex.code)}</pre></div>
@@ -364,20 +438,13 @@ const paint = (key, ex) => {
     <details class="pane ast">
       <summary class="hd"><span class="kind">Flow</span> AST do fluxo <span class="tag">Fn</span></summary>
       <div class="body"><pre>${esc(flowJson)}</pre></div>
-    </details>
-    <details class="pane plan" open>
-      <summary class="hd"><span class="kind">Plano</span> Visão <span class="tag">renderFnSvg</span></summary>
-      <div class="body">
-        ${plans}
-        ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
-      </div>
     </details>`;
 };
 
 const out = document.getElementById("out"), toc = document.getElementById("toc");
 for (const g of GROUPS) {
   const keys = g.keys.filter((k) => EXAMPLES[k]);
-  out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(g.title)}</h2>${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
+  out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(g.title)}</h2>${g.lead ? `<p class="sec-lead">${g.lead}</p>` : ""}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
   toc.insertAdjacentHTML("beforeend", `<li><a href="#${g.id}">${esc(g.title)}</a><ul>${keys.map((k) => `<li><a href="#${anchor(k)}">${EXAMPLES[k].num} ${EXAMPLES[k].title}</a></li>`).join("")}</ul></li>`);
   for (const k of keys) paint(k, EXAMPLES[k]);
 }

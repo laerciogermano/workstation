@@ -17,6 +17,7 @@
 - tudo é composto por funcoes (eternos) e estados (mutáveis)
   - softwares sao feitos de fluxos de esxecucao
   - resumidamente, um fluxo de exduccao é formado por dados e funcoes
+- Flow e software: exemplos [código vira visão](indice-ast.html#flowVisao) · [software = fluxos](indice-ast.html#softwareFluxo) · [visão logística](indice-ast.html#visaoLogistica) · [substituível](indice-ast.html#substituivel) · [realidade](indice-ast.html#realidade)
 - 1. Funcoes
   - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
@@ -40,7 +41,7 @@
     - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
     - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅); `concatenar` deve ter `return` (atribuir depois retornar)
 - Dados
-  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
+  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array) · [concreto](indice-ast.html#dadoConcreto) · [abstrato](indice-ast.html#dadoAbstrato)
   - os dados sao unidades transformaveis
     input
   - output
@@ -55,27 +56,28 @@
         - posicionais []
       - obj
         - chaveados {}
-      - arquivo (futuramente)
+      - arquivo (também objeto/estado)
       - imagem (futuramente)
   - **regras**
     - valor de dado: atribuir antes de usar / retornar (nunca literal solto em call ou return)
 - Estados
-  - exemplo: [estado do fluxo](indice-ast.html#estado)
+  - exemplos: [estado do fluxo](indice-ast.html#estado) · [inicial](indice-ast.html#estadoInicial) · [caixa](indice-ast.html#estadoCaixa) · [substituído](indice-ast.html#estadoSubstitui) · [abstrato](indice-ast.html#estadoAbstrato) · [paralelas](indice-ast.html#estadoParalelo) · [dentro do for](indice-ast.html#estadoBloco)
   - estados sao os dados que estao disponiveis
   - os estados iniciais sempre serao
   - **regras**
     - estado que alimenta chamada: variável já atribuída (nunca literal na chamada)
 - Selecao
-  - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx)
+  - exemplos: [if](indice-ast.html#se) · [if/else](indice-ast.html#seSenao) · [switch](indice-ast.html#switchEx) · [aninhados](indice-ast.html#seAninhado)
   - estruturas de conidcao, definem para onde vai o fluxo conforme
   o dado. utilizado quando nao se sabe o que executar, antes de ter a informacao.
   - if/else
+  - if/else aninhados
   - switch
   - **regras**
     - condição: atribuir antes (`const ok = true; if (ok)`)
     - definições das funções do ramo no fim do corpo
 - Repeticao
-  - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while/do-while](indice-ast.html#repWhile)
+  - exemplos: [for](indice-ast.html#repFor) · [vários passos](indice-ast.html#repFor2) · [while](indice-ast.html#repWhile) · [do-while](indice-ast.html#repDoWhile)
   - estuturas repetíveis
   - for
   - while
@@ -88,12 +90,24 @@
   - **regras**
     - try/catch primeiro; definições das funções no fim
 - Files
-  - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro)
+  - exemplos: [mesmo arquivo](indice-ast.html#fileMesmo) · [arquivos diferentes](indice-ast.html#fileOutro) · [arquivo como objeto/estado](indice-ast.html#fileObjeto)
   - todo dado tem um endereco
   - toda funcao tem um endereco
   - o arquivo organiza endereços sólidos (físicos)
+  - o arquivo também é objeto/estado: caixa com dados e funções, endereço físico
   - **regras**
     - arquivo ≠ camada: arquivo é endereço físico; camada é o abstrato
+    - arquivo = objeto/estado (não só “pasta de código”)
+- Responsáveis
+  - exemplos: [arquivo](indice-ast.html#respArquivo) · [máquina](indice-ast.html#respMaquina) · [IA](indice-ast.html#respIa) · [pessoa](indice-ast.html#respPessoa) · [objeto](indice-ast.html#respObjeto)
+  - quem executa o passo (source): a origem do trabalho
+  - podem ser: arquivo, máquina/lib, IA, pessoa, objeto
+  - o responsável também pode ser sólido ou abstrato
+    - sólido: endereço preenchido (arquivo, máquina, objeto) → barra preenchida
+    - abstrato: ainda sem quem assumiu (IA, pessoa até escolher) → barra clara
+  - **regras**
+    - responsável ≠ camada: a camada é o plano; o responsável preenche quem executa
+    - trocar responsável não muda o fluxo (substituível)
 - Camadas (= abstratos)
   - exemplos: [camada / abstrato](indice-ast.html#abstrata)
   - a camada é o abstrato: não possui endereço físico
@@ -102,10 +116,10 @@
   - a camada é substituível: preenche-se o endereço e vira sólido
   - **regras**
     - camadas = abstratos (não confundir com files)
-    - único assunto com barra vazada de propósito nos exemplos
+    - único assunto com barra vazada de propósito nos exemplos (função sem source)
 - Solidos
   - exemplos: [sólido](indice-ast.html#solida)
-  - sólido: tem endereço físico (agente, valor, arquivo)
+  - sólido: tem endereço físico (responsável, valor, arquivo)
   - para executar, a camada abstrata precisa solidificar
   - **regras**
     - sólido = endereço preenchido (barra preenchida)
@@ -120,11 +134,14 @@
     - privada aninhada: chamada primeiro; definição no fim; sólida por padrão
 -------------------
 - boas praticas de desenvlvimenot
+  - exemplos: [responsabilidade única](indice-ast.html#solidSrp) · [depender do abstrato](indice-ast.html#solidDip)
   - solid
 - padroes de projeto
+  - exemplos: [factory](indice-ast.html#padFactory) · [singleton](indice-ast.html#padSingleton)
   - factory
   - singleton
 - similares a OOP x flow
+  - exemplo: [instanciar](indice-ast.html#oopFlow)
   - instaciacao de uma classe similar ao flow..
 
 

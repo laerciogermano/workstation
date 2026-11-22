@@ -96,7 +96,26 @@
   - arquivo = também objeto/estado
   - arquivo ≠ camada
 
-- 9. Responsáveis
+- 8. Sólidos × abstratos
+  - exemplos: sólido, camada/abstrato, dado concreto, dado abstrato (indice-ast.html)
+  - tem endereço físico (responsável, valor, arquivo)
+  - camada precisa solidificar para executar
+  - funções não devem possuir sólidos, apenas abstratos
+
+- 9. Público / privado
+  - exemplos: pública, privada (indice-ast.html)
+  - público = export / acesso de fora
+  - privado = só dentro do arquivo/caixa/estado
+
+- 10. Folhas e use cases
+  - exemplos: folha, folha x composição, use case, use case com folhas (indice-ast.html)
+  - folha (leaf) = função sem filhas → ocupa o passo
+  - composição = tem filhas → cobre o tempo das folhas
+  - use case = fluxo de 1ª ordem que entrega um resultado
+  - sistema = conjunto de use cases
+  - use case = folhas (+ composições); main costuma ser o de entrada
+
+- 11. Responsáveis
   - exemplos: arquivo, máquina, IA, pessoa, objeto (indice-ast.html)
   - quem executa o passo (source)
   - arquivo | máquina/lib | IA | pessoa | objeto
@@ -104,42 +123,8 @@
   - abstrato: IA, pessoa (até assumir) → barra clara
   - trocar responsável não muda o fluxo
 
-- 10. Camadas (= abstratos)
-  - exemplo: camada / abstrato (indice-ast.html#abstrata)
-  - sem endereço físico
-  - plano universal vazio
-  - substituível → preenche endereço → vira sólido
-  - camada ≠ file
-
-- 11. Sólidos
-  - exemplos: sólido, dado concreto, dado abstrato (indice-ast.html)
-  - tem endereço físico (responsável, valor, arquivo)
-  - camada precisa solidificar para executar
-  - funções não devem possuir sólidos, apenas abstratos
-
-- 12. Público / privado
-  - exemplos: pública, privada (indice-ast.html)
-  - público = export / acesso de fora
-  - privado = só dentro do arquivo/caixa/estado
-
-- 13. Boas práticas
-  - exemplos: responsabilidade única, depender do abstrato (indice-ast.html)
-  - SOLID
-
-- 14. Padrões de projeto
-  - exemplos: factory, singleton (indice-ast.html)
-
-- 15. OOP x Flow
-  - exemplo: instanciar (indice-ast.html#oopFlow)
-  - instanciar classe ≈ fluxo com objeto responsável
-
-- 16. Folhas e use cases
-  - exemplos: folha, folha x composição, use case, use case com folhas (indice-ast.html)
-  - folha (leaf) = função sem filhas → ocupa o passo
-  - composição = tem filhas → cobre o tempo das folhas
-  - use case = fluxo de 1ª ordem que entrega um resultado
-  - sistema = conjunto de use cases
-  - use case = folhas (+ composições); main costuma ser o de entrada
+- Boas práticas / Padrões / OOP × Flow (ocultos na página)
+  - exemplos em indice-ast.html (hidden)
 
 - Roteiro: roteiro.md
 - Exemplos AST/SVG: indice-ast.html · lib novo/ast/fn-svg.ts

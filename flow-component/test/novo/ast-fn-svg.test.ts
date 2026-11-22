@@ -8,7 +8,7 @@ const main = (): Fn => ({
 });
 
 describe("ast/fn-svg", () => {
-  it("main folha: SVG com s0, s1 e barra main", () => {
+  it("main folha: SVG com s0, s1 e barra main sólida (1ª ordem)", () => {
     const { svg, scene, width, height } = renderFnSvg(main());
     expect(scene.nSteps).toBe(1);
     expect(scene.rows).toHaveLength(1);
@@ -16,6 +16,8 @@ describe("ast/fn-svg", () => {
     expect(svg).toContain(">s0<");
     expect(svg).toContain(">s1<");
     expect(svg).toContain("main");
+    expect(svg).toMatch(/class="fn conc/);
+    expect(svg).not.toMatch(/class="fn nag/);
     expect(width).toBeGreaterThan(100);
     expect(height).toBeGreaterThan(50);
   });

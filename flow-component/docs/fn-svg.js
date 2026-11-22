@@ -834,7 +834,8 @@ var FlowAst = (() => {
         if (lastVis > i) rail(r.depth, rowY(i + 1), (lastVis - i) * G.RH);
       }
     });
-    const kindOf = (f) => {
+    const kindOf = (f, depth) => {
+      if (depth === 0) return "conc";
       if (f.kids.length) return "conc";
       if (!f.agent) return "nag";
       return "conc";
@@ -870,7 +871,7 @@ var FlowAst = (() => {
         else over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
         return;
       }
-      const k = kindOf(f);
+      const k = kindOf(f, r.depth);
       const hasText = txtIn && f.title.trim() !== "";
       const cx = (colX(r.s) + colX(r.e + 1)) / 2;
       const x1 = hasText ? colX(r.s) + G.INS : cx - G.BH / 2;

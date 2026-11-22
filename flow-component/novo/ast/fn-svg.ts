@@ -106,10 +106,15 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
     }
   });
 
-  const kindOf = (f: Fn): "conc" | "abs" | "nag" => {
+  /**
+   * Sólida (conc) = preenchida. Toda função de 1ª ordem (depth 0) é sólida — mora no arquivo.
+   * Filha: composição ou com agent = sólida; sem agent = vazia (nag) / abstrata.
+   */
+  const kindOf = (f: Fn, depth: number): "conc" | "abs" | "nag" => {
+    if (depth === 0) return "conc";
     if (f.kids.length) return "conc";
     if (!f.agent) return "nag";
-    return "conc"; // com agent = concreta na lib mínima (sem Project)
+    return "conc";
   };
 
   const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
@@ -146,7 +151,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
       else over.push(`<text class="lbl" x="${colX(r.e + 1) + 10}" y="${ym(i) + 3.5}">${esc(f.title)}</text>`);
       return;
     }
-    const k = kindOf(f);
+    const k = kindOf(f, r.depth);
     const hasText = txtIn && f.title.trim() !== "";
     const cx = (colX(r.s) + colX(r.e + 1)) / 2;
     const x1 = hasText ? colX(r.s) + G.INS : cx - G.BH / 2;

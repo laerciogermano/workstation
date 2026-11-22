@@ -52,6 +52,20 @@ describe("ast/fn-svg", () => {
     expect(svg).toContain("∥");
   });
 
+  it("irmãs sequenciais ocupam passos consecutivos", () => {
+    const flow: Fn = {
+      ...main(),
+      kids: [
+        { t: "fn", id: "n2", title: "a", agent: null, resp: null, ins: [], outs: [], kids: [], par: false },
+        { t: "fn", id: "n3", title: "b", agent: null, resp: null, ins: [], outs: [], kids: [], par: false },
+      ],
+    };
+    const { scene } = renderFnSvg(flow);
+    expect(scene.nSteps).toBe(2);
+    expect(scene.leaves[0]!.s).toBe(0);
+    expect(scene.leaves[1]!.s).toBe(1);
+  });
+
   it("recusa bloco if (lote só funções)", () => {
     const bad = {
       ...main(),

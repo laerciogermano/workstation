@@ -122,6 +122,7 @@ footer {
           <li><a href="#main">1.1 A função <code>main</code></a> — 1ª ordem, sólida, sem I/O</li>
           <li><a href="#filha">1.2 Função filha</a> — composição: filho dentro de <code>main</code></li>
           <li><a href="#paralela">1.3 Função paralela</a> — irmã no mesmo passo (<code>par</code>)</li>
+          <li><a href="#sequencial">1.4 Função sequencial</a> — irmã no passo seguinte</li>
         </ul>
       </li>
     </ol>
@@ -132,6 +133,7 @@ footer {
   <section id="main" data-ex="main"></section>
   <section id="filha" data-ex="filha"></section>
   <section id="paralela" data-ex="paralela"></section>
+  <section id="sequencial" data-ex="sequencial"></section>
 
   <footer>
     Lib: <a href="../novo/ast/fn-svg.ts">novo/ast/fn-svg.ts</a> ·
@@ -187,6 +189,26 @@ const EXAMPLES = {
       kids: [
         fn("n2", "a"),
         fn("n3", "b", { par: true }),
+      ],
+    }),
+  },
+  sequencial: {
+    num: "1.4",
+    title: "Função sequencial",
+    lead: "Irmã no passo seguinte: <code>b</code> roda depois de <code>a</code> (<code>par: false</code>).",
+    code: `async function main() {
+  async function a() {
+  }
+  async function b() {
+  }
+  await a();
+  await b();
+}`,
+    flow: fn("n1", "main", {
+      file: "main.ts",
+      kids: [
+        fn("n2", "a"),
+        fn("n3", "b"),
       ],
     }),
   },

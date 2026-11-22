@@ -138,6 +138,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
 .side a:hover { color: var(--ink); background: var(--paper-2); }
 .side > ol > li > a { color: var(--ink); font-weight: 700; margin-top: .25rem; display: flex; align-items: center; gap: .5rem; }
 .side a .ic { flex: none; }
+.side .gn { font: 600 .72rem/1 var(--mono); color: var(--accent); min-width: 1.4rem; }
 .side ul { display: block; margin-left: .75rem; }
 .side ul a { font-weight: 500; font-size: .78rem; padding: .2rem .5rem; }
 .side a.on { color: var(--accent); border-left-color: var(--accent); background: var(--paper-2); }
@@ -159,10 +160,10 @@ h2 {
 }
 h3 { margin: 1.5rem 0 .5rem; font: 700 1.1rem/1.25 Archivo, sans-serif; }
 h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); color: var(--accent); margin-right: .4rem; }
-.rules { margin: 0 0 1rem; padding-left: 1.2rem; color: var(--body); }
-.rules li { margin: .3rem 0; }
-.rules b.eu { font: 700 .72rem/1 Archivo, sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); margin-right: .25rem; }
-.rules li::marker { color: var(--accent); }
+.rules { list-style: none; margin: 0 0 1rem; padding: 0; color: var(--body); }
+.rules code, .rules em { font: inherit; font-style: normal; background: none; padding: 0; color: inherit; }
+.rules li { display: flex; gap: .85rem; margin: .3rem 0; }
+.rules .ix { flex: none; min-width: 3.2rem; font: 600 .75rem/1.9 var(--mono); color: var(--accent); }
 .sec-lead { margin: 0 0 1rem; color: var(--body); }
 
 .lab {
@@ -303,59 +304,54 @@ const J = (...l) => l.join("\n");
 const main = (kids, extra = {}) => F("n1", "main", { file: "main.ts", kids, ...extra });
 
 const EXAMPLES = {
-  main: { num: "1.1", title: "A função <code>main</code>", lead: [["D","Entry point é a primeira chamada de um sistema."],["D","<code>main</code> é o nome dado ao entry point de um sistema."],["P","Toda função de 1ª ordem é sólida."],["T","<code>main</code> não recebe nem devolve dado."]],
+  main: { num: "1.1", title: "Função: a unidade de transformação", lead: [["D","Função é a unidade de transformação do fluxo."],["P","Toda função de 1ª ordem pertence a um arquivo, que é o seu responsável de origem."]],
     code: J("async function main() {", "}"), flow: main([]) },
-  filha: { num: "1.2", title: "Função filha", lead: [["D","Função filha é a função contida em outra, por composição."],["P","Toda função tem endereço no arquivo e é sólida por padrão."],["T","<code>hello</code> é filha de <code>main</code>, e a sua barra é preenchida."]],
+  filha: { num: "1.2", title: "Função filha", lead: [["P","Uma função pode ter funções filhas."],["D","Função filha é a função contida em outra, por composição."],["P","Uma função pode ter funções irmãs."],["D","Função composta é a que contém outras funções."]],
     code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
     flow: main([F("n2", "hello")]) },
-  paralela: { num: "1.3", title: "Função paralela", lead: [["D","Funções paralelas são irmãs que ocupam o mesmo passo."],["P","Funções paralelas executam juntas, em <code>Promise.all</code>."],["T","<code>a</code> e <code>b</code> terminam antes de o passo seguinte começar."]],
+  paralela: { num: "1.3", title: "Função paralela", lead: [["D","Funções paralelas são irmãs que ocupam o mesmo passo."],["P","Funções paralelas executam juntas."],["T","<code>a</code> e <code>b</code> terminam antes de o passo seguinte começar."]],
     code: J("async function main() {", "  await Promise.all([a(), b()]);", "}", "", "async function a() {", "}", "", "async function b() {", "}"),
     flow: main([F("n2", "a"), F("n3", "b", { par: true })]) },
-  sequencial: { num: "1.4", title: "Função sequencial", lead: [["D","Funções sequenciais são irmãs em passos consecutivos."],["P","Uma função sequencial começa quando a anterior termina."],["T","<code>b</code> executa depois de <code>a</code>."]],
+  sequencial: { num: "1.4", title: "Função sequencial", lead: [["P","As funções podem ser sequenciais."],["D","Funções sequenciais são irmãs em passos consecutivos."],["P","Uma função sequencial começa quando a anterior termina."],["P","Funções paralelas e sequenciais podem ser combinadas no mesmo fluxo."]],
     code: J("async function main() {", "  await a();", "  await b();", "}", "", "async function a() {", "}", "", "async function b() {", "}"),
     flow: main([F("n2", "a"), F("n3", "b")]) },
-  entrada: { num: "1.5", title: "Função com entrada", lead: [["D","Entrada é o dado que a função recebe."],["P","Uma função tem, no máximo, uma entrada."],["P","Na chamada, a entrada é sempre uma variável, nunca um literal."],["T","<code>nome</code> tem valor; logo é sólido, e o seu quadrado é preenchido."]],
+  ioGeral: { num: "2.1", title: "Funções têm entrada e saída", lead: [["P","As funções podem possuir entrada e saída."],["P","A entrada e a saída são dados."],["T","O dado que uma função devolve é a entrada das próximas."]],
+    code: J("async function main() {", "  const nome = await ler();", "  await saudar(nome);", "}", "", "async function ler() {", "  const nome = \"Ana\";", "  return nome;", "}", "", "async function saudar(nome) {", "}"),
+    flow: main([F("n2", "ler", { outs: ["nome"], args: { nome: '"Ana"' } }), F("n3", "saudar", { ins: ["nome"] })]) },
+  entrada: { num: "2.2", title: "Função com entrada", lead: [["D","Entrada é o dado que a função recebe."],["P","Uma função tem, no máximo, uma entrada e uma saída."],["P","Na chamada, a entrada é sempre uma variável, nunca um literal."]],
     code: J("async function main() {", "  const nome = \"Ana\";", "  await saudar(nome);", "}", "", "async function saudar(nome) {", "}"),
     flow: main([F("n2", "saudar", { ins: ["nome"], args: { nome: '"Ana"' } })]) },
-  saida: { num: "1.6", title: "Função com saída", lead: [["D","Saída é o dado que a função devolve."],["P","Uma função tem, no máximo, uma saída."],["P","O <code>return</code> devolve sempre uma variável, nunca um literal."],["T","<code>ler</code> atribui o valor a <code>nome</code> e só então o retorna."]],
+  saida: { num: "2.3", title: "Função com saída", lead: [["D","Saída é o dado que a função devolve."]],
     code: J("async function main() {", "  const nome = await ler();", "}", "", "async function ler() {", "  const nome = \"Ana\";", "  return nome;", "}"),
     flow: main([F("n2", "ler", { outs: ["nome"] })]) },
-  entradaSaida: { num: "1.7", title: "Entrada e saída ligadas", lead: [["D","Função nativa é a que não tem implementação no código."],["P","A saída de uma função é a entrada da função seguinte."],["P","A concatenação é sempre uma função, nunca <code>+</code> nem template."],["P","As partes a concatenar ficam em variáveis distintas, reunidas num array."],["T","<code>concatenar</code> é nativa: recebe o array e devolve a string."]],
+  entradaSaida: { num: "2.4", title: "Entrada e saída ligadas", lead: [["D","Função nativa é a que não tem implementação no código."],["P","A saída de uma função é a entrada da função seguinte."]],
     code: J("async function main() {", "  const nome = await ler();", "  const saudacao = await saudar(nome);", "}", "", "async function ler() {", "  const nome = \"Ana\";", "  return nome;", "}", "", "async function saudar(nome) {", "  const ola = \"Olá, \";", "  const partes = [ola, nome];", "  const saudacao = await concatenar(partes);", "  return saudacao;", "}"),
     flow: main([F("n2", "ler", { outs: ["nome"], args: { nome: '"Ana"' } }), F("n3", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { ola: '"Olá, "', saudacao: '"Olá, Ana"' }, kids: [F("n4", "concatenar", { agent: "maquina", ins: ["partes"], outs: ["saudacao"], args: { saudacao: '"Olá, Ana"', partes: '{ ola: "Olá, ", nome: "Ana" }' } })] })]) },
-  neta: { num: "1.8", title: "Filhas aninhadas", lead: [["D","Função composta é a que contém outras funções."],["T","<code>pedido</code> é composta por <code>validar</code> e <code>cobrar</code>."],["T","<code>cobrar</code> só começa depois de <code>validar</code>."]],
-    code: J("async function main() {", "  await pedido();", "}", "", "async function pedido() {", "  await validar();", "  await cobrar();", "}", "", "async function validar() {", "}", "", "async function cobrar() {", "}"),
-    flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
-  mista: { num: "1.9", title: "Paralela e depois sequencial", lead: [["P","Funções paralelas e sequenciais podem ser combinadas no mesmo fluxo."],["T","<code>a</code> e <code>b</code> executam no passo 0."],["T","<code>c</code> executa depois que as duas terminam."]],
-    code: J("async function main() {", "  await Promise.all([a(), b()]);", "  await c();", "}", "", "async function a() {", "}", "", "async function b() {", "}", "", "async function c() {", "}"),
-    flow: main([F("n2", "a"), F("n3", "b", { par: true }), F("n4", "c")]) },
-
-  texto: { num: "2.1", title: "Dado: texto", lead: [["D","Texto é a sequência de caracteres tratada como dado."],["P","Todo dado simples é representado por um quadrado."]],
-    code: J("async function main() {", "  const nome = await ler();", "", "  async function ler() {", "    const nome = \"Ana\";", "    return nome;", "  }", "}"),
-    flow: main([F("n2", "ler", { outs: ["nome"] })]) },
-  numero: { num: "2.2", title: "Dado: número", lead: [["D","Número é o dado que expressa quantidade."],["P","Todo dado simples é representado por um quadrado."]],
-    code: J("async function main() {", "  const total = await contar();", "", "  async function contar() {", "    const total = 42;", "    return total;", "  }", "}"),
-    flow: main([F("n2", "contar", { outs: ["total"] })]) },
-  booleano: { num: "2.3", title: "Dado: booleano", lead: [["D","Booleano é o dado que admite dois valores: verdadeiro e falso."],["T","O booleano é o que decide uma seleção."]],
-    code: J("async function main() {", "  const ok = await validar();", "", "  async function validar() {", "    const ok = true;", "    return ok;", "  }", "}"),
-    flow: main([F("n2", "validar", { outs: ["ok"] })]) },
-  funcaoDado: { num: "2.4", title: "Dado: função", lead: [["D","Uma função também é um dado."],["T","<code>aplicar</code> recebe <code>dobrar</code> como entrada."]],
-    code: J("async function main() {", "  const dobrar = (x) => x * 2;", "  const r = await aplicar(dobrar);", "", "  async function aplicar(fn) {", "    const x = 21;", "    const r = fn(x);", "    return r;", "  }", "}"),
-    flow: main([F("n2", "aplicar", { ins: ["dobrar"], outs: ["r"] })]) },
-  objeto: { num: "2.5", title: "Dado: objeto (caixa chaveada)", lead: [["D","Objeto é a caixa de campos chaveados, <code>{}</code>."],["P","Toda caixa é representada por um cubo."],["T","<code>{ nome, idade }</code> é uma caixa de dois campos."]],
-    code: J("async function main() {", "  const { nome, idade } = await ler();", "", "  async function ler() {", "    const nome = \"Ana\";", "    const idade = 30;", "    const pessoa = { nome, idade };", "    return pessoa;", "  }", "}"),
-    flow: main([F("n2", "ler", { outs: ["nome", "idade"] })]) },
-  array: { num: "2.6", title: "Dado: array (caixa posicional)", lead: [["D","Array é a caixa de campos posicionais, <code>[]</code>."],["P","Os campos do array são acessados pela posição."],["T","<code>[a, b]</code> é uma caixa de dois campos."]],
-    code: J("async function main() {", "  const [a, b] = await ler();", "", "  async function ler() {", "    const a = 1;", "    const b = 2;", "    const lista = [a, b];", "    return lista;", "  }", "}"),
-    flow: main([F("n2", "ler", { outs: ["a", "b"] })]) },
-
-  dadoConcreto: { num: "2.7", title: "Dado concreto", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]],
-    code: J("async function main() {", "  const idade = 30;", "  await usar(idade);", "", "  async function usar(idade) {", "  }", "}"),
-    flow: main([F("n2", "usar", { ins: ["idade"], args: { idade: "30" } })]) },
-  dadoAbstrato: { num: "2.8", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]],
-    code: J("async function main(idade) {", "  await usar(idade);", "", "  async function usar(idade) {", "  }", "}"),
-    flow: main([F("n2", "usar", { ins: ["idade"] })]) },
-  estado: { num: "3.1", title: "Estado do fluxo", lead: [["D","Estado é o conjunto de funções e dados disponíveis num passo."],["P","O estado é listado abaixo do passo."],["P","Os dados de passos anteriores permanecem, esmaecidos."],["T","<code>enviar</code> recebe <code>pedido</code> e <code>pagamento</code>, produzidos antes."]],
+  texto: { num: "2.5", title: "Dado: texto", lead: [["D","Texto é a sequência de caracteres tratada como dado."],["P","Todo dado simples é representado por um quadrado."],["P","O valor de um dado é atribuído antes de ser usado ou retornado."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const nome = \"Ana\";", "}"),
+    flow: main([], { args: { nome: '"Ana"' } }) },
+  numero: { num: "2.6", title: "Dado: número", lead: [["D","Dados são as unidades transformáveis do fluxo."],["D","Número é o dado que expressa quantidade."],["P","Todo dado simples é representado por um quadrado."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const total = 42;", "}"),
+    flow: main([], { args: { total: '42' } }) },
+  booleano: { num: "2.7", title: "Dado: booleano", lead: [["D","Booleano é o dado que admite dois valores: verdadeiro e falso."],["T","O booleano é o que decide uma seleção."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const ok = true;", "}"),
+    flow: main([], { args: { ok: 'true' } }) },
+  funcaoDado: { num: "2.8", title: "Dado: função", lead: [["D","Uma função também é um dado."],["P","Uma função guardada numa variável é tratada como dado."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const dobrar = (x) => x * 2;", "}"),
+    flow: main([], { args: { dobrar: '(x) => x * 2' } }) },
+  objeto: { num: "2.9", title: "Dado: objeto (caixa chaveada)", lead: [["D","Objeto é a caixa de campos chaveados."],["P","Toda caixa é representada por um cubo."],["P","O objeto é um ser que possui dados e funções."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const pessoa = { nome: \"Ana\", idade: 30 };", "}"),
+    flow: main([], { args: { pessoa: '{ nome: "Ana", idade: 30 }' } }) },
+  array: { num: "2.10", title: "Dado: array (caixa posicional)", lead: [["D","Array é a caixa de campos posicionais."],["P","Os campos do array são acessados pela posição."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const lista = [1, 2];", "}"),
+    flow: main([], { args: { lista: '[1, 2]' } }) },
+  dadoConcreto: { num: "10.2", title: "Dado concreto", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]], opts: { fnStates: false },
+    code: J("async function main() {", "  const idade = 30;", "}"),
+    flow: main([], { args: { idade: '30' } }) },
+  dadoAbstrato: { num: "10.3", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]], opts: { fnStates: false },
+    code: J("async function main(idade) {", "}"),
+    flow: main([], { ins: ["idade"] }) },
+  estado: { num: "3.1", title: "Estado do fluxo", lead: [["D","Estado é o conjunto de funções e dados disponíveis num passo."],["P","O estado é listado abaixo do passo."],["P","Os dados de passos anteriores permanecem, esmaecidos."],["T","<code>enviar</code> recebe <code>pedido</code> e <code>pagamento</code>, produzidos antes."],["P","O estado que alimenta uma chamada é uma variável já atribuída, nunca um literal."]],
     code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "", "  async function receber() {", "    const id = 1;", "    const pedido = { id };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pedido, pagamento) {", "  }", "}"),
     flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
   estadoInicial: { num: "3.2", title: "Estado inicial com valor", lead: [["D","Estado inicial é o que existe antes da primeira função."],["P","Um dado inicializado existe desde o início do passo."],["T","<code>nome = \"Ana\"</code> está no estado de <code>saudar</code>."]],
@@ -377,7 +373,7 @@ const EXAMPLES = {
     code: J("async function main() {", "  for (const item of itens) {", "    const dobro = await dobrar(item);", "  }", "", "  async function dobrar(item) {", "    const dobro = item * 2;", "    return dobro;", "  }", "}"),
     flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "dobrar", { ins: ["item"], outs: ["dobro"] })] }]) },
 
-  se: { num: "4.1", title: "Seleção: if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."]],
+  se: { num: "4.1", title: "Seleção: if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."],["P","A seleção é usada quando não se sabe o que executar antes de ter a informação."]],
     code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
     flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
   seSenao: { num: "4.2", title: "Seleção: if / else", lead: [["P","<code>if</code> e <code>else</code> ocupam o mesmo passo."],["T","Apenas um dos ramos executa."]], opts: { elseParallel: true },
@@ -390,7 +386,7 @@ const EXAMPLES = {
       { t: "if", id: "i2", test: "meio === 'cartao'", kids: [F("n3", "pagarCartao")], elseKids: [] },
     ]) },
 
-  repFor: { num: "5.1", title: "Repetição: for", lead: [["D","Repetição é a estrutura que executa um bloco várias vezes."],["P","A coleção é atribuída a uma variável antes do laço."],["T","<code>notificar</code> executa uma vez por item."]],
+  repFor: { num: "5.1", title: "Repetição: for", lead: [["D","Repetição é a estrutura que executa um bloco várias vezes."],["P","A coleção é atribuída a uma variável antes do laço."],["T","<code>notificar</code> executa uma vez por item."],["P","As repetições possíveis são <code>for</code>, <code>while</code> e <code>do-while</code>."]],
     code: J("async function main() {", "  const itens = [1, 2];", "  for (const item of itens) {", "    await notificar(item);", "  }", "", "  async function notificar(item) {", "  }", "}"),
     flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "notificar", { ins: ["item"] })] }]) },
   repFor2: { num: "5.2", title: "Repetição com vários passos", lead: [["P","O corpo de um laço pode ter passos sequenciais e paralelos."]],
@@ -400,7 +396,7 @@ const EXAMPLES = {
     code: J("async function main() {", "  const pendente = true;", "  while (pendente) {", "    await tentar();", "  }", "", "  async function tentar() {", "  }", "}"),
     flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", kids: [F("n2", "tentar")] }]) },
 
-  tryCatch: { num: "6.1", title: "try / catch", lead: [["D","<code>try/catch</code> é a estrutura que trata a falha."],["T","Se <code>cobrar</code> falha, o fluxo vai para o <code>catch</code>."],["T","<code>avisar</code> executa no <code>catch</code>."]],
+  tryCatch: { num: "6.1", title: "try / catch", lead: [["D","<code>try/catch</code> é a estrutura que trata a falha."],["T","Se <code>cobrar</code> falha, o fluxo vai para o <code>catch</code>."],["T","<code>avisar</code> executa no <code>catch</code>."],["P","O <code>try/catch</code> vem primeiro; as funções são definidas fora de <code>main</code>."]],
     code: J("async function main() {", "  try {", "    await cobrar();", "  } catch (error) {", "    await avisar();", "  }", "", "  async function cobrar() {", "  }", "  async function avisar() {", "  }", "}"),
     flow: main([{ t: "try", id: "t1", kids: [F("n2", "cobrar")], catchKids: [F("n3", "avisar")] }]) },
   tryFor: { num: "6.2", title: "Blocos combinados", lead: [["P","Os blocos podem ser aninhados."],["T","Aqui há um <code>try/catch</code> dentro de um <code>for</code>."]],
@@ -409,17 +405,17 @@ const EXAMPLES = {
       { t: "try", id: "t1", kids: [F("n2", "enviar", { ins: ["item"] })], catchKids: [F("n3", "registrarFalha")] },
     ] }]) },
 
-  fileMesmo: { num: "7.1", title: "Duas funções no mesmo arquivo", lead: [["D","Arquivo é o endereço físico de uma função de 1ª ordem."],["P","Várias funções podem dividir o mesmo arquivo."],["T","<code>main</code> e <code>util</code> moram em <code>app.ts</code>."]],
+  fileMesmo: { num: "7.1", title: "Duas funções no mesmo arquivo", lead: [["D","Arquivo é o endereço físico de uma função de 1ª ordem."],["P","Várias funções podem dividir o mesmo arquivo."],["P","Todo dado e toda função têm um endereço."],["P","O arquivo organiza os endereços sólidos."]],
     code: J("// app.ts", "async function main() {", "}", "async function util() {", "}"),
     flows: [F("n1", "main", { file: "app.ts" }), F("n2", "util", { file: "app.ts" })] },
-  fileOutro: { num: "7.2", title: "Arquivos diferentes", lead: [["P","Arquivos distintos são endereços físicos distintos."],["P","Arquivo não é camada."],["T","<code>main.ts</code> e <code>pagamento.ts</code> são endereços diferentes."]],
+  fileOutro: { num: "7.2", title: "Arquivos diferentes", lead: [["P","Arquivos distintos são endereços físicos distintos."],["P","Arquivo não é camada."]],
     code: J("// main.ts", "import { pagar } from \"./pagamento\";", "async function main() {", "  await pagar();", "}", "", "// pagamento.ts", "export async function pagar() {", "}"),
     flows: [main([F("n2", "pagar")]), F("n3", "pagar", { file: "pagamento.ts" })] },
   fileObjeto: { num: "7.3", title: "Arquivo como objeto / estado", lead: [["P","O arquivo também é objeto e estado."],["T","Ele é uma caixa com endereço físico, que guarda dados e funções."]],
     code: J("// pedidos.json como estado/objeto", "async function main() {", "  const pedidos = await lerArquivo();", "  await salvarArquivo(pedidos);", "", "  async function lerArquivo() {", "    const pedidos = { itens: [] };", "    return pedidos;", "  }", "  async function salvarArquivo(pedidos) {", "  }", "}"),
     flow: main([F("n2", "lerArquivo", { outs: ["pedidos"], agent: "arquivo" }), F("n3", "salvarArquivo", { ins: ["pedidos"], agent: "arquivo" })]) },
 
-  respArquivo: { num: "8.1", title: "Responsável: arquivo (sólido)", lead: [["D","Responsável é quem executa o passo."],["P","O arquivo é um responsável sólido."],["T","A barra é preenchida."]],
+  respArquivo: { num: "8.1", title: "Responsável: arquivo (sólido)", lead: [["D","Responsável é quem executa o passo."],["P","O arquivo é um responsável sólido."],["T","A barra é preenchida."],["P","O responsável pode ser arquivo, máquina, IA, pessoa ou objeto."],["P","O responsável pode ser sólido ou abstrato."]],
     code: J("// main.ts", "async function main() {", "}"), flow: main([]) },
   respMaquina: { num: "8.2", title: "Responsável: máquina (sólido)", lead: [["P","A máquina, ou biblioteca, é um responsável sólido."]],
     code: J("async function main() {", "  await maquina.enviarEmail();", "}"),
@@ -430,21 +426,21 @@ const EXAMPLES = {
   respPessoa: { num: "8.4", title: "Responsável: pessoa (abstrato)", lead: [["P","A pessoa é um responsável abstrato até ser definida."],["T","A barra é clara."]],
     code: J("async function main() {", "  await pessoa.aprovar();", "}"),
     flow: main([F("n2", "aprovar", { agent: "pessoa" })]) },
-  respObjeto: { num: "8.5", title: "Responsável: objeto (sólido)", lead: [["P","O objeto é um responsável sólido."],["T","O objeto já contém as funções."]],
+  respObjeto: { num: "8.5", title: "Responsável: objeto (sólido)", lead: [["P","O objeto é um responsável sólido."],["T","O objeto já contém as funções."],["P","Responsável não é camada: a camada é o plano, e o responsável é quem o preenche."],["P","Trocar o responsável não muda o fluxo."]],
     code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: [["D","Camada é o abstrato: o que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."]],
+  abstrata: { num: "9.1", title: "Camada (= abstrato)", lead: [["D","Camada é o abstrato: o que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
     code: J("async function main() {", "  const { hello } = state;", "  await hello();", "}"),
     flow: main([F("n2", "hello", { agent: null })]) },
 
-  solida: { num: "10.1", title: "Sólido", lead: [["D","Sólido é o que tem endereço físico."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."]],
+  solida: { num: "10.1", title: "Sólido", lead: [["D","Sólido é o que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","O endereço físico de um sólido pode ser um responsável, um valor ou um arquivo."],["P","Para executar, a camada abstrata precisa se tornar sólida."]],
     code: J("async function main() {", "  await maquina.hello();", "}"),
     flow: main([F("n2", "hello", { agent: "maquina" })]) },
 
-  publica: { num: "11.1", title: "Pública", lead: [["D","Função pública é a que pode ser acessada fora do arquivo."],["P","Declara-se com <code>export</code>."]],
+  publica: { num: "11.1", title: "Pública", lead: [["D","Função pública é a que pode ser acessada fora do arquivo."],["P","Dados e funções podem ser públicos ou privados."]],
     code: J("export async function main() {", "}"), flow: main([]) },
-  privada: { num: "11.2", title: "Privada", lead: [["D","Função privada é a que existe só dentro do arquivo ou da caixa."],["P","Não leva <code>export</code>."]],
+  privada: { num: "11.2", title: "Privada", lead: [["D","Função privada é a que existe só dentro do arquivo ou da caixa."],["P","O privado só é acessado dentro da caixa."],["P","A função privada aninhada é chamada primeiro e definida fora de <code>main</code>."]],
     code: J("async function main() {", "  await interna();", "", "  async function interna() {", "  }", "}"), flow: main([F("n2", "interna")]) },
 
   seAninhado: { num: "4.4", title: "Seleção: if / else aninhados", lead: [["P","Um <code>if</code> pode estar no <code>else</code> de outro."],["T","Há três caminhos possíveis, e só um executa."]],
@@ -457,7 +453,7 @@ const EXAMPLES = {
     code: J("async function main() {", "  let pendente = true;", "  do {", "    pendente = await tentar();", "  } while (pendente);", "", "  async function tentar() {", "    const pendente = false;", "    return pendente;", "  }", "}"),
     flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", kids: [F("n2", "tentar", { outs: ["pendente"] })] }]) },
 
-  solidSrp: { num: "12.1", title: "SOLID: responsabilidade única", lead: [["D","Responsabilidade única: cada função cuida de uma só coisa."],["T","<code>pedido</code> apenas compõe."],["T","O trabalho está em <code>validar</code>, <code>cobrar</code> e <code>enviar</code>."]],
+  solidSrp: { num: "12.1", title: "SOLID: responsabilidade única", lead: [["D","Responsabilidade única: cada função cuida de uma só coisa."],["T","<code>pedido</code> apenas compõe."],["T","O trabalho está em <code>validar</code>, <code>cobrar</code> e <code>enviar</code>."],["P","O Flow aplica os princípios SOLID."]],
     code: J("async function main() {", "  await pedido();", "", "  async function pedido() {", "    await validar();", "    await cobrar();", "    await enviar();", "", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "    async function enviar() {", "    }", "  }", "}"),
     flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar"), F("n5", "enviar")] })]) },
   solidDip: { num: "12.2", title: "SOLID: depender do abstrato", lead: [["P","O fluxo depende do abstrato, não de quem o implementa."],["T","<code>cobrar</code> é uma camada abstrata."],["T","Trocar o responsável não altera o resto do fluxo."]],
@@ -467,13 +463,26 @@ const EXAMPLES = {
   padFactory: { num: "13.1", title: "Padrão: factory", lead: [["D","Factory é a função que cria e devolve um objeto já montado."]],
     code: J("async function main() {", "  const cliente = await criarCliente();", "", "  async function criarCliente() {", "    const id = 1;", "    const nome = \"Ana\";", "    const cliente = { id, nome };", "    return cliente;", "  }", "}"),
     flow: main([F("n2", "criarCliente", { outs: ["id", "nome"] })]) },
-  padSingleton: { num: "13.2", title: "Padrão: singleton", lead: [["D","Singleton é a instância única e compartilhada."],["T","<code>usarA</code> e <code>usarB</code> leem o mesmo <code>config</code>."]],
+  padSingleton: { num: "13.2", title: "Padrão: singleton", lead: [["D","Singleton é a instância única e compartilhada."],["T","<code>usarA</code> e <code>usarB</code> leem o mesmo <code>config</code>."],["P","Os padrões de projeto (factory, singleton) têm forma própria no plano."]],
     code: J("async function main() {", "  const config = await carregar();", "  await usarA(config);", "  await usarB(config);", "", "  async function carregar() {", "    const config = { tema: \"black\" };", "    return config;", "  }", "  async function usarA(config) {", "  }", "  async function usarB(config) {", "  }", "}"),
     flow: main([F("n2", "carregar", { outs: ["config"] }), F("n3", "usarA", { ins: ["config"] }), F("n4", "usarB", { ins: ["config"], par: true })]) },
 
-  oopFlow: { num: "14.1", title: "OOP × Flow: instanciar", lead: [["P","Instanciar uma classe corresponde a um objeto responsável."],["P","Cada método é um passo."]],
+  oopFlow: { num: "14.1", title: "OOP × Flow: instanciar", lead: [["P","Instanciar uma classe corresponde a um objeto responsável."],["P","Cada método é um passo."],["T","A instanciação de uma classe é equivalente à de um fluxo."]],
     code: J("class Carrinho {", "  async adicionar() {", "  }", "}", "", "async function main() {", "  const carrinho = new Carrinho();", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
+
+  folha: { num: "15.1", title: "Folha (*leaf*)", lead: [["D","Folha é a função sem filhas."],["P","Só a folha ocupa um passo no plano."],["T","<code>hello</code> é folha: uma barra, um passo."]],
+    code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
+    flow: main([F("n2", "hello")]) },
+  folhaVsComp: { num: "15.2", title: "Folha × composição", lead: [["D","Composição é a função que contém filhas."],["P","A composição não ocupa passo próprio: cobre o tempo das folhas."],["T","<code>pedido</code> é composição; <code>validar</code> e <code>cobrar</code> são folhas."]],
+    code: J("async function main() {", "  await pedido();", "}", "", "async function pedido() {", "  await validar();", "  await cobrar();", "}", "", "async function validar() {", "}", "", "async function cobrar() {", "}"),
+    flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar")] })]) },
+  useCase: { num: "15.3", title: "Use case", lead: [["D","Use case é o fluxo de 1ª ordem que entrega um resultado ao usuário ou ao sistema."],["P","Todo sistema é um conjunto de use cases."],["T","<code>vender</code> é um use case: entry point de um cenário completo."]],
+    code: J("// vendas.ts", "async function vender() {", "  const pedido = await receber();", "  await cobrar(pedido);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "}"),
+    flow: F("n1", "vender", { file: "vendas.ts", kids: [F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"] })] }) },
+  useCaseFolhas: { num: "15.4", title: "Use case feito de folhas", lead: [["P","Um use case é feito de folhas (e composições)."],["T","A <code>main</code> é o use case de entrada; as folhas fazem o trabalho."]],
+    code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pagamento);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "  const pagamento = \"pago\";", "  return pagamento;", "}", "", "async function enviar(pagamento) {", "}"),
+    flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pagamento"] })]) },
 };
 
 const IC = (b) => `<svg class="ic" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">${b}</svg>`;
@@ -493,6 +502,7 @@ const ICONS = {
   praticas: IC('<path d="M2 7.500 5.500 11 12 3" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"/>'),
   padroes: IC('<rect x="1.500" y="1.500" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="8" y="1.500" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="1.500" y="8" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="8" y="8" width="4.500" height="4.500" fill="currentColor"/>'),
   oop: IC('<path d="M7 1 12.500 4v6L7 13 1.500 10V4Z" fill="none" stroke="currentColor" stroke-width="1.400" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.800" fill="currentColor"/>'),
+  folhas: IC('<circle cx="3.500" cy="10" r="2" fill="currentColor"/><circle cx="10.500" cy="10" r="2" fill="currentColor"/><path d="M7 2v5M7 7 3.500 10M7 7l3.500 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'),
 };
 
 const GROUPS = [
@@ -522,20 +532,21 @@ const GROUPS = [
 
 <h3>O que é um software</h3>
 <p>Um software é um conjunto de fluxos de execução. Cada fluxo, no fundo, é feito de dados e funções, os dois ícones acima.</p>`, keys: [] },
-  { id: "funcoes", n: "1.", title: "Funções", keys: ["main", "filha", "paralela", "sequencial", "entrada", "saida", "entradaSaida", "neta", "mista"] },
-  { id: "dados", n: "2.", title: "Dados", keys: ["texto", "numero", "booleano", "funcaoDado", "objeto", "array", "dadoConcreto", "dadoAbstrato"] },
-  { id: "estados", n: "3.", title: "Estados", lead: "O que está disponível em cada passo. No plano, o estado lista funções e dados juntos.", keys: ["estado", "estadoInicial", "estadoCaixa", "estadoSubstitui", "estadoAbstrato", "estadoParalelo", "estadoBloco"] },
-  { id: "selecao", n: "4.", title: "Seleção", keys: ["se", "seSenao", "switchEx", "seAninhado"] },
-  { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor", "repFor2", "repWhile", "repDoWhile"] },
-  { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch", "tryFor"] },
-  { id: "files", n: "7.", title: "Files", keys: ["fileMesmo", "fileOutro", "fileObjeto"] },
-  { id: "responsaveis", n: "8.", title: "Responsáveis", lead: "Quem executa o passo. Pode ser sólido (arquivo, máquina, objeto) ou abstrato (IA ou pessoa, até alguém assumir).", keys: ["respArquivo", "respMaquina", "respIa", "respPessoa", "respObjeto"] },
+  { id: "funcoes", n: "1.", title: "Funções", keys: ["main","filha","paralela","sequencial"] },
+  { id: "dados", n: "2.", title: "Dados", keys: ["ioGeral","entrada","saida","entradaSaida","texto","numero","booleano","funcaoDado","objeto","array"] },
+  { id: "estados", n: "3.", title: "Estados", lead: "O que está disponível em cada passo. No plano, o estado lista funções e dados juntos.", keys: ["estado","estadoInicial","estadoCaixa","estadoSubstitui","estadoAbstrato","estadoParalelo","estadoBloco"] },
+  { id: "selecao", n: "4.", title: "Seleção", keys: ["se","seSenao","switchEx","seAninhado"] },
+  { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor","repFor2","repWhile","repDoWhile"] },
+  { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch","tryFor"] },
+  { id: "files", n: "7.", title: "Files", keys: ["fileMesmo","fileOutro","fileObjeto"] },
+  { id: "responsaveis", n: "8.", title: "Responsáveis", lead: "Quem executa o passo. Pode ser sólido (arquivo, máquina, objeto) ou abstrato (IA ou pessoa, até alguém assumir).", keys: ["respArquivo","respMaquina","respIa","respPessoa","respObjeto"] },
   { id: "camadas", n: "9.", title: "Camadas (= abstratos)", keys: ["abstrata"] },
-  { id: "solidos", n: "10.", title: "Sólidos", keys: ["solida"] },
-  { id: "publico", n: "11.", title: "Público / privado", keys: ["publica", "privada"] },
-  { id: "praticas", n: "12.", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp", "solidDip"] },
-  { id: "padroes", n: "13.", title: "Padrões de projeto", keys: ["padFactory", "padSingleton"] },
+  { id: "solidos", n: "10.", title: "Sólidos × abstratos", keys: ["solida","dadoConcreto","dadoAbstrato"] },
+  { id: "publico", n: "11.", title: "Público / privado", keys: ["publica","privada"] },
+  { id: "praticas", n: "12.", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp","solidDip"] },
+  { id: "padroes", n: "13.", title: "Padrões de projeto", keys: ["padFactory","padSingleton"] },
   { id: "oop", n: "14.", title: "OOP × Flow", keys: ["oopFlow"] },
+  { id: "folhas", n: "15.", title: "Folhas e use cases", lead: "Folha = função sem filhas (ocupa o passo). Use case = fluxo de 1ª ordem que entrega um resultado.", keys: ["folha", "folhaVsComp", "useCase", "useCaseFolhas"] },
 ];
 const ANCHOR = { main: "main", filha: "filha", paralela: "paralela", sequencial: "sequencial" };
 const anchor = (k) => ANCHOR[k] ?? k;
@@ -556,16 +567,10 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const planOf = (flow, opts) => typeof FlowAst?.renderFnSvg === "function" ? FlowAst.renderFnSvg(flow, opts).svg : "";
 
 // o lead vira lista de bullets: um por frase (ou um por item, se vier como array)
-// regras no estilo dos Elementos de Euclides: definições, postulados e proposições, numeradas em romano
-const KIND = { D: "Definição", P: "Postulado", T: "Proposição" };
-const roman = (n) => ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][n] ?? String(n);
-const rules = (lead) => {
-  const count = { D: 0, P: 0, T: 0 };
-  const items = lead.map(([k, t]) => `<li><b class="eu">${KIND[k]} ${roman(++count[k])}.</b> ${t}</li>`);
-  return `<ul class="rules">${items.join("")}</ul>`;
-};
+// regras numeradas como cláusulas de uma especificação: 1.1.1, 1.1.2…
+const rules = (lead, num) => `<ol class="rules">${lead.map(([, t], i) => `<li><span class="ix">${esc(num)}.${i + 1}</span><span>${t}</span></li>`).join("")}</ol>`;
 
-const paint = (key, ex, flat = false) => {
+const paint = (key, ex, flat = false, noStates = false) => {
   const el = document.getElementById(anchor(key));
   let estree = "";
   try {
@@ -577,11 +582,11 @@ const paint = (key, ex, flat = false) => {
   const flows = ex.flows ?? [ex.flow];
   const planErr = typeof FlowAst?.renderFnSvg === "function" ? "" : "fn-svg.js ausente — rode: npm run example:build";
   const flowJson = flows.map((f) => JSON.stringify(f, null, 2)).join("\n");
-  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, ex.opts)}</div>`).join("");
+  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, noStates ? { ...ex.opts, states: false } : ex.opts)}</div>`).join("");
 
   const html = `
     <h3><span class="n">${esc(ex.num)}</span>${ex.title}</h3>
-    ${rules(ex.lead)}
+    ${rules(ex.lead, ex.num)}
     <details class="pane plan" open>
       <summary class="hd"><span class="kind">Plano</span> Visão <span class="tag">renderFnSvg</span></summary>
       <div class="body">
@@ -611,7 +616,7 @@ const out = document.getElementById("out"), toc = document.getElementById("toc")
 for (const g of GROUPS) {
   const keys = g.keys.filter((k) => EXAMPLES[k]);
   out.insertAdjacentHTML("beforeend", `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(g.title)}</h2>${g.lead ? `<p class="sec-lead">${g.lead}</p>` : ""}${g.html ?? ""}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`);
-  toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}">${ICONS[g.id] ?? ""}${esc(g.title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li><a href="#${anchor(k)}">${EXAMPLES[k].num} ${EXAMPLES[k].title}</a></li>`).join("")}</ul>` : ""}</li>`);
+  toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}">${ICONS[g.id] ?? ""}<span class="gn">${esc(g.n)}</span>${esc(g.title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li><a href="#${anchor(k)}">${EXAMPLES[k].num} ${EXAMPLES[k].title}</a></li>`).join("")}</ul>` : ""}</li>`);
   for (const k of keys) paint(k, EXAMPLES[k], g.id === "funcoes");
 }
 

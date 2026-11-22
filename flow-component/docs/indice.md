@@ -1,4 +1,5 @@
 - Flow
+  - muitos conceitos confusos
   - linguagem de programacao visual
   - Linguagem universal -> transpila para quaquer linguagem
   - Gerenciador de tarefas
@@ -23,14 +24,12 @@
   - softwares sao fluxos de execucao
   - um fluxo de execucao e formado basicamente por dado e funcao (icones)
 - 1. Funcoes
-  - 1.1 [`main`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
+  - 1.1 [`função: a unidade de transformação`](indice-ast.html#main) — 1ª ordem, sólida, sem entrada nem saída (JS + AST + plano SVG)
   - Definição I. entry point é a primeira chamada de um sistema
   - Definição II. `main` é o nome dado ao entry point de um sistema
   - 1.2 [`função filha`](indice-ast.html#filha) — filho sólido dentro de main (composição)
   - 1.3 [`função paralela`](indice-ast.html#paralela) — irmãs sólidas no mesmo passo (par / Promise.all)
   - 1.4 [`função sequencial`](indice-ast.html#sequencial) — irmãs sólidas no passo seguinte (await em sequência)
-  - 1.5 [`entrada`](indice-ast.html#entrada) · 1.6 [`saída`](indice-ast.html#saida) · 1.7 [`entrada e saída ligadas`](indice-ast.html#entradaSaida) — sólidas
-  - 1.8 [`filhas aninhadas`](indice-ast.html#neta) · 1.9 [`paralela e depois sequencial`](indice-ast.html#mista) — sólidas
   - funcoes sao unidades de transformacao
   - toda funcao de primeiro grau é sólida e pertence ao arquivo de origem como responsavel
   - uma funcao pode ter funcao filhas
@@ -47,7 +46,8 @@
     - `return`: sempre variável — nunca literal (`return "Ana"` ❌ → `const nome = "Ana"; return nome` ✅)
     - concatenação: sempre função — nunca `+` / template; partes em variáveis distintas passadas em `[]` (`const partes = [ola, nome]; await concatenar(partes)` ✅); `concatenar` deve ter `return` (atribuir depois retornar)
 - Dados
-  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array) · [concreto](indice-ast.html#dadoConcreto) · [abstrato](indice-ast.html#dadoAbstrato)
+  - entradas e saídas (primeira parte do capítulo): 2.1 [`funções têm entrada e saída`](indice-ast.html#ioGeral) · 2.2 [`entrada`](indice-ast.html#entrada) · 2.3 [`saída`](indice-ast.html#saida) · 2.4 [`entrada e saída ligadas`](indice-ast.html#entradaSaida)
+  - exemplos: [texto](indice-ast.html#texto) · [número](indice-ast.html#numero) · [booleano](indice-ast.html#booleano) · [função](indice-ast.html#funcaoDado) · [objeto](indice-ast.html#objeto) · [array](indice-ast.html#array)
   - os dados sao unidades transformaveis
     input
   - output
@@ -126,7 +126,7 @@
     - camadas = abstratos (não confundir com files)
     - único assunto com barra vazada de propósito nos exemplos (função sem source)
 - Solidos
-  - exemplos: [sólido](indice-ast.html#solida)
+  - exemplos: [sólido](indice-ast.html#solida) · [dado concreto](indice-ast.html#dadoConcreto) · [dado abstrato](indice-ast.html#dadoAbstrato)
   - sólido: tem endereço físico (responsável, valor, arquivo)
   - para executar, a camada abstrata precisa solidificar
   - **regras**
@@ -151,6 +151,17 @@
 - similares a OOP x flow
   - exemplo: [instanciar](indice-ast.html#oopFlow)
   - instaciacao de uma classe similar ao flow..
+- Folhas e use cases
+  - exemplos: [folha](indice-ast.html#folha) · [folha × composição](indice-ast.html#folhaVsComp) · [use case](indice-ast.html#useCase) · [use case com folhas](indice-ast.html#useCaseFolhas)
+  - folha (*leaf*): função sem filhas — ocupa um passo no plano; é a unidade de execução
+  - composição: função com filhas — não ocupa passo próprio; cobre o tempo das folhas
+  - use case: fluxo de 1ª ordem que entrega um resultado (cenário de uso do sistema)
+  - um use case é feito de folhas (e composições); a `main` / entry point costuma ser o use case de entrada
+  - **regras**
+    - Definição. folha é a função sem filhas
+    - Definição. use case é o fluxo de 1ª ordem que entrega um resultado ao usuário ou ao sistema
+    - Postulado. só a folha ocupa passo; composição cobre as folhas
+    - Postulado. todo sistema é um conjunto de use cases
 
 
 

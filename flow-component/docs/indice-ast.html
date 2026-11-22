@@ -8,9 +8,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root, [data-theme="black"] {
+  color-scheme: dark;
+  --paper: #000; --paper-2: #121212; --ink: #f2f2f2; --body: #a3a3a3;
+  --accent: #ff6a52; --line: #262626;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+[data-theme="white"] {
+  color-scheme: light;
   --paper: #fff; --paper-2: #f4f1ea; --ink: #14120f; --body: #44423d;
   --accent: #e0402b; --line: #e7e3db;
+}
+:root {
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
@@ -36,6 +45,12 @@ code, pre { font-family: var(--mono); }
   color: var(--body); text-decoration: none; margin-right: .75rem;
 }
 .sp { flex: 1; }
+.themes { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; margin-right: .75rem; }
+.themes button {
+  font: 600 .68rem/1 Archivo, sans-serif; letter-spacing: .05em; text-transform: uppercase;
+  padding: .45rem .8rem; border: 0; background: transparent; color: var(--body); cursor: pointer;
+}
+.themes button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .meta { font-size: .75rem; font-weight: 600; color: var(--body); }
 
 main { max-width: 46rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
@@ -62,22 +77,31 @@ h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); color: var(--accent); margin-right
 
 .pane {
   border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
-  margin: 0 0 1.25rem; background: var(--paper);
+  margin: 0 0 .75rem; background: var(--paper);
 }
-.pane .hd {
-  display: flex; align-items: center; height: 2rem; padding: 0 .85rem;
-  border-bottom: 1px solid var(--line); background: var(--paper-2);
+.pane > summary.hd {
+  display: flex; align-items: center; gap: .5rem; min-height: 2rem; padding: 0 .85rem;
+  background: var(--paper-2);
   font: 600 .72rem/1 Archivo, sans-serif;
   letter-spacing: .04em; text-transform: uppercase; color: var(--body);
+  cursor: pointer; list-style: none; user-select: none;
 }
+.pane > summary.hd::-webkit-details-marker { display: none; }
+.pane > summary.hd::before {
+  content: "▸"; color: var(--accent); font-size: .7rem; width: .7rem;
+  transition: transform .12s ease;
+}
+.pane[open] > summary.hd::before { transform: rotate(90deg); }
+.pane[open] > summary.hd { border-bottom: 1px solid var(--line); }
+.pane .hd .kind { color: var(--accent); margin-right: .2rem; }
 .pane .hd .tag { margin-left: auto; font-weight: 700; color: var(--accent); font-size: .65rem; }
+.pane .body { background: var(--paper); }
 .pane pre {
   margin: 0; padding: .85rem 1rem; overflow: auto;
   font-size: .78rem; line-height: 1.55; color: var(--ink); white-space: pre;
 }
 .pane.ast pre { color: var(--body); max-height: 18rem; }
-.pane.plan { padding: 1rem; overflow: auto; background: var(--paper-2); }
-.pane.plan .hd { margin: -1rem -1rem 1rem; }
+.pane.plan .body { padding: 1rem; overflow: auto; background: var(--paper-2); }
 .pane.plan .svg-host { overflow: auto; }
 .err { color: var(--accent); font-family: var(--mono); font-size: .78rem; padding: .5rem 0; }
 
@@ -95,6 +119,21 @@ footer {
   font: 600 .75rem/1.45 Archivo, sans-serif; color: var(--body);
 }
 </style>
+<script>
+(() => {
+  const set = (t) => {
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem("flow-docs-theme", t); } catch {}
+    document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === t)));
+  };
+  let t = "black"; try { t = localStorage.getItem("flow-docs-theme") || "black"; } catch {}
+  document.documentElement.dataset.theme = t;
+  addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-theme-set]").forEach((b) => b.addEventListener("click", () => set(b.dataset.themeSet)));
+    set(t);
+  });
+})();
+</script>
 <script src="fn-svg.js"></script>
 </head>
 <body>
@@ -105,6 +144,10 @@ footer {
     <a href="apresentacao.md">apresentação</a>
   </nav>
   <div class="sp"></div>
+  <div class="themes" role="group" aria-label="Tema">
+    <button type="button" data-theme-set="white" aria-pressed="false">White</button>
+    <button type="button" data-theme-set="black" aria-pressed="true">Black</button>
+  </div>
   <div class="meta">AST → SVG</div>
 </header>
 
@@ -182,9 +225,33 @@ const EXAMPLES = {
     code: J("async function main() {", "  const [a, b] = await ler();", "", "  async function ler() {", "    const a = 1;", "    const b = 2;", "    const lista = [a, b];", "    return lista;", "  }", "}"),
     flow: main([F("n2", "ler", { outs: ["a", "b"] })]) },
 
-  estado: { num: "3.1", title: "Estado do fluxo", lead: "Estado = os dados disponíveis. <code>enviar</code> enxerga <code>pedido</code> e <code>pagamento</code> produzidos antes.",
+  dadoConcreto: { num: "2.7", title: "Dado concreto", lead: "Dado com valor: quadrado cheio, valor visível no estado.",
+    code: J("async function main() {", "  const idade = 30;", "  await usar(idade);", "", "  async function usar(idade) {", "  }", "}"),
+    flow: main([F("n2", "usar", { ins: ["idade"], args: { idade: "30" } })]) },
+  dadoAbstrato: { num: "2.8", title: "Dado abstrato", lead: "Dado sem valor ainda (vem de fora): quadrado vazado.",
+    code: J("async function main(idade) {", "  await usar(idade);", "", "  async function usar(idade) {", "  }", "}"),
+    flow: main([F("n2", "usar", { ins: ["idade"] })]) },
+  estado: { num: "3.1", title: "Estado do fluxo", lead: "Estado = os dados disponíveis em cada passo (embaixo dos <code>s…</code>). <code>enviar</code> enxerga <code>pedido</code> e <code>pagamento</code> produzidos antes; os mais antigos aparecem esmaecidos.",
     code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "", "  async function receber() {", "    const id = 1;", "    const pedido = { id };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pedido, pagamento) {", "  }", "}"),
     flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
+  estadoInicial: { num: "3.2", title: "Estado inicial com valor", lead: "Dado inicializado com valor já existe no estado desde o início: <code>nome = \"Ana\"</code>.",
+    code: J("async function main() {", "  const nome = \"Ana\";", "  const saudacao = await saudar(nome);", "", "  async function saudar(nome) {", "    const saudacao = nome;", "    return saudacao;", "  }", "}"),
+    flow: main([F("n2", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { nome: '"Ana"' } })]) },
+  estadoCaixa: { num: "3.3", title: "Estado com caixa (objeto)", lead: "Um objeto vira cubo no estado, com campos e valores logo abaixo.",
+    code: J("async function main() {", "  const cliente = { id: 1, score: 9 };", "  const pontos = await pontuar(cliente);", "", "  async function pontuar(cliente) {", "    const pontos = cliente.score;", "    return pontos;", "  }", "}"),
+    flow: main([F("n2", "pontuar", { ins: ["cliente"], outs: ["pontos"], args: { cliente: "{ id: 1, score: 9 }" } })]) },
+  estadoSubstitui: { num: "3.4", title: "Estado substituído", lead: "Quando um nome é produzido de novo, o valor novo substitui o antigo.",
+    code: J("async function main() {", "  let total = await ler();", "  total = await somar(total);", "", "  async function ler() {", "    const total = 1;", "    return total;", "  }", "  async function somar(total) {", "    const novo = total + 1;", "    return novo;", "  }", "}"),
+    flow: main([F("n2", "ler", { outs: ["total"] }), F("n3", "somar", { ins: ["total"], outs: ["total"] })]) },
+  estadoAbstrato: { num: "3.5", title: "Estado abstrato (vem de fora)", lead: "Entrada que ninguém produz no fluxo: dado abstrato (quadrado vazado), fornecido por quem chama.",
+    code: J("async function main(pedido) {", "  await cobrar(pedido);", "", "  async function cobrar(pedido) {", "  }", "}"),
+    flow: main([F("n2", "cobrar", { ins: ["pedido"] })]) },
+  estadoParalelo: { num: "3.6", title: "Estado com paralelas", lead: "Paralelas produzem dados no mesmo passo: o estado seguinte reúne os dois.",
+    code: J("async function main() {", "  const [a, b] = await Promise.all([buscarA(), buscarB()]);", "", "  async function buscarA() {", "    const a = 1;", "    return a;", "  }", "  async function buscarB() {", "    const b = 2;", "    return b;", "  }", "}"),
+    flow: main([F("n2", "buscarA", { outs: ["a"] }), F("n3", "buscarB", { outs: ["b"], par: true })]) },
+  estadoBloco: { num: "3.7", title: "Estado dentro de um for", lead: "O corpo do <code>for</code> produz um dado por volta; o estado mostra o que sai do passo.",
+    code: J("async function main() {", "  for (const item of itens) {", "    const dobro = await dobrar(item);", "  }", "", "  async function dobrar(item) {", "    const dobro = item * 2;", "    return dobro;", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "dobrar", { ins: ["item"], outs: ["dobro"] })] }]) },
 
   se: { num: "4.1", title: "Seleção: if", lead: "<code>enviar</code> só roda se a condição for verdadeira.",
     code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
@@ -241,8 +308,8 @@ const EXAMPLES = {
 
 const GROUPS = [
   { id: "funcoes", n: "1.", title: "Funções", keys: ["main", "filha", "paralela", "sequencial", "entrada", "saida", "entradaSaida", "neta", "mista"] },
-  { id: "dados", n: "2.", title: "Dados", keys: ["texto", "numero", "booleano", "funcaoDado", "objeto", "array"] },
-  { id: "estados", n: "3.", title: "Estados", keys: ["estado"] },
+  { id: "dados", n: "2.", title: "Dados", keys: ["texto", "numero", "booleano", "funcaoDado", "objeto", "array", "dadoConcreto", "dadoAbstrato"] },
+  { id: "estados", n: "3.", title: "Estados", keys: ["estado", "estadoInicial", "estadoCaixa", "estadoSubstitui", "estadoAbstrato", "estadoParalelo", "estadoBloco"] },
   { id: "selecao", n: "4.", title: "Seleção", keys: ["se", "seSenao", "switchEx"] },
   { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor", "repFor2", "repWhile"] },
   { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch", "tryFor"] },
@@ -286,18 +353,25 @@ const paint = (key, ex) => {
   el.innerHTML = `
     <h3><span class="n">${esc(ex.num)}</span>${ex.title}</h3>
     <p class="sec-lead">${ex.lead}</p>
-    <div class="lab"><span class="kind">JS</span> Código</div>
-    <div class="pane"><div class="hd">JavaScript <span class="tag">fonte</span></div><pre>${esc(ex.code)}</pre></div>
-    <div class="lab"><span class="kind">ESTree</span> Árvore sintática</div>
-    <div class="pane ast"><div class="hd">AST do código <span class="tag">Acorn</span></div><pre>${esc(estree)}</pre></div>
-    <div class="lab"><span class="kind">Flow</span> AST do fluxo</div>
-    <div class="pane ast"><div class="hd">IR flow-novo <span class="tag">Fn</span></div><pre>${esc(flowJson)}</pre></div>
-    <div class="lab"><span class="kind">Plano</span> Visão</div>
-    <div class="pane plan">
-      <div class="hd">SVG <span class="tag">renderFnSvg</span></div>
-      ${plans}
-      ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
-    </div>`;
+    <details class="pane" open>
+      <summary class="hd"><span class="kind">JS</span> Código <span class="tag">fonte</span></summary>
+      <div class="body"><pre>${esc(ex.code)}</pre></div>
+    </details>
+    <details class="pane ast">
+      <summary class="hd"><span class="kind">ESTree</span> Árvore sintática <span class="tag">Acorn</span></summary>
+      <div class="body"><pre>${esc(estree)}</pre></div>
+    </details>
+    <details class="pane ast">
+      <summary class="hd"><span class="kind">Flow</span> AST do fluxo <span class="tag">Fn</span></summary>
+      <div class="body"><pre>${esc(flowJson)}</pre></div>
+    </details>
+    <details class="pane plan" open>
+      <summary class="hd"><span class="kind">Plano</span> Visão <span class="tag">renderFnSvg</span></summary>
+      <div class="body">
+        ${plans}
+        ${planErr ? `<div class="err">${esc(planErr)}</div>` : ""}
+      </div>
+    </details>`;
 };
 
 const out = document.getElementById("out"), toc = document.getElementById("toc");

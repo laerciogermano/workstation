@@ -12,6 +12,13 @@ await build({
 // versão nova (do zero): novo/ → example/flow-novo.js
 await build({ entryPoints: [join(root, "novo/app.ts")], outfile: join(root, "example/flow-novo.js"), bundle: true, format: "iife", target: "es2022", minify: false, logLevel: "info" });
 
+// lib AST → SVG (funções): docs/fn-svg.js para indice-ast.html
+await build({
+  entryPoints: [join(root, "novo/ast/fn-svg.ts")],
+  outfile: join(root, "docs/fn-svg.js"),
+  bundle: true, format: "iife", globalName: "FlowAst", target: "es2022", minify: false, logLevel: "info",
+});
+
 const src = readFileSync(join(root, "src/commands.ts"), "utf8");
 const clean = t => t.replace(/readonly /g, "").replace(/\s+/g, " ").trim();
 const contracts = {};

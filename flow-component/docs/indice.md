@@ -95,7 +95,7 @@
 
 Roteiro (capítulos): [`roteiro.md`](roteiro.md)
 
-Código JS + AST ESTree por representação: [`indice-ast.html`](indice-ast.html)
+Função `main` — código JS + AST + plano SVG: [`indice-ast.html`](indice-ast.html) · lib [`novo/ast/fn-svg.ts`](../novo/ast/fn-svg.ts)
 
 "A picture is worth a thousand words." – Confucius, 552–479 BCE
 

@@ -294,8 +294,14 @@ h3 .n { color: var(--dado); }
 .tabpanel.flow svg { display: block; margin: 0 auto; }
 .tabpanel.flow { overflow: auto; padding: .5rem; border: 0; border-radius: 6px; background: transparent; }
 .tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
-.hero-plan { overflow-x: auto; margin: 0; padding: .25rem; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 1.25rem; align-items: center; }
+.hero-plan { overflow-x: auto; margin: 0; padding: .25rem; min-width: 0; }
 .hero-plan svg { display: block; width: 100%; max-width: 1180px; margin: 0 auto; height: auto; }
+.hero-epigraph { margin: 0; padding: 0 .5rem 0 0; max-width: 9.5rem; text-align: right; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
+@media (max-width: 52rem) {
+  .hero-row { grid-template-columns: 1fr; }
+  .hero-epigraph { max-width: none; text-align: center; padding: 0; }
+}
 .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0 0 1.5rem; }
 .legend .it { flex: 1 1 15rem; display: flex; gap: .85rem; align-items: flex-start; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
 .legend svg { flex: none; margin-top: .15rem; }
@@ -392,14 +398,16 @@ footer {
   </div>
 </header>
 
-  <p class="epigraph-top tl" data-pt="Tudo flui — Heráclito" data-en="Πάντα ῥεῖ — Heraclitus">Tudo flui — Heráclito</p>
 <figure class="athens">
     <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
     <figcaption><span class="tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, imperfect and in transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, imperfeito e em transformação.</span></figcaption>
   </figure>
 <h1 class="page-title"><i class="pt-c" aria-hidden="true"></i><span class="pt-t">Flow Oriented <span>Programming</span></span><i class="pt-s" aria-hidden="true"></i></h1>
 <section class="hero" aria-label="Exemplo de fluxo">
-  <div class="hero-plan" id="hero-plan"></div>
+  <div class="hero-row">
+    <div class="hero-plan" id="hero-plan"></div>
+    <p class="hero-epigraph tl" data-pt="Tudo flui — Heráclito" data-en="Πάντα ῥεῖ — Heraclitus">Tudo flui — Heráclito</p>
+  </div>
   <blockquote class="quote quote-title">
     <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
     <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>

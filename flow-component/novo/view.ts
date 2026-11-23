@@ -145,7 +145,7 @@ export function tableWidth(sc: Scene, p: Project): number {
       w = pad + (r.leaf ? 22 : 38) + (f.title || "unnamed").length * 7.4 + (a?.kind === "ia" ? 28 + a.name.length * 6.5 : 0) + (f.par ? 22 : 0) + (hasContract(a) && r.leaf ? 30 : 0);
     } else {
       const n = r.node as Exclude<Node, Fn>;
-      const txt = r.kind === "catch" ? "if the try fails" : r.kind === "else" ? "otherwise" : n.t === "try" ? `catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
+      const txt = r.kind === "catch" ? "if the try fails" : r.kind === "else" ? "otherwise" : n.t === "try" ? "try" : blockLabel(p, n);
       w = pad + 54 + txt.length * 7.4;
     }
     // espaço seguro: o menu de opções (aparece ao passar o mouse na linha) tem de caber ao lado do texto, sem cobri-lo
@@ -281,7 +281,7 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
       const tag = r.kind === "catch" ? `${icon("x", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
         : n.t === "if" ? `${icon("triangle", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">↻</span><b class="mono">${esc(blockLabel(p, n))}</b>`
         : n.t === "switch" ? `${icon("square", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>`
-        : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
+        : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? "try" : blockLabel(p, n))}</b>`;
       return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${lead}${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
     }
     return `<div class="grow${sel}" ${base}>${respCell(p, r)}${taskCell(p, r)}<span class="fl-tools">${toolsHtml(toolsFor(p, r.id))}</span></div>`;
@@ -334,7 +334,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
     // if / for / switch / try / catch: ícone na linha, pill alinhada depois — só else fica colado na coluna
     const mark = (r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try" || n.t === "switch")) || r.kind === "catch", px = colX(r.s) + (mark ? 11 : 4), cx = colX(r.s), cy = ym(i);
-    const txt = r.kind === "catch" ? "catch · if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
+    const txt = r.kind === "catch" ? "catch · if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? "try" : blockLabel(p, n);
     const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
     if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 7} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
     if (mark && r.kind === "block" && n.t === "for") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">↻</text>`);

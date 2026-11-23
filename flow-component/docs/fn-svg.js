@@ -934,9 +934,9 @@ var FlowAst = (() => {
     if (n.t === "if") for (const k of n.elseKids) assertKnown(k);
     if (n.t === "try") for (const k of n.catchKids) assertKnown(k);
   }
-  var blockCls = (n) => n.t === "if" ? "if" : n.t === "for" ? "lp" : n.t === "switch" ? "sw" : "tr";
+  var blockCls = (n) => n.t === "if" ? n.caseVal !== void 0 ? "sw" : "if" : n.t === "for" ? "lp" : n.t === "switch" ? "sw" : "tr";
   var blockText = (n) => {
-    if (n.t === "if") return `if (${n.test})`;
+    if (n.t === "if") return n.caseVal !== void 0 ? `case ${n.caseVal}` : `if (${n.test})`;
     if (n.t === "switch") return `switch (${n.expr})`;
     if (n.t === "for") {
       if (n.loop === "while") return `while (${n.coll})`;

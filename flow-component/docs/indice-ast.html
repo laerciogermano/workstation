@@ -513,7 +513,7 @@ html { scroll-padding-top: 1.5rem; }
   .spread .hero, .spread-flow .hero { margin: 0; padding: 0; width: 100%; max-width: 100%; }
   .hero-plan { padding: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
   .hero-plan::-webkit-scrollbar { display: none; }
-  .hero-plan svg { width: 820px; max-width: none; min-width: 820px; height: auto; min-height: 0; margin: 0; }
+  .hero-plan svg { width: 1100px; max-width: none; min-width: 1100px; height: auto; min-height: 0; margin: 0; }
   .flow-preface { padding-top: 1rem; }
 }
 /* mobile: número da regra acima do conteúdo; abas e diagrama em largura total e centrados */
@@ -913,11 +913,9 @@ const exTitle = (k, ex) => (LANG === "en" ? EN.examples[k]?.t ?? ex.title : ex.t
 const exLead = (k, ex) => (LANG === "en" && EN.examples[k] ? ex.lead.map((x, i) => [x[0], EN.examples[k].r[i] ?? x[1]]) : ex.lead);
 const grp = (g) => (LANG === "en" ? EN.groups[g.id] ?? {} : {});
 
-// barras laterais em todo plano que tenha bloco (if, else, switch, for, while, try/catch)
-const hasBlock = (n) => !!n && typeof n === "object" && (n.t !== "fn" && n.t !== undefined || (n.kids ?? []).some(hasBlock));
 const planOf = (flow, opts) => {
   if (typeof FlowAst?.renderFnSvg !== "function") return "";
-  try { return FlowAst.renderFnSvg(flow, { rails: hasBlock(flow), ...opts, lang: LANG }).svg; }
+  try { return FlowAst.renderFnSvg(flow, { rails: true, table: true, ...opts, lang: LANG }).svg; }
   catch (e) { return `<div class="err">${esc(e.message || e)}</div>`; }
 };
 
@@ -958,7 +956,7 @@ const paint = (key, ex, flat = false, noStates = false, table = false) => {
   const flows = ex.flows ?? [ex.flow];
   const planErr = typeof FlowAst?.renderFnSvg === "function" ? "" : "fn-svg.js ausente — rode: npm run example:build";
   const flowJson = flows.map((f) => JSON.stringify(f, null, 2)).join("\n");
-  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, { ...ex.opts, ...(noStates ? { states: false } : {}), ...(flat && !ex.showRoot ? { hideRoot: true } : {}), ...(table ? { table: true } : {}) })}</div>`).join("");
+  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, { ...ex.opts, ...(noStates ? { states: false } : {}), ...(flat && !ex.showRoot ? { hideRoot: true, rootRail: true } : {}), ...(table ? { table: true } : {}) })}</div>`).join("");
 
   const html = `
     <h3${ex.sub ? ' class="sub"' : ""}><span class="n">${esc(ex.num)}</span>${exTitle(key, ex)}</h3>
@@ -994,8 +992,7 @@ const renderHero = () => {
   const host = document.getElementById("hero-plan");
   if (host && typeof FlowAst?.renderFnSvg === "function") {
     // no mobile a tabela de responsáveis empurra o plano pra fora da tela — só o fluxo
-    const table = !matchMedia("(max-width: 48rem)").matches;
-    const drawn = FlowAst.renderFnSvg(fluxo, { elseParallel: true, rails: true, table, lang: LANG });
+    const drawn = FlowAst.renderFnSvg(fluxo, { elseParallel: true, rails: true, table: true, lang: LANG });
     // Safari iOS: width/height fixos + height:auto → altura 0; viewBox + aspect-ratio mantém o plano visível
     const svg = String(drawn.svg)
       .replace(/\swidth="[^"]*"/, ' width="100%"')

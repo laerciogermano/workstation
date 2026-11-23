@@ -1077,14 +1077,17 @@ var FlowAst = (() => {
     }
     const rail = (depth, y0, h, cls = "co") => {
       if (opts.rails !== true || depth < 0 || h <= 0) return;
-      bands.push(`<line class="bande ${cls}" x1="${depth * G.IND + 0.5}" y1="${y0}" x2="${depth * G.IND + 0.5}" y2="${y0 + h}"/>`);
+      bands.push(`<line class="bande ${cls}" x1="${TW + depth * G.IND + 0.5}" y1="${y0}" x2="${TW + depth * G.IND + 0.5}" y2="${y0 + h}"/>`);
     };
     const byId = new Map(rows.map((r, i) => [r.id, i]));
     rows.forEach((r, i) => {
       const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : r.kind === "block" ? blockCls(r.node) : "co";
-      if (r.leaf) rail(r.depth, rowY(i), G.RH, cls);
-      else if (r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
+      if (!r.leaf && r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
     });
+    if (off > 0 && opts.rootRail === true) {
+      const root = fnRows(scene)[0];
+      if (root && !root.leaf) rail(root.depth, rowY(0), rows.length * G.RH, "co");
+    }
     const ioMarks = (f, r, i, x1, x2) => {
       const prod = /* @__PURE__ */ new Set();
       for (const q of rows) if (q.kind === "fn") {

@@ -81,7 +81,7 @@ position:relative;display:flex;flex-direction:column;height:100%;min-height:420p
 .fcv .fview .sv-pill.try rect{fill:color-mix(in srgb,var(--ok) 16%,var(--paper))} .fcv .fview .sv-pill.try text{fill:var(--ok)}
 .fcv .fview .sv-pill.catch rect{fill:color-mix(in srgb,var(--fail) 16%,var(--paper))} .fcv .fview .sv-pill.catch text{fill:var(--fail)}
 .fcv .fview .sv-bandl{stroke:var(--warn);stroke-width:2} .fcv .fview .sv-bandl.lp{stroke:var(--loop)}
-.fcv .fview .sv-fn{fill:var(--fn)} .fcv .fview .sv-fn.abs{fill:color-mix(in srgb,var(--fn) 8%,var(--paper));stroke:var(--fn);stroke-width:1.5}
+.fcv .fview .sv-fn{fill:var(--fn)} .fcv .fview .sv-fn.abs{fill:transparent;stroke:var(--fn);stroke-width:1.5}
 .fcv .fview .sv-fn.nag{fill:transparent;stroke:var(--fn);stroke-width:1.5} .fcv .fview .sv-fn.fail{stroke:var(--fail);stroke-width:2}
 .fcv .fview .sv-fn.sel,.fcv .fview .sv-sum.sel{stroke:var(--fn);stroke-width:2} .fcv .fview .sv-fn.abs.sel,.fcv .fview .sv-fn.nag.sel{stroke:var(--fn)} .fcv .fview .sv-sum{fill:var(--fn)}
 .fcv .fview g[data-act]:hover .sv-fn,.fcv .fview g[data-act]:hover .sv-sum{filter:brightness(1.12)}

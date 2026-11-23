@@ -1143,7 +1143,7 @@ var FlowAst = (() => {
 .chip rect{fill:var(--paper-2,#f4f1ea);stroke:var(--line,#e7e3db)}
 .chip text{font:600 9px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .bande.co{stroke:var(--fn,#dc2626);stroke-width:2}
-.fn{fill:var(--fn,#dc2626)}.fn.abs{fill:color-mix(in srgb,var(--fn,#dc2626) 22%,var(--paper,#fff));stroke:var(--fn,#dc2626);stroke-width:1.5}.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
+.fn{fill:var(--fn,#dc2626)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
 .fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
 .fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--fn,#dc2626)}
 .sum{fill:var(--fn,#dc2626)}

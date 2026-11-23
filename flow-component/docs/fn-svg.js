@@ -1086,12 +1086,14 @@ var FlowAst = (() => {
       else if (r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
     });
     const ioMarks = (f, r, i, x1, x2) => {
+      const prod = /* @__PURE__ */ new Set();
+      for (const q of rows) if (q.kind === "fn") q.node.outs.forEach((o) => prod.add(o));
       const mark = (x, list, side) => {
         if (!list.length) return "";
         const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]] ?? "");
         const tip = list.join(", ");
         if (!cube && /^function\b/.test(f.args?.[list[0]] ?? "")) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;
-        return cube ? `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><path class="cube" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(tip)}</title></g>` : `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><rect class="dot" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(tip)}</title></g>`;
+        return cube ? `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><path class="cube" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(tip)}</title></g>` : `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><rect class="dot${side === "in" && !f.args?.[list[0]]?.trim() && !prod.has(list[0]) ? " a" : ""}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(tip)}</title></g>`;
       };
       if (f.ins.length) {
         over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
@@ -1163,7 +1165,7 @@ var FlowAst = (() => {
 .sum{fill:var(--fn,#dc2626)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
-.dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
+.dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
 .bande.if,.bande.el,.bande.sw{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
 .fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
 .pill text{font:600 9px ui-monospace,Menlo,monospace}

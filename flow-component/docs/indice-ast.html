@@ -546,7 +546,7 @@ html { scroll-padding-top: 1.5rem; }
   .athens img { border-radius: 0; }
 }
 </style>
-<script src="fn-svg.js?v=20261123-switch"></script>
+<script src="fn-svg.js?v=20261123-dado-abs2"></script>
 </head>
 <body>
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
@@ -686,10 +686,10 @@ const EXAMPLES = {
   posicional: { num: "3.6.2", title: "Posicional", sub: true, lead: [["D","Objeto posicional é a caixa cujos campos são acessados pela posição."],["T","<code>lista.length</code> e o índice leem pela ordem."]],
     code: J("async function main() {", "  const lista = [1, 2, 3];", "  const total = await contar(lista);", "}", "", "async function contar(lista) {", "  const total = lista.length;", "  return total;", "}"),
     flow: main([F("n2", "contar", { ins: ["lista"], outs: ["total"], args: { lista: '[1, 2, 3]', total: '3' } })]) },
-  dadoConcreto: { num: "7.3", title: "Dado concreto", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]], opts: { fnStates: false },
+  dadoConcreto: { num: "7.1", title: "Dado sólido", lead: [["D","Dado concreto é o que tem valor."],["T","O seu quadrado é preenchido, e o valor aparece no estado."]], opts: { fnStates: false },
     code: J("async function main() {", "  const idade = 30;", "}"),
     flow: main([], { args: { idade: '30' } }) },
-  dadoAbstrato: { num: "7.4", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]], opts: { fnStates: false },
+  dadoAbstrato: { num: "7.2", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem valor."],["T","O seu quadrado é vazado."]], opts: { fnStates: false },
     code: J("async function main(idade) {", "}"),
     flow: main([], { ins: ["idade"] }) },
   todosDados: { num: "3.1", title: "Todos os tipos de dado", lead: [["D","Dados são as unidades mutáveis do fluxo."],["D","A visão de dados reúne todos os tipos de dado no mesmo estado."],["P","O identificador de um dado é um substantivo, como <code>mesa</code> ou <code>cadeira</code>."],["P","Todo dado tem um endereço, representado pelo seu nome."],["P","Em um mesmo contexto, ou bloco, endereços diferentes não podem ter nomes iguais."],["P","Todo dado simples é representado por um quadrado."],["P","Texto, número, booleano e nulo são dados simples."],["P","Toda caixa é representada por um cubo."],["P","O objeto é uma caixa, com campos chaveados ou posicionais."],["P","A função usada como dado continua sendo função, representada por um círculo."]], opts: { fnStates: false },
@@ -702,13 +702,13 @@ const EXAMPLES = {
   estado: { num: "3.8", title: "Estado do fluxo", lead: [["D","Estado é o conjunto de funções e dados disponíveis num passo."],["P","O estado é listado abaixo do passo."]],
     code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "", "  async function receber() {", "    const id = 1;", "    const pedido = { id };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pedido, pagamento) {", "  }", "}"),
     flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
-  estadoInicial: { num: "7.5", title: "Estado inicial", lead: [["D","Estado inicial é o que existe antes da primeira função."],["P","Um dado inicializado existe desde o início do passo."],["T","<code>nome = \"Ana\"</code> está no estado de <code>saudar</code>."]],
+  estadoInicial: { num: "3.9", title: "Estado inicial", lead: [["D","Estado inicial é o que existe antes da primeira função."],["P","Um dado inicializado existe desde o início do passo."],["T","<code>nome = \"Ana\"</code> está no estado de <code>saudar</code>."]],
     code: J("async function main() {", "  const nome = \"Ana\";", "  const saudacao = await saudar(nome);", "", "  async function saudar(nome) {", "    const saudacao = nome;", "    return saudacao;", "  }", "}"),
     flow: main([F("n2", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { nome: '"Ana"' } })]) },
-  estadoCaixa: { num: "3.9", title: "Estado com objeto", lead: [["P","Um objeto no estado é um cubo, com os campos e valores logo abaixo."]],
+  estadoCaixa: { num: "3.11", title: "Estado com objeto", lead: [["P","Um objeto no estado é um cubo, com os campos e valores logo abaixo."]],
     code: J("async function main() {", "  const cliente = { id: 1, score: 9 };", "  const pontos = await pontuar(cliente);", "", "  async function pontuar(cliente) {", "    const pontos = cliente.score;", "    return pontos;", "  }", "}"),
     flow: main([F("n2", "pontuar", { ins: ["cliente"], outs: ["pontos"], args: { cliente: "{ id: 1, score: 9 }" } })]) },
-  estadoAbstrato: { num: "7.6", title: "Estado abstrato", lead: [["D","Estado abstrato é o dado que nenhuma função do fluxo produz."],["P","Quem chama o fluxo o fornece."],["T","O seu quadrado é vazado."]],
+  estadoAbstrato: { num: "3.10", title: "Estado abstrato", lead: [["D","Estado abstrato é o dado que nenhuma função do fluxo produz."],["P","Quem chama o fluxo o fornece."],["T","O seu quadrado é vazado."]],
     code: J("async function main(pedido) {", "  await cobrar(pedido);", "", "  async function cobrar(pedido) {", "  }", "}"),
     flow: main([F("n2", "cobrar", { ins: ["pedido"] })]) },
   se: { num: "4.1", title: "if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."],["P","A seleção é usada quando não se sabe o que executar antes de ter a informação."]],
@@ -738,10 +738,10 @@ const EXAMPLES = {
   tryCatch: { num: "6.1", title: "try / catch", lead: [["D","<code>try/catch</code> é a estrutura que trata a falha."],["T","Se <code>cobrar</code> falha, o fluxo vai para o <code>catch</code>."],["T","<code>avisar</code> executa no <code>catch</code>."],["P","O <code>try/catch</code> vem primeiro; as funções são definidas fora de <code>main</code>."]],
     code: J("async function main() {", "  try {", "    await cobrar();", "  } catch (error) {", "    await avisar();", "  }", "", "  async function cobrar() {", "  }", "  async function avisar() {", "  }", "}"),
     flow: main([{ t: "try", id: "t1", kids: [F("n2", "cobrar")], catchKids: [F("n3", "avisar")] }]) },
-  blocos: { num: "3.10", title: "Blocos", lead: [["D","Bloco é a estrutura que agrupa passos no plano: seleção, repetição ou try/catch."],["P","O bloco tem rótulo próprio e cobre o tempo das folhas de dentro."],["P","O estado continua listando o que está disponível em cada passo do bloco."]],
+  blocos: { num: "3.12", title: "Blocos", lead: [["D","Bloco é a estrutura que agrupa passos no plano: seleção, repetição ou try/catch."],["P","O bloco tem rótulo próprio e cobre o tempo das folhas de dentro."],["P","O estado continua listando o que está disponível em cada passo do bloco."]],
     code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
     flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
-  tryFor: { num: "3.10.1", title: "Blocos combinados", sub: true, lead: [["P","Os blocos podem ser aninhados."],["T","Aqui há um <code>try/catch</code> dentro de um <code>for</code>."]],
+  tryFor: { num: "3.12.1", title: "Blocos combinados", sub: true, lead: [["P","Os blocos podem ser aninhados."],["T","Aqui há um <code>try/catch</code> dentro de um <code>for</code>."]],
     code: J("async function main() {", "  const itens = [1, 2];", "  for (const item of itens) {", "    try {", "      await enviar(item);", "    } catch (error) {", "      await registrarFalha();", "    }", "  }", "", "  async function enviar(item) {", "  }", "  async function registrarFalha() {", "  }", "}"),
     flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [
       { t: "try", id: "t1", kids: [F("n2", "enviar", { ins: ["item"] })], catchKids: [F("n3", "registrarFalha")] }] }]) },
@@ -760,11 +760,11 @@ const EXAMPLES = {
     code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  abstrata: { num: "7.2", title: "Camada", lead: [["D","Camada é o abstrato, ou seja, o que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
+  abstrata: { num: "7.4", title: "Função abstrata", lead: [["D","Função abstrata é a que não tem endereço físico."],["T","A sua barra é só contorno."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
     code: J("async function main() {", "  const { hello } = state;", "  await hello();", "}"),
     flow: main([F("n2", "hello", { agent: null })]) },
 
-  solida: { num: "7.1", title: "Sólido", lead: [["D","Sólido é o que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","O endereço físico de um sólido pode ser um responsável, um valor ou um arquivo."],["P","Para executar, a camada abstrata precisa se tornar sólida."]],
+  solida: { num: "7.3", title: "Função sólida", lead: [["D","Função sólida é a que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","O endereço físico de um sólido pode ser um responsável, um valor ou um arquivo."],["P","Para executar, a camada abstrata precisa se tornar sólida."]],
     code: J("async function main() {", "  await maquina.hello();", "}"),
     flow: main([F("n2", "hello", { agent: "maquina" })]) },
 
@@ -845,11 +845,11 @@ const GROUPS = [
   </div>
 </div>`, rules: ["Sistema é um conjunto de fluxos de execução.", "O sistema é formado por unidades de processamento, as funções, e por unidades processáveis, os estados."], keys: [] },
   { id: "funcoes", n: "2.", title: "Funções", keys: ["main","filha","irma","paralela","sequencial"] },
-  { id: "estados", n: "3.", title: "Estados", lead: "O que está disponível em cada passo. No plano, o estado lista funções e dados juntos.", keys: ["estado","estadoCaixa","todosDados","texto","numero","booleano","funcaoDado","objeto","chaveado","posicional","tipoNulo","blocos","tryFor"] },
+  { id: "estados", n: "3.", title: "Estados", lead: "O que está disponível em cada passo. No plano, o estado lista funções e dados juntos.", keys: ["estado","estadoInicial","estadoAbstrato","estadoCaixa","todosDados","texto","numero","booleano","funcaoDado","objeto","chaveado","posicional","tipoNulo","blocos","tryFor"] },
   { id: "selecao", n: "4.", title: "Seleção", keys: ["se","seSenao","switchEx","seAninhado"] },
   { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor","repFor2","repWhile","repDoWhile"] },
   { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch"] },
-  { id: "solidos", n: "7.", title: "Sólidos e abstratos", rules: ["Dados e funções podem ser abstratos.", "Dados e funções podem ser sólidos.", "As funções não devem possuir sólidos, apenas abstratos."], keys: ["solida","abstrata","dadoConcreto","dadoAbstrato","estadoInicial","estadoAbstrato"] },
+  { id: "solidos", n: "7.", title: "Sólidos e abstratos", rules: ["Dados e funções podem ser sólidos.", "Dados e funções podem ser abstratos.", "As funções não devem possuir sólidos, apenas abstratos."], keys: ["dadoConcreto","dadoAbstrato","solida","abstrata"] },
   { id: "publico", n: "8.", title: "Público e privado", keys: ["publica","privada"] },
   { id: "folhas", n: "9.", title: "Folhas e use cases", rules: ["Folhas são funções sem filhas.", "Use cases são funções com filhas."], keys: ["folha", "useCase"] },
   { id: "responsaveis", n: "10.", title: "Responsáveis", lead: "Quem executa o passo.", keys: ["responsavel"] },

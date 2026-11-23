@@ -112,9 +112,9 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
 @media (max-width: 62rem) {
   .layout { display: flex; flex-direction: column; }
   .content-col { display: contents; }
-  .flow-preface { order: 1; padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 0; }
+  .side { order: 1; position: static; width: 100%; max-width: 100%; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .flow-preface { order: 2; padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 0; }
   .main-col { order: 3; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
-  .side { order: 2; position: static; width: 100%; max-width: 100%; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .side ul { display: block; }
 }
 main { padding: 2rem 0 4rem; }
@@ -517,9 +517,11 @@ html { scroll-padding-top: 1.5rem; }
 }
 /* mobile: número da regra acima do conteúdo; abas e diagrama em largura total e centrados */
 @media (max-width: 48rem) {
-  .rules li { flex-direction: column; gap: .15rem; margin: .6rem 0; }
-  .rules .ix { width: auto; padding-right: 0; line-height: 1.4; }
-  .rules .rb { width: 100%; }
+  .rules li { flex-direction: row; flex-wrap: wrap; column-gap: .6rem; row-gap: .35rem; margin: .6rem 0; }
+  .rules .ix { flex: none; width: auto; padding-right: 0; line-height: 1.6; }
+  .rules .rb { display: contents; }
+  .rules .rb > span { flex: 1 1 0; min-width: 0; }
+  .rules .rplan { flex: 0 0 100%; }
   .rplan, .tabs { width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
   .tablist { justify-content: center; gap: .5rem; }
   .tablist button { flex: 1 1 0; max-width: 11rem; text-align: center; }
@@ -610,6 +612,12 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
 function c(){if(h.scrollWidth>h.clientWidth)h.scrollLeft=(h.scrollWidth-h.clientWidth)/2}
 new MutationObserver(function(){c()}).observe(h,{childList:true,subtree:true});
 addEventListener('load',c);addEventListener('resize',c);c();})();
+</script>
+<script>
+/* abre sempre no topo (capa), sem restaurar a rolagem anterior; respeita #âncora explícita */
+(function(){if('scrollRestoration' in history)history.scrollRestoration='manual';
+function top(){if(!location.hash)window.scrollTo({top:0,left:0,behavior:'instant'})}
+top();addEventListener('pageshow',top);addEventListener('load',function(){top();setTimeout(top,400)});})();
 </script>
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";

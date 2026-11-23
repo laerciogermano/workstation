@@ -13,7 +13,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Flow Oriented Programming","inLanguage":["pt-BR","en"],"about":"Linguagem de programação visual baseada em funções e estados","license":"https://opensource.org/license/mit"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 <style>
 :root {
   color-scheme: dark;
@@ -238,8 +238,8 @@ h3 .n { color: var(--dado); }
   min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px);
   padding: .75rem 1.5rem 14vh; gap: 1.75rem;
 }
-.spread .page-title { margin: 0; width: calc(100% - 2.5rem); }
-.spread .athens { width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.5rem auto 0; }
+.spread .page-title { margin: 1.5rem 0 0; width: calc(100% - 2.5rem); }
+.spread .athens { width: calc(100% - 2.5rem); max-width: 76rem; margin: 0 auto; }
 .spread .hero { width: 100%; max-width: 76rem; margin: 0; padding: 0; }
 .spread-flow {
   justify-content: flex-start;
@@ -362,29 +362,126 @@ footer {
   .site-foot { flex-direction: column; align-items: flex-start; }
   .site-foot .foot-meta { margin-left: 0; justify-content: flex-start; }
 }
+
+/* ───────── refinamento: preto editorial, serifa humanista, hairlines ───────── */
+:root {
+  --paper: #050505; --paper-2: #0d0d0d; --ink: #ededea; --body: #9a9a96;
+  --muted: #6f6f6b; --line: #1c1c1c; --line-2: #2e2e2e;
+  --accent: #f07167;               /* coral do flow (--fn) */
+  --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --glow: rgba(255,255,255,.035);
+}
+::selection { background: rgba(240,113,103,.30); color: #fff; }
+html { scrollbar-color: #262626 transparent; scrollbar-width: thin; }
+body { background: radial-gradient(ellipse 60% 100% at 50% 0, var(--glow), transparent 70%) top center / 100% 640px no-repeat, var(--paper); }
+
+/* barra superior: vidro fosco, fio de luz */
+.top { position: sticky; top: 0; z-index: 30; background: rgba(5,5,5,.72); -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px); border-bottom: 1px solid var(--line); }
+.ttl { font-weight: 500; font-size: 12px; letter-spacing: .02em; color: var(--body); }
+.lang button { border-color: var(--line-2); font-weight: 500; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: #000; }
+
+/* título: serifa grande, tracking justo, eco de manuscrito */
+.page-title { font-family: var(--serif); font-weight: 400; font-size: clamp(2.2rem, 6.2vw, 4.6rem); line-height: 1.04; letter-spacing: -.028em; color: var(--muted); font-variation-settings: "opsz" 72; margin-top: 3.25rem; }
+.page-title .pt-t span { font-style: italic; font-weight: 400; color: var(--ink); }
+.page-title::after { content: ""; display: block; width: 28px; height: 1px; margin: 1.6rem auto 0; background: var(--line-2); }
+
+/* citações: serifa itálica, autor em versalete discreto */
+.quote-spread p, .quote-solo p, .hero .quote-close p, .quote p { font-family: var(--serif); font-style: italic; font-weight: 400; font-variation-settings: "opsz" 36; color: var(--ink); text-wrap: balance; }
+.quote-spread p { font-size: clamp(1.35rem, 2.9vw, 2.1rem); max-width: 30ch; line-height: 1.3; letter-spacing: -.012em; text-align: center; }
+.quote-spread cite, .quote-solo cite { margin-top: 1.25rem; font: 500 .68rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .22em; color: var(--muted); }
+.quote-spread cite::before, .quote-solo cite::before { content: ""; display: block; width: 1px; height: 22px; margin: 0 auto 1rem; background: var(--line-2); }
+
+/* afresco: dessaturado, vinheta e esmaecimento para o preto */
+.athens { position: relative; }
+.athens img { border-radius: 10px; filter: saturate(.72) contrast(1.04) brightness(.92); border: 1px solid var(--line); box-shadow: 0 30px 80px -30px rgba(0,0,0,.9); }
+.athens::after { content: ""; position: absolute; left: 1px; right: 1px; top: 1px; height: clamp(220px, 38vw, 440px); border-radius: 10px; pointer-events: none; background: linear-gradient(to bottom, rgba(5,5,5,.25), transparent 28%, transparent 55%, rgba(5,5,5,.7)); }
+.athens figcaption { font: italic 400 12.5px/1.5 var(--serif); letter-spacing: .01em; color: var(--muted); }
+
+/* títulos de seção em serifa */
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -.018em; }
+h1 { font-weight: 500; }
+h2 { font-size: 1.7rem; border-top-color: var(--line); margin-top: 3rem; padding-top: 1.75rem; }
+h3 { font-size: 1.25rem; }
+h2 .n, h3 .n { font-family: var(--mono); font-weight: 500; }
+.prose { font-size: 1.04rem; line-height: 1.75; }
+.prose p:first-child { color: var(--ink); }
+.prose p.note { border-left-color: var(--line-2); background: transparent; border-radius: 0; }
+.lab, .toc .t, .side .t, .rail .t { letter-spacing: .14em; font-weight: 500; color: var(--muted); }
+.lab .kind, .pane .hd .kind, .pane .hd .tag { color: var(--fn); }
+
+/* barra lateral: densa, calma, estilo Obsidian/Notion */
+.side { border-right-color: var(--line); background: transparent; font-weight: 500; }
+.side a { border-radius: 6px; border-left-width: 0; padding: .3rem .6rem; }
+.side a:hover { background: rgba(255,255,255,.04); }
+.side a.on { background: rgba(255,255,255,.05); color: var(--ink); box-shadow: none; border-left-color: transparent; }
+.side > ol > li > a { font-weight: 600; }
+.search input { background: rgba(255,255,255,.025); border-color: var(--line-2); border-radius: 8px; }
+.search input:focus { outline: none; border-color: var(--body); box-shadow: 0 0 0 3px rgba(255,255,255,.06); }
+.search kbd { border-color: var(--line-2); background: #0a0a0a; }
+.rail a, .rail a.on { border-left-color: transparent; }
+.rail ul { border-left: 0; }
+.rail a.on { color: var(--ink); }
+
+/* painéis e abas */
+.pane { border-color: var(--line); border-radius: 10px; background: var(--paper); }
+.pane > summary.hd, .pane.flat > .hd { background: #0a0a0a; font-weight: 500; letter-spacing: .1em; }
+.pane.plan .body { background: #080808; }
+.tablist { border-bottom-color: var(--line); }
+.tablist button { font-weight: 500; letter-spacing: .12em; }
+.tablist button[aria-selected="true"] { border-bottom-color: var(--ink); }
+.toc, .legend .it { border-color: var(--line); border-radius: 10px; background: rgba(255,255,255,.015); }
+.copy { border-radius: 6px; border-color: var(--line-2); background: #0a0a0a; }
+.legend b { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; }
+
+/* rodapé */
+.site-foot { border-top-color: var(--line); background: transparent; }
+.site-foot a { border-bottom-color: var(--line-2); }
+
+
+
+/* artigo, não sistema: sem header; só o seletor de idioma, flutuante e discreto */
+.lang { position: fixed; top: 14px; right: 16px; z-index: 30; margin: 0; background: rgba(5,5,5,.6); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 99px; }
+html { scroll-padding-top: 1.5rem; }
+.side { top: 0; height: 100vh; }
+.rail { top: 0; height: 100vh; }
+.spread { min-height: 100vh; min-height: 100dvh; }
+.page-title { margin-top: 4rem; }
+
+/* sem ícones: só índice e texto */
+.brand .mark, svg.ic, svg.di { display: none !important; }
+.side > ol > li > a { gap: .5rem; }
+.brand { gap: 0; }
+
+/* revelação suave ao rolar */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+@media (max-width: 48rem) {
+  .page-title { font-size: clamp(2rem, 11vw, 2.8rem); margin-top: 2rem; }
+  .quote-spread p { font-size: clamp(1.25rem, 6vw, 1.6rem); }
+  .athens::after { height: auto; aspect-ratio: 16/10; max-height: 42vh; border-radius: 0; }
+  .athens img { border-radius: 0; }
+}
 </style>
 <script src="fn-svg.js?v=20261123-switch"></script>
 </head>
 <body>
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
-<header class="top">
-  <span class="brand"><img class="mark" src="favicon.svg" alt="" width="32" height="32"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span></span></span></span>
-  <div class="sp"></div>
-  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
-</header>
+<div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
 
-<h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
 <div class="spread">
-  <blockquote class="quote quote-solo quote-spread">
-    <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
-    <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
-  </blockquote>
   <figure class="athens">
     <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
     <figcaption>
       <span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span>
     </figcaption>
   </figure>
+  <h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
+  <blockquote class="quote quote-solo quote-spread">
+    <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
+    <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+  </blockquote>
 </div>
 <div class="spread spread-mid">
   <blockquote class="quote quote-solo quote-spread quote-confucio">
@@ -415,6 +512,13 @@ footer {
   <div class="foot-meta"><span>FOP</span><span class="sep">·</span><a href="https://flow-oriented-programming.com/LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></div>
 </footer>
 
+<script>
+(function(){var els=document.querySelectorAll('.page-title,.quote-spread,.athens,.spread-flow .hero');
+els.forEach(function(e){e.classList.add('rv')});
+if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.12});
+els.forEach(function(e){io.observe(e)});})();
+</script>
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";
 
@@ -822,7 +926,7 @@ const renderAll = () => {
     // Flow fora do main no DOM para no mobile ficar: Flow → índice → resto (desktop: coluna única com Flow em cima)
     if (g.id === "flow" && preface) preface.insertAdjacentHTML("beforeend", block);
     else out.insertAdjacentHTML("beforeend", block);
-    toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}">${ICONS[g.id] ?? `<span class="gn">${esc(g.n)}</span>`}${esc(title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li${EXAMPLES[k].sub ? ' class="sub"' : ""}><a href="#${anchor(k)}">${EXAMPLES[k].num} ${exTitle(k, EXAMPLES[k])}</a></li>`).join("")}</ul>` : ""}</li>`);
+    toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}"><span class="gn">${esc(g.n)}</span>${esc(title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li${EXAMPLES[k].sub ? ' class="sub"' : ""}><a href="#${anchor(k)}">${EXAMPLES[k].num} ${exTitle(k, EXAMPLES[k])}</a></li>`).join("")}</ul>` : ""}</li>`);
     for (const k of keys) {
       try { paint(k, EXAMPLES[k], g.id === "funcoes", false, g.id === "responsaveis"); }
       catch (e) {

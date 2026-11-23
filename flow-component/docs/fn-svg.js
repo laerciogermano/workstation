@@ -1199,33 +1199,33 @@ var FlowAst = (() => {
 .vg,.hg,.axis{stroke:var(--line,#e7e3db);stroke-width:1}
 .chip rect{fill:var(--paper-2,#f4f1ea);stroke:var(--line,#e7e3db)}
 .chip text{font:600 9px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
-.bande{stroke-width:2;stroke-opacity:.32}.bande.co{stroke:var(--fn,#dc2626)}.bande.if,.bande.el,.bande.sw{stroke:#d97706}.bande.lp{stroke:#8b5cf6}.bande.tr{stroke:#22c55e}.bande.ca{stroke:#ef4444}
-.fn{fill:var(--fn,#dc2626)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
+.bande{stroke-width:2;stroke-opacity:.45}.bande.co{stroke:var(--fn,#e0786c)}.bande.if,.bande.el,.bande.sw{stroke:#e0ba5e}.bande.lp{stroke:#68d1bf}.bande.tr{stroke:#22c55e}.bande.ca{stroke:#ef4444}
+.fn{fill:var(--fn,#e0786c)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#e0786c);stroke-width:1.5}
 .fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
-.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--ink,#14120f)}
-.sum{fill:var(--fn,#dc2626)}
+.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:#fff}
+.sum{fill:var(--fn,#e0786c)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
-.dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
+.dot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#668bf7);stroke:var(--ink,#14120f);stroke-width:.6}
 
-.fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:none;stroke:#d97706;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
+.fif,.fel{fill:var(--paper,#fff);stroke:#e0ba5e;stroke-width:1.5}.fsw{fill:none;stroke:#e0ba5e;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#68d1bf;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
 .pill text{font:600 9px ui-monospace,Menlo,monospace}
-.pill.if rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.if text{fill:#d97706}.pill.el rect{fill:color-mix(in srgb,#d97706 12%,var(--paper,#fff))}.pill.el text{fill:#d97706}
-.pill.sw rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.sw text{fill:#d97706}
-.pill.lp rect{fill:color-mix(in srgb,#8b5cf6 20%,var(--paper,#fff))}.pill.lp text{fill:#8b5cf6}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
+.pill.if rect{fill:color-mix(in srgb,#e0ba5e 18%,var(--paper,#fff))}.pill.if text{fill:#e0ba5e}.pill.el rect{fill:color-mix(in srgb,#e0ba5e 18%,var(--paper,#fff))}.pill.el text{fill:#e0ba5e}
+.pill.sw rect{fill:color-mix(in srgb,#e0ba5e 18%,var(--paper,#fff))}.pill.sw text{fill:#e0ba5e}
+.pill.lp rect{fill:color-mix(in srgb,#68d1bf 18%,var(--paper,#fff))}.pill.lp text{fill:#68d1bf}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
 .ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
-.dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.dotf.a{fill:transparent}
-.sfn{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
-.sdot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#2563eb);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
+.dotf{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.dotf.a{fill:transparent}
+.sfn{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
+.sdot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#668bf7);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
 .fic{fill:#fff;opacity:.9;pointer-events:none}
 .th{font:700 8px ui-monospace,Menlo,monospace;letter-spacing:.08em;fill:var(--body,#44423d)}.tb{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}.tb.mut{fill:var(--body,#44423d)}
 .so{stroke-width:1.5}.so.arq{fill:var(--body,#44423d);stroke:var(--body,#44423d)}.so.maq{fill:#22c55e;stroke:#22c55e}.so.obj{fill:#f59e0b;stroke:#f59e0b}.so.ia{fill:var(--paper,#fff);stroke:#a855f7}.so.pes{fill:var(--paper,#fff);stroke:#3b82f6}.so.abs{fill:var(--paper,#fff);stroke:var(--body,#44423d);stroke-dasharray:2 2}
 .par{font:600 11px ui-monospace,Menlo,monospace;fill:var(--body,#44423d)}
 .ico{fill:none;stroke:var(--body,#44423d);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ring{fill:none;stroke:var(--body,#44423d);stroke-width:1.3}.ring.abs{stroke:var(--muted,#8a8a83);stroke-dasharray:2.5 2.5}
 .ico.maq,.ring.maq{stroke:#22c55e}.ico.pes,.ring.pes{stroke:#3b82f6}.ico.ia,.ring.ia{stroke:#a855f7}.ico.obj,.ring.obj{stroke:#f59e0b}.ico.abs{stroke:var(--muted,#8a8a83)}
-.ico.k-if,.ico.k-sw{stroke:#d97706}.ico.k-lp{stroke:#8b5cf6}.ico.k-tr{stroke:#22c55e}.ico.k-ca{stroke:#ef4444}
+.ico.k-if,.ico.k-sw{stroke:#e0ba5e}.ico.k-lp{stroke:#68d1bf}.ico.k-tr{stroke:#22c55e}.ico.k-ca{stroke:#ef4444}
 .car{fill:none;stroke:var(--body,#44423d);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.car-hit{cursor:pointer}.car-hit:hover .car{stroke:var(--ink,#14120f)}
-.fdot{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.fdot.hol{fill:transparent}.tdiv{stroke:var(--line-2,#d4d4cd);stroke-width:1}.tb.abs-l{font-style:italic;fill:var(--muted,#8a8a83)}
+.fdot{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.fdot.hol{fill:transparent}.tdiv{stroke:var(--line-2,#d4d4cd);stroke-width:1}.tb.abs-l{font-style:italic;fill:var(--muted,#8a8a83)}
 </style>`;
     const svg = `<svg class="plan fn-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano ${esc(flow.title)}">${style}${out.join("")}<g class="bands">${bands.join("")}</g>${over.join("")}</svg>`;
     return { svg, scene, width: W, height: H };

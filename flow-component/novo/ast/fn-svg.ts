@@ -361,6 +361,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
 .sum{fill:var(--fn,#dc2626)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
+.dm,.fif,.fel,.fsw,.ftr,.fca,.flp{filter:drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000)}
 .dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
 .bande.if,.bande.el,.bande.sw{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
 .fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
@@ -370,6 +371,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
 .pill.lp rect{fill:color-mix(in srgb,#8b5cf6 20%,var(--paper,#fff))}.pill.lp text{fill:#8b5cf6}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
 .ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
 .dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}
+.sfn,.sdot,.scube{filter:drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000)}
 .sfn{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
 .sdot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#2563eb);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
 .fic{fill:#fff;opacity:.9;pointer-events:none}

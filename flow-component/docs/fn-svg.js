@@ -1206,6 +1206,7 @@ var FlowAst = (() => {
 .sum{fill:var(--fn,#e0786c)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
+.dm,.fif,.fel,.fsw,.ftr,.fca,.flp,.ico,.ring{filter:drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000)}
 .dot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#668bf7);stroke:var(--ink,#14120f);stroke-width:.6}
 
 .fif,.fel{fill:var(--paper,#fff);stroke:#e0ba5e;stroke-width:1.5}.fsw{fill:none;stroke:#e0ba5e;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#68d1bf;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
@@ -1215,6 +1216,7 @@ var FlowAst = (() => {
 .pill.lp rect{fill:color-mix(in srgb,#68d1bf 18%,var(--paper,#fff))}.pill.lp text{fill:#68d1bf}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
 .ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
 .dotf{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.dotf.a{fill:transparent}
+.sfn,.sdot,.scube{filter:drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000) drop-shadow(0 0 .9px #000)}
 .sfn{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
 .sdot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#668bf7);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
 .fic{fill:#fff;opacity:.9;pointer-events:none}

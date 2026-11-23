@@ -968,8 +968,8 @@ var FlowAst = (() => {
       return SRC[f.agent] ?? { name: f.agent, cls: "maq" };
     };
     const labelOf = (r) => r.kind !== "fn" ? r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(r.node) : r.node.title;
-    const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 34)) : 0;
-    const funcX = opts.table ? srcW + 6 : 0;
+    const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 54)) : 0;
+    const funcX = opts.table ? srcW + 28 : 0;
     const funcW = opts.table ? Math.max(40, ...rows.map((r) => r.depth * 12 + tw(labelOf(r), 6.1))) : 0;
     const TW = opts.table ? Math.ceil(funcX + funcW + 36) : 0;
     const colX = (s) => TW + gutter + G.OX + s * cw;
@@ -1043,7 +1043,7 @@ var FlowAst = (() => {
     }
     if (opts.grid !== false) rows.forEach((_, i) => out.push(`<line class="hg" x1="${opts.table ? 0 : gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     if (opts.table) {
-      out.push(`<text class="th" x="12" y="${top + 3}">${L.source}</text><text class="th" x="${funcX}" y="${top + 3}">${L.func}</text>`);
+      out.push(`<text class="th" x="16" y="${top + 3}">${L.source}</text><text class="th" x="${funcX}" y="${top + 3}">${L.func}</text>`);
       rows.forEach((r, i) => {
         const y = ym(i);
         if (r.kind !== "fn") {
@@ -1053,10 +1053,10 @@ var FlowAst = (() => {
           return;
         }
         const f = r.node, src = source(f, r.depth, r.leaf);
-        out.push(`<circle class="so ${src.cls}" cx="18" cy="${y}" r="4.5"/><text class="tb" x="30" y="${y + 3.5}">${esc(src.name)}</text>`);
+        out.push(`<circle class="so ${src.cls}" cx="22" cy="${y}" r="4.5"/><text class="tb" x="34" y="${y + 3.5}">${esc(src.name)}</text>`);
         out.push(`<text class="tb" x="${funcX + r.depth * 12}" y="${y + 3.5}">${esc(f.title)}</text>`);
       });
-      out.push(`<line class="vg" x1="${funcX - 4}" y1="${top + CHIP}" x2="${funcX - 4}" y2="${rowY(rows.length)}"/>`);
+      out.push(`<line class="vg" x1="${funcX - 22}" y1="${top + CHIP}" x2="${funcX - 22}" y2="${rowY(rows.length)}"/>`);
     }
     for (const col of stateCols) {
       const items = states.get(col) ?? [];
@@ -1167,7 +1167,7 @@ var FlowAst = (() => {
 .bande.co{stroke:var(--fn,#dc2626);stroke-width:2}
 .fn{fill:var(--fn,#dc2626)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
 .fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
-.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--fn,#dc2626)}
+.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:#fff}
 .sum{fill:var(--fn,#dc2626)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}

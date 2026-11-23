@@ -357,7 +357,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
 .bande.co{stroke:var(--fn,#dc2626);stroke-width:2}
 .fn{fill:var(--fn,#dc2626)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
 .fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
-.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--fn,#dc2626)}
+.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:#fff}
 .sum{fill:var(--fn,#dc2626)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}

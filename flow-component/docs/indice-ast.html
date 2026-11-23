@@ -212,7 +212,7 @@ h3 .n { color: var(--dado); }
 
 
 .hero { position: relative; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 0 auto 2.5rem; padding: .6rem;
-  border: 0; border-radius: 10px; overflow: hidden; background: var(--paper); }
+  border: 0; border-radius: 10px; overflow-x: auto; overflow-y: visible; background: var(--paper); }
 .hero h1 { margin: .1rem .25rem .6rem; font: 800 1.35rem/1.1 "IBM Plex Sans", sans-serif; letter-spacing: -.02em; color: var(--ink); }
 .hero h1 span { color: var(--accent); }
 .tabs { margin: 0 0 1rem; }
@@ -226,8 +226,8 @@ h3 .n { color: var(--dado); }
 .tabpanel.flow { overflow: auto; padding: .5rem; border: 0; border-radius: 6px; background: transparent; }
 .tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
 .hero-plan { overflow-x: auto; max-width: 100%; margin: 0; padding: .25rem; -webkit-overflow-scrolling: touch; }
-.hero-plan .tabpanel.flow { max-width: 100%; overflow-x: auto; }
-.hero-plan svg { display: block; width: 100%; max-width: 100%; margin: 0 auto; height: auto; }
+.hero-plan .tabpanel.flow { display: block; width: 100%; max-width: 100%; overflow: visible; line-height: 0; }
+.hero-plan svg { display: block; width: 100%; max-width: 100%; margin: 0 auto; height: auto; min-height: 10rem; }
 .quote-solo { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: -.25rem auto 1.5rem; padding: .1rem 0; border-left: 0; text-align: center; }
 .quote-solo p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote-solo cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
@@ -303,9 +303,9 @@ footer {
   }
   .quote-solo { padding: 0 1.15rem; width: 100%; box-sizing: border-box; }
   .quote-solo p { font-size: .98rem; }
-  .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow: hidden; margin-bottom: 1.5rem; }
+  .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow-x: auto; overflow-y: visible; margin-bottom: 1.5rem; }
   .hero-plan { padding: 0 .35rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .hero-plan svg { width: 100%; max-width: 100%; height: auto; }
+  .hero-plan svg { width: 100%; max-width: 100%; height: auto; min-height: 12rem; }
   .hero .quote-close { padding: 0 1.15rem; max-width: none; }
   .flow-preface { padding: 1.5rem 1.15rem 0; max-width: 100%; }
   .flow-preface .prose { max-width: 100%; font-size: 1rem; }
@@ -705,7 +705,12 @@ const renderHero = () => {
   if (host && typeof FlowAst?.renderFnSvg === "function") {
     // no mobile a tabela de responsáveis empurra o plano pra fora da tela — só o fluxo
     const table = !matchMedia("(max-width: 48rem)").matches;
-    host.innerHTML = `<div class="tabpanel flow">${FlowAst.renderFnSvg(fluxo, { elseParallel: true, table, lang: LANG }).svg}</div>`;
+    const drawn = FlowAst.renderFnSvg(fluxo, { elseParallel: true, table, lang: LANG });
+    // Safari iOS: width/height fixos + height:auto → altura 0; viewBox + aspect-ratio mantém o plano visível
+    const svg = String(drawn.svg)
+      .replace(/\swidth="[^"]*"/, ' width="100%"')
+      .replace(/\sheight="[^"]*"/, "");
+    host.innerHTML = `<div class="tabpanel flow" style="aspect-ratio:${drawn.width}/${drawn.height}">${svg}</div>`;
   }
 };
 matchMedia("(max-width: 48rem)").addEventListener("change", () => renderHero());

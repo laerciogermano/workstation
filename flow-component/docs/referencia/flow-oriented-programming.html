@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOP: Flow Oriented Programming</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://flow-oriented-programming.com/">
+<meta name="description" content="Linguagem visual universal.">
+<meta name="theme-color" content="#050505">
+<meta name="color-scheme" content="dark">
+<!-- Compartilhamento (LinkedIn, Facebook, WhatsApp, Slack…) -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="FOP · Flow Oriented Programming">
+<meta property="og:title" content="FOP: Flow Oriented Programming">
+<meta property="og:description" content="Linguagem visual universal.">
+<meta property="og:url" content="https://flow-oriented-programming.com/">
+<meta property="og:image" content="https://flow-oriented-programming.com/img/og-fop.jpg">
+<meta property="og:image:secure_url" content="https://flow-oriented-programming.com/img/og-fop.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Escola de Atenas, de Rafael, com o título Flow Oriented Programming e a frase de Heráclito: Tudo muda, exceto a mudança.">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FOP: Flow Oriented Programming">
+<meta name="twitter:description" content="Linguagem visual universal.">
+<meta name="twitter:image" content="https://flow-oriented-programming.com/img/og-fop.jpg">
+<meta name="twitter:image:alt" content="A Escola de Atenas, de Rafael, com o título Flow Oriented Programming e a frase de Heráclito: Tudo muda, exceto a mudança.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"FOP: Flow Oriented Programming","description":"Linguagem visual universal.","url":"https://flow-oriented-programming.com/","mainEntityOfPage":"https://flow-oriented-programming.com/","image":"https://flow-oriented-programming.com/img/og-fop.jpg","inLanguage":["pt-BR","en"],"about":"Linguagem de programação visual baseada em fluxo, com transpile para qualquer linguagem","license":"https://opensource.org/license/mit"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --paper: #000; --paper-2: #121212; --ink: #f2f2f2; --body: #a3a3a3;
+  --accent: #ff6a52; --line: #262626; --fn: #f07167; --dado: #5b8cff;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 14px/1.6 "IBM Plex Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--ink); }
+code, pre { font-family: var(--mono); }
+
+.top {
+  display: flex; align-items: center; gap: 14px;
+  height: 56px; padding: 6px 16px;
+  border-bottom: 1px solid var(--line); background: var(--paper);
+}
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; }
+.brand .mark { width: 32px; height: 32px; flex: none; margin-top: 1px; border-radius: 6px; }
+.brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.brand-row { display: inline-flex; align-items: center; gap: 8px; }
+.ttl { font-weight: 700; font-size: 12px; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
+.ver, .beta { font: 700 9px var(--mono); letter-spacing: .06em; color: var(--muted, #8a8a8a); border: 1px solid var(--line-2, #3a3a3a); border-radius: 99px; padding: 1px 7px; line-height: 1.5; }
+.beta { text-transform: uppercase; }
+.epigraph { font: 500 11px "IBM Plex Sans", sans-serif; color: var(--muted, #8a8a8a); line-height: 1.3; }
+.sp { flex: 1; }
+.meta { font-size: .75rem; font-weight: 600; color: var(--body); }
+
+html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+/* tokens de espaçamento (escala de base 4), raio e curva de movimento */
+:root { --s1: 4px; --s2: 8px; --s3: 16px; --s4: 32px; --s5: 64px; --r1: 6px; --r2: 10px; --ease: cubic-bezier(.16, 1, .3, 1); }
+html { text-rendering: optimizeLegibility; -webkit-text-size-adjust: 100%; }
+body { line-height: 1.65; letter-spacing: .003em; font-optical-sizing: auto; }
+:focus-visible { outline: 2px solid var(--fn); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: -999px; top: var(--s2); z-index: 20; padding: var(--s2) var(--s3); background: var(--ink); color: var(--paper); border-radius: var(--r1); text-decoration: none; font: 600 12px "IBM Plex Sans", sans-serif; }
+.skip:focus { left: var(--s3); }
+a, button { transition: color .15s var(--ease), background-color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+/* busca na barra lateral */
+.search { position: relative; margin: 0 .5rem var(--s3) .25rem; }
+.search input { width: 100%; box-sizing: border-box; padding: 8px 34px 8px 12px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--paper-2); color: var(--ink); font: 500 12px "IBM Plex Sans", sans-serif; }
+.search input::placeholder { color: var(--muted, #8a8a8a); }
+.search kbd { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; font: 600 10px var(--mono); color: var(--muted, #8a8a8a); pointer-events: none; }
+.side li.hide { display: none; }
+/* coluna "nesta página" (telas largas) */
+.rail { display: none; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1rem 2rem .25rem; font: 500 12px/1.4 "IBM Plex Sans", sans-serif; }
+.rail .t { margin: 0 0 var(--s2); font: 700 10px/1 "IBM Plex Sans", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted, #8a8a8a); }
+.rail ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
+.rail a { display: block; padding: 4px 0 4px var(--s3); margin-left: -1px; border-left: 1px solid transparent; color: var(--body); text-decoration: none; }
+.rail a:hover { color: var(--ink); }
+.rail a.on { color: var(--ink); border-left-color: var(--ink); }
+@media (min-width: 1500px) {
+  .layout {
+    grid-template-columns: 17rem minmax(0, 1fr) 15rem;
+    grid-template-areas: "side content rail";
+  }
+  .rail { display: block; grid-area: rail; }
+}
+@media (max-width: 62rem) { .rail { display: none !important; } }
+/* botão de copiar código */
+.tabpanel.code { position: relative; }
+.copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--paper-2); color: var(--body); font: 600 10px "IBM Plex Sans", sans-serif; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.copy:hover { color: var(--ink); border-color: var(--body); }
+.layout {
+  display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; max-width: none; margin: 0;
+  grid-template-areas: "side content";
+}
+.side { grid-area: side; }
+.content-col {
+  grid-area: content; min-width: 0; width: 100%; box-sizing: border-box;
+  max-width: 52rem; margin: 0 auto; padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+}
+.flow-preface { padding: 2rem 0 0; box-sizing: border-box; }
+.flow-preface h2 { border-top: 0; padding-top: 0; }
+.main-col { min-width: 0; }
+.side {
+  position: sticky; top: 3.5rem; height: calc(100vh - 3.5rem); overflow-y: auto;
+  padding: 1.5rem .75rem 2rem 1.25rem; border-right: 1px solid var(--line);
+  font: 600 .82rem/1.35 "IBM Plex Sans", sans-serif;
+}
+.side .t { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--body); margin: 0 0 .6rem .5rem; }
+.side ol, .side ul { list-style: none; margin: 0; padding: 0; }
+.side a { display: block; padding: .3rem .5rem; border-left: 2px solid transparent; color: var(--body); text-decoration: none; border-radius: 0 4px 4px 0; }
+.side a:hover { color: var(--ink); background: var(--paper-2); }
+.side > ol > li > a { color: var(--ink); font-weight: 700; margin-top: .25rem; display: flex; align-items: center; gap: .5rem; }
+.side a .ic { flex: none; }
+.side .gn { font: 600 .72rem/1 var(--mono); color: var(--accent); min-width: 1.4rem; }
+.side ul { display: block; margin-left: .75rem; }
+.side ul a { font-weight: 500; font-size: .78rem; padding: .2rem .5rem; }
+.side a.on { color: var(--accent); border-left-color: var(--accent); background: var(--paper-2); }
+@media (max-width: 62rem) {
+  .layout { display: flex; flex-direction: column; }
+  .content-col { display: contents; }
+  .side { order: 1; position: static; width: 100%; max-width: 100%; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .flow-preface { order: 2; padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 0; }
+  .main-col { order: 3; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
+  .side ul { display: block; }
+}
+main { padding: 2rem 0 4rem; }
+h1 {
+  margin: 0 0 .4rem;
+  font: 800 clamp(1.8rem, 4vw, 2.4rem)/1.12 "IBM Plex Sans", sans-serif;
+  letter-spacing: -.02em;
+}
+.lead { margin: 0 0 1.75rem; color: var(--body); max-width: 36rem; }
+h2 {
+  margin: 2rem 0 .75rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+  font: 700 1.35rem/1.2 "IBM Plex Sans", sans-serif; letter-spacing: -.015em;
+}
+h3.sub { font-size: 1.1rem; margin-top: 2.25rem; margin-left: 1.5rem; }
+.side li.sub > a { padding-left: 1.4rem; }
+h3 { margin: 1.5rem 0 .5rem; font: 700 1.1rem/1.25 "IBM Plex Sans", sans-serif; }
+h2, h3 { color: var(--ink); }
+h2 .n, h3 .n { font: 600 .8rem/1 var(--mono); margin-right: .4rem; }
+h2 .n { color: var(--fn); }
+h3 .n { color: var(--dado); }
+.quote { margin: 0 0 1.5rem; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); max-width: 40rem; }
+.quote p { margin: 0; font: italic 400 1.3rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.quote cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); }
+.prose + .quote { margin: 1.75rem 0 0; }
+.prose { max-width: 42rem; margin: 0 0 1.5rem; font: 400 1.05rem/1.65 "IBM Plex Sans", sans-serif; color: var(--body); }
+.prose p { margin: 0 0 .9rem; }
+.prose p.note { margin-top: 1.1rem; padding: .6rem .85rem; border-left: 2px solid var(--line); background: var(--paper-2); font-size: .95rem; line-height: 1.55; }
+.prose p.note strong { font: 700 .68rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); margin-right: .35rem; }
+.prose p:first-child { color: var(--ink); }
+.bul { margin: 0 0 1.25rem; padding-left: 1.2rem; color: var(--body); }
+.bul li { margin: .25rem 0; }
+.bul li::marker { color: var(--accent); }
+.intro { margin: 0 0 1.25rem; color: var(--body); }
+.intro p { margin: 0 0 .35rem; color: var(--ink); }
+.intro p.def { margin-bottom: .75rem; font-weight: 600; }
+.intro ul { list-style: none; margin: 0; padding: 0; }
+.intro li { display: flex; align-items: center; gap: .6rem; margin: .3rem 0; }
+.intro .di { flex: none; }
+.rules { list-style: none; margin: 0 0 1rem; padding: 0; color: var(--body); }
+.rules code, .rules em { font: inherit; font-style: normal; background: none; padding: 0; color: inherit; }
+.rules li { display: flex; gap: .85rem; margin: .3rem 0; }
+.rules .rb { min-width: 0; flex: 1; }
+.rplan { margin: .35rem 0 1rem; }
+.rules .ix { flex: none; box-sizing: border-box; width: 4.4rem; padding-right: .5rem; text-align: left; white-space: nowrap; font: 600 .75rem/1.9 var(--mono); font-variant-numeric: tabular-nums; color: var(--dado); }
+.sec-lead { margin: 0 0 1rem; color: var(--body); }
+
+.lab {
+  margin: 0 0 .35rem;
+  font: 700 .68rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--body);
+}
+.lab .kind { color: var(--accent); margin-right: .35rem; }
+
+.pane {
+  border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  margin: 0 0 .75rem; background: var(--paper);
+}
+.pane > summary.hd {
+  display: flex; align-items: center; gap: .5rem; min-height: 2rem; padding: 0 .85rem;
+  background: var(--paper-2);
+  font: 600 .72rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--body);
+  cursor: pointer; list-style: none; user-select: none;
+}
+.pane > summary.hd::-webkit-details-marker { display: none; }
+.pane > summary.hd::before {
+  content: "▸"; color: var(--accent); font-size: .7rem; width: .7rem;
+  transition: transform .12s ease;
+}
+.pane.flat > .hd { display: flex; align-items: center; gap: .5rem; min-height: 2rem; padding: 0 .85rem; background: var(--paper-2); border-bottom: 1px solid var(--line); font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--body); }
+.pane[open] > summary.hd::before { transform: rotate(90deg); }
+.pane[open] > summary.hd { border-bottom: 1px solid var(--line); }
+.pane .hd .kind { color: var(--accent); margin-right: .2rem; }
+.pane .hd .tag { margin-left: auto; font-weight: 700; color: var(--accent); font-size: .65rem; }
+.pane .body { background: var(--paper); }
+.pane pre {
+  margin: 0; padding: .85rem 1rem; overflow: auto;
+  font-size: .78rem; line-height: 1.55; color: var(--ink); white-space: pre;
+}
+/* ESTree e AST do fluxo ocultos; para exibir de novo, apague esta regra */
+.pane.ast { display: none; }
+.pane.ast pre { color: var(--body); max-height: 18rem; }
+.pane.plan .body { padding: 1rem; overflow: auto; background: var(--paper-2); }
+.pane.plan .svg-host { overflow: auto; }
+.err { color: var(--accent); font-family: var(--mono); font-size: .78rem; padding: .5rem 0; }
+
+.toc {
+  margin: 0 0 1.75rem; padding: .85rem 1rem;
+  border: 1px solid var(--line); border-radius: 6px;
+  font: 600 .85rem/1.5 "IBM Plex Sans", sans-serif;
+}
+.toc .t { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--body); margin-bottom: .35rem; }
+.toc ol { margin: 0; padding-left: 1.25rem; }
+.toc ul { list-style: none; margin: .25rem 0 0; padding-left: 1rem; }
+
+
+.hero { position: relative; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 0 auto 2.5rem; padding: .6rem;
+  border: 0; border-radius: 10px; overflow-x: auto; overflow-y: visible; background: var(--paper); }
+.hero h1 { margin: .1rem .25rem .6rem; font: 800 1.35rem/1.1 "IBM Plex Sans", sans-serif; letter-spacing: -.02em; color: var(--ink); }
+.hero h1 span { color: var(--accent); }
+.tabs { margin: 0 0 1rem; }
+.tablist { display: flex; justify-content: flex-start; gap: .25rem; margin: 0 0 .5rem; border-bottom: 1px solid var(--line); }
+.tablist button { font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .05em; text-transform: uppercase; padding: .55rem .9rem; margin-bottom: -1px;
+  border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--body); cursor: pointer; }
+.tablist button:hover { color: var(--ink); }
+.tablist button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabpanel[hidden] { display: none; }
+.tabpanel.flow svg { display: block; margin: 0 auto; }
+.tabpanel.flow { overflow: auto; padding: .5rem; border: 0; border-radius: 6px; background: transparent; }
+.tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
+.hero-plan { overflow-x: auto; max-width: 100%; margin: 0; padding: .25rem; -webkit-overflow-scrolling: touch; }
+.hero-plan .tabpanel.flow { display: block; width: 100%; max-width: 100%; overflow: visible; line-height: 0; }
+.hero-plan svg { display: block; width: 100%; max-width: 100%; margin: 0 auto; height: auto; min-height: 10rem; }
+.quote-solo { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 1.5rem; padding: .1rem 0; border-left: 0; text-align: center; }
+.quote-solo p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.quote-solo cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
+/* página de livro: título + citação; rola e respira antes do diagrama */
+.spread {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  box-sizing: border-box; width: 100%;
+  min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px);
+  padding: .75rem 1.5rem 14vh; gap: 1.75rem;
+}
+.spread .page-title { margin: 1.5rem 0 0; width: calc(100% - 2.5rem); }
+.spread .athens { width: calc(100% - 2.5rem); max-width: 76rem; margin: 0 auto; }
+.spread .hero { width: 100%; max-width: 76rem; margin: 0; padding: 0; }
+.spread-flow {
+  justify-content: flex-start;
+  gap: 1.75rem;
+  padding-top: 4.5rem;
+  padding-bottom: 12vh;
+}
+.spread-flow .page-title { margin-top: 0; }
+/* Confúcio: faixa curta centrada entre Atenas e o diagrama */
+.spread-mid {
+  min-height: 0;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+  gap: 0;
+}
+.quote-confucio { margin: 0; }
+.quote-spread {
+  width: 100%; max-width: none; margin: 0;
+  min-height: 0; padding: 0; box-sizing: border-box;
+}
+.quote-spread p {
+  font: italic 400 clamp(1.1rem, 2.4vw, 1.65rem)/1.35 "IBM Plex Sans", sans-serif;
+  max-width: 28ch; letter-spacing: -.01em;
+}
+.quote-spread cite {
+  margin-top: 1.1rem;
+  font: 600 .78rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: .12em;
+}
+.hero .quote-close { display: flex; flex-direction: column; align-items: center; margin: .85rem auto .15rem; padding: .1rem 0; border-left: 0; text-align: center; max-width: 40rem; }
+.hero .quote-close p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.hero .quote-close cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
+.legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0 0 1.5rem; }
+.legend .it { flex: 1 1 15rem; display: flex; gap: .85rem; align-items: flex-start; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
+.legend svg { flex: none; margin-top: .15rem; }
+.legend b { display: block; font: 700 .95rem/1.2 "IBM Plex Sans", sans-serif; color: var(--ink); }
+.legend span { color: var(--body); font-size: .95rem; }
+.legend .fnc { fill: var(--fn); } .legend .dtq { fill: var(--dado); }
+.legend .fna { fill: none; stroke: var(--fn); stroke-width: 2; } .legend .dta { fill: none; stroke: var(--dado); stroke-width: 2; }
+
+.lang { display: flex; gap: 2px; margin-right: .75rem; }
+.lang button { font: 600 .68rem/1 var(--mono); letter-spacing: .04em; padding: .4rem .6rem; border: 1px solid var(--line); background: transparent; color: var(--body); cursor: pointer; }
+.lang button:first-child { border-radius: 99px 0 0 99px; }
+.lang button:last-child { border-radius: 0 99px 99px 0; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.page-title { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 2rem auto .2rem;
+  font: 600 clamp(1.45rem, 4.6vw, 3.1rem)/1.12 "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif; letter-spacing: -.02em; text-align: center; color: var(--muted, #8a8a8a); }
+.page-title { display: block; }
+.page-title .pt-t { display: inline-block; max-width: 100%; }
+.page-title .pt-t span { color: var(--ink); }
+.page-title i { display: none; }
+.epigraph-top { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 2.25rem auto 1.25rem; text-align: center; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
+.athens { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 0; }
+.athens img { display: block; width: 100%; max-width: 100%; height: clamp(220px, 38vw, 440px); object-fit: cover; object-position: 50% 52%; border-radius: 6px; }
+.athens figcaption { margin: 1rem auto 0; max-width: 100%; text-align: center; font-size: 11.5px; line-height: 1.45; letter-spacing: .01em; color: var(--muted, #8a8a8a); white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.athens figcaption .ln { display: inline; }
+.site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 8px 16px; border-top: 1px solid var(--line); background: var(--paper); color: var(--muted, #8a8a8a); font: 500 11px/1.4 "IBM Plex Sans", sans-serif; }
+.site-foot .foot-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 10px; margin-left: auto; flex: none; }
+.site-foot a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--line-2, #3a3a3a); }
+.site-foot a:hover { color: var(--ink); border-color: var(--ink); }
+.site-foot .sep { color: var(--line-2, #3a3a3a); user-select: none; }
+.site-foot .fx-legend { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px 14px; color: var(--body); font-size: 10.5px; min-width: 0; flex: 1; }
+.site-foot .fx-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { display: inline-block; width: 16px; height: 9px; border-radius: 5px; }
+.lg.fc { background: var(--fn); border: 1.5px solid var(--fn); }
+.lg.fa { background: transparent; border: 1.5px solid var(--fn); }
+.lg.cb { width: 10px; height: 11px; border-radius: 0; background: var(--dado); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.lg.dc { width: 8px; height: 8px; border-radius: 0; background: var(--dado); }
+.lg.da { width: 8px; height: 8px; border-radius: 0; border: 1.3px solid var(--dado); }
+.lg.dia { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid #d97706; border-radius: 0; background: transparent; }
+.lg.el { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 9px solid #d97706; border-radius: 0; background: transparent; }
+.lg.lp { width: auto; height: auto; color: #8b5cf6; font-weight: 700; }
+.lg.tr { width: 9px; height: 10px; border-radius: 2px 2px 40% 40%; border: 1.5px solid #22c55e; background: transparent; }
+.lg.ca { width: 9px; height: 9px; border: none; border-radius: 0; background: transparent; position: relative; }
+.lg.ca::before, .lg.ca::after { content: ""; position: absolute; left: 50%; top: 0; width: 1.5px; height: 100%; background: #ef4444; border-radius: 1px; }
+.lg.ca::before { transform: translateX(-50%) rotate(45deg); }
+.lg.ca::after { transform: translateX(-50%) rotate(-45deg); }
+
+footer {
+  margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line);
+  font: 600 .75rem/1.45 "IBM Plex Sans", sans-serif; color: var(--body);
+}
+/* mobile: evita estouro horizontal (título, afresco, plano) */
+@media (max-width: 48rem) {
+  html, body { overflow-x: clip; max-width: 100%; }
+  .top { gap: 8px; padding: 6px 12px; }
+  .ttl { white-space: normal; font-size: 11px; line-height: 1.25; max-width: 12rem; }
+  .athens, .page-title, .quote-solo, .hero, .epigraph-top {
+    width: 100%; max-width: 100%; margin-left: 0; margin-right: 0;
+  }
+  .athens { margin-top: 0; }
+  .athens img {
+    height: auto; aspect-ratio: 16 / 10; max-height: 42vh;
+    border-radius: 0; object-position: 50% 42%;
+  }
+  .athens figcaption { padding: 0 1rem; box-sizing: border-box; }
+  .page-title {
+    margin: 1.5rem 0 .9rem; padding: 0 1rem;
+    font-size: clamp(1.35rem, 7.5vw, 1.9rem); line-height: 1.15; letter-spacing: -.03em;
+  }
+  .quote-solo { margin-top: .35rem; padding: 0 1.15rem; width: 100%; box-sizing: border-box; }
+  .quote-confucio { margin-top: 0; }
+  .quote-solo p { font-size: .98rem; }
+  .spread { min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px); padding: .5rem 1.15rem 16vh; gap: 1.5rem; }
+  .page-title { margin-bottom: .15rem; }
+  .spread-flow { padding-top: 2.75rem; padding-bottom: 10vh; gap: 1.35rem; }
+  .spread-mid { min-height: 0; padding: 1.75rem 1.15rem; justify-content: center; }
+  .quote-spread { margin: 0; padding: 0; width: 100%; }
+  .quote-spread p { font-size: clamp(1.05rem, 4.5vw, 1.4rem); }
+  .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow-x: auto; overflow-y: visible; margin-bottom: 1.5rem; }
+  .hero-plan { padding: 0 .35rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hero-plan svg { width: 100%; max-width: 100%; height: auto; min-height: 12rem; }
+  .hero .quote-close { padding: 0 1.15rem; max-width: none; }
+  .flow-preface { padding: 1.5rem 1.15rem 0; max-width: 100%; }
+  .flow-preface .prose { max-width: 100%; font-size: 1rem; }
+  .main-col { padding-inline: 1.15rem; max-width: 100%; }
+  .svg-host, .pane.plan .body, .rplan, .tabpanel.flow { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .svg-host svg { width: auto; max-width: none; min-width: min(100%, 28rem); height: auto; }
+  .pane pre, .tabpanel.code pre { max-width: 100%; overflow-x: auto; }
+  .site-foot { flex-direction: column; align-items: flex-start; }
+  .site-foot .foot-meta { margin-left: 0; justify-content: flex-start; }
+}
+
+/* ───────── refinamento: preto editorial, serifa humanista, hairlines ───────── */
+:root {
+  --paper: #050505; --paper-2: #0d0d0d; --ink: #ededea; --body: #9a9a96;
+  --muted: #6f6f6b; --line: #262626; --line-2: #333;
+  --accent: #f07167;               /* coral do flow (--fn) */
+  --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --glow: rgba(255,255,255,.035);
+  --hover: rgba(255,255,255,.04); --hover-2: rgba(255,255,255,.05); --field: rgba(255,255,255,.025); --ring: rgba(255,255,255,.06);
+  --surface: #0a0a0a; --surface-2: #080808; --glass: rgba(5,5,5,.72); --on-ink: #000;
+}
+::selection { background: rgba(240,113,103,.30); color: #fff; }
+html { scrollbar-color: #262626 transparent; scrollbar-width: thin; }
+body { background: radial-gradient(ellipse 60% 100% at 50% 0, var(--glow), transparent 70%) top center / 100% 640px no-repeat, var(--paper); }
+
+/* barra superior: vidro fosco, fio de luz */
+.top { position: sticky; top: 0; z-index: 30; background: var(--glass); -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px); border-bottom: 1px solid var(--line); }
+.ttl { font-weight: 500; font-size: 12px; letter-spacing: .02em; color: var(--body); }
+.lang button { border-color: var(--line-2); font-weight: 500; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+
+/* título: serifa grande, tracking justo, eco de manuscrito */
+.page-title { font-family: var(--serif); font-weight: 400; font-size: clamp(2.2rem, 6.2vw, 4.6rem); line-height: 1.04; letter-spacing: -.028em; color: var(--muted); font-variation-settings: "opsz" 72; margin-top: 3.25rem; }
+.page-title .pt-t span { font-style: italic; font-weight: 400; color: var(--ink); }
+.page-title::after { content: ""; display: block; width: 28px; height: 1px; margin: 1.6rem auto 0; background: var(--line-2); }
+
+/* citações: serifa itálica, autor em versalete discreto */
+.quote-spread p, .quote-solo p, .hero .quote-close p, .quote p { font-family: var(--serif); font-style: italic; font-weight: 400; font-variation-settings: "opsz" 36; color: var(--ink); text-wrap: balance; }
+.quote-spread p { font-size: clamp(1.35rem, 2.9vw, 2.1rem); max-width: 30ch; line-height: 1.3; letter-spacing: -.012em; text-align: center; }
+.quote-spread cite, .quote-solo cite { margin-top: 1.25rem; font: 500 .68rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .22em; color: var(--muted); }
+.quote-spread cite::before, .quote-solo cite::before { content: ""; display: block; width: 1px; height: 22px; margin: 0 auto 1rem; background: var(--line-2); }
+
+/* afresco: dessaturado, vinheta e esmaecimento para o preto */
+.athens { position: relative; }
+.athens img { border-radius: 10px; filter: saturate(.72) contrast(1.04) brightness(.92); border: 1px solid var(--line); box-shadow: 0 30px 80px -30px rgba(0,0,0,.9); }
+.athens::after { content: ""; position: absolute; left: 1px; right: 1px; top: 1px; height: clamp(220px, 38vw, 440px); border-radius: 10px; pointer-events: none; background: linear-gradient(to bottom, rgba(5,5,5,.25), transparent 28%, transparent 55%, rgba(5,5,5,.7)); }
+.athens figcaption { font: italic 400 12.5px/1.5 var(--serif); letter-spacing: .01em; color: var(--muted); }
+
+/* títulos de seção em serifa */
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -.018em; }
+h1 { font-weight: 500; }
+h2 { font-size: 1.7rem; border-top-color: var(--line); margin-top: 3rem; padding-top: 1.75rem; }
+h3 { font-size: 1.25rem; }
+h2 .n, h3 .n { font-family: var(--mono); font-weight: 500; }
+.prose { font-size: 1.04rem; line-height: 1.75; }
+.prose p:first-child { color: var(--ink); }
+.prose p.note { border-left-color: var(--line-2); background: transparent; border-radius: 0; }
+.lab, .toc .t, .side .t, .rail .t { letter-spacing: .14em; font-weight: 500; color: var(--muted); }
+.lab .kind, .pane .hd .kind, .pane .hd .tag { color: var(--fn); }
+
+/* barra lateral: densa, calma, estilo Obsidian/Notion */
+.side { border-right-color: var(--line); background: transparent; font-weight: 500; }
+.side a { border-radius: 6px; border-left-width: 0; padding: .3rem .6rem; }
+.side a:hover { background: var(--hover); }
+.side a.on { background: var(--hover-2); color: var(--ink); box-shadow: none; border-left-color: transparent; }
+.side > ol > li > a { font-weight: 600; }
+.search input { background: var(--field); border-color: var(--line-2); border-radius: 8px; }
+.search input:focus { outline: none; border-color: var(--body); box-shadow: 0 0 0 3px var(--ring); }
+.search kbd { border-color: var(--line-2); background: var(--surface); }
+.rail a, .rail a.on { border-left-color: transparent; }
+.rail ul { border-left: 0; }
+.rail a.on { color: var(--ink); }
+
+/* painéis e abas */
+.pane { border-color: var(--line); border-radius: 10px; background: var(--paper); }
+.pane > summary.hd, .pane.flat > .hd { background: var(--surface); font-weight: 500; letter-spacing: .1em; }
+.pane.plan .body { background: var(--surface-2); }
+.tablist { border-bottom-color: var(--line); }
+.tablist button { font-weight: 500; letter-spacing: .12em; }
+.tablist button[aria-selected="true"] { border-bottom-color: var(--ink); }
+.toc, .legend .it { border-color: var(--line); border-radius: 10px; background: var(--field); }
+.copy { border-radius: 6px; border-color: var(--line-2); background: var(--surface); }
+.legend b { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; }
+
+/* rodapé */
+.site-foot { border-top-color: var(--line); background: transparent; }
+.site-foot a { border-bottom-color: var(--line-2); }
+
+
+
+/* artigo, não sistema: sem header; só o seletor de idioma, flutuante e discreto */
+.lang { position: fixed; top: 14px; right: 16px; z-index: 30; margin: 0; background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 99px; }
+html { scroll-padding-top: 1.5rem; }
+.side { top: 0; height: 100vh; }
+.rail { top: 0; height: 100vh; }
+.spread { min-height: 100vh; min-height: 100dvh; }
+.spread-mid { min-height: 0; padding: 1.25rem 1.5rem 1.75rem; }
+.page-title { margin-top: 4rem; }
+.quote-confucio cite { margin-top: .7rem; }
+.quote-confucio cite::before { height: 14px; margin-bottom: .55rem; }
+
+
+/* capa: afresco em tela cheia; título e frase sobre a imagem */
+.cover { position: relative; width: 100%; height: 100vh; height: 100svh; min-height: 520px; overflow: hidden; background: #000; isolation: isolate; }
+.cover .athens { position: absolute; inset: 0; width: 100%; max-width: none; margin: 0; z-index: -2; }
+.cover .athens::after { display: none; }
+.cover .athens img { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border: 0; border-radius: 0; box-shadow: none; object-fit: cover; object-position: 50% 45%;
+  filter: saturate(.7) contrast(1.05) brightness(.78); transform: scale(calc(1 + var(--p, 0) * .12)); transform-origin: 50% 40%; will-change: transform; }
+.cover::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(0,0,0,.55), transparent 75%), linear-gradient(to bottom, rgba(5,5,5,.55) 0%, rgba(5,5,5,.1) 35%, rgba(5,5,5,.35) 70%, var(--paper) 100%); }
+.cover-text { position: absolute; left: 0; right: 0; top: 0; padding: 0 1.5rem; height: 78%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: calc(1 - var(--p, 0) * 1.4); transform: translateY(calc(var(--p, 0) * -40px)); text-shadow: 0 2px 30px rgba(0,0,0,.6); }
+.cover .page-title { margin: 0; width: 100%; color: #fff; font-size: clamp(2.4rem, 7vw, 5.6rem); }
+.cover .page-title .pt-t span { color: #fff; }
+.cover .page-title::after { background: rgba(255,255,255,.35); }
+.cover .quote-spread { margin: 1.5rem 0 0; width: auto; }
+.cover .quote-spread p { color: #fff; }
+.cover .quote-spread cite { color: rgba(255,255,255,.6); }
+.cover .quote-spread cite::before { background: rgba(255,255,255,.3); }
+.cover .athens figcaption { position: absolute; left: 0; right: 0; bottom: 1.1rem; margin: 0; padding: 0 1.5rem; z-index: 1; color: rgba(255,255,255,.5); text-align: center; text-shadow: 0 1px 12px #000; }
+.cover-hint { position: absolute; left: 50%; bottom: 3.4rem; width: 1px; height: 38px; background: linear-gradient(to bottom, rgba(255,255,255,.55), transparent); transform-origin: top; animation: hint 2.4s var(--ease) infinite; opacity: calc(1 - var(--p, 0) * 4); }
+@keyframes hint { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+.spread-flow { padding-top: 6rem; min-height: 0; }
+.spread-mid { padding: 5rem 1.5rem 7rem; }
+@media (max-width: 48rem) {
+  .cover .athens img { height: 100%; max-height: none; aspect-ratio: auto; object-position: 42% 45%; }
+  .cover-text { height: 74%; padding: 0 1.15rem; }
+  .cover .page-title { font-size: clamp(2.1rem, 11.5vw, 3rem); padding: 0; }
+  .cover .athens figcaption { padding: 0 1rem; font-size: 10.5px; }
+}
+
+/* texto da capa: bloco compacto, centrado entre Platão e Aristóteles */
+.cover-text { height: 100%; padding-bottom: 4vh; }
+.cover .page-title { font-size: clamp(2.2rem, 5.6vw, 4.4rem); line-height: 1; }
+.cover .page-title::after { margin-top: 1rem; }
+.cover .quote-spread { margin-top: 1rem; }
+.cover .quote-spread p { font-size: clamp(1.15rem, 2.2vw, 1.6rem); }
+.cover .quote-spread cite { margin-top: .7rem; }
+.cover .quote-spread cite::before { height: 12px; margin-bottom: .6rem; }
+.cover::before { background: radial-gradient(ellipse 45% 30% at 50% 48%, rgba(0,0,0,.6), transparent 80%), linear-gradient(to bottom, rgba(5,5,5,.5) 0%, rgba(5,5,5,.05) 35%, rgba(5,5,5,.3) 70%, var(--paper) 100%); }
+@media (max-width: 48rem) { .cover-text { height: 100%; } .cover .page-title { font-size: clamp(2rem, 10vw, 2.7rem); } }
+/* bloco no arco do afresco, entre as duas estátuas, sem cobrir Platão e Aristóteles */
+.cover-text { justify-content: flex-start; padding-top: 13vh; padding-bottom: 0; height: 100%; }
+.cover .page-title { font-size: clamp(2rem, 4.3vw, 3.5rem); }
+.cover .quote-spread p { font-size: clamp(1.05rem, 1.8vw, 1.4rem); }
+.cover::before { background: radial-gradient(ellipse 34% 24% at 50% 24%, rgba(0,0,0,.6), transparent 80%), linear-gradient(to bottom, rgba(5,5,5,.5) 0%, rgba(5,5,5,.05) 35%, rgba(5,5,5,.3) 70%, var(--paper) 100%); }
+@media (max-width: 48rem) { .cover-text { padding-top: 12vh; } .cover .page-title { font-size: clamp(1.8rem, 9vw, 2.4rem); } }
+/* descrição do afresco: faixa logo abaixo da capa */
+.cover-cap { margin: 0; padding: 1.1rem 1.5rem 0; text-align: center; white-space: nowrap; overflow-x: auto; scrollbar-width: none; font: italic 400 12.5px/1.5 var(--serif); letter-spacing: .01em; color: var(--muted); background: var(--paper); }
+.cover-cap::-webkit-scrollbar { display: none; }
+.cover-cap .ln { display: inline; }
+@media (max-width: 48rem) { .cover-cap { white-space: normal; padding: 1rem 1.15rem 0; font-size: 12px; } }
+/* ordem: capa, Confúcio, diagrama, artigo */
+.spread-mid { padding: 6rem 1.5rem 3rem; }
+.spread-flow { padding-top: 2rem; }
+/* mobile: diagrama maior (rolagem lateral, centrado) e mais perto das duas frases */
+@media (max-width: 48rem) {
+  .spread-mid { padding: 3rem 1.15rem 1.25rem; }
+  .spread-flow { padding: 0 0 2.25rem; gap: 0; min-height: 0; }
+  .spread .hero, .spread-flow .hero { margin: 0; padding: 0; width: 100%; max-width: 100%; }
+  .hero-plan { padding: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .hero-plan::-webkit-scrollbar { display: none; }
+  .hero-plan svg { width: 1100px; max-width: none; min-width: 1100px; height: auto; min-height: 0; margin: 0; }
+  .flow-preface { padding-top: 1rem; }
+}
+/* mobile: número da regra acima do conteúdo; abas e diagrama em largura total e centrados */
+@media (max-width: 48rem) {
+  .rules li { flex-direction: row; flex-wrap: wrap; column-gap: .6rem; row-gap: .35rem; margin: .6rem 0; }
+  .rules .ix { flex: none; width: auto; padding-right: 0; line-height: 1.6; }
+  .rules .rb { display: contents; }
+  .rules .rb > span { flex: 1 1 0; min-width: 0; }
+  .rules .rplan { flex: 0 0 100%; }
+  .rplan, .tabs { width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
+  .tablist { justify-content: center; gap: .5rem; }
+  .tablist button { flex: 1 1 0; max-width: 11rem; text-align: center; }
+  .tabpanel.flow { display: flex; justify-content: center; padding: .5rem 0; }
+  .tabpanel.flow svg { margin-left: auto; margin-right: auto; }
+  .tabpanel.code pre { margin: 0; }
+}
+.legend.four { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 48rem) { .legend.four { grid-template-columns: 1fr; } }
+/* título: círculo (função, coral) antes de "Flow" e quadrado (dado, azul) depois de "Programming" */
+.page-title .pt-t::before, .page-title .pt-t::after { content: ""; display: inline-block; width: .34em; height: .34em; vertical-align: .08em; flex: none; }
+.page-title .pt-t::before { box-sizing: border-box; background: transparent; border: .045em solid var(--fn); border-radius: 50%; margin-right: .32em; }
+.page-title .pt-t::after { background: var(--dado); margin-left: .32em; }
+/* controles do topo: idioma */
+.top-ctl { position: fixed; top: 14px; right: 16px; z-index: 30; display: flex; align-items: center; gap: 12px; }
+.top-ctl .lang { position: static; margin: 0; }
+@media (max-width: 48rem) { .top-ctl { top: 10px; right: 10px; gap: 8px; } }
+
+/* sem ícones: só índice e texto */
+.brand .mark, svg.ic { display: none !important; }
+.intro svg.di { display: inline-block; }
+.side > ol > li > a { gap: .5rem; }
+.brand { gap: 0; }
+
+/* revelação suave ao rolar */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+@media (max-width: 48rem) {
+  .page-title { font-size: clamp(2rem, 11vw, 2.8rem); margin-top: 2rem; }
+  .quote-spread p { font-size: clamp(1.25rem, 6vw, 1.6rem); }
+  .athens::after { height: auto; aspect-ratio: 16/10; max-height: 42vh; border-radius: 0; }
+  .athens img { border-radius: 0; }
+}
+</style>
+<script src="fn-svg.js?v=20261123-abs-branco"></script>
+</head>
+<body>
+<a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
+<div class="top-ctl">
+<div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
+</div>
+
+<section class="cover" id="cover">
+  <figure class="athens">
+    <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
+  </figure>
+  <div class="cover-text">
+  <h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
+  <blockquote class="quote quote-solo quote-spread">
+    <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
+    <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+  </blockquote>
+  </div>
+  <span class="cover-hint" aria-hidden="true"></span>
+</section>
+<p class="cover-cap"><span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span></p>
+<div class="spread spread-mid">
+  <blockquote class="quote quote-solo quote-spread quote-confucio">
+    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
+  </blockquote>
+</div>
+<div class="spread spread-flow">
+  <section class="hero" aria-label="Exemplo de fluxo">
+    <div class="hero-plan" id="hero-plan"></div>
+  </section>
+</div>
+<div class="layout">
+<nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
+<div class="content-col">
+<div class="flow-preface" id="flow-preface"></div>
+<main class="main-col" id="conteudo">
+  <div id="out"></div>
+</main>
+</div>
+<aside class="rail" id="rail" aria-label="Nesta página"></aside>
+</div>
+<footer class="site-foot">
+  <div class="fx-legend" aria-label="Legend">
+    <span><i class="lg fa"></i><span class="tl" data-pt="função abstrata" data-en="abstract function">função abstrata</span></span><span><i class="lg fc"></i><span class="tl" data-pt="função concreta" data-en="concrete function">função concreta</span></span><span><i class="lg da"></i><span class="tl" data-pt="dado abstrato" data-en="abstract data">dado abstrato</span></span><span><i class="lg dc"></i><span class="tl" data-pt="dado concreto" data-en="concrete data">dado concreto</span></span><span><i class="lg cb"></i><span class="tl" data-pt="objeto" data-en="object">objeto</span></span>
+    <span><i class="lg dia"></i><span class="tl" data-pt="seleção" data-en="selection">seleção</span></span><span><i class="lg el"></i><span class="tl" data-pt="else · senão" data-en="else · otherwise">else · senão</span></span><span><i class="lg lp">↻</i><span class="tl" data-pt="repetição" data-en="repetition">repetição</span></span><span><i class="lg tr"></i><span class="tl" data-pt="try" data-en="try">try</span></span><span><i class="lg ca"></i><span class="tl" data-pt="catch" data-en="catch">catch</span></span>
+  </div>
+  <div class="foot-meta"><span>FOP</span><span class="sep">·</span><a href="https://flow-oriented-programming.com/LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></div>
+</footer>
+
+<script>
+(function(){var els=document.querySelectorAll('.spread .quote-spread,.spread-flow .hero');
+els.forEach(function(e){e.classList.add('rv')});
+if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.12});
+els.forEach(function(e){io.observe(e)});})();
+</script>
+<script>
+(function(){var c=document.getElementById('cover');if(!c)return;var t=false;
+function u(){t=false;var p=Math.min(Math.max(scrollY/(c.offsetHeight*.8),0),1);c.style.setProperty('--p',p.toFixed(3))}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u();})();
+</script>
+<script>
+(function(){var h=document.getElementById('hero-plan');if(!h)return;
+function c(){if(h.scrollWidth>h.clientWidth)h.scrollLeft=(h.scrollWidth-h.clientWidth)/2}
+var mo=new MutationObserver(function(){if(h.querySelector('svg')){c();mo.disconnect()}});mo.observe(h,{childList:true,subtree:true});
+addEventListener('load',c);addEventListener('resize',c);c();})();
+</script>
+<script>
+/* abre sempre no topo (capa): ignora #âncora antiga e a rolagem restaurada, até o primeiro toque/rolagem do usuário */
+(function(){if('scrollRestoration' in history)history.scrollRestoration='manual';
+if(location.hash){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+var done=false;function stop(){done=true}
+['touchstart','wheel','keydown','mousedown'].forEach(function(e){addEventListener(e,stop,{passive:true,once:true})});
+setTimeout(stop,3000);
+function top(){if(!done&&(window.scrollY||document.documentElement.scrollTop))window.scrollTo({top:0,left:0,behavior:'instant'})}
+function loop(){top();if(!done)requestAnimationFrame(loop)}
+top();loop();addEventListener('pageshow',top);addEventListener('load',top);})();
+</script>
+<script type="module">
+import * as acorn from "https://esm.sh/acorn@8.14.0";
+
+const fn = (id, title, extra = {}) => ({
+  t: "fn", id, title, agent: "arquivo", resp: null,
+  ins: [], outs: [], kids: [], par: false, ...extra,
+});
+
+const F = fn;
+const J = (...l) => l.join("\n");
+const main = (kids, extra = {}) => F("n1", "main", { file: "main.ts", kids, ...extra });
+
+const EXAMPLES = {
+  main: { num: "2.1", title: "A unidade de processamento", lead: [["D","Função é a unidade de processamento, cujo objetivo é transformar um estado inicial em um estado final."],["P","As funções podem possuir entrada e saída."],["D","Entrada é o dado que a função recebe."],["D","Saída é o dado que a função devolve."],["P","Uma função tem, no máximo, uma entrada e uma saída."]],
+    ruleCodes: [
+      null,
+      J("async function processar(entrada) {", "  const saida = entrada;", "  return saida;", "}"),
+      J("const entrada = \"Ana\";", "await processar(entrada);", "", "async function processar(entrada) {", "}"),
+      J("const saida = await processar();", "", "async function processar() {", "  const saida = \"Ana\";", "  return saida;", "}"),
+      J("const a = 2;", "const b = 3;", "const entrada = { a, b };", "const saida = await processar(entrada);", "", "async function processar(entrada) {", "  const saida = entrada.a + entrada.b;", "  return saida;", "}"),
+    ],
+    ruleFlows: [
+      null,
+      main([F("n2", "processar", { ins: ["entrada"], outs: ["saida"], args: { entrada: '1', saida: '1' } })]),
+      main([F("n2", "processar", { ins: ["entrada"], args: { entrada: '"Ana"' } })]),
+      main([F("n2", "processar", { outs: ["saida"], args: { saida: '"Ana"' } })]),
+      main([F("n2", "processar", { ins: ["entrada"], outs: ["saida"], args: { entrada: '{ a: 2, b: 3 }', saida: '5' } })]),
+    ],
+    code: J("const a = 2;", "const b = 3;", "const entrada = { a, b };", "const saida = await processar(entrada);", "", "async function processar(entrada) {", "  const saida = entrada.a + entrada.b;", "  return saida;", "}"),
+    flow: main([F("n2", "processar", { ins: ["entrada"], outs: ["saida"], args: { entrada: '{ a: 2, b: 3 }', saida: '5' } })]) },
+  filha: { num: "2.2", title: "Função filha", lead: [["P","Uma função pode ter funções filhas, por composição."]],
+    showRoot: true,
+    code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
+    flow: main([F("n2", "hello")]) },
+  irma: { num: "2.3", title: "Função irmã", lead: [["P","As funções podem ter funções irmãs."],["D","Função irmã é a que divide o mesmo pai com outra função."],["P","Funções irmãs podem ser sequenciais ou paralelas."]],
+    showRoot: true,
+    code: J("async function main() {", "  await preparar();", "  await enviar();", "}", "", "async function preparar() {", "}", "", "async function enviar() {", "}"),
+    flow: main([F("n2", "preparar"), F("n3", "enviar")]) },
+  paralela: { num: "2.3.1", title: "Função paralela", sub: true, lead: [["D","Funções paralelas são irmãs que ocupam o mesmo passo."],["P","Funções paralelas executam juntas."],["P","As funções paralelas terminam antes do passo seguinte começar."]],
+    showRoot: true,
+    code: J("async function main() {", "  const valor = 21;", "  const [dobro, triplo] = await Promise.all([dobrar(valor), triplicar(valor)]);", "}", "", "async function dobrar(valor) {", "  const dobro = valor * 2;", "  return dobro;", "}", "", "async function triplicar(valor) {", "  const triplo = valor * 3;", "  return triplo;", "}"),
+    flow: main([F("n2", "dobrar", { ins: ["valor"], outs: ["dobro"], args: { valor: '21', dobro: '42' } }), F("n3", "triplicar", { ins: ["valor"], outs: ["triplo"], par: true, args: { valor: '21', triplo: '63' } })]) },
+  sequencial: { num: "2.3.2", title: "Função sequencial", sub: true, lead: [["P","As funções podem ser sequenciais."],["D","Funções sequenciais são irmãs em passos consecutivos."],["P","Uma função sequencial começa quando a anterior termina."],["P","Funções paralelas e sequenciais podem ser combinadas no mesmo fluxo."]],
+    showRoot: true,
+    code: J("async function main() {", "  const valor = await ler();", "  const [dobro, triplo] = await Promise.all([dobrar(valor), triplicar(valor)]);", "  const parcelas = { dobro, triplo };", "  const total = await somar(parcelas);", "}", "", "async function ler() {", "  const valor = 21;", "  return valor;", "}", "", "async function dobrar(valor) {", "  const dobro = valor * 2;", "  return dobro;", "}", "", "async function triplicar(valor) {", "  const triplo = valor * 3;", "  return triplo;", "}", "", "async function somar(parcelas) {", "  const total = parcelas.dobro + parcelas.triplo;", "  return total;", "}"),
+    flow: main([F("n2", "ler", { outs: ["valor"], args: { valor: '21' } }), F("n3", "dobrar", { ins: ["valor"], outs: ["dobro"], args: { dobro: '42' } }), F("n4", "triplicar", { ins: ["valor"], outs: ["triplo"], par: true, args: { triplo: '63' } }), F("n5", "somar", { ins: ["parcelas"], outs: ["total"], args: { parcelas: '{ dobro: 42, triplo: 63 }', total: '105' } })]) },
+  texto: { num: "3.2", title: "Texto", lead: [["D","Texto é a sequência de caracteres tratada como dado."]],
+    code: J("async function main() {", "  const texto = \"  Ana \";", "  const limpo = await limpar(texto);", "}"),
+    flow: main([F("n2", "limpar", { agent: "maquina", ins: ["texto"], outs: ["limpo"], args: { texto: '"  Ana "', limpo: '"Ana"' } })]) },
+  numero: { num: "3.3", title: "Número", lead: [["D","Número é o dado que expressa quantidade."]],
+    code: J("async function main() {", "  const valor = 21;", "  const dobro = await dobrar(valor);", "}", "", "async function dobrar(valor) {", "  const dobro = valor * 2;", "  return dobro;", "}"),
+    flow: main([F("n2", "dobrar", { ins: ["valor"], outs: ["dobro"], args: { valor: '21', dobro: '42' } })]) },
+  booleano: { num: "3.4", title: "Booleano", lead: [["D","Booleano é o dado que admite dois valores: verdadeiro e falso."],["T","O booleano é o que decide uma seleção."]],
+    code: J("async function main() {", "  const idade = 30;", "  const maior = await verificar(idade);", "}"),
+    flow: main([F("n2", "verificar", { agent: "maquina", ins: ["idade"], outs: ["maior"], args: { idade: '30', maior: 'true' } })]) },
+  funcaoDado: { num: "3.5", title: "Função como dado", lead: [["D","Uma função também é um dado, servindo como objeto substituível de uma função."],["P","Uma função guardada numa variável é tratada como dado."]],
+    code: J("async function main() {", "  const resultado = await aplicar(dobrar);", "}", "", "async function dobrar(x) {", "  const dobro = x * 2;", "  return dobro;", "}", "", "async function aplicar(dobrar) {", "  const x = 21;", "  const resultado = await dobrar(x);", "  return resultado;", "}"),
+    flow: main([F("n2", "aplicar", { ins: ["dobrar"], outs: ["resultado"], args: { dobrar: 'function (x)', resultado: '42' }, kids: [F("n3", "dobrar", { ins: ["x"], outs: ["dobro"], args: { x: '21', dobro: '42' } })] })]) },
+  objeto: { num: "3.6", title: "Objeto", lead: [["D","Objeto é o elemento que pode possuir mais de um valor ao mesmo tempo, podendo ser função e/ou estado."],["P","Os campos do objeto podem ser chaveados ou posicionais."]],
+    code: J("async function main() {", "  const pessoa = { nome: \"Ana\", idade: 30 };", "  const nome = await extrairNome(pessoa);", "}", "", "async function extrairNome(pessoa) {", "  const nome = pessoa.nome;", "  return nome;", "}"),
+    flow: main([F("n2", "extrairNome", { ins: ["pessoa"], outs: ["nome"], args: { pessoa: '{ nome: "Ana", idade: 30 }', nome: '"Ana"' } })]) },
+  chaveado: { num: "3.6.1", title: "Chaveado", sub: true, lead: [["D","Objeto chaveado é a caixa cujos campos são acessados pelo nome."],["T","<code>pessoa.nome</code> lê o campo pela chave."]],
+    code: J("async function main() {", "  const pessoa = { nome: \"Ana\", idade: 30 };", "  const nome = await extrairNome(pessoa);", "}", "", "async function extrairNome(pessoa) {", "  const nome = pessoa.nome;", "  return nome;", "}"),
+    flow: main([F("n2", "extrairNome", { ins: ["pessoa"], outs: ["nome"], args: { pessoa: '{ nome: "Ana", idade: 30 }', nome: '"Ana"' } })]) },
+  posicional: { num: "3.6.2", title: "Posicional", sub: true, lead: [["D","Objeto posicional é a caixa cujos campos são acessados pela posição."],["T","<code>lista.length</code> e o índice leem pela ordem."]],
+    code: J("async function main() {", "  const lista = [1, 2, 3];", "  const total = await contar(lista);", "}", "", "async function contar(lista) {", "  const total = lista.length;", "  return total;", "}"),
+    flow: main([F("n2", "contar", { ins: ["lista"], outs: ["total"], args: { lista: '[1, 2, 3]', total: '3' } })]) },
+  dadoConcreto: { num: "8.1", title: "Dado sólido", lead: [["D","Dado sólido é o que tem endereço."],["T","O seu quadrado é preenchido, e o valor aparece no estado."],["T","<code>dobrar</code> recebe <code>idade</code> como entrada."]], opts: { fnStates: false, hideRoot: true },
+    code: J("async function main() {", "  const idade = 30;", "  await dobrar(idade);", "", "  async function dobrar(idade) {", "  }", "}"),
+    flow: main([F("n2", "dobrar", { ins: ["idade"], args: { idade: '30' } })]) },
+  dadoAbstrato: { num: "8.2", title: "Dado abstrato", lead: [["D","Dado abstrato é o que ainda não tem endereço."],["T","O seu quadrado é vazado."],["T","<code>dobrar</code> recebe <code>idade</code>, que ainda não tem valor."]], opts: { fnStates: false, hideRoot: true },
+    code: J("async function main(idade) {", "  await dobrar(idade);", "", "  async function dobrar(idade) {", "  }", "}"),
+    flow: main([F("n2", "dobrar", { ins: ["idade"] })], { ins: ["idade"] }) },
+  todosDados: { num: "3.1", title: "Todos os tipos de dado", lead: [["D","Dados são as unidades mutáveis do fluxo."],["D","A visão de dados reúne todos os tipos de dado no mesmo estado."],["P","O identificador de um dado é um substantivo, como <code>mesa</code> ou <code>cadeira</code>."],["P","Todo dado tem um endereço, representado pelo seu nome."],["P","Em um mesmo contexto, ou bloco, endereços diferentes não podem ter nomes iguais."],["P","Todo dado simples é representado por um quadrado."],["P","Texto, número, booleano e nulo são dados simples."],["P","Toda caixa é representada por um cubo."],["P","O objeto é uma caixa, com campos chaveados ou posicionais."],["P","A função usada como dado continua sendo função, representada por um círculo."]], opts: { fnStates: false },
+    beforePlan: `<div class="intro"><p>Dados podem ser:</p><ul><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4V2.500h12V4M8 2.500v11M5.500 13.500h5" fill="none" stroke="var(--dado)" stroke-width="1.600" stroke-linecap="round" stroke-linejoin="round"/></svg><span>texto</span></li><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.500 2 4.500 14M11.500 2 10.500 14M2 5.500h12.500M1.500 10.500H14" fill="none" stroke="var(--dado)" stroke-width="1.600" stroke-linecap="round"/></svg><span>número</span></li><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.500" y="4" width="13" height="8" rx="4" fill="none" stroke="var(--dado)" stroke-width="1.500"/><circle cx="11" cy="8" r="2.300" fill="var(--dado)"/></svg><span>booleano</span></li><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="var(--fn)"/></svg><span>função</span></li><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.500 14 5v6.500L8 15 2 11.500V5Z M2 5l6 3.500L14 5 M8 8.500V15" fill="var(--dado)" stroke="var(--paper)" stroke-width=".9" stroke-linejoin="round"/></svg><span>objeto</span></li><li><svg class="di" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.500" fill="none" stroke="var(--dado)" stroke-width="1.500"/><path d="M4 12 12 4" stroke="var(--dado)" stroke-width="1.500" stroke-linecap="round"/></svg><span>nulo</span></li></ul></div>`,
+    code: J("async function main() {", "  const texto = \"Ana\";", "  const numero = 42;", "  const booleano = true;", "  const funcao = dobrar;", "  const pessoa = { nome: \"Ana\", idade: 30 };", "  const lista = [1, 2, 3];", "  const vazio = null;", "}", "", "async function dobrar(x) {", "  const dobro = x * 2;", "  return dobro;", "}"),
+    flow: main([], { args: {"texto":"\"Ana\"","numero":"42","booleano":"true","funcao":"function (x)","pessoa":"{ nome: \"Ana\", idade: 30 }","lista":"[1, 2, 3]","vazio":"null"} }) },
+  tipoNulo: { num: "3.7", title: "Nulo", lead: [["D","Nulo é o dado que representa a ausência de valor."],["P","Uma função devolve nulo quando não encontra o que procura."]],
+    code: J("async function main() {", "  const codigo = 99;", "  const cliente = await buscar(codigo);", "}"),
+    flow: main([F("n2", "buscar", { agent: "maquina", ins: ["codigo"], outs: ["cliente"], args: { codigo: '99', cliente: 'null' } })]) },
+  estado: { num: "3.8", title: "Estado do fluxo", lead: [["D","Estado é o conjunto de funções e dados disponíveis num passo."],["P","O estado é listado abaixo do passo."]],
+    code: J("async function main() {", "  const pedido = await receber();", "  const pagamento = await cobrar(pedido);", "  await enviar(pedido, pagamento);", "", "  async function receber() {", "    const id = 1;", "    const pedido = { id };", "    return pedido;", "  }", "  async function cobrar(pedido) {", "    const pagamento = \"pago\";", "    return pagamento;", "  }", "  async function enviar(pedido, pagamento) {", "  }", "}"),
+    flow: main([F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"], outs: ["pagamento"] }), F("n4", "enviar", { ins: ["pedido", "pagamento"] })]) },
+  estadoInicial: { num: "3.9", title: "Estado inicial", lead: [["D","Estado inicial é o que existe antes da primeira função."]],
+    code: J("async function main() {", "  const nome = \"Ana\";", "  const saudacao = await saudar(nome);", "", "  async function saudar(nome) {", "    const saudacao = nome;", "    return saudacao;", "  }", "}"),
+    flow: main([F("n2", "saudar", { ins: ["nome"], outs: ["saudacao"], args: { nome: '"Ana"' } })]) },
+  estadoCaixa: { num: "3.10", title: "Estado com objeto", lead: [["P","Um objeto no estado é um cubo, com os campos e valores logo abaixo."]],
+    code: J("async function main() {", "  const cliente = { id: 1, score: 9 };", "  const pontos = await pontuar(cliente);", "", "  async function pontuar(cliente) {", "    const pontos = cliente.score;", "    return pontos;", "  }", "}"),
+    flow: main([F("n2", "pontuar", { ins: ["cliente"], outs: ["pontos"], args: { cliente: "{ id: 1, score: 9 }" } })]) },
+  estadoAbstrato: { num: "8.5", title: "Estado abstrato", lead: [["D","Estado abstrato é o dado que nenhuma função do fluxo produz."],["P","Quem chama o fluxo o fornece."],["T","O seu quadrado é vazado."]],
+    code: J("async function main(pedido) {", "  await cobrar(pedido);", "", "  async function cobrar(pedido) {", "  }", "}"),
+    flow: main([F("n2", "cobrar", { ins: ["pedido"] })]) },
+  se: { num: "4.1", title: "if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."],["P","A seleção é usada quando não se sabe o que executar antes de ter a informação."]],
+    opts: { rails: true },
+    code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
+    flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
+  seSenao: { num: "4.2", title: "if e else", lead: [["P","<code>if</code> e <code>else</code> ocupam o mesmo passo."],["T","Apenas um dos ramos executa."]], opts: { elseParallel: true, rails: true },
+    code: J("async function main() {", "  const aprovada = true;", "  if (aprovada) {", "    await enviar();", "  } else {", "    await revisar();", "  }", "", "  async function enviar() {", "  }", "  async function revisar() {", "  }", "}"),
+    flow: main([{ t: "if", id: "i1", test: "aprovada", kids: [F("n2", "enviar")], elseKids: [F("n3", "revisar")] }]) },
+  switchEx: { num: "4.3", title: "switch", lead: [["D","O <code>switch</code> é a seleção com vários caminhos por valor."],["P","Cada <code>case</code> equivale a um <code>if</code>."],["T","Os cases ocupam o mesmo passo, em paralelo."]],
+    opts: { rails: true },
+    code: J("async function main() {", "  const meio = \"pix\";", "  switch (meio) {", "    case \"pix\":", "      await pagarPix();", "      break;", "    case \"cartao\":", "      await pagarCartao();", "      break;", "  }", "", "  async function pagarPix() {", "  }", "  async function pagarCartao() {", "  }", "}"),
+    flow: main([{ t: "switch", id: "sw1", expr: "meio", kids: [
+      { t: "if", id: "i1", test: "meio === 'pix'", caseVal: '"pix"', kids: [F("n2", "pagarPix")], elseKids: [] },
+      { t: "if", id: "i2", test: "meio === 'cartao'", caseVal: '"cartao"', kids: [F("n3", "pagarCartao")], elseKids: [], par: true }] }]) },
+
+  repFor: { num: "5.1", title: "for", lead: [["D","Repetição é a estrutura que executa um bloco várias vezes."],["P","A coleção é atribuída a uma variável antes do laço."],["T","<code>notificar</code> executa uma vez por item."],["P","As repetições possíveis são <code>for</code>, <code>while</code> e <code>do-while</code>."]],
+    code: J("async function main() {", "  const itens = [1, 2];", "  for (const item of itens) {", "    await notificar(item);", "  }", "", "  async function notificar(item) {", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "notificar", { ins: ["item"], args: { item: '1' } })] }]) },
+  repFor2: { num: "5.2", title: "for", lead: [["P","O corpo de um laço pode ter passos sequenciais e paralelos."]],
+    code: J("async function main() {", "  const itens = [1, 2];", "  for (const item of itens) {", "    await validar(item);", "    await salvar(item);", "  }", "", "  async function validar(item) {", "  }", "  async function salvar(item) {", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n2", "validar", { ins: ["item"], args: { item: '1' } }), F("n3", "salvar", { ins: ["item"], args: { item: '1' } })] }]) },
+  repWhile: { num: "5.3", title: "while", lead: [["P","O <code>while</code> repete enquanto a condição for verdadeira."],["T","O rótulo do bloco mostra a condição."]],
+    code: J("async function main() {", "  const pendente = true;", "  while (pendente) {", "    await tentar();", "  }", "", "  async function tentar() {", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", loop: "while", kids: [F("n2", "tentar")] }]) },
+
+  tryCatch: { num: "6.1", title: "try / catch", lead: [["D","<code>try/catch</code> é a estrutura que trata a falha."],["T","Se <code>cobrar</code> falha, o fluxo vai para o <code>catch</code>."],["T","<code>avisar</code> executa no <code>catch</code>."],["P","O <code>try/catch</code> vem primeiro; as funções são definidas fora de <code>main</code>."]],
+    code: J("async function main() {", "  try {", "    await cobrar();", "  } catch (error) {", "    await avisar();", "  }", "", "  async function cobrar() {", "  }", "  async function avisar() {", "  }", "}"),
+    flow: main([{ t: "try", id: "t1", kids: [F("n2", "cobrar")], catchKids: [F("n3", "avisar")] }]) },
+  blocos: { num: "7.1", title: "Blocos", lead: [["D","Bloco é a estrutura que agrupa passos no plano: seleção, repetição ou try/catch."],["P","O bloco tem rótulo próprio e cobre o tempo das folhas de dentro."],["P","O estado continua listando o que está disponível em cada passo do bloco."]],
+    code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
+    flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
+  tryFor: { num: "7.1.1", title: "Blocos combinados", sub: true, lead: [["P","Os blocos podem ser aninhados."],["T","Aqui há um <code>try/catch</code> dentro de um <code>for</code>."]],
+    code: J("async function main() {", "  const itens = [1, 2];", "  for (const item of itens) {", "    try {", "      await enviar(item);", "    } catch (error) {", "      await registrarFalha();", "    }", "  }", "", "  async function enviar(item) {", "  }", "  async function registrarFalha() {", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "item", coll: "itens", kids: [
+      { t: "try", id: "t1", kids: [F("n2", "enviar", { ins: ["item"], args: { item: '1' } })], catchKids: [F("n3", "registrarFalha")] }] }]) },
+
+  fileMesmo: { num: "8.1", title: "Duas funções no mesmo arquivo", lead: [["D","Arquivo é o endereço físico de uma função de 1ª ordem."],["P","Várias funções podem dividir o mesmo arquivo."],["P","Todo dado e toda função têm um endereço."],["P","O arquivo organiza os endereços sólidos."]],
+    code: J("// app.ts", "async function main() {", "}", "async function util() {", "}"),
+    flows: [F("n1", "main", { file: "app.ts" }), F("n2", "util", { file: "app.ts" })] },
+  fileOutro: { num: "8.2", title: "Arquivos diferentes", lead: [["P","Arquivos distintos são endereços físicos distintos."],["P","Arquivo não é camada."]],
+    code: J("// main.ts", "import { pagar } from \"./pagamento\";", "async function main() {", "  await pagar();", "}", "", "// pagamento.ts", "export async function pagar() {", "}"),
+    flows: [main([F("n2", "pagar")]), F("n3", "pagar", { file: "pagamento.ts" })] },
+  fileObjeto: { num: "8.3", title: "Arquivo como objeto", lead: [["P","O arquivo também é objeto e estado."],["T","Ele é uma caixa com endereço físico, que guarda dados e funções."]],
+    code: J("// pedidos.json como estado/objeto", "async function main() {", "  const pedidos = await lerArquivo();", "  await salvarArquivo(pedidos);", "", "  async function lerArquivo() {", "    const pedidos = { itens: [] };", "    return pedidos;", "  }", "  async function salvarArquivo(pedidos) {", "  }", "}"),
+    flow: main([F("n2", "lerArquivo", { outs: ["pedidos"], agent: "arquivo" }), F("n3", "salvarArquivo", { ins: ["pedidos"], agent: "arquivo" })]) },
+
+  responsavel: { num: "11.1", title: "Responsável", lead: [["D","Responsável é quem executa o passo."],["P","É a fonte, a origem da função."],["P","O responsável pode ser sólido ou abstrato."]],
+    code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
+    flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
+
+  responsavelSolido: { num: "11.2", title: "Responsável sólido", lead: [["D","Responsável sólido é o que está definido no passo e possui endereço físico."],["P","Toda função que tem responsável se torna sólida."]],
+    code: J("async function main() {", "  await maquina.cobrar();", "  await arquivo.ler();", "  await pessoa.aprovar();", "}"),
+    flow: main([F("n2", "cobrar", { agent: "maquina" }), F("n3", "ler", { agent: "arquivo" }), F("n4", "aprovar", { agent: "pessoa" })]) },
+
+  responsavelAbstrato: { num: "11.3", title: "Responsável abstrato", lead: [["D","Responsável abstrato é o que ainda não foi definido."],["P","Ele é o espaço a ser preenchido: ainda não há quem execute."]],
+    code: J("async function main(cobrar) {", "  await cobrar();", "}"),
+    flow: main([F("n2", "cobrar", { agent: null })], { ins: ["cobrar"] }) },
+
+  abstrata: { num: "8.4", title: "Função abstrata", lead: [["D","Função abstrata é a que não tem endereço físico."],["T","A sua barra é só contorno."],["T","Ela vem da função pai: <code>vender</code> recebe <code>hello</code> como entrada, o círculo vazado com borda vermelha."],["T","<code>hello</code> recebe <code>nome</code> como entrada."],["P","É o único caso de barra vazada nos exemplos."],["P","As estruturas universais ficam no plano abstrato, ainda vazio."],["P","O que se conhece no plano abstrato forma a mesma camada."],["P","Camada não é arquivo."]],
+    code: J("// vendas.ts", "async function vender(hello) {", "  const nome = \"Ana\";", "  await hello(nome);", "}"),
+    flow: F("n1", "vender", { file: "vendas.ts", ins: ["hello"], kids: [F("n2", "hello", { agent: null, ins: ["nome"], args: { nome: '"Ana"' } })] }) },
+
+  solida: { num: "8.3", title: "Função sólida", lead: [["D","Função sólida é a que tem endereço físico."],["P","Toda função de 1ª ordem é sólida."],["P","A camada abstrata se torna sólida ao receber um endereço."],["T","A barra é preenchida, e há quem execute."],["P","Para executar, a camada abstrata precisa ser preenchida com um sólido."]],
+    opts: { hideRoot: true },
+    code: J("async function main() {", "  const valor = 100;", "  await maquina.cobrar(valor);", "}"),
+    flow: main([F("n2", "cobrar", { agent: "maquina", ins: ["valor"], args: { valor: '100' } })]) },
+
+  publica: { num: "9.1", title: "Pública", lead: [["D","Função pública é a que pode ser acessada fora do arquivo."],["P","Dados e funções podem ser públicos ou privados."]],
+    code: J("export async function main() {", "}"), flow: main([]) },
+  privada: { num: "9.2", title: "Privada", lead: [["D","Função privada é a que existe só dentro do arquivo ou da caixa."],["P","O privado só é acessado dentro da caixa."],["P","A função privada aninhada é chamada primeiro e definida fora de <code>main</code>."]],
+    code: J("async function main() {", "  await interna();", "", "  async function interna() {", "  }", "}"), flow: main([F("n2", "interna")]) },
+
+  seAninhado: { num: "4.4", title: "if aninhados", lead: [["P","Um <code>if</code> pode estar no <code>else</code> de outro."],["T","Há três caminhos possíveis, e só um executa."]],
+    code: J("async function main() {", "  const nota = 7;", "  const aprovado = nota >= 7;", "  if (aprovado) {", "    await publicar();", "  } else {", "    const recuperacao = nota >= 5;", "    if (recuperacao) {", "      await refazer();", "    } else {", "      await reprovar();", "    }", "  }", "", "  async function publicar() {", "  }", "  async function refazer() {", "  }", "  async function reprovar() {", "  }", "}"),
+    opts: { elseParallel: true, rails: true },
+    flow: main([{ t: "if", id: "i1", test: "aprovado", kids: [F("n2", "publicar")], elseKids: [
+      { t: "if", id: "i2", test: "recuperacao", kids: [F("n3", "refazer")], elseKids: [F("n4", "reprovar")] }] }]) },
+  repDoWhile: { num: "5.4", title: "do-while", lead: [["P","O <code>do-while</code> executa ao menos uma vez."],["P","Repete enquanto a condição valer."]],
+    code: J("async function main() {", "  let pendente = true;", "  do {", "    pendente = await tentar();", "  } while (pendente);", "", "  async function tentar() {", "    const pendente = false;", "    return pendente;", "  }", "}"),
+    flow: main([{ t: "for", id: "l1", v: "tentativa", coll: "pendente", loop: "do-while", kids: [F("n2", "tentar", { outs: ["pendente"] })] }]) },
+
+  solidSrp: { num: "11.1", title: "Responsabilidade única", lead: [["D","Responsabilidade única significa que cada função cuida de uma só coisa."],["T","<code>pedido</code> apenas compõe."],["T","O trabalho está em <code>validar</code>, <code>cobrar</code> e <code>enviar</code>."],["P","O Flow aplica os princípios SOLID."]],
+    code: J("async function main() {", "  await pedido();", "", "  async function pedido() {", "    await validar();", "    await cobrar();", "    await enviar();", "", "    async function validar() {", "    }", "    async function cobrar() {", "    }", "    async function enviar() {", "    }", "  }", "}"),
+    flow: main([F("n2", "pedido", { kids: [F("n3", "validar"), F("n4", "cobrar"), F("n5", "enviar")] })]) },
+  solidDip: { num: "11.2", title: "Depender do abstrato", lead: [["P","O fluxo depende do abstrato, não de quem o implementa."],["T","<code>cobrar</code> é uma camada abstrata."],["T","Trocar o responsável não altera o resto do fluxo."]],
+    code: J("async function main() {", "  const { cobrar } = state;", "  await cobrar();", "}"),
+    flow: main([F("n2", "cobrar", { agent: null })]) },
+
+  padFactory: { num: "12.1", title: "Factory", lead: [["D","Factory é a função que cria e devolve um objeto já montado."]],
+    code: J("async function main() {", "  const cliente = await criarCliente();", "", "  async function criarCliente() {", "    const id = 1;", "    const nome = \"Ana\";", "    const cliente = { id, nome };", "    return cliente;", "  }", "}"),
+    flow: main([F("n2", "criarCliente", { outs: ["id", "nome"] })]) },
+  padSingleton: { num: "12.2", title: "Singleton", lead: [["D","Singleton é a instância única e compartilhada."],["T","<code>usarA</code> e <code>usarB</code> leem o mesmo <code>config</code>."],["P","Os padrões de projeto (factory, singleton) têm forma própria no plano."]],
+    code: J("async function main() {", "  const config = await carregar();", "  await usarA(config);", "  await usarB(config);", "", "  async function carregar() {", "    const config = { tema: \"black\" };", "    return config;", "  }", "  async function usarA(config) {", "  }", "  async function usarB(config) {", "  }", "}"),
+    flow: main([F("n2", "carregar", { outs: ["config"] }), F("n3", "usarA", { ins: ["config"] }), F("n4", "usarB", { ins: ["config"], par: true })]) },
+
+  oopFlow: { num: "13.1", title: "Instanciar", lead: [["P","Instanciar uma classe corresponde a um objeto responsável."],["P","Cada método é um passo."],["T","A instanciação de uma classe é equivalente à de um fluxo."]],
+    code: J("class Carrinho {", "  async adicionar() {", "  }", "}", "", "async function main() {", "  const carrinho = new Carrinho();", "  await carrinho.adicionar();", "}"),
+    flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
+
+  folha: { num: "10.1", title: "Folha", lead: [["P","Só a folha ocupa um passo no plano."]],
+    code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
+    flow: main([F("n2", "hello")]) },
+  useCase: { num: "10.2", title: "Use case", lead: [["D","Use case é uma função que tem funções filhas."],["P","Use case também deve ser completamente abstrato."]],
+    code: J("// vendas.ts", "async function vender() {", "  const pedido = await receber();", "  await cobrar(pedido);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "}"),
+    flow: F("n1", "vender", { file: "vendas.ts", kids: [F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"] })] }) },
+};
+
+const IC = (b) => `<svg class="ic" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">${b}</svg>`;
+const ICONS = {
+  flow: IC('<path d="M1 7h4l2-4 2 8 2-4h2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'),
+  sistema: IC('<circle cx="4" cy="4" r="2.600" fill="var(--fn)"/><rect x="8" y="8" width="5" height="5" fill="var(--dado)"/><path d="M6 6l2.500 2.500" stroke="currentColor" stroke-width="1.200" stroke-linecap="round"/>'),
+  funcoes: IC('<circle cx="7" cy="7" r="5.5" fill="var(--fn)"/>'),
+  dados: IC('<rect x="2" y="2" width="10" height="10" fill="var(--dado)"/>'),
+  estados: IC('<path d="M7 1 12.5 4v6L7 13 1.5 10V4Z M1.5 4 7 7l5.5-3 M7 7v6" fill="var(--dado)" stroke="var(--paper)" stroke-width=".9" stroke-linejoin="round"/>'),
+  selecao: IC('<path d="M7 1.5 13 12H1Z" fill="none" stroke="#d97706" stroke-width="1.6" stroke-linejoin="round"/>'),
+  repeticao: IC('<path d="M11.5 5A5 5 0 1 0 12 8M11.5 1.5V5H8" fill="none" stroke="#8b5cf6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'),
+  trycatch: IC('<path d="M7 1c1.6 0 3 .8 4 1.8v4C11 10 9.200 11.500 7 12.500 4.800 11.500 3 10 3 6.800v-4C4 1.800 5.400 1 7 1Z" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linejoin="round"/>'),
+  files: IC('<path d="M3 1.5h5l3 3v8H3Z M8 1.500v3h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'),
+  responsaveis: IC('<circle cx="7" cy="4.500" r="2.500" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 12.500c0-2.800 2.200-4.500 5-4.500s5 1.700 5 4.500" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'),
+  solidos: IC('<rect x="2" y="2" width="10" height="10" rx="1.500" fill="currentColor"/>'),
+  publico: IC('<rect x="2.500" y="6" width="9" height="6.500" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.500 6V4.500a2.500 2.500 0 0 1 5 0V6" fill="none" stroke="currentColor" stroke-width="1.4"/>'),
+  praticas: IC('<path d="M2 7.500 5.500 11 12 3" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"/>'),
+  padroes: IC('<rect x="1.500" y="1.500" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="8" y="1.500" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="1.500" y="8" width="4.500" height="4.500" fill="none" stroke="currentColor" stroke-width="1.300"/><rect x="8" y="8" width="4.500" height="4.500" fill="currentColor"/>'),
+  oop: IC('<path d="M7 1 12.500 4v6L7 13 1.500 10V4Z" fill="none" stroke="currentColor" stroke-width="1.400" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.800" fill="currentColor"/>'),
+  folhas: IC('<circle cx="3.500" cy="10" r="2" fill="currentColor"/><circle cx="10.500" cy="10" r="2" fill="currentColor"/><path d="M7 2v5M7 7 3.500 10M7 7l3.500 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'),
+};
+
+const GROUPS = [
+  { id: "flow", n: "0.", title: "Flow", html: `<div class="prose"><p>O Flow é uma linguagem de programação visual e universal. Adicionalmente, pode ser empregado como notação de diagramação, permitindo a representação gráfica de sistemas e de processos. O programa é um fluxo desenhado, que pode ser transpilado para qualquer linguagem, e a linguagem oferece os recursos usuais: funções, dados, objetos, seleção, repetição e tratamento de erros.</p>
+<p>Este documento reúne as regras e as descrições de como utilizar a linguagem.</p>
+<p>Todo sistema é composto, essencialmente, de unidades de processamento e de unidades processáveis, isto é, de funções e de estados. A função é a unidade de processamento, eterna e imutável, e por essa natureza é representada por um círculo. O estado é a unidade processável, o dado processado pela função, mutável e transitório, e por essa natureza é representado por um quadrado. Um software é um conjunto de fluxos de execução.</p>
+<p>O desenho substitui a leitura linear do código-fonte, e a ordem de execução, o paralelismo e o caminho dos dados ficam explícitos, o que reduz o esforço de análise. Todos os fluxos de um sistema podem ser vistos em conjunto, e os componentes, por serem desacoplados a nível de serviço, podem ser substituídos em qualquer contexto. A representação visual também facilita o aprendizado de programação por iniciantes, pois permite expressar a lógica sem depender da sintaxe de uma linguagem.</p>
+<p>O objetivo do Flow é também dar face ao que antes não foi visto: o que no código ficava implícito, escondido na linearidade do texto, ganha forma e lugar no desenho.</p>
+<p>O modelo se aplica aos processos de software, ou seja, ao código, e à gestão de processos em geral, incluindo o gerenciamento de tarefas. Nesse segundo uso, o responsável por cada passo pode ser uma pessoa, um agente de IA, uma máquina ou outro sistema.</p>
+</div>`, keys: [] },
+  { id: "sistema", n: "1.", title: "Sistema", html: `<div class="legend" aria-label="Ícones">
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle class="fnc" cx="11" cy="11" r="9"/></svg>
+    <div><b>Função</b><span>unidade de processamento</span></div>
+  </div>
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect class="dtq" x="3" y="3" width="16" height="16"/></svg>
+    <div><b>Dado</b><span>unidade processável</span></div>
+  </div>
+</div>`, rules: ["Sistema é um conjunto de fluxos de execução.", "O sistema é formado por unidades de processamento, as funções, e por unidades processáveis, os estados.", "Em um sistema, dados e chamadas de funções são equivalentes."], keys: [] },
+  { id: "funcoes", n: "2.", title: "Funções", keys: ["main","filha","irma","paralela","sequencial"] },
+  { id: "estados", n: "3.", title: "Estados", keys: ["estado","estadoInicial","estadoCaixa","todosDados","texto","numero","booleano","funcaoDado","objeto","chaveado","posicional","tipoNulo"] },
+  { id: "selecao", n: "4.", title: "Seleção", keys: ["se","seSenao","switchEx","seAninhado"] },
+  { id: "repeticao", n: "5.", title: "Repetição", keys: ["repFor","repFor2","repWhile","repDoWhile"] },
+  { id: "trycatch", n: "6.", title: "try / catch", keys: ["tryCatch"] },
+  { id: "blocosec", n: "7.", title: "Blocos", keys: ["blocos","tryFor"] },
+  { id: "solidos", n: "8.", title: "Sólidos e abstratos", html: `<div class="legend four" aria-label="Sólidos e abstratos">
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect class="dtq" x="3" y="3" width="16" height="16"/></svg>
+    <div><b>Dado sólido</b><span>tem valor</span></div>
+  </div>
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect class="dta" x="4" y="4" width="14" height="14"/></svg>
+    <div><b>Dado abstrato</b><span>ainda sem valor</span></div>
+  </div>
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle class="fnc" cx="11" cy="11" r="9"/></svg>
+    <div><b>Função sólida</b><span>tem endereço físico</span></div>
+  </div>
+  <div class="it">
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle class="fna" cx="11" cy="11" r="8"/></svg>
+    <div><b>Função abstrata</b><span>sem endereço físico</span></div>
+  </div>
+</div>`, rules: ["Sólidos possuem endereço físico: são os entes que compõem o componente.", "Abstratos não possuem endereço físico: são o espaço a ser preenchido.", "Dados e funções podem ser sólidos ou abstratos.", "As funções não devem possuir sólidos, apenas abstratos."], keys: ["dadoConcreto","dadoAbstrato","solida","abstrata","estadoAbstrato"] },
+  { id: "publico", hidden: true, n: "9.", title: "Público e privado", keys: ["publica","privada"] },
+  { id: "folhas", n: "10.", title: "Folhas e use cases", rules: ["Folhas são funções sem filhas.", "Use cases são funções com filhas."], keys: ["folha", "useCase"] },
+  { id: "responsaveis", n: "11.", title: "Responsáveis", lead: "Quem executa o passo.", keys: ["responsavel","responsavelSolido","responsavelAbstrato"] },
+  { id: "files", hidden: true, n: "", title: "Files", keys: ["fileMesmo","fileOutro","fileObjeto"] },
+  { id: "praticas", hidden: true, n: "", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp","solidDip"] },
+  { id: "padroes", hidden: true, n: "", title: "Padrões de projeto", keys: ["padFactory","padSingleton"] },
+  { id: "oop", hidden: true, n: "", title: "OOP e Flow", keys: ["oopFlow"] }];
+const ANCHOR = { main: "main", filha: "filha", paralela: "paralela", sequencial: "sequencial" };
+const anchor = (k) => ANCHOR[k] ?? k;
+
+const prune = (node) => {
+  if (!node || typeof node !== "object") return node;
+  if (Array.isArray(node)) return node.map(prune);
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    if (k === "start" || k === "end" || k === "loc" || k === "range") continue;
+    out[k] = prune(v);
+  }
+  return out;
+};
+
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+// ── idioma (EN / PT-BR) ──
+const EN = {"examples":{"main":{"t":"The unit of processing","r":["A function is the unit of processing, whose purpose is to transform an initial state into a final state.","Functions may have an input and an output.","The input is the data that the function receives.","The output is the data that the function returns.","A function has, at most, one input and one output."]},"filha":{"t":"Child function","r":["A function may have child functions, by composition."]},"irma":{"t":"Sibling function","r":["Functions may have sibling functions.","A sibling function is one that shares the same parent with another function.","Sibling functions may be sequential or parallel."]},"paralela":{"t":"Parallel function","r":["Parallel functions are siblings that occupy the same step.","Parallel functions execute together.","Parallel functions finish before the next step begins."]},"sequencial":{"t":"Sequential function","r":["Functions may be sequential.","Sequential functions are siblings in consecutive steps.","A sequential function starts when the previous one finishes.","Parallel and sequential functions may be combined in the same flow."]},"texto":{"t":"Text","r":["Text is a sequence of characters treated as data."]},"numero":{"t":"Number","r":["A number is data that expresses quantity."]},"booleano":{"t":"Boolean","r":["A boolean is data that admits two values: true and false.","The boolean is what decides a selection."]},"funcaoDado":{"t":"Function as data","r":["A function is also data, serving as a replaceable object of a function.","A function stored in a variable is treated as data."]},"objeto":{"t":"Object","r":["An object is the element that can hold more than one value at the same time, which may be function and/or state.","The fields of an object may be keyed or positional."]},"dadoConcreto":{"t":"Solid data","r":["Solid data is data that has an address.","Its square is filled, and the value appears in the state.","<code>dobrar</code> receives <code>idade</code> as input."]},"dadoAbstrato":{"t":"Abstract data","r":["Abstract data is data that does not have an address yet.","Its square is hollow.","<code>dobrar</code> receives <code>idade</code>, which does not have a value yet."]},"todosDados":{"t":"All data types","r":["Data are the mutable units of the flow.","The data overview gathers all data types in the same state.","The identifier of a piece of data is a noun, such as <code>mesa</code> or <code>cadeira</code>.","Every piece of data has an address, represented by its name.","Within the same context, or block, different addresses cannot have the same name.","Every simple data is represented by a square.","Text, number, boolean and null are simple data.","Every box is represented by a cube.","The object is a box, with keyed or positional fields.","A function used as data remains a function, represented by a circle."]},"tipoNulo":{"t":"Null","r":["Null is data that represents the absence of a value.","A function returns null when it does not find what it is looking for."]},"estado":{"t":"Flow state","r":["The state is the set of functions and data available in a step.","The state is listed below the step."]},"estadoInicial":{"t":"Initial state","r":["The initial state is what exists before the first function."]},"estadoCaixa":{"t":"State with an object","r":["An object in the state is a cube, with its fields and values right below."]},"estadoAbstrato":{"t":"Abstract state","r":["The abstract state is data that no function of the flow produces.","Whoever calls the flow provides it.","Its square is hollow."]},"se":{"t":"if","r":["Selection is the structure that decides, based on data, where the flow goes.","The condition is assigned to a variable before the <code>if</code>.","<code>enviar</code> only executes if the condition is true.","Selection is used when it is not known what to execute before having the information."]},"seSenao":{"t":"if and else","r":["<code>if</code> and <code>else</code> occupy the same step.","Only one of the branches executes."]},"switchEx":{"t":"switch","r":["The <code>switch</code> is the selection with several paths by value.","Each <code>case</code> is equivalent to an <code>if</code>.","The cases occupy the same step, in parallel."]},"repFor":{"t":"for","r":["Repetition is the structure that executes a block several times.","The collection is assigned to a variable before the loop.","<code>notificar</code> executes once per item.","The possible repetitions are <code>for</code>, <code>while</code> and <code>do-while</code>."]},"repFor2":{"t":"for","r":["The body of a loop may have sequential and parallel steps."]},"repWhile":{"t":"while","r":["The <code>while</code> repeats while the condition is true.","The block label shows the condition."]},"tryCatch":{"t":"try / catch","r":["<code>try/catch</code> is the structure that handles failure.","If <code>cobrar</code> fails, the flow goes to the <code>catch</code>.","<code>avisar</code> executes in the <code>catch</code>.","The <code>try/catch</code> comes first; the functions are defined outside <code>main</code>."]},"tryFor":{"t":"Combined blocks","r":["Blocks may be nested.","Here there is a <code>try/catch</code> inside a <code>for</code>."]},"fileMesmo":{"t":"Two functions in the same file","r":["A file is the physical address of a first-order function.","Several functions may share the same file.","Every piece of data and every function has an address.","The file organizes the solid addresses."]},"fileOutro":{"t":"Different files","r":["Distinct files are distinct physical addresses.","A file is not a layer."]},"fileObjeto":{"t":"File as object","r":["The file is also an object and a state.","It is a box with a physical address, which holds data and functions."]},"abstrata":{"t":"Abstract function","r":["An abstract function is one that has no physical address.","Its bar is only an outline.","It comes from the parent function: <code>vender</code> receives <code>hello</code> as input, the hollow circle with a red border.","<code>hello</code> receives <code>nome</code> as input.","It is the only case of a hollow bar in the examples.","Universal structures stay in the abstract plan, still empty.","What is known in the abstract plan forms the same layer.","A layer is not a file."]},"solida":{"t":"Solid function","r":["A solid function is one that has a physical address.","Every first-order function is solid.","The abstract layer becomes solid when it receives an address.","The bar is filled, and someone executes it.","To execute, the abstract layer needs to be filled with a solid."]},"publica":{"t":"Public","r":["A public function is one that can be accessed outside the file.","Data and functions may be public or private."]},"privada":{"t":"Private","r":["A private function is one that exists only inside the file or the box.","Private members are accessed only inside the box.","A nested private function is called first and defined outside <code>main</code>."]},"seAninhado":{"t":"Nested if","r":["An <code>if</code> may be inside the <code>else</code> of another.","There are three possible paths, and only one executes."]},"repDoWhile":{"t":"do-while","r":["The <code>do-while</code> executes at least once.","It repeats while the condition holds."]},"solidSrp":{"t":"Single responsibility","r":["Single responsibility means that each function takes care of one thing only.","<code>pedido</code> only composes.","The work is in <code>validar</code>, <code>cobrar</code> and <code>enviar</code>.","Flow applies the SOLID principles."]},"solidDip":{"t":"Depend on the abstract","r":["The flow depends on the abstract, not on whoever implements it.","<code>cobrar</code> is an abstract layer.","Changing the responsible party does not change the rest of the flow."]},"padFactory":{"t":"Factory","r":["A factory is the function that creates and returns an already assembled object."]},"padSingleton":{"t":"Singleton","r":["A singleton is the single, shared instance.","<code>usarA</code> and <code>usarB</code> read the same <code>config</code>.","Design patterns (factory, singleton) have their own form in the plan."]},"oopFlow":{"t":"Instantiation","r":["Instantiating a class corresponds to a responsible object.","Each method is a step.","Instantiating a class is equivalent to instantiating a flow."]},"folha":{"t":"Leaf","r":["Only the leaf occupies a step in the plan."]},"useCase":{"t":"Use case","r":["A use case is a function that has child functions.","A use case must also be completely abstract."]},"chaveado":{"t":"Keyed","r":["A keyed object is the box whose fields are accessed by name.","<code>pessoa.nome</code> reads the field by key."]},"posicional":{"t":"Positional","r":["A positional object is the box whose fields are accessed by position.","<code>lista.length</code> and the index read by order."]},"blocos":{"t":"Blocks","r":["A block is the structure that groups steps in the plan: selection, repetition or try/catch.","The block has its own label and covers the time of the leaves inside it.","The state still lists what is available at each step of the block."]},"responsavel":{"t":"Responsible party","r":["The responsible party is whoever executes the step.","It is the source, the origin of the function.","The responsible party may be solid or abstract."]},"responsavelSolido":{"t":"Solid responsible party","r":["A solid responsible party is one that is defined in the step and has a physical address.","Every function that has a responsible party becomes solid."]},"responsavelAbstrato":{"t":"Abstract responsible party","r":["An abstract responsible party is one that has not been defined yet.","It is the space to be filled: there is still no one to execute."]}},"groups":{"flow":{"t":"Flow"},"sistema":{"t":"System","rules":["A system is a set of execution flows.","The system is formed by units of processing, the functions, and by processable units, the states.","In a system, data and function calls are equivalent."]},"funcoes":{"t":"Functions"},"estados":{"t":"States"},"selecao":{"t":"Selection"},"repeticao":{"t":"Repetition"},"trycatch":{"t":"try / catch"},"blocosec":{"t":"Blocks"},"responsaveis":{"t":"Responsible parties","lead":"Who executes the step."},"files":{"t":"Files"},"solidos":{"t":"Solid and abstract","rules":["Solids have a physical address: they are the entities that make up the component.","Abstracts have no physical address: they are the space to be filled.","Data and functions may be solid or abstract.","Functions must not have solids, only abstracts."]},"publico":{"t":"Public and private"},"praticas":{"t":"Development best practices","lead":"The SOLID principles applied to the plan."},"padroes":{"t":"Design patterns"},"oop":{"t":"OOP and Flow"},"folhas":{"t":"Leaves and use cases","rules":["Leaves are functions without children.","Use cases are functions with children."]}}};
+const EN_REPL = [["O objetivo do Flow é também dar face ao que antes não foi visto: o que no código ficava implícito, escondido na linearidade do texto, ganha forma e lugar no desenho.","The goal of Flow is also to give a face to what was not seen before: what stayed implicit in code, hidden in the linearity of the text, gains form and place in the drawing."],["Este documento reúne as regras e as descrições de como utilizar a linguagem.","This document gathers the rules and descriptions of how to use the language."],["<b>Função sólida</b>", "<b>Solid function</b>"],["<b>Função abstrata</b>", "<b>Abstract function</b>"],["<b>Dado sólido</b>", "<b>Solid data</b>"],["<b>Dado abstrato</b>", "<b>Abstract data</b>"],["<span>tem endereço físico</span>", "<span>has a physical address</span>"],["<span>sem endereço físico</span>", "<span>no physical address</span>"],["<span>tem valor</span>", "<span>has a value</span>"],["<span>ainda sem valor</span>", "<span>no value yet</span>"],["O Flow é uma linguagem de programação visual e universal. Adicionalmente, pode ser empregado como notação de diagramação, permitindo a representação gráfica de sistemas e de processos. O programa é um fluxo desenhado, que pode ser transpilado para qualquer linguagem, e a linguagem oferece os recursos usuais: funções, dados, objetos, seleção, repetição e tratamento de erros.","Flow is a visual and universal programming language. Additionally, it can be used as a diagramming notation, allowing the graphical representation of systems and processes. The program is a drawn flow, which can be transpiled to any language, and the language offers the usual resources: functions, data, objects, selection, repetition and error handling."],["Todo sistema é composto, essencialmente, de unidades de processamento e de unidades processáveis, isto é, de funções e de estados. A função é a unidade de processamento, eterna e imutável, e por essa natureza é representada por um círculo. O estado é a unidade processável, o dado processado pela função, mutável e transitório, e por essa natureza é representado por um quadrado. Um software é um conjunto de fluxos de execução.","Every system is composed, essentially, of units of processing and processable units, that is, of functions and states. The function is the unit of processing, eternal and immutable, and by that nature is represented by a circle. The state is the processable unit, the data processed by the function, mutable and transient, and by that nature is represented by a square. A software is a set of execution flows."],["O desenho substitui a leitura linear do código-fonte, e a ordem de execução, o paralelismo e o caminho dos dados ficam explícitos, o que reduz o esforço de análise. Todos os fluxos de um sistema podem ser vistos em conjunto, e os componentes, por serem desacoplados a nível de serviço, podem ser substituídos em qualquer contexto. A representação visual também facilita o aprendizado de programação por iniciantes, pois permite expressar a lógica sem depender da sintaxe de uma linguagem.","The drawing replaces the linear reading of the source code, and the order of execution, the parallelism and the path of the data become explicit, which reduces the analysis effort. All the flows of a system can be seen together, and the components, being decoupled at the service level, can be replaced in any context. The visual representation also makes it easier for beginners to learn programming, since it allows logic to be expressed without depending on the syntax of a language."],["O modelo se aplica aos processos de software, ou seja, ao código, e à gestão de processos em geral, incluindo o gerenciamento de tarefas. Nesse segundo uso, o responsável por cada passo pode ser uma pessoa, um agente de IA, uma máquina ou outro sistema.","The model applies to software processes, that is, to code, and to process management in general, including task management. In this second use, the party responsible for each step can be a person, an AI agent, a machine or another system."],["Uma imagem vale mais que mil palavras.","A picture is worth a thousand words."],["Confúcio, 552–479 a.C.","Confucius, 552–479 BCE"],["<b>Função</b>","<b>Function</b>"],["<b>Dado</b>","<b>Data</b>"],["unidade de processamento","unit of processing"],["unidade processável","processable unit"],["<p>Dados podem ser:</p>","<p>Data can be:</p>"],["<span>texto</span>","<span>text</span>"],["<span>número</span>","<span>number</span>"],["<span>booleano</span>","<span>boolean</span>"],["<span>função</span>","<span>function</span>"],["<span>objeto</span>","<span>object</span>"],["<span>array</span>","<span>array</span>"],["<span>nulo</span>","<span>null</span>"]];
+let LANG = "pt"; try { LANG = localStorage.getItem("flow-docs-lang") === "en" ? "en" : "pt"; } catch {}
+const ui = (pt, en) => (LANG === "en" ? en : pt);
+const trHtml = (s) => (s && LANG === "en" ? EN_REPL.reduce((a, [p, e]) => a.split(p).join(e), s) : s);
+const exTitle = (k, ex) => (LANG === "en" ? EN.examples[k]?.t ?? ex.title : ex.title);
+const exLead = (k, ex) => (LANG === "en" && EN.examples[k] ? ex.lead.map((x, i) => [x[0], EN.examples[k].r[i] ?? x[1]]) : ex.lead);
+const grp = (g) => (LANG === "en" ? EN.groups[g.id] ?? {} : {});
+
+// planos recolhíveis: cada desenho guarda o fluxo e as linhas fechadas; clicar na seta redesenha só ele
+const PLANS = new Map(); let planSeq = 0;
+const drawPlan = (e) => FlowAst.renderFnSvg(e.flow, { ...e.opts, closed: e.closed, lang: LANG });
+const planOf = (flow, opts) => {
+  if (typeof FlowAst?.renderFnSvg !== "function") return "";
+  try {
+    const e = { flow, opts: { rails: true, table: true, ...opts }, closed: new Set() }, id = ++planSeq;
+    PLANS.set(id, e);
+    return `<div class="plan-host" data-plan="${id}">${drawPlan(e).svg}</div>`;
+  } catch (e) { return `<div class="err">${esc(e.message || e)}</div>`; }
+};
+const heroInner = (e) => {
+  const drawn = drawPlan(e);
+  // Safari iOS: width/height fixos + height:auto → altura 0; viewBox + aspect-ratio mantém o plano visível
+  const svg = String(drawn.svg).replace(/\swidth="[^"]*"/, ' width="100%"').replace(/\sheight="[^"]*"/, "");
+  return `<div class="tabpanel flow" style="aspect-ratio:${drawn.width}/${drawn.height}">${svg}</div>`;
+};
+document.addEventListener("click", (ev) => {
+  const t = ev.target.closest?.("[data-toggle]"); if (!t) return;
+  const h = t.closest("[data-plan]"), e = h && PLANS.get(+h.dataset.plan); if (!e) return;
+  const k = t.getAttribute("data-toggle");
+  if (e.closed.has(k)) e.closed.delete(k); else e.closed.add(k);
+  h.innerHTML = e.hero ? heroInner(e) : drawPlan(e).svg;
+});
+
+// o lead vira lista de bullets: um por frase (ou um por item, se vier como array)
+// abas Flow | Código: o mesmo programa nas duas formas, para comparar
+const tabsHtml = (flowHtml, code) => `<div class="tabs">
+  <div class="tablist" role="tablist"><button type="button" role="tab" data-tab="flow" aria-selected="true">Flow</button><button type="button" role="tab" data-tab="code" aria-selected="false">${ui("Código", "Code")}</button></div>
+  <div class="tabpanel flow" role="tabpanel" data-panel="flow">${flowHtml}</div>
+  <div class="tabpanel code" role="tabpanel" data-panel="code" hidden><button type="button" class="copy" data-copy>${ui("Copiar", "Copy")}</button><pre>${esc(code)}</pre></div>
+</div>`;
+document.addEventListener("click", (e) => {
+  const c = e.target.closest?.("[data-copy]");
+  if (c) {
+    const txt = c.parentElement.querySelector("pre")?.textContent ?? "";
+    navigator.clipboard?.writeText(txt).then(() => { c.textContent = ui("Copiado", "Copied"); setTimeout(() => { c.textContent = ui("Copiar", "Copy"); }, 1400); });
+    return;
+  }
+  const b = e.target.closest?.("[data-tab]"); if (!b) return;
+  const box = b.closest(".tabs"); if (!box) return;
+  box.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+  box.querySelectorAll("[data-panel]").forEach((p) => { p.hidden = p.dataset.panel !== b.dataset.tab; });
+});
+
+// regras numeradas como cláusulas de uma especificação: 1.1.1, 1.1.2…
+// regras numeradas; uma regra pode trazer o seu próprio desenho (ex.ruleFlows[i])
+const ruleDraw = (flow, code) => flow ? `<div class="rplan">${tabsHtml(planOf(flow, { hideRoot: true }), code ?? "")}</div>` : "";
+const rules = (lead, num, flows = [], codes = []) => `<ol class="rules">${lead.map(([, t], i) => `<li><span class="ix">${esc(num)}.${i + 1}</span><div class="rb"><span>${t}</span>${ruleDraw(flows[i], codes[i])}</div></li>`).join("")}</ol>`;
+
+const paint = (key, ex, flat = false, noStates = false, table = false) => {
+  const el = document.getElementById(anchor(key));
+  let estree = "";
+  try {
+    estree = JSON.stringify(prune(acorn.parse(ex.code, { ecmaVersion: "latest", sourceType: "module" })), null, 2);
+  } catch (e) {
+    estree = e.message;
+  }
+
+  const flows = ex.flows ?? [ex.flow];
+  const planErr = typeof FlowAst?.renderFnSvg === "function" ? "" : "fn-svg.js ausente — rode: npm run example:build";
+  const flowJson = flows.map((f) => JSON.stringify(f, null, 2)).join("\n");
+  const plans = flows.map((f) => `${flows.length > 1 ? `<div class="lab"><span class="kind">${esc(f.file ?? "")}</span> ${esc(f.title)}</div>` : ""}<div class="svg-host">${planOf(f, { ...ex.opts, ...(noStates ? { states: false } : {}), ...(flat && !ex.showRoot ? { hideRoot: true, rootRail: true } : {}), ...(table ? { table: true } : {}) })}</div>`).join("");
+
+  const html = `
+    <h3${ex.sub ? ' class="sub"' : ""}><span class="n">${esc(ex.num)}</span>${exTitle(key, ex)}</h3>
+    ${rules(exLead(key, ex), ex.num, ex.ruleFlows, ex.ruleCodes)}
+    ${trHtml(ex.beforePlan ?? "")}
+    ${ex.ruleFlows ? "" : tabsHtml(plans + (planErr ? `<div class="err">${esc(planErr)}</div>` : ""), ex.code)}
+    <details class="pane ast">
+      <summary class="hd"><span class="kind">ESTree</span> ${ui("Árvore sintática", "Syntax tree")} <span class="tag">Acorn</span></summary>
+      <div class="body"><pre>${esc(estree)}</pre></div>
+    </details>
+    <details class="pane ast">
+      <summary class="hd"><span class="kind">Flow</span> ${ui("AST do fluxo", "Flow AST")} <span class="tag">Fn</span></summary>
+      <div class="body"><pre>${esc(flowJson)}</pre></div>
+    </details>`;
+  // capítulo "flat": plano e código fixos; as árvores (AST) continuam como acordeão fechado
+  const flatten = (s) => s.replace(/<details class="pane(?! ast)([^"]*)"[^>]*>\s*<summary class="hd">([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g,
+    (_, c, hd, body) => `<div class="pane flat${c}"><div class="hd">${hd}</div>${body}</div>`);
+  el.innerHTML = flat ? flatten(html) : html;
+};
+
+// fluxo de abertura: um pedido completo, com seleção, repetição, paralelo, try/catch e responsáveis variados
+const renderHero = () => {
+  const pedido = '{ id: 1, cliente: "Ana" }';
+  const fluxo = F("n1", "processarPedido", { file: "pedido.ts", ins: ["recusar"], kids: [
+    F("n2", "receber", { outs: ["pedido"], args: { pedido } }),
+    F("n3", "validar", { ins: ["pedido"], outs: ["valido"], args: { valido: "true" } }),
+    { t: "if", id: "i1", test: "valido", kids: [
+      F("n4", "cobrar", { agent: "maquina", ins: ["pedido"], outs: ["pagamento"], args: { pagamento: '"aprovado"' } }),
+      F("n5", "reservar", { agent: "maquina", par: true, outs: ["reserva"], args: { reserva: '"ok"' } }),
+      { t: "for", id: "l1", v: "item", coll: "itens", kids: [F("n6", "separar", { agent: "pessoa", ins: ["item"] })] },
+      { t: "try", id: "t1", kids: [F("n7", "enviar", { agent: "maquina", ins: ["pedido"] })], catchKids: [F("n8", "avisar", { agent: "ia" })] }], elseKids: [F("n9", "recusar", { agent: null })] },
+    F("n10", "registrar", { ins: ["pedido"] })] });
+  const host = document.getElementById("hero-plan");
+  if (host && typeof FlowAst?.renderFnSvg === "function") {
+    // no mobile a tabela de responsáveis empurra o plano pra fora da tela — só o fluxo
+    const e = { flow: fluxo, opts: { elseParallel: true, rails: true, table: true }, closed: new Set(), hero: true }, id = ++planSeq;
+    PLANS.set(id, e);
+    host.dataset.plan = String(id);
+    host.innerHTML = heroInner(e);
+  }
+};
+matchMedia("(max-width: 48rem)").addEventListener("change", () => renderHero());
+
+// menu lateral: marca a seção visível e abre os itens do capítulo corrente
+let spyMark = null, railFor = null;
+const updateRail = (curId) => {
+  const rail = document.getElementById("rail"); if (!rail) return;
+  const li = document.querySelector(`#toc a[href="#${curId}"]`)?.closest("li[data-g]");
+  const gid = li?.dataset.g; if (!gid) return;
+  if (railFor !== gid + LANG) {
+    railFor = gid + LANG;
+    const items = [...li.querySelectorAll(":scope > ul > li > a")];
+    rail.innerHTML = items.length ? `<div class="t">${ui("Nesta página", "On this page")}</div><ul>${items.map((a) => `<li><a href="${a.getAttribute("href")}">${a.innerHTML}</a></li>`).join("")}</ul>` : "";
+  }
+  rail.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === `#${curId}`));
+};
+const initSpy = () => {
+  const links = new Map([...document.querySelectorAll(".side a")].map((a) => [a.getAttribute("href").slice(1), a]));
+  const heads = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean);
+  const groupOf = (id) => links.get(id)?.closest("li[data-g]");
+  let cur = null;
+  spyMark = () => {
+    let best = heads[0];
+    for (const el of heads) if (el.getBoundingClientRect().top <= 120) best = el; else break;
+    if (!best || best.id === cur) return;
+    cur = best.id;
+    links.forEach((a) => a.classList.remove("on"));
+    document.querySelectorAll(".side li.open").forEach((li) => li.classList.remove("open"));
+    const a = links.get(cur); a.classList.add("on");
+    groupOf(cur)?.classList.add("open");
+    if (matchMedia("(min-width: 62.01rem)").matches) {
+      const side = a.closest(".side"), ar = a.getBoundingClientRect(), sr = side.getBoundingClientRect();
+      if (ar.top < sr.top + 8) side.scrollTop += ar.top - sr.top - 8;
+      else if (ar.bottom > sr.bottom - 8) side.scrollTop += ar.bottom - sr.bottom + 8;
+    }
+    updateRail(cur);
+  };
+  spyMark();
+};
+addEventListener("scroll", () => spyMark?.(), { passive: true });
+addEventListener("resize", () => spyMark?.());
+
+// textos fixos da página (barra lateral, rodapé, quadro final) e botões de idioma
+const applyStatic = () => {
+  document.documentElement.lang = LANG === "en" ? "en" : "pt-BR";
+  document.querySelectorAll("[data-pt]").forEach((el) => { el.textContent = LANG === "en" ? el.dataset.en : el.dataset.pt; });
+  document.querySelectorAll("[data-ph-pt]").forEach((el) => { el.placeholder = LANG === "en" ? el.dataset.phEn : el.dataset.phPt; });
+  document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG)));
+};
+
+const renderAll = () => {
+  const out = document.getElementById("out"), toc = document.getElementById("toc"), preface = document.getElementById("flow-preface");
+  out.innerHTML = ""; toc.innerHTML = ""; if (preface) preface.innerHTML = ""; if (searchInput) searchInput.value = "";
+  for (const g of GROUPS.filter((x) => !x.hidden)) {
+    const gt = grp(g), title = gt.t ?? g.title, lead = gt.lead ?? g.lead, rl = gt.rules ?? g.rules;
+    const keys = g.keys.filter((k) => EXAMPLES[k]);
+    const block = `<h2 id="${g.id}"><span class="n">${g.n}</span>${esc(title)}</h2>${lead ? `<p class="sec-lead">${lead}</p>` : ""}${rl ? `<ol class="rules">${rl.map((t, i) => `<li><span class="ix">${esc(g.n)}${i + 1}</span><span>${t}</span></li>`).join("")}</ol>` : ""}${trHtml(g.html ?? "")}${keys.map((k) => `<section id="${anchor(k)}"></section>`).join("")}`;
+    // Flow fora do main no DOM para no mobile ficar: Flow → índice → resto (desktop: coluna única com Flow em cima)
+    if (g.id === "flow" && preface) preface.insertAdjacentHTML("beforeend", block);
+    else out.insertAdjacentHTML("beforeend", block);
+    toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}"><span class="gn">${esc(g.n)}</span>${esc(title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li${EXAMPLES[k].sub ? ' class="sub"' : ""}><a href="#${anchor(k)}">${EXAMPLES[k].num} ${exTitle(k, EXAMPLES[k])}</a></li>`).join("")}</ul>` : ""}</li>`);
+    for (const k of keys) {
+      try { paint(k, EXAMPLES[k], g.id === "funcoes", false, g.id === "responsaveis"); }
+      catch (e) {
+        const el = document.getElementById(anchor(k));
+        if (el) el.innerHTML = `<h3><span class="n">${esc(EXAMPLES[k].num)}</span>${esc(EXAMPLES[k].title)}</h3><div class="err">${esc(e.message || e)}</div>`;
+        console.error("paint", k, e);
+      }
+    }
+  }
+  try { renderHero(); } catch (e) { console.error("hero", e); }
+  applyStatic();
+  initSpy();
+};
+
+// busca: filtra capítulos e exemplos do menu; Enter vai ao primeiro resultado; "/" foca o campo
+const searchInput = document.getElementById("q");
+const norm = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const filterToc = () => {
+  const q = norm(searchInput?.value ?? "").trim();
+  document.querySelectorAll("#toc li").forEach((li) => li.classList.remove("hide"));
+  if (!q) return;
+  document.querySelectorAll("#toc > li").forEach((ch) => {
+    const subs = [...ch.querySelectorAll(":scope > ul > li")];
+    const chHit = norm(ch.querySelector(":scope > a")?.textContent ?? "").includes(q);
+    let any = chHit;
+    subs.forEach((li) => { const hit = chHit || norm(li.textContent).includes(q); li.classList.toggle("hide", !hit); any = any || hit; });
+    ch.classList.toggle("hide", !any);
+  });
+};
+searchInput?.addEventListener("input", filterToc);
+searchInput?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { document.querySelector("#toc li:not(.hide) ul li:not(.hide) a, #toc li:not(.hide) > a")?.click(); searchInput.blur(); }
+  if (e.key === "Escape") { searchInput.value = ""; filterToc(); searchInput.blur(); }
+});
+addEventListener("keydown", (e) => {
+  if (e.key === "/" && !/^(input|textarea)$/i.test(document.activeElement?.tagName ?? "")) { e.preventDefault(); searchInput?.focus(); }
+});
+
+// botões EN | PT-BR
+document.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => {
+  if (LANG === b.dataset.lang) return;
+  LANG = b.dataset.lang;
+  try { localStorage.setItem("flow-docs-lang", LANG); } catch {}
+  railFor = null; const y = scrollY; renderAll(); scrollTo(0, y);
+}));
+
+renderAll();
+</script>
+</body>
+</html>

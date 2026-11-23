@@ -15,7 +15,8 @@ export interface Agent { id: string; kind: AgentKind; name: string; tasks: strin
 export interface Fn { t: "fn"; id: string; title: string; agent: string | null; resp: string | null; ins: string[]; outs: string[]; kids: Node[]; par: boolean; args?: Record<string, string>; /** Só em função raiz: arquivo onde ela mora (várias funções podem dividir o mesmo arquivo). */ file?: string }
 /** `elseKids` vazio = sem else; com filhos o else aparece no flow como o catch do try (cabeçalho, faixa e lista própria). */
 export interface IfB { t: "if"; id: string; test: string; kids: Node[]; elseKids: Node[] }
-export interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[] }
+/** `loop` omisso = for-of; while/do-while usam `coll` como condição. */
+export interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[]; loop?: "for" | "while" | "do-while" }
 export interface TryB { t: "try"; id: string; kids: Node[]; catchKids: Node[] }
 export type Block = IfB | ForB | TryB;
 export type Node = Fn | Block;
@@ -669,7 +670,10 @@ export function parseProject(text: string): Project {
       return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...(args && Object.keys(args).length ? { args } : {}), ...(typeof n.file === "string" && n.file ? { file: n.file } : {}) };
     }
     if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
-    if (n.t === "for") return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids) };
+    if (n.t === "for") {
+      const loop = n.loop === "while" || n.loop === "do-while" ? n.loop : undefined;
+      return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids), ...(loop ? { loop } : {}) };
+    }
     if (n.t === "try") return { t: "try", id: n.id, kids: list(n.kids), catchKids: list(n.catchKids ?? []) };
     return fail("invalid", `Unknown element type in ${n.id}`);
   };

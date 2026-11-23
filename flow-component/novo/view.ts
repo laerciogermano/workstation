@@ -231,7 +231,11 @@ export function dataLinks(p: Project, sc: Scene): DataLink[] {
 // ───────────────────────── textos ─────────────────────────
 export const blockLabel = (_p: Project, n: Node): string => {
   if (n.t === "if") return `if (${n.test})`;
-  if (n.t === "for") return `for (${n.v} of ${n.coll})`;
+  if (n.t === "for") {
+    if (n.loop === "while") return `while (${n.coll})`;
+    if (n.loop === "do-while") return `do-while (${n.coll})`;
+    return `for (${n.v} of ${n.coll})`;
+  }
   return "try";
 };
 export const fnKind = (p: Project, f: Fn): "conc" | "abs" | "nag" => { if (f.kids.length) return "conc"; const a = agentOf(p, f.agent); return !a ? "nag" : a.kind === "maquina" || a.kind === "arquivo" ? "conc" : "abs"; };

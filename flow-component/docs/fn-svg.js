@@ -931,7 +931,15 @@ var FlowAst = (() => {
     if (n.t === "if") for (const k of n.elseKids) assertKnown(k);
     if (n.t === "try") for (const k of n.catchKids) assertKnown(k);
   }
-  var blockText = (n) => n.t === "if" ? `if (${n.test})` : n.t === "for" ? `for (${n.v} of ${n.coll})` : `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+  var blockText = (n) => {
+    if (n.t === "if") return `if (${n.test})`;
+    if (n.t === "for") {
+      if (n.loop === "while") return `while (${n.coll})`;
+      if (n.loop === "do-while") return `do-while (${n.coll})`;
+      return `for (${n.v} of ${n.coll})`;
+    }
+    return `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+  };
   function renderFnSvg(flow, opts = {}) {
     assertKnown(flow);
     const L = opts.lang === "en" ? { machine: "machine", ai: "AI", person: "person", abstract: "abstract", source: "SOURCE", func: "FUNCTION", catchTxt: "catch \xB7 if the try fails", elseTxt: "else \xB7 otherwise", sol: "solid", abs: "abstract", eternal: "function (eternal)" } : { machine: "m\xE1quina", ai: "IA", person: "pessoa", abstract: "abstrato", source: "SOURCE", func: "FUN\xC7\xC3O", catchTxt: "catch \xB7 se o try falhar", elseTxt: "else \xB7 sen\xE3o", sol: "s\xF3lida", abs: "abstrata", eternal: "fun\xE7\xE3o (eterna)" };

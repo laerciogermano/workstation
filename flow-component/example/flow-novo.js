@@ -851,7 +851,10 @@
         return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...args && Object.keys(args).length ? { args } : {}, ...typeof n.file === "string" && n.file ? { file: n.file } : {} };
       }
       if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
-      if (n.t === "for") return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids) };
+      if (n.t === "for") {
+        const loop = n.loop === "while" || n.loop === "do-while" ? n.loop : void 0;
+        return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids), ...loop ? { loop } : {} };
+      }
       if (n.t === "try") return { t: "try", id: n.id, kids: list(n.kids), catchKids: list(n.catchKids ?? []) };
       return fail("invalid", `Unknown element type in ${n.id}`);
     };
@@ -2051,7 +2054,11 @@ ${given.map((g) => `  ${g},`).join("\n")}
   }
   var blockLabel = (_p, n) => {
     if (n.t === "if") return `if (${n.test})`;
-    if (n.t === "for") return `for (${n.v} of ${n.coll})`;
+    if (n.t === "for") {
+      if (n.loop === "while") return `while (${n.coll})`;
+      if (n.loop === "do-while") return `do-while (${n.coll})`;
+      return `for (${n.v} of ${n.coll})`;
+    }
     return "try";
   };
   var fnKind = (p, f) => {

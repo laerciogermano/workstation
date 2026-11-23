@@ -85,9 +85,15 @@ function assertKnown(n: Node): void {
   if (n.t === "try") for (const k of n.catchKids) assertKnown(k);
 }
 
-const blockText = (n: Exclude<Node, Fn>): string =>
-  n.t === "if" ? `if (${n.test})` : n.t === "for" ? `for (${n.v} of ${n.coll})`
-    : `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+const blockText = (n: Exclude<Node, Fn>): string => {
+  if (n.t === "if") return `if (${n.test})`;
+  if (n.t === "for") {
+    if (n.loop === "while") return `while (${n.coll})`;
+    if (n.loop === "do-while") return `do-while (${n.coll})`;
+    return `for (${n.v} of ${n.coll})`;
+  }
+  return `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+};
 
 /**
  * Converte AST de função (raiz + kids só `fn`) em SVG do plano.

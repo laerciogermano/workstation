@@ -50,22 +50,10 @@
   - JS: entrada/return sempre variável (nunca literal)
   - JS: concatenação = função + partes em []
 
-- 2. Dados
-  - exemplos: texto, número, booleano, função, objeto, array (indice-ast.html)
-  - unidades transformáveis
-  - input / output
-  - tipos: texto, número, booleano, função
-  - objetos (caixas): dados + funções
-    - array = posicional []
-    - obj = chaveado {}
-    - arquivo = também objeto/estado
-    - imagem (futuro)
-  - valor: atribuir antes de usar / retornar
-
 - 3. Estados
-  - exemplos: estado do fluxo, inicial, caixa, substituído, abstrato, paralelas, dentro do for (indice-ast.html)
-  - dados disponíveis no passo
-  - visão do estado mostra funções e estados juntos
+  - exemplos: estado do fluxo, caixa, tipos de dado (indice-ast.html)
+  - dados disponíveis no passo + tipos (texto, número, booleano, função, objeto chaveado/posicional, nulo)
+  - visão do estado mostra funções e dados juntos
   - o que alimenta a chamada já é variável atribuída
 
 - 4. Entrada e saída

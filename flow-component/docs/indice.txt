@@ -84,7 +84,9 @@
   - arquivo = também objeto/estado
   - arquivo ≠ camada
 
-- 8. Sólidos × abstratos
+- 7. Sólidos × abstratos
+  - dados e funções podem ser abstratos
+  - dados e funções podem ser sólidos
   - exemplos: sólido, camada/abstrato, dado concreto, dado abstrato (indice-ast.html)
   - tem endereço físico (responsável, valor, arquivo)
   - camada precisa solidificar para executar

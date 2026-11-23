@@ -255,10 +255,13 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
         ? `<circle class="sfn" cx="${colX(col)}" cy="${y}" r="4.5"/>`
         : it.cube
         ? `<path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/>`
-        : `<rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"/>`}<text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube || isFn ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+        : `<rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"/>`}<text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
       if (it.cube) for (const fld of it.fields) {
         const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld];
         out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`);
+      } else if (!isFn && it.value) {
+        const fy = bot + 34 + row++ * STATE_ROW;
+        out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([it.value], 24))}</text><title>${esc(it.value)}</title></g>`);
       }
     }
   }

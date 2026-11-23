@@ -827,7 +827,10 @@ var FlowAst = (() => {
       return { name: x.replace(/^\.\.\./, "").trim() };
     });
   }
-  var stateRows = (items) => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
+  var stateRows = (items) => items.reduce((n, it) => {
+    const valRow = !it.cube && it.value && !/^function\b/.test(it.value) ? 1 : 0;
+    return n + 1 + (it.cube ? it.fields.length : valRow);
+  }, 0);
   var initsName = (f, n) => {
     const e = f.args?.[n]?.trim();
     return e && !isDataRef(e) ? e : void 0;
@@ -1097,10 +1100,13 @@ var FlowAst = (() => {
       for (const it of items) {
         const y = bot + 34 + row++ * STATE_ROW;
         const isFn = !it.cube && /^function\b/.test(it.value ?? "");
-        out.push(`<g class="stt${it.old ? " old" : ""}">${isFn ? `<circle class="sfn" cx="${colX(col)}" cy="${y}" r="4.5"/>` : it.cube ? `<path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/>` : `<rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"/>`}<text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube || isFn ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+        out.push(`<g class="stt${it.old ? " old" : ""}">${isFn ? `<circle class="sfn" cx="${colX(col)}" cy="${y}" r="4.5"/>` : it.cube ? `<path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/>` : `<rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"/>`}<text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
         if (it.cube) for (const fld of it.fields) {
           const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld];
           out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`);
+        } else if (!isFn && it.value) {
+          const fy = bot + 34 + row++ * STATE_ROW;
+          out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([it.value], 24))}</text><title>${esc(it.value)}</title></g>`);
         }
       }
     }
@@ -1139,12 +1145,12 @@ var FlowAst = (() => {
       if (f.ins.length) {
         over.push(`<line class="dlk" x1="${colX(r.s) + 4}" y1="${ym(i)}" x2="${x1}" y2="${ym(i)}"/>`);
         over.push(mark(colX(r.s), f.ins, "in"));
-        over.push(`<text class="dn in" x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(f.ins.length > 1 ? f.ins.join(",") : f.ins[0])}</text>`);
+        over.push(`<text class="dn in" x="${colX(r.s) - G.GAP}" y="${ym(i) + 3.5}" text-anchor="end">${esc(isCube(f.ins) ? cubeName(f, "in") : f.ins[0])}</text>`);
       }
       if (f.outs.length) {
         over.push(`<line class="dlk" x1="${x2}" y1="${ym(i)}" x2="${colX(r.e + 1) - 4}" y2="${ym(i)}"/>`);
         over.push(mark(colX(r.e + 1), f.outs, "out"));
-        over.push(`<text class="dn out" x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(f.outs.length > 1 ? f.outs.join(",") : f.outs[0])}</text>`);
+        over.push(`<text class="dn out" x="${colX(r.e + 1) + G.GAP}" y="${ym(i) + 3.5}" text-anchor="start">${esc(isCube(f.outs) ? cubeName(f, "out") : f.outs[0])}</text>`);
       }
     };
     rows.forEach((r, i) => {

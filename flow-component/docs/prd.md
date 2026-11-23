@@ -92,7 +92,7 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Loop label (for/while/do-while):** `ForB.loop` opcional; rótulo no plano via `blockText`/`blockLabel`. **Antes:** while/do-while apareciam como `for (… of …)`. **Voltar:** omitir `loop` (default for).
 
-**Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. Filho folha do else/catch compartilha o passo do cabeçalho; **bloco aninhado** (ex. if no else) começa no passo seguinte ao else. **Antes:** em paralelo à última célula; depois, bloco aninhado no mesmo passo do else. **Voltar:** `childStart = after` sempre em `placeAlt` (`novo/layout.ts`).
+**Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. Filho folha do else/catch compartilha o passo do cabeçalho; **bloco aninhado** no passo seguinte ao else, salvo `elseParallel` (if aninhado no mesmo passo do else). **Antes:** em paralelo à última célula. **Voltar:** `childStart = after + 1` para bloco mesmo com `elseParallel` (`novo/layout.ts`).
 
 **Nome da função pai (composição):** centrado em cima da barra-resumo (`text-anchor=middle`) — 1ª ordem e compostas internas. **Antes:** só a 1ª ordem em cima; internas à direita das saídas. **Voltar:** `lblAfterOuts` nas compostas internas (`view.ts` / `fn-svg.ts`).
 

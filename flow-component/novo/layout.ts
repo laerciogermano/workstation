@@ -5,7 +5,7 @@ import { altKids, type Block, type Fn, type Node } from "./model";
  *  - cada função folha ocupa um passo; funções em paralelo dividem o mesmo passo;
  *  - blocos e funções compostas cobrem os passos dos filhos;
  *  - catch (try) e else (if) compartilham a mesma regra: sequência logo após o último elemento do bloco;
- *    filho folha no mesmo passo do cabeçalho; bloco aninhado (if no else) no passo seguinte;
+ *    filho folha no mesmo passo do cabeçalho; bloco aninhado no passo seguinte (no else paralelo, no mesmo passo);
  *    o que vem depois do bloco só começa quando o ramo alternativo termina. Não entram em `leaves`.
  */
 export type RowKind = "fn" | "block" | "catch" | "else";
@@ -28,10 +28,10 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
   const place = (list: readonly Node[], depth: number, start: number, emit: boolean, inAlt: boolean): number => {
     let step = start, prev: Span | null = null;
     const push = (r: Omit<Row, "last">): Row => { const row: Row = { ...r, last: 0 }; if (emit) { rows.push(row); maxDepth = Math.max(maxDepth, r.depth); } return row; };
-    /** catch e else: começam no passo `after`. Filhos folha compartilham o passo; bloco aninhado (ex. if no else) vem no passo seguinte. */
-    const placeAlt = (b: Block, alt: readonly Node[], after: number, emitAlt: boolean, blockClosed: boolean): number => {
+    /** catch e else: começam no passo `after`. Folha no mesmo passo; bloco aninhado no passo seguinte — salvo else paralelo. */
+    const placeAlt = (b: Block, alt: readonly Node[], after: number, emitAlt: boolean, blockClosed: boolean, parallel = false): number => {
       const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-      const first = alt[0], childStart = first && first.t !== "fn" ? after + 1 : after;
+      const first = alt[0], childStart = first && first.t !== "fn" && !parallel ? after + 1 : after;
       if (blockClosed) return place(alt, depth + 1, childStart, false, true);
       const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
       const cend = place(alt, depth + 1, childStart, emitAlt && !altClosed, true);
@@ -61,7 +61,8 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
         const next = place(b.kids, depth + 1, step, emit && !isClosed, inAlt), sp: Span = { s: step, e: Math.max(step, next - 1) };
         if (emit) { span.set(b.id, sp); row.s = sp.s; row.e = sp.e; }
         let end = next;
-        if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, opts.elseParallel && b.t === "if" ? step : next, emit, isClosed));
+        const elsePar = !!(opts.elseParallel && b.t === "if");
+        if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? step : next, emit, isClosed, elsePar));
         if (emit) row.last = rows.length - 1;
         step = Math.max(step, end);
       }

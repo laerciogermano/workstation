@@ -70,6 +70,24 @@ describe("cena: linhas e passos", () => {
     expect(if2.s).toBe(2);
     expect(if2.s).toBeGreaterThan(else1.s);
   });
+  it("else paralelo: if aninhado no else compartilha o passo do else", () => {
+    const flow: Fn = {
+      t: "fn", id: "n1", title: "main", agent: "arquivo", resp: null, ins: [], outs: [], kids: [
+        { t: "if", id: "i1", test: "aprovado", kids: [{ t: "fn", id: "n2", title: "publicar", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }],
+          elseKids: [
+            { t: "if", id: "i2", test: "recuperacao", kids: [{ t: "fn", id: "n3", title: "refazer", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }],
+              elseKids: [{ t: "fn", id: "n4", title: "reprovar", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }] },
+          ] },
+      ], par: false,
+    };
+    const s = layout(flow, { elseParallel: true });
+    const else1 = s.rows.find(r => r.kind === "else" && r.id === "i1")!;
+    const if2 = s.rows.find(r => r.kind === "block" && r.id === "i2")!;
+    const else2 = s.rows.find(r => r.kind === "else" && r.id === "i2")!;
+    expect(else1.s).toBe(0);
+    expect(if2.s).toBe(0);
+    expect(else2.s).toBe(0);
+  });
   it("if sem else não gera linha de else", () => { const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); expect(t.sc().rows.some(r => r.kind === "else")).toBe(false); });
   it("funções do catch não entram na sequência (leaves)", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const s = t.sc();

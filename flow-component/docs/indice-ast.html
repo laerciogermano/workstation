@@ -427,7 +427,7 @@ const EXAMPLES = {
   se: { num: "4.1", title: "if", lead: [["D","Seleção é a estrutura que decide, pelo dado, para onde vai o fluxo."],["P","A condição é atribuída a uma variável antes do <code>if</code>."],["T","<code>enviar</code> só executa se a condição for verdadeira."],["P","A seleção é usada quando não se sabe o que executar antes de ter a informação."]],
     code: J("async function main() {", "  const ok = true;", "  if (ok) {", "    await enviar();", "  }", "", "  async function enviar() {", "  }", "}"),
     flow: main([{ t: "if", id: "i1", test: "ok", kids: [F("n2", "enviar")], elseKids: [] }]) },
-  seSenao: { num: "4.2", title: "if e else", lead: [["P","<code>if</code> e <code>else</code> ocupam o mesmo passo."],["T","Apenas um dos ramos executa."]], opts: { elseParallel: true },
+  seSenao: { num: "4.2", title: "if e else", lead: [["P","<code>if</code> e <code>else</code> ocupam o mesmo passo."],["T","Apenas um dos ramos executa."]], opts: { elseParallel: true, rails: true },
     code: J("async function main() {", "  const aprovada = true;", "  if (aprovada) {", "    await enviar();", "  } else {", "    await revisar();", "  }", "", "  async function enviar() {", "  }", "  async function revisar() {", "  }", "}"),
     flow: main([{ t: "if", id: "i1", test: "aprovada", kids: [F("n2", "enviar")], elseKids: [F("n3", "revisar")] }]) },
   switchEx: { num: "4.3", title: "switch", lead: [["P","Cada <code>case</code> do <code>switch</code> equivale a um <code>if</code>."],["T","Há um <code>if</code> por valor."]],
@@ -497,7 +497,7 @@ const EXAMPLES = {
 
   seAninhado: { num: "4.4", title: "if aninhados", lead: [["P","Um <code>if</code> pode estar no <code>else</code> de outro."],["T","Há três caminhos possíveis, e só um executa."]],
     code: J("async function main() {", "  const nota = 7;", "  const aprovado = nota >= 7;", "  if (aprovado) {", "    await publicar();", "  } else {", "    const recuperacao = nota >= 5;", "    if (recuperacao) {", "      await refazer();", "    } else {", "      await reprovar();", "    }", "  }", "", "  async function publicar() {", "  }", "  async function refazer() {", "  }", "  async function reprovar() {", "  }", "}"),
-    opts: { elseParallel: true },
+    opts: { elseParallel: true, rails: true },
     flow: main([{ t: "if", id: "i1", test: "aprovado", kids: [F("n2", "publicar")], elseKids: [
       { t: "if", id: "i2", test: "recuperacao", kids: [F("n3", "refazer")], elseKids: [F("n4", "reprovar")] }] }]) },
   repDoWhile: { num: "5.4", title: "do-while", lead: [["P","O <code>do-while</code> executa ao menos uma vez."],["P","Repete enquanto a condição valer."]],

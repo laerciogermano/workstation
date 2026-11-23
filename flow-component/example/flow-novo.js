@@ -1753,9 +1753,9 @@ ${given.map((g) => `  ${g},`).join("\n")}
         }
         return row;
       };
-      const placeAlt = (b, alt, after, emitAlt, blockClosed) => {
+      const placeAlt = (b, alt, after, emitAlt, blockClosed, parallel = false) => {
         const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-        const first = alt[0], childStart = first && first.t !== "fn" ? after + 1 : after;
+        const first = alt[0], childStart = first && first.t !== "fn" && !parallel ? after + 1 : after;
         if (blockClosed) return place(alt, depth + 1, childStart, false, true);
         const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
         const cend = place(alt, depth + 1, childStart, emitAlt && !altClosed, true);
@@ -1807,7 +1807,8 @@ ${given.map((g) => `  ${g},`).join("\n")}
             row.e = sp.e;
           }
           let end = next;
-          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, opts.elseParallel && b.t === "if" ? step2 : next, emit, isClosed));
+          const elsePar = !!(opts.elseParallel && b.t === "if");
+          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? step2 : next, emit, isClosed, elsePar));
           if (emit) row.last = rows.length - 1;
           step2 = Math.max(step2, end);
         }

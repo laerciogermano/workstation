@@ -61,10 +61,7 @@ export function objectPairs(expr: string): { name: string; value?: string }[] | 
 export function objectFields(expr: string): string[] | null {
   const p = objectPairs(expr); return p && p.map(x => x.name);
 }
-export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => {
-  const valRow = !it.cube && it.value && !/^function\b/.test(it.value) ? 1 : 0;
-  return n + 1 + (it.cube ? it.fields.length : valRow);
-}, 0);
+export const stateRows = (items: readonly StateItem[]): number => items.reduce((n, it) => n + 1 + (it.cube ? it.fields.length : 0), 0);
 /** Nome entra no estado: saída, ou entrada inicializada com literal/expr (não é só referência a outro dado). */
 const initsName = (f: Fn, n: string): string | undefined => { const e = f.args?.[n]?.trim(); return e && !isDataRef(e) ? e : undefined; };
 const producesName = (f: Fn, name: string): boolean => f.outs.includes(name) || !!initsName(f, name);
@@ -311,10 +308,9 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     let row = 0;
     for (const it of items) {
       const y = bot + 34 + row++ * STATE_ROW;
-      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-act="editData" data-id="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.name)}" data-sthover="${esc(it.owner)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(dataText([it.name], 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
-      // nome na linha do dado; valor/campos ficam indentados abaixo
+      out.push(`<g class="stt${it.old ? " old" : ""}"${it.owner ? ` data-act="editData" data-id="${esc(it.owner)}" data-side="${it.side}" data-name="${esc(it.name)}" data-sthover="${esc(it.owner)}"` : ""}><${it.cube ? `path class="scube" transform="translate(${colX(col) - 4.5} ${y - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"` : `rect class="sdot${it.abs ? " a" : ""}" x="${colX(col) - 4}" y="${y - 4}" width="8" height="8"`}/><text class="dn st" x="${colX(col) + 9}" y="${y + 3.2}">${esc(it.cube ? dataText([it.name], 26) : stateLabel(it.name, it.value, 26))}</text><title>${esc(it.value ?? it.fields.join(", "))}</title></g>`);
+      // o cubo mostra os campos (com valor, se houver) logo abaixo, indentados
       if (it.cube) for (const fld of it.fields) { const fy = bot + 34 + row++ * STATE_ROW, fv = it.fieldValues?.[fld]; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(stateLabel(fld, fv, 24))}</text><title>${esc(fv != null ? `${fld} = ${fv}` : fld)}</title></g>`); }
-      else if (it.value && !/^function\b/.test(it.value)) { const fy = bot + 34 + row++ * STATE_ROW; out.push(`<g class="stt sub${it.old ? " old" : ""}"><rect class="sdot sm" x="${colX(col) + 8}" y="${fy - 2.5}" width="5" height="5"/><text class="dn st" x="${colX(col) + 18}" y="${fy + 3.2}">${esc(dataText([it.value], 24))}</text><title>${esc(it.value)}</title></g>`); }
     }
   }
   out.push(`<line class="axis" x1="${colX(0)}" y1="${rowY(sc.rows.length) + 4}" x2="${colX(sc.nSteps)}" y2="${rowY(sc.rows.length) + 4}"/>`);

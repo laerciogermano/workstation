@@ -10,7 +10,6 @@
 <meta property="og:description" content="Funções e estados, num só desenho. Linguagem visual e universal.">
 <meta property="og:type" content="article">
 <meta name="color-scheme" content="dark">
-<script>try{var __q=new URLSearchParams(location.search).get('paleta'),__p=__q||localStorage.getItem('fop-pal');if(__p&&__p!=='atual')document.documentElement.setAttribute('data-pal',__p)}catch(e){}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Flow Oriented Programming","inLanguage":["pt-BR","en"],"about":"Linguagem de programação visual baseada em funções e estados","license":"https://opensource.org/license/mit"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,21 +543,6 @@ html { scroll-padding-top: 1.5rem; }
 .top-ctl .lang { position: static; margin: 0; }
 @media (max-width: 48rem) { .top-ctl { top: 10px; right: 10px; gap: 8px; } }
 
-/* paletas (vermelho = Platão/função · azul = Aristóteles/dado) */
-html[data-pal="afresco"] { --fn: #e5604d; --dado: #6c8cf0; --accent: #e5604d; }
-html[data-pal="fogo-agua"] { --fn: #f2674a; --dado: #4aa3df; --accent: #f2674a; }
-html[data-pal="carmim-lapis"] { --fn: #d94a5f; --dado: #5876d8; --accent: #d94a5f; }
-html[data-pal="rubi-safira"] { --fn: #e0445f; --dado: #4f83f1; --accent: #e0445f; }
-html[data-pal="terracota-ceu"] { --fn: #d9735b; --dado: #7fa8e0; --accent: #d9735b; }
-html[data-pal="sangue-aco"] { --fn: #c8514f; --dado: #6a8bb0; --accent: #c8514f; }
-.pal { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 99px; background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid var(--line-2); }
-.pal button { position: relative; display: inline-flex; align-items: center; width: 26px; height: 16px; padding: 0; border: 0; background: transparent; cursor: pointer; border-radius: 99px; }
-.pal button i { position: absolute; top: 2px; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.35); }
-.pal button i:first-child { left: 0; }
-.pal button i:last-child { right: 0; border-radius: 2px; }
-.pal button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink); }
-.pal button:hover { transform: scale(1.1); }
-@media (max-width: 48rem) { .pal { gap: 4px; padding: 5px 6px; } .pal button { width: 22px; } .pal button i { width: 10px; height: 10px; } }
 /* sem ícones: só índice e texto */
 .brand .mark, svg.ic { display: none !important; }
 .intro svg.di { display: inline-block; }
@@ -581,7 +565,6 @@ html[data-pal="sangue-aco"] { --fn: #c8514f; --dado: #6a8bb0; --accent: #c8514f;
 <body>
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
 <div class="top-ctl">
-<div class="pal" role="group" aria-label="Paleta de cores"><button type="button" data-pal="atual" aria-pressed="true" aria-label="Paleta Atual · coral e azul" title="Atual · coral e azul"><i style="background:#f07167"></i><i style="background:#5b8cff"></i></button><button type="button" data-pal="afresco" aria-pressed="false" aria-label="Paleta Afresco · vermelhão e ultramarino" title="Afresco · vermelhão e ultramarino"><i style="background:#e5604d"></i><i style="background:#6c8cf0"></i></button><button type="button" data-pal="fogo-agua" aria-pressed="false" aria-label="Paleta Fogo e água · brasa e azul-água" title="Fogo e água · brasa e azul-água"><i style="background:#f2674a"></i><i style="background:#4aa3df"></i></button><button type="button" data-pal="carmim-lapis" aria-pressed="false" aria-label="Paleta Carmim e lápis-lazúli · garança e lápis" title="Carmim e lápis-lazúli · garança e lápis"><i style="background:#d94a5f"></i><i style="background:#5876d8"></i></button><button type="button" data-pal="rubi-safira" aria-pressed="false" aria-label="Paleta Rubi e safira · joia" title="Rubi e safira · joia"><i style="background:#e0445f"></i><i style="background:#4f83f1"></i></button><button type="button" data-pal="terracota-ceu" aria-pressed="false" aria-label="Paleta Terracota e céu · fosco" title="Terracota e céu · fosco"><i style="background:#d9735b"></i><i style="background:#7fa8e0"></i></button><button type="button" data-pal="sangue-aco" aria-pressed="false" aria-label="Paleta Sangue e aço · sóbrio" title="Sangue e aço · sóbrio"><i style="background:#c8514f"></i><i style="background:#6a8bb0"></i></button></div>
 <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
 </div>
 
@@ -656,11 +639,6 @@ setTimeout(stop,3000);
 function top(){if(!done&&(window.scrollY||document.documentElement.scrollTop))window.scrollTo({top:0,left:0,behavior:'instant'})}
 function loop(){top();if(!done)requestAnimationFrame(loop)}
 top();loop();addEventListener('pageshow',top);addEventListener('load',top);})();
-</script>
-<script>
-(function(){var r=document.documentElement,bs=document.querySelectorAll('[data-pal]');
-function mark(){var p=r.getAttribute('data-pal')||'atual';bs.forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-pal')===p?'true':'false')})}
-bs.forEach(function(b){b.addEventListener('click',function(){var p=b.getAttribute('data-pal');if(p==='atual')r.removeAttribute('data-pal');else r.setAttribute('data-pal',p);try{localStorage.setItem('fop-pal',p)}catch(e){}mark()})});mark();})();
 </script>
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";

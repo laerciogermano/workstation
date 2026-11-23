@@ -19,7 +19,9 @@ export interface IfB { t: "if"; id: string; test: string; kids: Node[]; elseKids
 /** `loop` omisso = for-of; while/do-while usam `coll` como condição. */
 export interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[]; loop?: "for" | "while" | "do-while" }
 export interface TryB { t: "try"; id: string; kids: Node[]; catchKids: Node[] }
-export type Block = IfB | ForB | TryB;
+/** `expr`: valor discriminado; kids = cases (ifs). */
+export interface SwitchB { t: "switch"; id: string; expr: string; kids: Node[] }
+export type Block = IfB | ForB | TryB | SwitchB;
 export type Node = Fn | Block;
 export type BlockKind = Block["t"];
 
@@ -166,6 +168,7 @@ export function renameDatumInFlow(flow: Fn, from: string, to: string): void {
   walk(flow.kids, n => {
     if (n.t === "fn") patch(n);
     else if (n.t === "if") n.test = renameIdentInExpr(n.test, from, to);
+    else if (n.t === "switch") n.expr = renameIdentInExpr(n.expr, from, to);
     else if (n.t === "for") { if (n.v === from) n.v = to; n.coll = renameIdentInExpr(n.coll, from, to); }
   });
 }
@@ -676,6 +679,7 @@ export function parseProject(text: string): Project {
       return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids), ...(loop ? { loop } : {}) };
     }
     if (n.t === "try") return { t: "try", id: n.id, kids: list(n.kids), catchKids: list(n.catchKids ?? []) };
+    if (n.t === "switch") return { t: "switch", id: n.id, expr: String(n.expr ?? "value"), kids: list(n.kids ?? []) };
     return fail("invalid", `Unknown element type in ${n.id}`);
   };
   const flows = pr.flows.map(f => { const n = node(f as never); return n.t === "fn" ? n : fail("invalid", "Every flow starts with a function"); });

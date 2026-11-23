@@ -167,6 +167,18 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
       } else if (n.t === "for") {
         letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
         emit(`${ind}for (const ${n.v} of ${n.coll}) {`); list(n.kids, ind + "  ", [...scope, n.v], err, `${n.id}:k`); emit(`${ind}}`); mark(n.id, a1);
+      } else if (n.t === "switch") {
+        letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
+        emit(`${ind}switch (${n.expr}) {`);
+        for (const c of n.kids) {
+          if (c.t === "if") {
+            const m = /===?\s*(.+)$/.exec(c.test);
+            emit(`${ind}  case ${m ? m[1]!.trim() : c.test}:`);
+            list(c.kids, ind + "    ", scope, err, `${c.id}:k`);
+            emit(`${ind}    break;`);
+          } else list([c], ind + "  ", scope, err, `${n.id}:k`);
+        }
+        emit(`${ind}}`); mark(n.id, a1);
       } else {
         letLine(declAt.get(`${key}|${n.id}`) ?? [], ind); const a1 = lines.length + 1;
         emit(`${ind}try {`); list(n.kids, ind + "  ", scope, err, `${n.id}:k`); emit(`${ind}} catch (error) {`);
@@ -184,6 +196,7 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
       if (n.t === "fn") for (const v of Object.values(n.args ?? {})) for (const id of idsOf(v)) { if (scope.includes(id)) continue; inExpr.add(id); if (!produced.includes(id)) fromStateSet.add(id); }
       if (n.t === "if") { for (const id of idsOf(n.test)) { if (scope.includes(id)) continue; inExpr.add(id); if (!produced.includes(id)) fromStateSet.add(id); } scan(n.kids, scope); scan(n.elseKids, scope); }
       else if (n.t === "for") { for (const id of idsOf(n.coll)) { if (scope.includes(id)) continue; inExpr.add(id); if (!produced.includes(id)) fromStateSet.add(id); } scan(n.kids, [...scope, n.v]); }
+      else if (n.t === "switch") { for (const id of idsOf(n.expr)) { if (scope.includes(id)) continue; inExpr.add(id); if (!produced.includes(id)) fromStateSet.add(id); } scan(n.kids, scope); }
       else if (n.t === "try") { scan(n.kids, scope); scan(n.catchKids, scope); }   // fn: o que há dentro de uma composição é de outro escopo (função local)
     }
   };
@@ -218,6 +231,7 @@ export function generate(p: Project, rootId: string, options: GenOptions = {}): 
         const here = [...trail, [key, n.id] as const];
         if (n.t === "if") { idsOf(n.test).forEach(id => addUse(id, here)); scanDecl(n.kids, `${n.id}:k`, here, scope); scanDecl(n.elseKids, `${n.id}:e`, here, scope); }
         else if (n.t === "for") { idsOf(n.coll).forEach(id => addUse(id, here)); scanDecl(n.kids, `${n.id}:k`, here, [...scope, n.v]); }
+        else if (n.t === "switch") { idsOf(n.expr).forEach(id => addUse(id, here)); scanDecl(n.kids, `${n.id}:k`, here, scope); }
         else { scanDecl(n.kids, `${n.id}:k`, here, scope); scanDecl(n.catchKids, `${n.id}:c`, here, scope); }
       }
     }

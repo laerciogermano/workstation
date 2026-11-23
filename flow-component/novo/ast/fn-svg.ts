@@ -77,7 +77,7 @@ function colW(sc: Scene, opts: FnSvgOpts): number {
   return Math.max(opts.minW ?? 0, txt ? Math.max(G.W, fromTitle) : G.WS);
 }
 
-const KINDS = new Set(["fn", "if", "for", "try"]);
+const KINDS = new Set(["fn", "if", "for", "try", "switch"]);
 function assertKnown(n: Node): void {
   if (!KINDS.has(n.t)) throw new Error(`fn-svg: nó desconhecido t:"${(n as { t: string }).t}"`);
   for (const k of n.kids) assertKnown(k);
@@ -85,8 +85,12 @@ function assertKnown(n: Node): void {
   if (n.t === "try") for (const k of n.catchKids) assertKnown(k);
 }
 
+const blockCls = (n: Exclude<Node, Fn>): string =>
+  n.t === "if" ? "if" : n.t === "for" ? "lp" : n.t === "switch" ? "sw" : "tr";
+
 const blockText = (n: Exclude<Node, Fn>): string => {
   if (n.t === "if") return `if (${n.test})`;
+  if (n.t === "switch") return `switch (${n.expr})`;
   if (n.t === "for") {
     if (n.loop === "while") return `while (${n.coll})`;
     if (n.loop === "do-while") return `do-while (${n.coll})`;
@@ -268,7 +272,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
   const byId = new Map(rows.map((r, i) => [r.id, i]));
 
   rows.forEach((r, i) => {
-    const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : r.kind === "block" ? ((r.node as Exclude<Node, Fn>).t === "if" ? "if" : (r.node as Exclude<Node, Fn>).t === "for" ? "lp" : "tr") : "co";
+    const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : r.kind === "block" ? blockCls(r.node as Exclude<Node, Fn>) : "co";
     if (r.leaf) rail(r.depth, rowY(i), G.RH, cls);
     else if (r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
   });
@@ -299,13 +303,14 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
   rows.forEach((r, i) => {
     if (r.kind !== "fn") {
       const n = r.node as Exclude<Node, Fn>;
-      const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+      const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : blockCls(n);
       const txt = r.kind === "catch" ? L.catchTxt : r.kind === "else" ? L.elseTxt : blockText(n);
       const cx = colX(r.s), cy = ym(i), px = cx + 11;
       const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6);
       if (cls === "if") over.push(`<path class="fif" d="M${cx} ${cy - 7} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
       if (cls === "el") over.push(`<path class="fel" d="M${cx} ${cy + 7} L${cx + 6.5} ${cy - 5} H${cx - 6.5} Z"/>`);
       if (cls === "lp") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">↻</text>`);
+      if (cls === "sw") over.push(`<rect class="fsw" x="${cx - 5}" y="${cy - 5}" width="10" height="10" rx="1.5"/>`);
       if (cls === "tr") over.push(`<path class="ftr" d="M${cx} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx - 3.5} ${cy - 6.1} ${cx - 1.8} ${cy - 7} ${cx} ${cy - 7}z"/>`);
       if (cls === "ca") over.push(`<path class="fca" d="M${cx - 5} ${cy - 5} L${cx + 5} ${cy + 5} M${cx + 5} ${cy - 5} L${cx - 5} ${cy + 5}"/>`);
       // else lado a lado com o if (mesmo passo): a etiqueta ocupa toda a largura do if
@@ -357,10 +362,11 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
 .dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
-.bande.if,.bande.el{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
-.fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
+.bande.if,.bande.el,.bande.sw{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
+.fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
 .pill text{font:600 9px ui-monospace,Menlo,monospace}
 .pill.if rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.if text{fill:#d97706}.pill.el rect{fill:color-mix(in srgb,#d97706 12%,var(--paper,#fff))}.pill.el text{fill:#d97706}
+.pill.sw rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.sw text{fill:#d97706}
 .pill.lp rect{fill:color-mix(in srgb,#8b5cf6 20%,var(--paper,#fff))}.pill.lp text{fill:#8b5cf6}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
 .ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
 .dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}

@@ -231,6 +231,7 @@ export function dataLinks(p: Project, sc: Scene): DataLink[] {
 // ───────────────────────── textos ─────────────────────────
 export const blockLabel = (_p: Project, n: Node): string => {
   if (n.t === "if") return `if (${n.test})`;
+  if (n.t === "switch") return `switch (${n.expr})`;
   if (n.t === "for") {
     if (n.loop === "while") return `while (${n.coll})`;
     if (n.loop === "do-while") return `do-while (${n.coll})`;
@@ -279,6 +280,7 @@ export function renderTable(p: Project, sc: Scene, ui: Ui): string {
       const lead = r.leaf ? "" : `<span class="car${r.closed ? " shut" : ""}" data-act="toggle" data-id="${esc(closeKey)}" title="Open / close">${icon("chevron")}</span>`;
       const tag = r.kind === "catch" ? `${icon("x", "mini")}<span class="trd c">catch</span><b class="mono">if the try fails</b>` : r.kind === "else" ? `<span class="trd e">else</span><b class="mono">otherwise</b>`
         : n.t === "if" ? `${icon("triangle", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>` : n.t === "for" ? `<span class="lpd">↻</span><b class="mono">${esc(blockLabel(p, n))}</b>`
+        : n.t === "switch" ? `${icon("square", "mini")}<b class="mono">${esc(blockLabel(p, n))}</b>`
         : `${icon("shield", "mini")}<b class="mono">${esc(n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n))}</b>`;
       return `<div class="grow ifrow ${part === "main" ? n.t + "row" : part + "row"}${sel}" ${base} data-part="${part}"><span class="c-ag"></span><span class="nm" style="padding-left:${pad}px">${lead}${tag}</span><span class="fl-tools">${toolsHtml(toolsFor(p, r.id, part))}</span></div>`;
     }
@@ -328,14 +330,15 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
   // bandas dos blocos + etiquetas (pills)
   sc.rows.forEach((r, i) => {
     if (r.kind !== "block" && r.kind !== "catch" && r.kind !== "else") return;
-    const n = r.node as Exclude<Node, Fn>, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : "tr";
+    const n = r.node as Exclude<Node, Fn>, cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : n.t === "if" ? "if" : n.t === "for" ? "lp" : n.t === "switch" ? "sw" : "tr";
     rail(cls, r.depth, rowY(i), (r.last - i + 1) * G.RH);
-    // if / for / try / catch: ícone na linha, pill alinhada depois — só else fica colado na coluna
-    const mark = (r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try")) || r.kind === "catch", px = colX(r.s) + (mark ? 11 : 4), cx = colX(r.s), cy = ym(i);
+    // if / for / switch / try / catch: ícone na linha, pill alinhada depois — só else fica colado na coluna
+    const mark = (r.kind === "block" && (n.t === "if" || n.t === "for" || n.t === "try" || n.t === "switch")) || r.kind === "catch", px = colX(r.s) + (mark ? 11 : 4), cx = colX(r.s), cy = ym(i);
     const txt = r.kind === "catch" ? "catch · if the try fails" : r.kind === "else" ? "else" : n.t === "try" ? `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}` : blockLabel(p, n);
     const w = Math.max(tw(txt) + 12, colX(r.e + 1) - px - 6), edit = r.kind === "block" && (n.t === "if" || n.t === "for");
     if (mark && r.kind === "block" && n.t === "if") over.push(`<path class="fif" d="M${cx} ${cy - 7} L${cx + 6.5} ${cy + 5} H${cx - 6.5} Z"/>`);
     if (mark && r.kind === "block" && n.t === "for") over.push(`<text class="flp" x="${cx}" y="${cy + 3.5}" text-anchor="middle">↻</text>`);
+    if (mark && r.kind === "block" && n.t === "switch") over.push(`<rect class="fsw" x="${cx - 5}" y="${cy - 5}" width="10" height="10" rx="1.5"/>`);
     if (mark && r.kind === "block" && n.t === "try") over.push(`<path class="ftr" d="M${cx} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx - 3.5} ${cy - 6.1} ${cx - 1.8} ${cy - 7} ${cx} ${cy - 7}z"/>`);
     if (mark && r.kind === "catch") over.push(`<path class="fca" d="M${cx - 5} ${cy - 5} L${cx + 5} ${cy + 5} M${cx + 5} ${cy - 5} L${cx - 5} ${cy + 5}"/>`);
     over.push(`<g class="pill ${cls}" data-hover="${esc(r.id)}" data-part="${r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : "main"}" ${edit ? `data-act="editBlock" data-id="${esc(r.id)}"` : ""}><rect x="${px}" y="${ym(i) - 8}" width="${w}" height="16"/><text x="${px + 6}" y="${ym(i) + 3.5}">${esc(txt)}</text><title>${esc(txt)}</title></g>`);

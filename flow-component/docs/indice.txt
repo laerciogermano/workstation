@@ -69,7 +69,7 @@
   - condição: atribuir antes do if
 
 - 6. Repetição
-  - exemplos: for, vários passos, while, do-while (indice-ast.html)
+  - exemplos: for, for (vários passos), while, do-while (indice-ast.html)
   - for / while / do-while
   - coleção/condição: atribuir antes do loop
 

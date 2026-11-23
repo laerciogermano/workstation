@@ -366,7 +366,7 @@ footer {
 /* ───────── refinamento: preto editorial, serifa humanista, hairlines ───────── */
 :root {
   --paper: #050505; --paper-2: #0d0d0d; --ink: #ededea; --body: #9a9a96;
-  --muted: #6f6f6b; --line: #1c1c1c; --line-2: #2e2e2e;
+  --muted: #6f6f6b; --line: #262626; --line-2: #333;
   --accent: #f07167;               /* coral do flow (--fn) */
   --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --glow: rgba(255,255,255,.035);
@@ -451,6 +451,70 @@ html { scroll-padding-top: 1.5rem; }
 .quote-confucio cite { margin-top: .7rem; }
 .quote-confucio cite::before { height: 14px; margin-bottom: .55rem; }
 
+
+/* capa: afresco em tela cheia; título e frase sobre a imagem */
+.cover { position: relative; width: 100%; height: 100vh; height: 100svh; min-height: 520px; overflow: hidden; background: #000; isolation: isolate; }
+.cover .athens { position: absolute; inset: 0; width: 100%; max-width: none; margin: 0; z-index: -2; }
+.cover .athens::after { display: none; }
+.cover .athens img { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border: 0; border-radius: 0; box-shadow: none; object-fit: cover; object-position: 50% 45%;
+  filter: saturate(.7) contrast(1.05) brightness(.78); transform: scale(calc(1 + var(--p, 0) * .12)); transform-origin: 50% 40%; will-change: transform; }
+.cover::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(0,0,0,.55), transparent 75%), linear-gradient(to bottom, rgba(5,5,5,.55) 0%, rgba(5,5,5,.1) 35%, rgba(5,5,5,.35) 70%, #050505 100%); }
+.cover-text { position: absolute; left: 0; right: 0; top: 0; padding: 0 1.5rem; height: 78%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: calc(1 - var(--p, 0) * 1.4); transform: translateY(calc(var(--p, 0) * -40px)); text-shadow: 0 2px 30px rgba(0,0,0,.6); }
+.cover .page-title { margin: 0; width: 100%; color: #fff; font-size: clamp(2.4rem, 7vw, 5.6rem); }
+.cover .page-title .pt-t span { color: #fff; }
+.cover .page-title::after { background: rgba(255,255,255,.35); }
+.cover .quote-spread { margin: 1.5rem 0 0; width: auto; }
+.cover .quote-spread p { color: #fff; }
+.cover .quote-spread cite { color: rgba(255,255,255,.6); }
+.cover .quote-spread cite::before { background: rgba(255,255,255,.3); }
+.cover .athens figcaption { position: absolute; left: 0; right: 0; bottom: 1.1rem; margin: 0; padding: 0 1.5rem; z-index: 1; color: rgba(255,255,255,.5); text-align: center; text-shadow: 0 1px 12px #000; }
+.cover-hint { position: absolute; left: 50%; bottom: 3.4rem; width: 1px; height: 38px; background: linear-gradient(to bottom, rgba(255,255,255,.55), transparent); transform-origin: top; animation: hint 2.4s var(--ease) infinite; opacity: calc(1 - var(--p, 0) * 4); }
+@keyframes hint { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+.spread-flow { padding-top: 6rem; min-height: 0; }
+.spread-mid { padding: 5rem 1.5rem 7rem; }
+@media (max-width: 48rem) {
+  .cover .athens img { height: 100%; max-height: none; aspect-ratio: auto; object-position: 42% 45%; }
+  .cover-text { height: 74%; padding: 0 1.15rem; }
+  .cover .page-title { font-size: clamp(2.1rem, 11.5vw, 3rem); padding: 0; }
+  .cover .athens figcaption { padding: 0 1rem; font-size: 10.5px; }
+}
+
+/* texto da capa: bloco compacto, centrado entre Platão e Aristóteles */
+.cover-text { height: 100%; padding-bottom: 4vh; }
+.cover .page-title { font-size: clamp(2.2rem, 5.6vw, 4.4rem); line-height: 1; }
+.cover .page-title::after { margin-top: 1rem; }
+.cover .quote-spread { margin-top: 1rem; }
+.cover .quote-spread p { font-size: clamp(1.15rem, 2.2vw, 1.6rem); }
+.cover .quote-spread cite { margin-top: .7rem; }
+.cover .quote-spread cite::before { height: 12px; margin-bottom: .6rem; }
+.cover::before { background: radial-gradient(ellipse 45% 30% at 50% 48%, rgba(0,0,0,.6), transparent 80%), linear-gradient(to bottom, rgba(5,5,5,.5) 0%, rgba(5,5,5,.05) 35%, rgba(5,5,5,.3) 70%, #050505 100%); }
+@media (max-width: 48rem) { .cover-text { height: 100%; } .cover .page-title { font-size: clamp(2rem, 10vw, 2.7rem); } }
+/* bloco no arco do afresco, entre as duas estátuas, sem cobrir Platão e Aristóteles */
+.cover-text { justify-content: flex-start; padding-top: 13vh; padding-bottom: 0; height: 100%; }
+.cover .page-title { font-size: clamp(2rem, 4.3vw, 3.5rem); }
+.cover .quote-spread p { font-size: clamp(1.05rem, 1.8vw, 1.4rem); }
+.cover::before { background: radial-gradient(ellipse 34% 24% at 50% 24%, rgba(0,0,0,.6), transparent 80%), linear-gradient(to bottom, rgba(5,5,5,.5) 0%, rgba(5,5,5,.05) 35%, rgba(5,5,5,.3) 70%, #050505 100%); }
+@media (max-width: 48rem) { .cover-text { padding-top: 12vh; } .cover .page-title { font-size: clamp(1.8rem, 9vw, 2.4rem); } }
+/* descrição do afresco: faixa logo abaixo da capa */
+.cover-cap { margin: 0; padding: 1.1rem 1.5rem 0; text-align: center; white-space: nowrap; overflow-x: auto; scrollbar-width: none; font: italic 400 12.5px/1.5 var(--serif); letter-spacing: .01em; color: var(--muted); background: var(--paper); }
+.cover-cap::-webkit-scrollbar { display: none; }
+.cover-cap .ln { display: inline; }
+@media (max-width: 48rem) { .cover-cap { white-space: normal; padding: 1rem 1.15rem 0; font-size: 12px; } }
+/* ordem: capa, Confúcio, diagrama, artigo */
+.spread-mid { padding: 6rem 1.5rem 3rem; }
+.spread-flow { padding-top: 2rem; }
+/* mobile: diagrama maior (rolagem lateral, centrado) e mais perto das duas frases */
+@media (max-width: 48rem) {
+  .spread-mid { padding: 3rem 1.15rem 1.25rem; }
+  .spread-flow { padding: 0 0 2.25rem; gap: 0; min-height: 0; }
+  .spread .hero, .spread-flow .hero { margin: 0; padding: 0; width: 100%; max-width: 100%; }
+  .hero-plan { padding: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .hero-plan::-webkit-scrollbar { display: none; }
+  .hero-plan svg { width: 820px; max-width: none; min-width: 820px; height: auto; min-height: 0; margin: 0; }
+  .flow-preface { padding-top: 1rem; }
+}
 /* sem ícones: só índice e texto */
 .brand .mark, svg.ic, svg.di { display: none !important; }
 .side > ol > li > a { gap: .5rem; }
@@ -473,29 +537,30 @@ html { scroll-padding-top: 1.5rem; }
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
 <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="pt" aria-pressed="true">PT-BR</button></div>
 
-<div class="spread">
+<section class="cover" id="cover">
   <figure class="athens">
     <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
-    <figcaption>
-      <span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span>
-    </figcaption>
   </figure>
+  <div class="cover-text">
   <h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
   <blockquote class="quote quote-solo quote-spread">
     <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
     <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+  </blockquote>
+  </div>
+  <span class="cover-hint" aria-hidden="true"></span>
+</section>
+<p class="cover-cap"><span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span></p>
+<div class="spread spread-mid">
+  <blockquote class="quote quote-solo quote-spread quote-confucio">
+    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
+    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
   </blockquote>
 </div>
 <div class="spread spread-flow">
   <section class="hero" aria-label="Exemplo de fluxo">
     <div class="hero-plan" id="hero-plan"></div>
   </section>
-</div>
-<div class="spread spread-mid">
-  <blockquote class="quote quote-solo quote-spread quote-confucio">
-    <p class="tl" data-pt="Uma imagem vale mais que mil palavras." data-en="A picture is worth a thousand words.">Uma imagem vale mais que mil palavras.</p>
-    <cite class="tl" data-pt="Confúcio, 552–479 a.C." data-en="Confucius, 552–479 BCE">Confúcio, 552–479 a.C.</cite>
-  </blockquote>
 </div>
 <div class="layout">
 <nav class="side" aria-label="Índice"><div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" data-ph-pt="Buscar" data-ph-en="Search" placeholder="Buscar"><kbd>/</kbd></div><div class="t" data-pt="Índice" data-en="Contents">Índice</div><ol id="toc"></ol></nav>
@@ -516,11 +581,22 @@ html { scroll-padding-top: 1.5rem; }
 </footer>
 
 <script>
-(function(){var els=document.querySelectorAll('.page-title,.quote-spread,.athens,.spread-flow .hero');
+(function(){var els=document.querySelectorAll('.spread .quote-spread,.spread-flow .hero');
 els.forEach(function(e){e.classList.add('rv')});
 if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return}
 var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.12});
 els.forEach(function(e){io.observe(e)});})();
+</script>
+<script>
+(function(){var c=document.getElementById('cover');if(!c)return;var t=false;
+function u(){t=false;var p=Math.min(Math.max(scrollY/(c.offsetHeight*.8),0),1);c.style.setProperty('--p',p.toFixed(3))}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u();})();
+</script>
+<script>
+(function(){var h=document.getElementById('hero-plan');if(!h)return;
+function c(){if(h.scrollWidth>h.clientWidth)h.scrollLeft=(h.scrollWidth-h.clientWidth)/2}
+new MutationObserver(function(){c()}).observe(h,{childList:true,subtree:true});
+addEventListener('load',c);addEventListener('resize',c);c();})();
 </script>
 <script type="module">
 import * as acorn from "https://esm.sh/acorn@8.14.0";
@@ -903,7 +979,11 @@ const initSpy = () => {
     document.querySelectorAll(".side li.open").forEach((li) => li.classList.remove("open"));
     const a = links.get(cur); a.classList.add("on");
     groupOf(cur)?.classList.add("open");
-    a.scrollIntoView({ block: "nearest" });
+    if (matchMedia("(min-width: 62.01rem)").matches) {
+      const side = a.closest(".side"), ar = a.getBoundingClientRect(), sr = side.getBoundingClientRect();
+      if (ar.top < sr.top + 8) side.scrollTop += ar.top - sr.top - 8;
+      else if (ar.bottom > sr.bottom - 8) side.scrollTop += ar.bottom - sr.bottom + 8;
+    }
     updateRail(cur);
   };
   spyMark();

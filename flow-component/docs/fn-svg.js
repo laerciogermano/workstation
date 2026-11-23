@@ -1218,7 +1218,7 @@ var FlowAst = (() => {
 .dotf{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.dotf.a{fill:transparent}
 .sfn,.sdot,.scube{filter:drop-shadow(1.25px 0 0 #000) drop-shadow(-1.25px 0 0 #000) drop-shadow(0 1.25px 0 #000) drop-shadow(0 -1.25px 0 #000) drop-shadow(1px 1px 0 #000) drop-shadow(-1px -1px 0 #000) drop-shadow(1px -1px 0 #000) drop-shadow(-1px 1px 0 #000)}
 .sfn{fill:var(--fn,#e0786c);stroke:var(--fn,#e0786c);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
-.sdot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#668bf7);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
+.sdot{fill:var(--dado,#668bf7);stroke:var(--dado,#668bf7);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#668bf7);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.58}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
 .fic{fill:#fff;opacity:.9;pointer-events:none}
 .th{font:700 8px ui-monospace,Menlo,monospace;letter-spacing:.08em;fill:var(--body,#44423d)}.tb{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}.tb.mut{fill:var(--body,#44423d)}
 .so{stroke-width:1.5}.so.arq{fill:var(--body,#44423d);stroke:var(--body,#44423d)}.so.maq{fill:#22c55e;stroke:#22c55e}.so.obj{fill:#f59e0b;stroke:#f59e0b}.so.ia{fill:var(--paper,#fff);stroke:#a855f7}.so.pes{fill:var(--paper,#fff);stroke:#3b82f6}.so.abs{fill:var(--paper,#fff);stroke:var(--body,#44423d);stroke-dasharray:2 2}

@@ -294,8 +294,8 @@ h3 .n { color: var(--dado); }
 .epigraph-top { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 2.25rem auto 1.25rem; text-align: center; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
 .athens { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 0; }
 .athens img { display: block; width: 100%; max-width: 100%; height: clamp(220px, 38vw, 440px); object-fit: cover; object-position: 50% 52%; border-radius: 6px; }
-.athens figcaption { margin: 1rem auto 0; max-width: 56rem; text-align: center; font-size: 11.5px; line-height: 1.55; letter-spacing: .01em; color: var(--muted, #8a8a8a); }
-.athens figcaption .ln { display: block; }
+.athens figcaption { margin: 1rem auto 0; max-width: 100%; text-align: center; font-size: 11.5px; line-height: 1.45; letter-spacing: .01em; color: var(--muted, #8a8a8a); white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.athens figcaption .ln { display: inline; }
 .site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 8px 16px; border-top: 1px solid var(--line); background: var(--paper); color: var(--muted, #8a8a8a); font: 500 11px/1.4 "IBM Plex Sans", sans-serif; }
 .site-foot .foot-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 10px; margin-left: auto; flex: none; }
 .site-foot a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--line-2, #3a3a3a); }
@@ -382,9 +382,7 @@ footer {
   <figure class="athens">
     <img src="img/escola-de-atenas.jpg" alt="A Escola de Atenas, fresco de Rafael, com Platão e Aristóteles ao centro" loading="lazy">
     <figcaption>
-      <span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano.</span>
-      <span class="ln tl" data-pt="Platão (de vermelho) aponta para o alto, para as formas imutáveis;" data-en="Plato (in red) points upward, to the immutable forms;">Platão (de vermelho) aponta para o alto, para as formas imutáveis;</span>
-      <span class="ln tl" data-pt="Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span>
+      <span class="ln tl" data-pt="Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Raphael, The School of Athens, 1509–1511. Fresco, Apostolic Palace, Vatican City. Plato (in red) points upward, to the immutable forms; Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Rafael Sanzio, A Escola de Atenas, 1509–1511. Afresco, Palácio Apostólico, Vaticano. Platão (de vermelho) aponta para o alto, para as formas imutáveis; Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span>
     </figcaption>
   </figure>
 </div>

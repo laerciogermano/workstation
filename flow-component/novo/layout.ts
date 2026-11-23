@@ -5,6 +5,7 @@ import { altKids, type Block, type Fn, type Node } from "./model";
  *  - cada função folha ocupa um passo; funções em paralelo dividem o mesmo passo;
  *  - blocos e funções compostas cobrem os passos dos filhos;
  *  - catch (try) e else (if) compartilham a mesma regra: sequência logo após o último elemento do bloco;
+ *    filho folha no mesmo passo do cabeçalho; bloco aninhado (if no else) no passo seguinte;
  *    o que vem depois do bloco só começa quando o ramo alternativo termina. Não entram em `leaves`.
  */
 export type RowKind = "fn" | "block" | "catch" | "else";
@@ -27,12 +28,13 @@ export function layout(flow: Fn, opts: LayoutOpts = {}): Scene {
   const place = (list: readonly Node[], depth: number, start: number, emit: boolean, inAlt: boolean): number => {
     let step = start, prev: Span | null = null;
     const push = (r: Omit<Row, "last">): Row => { const row: Row = { ...r, last: 0 }; if (emit) { rows.push(row); maxDepth = Math.max(maxDepth, r.depth); } return row; };
-    /** catch e else: mesma regra — começa no passo seguinte ao fim do bloco (`after`). */
+    /** catch e else: começam no passo `after`. Filhos folha compartilham o passo; bloco aninhado (ex. if no else) vem no passo seguinte. */
     const placeAlt = (b: Block, alt: readonly Node[], after: number, emitAlt: boolean, blockClosed: boolean): number => {
       const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-      if (blockClosed) return place(alt, depth + 1, after, false, true);
+      const first = alt[0], childStart = first && first.t !== "fn" ? after + 1 : after;
+      if (blockClosed) return place(alt, depth + 1, childStart, false, true);
       const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
-      const cend = place(alt, depth + 1, after, emitAlt && !altClosed, true);
+      const cend = place(alt, depth + 1, childStart, emitAlt && !altClosed, true);
       if (emitAlt) { crow.s = after; crow.e = Math.max(after, cend - 1); span.set(altKey, { s: crow.s, e: crow.e }); crow.last = rows.length - 1; }
       return cend;
     };

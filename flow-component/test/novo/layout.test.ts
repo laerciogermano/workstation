@@ -53,6 +53,23 @@ describe("cena: linhas e passos", () => {
     expect(s.rows.findIndex(r => r.kind === "else")).toBeGreaterThan(s.rows.findIndex(r => r.id === t.ids[2])); expect(s.leaves.map(l => (l.node as Fn).title)).toEqual(["a", "b", "c", "d"]);
     expect(e.depth).toBe(1); expect(e.last).toBeGreaterThan(s.rows.indexOf(e) - 1);
   });
+  it("if aninhado no else começa no passo seguinte ao else (não no mesmo)", () => {
+    const flow: Fn = {
+      t: "fn", id: "n1", title: "main", agent: "arquivo", resp: null, ins: [], outs: [], kids: [
+        { t: "if", id: "i1", test: "aprovado", kids: [{ t: "fn", id: "n2", title: "publicar", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }],
+          elseKids: [
+            { t: "if", id: "i2", test: "recuperacao", kids: [{ t: "fn", id: "n3", title: "refazer", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }],
+              elseKids: [{ t: "fn", id: "n4", title: "reprovar", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }] },
+          ] },
+      ], par: false,
+    };
+    const s = layout(flow);
+    const else1 = s.rows.find(r => r.kind === "else" && r.id === "i1")!;
+    const if2 = s.rows.find(r => r.kind === "block" && r.id === "i2")!;
+    expect(else1.s).toBe(1);
+    expect(if2.s).toBe(2);
+    expect(if2.s).toBeGreaterThan(else1.s);
+  });
   it("if sem else não gera linha de else", () => { const t = base(); t.run({ type: "wrap", id: t.ids[1]!, kind: "if" }); expect(t.sc().rows.some(r => r.kind === "else")).toBe(false); });
   it("funções do catch não entram na sequência (leaves)", () => {
     const t = base(); const tr = t.run({ type: "wrap", id: t.ids[1]!, kind: "try" }); const s = t.sc();

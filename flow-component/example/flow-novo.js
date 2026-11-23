@@ -1752,9 +1752,10 @@ ${given.map((g) => `  ${g},`).join("\n")}
       };
       const placeAlt = (b, alt, after, emitAlt, blockClosed) => {
         const kind = b.t === "try" ? "catch" : "else", altKey = `${b.id}:${kind}`, altClosed = closed.has(altKey);
-        if (blockClosed) return place(alt, depth + 1, after, false, true);
+        const first = alt[0], childStart = first && first.t !== "fn" ? after + 1 : after;
+        if (blockClosed) return place(alt, depth + 1, childStart, false, true);
         const crow = push({ kind, id: b.id, node: b, depth, s: after, e: after, leaf: false, closed: altClosed });
-        const cend = place(alt, depth + 1, after, emitAlt && !altClosed, true);
+        const cend = place(alt, depth + 1, childStart, emitAlt && !altClosed, true);
         if (emitAlt) {
           crow.s = after;
           crow.e = Math.max(after, cend - 1);

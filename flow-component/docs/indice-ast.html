@@ -114,7 +114,7 @@ a, button { transition: color .15s var(--ease), background-color .15s var(--ease
   .content-col { display: contents; }
   .flow-preface { order: 1; padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 0; }
   .main-col { order: 3; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
-  .side { order: 2; position: static; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .side { order: 2; position: static; width: 100%; max-width: 100%; height: auto; border-right: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .side ul { display: block; }
 }
 main { padding: 2rem 0 4rem; }
@@ -225,8 +225,9 @@ h3 .n { color: var(--dado); }
 .tabpanel.flow svg { display: block; margin: 0 auto; }
 .tabpanel.flow { overflow: auto; padding: .5rem; border: 0; border-radius: 6px; background: transparent; }
 .tabpanel.code pre { margin: 0; padding: .85rem 1rem; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-size: .78rem; line-height: 1.55; color: var(--ink); }
-.hero-plan { overflow-x: auto; margin: 0; padding: .25rem; }
-.hero-plan svg { display: block; width: 100%; max-width: 1180px; margin: 0 auto; height: auto; }
+.hero-plan { overflow-x: auto; max-width: 100%; margin: 0; padding: .25rem; -webkit-overflow-scrolling: touch; }
+.hero-plan .tabpanel.flow { max-width: 100%; overflow-x: auto; }
+.hero-plan svg { display: block; width: 100%; max-width: 100%; margin: 0 auto; height: auto; }
 .quote-solo { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: -.25rem auto 1.5rem; padding: .1rem 0; border-left: 0; text-align: center; }
 .quote-solo p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote-solo cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
@@ -246,15 +247,14 @@ h3 .n { color: var(--dado); }
 .lang button:last-child { border-radius: 0 99px 99px 0; }
 .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .page-title { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 3.5rem auto 1.75rem;
-  font: 600 clamp(2rem, 4.6vw, 3.1rem)/1.04 "IBM Plex Sans", sans-serif; letter-spacing: -.04em; text-align: center; color: var(--muted, #8a8a8a); }
-.page-title { display: flex; align-items: center; justify-content: center; gap: .55em; }
+  font: 600 clamp(1.45rem, 4.6vw, 3.1rem)/1.12 "IBM Plex Sans", sans-serif; letter-spacing: -.04em; text-align: center; color: var(--muted, #8a8a8a); }
+.page-title { display: block; }
+.page-title .pt-t { display: inline-block; max-width: 100%; }
 .page-title .pt-t span { color: var(--ink); }
-.page-title i { flex: none; display: inline-block; width: .5em; height: .5em; border: 1px solid; }
-.page-title .pt-c { border-radius: 50%; border-color: var(--fn); }
-.page-title .pt-s { border-radius: 0; border-color: var(--dado); background: var(--dado); }
+.page-title i { display: none; }
 .epigraph-top { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 2.25rem auto 1.25rem; text-align: center; font: 500 13px/1.4 "IBM Plex Sans", sans-serif; letter-spacing: .02em; color: var(--muted, #8a8a8a); }
 .athens { box-sizing: border-box; width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.25rem auto 0; }
-.athens img { display: block; width: 100%; height: clamp(220px, 38vw, 440px); object-fit: cover; object-position: 50% 52%; border-radius: 6px; }
+.athens img { display: block; width: 100%; max-width: 100%; height: clamp(220px, 38vw, 440px); object-fit: cover; object-position: 50% 52%; border-radius: 6px; }
 .athens figcaption { margin: 1rem auto 0; max-width: 56rem; text-align: center; font-size: 11.5px; line-height: 1.55; letter-spacing: .01em; color: var(--muted, #8a8a8a); }
 .athens figcaption .ln { display: block; }
 .site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 8px 16px; border-top: 1px solid var(--line); background: var(--paper); color: var(--muted, #8a8a8a); font: 500 11px/1.4 "IBM Plex Sans", sans-serif; }
@@ -282,6 +282,39 @@ h3 .n { color: var(--dado); }
 footer {
   margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line);
   font: 600 .75rem/1.45 "IBM Plex Sans", sans-serif; color: var(--body);
+}
+/* mobile: evita estouro horizontal (título, afresco, plano) */
+@media (max-width: 48rem) {
+  html, body { overflow-x: clip; max-width: 100%; }
+  .top { gap: 8px; padding: 6px 12px; }
+  .ttl { white-space: normal; font-size: 11px; line-height: 1.25; max-width: 12rem; }
+  .athens, .page-title, .quote-solo, .hero, .epigraph-top {
+    width: 100%; max-width: 100%; margin-left: 0; margin-right: 0;
+  }
+  .athens { margin-top: 0; }
+  .athens img {
+    height: auto; aspect-ratio: 16 / 10; max-height: 42vh;
+    border-radius: 0; object-position: 50% 42%;
+  }
+  .athens figcaption { padding: 0 1rem; box-sizing: border-box; }
+  .page-title {
+    margin: 1.5rem 0 .9rem; padding: 0 1rem;
+    font-size: clamp(1.35rem, 7.5vw, 1.9rem); line-height: 1.15; letter-spacing: -.03em;
+  }
+  .quote-solo { padding: 0 1.15rem; width: 100%; box-sizing: border-box; }
+  .quote-solo p { font-size: .98rem; }
+  .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow: hidden; margin-bottom: 1.5rem; }
+  .hero-plan { padding: 0 .35rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hero-plan svg { width: 100%; max-width: 100%; height: auto; }
+  .hero .quote-close { padding: 0 1.15rem; max-width: none; }
+  .flow-preface { padding: 1.5rem 1.15rem 0; max-width: 100%; }
+  .flow-preface .prose { max-width: 100%; font-size: 1rem; }
+  .main-col { padding-inline: 1.15rem; max-width: 100%; }
+  .svg-host, .pane.plan .body, .rplan, .tabpanel.flow { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .svg-host svg { width: auto; max-width: none; min-width: min(100%, 28rem); height: auto; }
+  .pane pre, .tabpanel.code pre { max-width: 100%; overflow-x: auto; }
+  .site-foot { flex-direction: column; align-items: flex-start; }
+  .site-foot .foot-meta { margin-left: 0; justify-content: flex-start; }
 }
 </style>
 <script src="fn-svg.js"></script>
@@ -669,8 +702,13 @@ const renderHero = () => {
       { t: "try", id: "t1", kids: [F("n7", "enviar", { agent: "maquina", ins: ["pedido"] })], catchKids: [F("n8", "avisar", { agent: "ia" })] }], elseKids: [F("n9", "recusar", { agent: "pessoa" })] },
     F("n10", "registrar", { ins: ["pedido"] })] });
   const host = document.getElementById("hero-plan");
-  if (host && typeof FlowAst?.renderFnSvg === "function") host.innerHTML = `<div class="tabpanel flow">${FlowAst.renderFnSvg(fluxo, { elseParallel: true, table: true, lang: LANG }).svg}</div>`;
+  if (host && typeof FlowAst?.renderFnSvg === "function") {
+    // no mobile a tabela de responsáveis empurra o plano pra fora da tela — só o fluxo
+    const table = !matchMedia("(max-width: 48rem)").matches;
+    host.innerHTML = `<div class="tabpanel flow">${FlowAst.renderFnSvg(fluxo, { elseParallel: true, table, lang: LANG }).svg}</div>`;
+  }
 };
+matchMedia("(max-width: 48rem)").addEventListener("change", () => renderHero());
 
 // menu lateral: marca a seção visível e abre os itens do capítulo corrente
 let spyMark = null, railFor = null;

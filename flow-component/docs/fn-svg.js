@@ -761,7 +761,7 @@ var FlowAst = (() => {
           let end = next;
           const elsePar = !!(opts.elseParallel && b.t === "if");
           if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? s0 : next, emit, isClosed, elsePar));
-          if (emit) row.last = b.t === "try" ? mainLast : rows.length - 1;
+          if (emit) row.last = b.t === "try" || b.t === "if" ? mainLast : rows.length - 1;
           step = Math.max(step, end);
         }
       }

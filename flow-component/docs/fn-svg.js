@@ -926,7 +926,7 @@ var FlowAst = (() => {
     repeat: ["m17 2 4 4-4 4", "M3 11v-1a4 4 0 0 1 4-4h14", "m7 22-4-4 4-4", "M21 13v1a4 4 0 0 1-4 4H3"],
     shield: ["M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"],
     x: ["M18 6 6 18", "m6 6 12 12"],
-    square: ["rect:5,5,14,14,2"]
+    split: ["M16 3h5v5", "M8 3H3v5", "M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3", "m15 9 6-6"]
   };
   var ico = (name, x, y, size, cls) => {
     const body = (ICO[name] ?? []).map((d) => {
@@ -1065,7 +1065,7 @@ var FlowAst = (() => {
     }
     if (opts.grid !== false) rows.forEach((_, i) => out.push(`<line class="hg" x1="${opts.table ? 0 : gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     if (opts.table) {
-      out.push(`<text class="th" x="16" y="${top + 3}">${L.source}</text><text class="th" x="${funcX}" y="${top + 3}">${L.func}</text>`);
+      out.push(`<text class="th" x="16" y="${top + 3}">${L.source}</text><text class="th" x="${funcX + 30 + Math.min(...rows.map((r) => r.depth)) * 12}" y="${top + 3}">${L.func}</text>`);
       const car = (x, y, shut, key) => `<g class="car-hit" data-toggle="${esc(key)}"><title>${shut ? "expandir" : "recolher"}</title><rect x="${x - 2}" y="${y - 9}" width="16" height="18" fill="transparent"/><g transform="translate(${x} ${y - 6})"><path class="car" transform="${shut ? "rotate(-90 6 6) " : ""}scale(.5)" d="m6 9 6 6 6-6"/></g></g>`;
       rows.forEach((r, i) => {
         const y = ym(i), bx = funcX + r.depth * 12;
@@ -1073,7 +1073,7 @@ var FlowAst = (() => {
           const n = r.node, key = r.kind === "block" ? r.id : `${r.id}:${r.kind}`;
           const cls2 = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : blockCls(n);
           const txt = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(n);
-          const ic = r.kind === "catch" ? "x" : r.kind === "else" ? "triangle" : n.t === "if" ? "triangle" : n.t === "for" ? "repeat" : n.t === "switch" ? "square" : "shield";
+          const ic = r.kind === "catch" ? "x" : r.kind === "else" ? "triangle" : n.t === "if" ? n.caseVal !== void 0 ? "split" : "triangle" : n.t === "for" ? "repeat" : n.t === "switch" ? "split" : "shield";
           const flip = r.kind === "else" ? ` transform="rotate(180 ${bx + 14 + 6} ${y})"` : "";
           out.push(`${r.leaf ? "" : car(bx, y, r.closed, key)}<g${flip}>${ico(ic, bx + 14, y - 6, 12, `k-${cls2 === "el" ? "if" : cls2}`)}</g><text class="tb" x="${bx + 30}" y="${y + 3.5}">${esc(txt)}</text>`);
           return;
@@ -1155,7 +1155,7 @@ var FlowAst = (() => {
         if (cls === "if") over.push(`<path class="fif" d="M${cx2} ${cy - 7} L${cx2 + 6.5} ${cy + 5} H${cx2 - 6.5} Z"/>`);
         if (cls === "el") over.push(`<path class="fel" d="M${cx2} ${cy + 7} L${cx2 + 6.5} ${cy - 5} H${cx2 - 6.5} Z"/>`);
         if (cls === "lp") over.push(`<text class="flp" x="${cx2}" y="${cy + 3.5}" text-anchor="middle">\u21BB</text>`);
-        if (cls === "sw") over.push(`<rect class="fsw" x="${cx2 - 5}" y="${cy - 5}" width="10" height="10" rx="1.5"/>`);
+        if (cls === "sw") over.push(`<g transform="translate(${cx2 - 6} ${cy - 6}) scale(.5)"><path class="fsw" d="M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.17-2.87L3 3M15 9l6-6"/></g>`);
         if (cls === "tr") over.push(`<path class="ftr" d="M${cx2} ${cy - 7}c1.8 0 3.5.9 4.6 2.1v4.2c0 2.8-2 4.4-4.6 5.4-2.6-1-4.6-2.6-4.6-5.4V${cy - 4.9}C${cx2 - 3.5} ${cy - 6.1} ${cx2 - 1.8} ${cy - 7} ${cx2} ${cy - 7}z"/>`);
         if (cls === "ca") over.push(`<path class="fca" d="M${cx2 - 5} ${cy - 5} L${cx2 + 5} ${cy + 5} M${cx2 + 5} ${cy - 5} L${cx2 - 5} ${cy + 5}"/>`);
         const brow = r.kind === "else" ? rows.find((x) => x.kind === "block" && x.node === r.node && x.s === r.s) : void 0;
@@ -1206,7 +1206,7 @@ var FlowAst = (() => {
 .dlk{stroke:#9a9a9a;stroke-width:1}
 .dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
 
-.fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
+.fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:none;stroke:#d97706;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
 .pill text{font:600 9px ui-monospace,Menlo,monospace}
 .pill.if rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.if text{fill:#d97706}.pill.el rect{fill:color-mix(in srgb,#d97706 12%,var(--paper,#fff))}.pill.el text{fill:#d97706}
 .pill.sw rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.sw text{fill:#d97706}

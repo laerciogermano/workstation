@@ -317,7 +317,7 @@ footer {
   .site-foot .foot-meta { margin-left: 0; justify-content: flex-start; }
 }
 </style>
-<script src="fn-svg.js"></script>
+<script src="fn-svg.js?v=20261123-switch"></script>
 </head>
 <body>
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
@@ -629,7 +629,11 @@ const exTitle = (k, ex) => (LANG === "en" ? EN.examples[k]?.t ?? ex.title : ex.t
 const exLead = (k, ex) => (LANG === "en" && EN.examples[k] ? ex.lead.map((x, i) => [x[0], EN.examples[k].r[i] ?? x[1]]) : ex.lead);
 const grp = (g) => (LANG === "en" ? EN.groups[g.id] ?? {} : {});
 
-const planOf = (flow, opts) => typeof FlowAst?.renderFnSvg === "function" ? FlowAst.renderFnSvg(flow, { ...opts, lang: LANG }).svg : "";
+const planOf = (flow, opts) => {
+  if (typeof FlowAst?.renderFnSvg !== "function") return "";
+  try { return FlowAst.renderFnSvg(flow, { ...opts, lang: LANG }).svg; }
+  catch (e) { return `<div class="err">${esc(e.message || e)}</div>`; }
+};
 
 // o lead vira lista de bullets: um por frase (ou um por item, se vier como array)
 // abas Flow | Código: o mesmo programa nas duas formas, para comparar
@@ -769,9 +773,16 @@ const renderAll = () => {
     if (g.id === "flow" && preface) preface.insertAdjacentHTML("beforeend", block);
     else out.insertAdjacentHTML("beforeend", block);
     toc.insertAdjacentHTML("beforeend", `<li data-g="${g.id}"><a href="#${g.id}">${ICONS[g.id] ?? `<span class="gn">${esc(g.n)}</span>`}${esc(title)}</a>${keys.length ? `<ul>${keys.map((k) => `<li${EXAMPLES[k].sub ? ' class="sub"' : ""}><a href="#${anchor(k)}">${EXAMPLES[k].num} ${exTitle(k, EXAMPLES[k])}</a></li>`).join("")}</ul>` : ""}</li>`);
-    for (const k of keys) paint(k, EXAMPLES[k], g.id === "funcoes", false, g.id === "responsaveis");
+    for (const k of keys) {
+      try { paint(k, EXAMPLES[k], g.id === "funcoes", false, g.id === "responsaveis"); }
+      catch (e) {
+        const el = document.getElementById(anchor(k));
+        if (el) el.innerHTML = `<h3><span class="n">${esc(EXAMPLES[k].num)}</span>${esc(EXAMPLES[k].title)}</h3><div class="err">${esc(e.message || e)}</div>`;
+        console.error("paint", k, e);
+      }
+    }
   }
-  renderHero();
+  try { renderHero(); } catch (e) { console.error("hero", e); }
   applyStatic();
   initSpy();
 };

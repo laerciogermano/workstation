@@ -232,12 +232,17 @@ h3 .n { color: var(--dado); }
 .quote-confucio { margin-top: 1.75rem; }
 .quote-solo p { margin: 0; font: italic 400 1.05rem/1.4 "IBM Plex Sans", sans-serif; color: var(--ink); }
 .quote-solo cite { display: block; margin-top: .35rem; font: 600 .72rem/1 "IBM Plex Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-style: normal; color: var(--body); text-align: center; }
-/* página de livro: citação ocupa a tela; rola e respira antes do título */
+/* página de livro: título + citação; rola e respira antes do diagrama */
+.spread {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-sizing: border-box; width: 100%;
+  min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px);
+  padding: 12vh 1.5rem 18vh; gap: 2rem;
+}
+.spread .page-title { margin: 0; width: calc(100% - 2.5rem); }
 .quote-spread {
   width: 100%; max-width: none; margin: 0;
-  min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px);
-  justify-content: center; padding: 18vh 1.5rem 22vh;
-  box-sizing: border-box;
+  min-height: 0; padding: 0; box-sizing: border-box;
 }
 .quote-spread p {
   font: italic 400 clamp(1.35rem, 3.2vw, 2.15rem)/1.35 "IBM Plex Sans", sans-serif;
@@ -321,10 +326,8 @@ footer {
   .quote-solo { margin-top: 2rem; padding: 0 1.15rem; width: 100%; box-sizing: border-box; }
   .quote-confucio { margin-top: 1rem; }
   .quote-solo p { font-size: .98rem; }
-  .quote-spread {
-    min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px);
-    margin: 0; padding: 16vh 1.15rem 20vh; width: 100%;
-  }
+  .spread { min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px); padding: 10vh 1.15rem 16vh; gap: 1.5rem; }
+  .quote-spread { margin: 0; padding: 0; width: 100%; }
   .quote-spread p { font-size: clamp(1.25rem, 6vw, 1.75rem); }
   .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow-x: auto; overflow-y: visible; margin-bottom: 1.5rem; }
   .hero-plan { padding: 0 .35rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -358,11 +361,13 @@ footer {
     <span class="ln tl" data-pt="Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação." data-en="Aristotle (in blue) extends his hand toward the earth, to the physical world, in constant transformation.">Aristóteles (de azul) estende a mão para a terra, para o mundo físico, em constante transformação.</span>
   </figcaption>
 </figure>
-<blockquote class="quote quote-solo quote-spread">
-  <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
-  <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
-</blockquote>
-<h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
+<div class="spread">
+  <h1 class="page-title"><span class="pt-t">Flow Oriented <span>Programming</span></span></h1>
+  <blockquote class="quote quote-solo quote-spread">
+    <p class="tl" data-pt="Tudo muda, exceto a mudança." data-en="Everything changes, except change.">Tudo muda, exceto a mudança.</p>
+    <cite class="tl" data-pt="Heráclito" data-en="Heraclitus">Heráclito</cite>
+  </blockquote>
+</div>
 <section class="hero" aria-label="Exemplo de fluxo">
   <div class="hero-plan" id="hero-plan"></div>
 </section>

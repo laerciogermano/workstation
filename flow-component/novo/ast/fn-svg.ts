@@ -96,7 +96,7 @@ const blockText = (n: Exclude<Node, Fn>): string => {
     if (n.loop === "do-while") return `do-while (${n.coll})`;
     return `for (${n.v} of ${n.coll})`;
   }
-  return `try · catch ↓ ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+  return "try";
 };
 
 /**

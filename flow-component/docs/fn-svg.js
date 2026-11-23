@@ -965,7 +965,7 @@ var FlowAst = (() => {
       if (n.loop === "do-while") return `do-while (${n.coll})`;
       return `for (${n.v} of ${n.coll})`;
     }
-    return `try \xB7 catch \u2193 ${n.catchKids[0]?.t === "fn" ? n.catchKids[0].title : "handler"}`;
+    return "try";
   };
   function renderFnSvg(flow, opts = {}) {
     assertKnown(flow);

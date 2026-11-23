@@ -497,6 +497,7 @@ const EXAMPLES = {
 
   seAninhado: { num: "4.4", title: "if aninhados", lead: [["P","Um <code>if</code> pode estar no <code>else</code> de outro."],["T","Há três caminhos possíveis, e só um executa."]],
     code: J("async function main() {", "  const nota = 7;", "  const aprovado = nota >= 7;", "  if (aprovado) {", "    await publicar();", "  } else {", "    const recuperacao = nota >= 5;", "    if (recuperacao) {", "      await refazer();", "    } else {", "      await reprovar();", "    }", "  }", "", "  async function publicar() {", "  }", "  async function refazer() {", "  }", "  async function reprovar() {", "  }", "}"),
+    opts: { elseParallel: true },
     flow: main([{ t: "if", id: "i1", test: "aprovado", kids: [F("n2", "publicar")], elseKids: [
       { t: "if", id: "i2", test: "recuperacao", kids: [F("n3", "refazer")], elseKids: [F("n4", "reprovar")] }] }]) },
   repDoWhile: { num: "5.4", title: "do-while", lead: [["P","O <code>do-while</code> executa ao menos uma vez."],["P","Repete enquanto a condição valer."]],

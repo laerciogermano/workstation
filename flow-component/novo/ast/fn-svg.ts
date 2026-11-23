@@ -280,7 +280,7 @@ export function renderFnSvg(flow: Fn, opts: FnSvgOpts = {}): FnSvgResult {
   const ioMarks = (f: Fn, r: Row, i: number, x1: number, x2: number): void => {
     const mark = (x: number, list: readonly string[], side: "in" | "out"): string => {
       if (!list.length) return "";
-      const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]!] ?? "");
+      const cube = list.length !== 1 || /^\s*[{[]/.test(f.args?.[list[0]!] ?? "");
       const tip = list.join(", ");
       // função passada como dado continua sendo função: ícone redondo
       if (!cube && /^function\b/.test(f.args?.[list[0]!] ?? "")) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;

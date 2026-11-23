@@ -1130,7 +1130,7 @@ var FlowAst = (() => {
       const fnTitles = new Set(rows.filter((q) => q.kind === "fn").map((q) => q.node.title));
       const mark = (x, list, side) => {
         if (!list.length) return "";
-        const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]] ?? "");
+        const cube = list.length !== 1 || /^\s*[{[]/.test(f.args?.[list[0]] ?? "");
         const tip = list.join(", ");
         if (!cube && side === "in" && !f.args?.[list[0]]?.trim() && !prod.has(list[0]) && fnTitles.has(list[0])) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf a" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;
         if (!cube && /^function\b/.test(f.args?.[list[0]] ?? "")) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;

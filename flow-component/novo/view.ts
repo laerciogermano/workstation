@@ -357,7 +357,7 @@ export function renderPlan(p: Project, flow: Fn, sc: Scene, ui: Ui): string {
     const mark = (x: number, list: readonly string[], kind: "in" | "out", abs: boolean, tip: string): string => {
       if (!list.length) return "";
       // mesmo nome = mesma forma: herda cubo da origem (objeto/multi) mesmo em porto de um só identificador
-      const asCube = isCube(list) || (list.length === 1 && cubes.has(list[0]!)) || (kind === "in" && list.length === 1 && /^\s*\{/.test(f.args?.[list[0]!] ?? ""));
+      const asCube = isCube(list) || (list.length === 1 && cubes.has(list[0]!)) || (kind === "in" && list.length === 1 && /^\s*[{[]/.test(f.args?.[list[0]!] ?? ""));
       const title = asCube && isCube(list) ? `${cubeName(f, kind)}: ${list.join(", ")}` : list[0]!;
       return asCube
         ? `<g class="dm" data-act="editData" data-id="${esc(f.id)}" data-side="${kind}"><path class="cube${abs ? " a" : ""}" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(title)} · ${tip}</title></g>`

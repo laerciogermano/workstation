@@ -22642,3 +22642,740 @@ cdpId=marina-costa cdpUrl=http://127.0.0.1:9224 url=https://www.linkedin.com/in/
 20/11/2026 19:17:25 [d59832cd] ✖ heartbeat falhou: fetch failed
 20/11/2026 19:17:25 [d59832cd] ✖ erro no ciclo #2063: fetch failed
 20/11/2026 19:17:25 [d59832cd] pausa 15s antes de tentar de novo
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+23/11/2026 10:52:06 [d59832cd] ——— worker iniciado ———
+23/11/2026 10:52:06 [d59832cd] API http://185.250.37.82
+23/11/2026 10:52:06 [d59832cd] agente d59832cd-92fc-4446-bd9c-a8ac989b9cea · Chrome CDP · perfil=marina-costa · http://127.0.0.1:9224
+23/11/2026 10:52:06 [d59832cd] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+23/11/2026 10:52:06 [d59832cd] cadastrando/atualizando agente na API (enroll)…
+23/11/2026 10:52:07 [d59832cd] enroll OK (já existia) · LinkedIn ok · online
+23/11/2026 10:52:07 [d59832cd] ciclo #1: pedindo job na API…
+23/11/2026 10:52:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:52:07 [d59832cd] ciclo #1: peguei job «buscar candidatos» (extrair_leads) prioridade=5 id=fd3f28ea-7f7e-4f9f-88c1-591c2d7616a0
+23/11/2026 10:52:07 [d59832cd]   payload: máx=5
+23/11/2026 10:52:07 [d59832cd] executando «buscar candidatos» em Chrome CDP (marina-costa)…
+23/11/2026 10:52:07 [spawn] iniciando robô: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 10 --no-shot
+
+{
+  "ok": false,
+  "query": "comprador",
+  "n": 10,
+  "count": 0,
+  "pagesUsed": 1,
+  "profiles": [],
+  "steps": [
+    "search:comprador:page=1",
+    "list-page:1:cards=0",
+    "page_end:1"
+  ],
+  "truncated": true
+}
+23/11/2026 10:52:32 [spawn] robô saiu com código 1: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot
+23/11/2026 10:52:32 [d59832cd] ✖ job «buscar candidatos» falhou: linkedin-extract-leads-cdp exit=1
+23/11/2026 10:52:33 [d59832cd] ciclo #1 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:52:48 [d59832cd] ciclo #2: pedindo job na API…
+23/11/2026 10:52:48 [d59832cd] ciclo #2: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:52:48 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:53:03 [d59832cd] ciclo #3: pedindo job na API…
+23/11/2026 10:53:04 [d59832cd] ciclo #3: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:53:04 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:53:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:53:19 [d59832cd] ciclo #4: pedindo job na API…
+23/11/2026 10:53:19 [d59832cd] ciclo #4: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:53:19 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:53:34 [d59832cd] ciclo #5: pedindo job na API…
+23/11/2026 10:53:35 [d59832cd] ciclo #5: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:53:35 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:53:50 [d59832cd] ciclo #6: pedindo job na API…
+23/11/2026 10:53:50 [d59832cd] ciclo #6: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:53:50 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:54:05 [d59832cd] ciclo #7: pedindo job na API…
+23/11/2026 10:54:05 [d59832cd] ciclo #7: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:54:05 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:54:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:54:20 [d59832cd] ciclo #8: pedindo job na API…
+23/11/2026 10:54:21 [d59832cd] ciclo #8: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:54:21 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:54:36 [d59832cd] ciclo #9: pedindo job na API…
+23/11/2026 10:54:36 [d59832cd] ciclo #9: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:54:36 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:54:51 [d59832cd] ciclo #10: pedindo job na API…
+23/11/2026 10:54:52 [d59832cd] ciclo #10: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:54:52 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:55:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:55:07 [d59832cd] ciclo #11: pedindo job na API…
+23/11/2026 10:55:07 [d59832cd] ciclo #11: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:55:07 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:55:22 [d59832cd] ciclo #12: pedindo job na API…
+23/11/2026 10:55:23 [d59832cd] ciclo #12: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:55:23 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:55:38 [d59832cd] ciclo #13: pedindo job na API…
+23/11/2026 10:55:38 [d59832cd] ciclo #13: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:55:38 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:55:53 [d59832cd] ciclo #14: pedindo job na API…
+23/11/2026 10:55:55 [d59832cd] ciclo #14: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:55:55 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:56:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:56:10 [d59832cd] ciclo #15: pedindo job na API…
+23/11/2026 10:56:10 [d59832cd] ciclo #15: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:56:10 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:56:25 [d59832cd] ciclo #16: pedindo job na API…
+23/11/2026 10:56:26 [d59832cd] ciclo #16: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:56:26 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:56:41 [d59832cd] ciclo #17: pedindo job na API…
+23/11/2026 10:56:41 [d59832cd] ciclo #17: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:56:41 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:56:56 [d59832cd] ciclo #18: pedindo job na API…
+23/11/2026 10:56:56 [d59832cd] ciclo #18: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:56:56 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:57:11 [d59832cd] ciclo #19: pedindo job na API…
+23/11/2026 10:57:12 [d59832cd] ciclo #19: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:12 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:27 [d59832cd] ciclo #20: pedindo job na API…
+23/11/2026 10:57:27 [d59832cd] ciclo #20: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:27 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:42 [d59832cd] ciclo #21: pedindo job na API…
+23/11/2026 10:57:43 [d59832cd] ciclo #21: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:43 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:58 [d59832cd] ciclo #22: pedindo job na API…
+23/11/2026 10:57:58 [d59832cd] ciclo #22: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:58 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:58:13 [d59832cd] ciclo #23: pedindo job na API…
+23/11/2026 10:58:14 [d59832cd] ciclo #23: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:14 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:29 [d59832cd] ciclo #24: pedindo job na API…
+23/11/2026 10:58:29 [d59832cd] ciclo #24: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:29 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:44 [d59832cd] ciclo #25: pedindo job na API…
+23/11/2026 10:58:45 [d59832cd] ciclo #25: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:45 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:00 [d59832cd] ciclo #26: pedindo job na API…
+23/11/2026 10:59:00 [d59832cd] ciclo #26: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:00 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:59:15 [d59832cd] ciclo #27: pedindo job na API…
+23/11/2026 10:59:16 [d59832cd] ciclo #27: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:16 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:31 [d59832cd] ciclo #28: pedindo job na API…
+23/11/2026 10:59:31 [d59832cd] ciclo #28: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:31 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:46 [d59832cd] ciclo #29: pedindo job na API…
+23/11/2026 10:59:47 [d59832cd] ciclo #29: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:47 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:02 [d59832cd] ciclo #30: pedindo job na API…
+23/11/2026 11:00:02 [d59832cd] ciclo #30: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:02 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:00:17 [d59832cd] ciclo #31: pedindo job na API…
+23/11/2026 11:00:18 [d59832cd] ciclo #31: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:18 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:33 [d59832cd] ciclo #32: pedindo job na API…
+23/11/2026 11:00:33 [d59832cd] ciclo #32: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:33 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:48 [d59832cd] ciclo #33: pedindo job na API…
+23/11/2026 11:00:49 [d59832cd] ciclo #33: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:49 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:04 [d59832cd] ciclo #34: pedindo job na API…
+23/11/2026 11:01:04 [d59832cd] ciclo #34: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:04 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:01:19 [d59832cd] ciclo #35: pedindo job na API…
+23/11/2026 11:01:19 [d59832cd] ciclo #35: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:19 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:34 [d59832cd] ciclo #36: pedindo job na API…
+23/11/2026 11:01:35 [d59832cd] ciclo #36: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:35 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:50 [d59832cd] ciclo #37: pedindo job na API…
+23/11/2026 11:01:50 [d59832cd] ciclo #37: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:50 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:05 [d59832cd] ciclo #38: pedindo job na API…
+23/11/2026 11:02:06 [d59832cd] ciclo #38: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:06 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:02:21 [d59832cd] ciclo #39: pedindo job na API…
+23/11/2026 11:02:21 [d59832cd] ciclo #39: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:21 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:36 [d59832cd] ciclo #40: pedindo job na API…
+23/11/2026 11:02:37 [d59832cd] ciclo #40: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:37 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:52 [d59832cd] ciclo #41: pedindo job na API…
+23/11/2026 11:02:52 [d59832cd] ciclo #41: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:52 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:03:07 [d59832cd] ciclo #42: pedindo job na API…
+23/11/2026 11:03:07 [d59832cd] ciclo #42: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:07 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:22 [d59832cd] ciclo #43: pedindo job na API…
+23/11/2026 11:03:23 [d59832cd] ciclo #43: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:23 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:38 [d59832cd] ciclo #44: pedindo job na API…
+23/11/2026 11:03:39 [d59832cd] ciclo #44: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:39 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:54 [d59832cd] ciclo #45: pedindo job na API…
+23/11/2026 11:03:54 [d59832cd] ciclo #45: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:54 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:04:09 [d59832cd] ciclo #46: pedindo job na API…
+23/11/2026 11:04:09 [d59832cd] ciclo #46: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:09 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:24 [d59832cd] ciclo #47: pedindo job na API…
+23/11/2026 11:04:25 [d59832cd] ciclo #47: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:25 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:40 [d59832cd] ciclo #48: pedindo job na API…
+23/11/2026 11:04:40 [d59832cd] ciclo #48: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:40 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:55 [d59832cd] ciclo #49: pedindo job na API…
+23/11/2026 11:04:56 [d59832cd] ciclo #49: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:56 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:05:11 [d59832cd] ciclo #50: pedindo job na API…
+23/11/2026 11:05:11 [d59832cd] ciclo #50: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:11 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:26 [d59832cd] ciclo #51: pedindo job na API…
+23/11/2026 11:05:26 [d59832cd] ciclo #51: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:26 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:41 [d59832cd] ciclo #52: pedindo job na API…
+23/11/2026 11:05:42 [d59832cd] ciclo #52: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:42 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:57 [d59832cd] ciclo #53: pedindo job na API…
+23/11/2026 11:05:57 [d59832cd] ciclo #53: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:57 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:06:12 [d59832cd] ciclo #54: pedindo job na API…
+23/11/2026 11:06:13 [d59832cd] ciclo #54: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:13 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:28 [d59832cd] ciclo #55: pedindo job na API…
+23/11/2026 11:06:28 [d59832cd] ciclo #55: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:28 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:43 [d59832cd] ciclo #56: pedindo job na API…
+23/11/2026 11:06:44 [d59832cd] ciclo #56: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:44 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:59 [d59832cd] ciclo #57: pedindo job na API…
+23/11/2026 11:06:59 [d59832cd] ciclo #57: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:59 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:07:14 [d59832cd] ciclo #58: pedindo job na API…
+23/11/2026 11:07:14 [d59832cd] ciclo #58: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:14 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:29 [d59832cd] ciclo #59: pedindo job na API…
+23/11/2026 11:07:30 [d59832cd] ciclo #59: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:30 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:45 [d59832cd] ciclo #60: pedindo job na API…
+23/11/2026 11:07:45 [d59832cd] ciclo #60: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:45 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:00 [d59832cd] ciclo #61: pedindo job na API…
+23/11/2026 11:08:01 [d59832cd] ciclo #61: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:01 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:08:16 [d59832cd] ciclo #62: pedindo job na API…
+23/11/2026 11:08:16 [d59832cd] ciclo #62: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:16 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:31 [d59832cd] ciclo #63: pedindo job na API…
+23/11/2026 11:08:32 [d59832cd] ciclo #63: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:32 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:47 [d59832cd] ciclo #64: pedindo job na API…
+23/11/2026 11:08:47 [d59832cd] ciclo #64: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:47 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:02 [d59832cd] ciclo #65: pedindo job na API…
+23/11/2026 11:09:03 [d59832cd] ciclo #65: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:03 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:09:18 [d59832cd] ciclo #66: pedindo job na API…
+23/11/2026 11:09:18 [d59832cd] ciclo #66: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:18 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:33 [d59832cd] ciclo #67: pedindo job na API…
+23/11/2026 11:09:33 [d59832cd] ciclo #67: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:33 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:48 [d59832cd] ciclo #68: pedindo job na API…
+23/11/2026 11:09:49 [d59832cd] ciclo #68: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:49 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:04 [d59832cd] ciclo #69: pedindo job na API…
+23/11/2026 11:10:04 [d59832cd] ciclo #69: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:04 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:10:19 [d59832cd] ciclo #70: pedindo job na API…
+23/11/2026 11:10:20 [d59832cd] ciclo #70: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:20 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:35 [d59832cd] ciclo #71: pedindo job na API…
+23/11/2026 11:10:35 [d59832cd] ciclo #71: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:35 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:50 [d59832cd] ciclo #72: pedindo job na API…
+23/11/2026 11:10:51 [d59832cd] ciclo #72: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:51 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:06 [d59832cd] ciclo #73: pedindo job na API…
+23/11/2026 11:11:06 [d59832cd] ciclo #73: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:06 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:11:21 [d59832cd] ciclo #74: pedindo job na API…
+23/11/2026 11:11:22 [d59832cd] ciclo #74: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:22 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:37 [d59832cd] ciclo #75: pedindo job na API…
+23/11/2026 11:11:37 [d59832cd] ciclo #75: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:37 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:52 [d59832cd] ciclo #76: pedindo job na API…
+23/11/2026 11:11:53 [d59832cd] ciclo #76: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:53 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:12:08 [d59832cd] ciclo #77: pedindo job na API…
+23/11/2026 11:12:08 [d59832cd] ciclo #77: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:08 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:23 [d59832cd] ciclo #78: pedindo job na API…
+23/11/2026 11:12:23 [d59832cd] ciclo #78: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:23 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:38 [d59832cd] ciclo #79: pedindo job na API…
+23/11/2026 11:12:39 [d59832cd] ciclo #79: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:39 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:54 [d59832cd] ciclo #80: pedindo job na API…
+23/11/2026 11:12:54 [d59832cd] ciclo #80: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:54 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:13:09 [d59832cd] ciclo #81: pedindo job na API…
+23/11/2026 11:13:09 [d59832cd] ciclo #81: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:09 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:24 [d59832cd] ciclo #82: pedindo job na API…
+23/11/2026 11:13:25 [d59832cd] ciclo #82: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:25 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:40 [d59832cd] ciclo #83: pedindo job na API…
+23/11/2026 11:13:40 [d59832cd] ciclo #83: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:40 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:55 [d59832cd] ciclo #84: pedindo job na API…
+23/11/2026 11:13:56 [d59832cd] ciclo #84: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:56 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:14:11 [d59832cd] ciclo #85: pedindo job na API…
+23/11/2026 11:14:11 [d59832cd] ciclo #85: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:11 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:26 [d59832cd] ciclo #86: pedindo job na API…
+23/11/2026 11:14:26 [d59832cd] ciclo #86: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:26 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:41 [d59832cd] ciclo #87: pedindo job na API…
+23/11/2026 11:14:42 [d59832cd] ciclo #87: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:42 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:57 [d59832cd] ciclo #88: pedindo job na API…
+23/11/2026 11:14:57 [d59832cd] ciclo #88: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:57 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:15:12 [d59832cd] ciclo #89: pedindo job na API…
+23/11/2026 11:15:13 [d59832cd] ciclo #89: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:13 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:28 [d59832cd] ciclo #90: pedindo job na API…
+23/11/2026 11:15:28 [d59832cd] ciclo #90: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:28 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:43 [d59832cd] ciclo #91: pedindo job na API…
+23/11/2026 11:15:44 [d59832cd] ciclo #91: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:44 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:59 [d59832cd] ciclo #92: pedindo job na API…
+23/11/2026 11:15:59 [d59832cd] ciclo #92: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:59 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:16:14 [d59832cd] ciclo #93: pedindo job na API…
+23/11/2026 11:16:15 [d59832cd] ciclo #93: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:15 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:30 [d59832cd] ciclo #94: pedindo job na API…
+23/11/2026 11:16:30 [d59832cd] ciclo #94: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:30 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:45 [d59832cd] ciclo #95: pedindo job na API…
+23/11/2026 11:16:45 [d59832cd] ciclo #95: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:45 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:00 [d59832cd] ciclo #96: pedindo job na API…
+23/11/2026 11:17:01 [d59832cd] ciclo #96: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:01 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:17:16 [d59832cd] ciclo #97: pedindo job na API…
+23/11/2026 11:17:16 [d59832cd] ciclo #97: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:16 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:31 [d59832cd] ciclo #98: pedindo job na API…
+23/11/2026 11:17:32 [d59832cd] ciclo #98: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:32 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:47 [d59832cd] ciclo #99: pedindo job na API…
+23/11/2026 11:17:47 [d59832cd] ciclo #99: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:47 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:02 [d59832cd] ciclo #100: pedindo job na API…
+23/11/2026 11:18:03 [d59832cd] ciclo #100: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:03 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:18:18 [d59832cd] ciclo #101: pedindo job na API…
+23/11/2026 11:18:18 [d59832cd] ciclo #101: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:18 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:33 [d59832cd] ciclo #102: pedindo job na API…
+23/11/2026 11:18:34 [d59832cd] ciclo #102: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:34 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:49 [d59832cd] ciclo #103: pedindo job na API…
+23/11/2026 11:18:49 [d59832cd] ciclo #103: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:49 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:04 [d59832cd] ciclo #104: pedindo job na API…
+23/11/2026 11:19:05 [d59832cd] ciclo #104: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:05 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:19:20 [d59832cd] ciclo #105: pedindo job na API…
+23/11/2026 11:19:20 [d59832cd] ciclo #105: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:20 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:35 [d59832cd] ciclo #106: pedindo job na API…
+23/11/2026 11:19:36 [d59832cd] ciclo #106: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:36 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:51 [d59832cd] ciclo #107: pedindo job na API…
+23/11/2026 11:19:51 [d59832cd] ciclo #107: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:51 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:06 [d59832cd] ciclo #108: pedindo job na API…
+23/11/2026 11:20:07 [d59832cd] ciclo #108: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:07 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:20:22 [d59832cd] ciclo #109: pedindo job na API…
+23/11/2026 11:20:22 [d59832cd] ciclo #109: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:22 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:37 [d59832cd] ciclo #110: pedindo job na API…
+23/11/2026 11:20:37 [d59832cd] ciclo #110: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:37 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:52 [d59832cd] ciclo #111: pedindo job na API…
+23/11/2026 11:20:53 [d59832cd] ciclo #111: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:53 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:21:08 [d59832cd] ciclo #112: pedindo job na API…
+23/11/2026 11:21:08 [d59832cd] ciclo #112: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:08 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:23 [d59832cd] ciclo #113: pedindo job na API…
+23/11/2026 11:21:24 [d59832cd] ciclo #113: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:24 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:39 [d59832cd] ciclo #114: pedindo job na API…
+23/11/2026 11:21:39 [d59832cd] ciclo #114: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:39 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:54 [d59832cd] ciclo #115: pedindo job na API…
+23/11/2026 11:21:54 [d59832cd] ciclo #115: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:54 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:22:09 [d59832cd] ciclo #116: pedindo job na API…
+23/11/2026 11:22:10 [d59832cd] ciclo #116: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:10 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:25 [d59832cd] ciclo #117: pedindo job na API…
+23/11/2026 11:22:25 [d59832cd] ciclo #117: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:25 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:40 [d59832cd] ciclo #118: pedindo job na API…
+23/11/2026 11:22:41 [d59832cd] ciclo #118: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:41 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:56 [d59832cd] ciclo #119: pedindo job na API…
+23/11/2026 11:22:56 [d59832cd] ciclo #119: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:56 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:23:11 [d59832cd] ciclo #120: pedindo job na API…
+23/11/2026 11:23:11 [d59832cd] ciclo #120: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:11 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:26 [d59832cd] ciclo #121: pedindo job na API…
+23/11/2026 11:23:27 [d59832cd] ciclo #121: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:27 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:42 [d59832cd] ciclo #122: pedindo job na API…
+23/11/2026 11:23:42 [d59832cd] ciclo #122: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:42 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:57 [d59832cd] ciclo #123: pedindo job na API…
+23/11/2026 11:23:58 [d59832cd] ciclo #123: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:58 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:24:13 [d59832cd] ciclo #124: pedindo job na API…
+23/11/2026 11:24:13 [d59832cd] ciclo #124: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:13 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:28 [d59832cd] ciclo #125: pedindo job na API…
+23/11/2026 11:24:29 [d59832cd] ciclo #125: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:29 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:44 [d59832cd] ciclo #126: pedindo job na API…
+23/11/2026 11:24:44 [d59832cd] ciclo #126: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:44 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:59 [d59832cd] ciclo #127: pedindo job na API…
+23/11/2026 11:24:59 [d59832cd] ciclo #127: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:59 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:25:14 [d59832cd] ciclo #128: pedindo job na API…
+23/11/2026 11:25:15 [d59832cd] ciclo #128: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:15 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:30 [d59832cd] ciclo #129: pedindo job na API…
+23/11/2026 11:25:30 [d59832cd] ciclo #129: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:30 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:45 [d59832cd] ciclo #130: pedindo job na API…
+23/11/2026 11:25:46 [d59832cd] ciclo #130: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:46 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:01 [d59832cd] ciclo #131: pedindo job na API…
+23/11/2026 11:26:01 [d59832cd] ciclo #131: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:26:01 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:26:16 [d59832cd] ciclo #132: pedindo job na API…
+23/11/2026 11:26:17 [d59832cd] ciclo #132: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:26:17 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:32 [d59832cd] ciclo #133: pedindo job na API…
+23/11/2026 11:26:32 [d59832cd] ciclo #133: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:26:32 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:47 [d59832cd] ciclo #134: pedindo job na API…
+23/11/2026 11:26:48 [d59832cd] ciclo #134: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:26:48 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:03 [d59832cd] ciclo #135: pedindo job na API…
+23/11/2026 11:27:03 [d59832cd] ciclo #135: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:03 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:27:18 [d59832cd] ciclo #136: pedindo job na API…
+23/11/2026 11:27:18 [d59832cd] ciclo #136: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:18 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:33 [d59832cd] ciclo #137: pedindo job na API…
+23/11/2026 11:27:34 [d59832cd] ciclo #137: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:34 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:49 [d59832cd] ciclo #138: pedindo job na API…
+23/11/2026 11:27:49 [d59832cd] ciclo #138: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:49 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:04 [d59832cd] ciclo #139: pedindo job na API…
+23/11/2026 11:28:05 [d59832cd] ciclo #139: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:05 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:28:20 [d59832cd] ciclo #140: pedindo job na API…
+23/11/2026 11:28:20 [d59832cd] ciclo #140: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:20 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:35 [d59832cd] ciclo #141: pedindo job na API…
+23/11/2026 11:28:36 [d59832cd] ciclo #141: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:36 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:51 [d59832cd] ciclo #142: pedindo job na API…
+23/11/2026 11:28:51 [d59832cd] ciclo #142: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:51 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:06 [d59832cd] ciclo #143: pedindo job na API…
+23/11/2026 11:29:07 [d59832cd] ciclo #143: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:07 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:29:22 [d59832cd] ciclo #144: pedindo job na API…
+23/11/2026 11:29:22 [d59832cd] ciclo #144: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:22 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:37 [d59832cd] ciclo #145: pedindo job na API…
+23/11/2026 11:29:37 [d59832cd] ciclo #145: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:37 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:52 [d59832cd] ciclo #146: pedindo job na API…
+23/11/2026 11:29:53 [d59832cd] ciclo #146: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:53 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:30:08 [d59832cd] ciclo #147: pedindo job na API…
+23/11/2026 11:30:08 [d59832cd] ciclo #147: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:08 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:23 [d59832cd] ciclo #148: pedindo job na API…
+23/11/2026 11:30:24 [d59832cd] ciclo #148: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:24 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:39 [d59832cd] ciclo #149: pedindo job na API…
+23/11/2026 11:30:39 [d59832cd] ciclo #149: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:39 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:54 [d59832cd] ciclo #150: pedindo job na API…
+23/11/2026 11:30:54 [d59832cd] ciclo #150: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:54 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:31:09 [d59832cd] ciclo #151: pedindo job na API…
+23/11/2026 11:31:10 [d59832cd] ciclo #151: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:10 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:25 [d59832cd] ciclo #152: pedindo job na API…
+23/11/2026 11:31:25 [d59832cd] ciclo #152: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:25 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:40 [d59832cd] ciclo #153: pedindo job na API…
+23/11/2026 11:31:41 [d59832cd] ciclo #153: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:41 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:56 [d59832cd] ciclo #154: pedindo job na API…
+23/11/2026 11:31:56 [d59832cd] ciclo #154: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:56 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:32:11 [d59832cd] ciclo #155: pedindo job na API…
+23/11/2026 11:32:11 [d59832cd] ciclo #155: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:11 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:26 [d59832cd] ciclo #156: pedindo job na API…
+23/11/2026 11:32:27 [d59832cd] ciclo #156: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:27 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:42 [d59832cd] ciclo #157: pedindo job na API…
+23/11/2026 11:32:42 [d59832cd] ciclo #157: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:42 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:57 [d59832cd] ciclo #158: pedindo job na API…
+23/11/2026 11:32:58 [d59832cd] ciclo #158: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:58 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:33:13 [d59832cd] ciclo #159: pedindo job na API…
+23/11/2026 11:33:13 [d59832cd] ciclo #159: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:13 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:28 [d59832cd] ciclo #160: pedindo job na API…
+23/11/2026 11:33:29 [d59832cd] ciclo #160: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:29 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:44 [d59832cd] ciclo #161: pedindo job na API…
+23/11/2026 11:33:44 [d59832cd] ciclo #161: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:44 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:59 [d59832cd] ciclo #162: pedindo job na API…
+23/11/2026 11:34:00 [d59832cd] ciclo #162: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:00 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:34:15 [d59832cd] ciclo #163: pedindo job na API…
+23/11/2026 11:34:15 [d59832cd] ciclo #163: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:15 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:30 [d59832cd] ciclo #164: pedindo job na API…
+23/11/2026 11:34:31 [d59832cd] ciclo #164: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:31 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:46 [d59832cd] ciclo #165: pedindo job na API…
+23/11/2026 11:34:46 [d59832cd] ciclo #165: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:46 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:01 [d59832cd] ciclo #166: pedindo job na API…
+23/11/2026 11:35:02 [d59832cd] ciclo #166: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:02 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:35:17 [d59832cd] ciclo #167: pedindo job na API…
+23/11/2026 11:35:17 [d59832cd] ciclo #167: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:17 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:32 [d59832cd] ciclo #168: pedindo job na API…
+23/11/2026 11:35:33 [d59832cd] ciclo #168: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:33 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:48 [d59832cd] ciclo #169: pedindo job na API…
+23/11/2026 11:35:48 [d59832cd] ciclo #169: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:48 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:03 [d59832cd] ciclo #170: pedindo job na API…
+23/11/2026 11:36:03 [d59832cd] ciclo #170: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:03 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:36:18 [d59832cd] ciclo #171: pedindo job na API…
+23/11/2026 11:36:19 [d59832cd] ciclo #171: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:19 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:34 [d59832cd] ciclo #172: pedindo job na API…
+23/11/2026 11:36:34 [d59832cd] ciclo #172: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:34 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:49 [d59832cd] ciclo #173: pedindo job na API…
+23/11/2026 11:36:50 [d59832cd] ciclo #173: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:50 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:05 [d59832cd] ciclo #174: pedindo job na API…
+23/11/2026 11:37:05 [d59832cd] ciclo #174: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:05 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:37:20 [d59832cd] ciclo #175: pedindo job na API…
+23/11/2026 11:37:21 [d59832cd] ciclo #175: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:21 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:36 [d59832cd] ciclo #176: pedindo job na API…
+23/11/2026 11:37:36 [d59832cd] ciclo #176: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:36 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:51 [d59832cd] ciclo #177: pedindo job na API…
+23/11/2026 11:37:52 [d59832cd] ciclo #177: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:52 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:07 [d59832cd] ciclo #178: pedindo job na API…
+23/11/2026 11:38:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:38:07 [d59832cd] ciclo #178: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:07 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:22 [d59832cd] ciclo #179: pedindo job na API…
+23/11/2026 11:38:23 [d59832cd] ciclo #179: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:23 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:38 [d59832cd] ciclo #180: pedindo job na API…
+23/11/2026 11:38:38 [d59832cd] ciclo #180: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:38 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:53 [d59832cd] ciclo #181: pedindo job na API…
+23/11/2026 11:38:53 [d59832cd] ciclo #181: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:53 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:39:08 [d59832cd] ciclo #182: pedindo job na API…
+23/11/2026 11:39:09 [d59832cd] ciclo #182: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:09 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:24 [d59832cd] ciclo #183: pedindo job na API…
+23/11/2026 11:39:24 [d59832cd] ciclo #183: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:24 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:39 [d59832cd] ciclo #184: pedindo job na API…
+23/11/2026 11:39:40 [d59832cd] ciclo #184: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:40 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:55 [d59832cd] ciclo #185: pedindo job na API…
+23/11/2026 11:39:55 [d59832cd] ciclo #185: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:55 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:40:10 [d59832cd] ciclo #186: pedindo job na API…
+23/11/2026 11:40:10 [d59832cd] ciclo #186: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:10 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:25 [d59832cd] ciclo #187: pedindo job na API…
+23/11/2026 11:40:26 [d59832cd] ciclo #187: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:26 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:41 [d59832cd] ciclo #188: pedindo job na API…
+23/11/2026 11:40:41 [d59832cd] ciclo #188: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:41 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:56 [d59832cd] ciclo #189: pedindo job na API…
+23/11/2026 11:40:57 [d59832cd] ciclo #189: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:57 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:41:12 [d59832cd] ciclo #190: pedindo job na API…
+23/11/2026 11:41:12 [d59832cd] ciclo #190: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:12 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:27 [d59832cd] ciclo #191: pedindo job na API…
+23/11/2026 11:41:28 [d59832cd] ciclo #191: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:28 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:43 [d59832cd] ciclo #192: pedindo job na API…
+23/11/2026 11:41:43 [d59832cd] ciclo #192: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:43 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:58 [d59832cd] ciclo #193: pedindo job na API…
+23/11/2026 11:41:59 [d59832cd] ciclo #193: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:59 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:42:14 [d59832cd] ciclo #194: pedindo job na API…
+23/11/2026 11:42:14 [d59832cd] ciclo #194: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:14 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:29 [d59832cd] ciclo #195: pedindo job na API…
+23/11/2026 11:42:29 [d59832cd] ciclo #195: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:29 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:44 [d59832cd] ciclo #196: pedindo job na API…
+23/11/2026 11:42:45 [d59832cd] ciclo #196: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:45 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:00 [d59832cd] ciclo #197: pedindo job na API…
+23/11/2026 11:43:00 [d59832cd] ciclo #197: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:00 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:43:15 [d59832cd] ciclo #198: pedindo job na API…
+23/11/2026 11:43:16 [d59832cd] ciclo #198: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:16 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:31 [d59832cd] ciclo #199: pedindo job na API…
+23/11/2026 11:43:31 [d59832cd] ciclo #199: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:31 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:46 [d59832cd] ciclo #200: pedindo job na API…
+23/11/2026 11:43:47 [d59832cd] ciclo #200: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:47 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:02 [d59832cd] ciclo #201: pedindo job na API…
+23/11/2026 11:44:02 [d59832cd] ciclo #201: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:02 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:44:17 [d59832cd] ciclo #202: pedindo job na API…
+23/11/2026 11:44:18 [d59832cd] ciclo #202: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:18 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:33 [d59832cd] ciclo #203: pedindo job na API…
+23/11/2026 11:44:33 [d59832cd] ciclo #203: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:33 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:48 [d59832cd] ciclo #204: pedindo job na API…
+23/11/2026 11:44:49 [d59832cd] ciclo #204: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:49 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:04 [d59832cd] ciclo #205: pedindo job na API…
+23/11/2026 11:45:04 [d59832cd] ciclo #205: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:04 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:45:19 [d59832cd] ciclo #206: pedindo job na API…
+23/11/2026 11:45:20 [d59832cd] ciclo #206: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:20 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:35 [d59832cd] ciclo #207: pedindo job na API…
+23/11/2026 11:45:35 [d59832cd] ciclo #207: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:35 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:50 [d59832cd] ciclo #208: pedindo job na API…
+23/11/2026 11:45:51 [d59832cd] ciclo #208: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:51 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:06 [d59832cd] ciclo #209: pedindo job na API…
+23/11/2026 11:46:06 [d59832cd] ciclo #209: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:06 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:46:21 [d59832cd] ciclo #210: pedindo job na API…
+23/11/2026 11:46:22 [d59832cd] ciclo #210: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:22 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:37 [d59832cd] ciclo #211: pedindo job na API…
+23/11/2026 11:46:37 [d59832cd] ciclo #211: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:37 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:52 [d59832cd] ciclo #212: pedindo job na API…
+23/11/2026 11:46:52 [d59832cd] ciclo #212: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:52 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:07 [d59832cd] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:47:07 [d59832cd] ciclo #213: pedindo job na API…
+23/11/2026 11:47:08 [d59832cd] ciclo #213: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:08 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:23 [d59832cd] ciclo #214: pedindo job na API…
+23/11/2026 11:47:23 [d59832cd] ciclo #214: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:23 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:38 [d59832cd] ciclo #215: pedindo job na API…
+23/11/2026 11:47:39 [d59832cd] ciclo #215: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:39 [d59832cd] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:54 [d59832cd] ciclo #216: pedindo job na API…
+23/11/2026 11:47:54 [d59832cd] ciclo #216: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:54 [d59832cd] sem job — pausa 15s e consulto a fila de novo

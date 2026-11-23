@@ -69397,3 +69397,1730 @@ cdpId=matheus-conectmax cdpUrl=http://127.0.0.1:9267 url=https://www.linkedin.co
 20/11/2026 19:17:25 [ddc7f46c] ✖ heartbeat falhou: fetch failed
 20/11/2026 19:17:25 [ddc7f46c] ✖ erro no ciclo #2046: fetch failed
 20/11/2026 19:17:25 [ddc7f46c] pausa 15s antes de tentar de novo
+
+> connectmax-agent-worker@0.1.0 start
+> node src/loop.mjs
+
+23/11/2026 10:52:06 [ddc7f46c] ——— worker iniciado ———
+23/11/2026 10:52:06 [ddc7f46c] API http://185.250.37.82
+23/11/2026 10:52:06 [ddc7f46c] agente ddc7f46c-2361-4ed2-aa4d-a32319f97721 · Chrome CDP · perfil=matheus-conectmax · http://127.0.0.1:9267
+23/11/2026 10:52:06 [ddc7f46c] DRY=não · ONCE=não · pausa ociosa 15s · heartbeat 1min
+23/11/2026 10:52:06 [ddc7f46c] cadastrando/atualizando agente na API (enroll)…
+23/11/2026 10:52:07 [ddc7f46c] enroll OK (já existia) · faltam dados LinkedIn no painel · online
+23/11/2026 10:52:07 [ddc7f46c] ⚠ complete o LinkedIn em /agentes antes de rodar jobs de verdade
+23/11/2026 10:52:07 [ddc7f46c] ciclo #1: pedindo job na API…
+23/11/2026 10:52:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:52:08 [ddc7f46c] ciclo #1: peguei job «ler mensagens» (ler_mensagens) prioridade=1 id=6aa66442-5779-4ffe-afb7-af2180374004
+23/11/2026 10:52:08 [ddc7f46c] executando «ler mensagens» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:52:08 [spawn] iniciando robô: npm run linkedin-unread-messages-cdp -- --max-results 20 --sync --no-shot
+
+> screen-robot@1.0.0 linkedin-unread-messages-cdp
+> node scripts/linkedin-unread-messages-cdp.js --max-results 20 --sync --no-shot
+
+23/11/2026 10:53:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:54:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+{
+  "ok": true,
+  "status": "ok",
+  "maxResults": 20,
+  "count": 4,
+  "conversations": [
+    {
+      "name": "Crislaine Gonçalves",
+      "message": "Crislaine: Segue meu e-mail compras01@consorcionovabh.com.br",
+      "unreadCount": 1,
+      "time": "20 de nov."
+    },
+    {
+      "name": "Jordanni Lindenberg Sudario",
+      "message": "Jordanni Lindenberg: Boa noite, Matheus Trabalho na área de compras de equipamentos e materiais, da Samarco Mineração para planta da Mina de Germano em Mariana. Não compramos esse tipo de material, mas vou te indicar duas pessoas da MIP ENGENHARIA. Entra em contato com alysson.ferreira@mip.com.br ou ednei.martins@mip.com.br",
+      "unreadCount": 1,
+      "time": "18 de nov."
+    },
+    {
+      "name": "Eliana Santos de Paula",
+      "message": "Eliana: oi, Matheus, tudo bem? eliana.paula@marppaineis.com.br",
+      "unreadCount": 1,
+      "time": "18 de nov."
+    },
+    {
+      "name": "Lidiane Carla",
+      "message": "Lidiane: Bom dia! Bem você? Pode encaminhar no compras@saofrancisco.org.br",
+      "unreadCount": 1,
+      "time": "17 de nov."
+    }
+  ],
+  "steps": [
+    "goto:https://www.linkedin.com/messaging/?filter=unread",
+    "unread:filter-url",
+    "page:0:found=4:total=4",
+    "page:1:found=4:total=4",
+    "page:2:found=4:total=4",
+    "page:3:found=4:total=4",
+    "sync:open:Crislaine Gonçalves",
+    "sync:done:Crislaine Gonçalves:msgs=8:db=ok",
+    "sync:open:Jordanni Lindenberg Sudario",
+    "sync:done:Jordanni Lindenberg Sudario:msgs=8:db=ok",
+    "sync:open:Eliana Santos de Paula",
+    "sync:done:Eliana Santos de Paula:msgs=4:db=ok",
+    "sync:open:Lidiane Carla",
+    "sync:done:Lidiane Carla:msgs=4:db=ok"
+  ],
+  "synced": [
+    {
+      "name": "Crislaine Gonçalves",
+      "profileUrl": "https://www.linkedin.com/in/crislaine-goncalves",
+      "ok": true,
+      "count": 8,
+      "db": {
+        "notified": true,
+        "url": "http://185.250.37.82/client-linkedin-messages",
+        "data": {
+          "ok": true,
+          "count": 4,
+          "data": [
+            {
+              "id": "add70779-8950-47e6-8c0d-98ea42240961",
+              "clienteLinkedinId": "933567e4-7ee5-4b56-8b08-790b036c26c6",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Matheus ConectMax",
+              "message": "Olá, Crislaine, tudo bem contigo? Crislaine, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês. Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+              "timeLabel": "13:08",
+              "occurredAt": "2026-11-23T13:48:51.174Z",
+              "fingerprint": "06273175485a04f910d88cbaace4ba65d819c092",
+              "createdAt": "2026-11-20T14:02:31.495Z",
+              "updatedAt": "2026-11-23T13:52:51.177Z"
+            },
+            {
+              "id": "f81d7335-7698-4af7-9355-f2df7a54935a",
+              "clienteLinkedinId": "933567e4-7ee5-4b56-8b08-790b036c26c6",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Crislaine Gonçalves",
+              "message": "👏 👍 😊 Bom dia Matheus",
+              "timeLabel": "07:23",
+              "occurredAt": "2026-11-23T13:49:51.174Z",
+              "fingerprint": "710b0b052fa9a5c85015b1ff332acf60d5d4dde5",
+              "createdAt": "2026-11-20T14:02:31.501Z",
+              "updatedAt": "2026-11-23T13:52:51.181Z"
+            },
+            {
+              "id": "b912f46b-1aeb-418a-aab1-ad9db0772b0b",
+              "clienteLinkedinId": "933567e4-7ee5-4b56-8b08-790b036c26c6",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": null,
+              "message": "Segue meu e-mail compras01@consorcionovabh.com.br",
+              "timeLabel": null,
+              "occurredAt": "2026-11-23T13:50:51.174Z",
+              "fingerprint": "dcc2a3f75108715c33cbfcb87cb48cd3314d9242",
+              "createdAt": "2026-11-20T14:02:31.504Z",
+              "updatedAt": "2026-11-23T13:52:51.185Z"
+            },
+            {
+              "id": "09c0d2fa-0d12-451a-a6db-41bdd119fb4a",
+              "clienteLinkedinId": "933567e4-7ee5-4b56-8b08-790b036c26c6",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Crislaine Gonçalves",
+              "message": "Bom dia Matheus",
+              "timeLabel": "07:23",
+              "occurredAt": "2026-11-23T13:51:51.174Z",
+              "fingerprint": "2a99b10989b9551b3de886ddfb30294d6d04a8e5",
+              "createdAt": "2026-11-20T14:02:31.508Z",
+              "updatedAt": "2026-11-23T13:52:51.189Z"
+            }
+          ]
+        }
+      },
+      "error": null
+    },
+    {
+      "name": "Jordanni Lindenberg Sudario",
+      "profileUrl": "https://www.linkedin.com/in/jordanni-lindenberg-sudario-30252533",
+      "ok": true,
+      "count": 8,
+      "db": {
+        "notified": true,
+        "url": "http://185.250.37.82/client-linkedin-messages",
+        "data": {
+          "ok": true,
+          "count": 2,
+          "data": [
+            {
+              "id": "f69b69d2-4e54-46d3-a39d-b3ca60aaaf54",
+              "clienteLinkedinId": "24d23d9a-573d-43c9-b797-928f8728dce2",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Matheus ConectMax",
+              "message": "👏 👍 😊 Olá, Jordanni, tudo bem contigo? Jordanni, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês. Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+              "timeLabel": "09:04",
+              "occurredAt": "2026-11-23T13:51:20.990Z",
+              "fingerprint": "3c372035207a48eb8d04e12e7bd611b7f907bfb5",
+              "createdAt": "2026-11-19T16:57:23.926Z",
+              "updatedAt": "2026-11-23T13:53:20.992Z"
+            },
+            {
+              "id": "dea8aaca-3d7e-47cf-bba5-a17a043b679a",
+              "clienteLinkedinId": "24d23d9a-573d-43c9-b797-928f8728dce2",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Jordanni Lindenberg Sudario",
+              "message": "👏 👍 😊 Boa noite, Matheus Trabalho na área de compras de equipamentos e materiais, da Samarco Mineração para planta da Mina de Germano em Mariana. Não compramos esse tipo de material, mas vou te indicar duas pessoas da MIP ENGENHARIA. Entra em contato com alysson.ferreira@mip.com.br ou ednei.martins@mip.com.br",
+              "timeLabel": "20:21",
+              "occurredAt": "2026-11-23T13:52:20.990Z",
+              "fingerprint": "d2f10273d321df027008b5d98854618f57589605",
+              "createdAt": "2026-11-19T16:57:23.931Z",
+              "updatedAt": "2026-11-23T13:53:20.996Z"
+            }
+          ]
+        }
+      },
+      "error": null
+    },
+    {
+      "name": "Eliana Santos de Paula",
+      "profileUrl": "https://www.linkedin.com/in/eliana-santos-de-paula-0a693a49",
+      "ok": true,
+      "count": 4,
+      "db": {
+        "notified": true,
+        "url": "http://185.250.37.82/client-linkedin-messages",
+        "data": {
+          "ok": true,
+          "count": 2,
+          "data": [
+            {
+              "id": "c38df2ea-d519-4d80-8503-8a5062035996",
+              "clienteLinkedinId": "54b9e5ed-3b85-40a5-8ca1-d49fd1fcc35b",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Matheus ConectMax",
+              "message": "Olá, Eliana, tudo bem contigo? Eliana, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês. Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+              "timeLabel": "15:10",
+              "occurredAt": "2026-11-23T13:51:47.853Z",
+              "fingerprint": "a85fdf785700ba48c12f58529f351b41c5a0e53d",
+              "createdAt": "2026-11-19T16:57:48.518Z",
+              "updatedAt": "2026-11-23T13:53:47.855Z"
+            },
+            {
+              "id": "9db90e84-fed4-464d-84ee-1b91252fe7e5",
+              "clienteLinkedinId": "54b9e5ed-3b85-40a5-8ca1-d49fd1fcc35b",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Eliana Santos de Paula",
+              "message": "oi, Matheus, tudo bem? eliana.paula@marppaineis.com.br",
+              "timeLabel": "19:58",
+              "occurredAt": "2026-11-23T13:52:47.853Z",
+              "fingerprint": "46b14dcaa87a7741653ca1fdf0deb3d84de4a600",
+              "createdAt": "2026-11-19T16:57:48.523Z",
+              "updatedAt": "2026-11-23T13:53:47.859Z"
+            }
+          ]
+        }
+      },
+      "error": null
+    },
+    {
+      "name": "Lidiane Carla",
+      "profileUrl": "https://www.linkedin.com/in/lidiane-carla-6b8472173",
+      "ok": true,
+      "count": 4,
+      "db": {
+        "notified": true,
+        "url": "http://185.250.37.82/client-linkedin-messages",
+        "data": {
+          "ok": true,
+          "count": 2,
+          "data": [
+            {
+              "id": "53e4efa5-3ded-474d-8894-0fb8039f1cd1",
+              "clienteLinkedinId": "ea70e22f-4151-4c76-b881-6b5a4883cf45",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Matheus ConectMax",
+              "message": "Olá, Lidiane, tudo bem contigo? Lidiane, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês. Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+              "timeLabel": "10:05",
+              "occurredAt": "2026-11-23T13:52:15.081Z",
+              "fingerprint": "adfe25b2c86d8f131cbabfa9ed6b1cfcbc3e456c",
+              "createdAt": "2026-11-19T16:58:16.460Z",
+              "updatedAt": "2026-11-23T13:54:15.083Z"
+            },
+            {
+              "id": "02f0e2dc-8acd-4855-9763-db42421565e5",
+              "clienteLinkedinId": "ea70e22f-4151-4c76-b881-6b5a4883cf45",
+              "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+              "direction": "received",
+              "sender": "Lidiane Carla",
+              "message": "👏 👍 😊 Bom dia! Bem você? Pode encaminhar no compras@saofrancisco.org.br",
+              "timeLabel": "11:13",
+              "occurredAt": "2026-11-23T13:53:15.081Z",
+              "fingerprint": "4ce36272873b8d213918f61a46a3f9b2feac692f",
+              "createdAt": "2026-11-19T16:58:16.464Z",
+              "updatedAt": "2026-11-23T13:54:15.087Z"
+            }
+          ]
+        }
+      },
+      "error": null
+    }
+  ]
+}
+23/11/2026 10:54:15 [spawn] robô terminou OK: npm run linkedin-unread-messages-cdp -- --max-results 20 --sync --no-shot
+23/11/2026 10:54:16 [ddc7f46c] job «ler mensagens» OK em 2min 8s (id=6aa66442-5779-4ffe-afb7-af2180374004)
+23/11/2026 10:54:16 [ddc7f46c] ciclo #1 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:54:31 [ddc7f46c] ciclo #2: pedindo job na API…
+23/11/2026 10:54:31 [ddc7f46c] ciclo #2: peguei job «verificar conexões» (verificar_conexoes) prioridade=2 id=db96105f-5688-4ea2-9359-29d0e2eb8ba4
+23/11/2026 10:54:31 [ddc7f46c] executando «verificar conexões» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:54:31 [spawn] iniciando robô: npm run linkedin-extract-connections-cdp -- --n 20 --no-shot --url https://www.linkedin.com/in/me/
+
+> screen-robot@1.0.0 linkedin-extract-connections-cdp
+> node scripts/linkedin-extract-connections-cdp.js --n 20 --no-shot --url https://www.linkedin.com/in/me/
+
+{
+  "ok": true,
+  "n": 20,
+  "count": 20,
+  "connections": [
+    {
+      "index": 1,
+      "name": "Natalya Mendes Comprador na rede supermercados uberaba",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 2,
+      "name": "Jamerson Ramos comprador - Mercearia salgada",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 3,
+      "name": "Ana Paula Maraia Compras I Analista Compras | Gestão de Compras I Gestão de Fornecedores I Técnicas de Negociação I Comprador Industrial |",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 4,
+      "name": "Thaís Melo Compradora | CEI SERVIÇOS DE ENGENHARIA LTDA",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 5,
+      "name": "Júlio César Oliveira Comprador Pleno",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 6,
+      "name": "Lívia Bulha de Carvalho Baldo #CompradoraSênior/#Compradora/#Compras/#comprador",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 7,
+      "name": "Renata Cristina Analista de compras SIC",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 8,
+      "name": "José Ronaldo Barcelos Executivo das áreas de Suprimentos | Supply Chain | Industrial | Operações",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 9,
+      "name": "Samuel Lopes Comprador | Compras | Suprimentos |",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 10,
+      "name": "Ricardo Russo Coordenador / Comprador",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 11,
+      "name": "Fernanda Carolina Mesquita Compradora",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 12,
+      "name": "Maranei Mara Compradora na SRA Equipamentos e Sistemas",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 13,
+      "name": "Michelle Fernandes Costa Compradora | Negociação Estratégica & Gestão de Fornecedores | Category Management | Performance Comercial",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 14,
+      "name": "MARCO ANTÔNIO REIS Sócio proprietário da empresa Reis café",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 15,
+      "name": "Eliana Santos de Paula Compradora",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 16,
+      "name": "Carolina Pereira Compras | Comprador | Negociação | Supply Chain | Strategic Sourcing | Suprimentos | SAP | TOTVS Administrador |",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 17,
+      "name": "Jacqueline Sabino Camilo Comprador l Suprimentos l Supply Chain l Compras",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 18,
+      "name": "Bárbara Oliveira Comprador | Compradora Industrial | Strategic Sourcing | Negociação | Redução de custos | Supply Chain | Contratos | SAP",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 19,
+      "name": "Patrícia Xavier Gerente de Compras",
+      "title": null,
+      "connectedOn": null
+    },
+    {
+      "index": 20,
+      "name": "Vanessa Reis Comprador pleno da empresa Hoya Vision Care",
+      "title": null,
+      "connectedOn": null
+    }
+  ],
+  "steps": [
+    "goto:https://www.linkedin.com/mynetwork/invite-connect/connections/",
+    "lista:ok:333 conexões",
+    "round1:+10/total10",
+    "round2:+10/total20",
+    "api:mark-accepted:ok:0"
+  ],
+  "truncated": false,
+  "db": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-connections-linkedin/mark-accepted",
+    "data": {
+      "ok": true,
+      "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+      "pendingChecked": 65,
+      "updated": [],
+      "unmatched": [
+        "Natalya Mendes Comprador na rede supermercados uberaba",
+        "Jamerson Ramos comprador - Mercearia salgada",
+        "Ana Paula Maraia Compras I Analista Compras | Gestão de Compras I Gestão de Fornecedores I Técnicas de Negociação I Comprador Industrial |",
+        "Thaís Melo Compradora | CEI SERVIÇOS DE ENGENHARIA LTDA",
+        "Júlio César Oliveira Comprador Pleno",
+        "Lívia Bulha de Carvalho Baldo #CompradoraSênior/#Compradora/#Compras/#comprador",
+        "Renata Cristina Analista de compras SIC",
+        "José Ronaldo Barcelos Executivo das áreas de Suprimentos | Supply Chain | Industrial | Operações",
+        "Samuel Lopes Comprador | Compras | Suprimentos |",
+        "Ricardo Russo Coordenador / Comprador",
+        "Fernanda Carolina Mesquita Compradora",
+        "Maranei Mara Compradora na SRA Equipamentos e Sistemas",
+        "Michelle Fernandes Costa Compradora | Negociação Estratégica & Gestão de Fornecedores | Category Management | Performance Comercial",
+        "MARCO ANTÔNIO REIS Sócio proprietário da empresa Reis café",
+        "Eliana Santos de Paula Compradora",
+        "Carolina Pereira Compras | Comprador | Negociação | Supply Chain | Strategic Sourcing | Suprimentos | SAP | TOTVS Administrador |",
+        "Jacqueline Sabino Camilo Comprador l Suprimentos l Supply Chain l Compras",
+        "Bárbara Oliveira Comprador | Compradora Industrial | Strategic Sourcing | Negociação | Redução de custos | Supply Chain | Contratos | SAP",
+        "Patrícia Xavier Gerente de Compras",
+        "Vanessa Reis Comprador pleno da empresa Hoya Vision Care"
+      ]
+    }
+  },
+  "sense": "dom",
+  "profileUrl": "https://www.linkedin.com/in/me"
+}
+23/11/2026 10:54:44 [spawn] robô terminou OK: npm run linkedin-extract-connections-cdp -- --n 20 --no-shot --url https://www.linkedin.com/in/me/
+23/11/2026 10:54:44 [ddc7f46c] job «verificar conexões» OK em 13s (id=db96105f-5688-4ea2-9359-29d0e2eb8ba4)
+23/11/2026 10:54:44 [ddc7f46c] ciclo #2 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:54:59 [ddc7f46c] ciclo #3: pedindo job na API…
+23/11/2026 10:55:00 [ddc7f46c] ciclo #3: peguei job «buscar candidatos» (extrair_leads) prioridade=5 id=1670b536-ce00-46c6-9886-b3a8b63d35b5
+23/11/2026 10:55:00 [ddc7f46c]   payload: busca="comprador" · máx=5
+23/11/2026 10:55:00 [ddc7f46c] executando «buscar candidatos» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:55:00 [spawn] iniciando robô: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot --query comprador
+
+> screen-robot@1.0.0 linkedin-extract-leads-cdp
+> node scripts/linkedin-extract-leads-cdp.js -n 10 --no-shot --query comprador
+
+23/11/2026 10:55:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+{
+  "ok": true,
+  "query": "comprador",
+  "n": 10,
+  "count": 10,
+  "pagesUsed": 1,
+  "profiles": [
+    {
+      "name": "Meyrielle Simões",
+      "title": "Compradora | Comprador | Analista de Compras | Suprimentos | Transporte",
+      "city": "Belo Horizonte, Minas Gerais, Brasil",
+      "location": "Belo Horizonte, Minas Gerais, Brasil",
+      "current": "Compradora | Comprador | Analista de Compras | Suprimentos | Transporte",
+      "past": "Comprador na Diferencial Farma Medicamentos Marcello ConectMax é uma conexão em comum",
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": "em comum",
+      "summary": "Meyrielle Simões • 2º Compradora | Comprador | Analista de Compras | Suprimentos | Transporte Belo Horizonte, Minas Gerais, Brasil Pendente Anterior: Comprador na Diferencial Farma Medicamentos Marcello ConectMax é uma conexão em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D35AQEm_MUJrGZshA/profile-framedphoto-shrink_100_100/B4DZdbnuSrG8As-/0/1749588829723?e=1796047200&v=beta&t=dZpP1VjL4bjpWU7rGt1HQ8Hh7NtqzxiIU0b1dSp6_ec",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/meyrielle-simões-112825267",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:15.761Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Gisele Xavier",
+      "title": "Compradora",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "Compradora",
+      "past": null,
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": null,
+      "summary": "Gisele Xavier • 2º Compradora Contagem, Minas Gerais, Brasil Pendente",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D35AQEm_MUJrGZshA/profile-framedphoto-shrink_100_100/B4DZdbnuSrG8As-/0/1749588829723?e=1796047200&v=beta&t=dZpP1VjL4bjpWU7rGt1HQ8Hh7NtqzxiIU0b1dSp6_ec",
+      "photoBase64": null,
+      "profileUrl": "https://www.linkedin.com/in/gisele-xavier-04b81059",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:16.259Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Lwana T.",
+      "title": "Compradora | supply chain buyer | perfumery 🙋🏼‍♀️ | ECONOMART 🚀",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "Comprador na Economart Atacadista Edina Costa, Vitor Sousa e mais 11 conexões em comum",
+      "past": null,
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": "11 conexões em comum",
+      "summary": "Lwana T. • 2º Compradora | supply chain buyer | perfumery 🙋🏼‍♀️ | ECONOMART 🚀 Contagem, Minas Gerais, Brasil Pendente Atual: Comprador na Economart Atacadista Edina Costa, Vitor Sousa e mais 11 conexões em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQFhd_W0_u7YqA/profile-displayphoto-scale_100_100/B4DZsSUJvJH8Ac-/0/1765538831924?e=1796860800&v=beta&t=GUwZJLYapyMT3NBJOFuaZ9td2M_LVOtFHOBHPRvDl0o",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/lwana-t-9b0327211",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:16.730Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Rafael Lucas",
+      "title": "Gestão Comercial | Comprador | Varejo & Distribuição",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "Comprador na GRUPO DEC MINAS Karina Fernandes, Michelle Fernandes Costa e mais 10 conexões em comum",
+      "past": null,
+      "level": null,
+      "action": "Message",
+      "connection": "connect",
+      "mutualConnections": "10 conexões em comum",
+      "summary": "Rafael Lucas • 1° Gestão Comercial | Comprador | Varejo & Distribuição Contagem, Minas Gerais, Brasil Enviar mensagem Atual: Comprador na GRUPO DEC MINAS Karina Fernandes, Michelle Fernandes Costa e mais 10 conexões em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQF1ZXq7NgoLew/profile-displayphoto-scale_100_100/B4DaEWua8KHoAY-/0/1791382630803?e=1796860800&v=beta&t=kXXDOrr7_ao52uKn5tTbLceHA575vwBzNE7KZsz5tDo",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/rafael-lucas-a8050533b",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:16.981Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Nicole Morais",
+      "title": "Comprador Sênior | Procurement | Strategic Sourcing | Gestão de Contratos",
+      "city": "Belo Horizonte, Minas Gerais, Brasil",
+      "location": "Belo Horizonte, Minas Gerais, Brasil",
+      "current": "Comprador Sênior na Tabocas Participações Empreendimentos S/A IRACEMA SANTOS🎯, Liliane Isabela Palhares e mais 13 conexões em comum",
+      "past": null,
+      "level": null,
+      "action": "Message",
+      "connection": "connect",
+      "mutualConnections": "13 conexões em comum",
+      "summary": "Nicole Morais • 1° Comprador Sênior | Procurement | Strategic Sourcing | Gestão de Contratos Belo Horizonte, Minas Gerais, Brasil Enviar mensagem Atual: Comprador Sênior na Tabocas Participações Empreendimentos S/A IRACEMA SANTOS🎯, Liliane Isabela Palhares e mais 13 conexões em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQFjgDAmq1b7jg/profile-displayphoto-scale_100_100/B4DZtvNNTFGUAc-/0/1767097293381?e=1796860800&v=beta&t=xtPowrWR4y7ihBOzj8nywUUu9wUyOiNWXgPlnW_9zj0",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/nicolemoraiscunha",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:17.218Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Eliana Santos de Paula",
+      "title": "Compradora",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "Compradora",
+      "past": "Comprador Pleno Materiais Mecânicos na Sempel Painéis Elétricos Maranei Mara, Heitor Mello e mais 1 conexão em comum",
+      "level": null,
+      "action": "Message",
+      "connection": "connect",
+      "mutualConnections": "em comum",
+      "summary": "Eliana Santos de Paula • 1° Compradora Contagem, Minas Gerais, Brasil Enviar mensagem Anterior: Comprador Pleno Materiais Mecânicos na Sempel Painéis Elétricos Maranei Mara, Heitor Mello e mais 1 conexão em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQEbwNhneQ-Hgw/profile-displayphoto-scale_100_100/B4DZ4zIlf3H4AY-/0/1778974350975?e=1796860800&v=beta&t=5UIo8X2NSCC9407jIYLNKwXX1ITaa59Kg-onTLMfTe4",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/eliana-santos-de-paula-0a693a49",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:17.480Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Thaís Melo",
+      "title": "Compradora | CEI SERVIÇOS DE ENGENHARIA LTDA",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "Comprador na Grupo CEI - Engenharia Elétrica Ricardo Russo e Marcello ConectMax são conexões em comum",
+      "past": null,
+      "level": null,
+      "action": "Message",
+      "connection": "connect",
+      "mutualConnections": "conexões em comum",
+      "summary": "Thaís Melo • 1° Compradora | CEI SERVIÇOS DE ENGENHARIA LTDA Contagem, Minas Gerais, Brasil Enviar mensagem Atual: Comprador na Grupo CEI - Engenharia Elétrica Ricardo Russo e Marcello ConectMax são conexões em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGOhEv-ctBWVg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1730418174841?e=1796860800&v=beta&t=F8I1p2fHznx_-FKgQs1Nx5DV-w9GclugiLQnLYcWlUM",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+      "inviteStatus": "connect",
+      "canConnect": true,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:17.706Z",
+      "source": "search_card"
+    },
+    {
+      "name": "EDILANE ALVES",
+      "title": "Compradora | Rede Mendonça",
+      "city": "Belo Horizonte, Minas Gerais, Brasil",
+      "location": "Belo Horizonte, Minas Gerais, Brasil",
+      "current": "Compradora | Rede Mendonça",
+      "past": null,
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": "em comum · 52 seguidores",
+      "summary": "EDILANE ALVES • 2º Compradora | Rede Mendonça Belo Horizonte, Minas Gerais, Brasil Pendente Elisiane Silva, Sueli Martins e mais 1 conexão em comum · 52 seguidores",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/C4E03AQGBxlxPcF876w/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1657587768892?e=1796860800&v=beta&t=JWaJUtuw3eGxLsjyP27Omxv0wakkACvtrU9pbsfPaNg",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/edilane-alves-6b4863217",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:17.964Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Gabrielle Alves da Silva Santos",
+      "title": "Compradora Bomboniere grupo Super Nosso",
+      "city": "Belo Horizonte, Minas Gerais, Brasil",
+      "location": "Belo Horizonte, Minas Gerais, Brasil",
+      "current": "Compradora Bomboniere grupo Super Nosso",
+      "past": null,
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": "3 conexões em comum",
+      "summary": "Gabrielle Alves da Silva Santos • 2º Compradora Bomboniere grupo Super Nosso Belo Horizonte, Minas Gerais, Brasil Pendente Everton Alves, Andre Barros e mais 3 conexões em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D5603AQF9v8BLQEbt5g/profile-displayphoto-shrink_100_100/B56Zczz5YaGoAU-/0/1748920932882?e=1796860800&v=beta&t=-0_N-_k8z9CeA6f79NZaiI6CMx94EsY28Y1hcQZw7-Y",
+      "photoBase64": "data:image/jpeg;base64,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",
+      "profileUrl": "https://www.linkedin.com/in/gabrielle-alves-da-silva-santos-690824316",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:18.197Z",
+      "source": "search_card"
+    },
+    {
+      "name": "Bruna Tatiane",
+      "title": "COMPRADORA na COMERCIO DE ALIMENTOS CIAAD LTDA",
+      "city": "Contagem, Minas Gerais, Brasil",
+      "location": "Contagem, Minas Gerais, Brasil",
+      "current": "COMPRADORA na COMERCIO DE ALIMENTOS CIAAD LTDA",
+      "past": null,
+      "level": "2º",
+      "action": "Pending",
+      "connection": "pending",
+      "mutualConnections": "em comum",
+      "summary": "Bruna Tatiane • 2º COMPRADORA na COMERCIO DE ALIMENTOS CIAAD LTDA Contagem, Minas Gerais, Brasil Pendente Ronildo Valentino Celestino é uma conexão em comum",
+      "photoUrl": "https://media.licdn.com/dms/image/v2/D4D35AQEbgGO4fES2ug/profile-framedphoto-shrink_100_100/profile-framedphoto-shrink_100_100/0/1713972350966?e=1796047200&v=beta&t=ZW9iHxX9guEFUmtXalcEaxEZEPLXnjyNhqFmA8BxuFQ",
+      "photoBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIYSUNDX1BST0ZJTEUAAQEAAAIIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAGRyWFlaAAABVAAAABRnWFlaAAABaAAAABRiWFlaAAABfAAAABR3dHB0AAABkAAAABRyVFJDAAABpAAAAChnVFJDAAABpAAAAChiVFJDAAABpAAAAChjcHJ0AAABzAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAaQBzAHAAbABhAHkAIABQADMAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAWFlaIAAAAAAAAIPeAAA9vv///7tYWVogAAAAAAAASr4AALE2AAAKuVhZWiAAAAAAAAAoOwAAEQwAAMjNWFlaIAAAAAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2/9sAQwAFAwQEBAMFBAQEBQUFBgcMCAcHBwcPCwsJDBEPEhIRDxERExYcFxMUGhURERghGBodHR8fHxMXIiQiHiQcHh8e/9sAQwEFBQUHBgcOCAgOHhQRFB4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4e/8AAEQgAYABgAwEiAAIRAQMRAf/EABwAAAICAwEBAAAAAAAAAAAAAAYHBAUAAggDAf/EADwQAAEDAwIDBwEFBgUFAAAAAAECAwQABREGIQcSMRMUIkFRYYFxMmKRocEIFSMksdEWM4KS8CVSU3Ky/8QAGgEAAwEBAQEAAAAAAAAAAAAAAwQFAgABBv/EACMRAAICAgIBBAMAAAAAAAAAAAECABEDEgQhMRMiMkFRgaH/2gAMAwEAAhEDEQA/AOy6ysod4hays2h9POXm8vYSPCwwj/Mfc8kJH69ANzXTpdXKdDtsJ2bcJTMWM0nmcddWEpSPcmkdxJ/aHi2tCo+kbWJ7mSBMl5Qzn1SgYUofUppa3zWt94hz1T7s52UNskxoTZPZMj1+8r7x/IbUH8RGURWorSRglOaUbk+/URxeLSbNJd+4u8Qr8tapeppkdo9GoZ7ukD08GCR9SaFXblPm8y5cyRIVnq64VH868LXCdlr5UCrZVncZjuKKc+En6Vxyd1PBiNdTfS11mRZSFR5j0daSClTbhT/Snpp3X2pI0ZLrV1eeSlIyl89oCfTxbj4rnO1r5XgrJyF019OuhVkBO5KulLcklQCDUZ4gVmoiwY9NK8V40taI98id2WTjt2MqRn3T1HxmmUw80+yl5lxLjahlKknINcw6aZ7xcmUEbA8x+Ka+n7lKtjmWVZbUfG2eiv7H3rXG5THp+4PmcdFb2RlVlRrdNYnxg+wrbopJ6pPoak1RBvsSfI11nxLXbZNynvpYixmlOvOKOyUpGSa4Z4r65n8QdZLukjnahN5bgxidmm8//SupPrt0Ap5/te6tXEs8LR0R0pcnfzMzlO/ZJOEJPsVAn/QK5ptLCly0Ech8XRSsULI/1DYQL7h9o5kJtKk8uDiqfi2OSXFPUchFE+nnojbTjCgWXeXwpVjBPsfOqjjJBWGoUgA8pyM+9TEv1e5Vejj6mmhrWhMEOkZUpOR81f3mC3HgSCoDKY5J+pqr4bS0Sbf2R2W0ADRFqtPNEm4/8QT+VePYfubUAp1E5bmCpx0YO+4pj6TdP7v5D54NDttt4BZKU55+u1GlhtTrcFCkJ8O+9EzNsIDEujXDDQsbKnZBG/2R+v6UcsJKRQ/pWOWLe0kjc+I/NETZ2rKChBZ23cmT7TcnLbMDyQVNnZxH/cP70fsOtvsoeaUFtrSFJI8waV8hXhwKsuFWqUXC5XPTyz4oZDjBz1Sdlj4Vj/dT/HJ7ESy1OaOOtzVfuK94f5yppqT3Rv0CWvBt9SCfmh1vTa3+VSFjAOQDWXF0zLk/MWcrdeU4T7lRP60SafeClJGQamNna7guJkUtTSPp+0Ktbj7smM5I5k/wglzCUnPUijKBbGdVQhBmBxKEqynfdNWE6JFjxQ49yoBG3vVjotCEyFLSk8vlgday+ctRl5MGn7gVcNOxNLLkJiS1OKCOZSQBzAVVmTOkxFJfedZTJwlpTrWAvHUA0zNTaebmyS87Hzn8cV9s+kDPZTAhRi0SQO0XlXKPQZO3xTKZFbz5gWV18eIvbHCLHYOugHkBz+JoxsjiHIqG0gAr8P4mq/iPY/8ACkpq1szVyH1o/iq5cJTnJ2qdpZkCY2lI8DLY+SR1rTagTPkXDm3oCUgem1WKSMbVAjYCalBW1ZURcyHf5aIVrkSifsIOPr5UE8Jp7kDW9ulqUf5l/snPcL8O/wAkH4qy4ly8QWICFeJ5XMoD0FbcJrN3/U0ZZH8OOrtFH/13/rVTjpqlmIZ3tqidsttt6tXC2XmQqNES+pp1xKgkpwSOpBop11Z9O6Ykw3bBeFTm3VELbU42spwTg+FWfxHzXlxStMWx8ZrgzcGz3B6cJSgOhbcIWcewJI+Ktdbt9909PS4bNLUHkrtaLW0CttkE8xXyjZPLj7W+aihOmUxNDoTUlzprFyLJU0ChKRgJO9Huh48RDSXFHB8kkb0ltNtvXeA0uM6US4v8NQB+0ny/KmdpBy+tSmWTHbcUBgqORtWExhjc+wxt6uEMp+oSXBot3pbaVFTSwFJz+dGGk4zcZlchZACRnPtQ9Liz33oocjtoVzbqSScVE4oX96waQVEgpUuTKIYKknHID1+TTGNQrxXMSU1EU+tJy75rlMx1Z7J9S1pGeiechI/2gUVWZCW0BI6/TyoJ0VY7pdX5brjSudBBStewPXOPxo9iw34nK28hSCkDr50TIRdCCIIWpdsLASDXsFkkY3zQ5fpyodvUQrCleEb0P27Us22pU4VB5tIzyLreLGWi2R9Zvqd0z9VOJT4gwA2PrTM4axe5wnmyjC5IDfN0IB60sdCOtXW7PyXknKlKdV6DJ6U8NDtRZHM+hQKkHATjGB61Rc6gKIkF2Oxi9/as0qqXaoerIjXM5D/l5eBv2SjlCvoFEj/WKBuFOo7nPSnTkDTpf5U5BhEMpVsQe8KweZBzv06bV1FcoUW5W+Rb5rKXo0htTbrauikkYIrkfWdmvPC/VM61pV2tuntEMurBCXms5B2x40HH0O/QipnJxlH3Hg+YDKurbSBLjytD6paeL7EyHIBIcjHLbieYhQTnzSoEb+lPHSEq3PwmrizOQ6y4kKSUnJPtjqD7Glu5aNOXfh27KblBDMe5g3C9S08z75DRUUoSd91LACfPGTQ1Ae1PoFcWd2Yets9CXUHm5mXgRnYjooefntSjKVNiN8TmHCNG+J/k6fgSWpDansYbQNsikzxbnhu/RnkkPNFSVrQk5KSnODj5H4VaWLiTYbtFDJlm2yVDCm3jgE+yuh/rUe0W63vXmQi4hMtLy+dp1LmUlPl0NbxtZsyojY29ym4w9Khi52ePNYSkIWgHYY3q4lWePcLc6wUYeSnmbUBuDX2yv2uBBSgyIrDSE75WlIAqFdeIWlLaVCPNbmP4xysHI+T0o+NVu4pn5AHRiG4niTJebjMrCewJKk5xlX/P60JwlXiUpFr7NS3XiEp5hv8AjVvq25Km3yW/gYW8opAOcDNW3Dy7xy+8ytCe0QQQsjfGOlNJkVR1E2yhjCrTlqTao8e1tgJUpIVJX5qPp9Kdek7eiHBDgSAVjb6UrdOW6TqO+x24quRlvd9zGQlH9z0FOpptDTSGmxyoQAlI9AK2h2O0IXBWhNqoddaTtOsbC5abs1lJ8TLyftsr8lJP6edX1ZRCAwowZFzjbW+jb7oO6x4d8Zdm2XvIdbW0ohl8Z3H3FkDGDv8AUb1c2S9SNTNX2cmHEmXIOMJgWx9zDDLA5kkoQSASkco+Sa6ouUGHcoTsG4RWZUZ1PK406gKSoe4NJfW3ACDJcXM0jcTb3Tk91kkqaz6JWPEkfXmqe/FZDadj8RdsRHaxfz9CW69XGf8AuSQ0y5HejofbbIUwyVpJdPN6JIqnd4f3mJPLCbgwykOSCXFLKAlhn7bx9E52Hqamy9F8UNIxZ8Nq0TVRZiQl9cNIfStIOR9nJA+oFV1y1lqZOqVXq6QgHFRTDdivsKS0tkp5VIIO+/U+9LMFHyFQfS/VSbadBSbnNb7S996gvRXZMZ+OFOKeLZAWgJPRQzmr/TembHbJN5Zn3I95tKyhanUEtlLiMIUUjpyqO9CLGrL69NgGxWpEVmC06zHjRWlrSA6MLJySST7nyFWULRPE/VbyXF2q4ICmksqemfy4KB0zzYKh8GvVKn4i51g+BcEr53mBdHor7zD62z/mMuBSF+eQRRBwp0jqXVV5/wCjNliK2rEmY4D2bYPUfeV90fkN6a+hv2foERbcrVlw7+4nB7pFyhrPopZwpQ+gTTqtsGHbYTUK3xWYsZpPK200gJSkewFMYeKxNv1CJha7aQ9L2KFp60t2+ECQndx1X2nFeaj/AM2q0rKyqAAAoRkCp//Z",
+      "profileUrl": "https://www.linkedin.com/in/bruna-tatiane-7828b336",
+      "inviteStatus": "pending",
+      "canConnect": false,
+      "canMessage": false,
+      "query": "comprador",
+      "searchQuery": "comprador",
+      "searchPage": 1,
+      "round": 1,
+      "extractedAt": "2026-11-23T13:55:18.466Z",
+      "source": "search_card"
+    }
+  ],
+  "steps": [
+    "search:comprador:page=1",
+    "list-page:1:cards=25",
+    "card:1:p1:Meyrielle Simões",
+    "api:profiles:ok",
+    "card:2:p1:Gisele Xavier",
+    "api:profiles:ok",
+    "card:3:p1:Lwana T.",
+    "api:profiles:ok",
+    "card:4:p1:Rafael Lucas",
+    "api:profiles:ok",
+    "card:5:p1:Nicole Morais",
+    "api:profiles:ok",
+    "card:6:p1:Eliana Santos de Paula",
+    "api:profiles:ok",
+    "card:7:p1:Thaís Melo",
+    "api:profiles:ok",
+    "card:8:p1:EDILANE ALVES",
+    "api:profiles:ok",
+    "card:9:p1:Gabrielle Alves da Silva Santos",
+    "api:profiles:ok",
+    "card:10:p1:Bruna Tatiane",
+    "api:profiles:ok"
+  ],
+  "truncated": false
+}
+23/11/2026 10:55:18 [spawn] robô terminou OK: npm run linkedin-extract-leads-cdp -- -n 10 --no-shot --query comprador
+23/11/2026 10:55:19 [ddc7f46c] job «buscar candidatos» OK em 19s (id=1670b536-ce00-46c6-9886-b3a8b63d35b5)
+23/11/2026 10:55:19 [ddc7f46c] ciclo #3 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:55:34 [ddc7f46c] ciclo #4: pedindo job na API…
+23/11/2026 10:55:34 [ddc7f46c] ciclo #4: peguei job «enviar conexão» (conectar) prioridade=4 id=be01c091-9903-4400-a725-ceeeba53c50d
+23/11/2026 10:55:34 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/nicolemoraiscunha · conexão=823506bc-6e4a-4b32-9ce9-b64f85a141b1
+23/11/2026 10:55:34 [ddc7f46c] executando «enviar conexão» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:55:34 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/nicolemoraiscunha --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/nicolemoraiscunha --no-shot
+
+cdpId=matheus-conectmax cdpUrl=http://127.0.0.1:9267 url=https://www.linkedin.com/in/nicolemoraiscunha
+{
+  "ok": true,
+  "status": "already_connected",
+  "url": "https://www.linkedin.com/in/nicolemoraiscunha",
+  "steps": [
+    "view:https://www.linkedin.com/in/nicolemoraiscunha",
+    "already_connected",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-connections-linkedin",
+    "data": {
+      "id": "823506bc-6e4a-4b32-9ce9-b64f85a141b1",
+      "clienteLinkedinId": "9059e4f9-1484-4d52-a7bc-2c8fdb60400e",
+      "clienteLinkedin": {
+        "id": "9059e4f9-1484-4d52-a7bc-2c8fdb60400e",
+        "clienteId": "f774821b-3e7b-4961-a36a-ca6257b5852e",
+        "profileUrl": "https://www.linkedin.com/in/nicolemoraiscunha",
+        "headline": "Comprador Sênior | Procurement | Strategic Sourcing | Gestão de Contratos",
+        "company": "Comprador Sênior na Tabocas Participações Empreendimentos S/A IRACEMA SANTOS🎯, Liliane Isabela Palhares e mais 13 conexões em comum",
+        "location": "Belo Horizonte, Minas Gerais, Brasil",
+        "connections": null,
+        "mutualConnections": "13 conexões em comum",
+        "connectionDegree": "2º",
+        "inviteStatus": "connect",
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador",
+        "past": null,
+        "round": 1,
+        "photoBase64": "data:image/jpeg;base64,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",
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-23T13:55:17.218Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-12T13:25:25.814Z",
+        "updatedAt": "2026-11-23T13:55:17.514Z"
+      },
+      "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+      "status": 2,
+      "invitedAt": "2026-11-12T15:53:18.794Z",
+      "connectedAt": "2026-11-23T13:55:42.186Z",
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/nicolemoraiscunha",
+        "already_connected"
+      ],
+      "createdAt": "2026-11-12T13:25:25.821Z",
+      "updatedAt": "2026-11-23T13:55:42.693Z"
+    },
+    "status": 2
+  }
+}
+23/11/2026 10:55:42 [spawn] robô terminou OK: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/nicolemoraiscunha --no-shot
+23/11/2026 10:55:43 [ddc7f46c] job «enviar conexão» OK em 8s (id=be01c091-9903-4400-a725-ceeeba53c50d)
+23/11/2026 10:55:43 [ddc7f46c] ciclo #4 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:55:58 [ddc7f46c] ciclo #5: pedindo job na API…
+23/11/2026 10:55:58 [ddc7f46c] ciclo #5: peguei job «enviar mensagem» (enviar_prospeccao) prioridade=3 id=3d48b483-8167-4c14-9bf4-7544c1e22b18
+23/11/2026 10:55:58 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/nicolemoraiscunha · conexão=823506bc-6e4a-4b32-9ce9-b64f85a141b1
+23/11/2026 10:55:58 [ddc7f46c] executando «enviar mensagem» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:55:58 [spawn] iniciando robô: npm run linkedin-message-cdp -- --url https://www.linkedin.com/in/nicolemoraiscunha --text Olá, Nicole, tudo bem contigo?
+
+Nicole, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 9059e4f9-1484-4d52-a7bc-2c8fdb60400e
+
+> screen-robot@1.0.0 linkedin-message-cdp
+> node scripts/linkedin-message-cdp.js --url https://www.linkedin.com/in/nicolemoraiscunha --text Olá, Nicole, tudo bem contigo?
+
+Nicole, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 9059e4f9-1484-4d52-a7bc-2c8fdb60400e
+
+23/11/2026 10:56:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+{
+  "ok": true,
+  "status": "sent",
+  "url": "https://www.linkedin.com/in/nicolemoraiscunha",
+  "text": "Olá, Nicole, tudo bem contigo?\n\nNicole, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.\n\nEstamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+  "steps": [
+    "view:https://www.linkedin.com/in/nicolemoraiscunha",
+    "goto:compose",
+    "composer",
+    "composer:div.msg-form__contenteditable",
+    "click:button.msg-form__send-button:not([disabled])",
+    "send:confirmed",
+    "db:message:sent"
+  ],
+  "db": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-linkedin-messages",
+    "data": {
+      "ok": true,
+      "count": 1,
+      "data": [
+        {
+          "id": "010fe253-2875-479e-a9b5-ec693475d0c1",
+          "clienteLinkedinId": "9059e4f9-1484-4d52-a7bc-2c8fdb60400e",
+          "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+          "direction": "sent",
+          "sender": null,
+          "message": "Olá, Nicole, tudo bem contigo?\n\nNicole, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.\n\nEstamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+          "timeLabel": null,
+          "occurredAt": "2026-11-23T13:56:18.350Z",
+          "fingerprint": "088248dc4d36bffae1b7f1afc38da13cb905d315",
+          "createdAt": "2026-11-23T13:56:18.830Z",
+          "updatedAt": "2026-11-23T13:56:18.830Z"
+        }
+      ]
+    }
+  }
+}
+23/11/2026 10:56:18 [spawn] robô terminou OK: npm run linkedin-message-cdp -- --url https://www.linkedin.com/in/nicolemoraiscunha --text Olá, Nicole, tudo bem contigo?
+
+Nicole, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 9059e4f9-1484-4d52-a7bc-2c8fdb60400e
+23/11/2026 10:56:19 [ddc7f46c] job «enviar mensagem» OK em 20s (id=3d48b483-8167-4c14-9bf4-7544c1e22b18)
+23/11/2026 10:56:19 [ddc7f46c] ciclo #5 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:56:34 [ddc7f46c] ciclo #6: pedindo job na API…
+23/11/2026 10:56:34 [ddc7f46c] ciclo #6: peguei job «enviar conexão» (conectar) prioridade=4 id=17763e0e-87e6-4127-8997-09506a2042f2
+23/11/2026 10:56:34 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/rafael-lucas-a8050533b · conexão=81b40a9a-ed7f-40ec-a437-86ab35e32d54
+23/11/2026 10:56:34 [ddc7f46c] executando «enviar conexão» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:56:34 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/rafael-lucas-a8050533b --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/rafael-lucas-a8050533b --no-shot
+
+cdpId=matheus-conectmax cdpUrl=http://127.0.0.1:9267 url=https://www.linkedin.com/in/rafael-lucas-a8050533b
+{
+  "ok": true,
+  "status": "already_connected",
+  "url": "https://www.linkedin.com/in/rafael-lucas-a8050533b",
+  "steps": [
+    "view:https://www.linkedin.com/in/rafael-lucas-a8050533b",
+    "already_connected",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-connections-linkedin",
+    "data": {
+      "id": "81b40a9a-ed7f-40ec-a437-86ab35e32d54",
+      "clienteLinkedinId": "1198636f-662d-4980-aa07-fb6c0f00f184",
+      "clienteLinkedin": {
+        "id": "1198636f-662d-4980-aa07-fb6c0f00f184",
+        "clienteId": "90e60b27-b83f-47bd-b82c-36cedcdcbfba",
+        "profileUrl": "https://www.linkedin.com/in/rafael-lucas-a8050533b",
+        "headline": "Gestão Comercial | Comprador | Varejo & Distribuição",
+        "company": "Comprador na GRUPO DEC MINAS Karina Fernandes, Michelle Fernandes Costa e mais 10 conexões em comum",
+        "location": "Contagem, Minas Gerais, Brasil",
+        "connections": null,
+        "mutualConnections": "10 conexões em comum",
+        "connectionDegree": null,
+        "inviteStatus": "connect",
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador",
+        "past": null,
+        "round": 1,
+        "photoBase64": "data:image/jpeg;base64,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",
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-23T13:55:16.981Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-16T14:16:31.568Z",
+        "updatedAt": "2026-11-23T13:55:17.282Z"
+      },
+      "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+      "status": 2,
+      "invitedAt": null,
+      "connectedAt": "2026-11-23T13:56:43.799Z",
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/rafael-lucas-a8050533b",
+        "already_connected"
+      ],
+      "createdAt": "2026-11-16T14:16:31.576Z",
+      "updatedAt": "2026-11-23T13:56:44.278Z"
+    },
+    "status": 2
+  }
+}
+23/11/2026 10:56:44 [spawn] robô terminou OK: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/rafael-lucas-a8050533b --no-shot
+23/11/2026 10:56:44 [ddc7f46c] job «enviar conexão» OK em 10s (id=17763e0e-87e6-4127-8997-09506a2042f2)
+23/11/2026 10:56:44 [ddc7f46c] ciclo #6 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:56:59 [ddc7f46c] ciclo #7: pedindo job na API…
+23/11/2026 10:57:00 [ddc7f46c] ciclo #7: peguei job «enviar conexão» (conectar) prioridade=4 id=9c8919c9-6cc2-42e4-a0b2-5772e098fa74
+23/11/2026 10:57:00 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/thaís-melo-4b22b41bb · conexão=1996a22e-3d7e-4411-805c-9f4150baed52
+23/11/2026 10:57:00 [ddc7f46c] executando «enviar conexão» em Chrome CDP (matheus-conectmax)…
+23/11/2026 10:57:00 [spawn] iniciando robô: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --no-shot (timeout 360s)
+
+> screen-robot@1.0.0 linkedin-connect-cdp
+> node scripts/linkedin-connect-cdp.js --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --no-shot
+
+cdpId=matheus-conectmax cdpUrl=http://127.0.0.1:9267 url=https://www.linkedin.com/in/thaís-melo-4b22b41bb
+23/11/2026 10:57:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+{
+  "ok": true,
+  "status": "already_connected",
+  "url": "https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+  "steps": [
+    "view:https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+    "already_connected",
+    "api:client-connections-linkedin:ok"
+  ],
+  "notify": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-connections-linkedin",
+    "data": {
+      "id": "1996a22e-3d7e-4411-805c-9f4150baed52",
+      "clienteLinkedinId": "29611388-8ae3-4a3e-8b50-b97ca3b036b3",
+      "clienteLinkedin": {
+        "id": "29611388-8ae3-4a3e-8b50-b97ca3b036b3",
+        "clienteId": "562b7efc-34d1-4a11-b5c9-63c689477b84",
+        "profileUrl": "https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+        "headline": "Compradora | CEI SERVIÇOS DE ENGENHARIA LTDA",
+        "company": "Comprador na Grupo CEI - Engenharia Elétrica Ricardo Russo e Marcello ConectMax são conexões em comum",
+        "location": "Contagem, Minas Gerais, Brasil",
+        "connections": null,
+        "mutualConnections": "conexões em comum",
+        "connectionDegree": "2º",
+        "inviteStatus": "connect",
+        "canConnect": null,
+        "canMessage": null,
+        "about": null,
+        "experience": null,
+        "education": null,
+        "skills": null,
+        "searchQuery": "comprador",
+        "past": null,
+        "round": 1,
+        "photoBase64": "data:image/jpeg;base64,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",
+        "coverBase64": null,
+        "cardBase64": null,
+        "rawOcr": null,
+        "extractedAt": "2026-11-23T13:55:17.706Z",
+        "deletedAt": null,
+        "createdAt": "2026-11-20T10:02:46.217Z",
+        "updatedAt": "2026-11-23T13:55:17.995Z"
+      },
+      "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+      "status": 2,
+      "invitedAt": "2026-11-20T10:03:43.038Z",
+      "connectedAt": "2026-11-23T13:57:08.164Z",
+      "discardReason": null,
+      "steps": [
+        "view:https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+        "already_connected"
+      ],
+      "createdAt": "2026-11-20T10:02:46.226Z",
+      "updatedAt": "2026-11-23T13:57:08.683Z"
+    },
+    "status": 2
+  }
+}
+23/11/2026 10:57:08 [spawn] robô terminou OK: npm run linkedin-connect-cdp -- --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --no-shot
+23/11/2026 10:57:08 [ddc7f46c] job «enviar conexão» OK em 9s (id=9c8919c9-6cc2-42e4-a0b2-5772e098fa74)
+23/11/2026 10:57:08 [ddc7f46c] ciclo #7 ok — pausa 15s e volto a puxar fila
+23/11/2026 10:57:23 [ddc7f46c] ciclo #8: pedindo job na API…
+23/11/2026 10:57:24 [ddc7f46c] ciclo #8: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:24 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:39 [ddc7f46c] ciclo #9: pedindo job na API…
+23/11/2026 10:57:39 [ddc7f46c] ciclo #9: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:57:54 [ddc7f46c] ciclo #10: pedindo job na API…
+23/11/2026 10:57:55 [ddc7f46c] ciclo #10: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:57:55 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:58:10 [ddc7f46c] ciclo #11: pedindo job na API…
+23/11/2026 10:58:10 [ddc7f46c] ciclo #11: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:10 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:25 [ddc7f46c] ciclo #12: pedindo job na API…
+23/11/2026 10:58:26 [ddc7f46c] ciclo #12: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:26 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:41 [ddc7f46c] ciclo #13: pedindo job na API…
+23/11/2026 10:58:41 [ddc7f46c] ciclo #13: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:41 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:58:56 [ddc7f46c] ciclo #14: pedindo job na API…
+23/11/2026 10:58:57 [ddc7f46c] ciclo #14: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:58:57 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 10:59:12 [ddc7f46c] ciclo #15: pedindo job na API…
+23/11/2026 10:59:12 [ddc7f46c] ciclo #15: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:12 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:27 [ddc7f46c] ciclo #16: pedindo job na API…
+23/11/2026 10:59:28 [ddc7f46c] ciclo #16: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:28 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:43 [ddc7f46c] ciclo #17: pedindo job na API…
+23/11/2026 10:59:43 [ddc7f46c] ciclo #17: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:43 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 10:59:58 [ddc7f46c] ciclo #18: pedindo job na API…
+23/11/2026 10:59:58 [ddc7f46c] ciclo #18: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 10:59:58 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:00:13 [ddc7f46c] ciclo #19: pedindo job na API…
+23/11/2026 11:00:14 [ddc7f46c] ciclo #19: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:14 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:29 [ddc7f46c] ciclo #20: pedindo job na API…
+23/11/2026 11:00:29 [ddc7f46c] ciclo #20: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:29 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:00:44 [ddc7f46c] ciclo #21: pedindo job na API…
+23/11/2026 11:00:45 [ddc7f46c] ciclo #21: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:00:45 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:00 [ddc7f46c] ciclo #22: pedindo job na API…
+23/11/2026 11:01:00 [ddc7f46c] ciclo #22: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:00 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:01:15 [ddc7f46c] ciclo #23: pedindo job na API…
+23/11/2026 11:01:16 [ddc7f46c] ciclo #23: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:16 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:31 [ddc7f46c] ciclo #24: pedindo job na API…
+23/11/2026 11:01:31 [ddc7f46c] ciclo #24: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:31 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:01:46 [ddc7f46c] ciclo #25: pedindo job na API…
+23/11/2026 11:01:46 [ddc7f46c] ciclo #25: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:01:46 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:01 [ddc7f46c] ciclo #26: pedindo job na API…
+23/11/2026 11:02:02 [ddc7f46c] ciclo #26: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:02 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:02:17 [ddc7f46c] ciclo #27: pedindo job na API…
+23/11/2026 11:02:17 [ddc7f46c] ciclo #27: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:17 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:32 [ddc7f46c] ciclo #28: pedindo job na API…
+23/11/2026 11:02:33 [ddc7f46c] ciclo #28: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:33 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:02:48 [ddc7f46c] ciclo #29: pedindo job na API…
+23/11/2026 11:02:48 [ddc7f46c] ciclo #29: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:02:48 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:03 [ddc7f46c] ciclo #30: pedindo job na API…
+23/11/2026 11:03:04 [ddc7f46c] ciclo #30: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:04 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:03:19 [ddc7f46c] ciclo #31: pedindo job na API…
+23/11/2026 11:03:19 [ddc7f46c] ciclo #31: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:19 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:34 [ddc7f46c] ciclo #32: pedindo job na API…
+23/11/2026 11:03:35 [ddc7f46c] ciclo #32: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:35 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:03:50 [ddc7f46c] ciclo #33: pedindo job na API…
+23/11/2026 11:03:50 [ddc7f46c] ciclo #33: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:03:50 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:05 [ddc7f46c] ciclo #34: pedindo job na API…
+23/11/2026 11:04:06 [ddc7f46c] ciclo #34: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:06 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:04:21 [ddc7f46c] ciclo #35: pedindo job na API…
+23/11/2026 11:04:21 [ddc7f46c] ciclo #35: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:21 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:36 [ddc7f46c] ciclo #36: pedindo job na API…
+23/11/2026 11:04:37 [ddc7f46c] ciclo #36: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:37 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:04:52 [ddc7f46c] ciclo #37: pedindo job na API…
+23/11/2026 11:04:52 [ddc7f46c] ciclo #37: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:04:52 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:07 [ddc7f46c] ciclo #38: pedindo job na API…
+23/11/2026 11:05:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:05:08 [ddc7f46c] ciclo #38: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:08 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:23 [ddc7f46c] ciclo #39: pedindo job na API…
+23/11/2026 11:05:23 [ddc7f46c] ciclo #39: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:23 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:38 [ddc7f46c] ciclo #40: pedindo job na API…
+23/11/2026 11:05:39 [ddc7f46c] ciclo #40: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:05:54 [ddc7f46c] ciclo #41: pedindo job na API…
+23/11/2026 11:05:54 [ddc7f46c] ciclo #41: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:05:54 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:06:09 [ddc7f46c] ciclo #42: pedindo job na API…
+23/11/2026 11:06:09 [ddc7f46c] ciclo #42: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:09 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:24 [ddc7f46c] ciclo #43: pedindo job na API…
+23/11/2026 11:06:25 [ddc7f46c] ciclo #43: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:25 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:40 [ddc7f46c] ciclo #44: pedindo job na API…
+23/11/2026 11:06:40 [ddc7f46c] ciclo #44: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:40 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:06:55 [ddc7f46c] ciclo #45: pedindo job na API…
+23/11/2026 11:06:56 [ddc7f46c] ciclo #45: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:06:56 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:07:11 [ddc7f46c] ciclo #46: pedindo job na API…
+23/11/2026 11:07:11 [ddc7f46c] ciclo #46: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:11 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:26 [ddc7f46c] ciclo #47: pedindo job na API…
+23/11/2026 11:07:27 [ddc7f46c] ciclo #47: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:27 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:42 [ddc7f46c] ciclo #48: pedindo job na API…
+23/11/2026 11:07:42 [ddc7f46c] ciclo #48: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:42 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:07:57 [ddc7f46c] ciclo #49: pedindo job na API…
+23/11/2026 11:07:57 [ddc7f46c] ciclo #49: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:07:57 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:08:12 [ddc7f46c] ciclo #50: pedindo job na API…
+23/11/2026 11:08:13 [ddc7f46c] ciclo #50: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:13 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:28 [ddc7f46c] ciclo #51: pedindo job na API…
+23/11/2026 11:08:28 [ddc7f46c] ciclo #51: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:28 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:43 [ddc7f46c] ciclo #52: pedindo job na API…
+23/11/2026 11:08:44 [ddc7f46c] ciclo #52: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:44 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:08:59 [ddc7f46c] ciclo #53: pedindo job na API…
+23/11/2026 11:08:59 [ddc7f46c] ciclo #53: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:08:59 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:09:14 [ddc7f46c] ciclo #54: pedindo job na API…
+23/11/2026 11:09:15 [ddc7f46c] ciclo #54: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:15 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:30 [ddc7f46c] ciclo #55: pedindo job na API…
+23/11/2026 11:09:30 [ddc7f46c] ciclo #55: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:30 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:09:45 [ddc7f46c] ciclo #56: pedindo job na API…
+23/11/2026 11:09:46 [ddc7f46c] ciclo #56: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:09:46 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:01 [ddc7f46c] ciclo #57: pedindo job na API…
+23/11/2026 11:10:01 [ddc7f46c] ciclo #57: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:01 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:10:16 [ddc7f46c] ciclo #58: pedindo job na API…
+23/11/2026 11:10:17 [ddc7f46c] ciclo #58: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:17 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:32 [ddc7f46c] ciclo #59: pedindo job na API…
+23/11/2026 11:10:32 [ddc7f46c] ciclo #59: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:32 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:10:47 [ddc7f46c] ciclo #60: pedindo job na API…
+23/11/2026 11:10:47 [ddc7f46c] ciclo #60: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:10:47 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:02 [ddc7f46c] ciclo #61: pedindo job na API…
+23/11/2026 11:11:03 [ddc7f46c] ciclo #61: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:03 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:11:18 [ddc7f46c] ciclo #62: pedindo job na API…
+23/11/2026 11:11:18 [ddc7f46c] ciclo #62: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:18 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:33 [ddc7f46c] ciclo #63: pedindo job na API…
+23/11/2026 11:11:34 [ddc7f46c] ciclo #63: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:34 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:11:49 [ddc7f46c] ciclo #64: pedindo job na API…
+23/11/2026 11:11:49 [ddc7f46c] ciclo #64: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:11:49 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:04 [ddc7f46c] ciclo #65: pedindo job na API…
+23/11/2026 11:12:05 [ddc7f46c] ciclo #65: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:05 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:12:20 [ddc7f46c] ciclo #66: pedindo job na API…
+23/11/2026 11:12:20 [ddc7f46c] ciclo #66: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:20 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:35 [ddc7f46c] ciclo #67: pedindo job na API…
+23/11/2026 11:12:36 [ddc7f46c] ciclo #67: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:36 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:12:51 [ddc7f46c] ciclo #68: pedindo job na API…
+23/11/2026 11:12:51 [ddc7f46c] ciclo #68: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:12:51 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:06 [ddc7f46c] ciclo #69: pedindo job na API…
+23/11/2026 11:13:06 [ddc7f46c] ciclo #69: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:06 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:13:21 [ddc7f46c] ciclo #70: pedindo job na API…
+23/11/2026 11:13:22 [ddc7f46c] ciclo #70: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:22 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:37 [ddc7f46c] ciclo #71: pedindo job na API…
+23/11/2026 11:13:37 [ddc7f46c] ciclo #71: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:37 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:13:52 [ddc7f46c] ciclo #72: pedindo job na API…
+23/11/2026 11:13:53 [ddc7f46c] ciclo #72: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:13:53 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:14:08 [ddc7f46c] ciclo #73: pedindo job na API…
+23/11/2026 11:14:08 [ddc7f46c] ciclo #73: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:08 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:23 [ddc7f46c] ciclo #74: pedindo job na API…
+23/11/2026 11:14:23 [ddc7f46c] ciclo #74: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:23 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:38 [ddc7f46c] ciclo #75: pedindo job na API…
+23/11/2026 11:14:39 [ddc7f46c] ciclo #75: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:14:54 [ddc7f46c] ciclo #76: pedindo job na API…
+23/11/2026 11:14:54 [ddc7f46c] ciclo #76: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:14:54 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:15:09 [ddc7f46c] ciclo #77: pedindo job na API…
+23/11/2026 11:15:10 [ddc7f46c] ciclo #77: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:10 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:25 [ddc7f46c] ciclo #78: pedindo job na API…
+23/11/2026 11:15:25 [ddc7f46c] ciclo #78: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:25 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:40 [ddc7f46c] ciclo #79: pedindo job na API…
+23/11/2026 11:15:41 [ddc7f46c] ciclo #79: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:41 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:15:56 [ddc7f46c] ciclo #80: pedindo job na API…
+23/11/2026 11:15:56 [ddc7f46c] ciclo #80: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:15:56 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:16:11 [ddc7f46c] ciclo #81: pedindo job na API…
+23/11/2026 11:16:11 [ddc7f46c] ciclo #81: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:11 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:26 [ddc7f46c] ciclo #82: pedindo job na API…
+23/11/2026 11:16:27 [ddc7f46c] ciclo #82: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:27 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:42 [ddc7f46c] ciclo #83: pedindo job na API…
+23/11/2026 11:16:42 [ddc7f46c] ciclo #83: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:42 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:16:57 [ddc7f46c] ciclo #84: pedindo job na API…
+23/11/2026 11:16:58 [ddc7f46c] ciclo #84: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:16:58 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:17:13 [ddc7f46c] ciclo #85: pedindo job na API…
+23/11/2026 11:17:13 [ddc7f46c] ciclo #85: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:13 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:28 [ddc7f46c] ciclo #86: pedindo job na API…
+23/11/2026 11:17:29 [ddc7f46c] ciclo #86: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:29 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:44 [ddc7f46c] ciclo #87: pedindo job na API…
+23/11/2026 11:17:44 [ddc7f46c] ciclo #87: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:17:44 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:17:59 [ddc7f46c] ciclo #88: pedindo job na API…
+23/11/2026 11:18:00 [ddc7f46c] ciclo #88: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:00 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:18:15 [ddc7f46c] ciclo #89: pedindo job na API…
+23/11/2026 11:18:15 [ddc7f46c] ciclo #89: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:15 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:30 [ddc7f46c] ciclo #90: pedindo job na API…
+23/11/2026 11:18:31 [ddc7f46c] ciclo #90: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:31 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:18:46 [ddc7f46c] ciclo #91: pedindo job na API…
+23/11/2026 11:18:46 [ddc7f46c] ciclo #91: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:18:46 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:01 [ddc7f46c] ciclo #92: pedindo job na API…
+23/11/2026 11:19:01 [ddc7f46c] ciclo #92: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:01 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:19:16 [ddc7f46c] ciclo #93: pedindo job na API…
+23/11/2026 11:19:17 [ddc7f46c] ciclo #93: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:17 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:32 [ddc7f46c] ciclo #94: pedindo job na API…
+23/11/2026 11:19:32 [ddc7f46c] ciclo #94: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:32 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:19:47 [ddc7f46c] ciclo #95: pedindo job na API…
+23/11/2026 11:19:48 [ddc7f46c] ciclo #95: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:19:48 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:03 [ddc7f46c] ciclo #96: pedindo job na API…
+23/11/2026 11:20:03 [ddc7f46c] ciclo #96: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:03 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:20:18 [ddc7f46c] ciclo #97: pedindo job na API…
+23/11/2026 11:20:19 [ddc7f46c] ciclo #97: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:19 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:34 [ddc7f46c] ciclo #98: pedindo job na API…
+23/11/2026 11:20:34 [ddc7f46c] ciclo #98: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:34 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:20:49 [ddc7f46c] ciclo #99: pedindo job na API…
+23/11/2026 11:20:50 [ddc7f46c] ciclo #99: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:20:50 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:05 [ddc7f46c] ciclo #100: pedindo job na API…
+23/11/2026 11:21:05 [ddc7f46c] ciclo #100: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:05 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:21:20 [ddc7f46c] ciclo #101: pedindo job na API…
+23/11/2026 11:21:21 [ddc7f46c] ciclo #101: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:21 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:36 [ddc7f46c] ciclo #102: pedindo job na API…
+23/11/2026 11:21:36 [ddc7f46c] ciclo #102: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:36 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:21:51 [ddc7f46c] ciclo #103: pedindo job na API…
+23/11/2026 11:21:52 [ddc7f46c] ciclo #103: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:21:52 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:07 [ddc7f46c] ciclo #104: pedindo job na API…
+23/11/2026 11:22:07 [ddc7f46c] ciclo #104: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:07 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:22:22 [ddc7f46c] ciclo #105: pedindo job na API…
+23/11/2026 11:22:23 [ddc7f46c] ciclo #105: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:23 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:38 [ddc7f46c] ciclo #106: pedindo job na API…
+23/11/2026 11:22:38 [ddc7f46c] ciclo #106: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:38 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:22:53 [ddc7f46c] ciclo #107: pedindo job na API…
+23/11/2026 11:22:54 [ddc7f46c] ciclo #107: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:22:54 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:23:09 [ddc7f46c] ciclo #108: pedindo job na API…
+23/11/2026 11:23:09 [ddc7f46c] ciclo #108: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:09 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:24 [ddc7f46c] ciclo #109: pedindo job na API…
+23/11/2026 11:23:24 [ddc7f46c] ciclo #109: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:24 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:39 [ddc7f46c] ciclo #110: pedindo job na API…
+23/11/2026 11:23:40 [ddc7f46c] ciclo #110: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:40 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:23:55 [ddc7f46c] ciclo #111: pedindo job na API…
+23/11/2026 11:23:55 [ddc7f46c] ciclo #111: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:23:55 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:24:10 [ddc7f46c] ciclo #112: pedindo job na API…
+23/11/2026 11:24:11 [ddc7f46c] ciclo #112: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:11 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:26 [ddc7f46c] ciclo #113: pedindo job na API…
+23/11/2026 11:24:26 [ddc7f46c] ciclo #113: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:26 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:41 [ddc7f46c] ciclo #114: pedindo job na API…
+23/11/2026 11:24:42 [ddc7f46c] ciclo #114: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:42 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:24:57 [ddc7f46c] ciclo #115: pedindo job na API…
+23/11/2026 11:24:57 [ddc7f46c] ciclo #115: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:24:57 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:25:12 [ddc7f46c] ciclo #116: pedindo job na API…
+23/11/2026 11:25:12 [ddc7f46c] ciclo #116: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:12 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:27 [ddc7f46c] ciclo #117: pedindo job na API…
+23/11/2026 11:25:28 [ddc7f46c] ciclo #117: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:28 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:43 [ddc7f46c] ciclo #118: pedindo job na API…
+23/11/2026 11:25:43 [ddc7f46c] ciclo #118: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:43 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:25:58 [ddc7f46c] ciclo #119: pedindo job na API…
+23/11/2026 11:25:59 [ddc7f46c] ciclo #119: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:25:59 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:26:14 [ddc7f46c] ciclo #120: pedindo job na API…
+23/11/2026 11:26:14 [ddc7f46c] ciclo #120: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:26:14 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:26:29 [ddc7f46c] ciclo #121: pedindo job na API…
+23/11/2026 11:26:30 [ddc7f46c] ciclo #121: peguei job «enviar mensagem» (enviar_prospeccao) prioridade=3 id=51afa221-43cb-41ef-a00a-cf62833dd6ed
+23/11/2026 11:26:30 [ddc7f46c]   payload: perfil=https://www.linkedin.com/in/thaís-melo-4b22b41bb · conexão=1996a22e-3d7e-4411-805c-9f4150baed52
+23/11/2026 11:26:30 [ddc7f46c] executando «enviar mensagem» em Chrome CDP (matheus-conectmax)…
+23/11/2026 11:26:30 [spawn] iniciando robô: npm run linkedin-message-cdp -- --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --text Olá, Thaís, tudo bem contigo?
+
+Thaís, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 29611388-8ae3-4a3e-8b50-b97ca3b036b3
+
+> screen-robot@1.0.0 linkedin-message-cdp
+> node scripts/linkedin-message-cdp.js --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --text Olá, Thaís, tudo bem contigo?
+
+Thaís, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 29611388-8ae3-4a3e-8b50-b97ca3b036b3
+
+{
+  "ok": true,
+  "status": "sent",
+  "url": "https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+  "text": "Olá, Thaís, tudo bem contigo?\n\nThaís, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.\n\nEstamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+  "steps": [
+    "view:https://www.linkedin.com/in/thaís-melo-4b22b41bb",
+    "goto:compose",
+    "composer",
+    "composer:div.msg-form__contenteditable",
+    "click:button.msg-form__send-button:not([disabled])",
+    "send:confirmed",
+    "db:message:sent"
+  ],
+  "db": {
+    "notified": true,
+    "url": "http://185.250.37.82/client-linkedin-messages",
+    "data": {
+      "ok": true,
+      "count": 1,
+      "data": [
+        {
+          "id": "3219e5c0-5c03-4e69-99fd-18dff683912a",
+          "clienteLinkedinId": "29611388-8ae3-4a3e-8b50-b97ca3b036b3",
+          "agentId": "ddc7f46c-2361-4ed2-aa4d-a32319f97721",
+          "direction": "sent",
+          "sender": null,
+          "message": "Olá, Thaís, tudo bem contigo?\n\nThaís, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.\n\nEstamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade?",
+          "timeLabel": null,
+          "occurredAt": "2026-11-23T14:26:50.288Z",
+          "fingerprint": "ef08711df59d51e2e4c68bd89efcf2d1fbbac8da",
+          "createdAt": "2026-11-23T14:26:50.720Z",
+          "updatedAt": "2026-11-23T14:26:50.720Z"
+        }
+      ]
+    }
+  }
+}
+23/11/2026 11:26:50 [spawn] robô terminou OK: npm run linkedin-message-cdp -- --url https://www.linkedin.com/in/thaís-melo-4b22b41bb --text Olá, Thaís, tudo bem contigo?
+
+Thaís, me chamo Matheus, sou consultor de vendas da empresa ConectMax e trabalhamos com vendas de equipamentos de escritório, informática e eletrônicos no geral e gostaria de apresentar minha empresa para vocês.
+
+Estamos a mais de 6 anos mercado atendendo grandes clientes, e queria ver contigo se teria um e-mail para que eu possa estar mandando nossa carta de apresentação com o nosso novo catálogo para vocês, tem essa possibilidade? --no-shot --cliente-linkedin-id 29611388-8ae3-4a3e-8b50-b97ca3b036b3
+23/11/2026 11:26:51 [ddc7f46c] job «enviar mensagem» OK em 21s (id=51afa221-43cb-41ef-a00a-cf62833dd6ed)
+23/11/2026 11:26:51 [ddc7f46c] ciclo #121 ok — pausa 15s e volto a puxar fila
+23/11/2026 11:27:06 [ddc7f46c] ciclo #122: pedindo job na API…
+23/11/2026 11:27:06 [ddc7f46c] ciclo #122: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:06 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:27:21 [ddc7f46c] ciclo #123: pedindo job na API…
+23/11/2026 11:27:22 [ddc7f46c] ciclo #123: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:22 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:37 [ddc7f46c] ciclo #124: pedindo job na API…
+23/11/2026 11:27:37 [ddc7f46c] ciclo #124: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:37 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:27:52 [ddc7f46c] ciclo #125: pedindo job na API…
+23/11/2026 11:27:52 [ddc7f46c] ciclo #125: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:27:52 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:07 [ddc7f46c] ciclo #126: pedindo job na API…
+23/11/2026 11:28:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:28:08 [ddc7f46c] ciclo #126: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:08 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:23 [ddc7f46c] ciclo #127: pedindo job na API…
+23/11/2026 11:28:24 [ddc7f46c] ciclo #127: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:24 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:39 [ddc7f46c] ciclo #128: pedindo job na API…
+23/11/2026 11:28:39 [ddc7f46c] ciclo #128: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:28:54 [ddc7f46c] ciclo #129: pedindo job na API…
+23/11/2026 11:28:54 [ddc7f46c] ciclo #129: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:28:54 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:29:09 [ddc7f46c] ciclo #130: pedindo job na API…
+23/11/2026 11:29:10 [ddc7f46c] ciclo #130: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:10 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:25 [ddc7f46c] ciclo #131: pedindo job na API…
+23/11/2026 11:29:25 [ddc7f46c] ciclo #131: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:25 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:40 [ddc7f46c] ciclo #132: pedindo job na API…
+23/11/2026 11:29:41 [ddc7f46c] ciclo #132: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:41 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:29:56 [ddc7f46c] ciclo #133: pedindo job na API…
+23/11/2026 11:29:56 [ddc7f46c] ciclo #133: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:29:56 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:08 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:30:11 [ddc7f46c] ciclo #134: pedindo job na API…
+23/11/2026 11:30:11 [ddc7f46c] ciclo #134: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:11 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:26 [ddc7f46c] ciclo #135: pedindo job na API…
+23/11/2026 11:30:27 [ddc7f46c] ciclo #135: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:27 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:42 [ddc7f46c] ciclo #136: pedindo job na API…
+23/11/2026 11:30:42 [ddc7f46c] ciclo #136: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:42 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:30:57 [ddc7f46c] ciclo #137: pedindo job na API…
+23/11/2026 11:30:58 [ddc7f46c] ciclo #137: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:30:58 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:31:13 [ddc7f46c] ciclo #138: pedindo job na API…
+23/11/2026 11:31:13 [ddc7f46c] ciclo #138: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:13 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:28 [ddc7f46c] ciclo #139: pedindo job na API…
+23/11/2026 11:31:29 [ddc7f46c] ciclo #139: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:29 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:44 [ddc7f46c] ciclo #140: pedindo job na API…
+23/11/2026 11:31:44 [ddc7f46c] ciclo #140: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:44 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:31:59 [ddc7f46c] ciclo #141: pedindo job na API…
+23/11/2026 11:31:59 [ddc7f46c] ciclo #141: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:31:59 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:32:14 [ddc7f46c] ciclo #142: pedindo job na API…
+23/11/2026 11:32:15 [ddc7f46c] ciclo #142: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:15 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:30 [ddc7f46c] ciclo #143: pedindo job na API…
+23/11/2026 11:32:30 [ddc7f46c] ciclo #143: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:30 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:32:45 [ddc7f46c] ciclo #144: pedindo job na API…
+23/11/2026 11:32:46 [ddc7f46c] ciclo #144: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:32:46 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:01 [ddc7f46c] ciclo #145: pedindo job na API…
+23/11/2026 11:33:01 [ddc7f46c] ciclo #145: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:01 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:33:16 [ddc7f46c] ciclo #146: pedindo job na API…
+23/11/2026 11:33:17 [ddc7f46c] ciclo #146: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:17 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:32 [ddc7f46c] ciclo #147: pedindo job na API…
+23/11/2026 11:33:32 [ddc7f46c] ciclo #147: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:32 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:33:47 [ddc7f46c] ciclo #148: pedindo job na API…
+23/11/2026 11:33:47 [ddc7f46c] ciclo #148: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:33:47 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:02 [ddc7f46c] ciclo #149: pedindo job na API…
+23/11/2026 11:34:03 [ddc7f46c] ciclo #149: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:03 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:34:18 [ddc7f46c] ciclo #150: pedindo job na API…
+23/11/2026 11:34:18 [ddc7f46c] ciclo #150: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:18 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:33 [ddc7f46c] ciclo #151: pedindo job na API…
+23/11/2026 11:34:34 [ddc7f46c] ciclo #151: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:34 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:34:49 [ddc7f46c] ciclo #152: pedindo job na API…
+23/11/2026 11:34:49 [ddc7f46c] ciclo #152: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:34:49 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:04 [ddc7f46c] ciclo #153: pedindo job na API…
+23/11/2026 11:35:05 [ddc7f46c] ciclo #153: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:05 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:35:20 [ddc7f46c] ciclo #154: pedindo job na API…
+23/11/2026 11:35:20 [ddc7f46c] ciclo #154: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:20 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:35 [ddc7f46c] ciclo #155: pedindo job na API…
+23/11/2026 11:35:36 [ddc7f46c] ciclo #155: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:36 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:35:51 [ddc7f46c] ciclo #156: pedindo job na API…
+23/11/2026 11:35:51 [ddc7f46c] ciclo #156: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:35:51 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:06 [ddc7f46c] ciclo #157: pedindo job na API…
+23/11/2026 11:36:06 [ddc7f46c] ciclo #157: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:06 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:36:21 [ddc7f46c] ciclo #158: pedindo job na API…
+23/11/2026 11:36:22 [ddc7f46c] ciclo #158: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:22 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:37 [ddc7f46c] ciclo #159: pedindo job na API…
+23/11/2026 11:36:37 [ddc7f46c] ciclo #159: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:37 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:36:52 [ddc7f46c] ciclo #160: pedindo job na API…
+23/11/2026 11:36:53 [ddc7f46c] ciclo #160: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:36:53 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:37:08 [ddc7f46c] ciclo #161: pedindo job na API…
+23/11/2026 11:37:08 [ddc7f46c] ciclo #161: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:08 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:23 [ddc7f46c] ciclo #162: pedindo job na API…
+23/11/2026 11:37:23 [ddc7f46c] ciclo #162: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:23 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:38 [ddc7f46c] ciclo #163: pedindo job na API…
+23/11/2026 11:37:39 [ddc7f46c] ciclo #163: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:37:54 [ddc7f46c] ciclo #164: pedindo job na API…
+23/11/2026 11:37:54 [ddc7f46c] ciclo #164: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:37:54 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:38:09 [ddc7f46c] ciclo #165: pedindo job na API…
+23/11/2026 11:38:10 [ddc7f46c] ciclo #165: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:10 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:25 [ddc7f46c] ciclo #166: pedindo job na API…
+23/11/2026 11:38:25 [ddc7f46c] ciclo #166: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:25 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:40 [ddc7f46c] ciclo #167: pedindo job na API…
+23/11/2026 11:38:41 [ddc7f46c] ciclo #167: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:41 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:38:56 [ddc7f46c] ciclo #168: pedindo job na API…
+23/11/2026 11:38:56 [ddc7f46c] ciclo #168: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:38:56 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:39:11 [ddc7f46c] ciclo #169: pedindo job na API…
+23/11/2026 11:39:11 [ddc7f46c] ciclo #169: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:11 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:26 [ddc7f46c] ciclo #170: pedindo job na API…
+23/11/2026 11:39:27 [ddc7f46c] ciclo #170: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:27 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:42 [ddc7f46c] ciclo #171: pedindo job na API…
+23/11/2026 11:39:42 [ddc7f46c] ciclo #171: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:42 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:39:57 [ddc7f46c] ciclo #172: pedindo job na API…
+23/11/2026 11:39:58 [ddc7f46c] ciclo #172: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:39:58 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:40:13 [ddc7f46c] ciclo #173: pedindo job na API…
+23/11/2026 11:40:13 [ddc7f46c] ciclo #173: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:13 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:28 [ddc7f46c] ciclo #174: pedindo job na API…
+23/11/2026 11:40:29 [ddc7f46c] ciclo #174: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:29 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:44 [ddc7f46c] ciclo #175: pedindo job na API…
+23/11/2026 11:40:44 [ddc7f46c] ciclo #175: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:40:44 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:40:59 [ddc7f46c] ciclo #176: pedindo job na API…
+23/11/2026 11:41:00 [ddc7f46c] ciclo #176: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:00 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:41:15 [ddc7f46c] ciclo #177: pedindo job na API…
+23/11/2026 11:41:15 [ddc7f46c] ciclo #177: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:15 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:30 [ddc7f46c] ciclo #178: pedindo job na API…
+23/11/2026 11:41:30 [ddc7f46c] ciclo #178: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:30 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:41:45 [ddc7f46c] ciclo #179: pedindo job na API…
+23/11/2026 11:41:46 [ddc7f46c] ciclo #179: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:41:46 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:01 [ddc7f46c] ciclo #180: pedindo job na API…
+23/11/2026 11:42:01 [ddc7f46c] ciclo #180: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:01 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:42:16 [ddc7f46c] ciclo #181: pedindo job na API…
+23/11/2026 11:42:17 [ddc7f46c] ciclo #181: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:17 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:32 [ddc7f46c] ciclo #182: pedindo job na API…
+23/11/2026 11:42:32 [ddc7f46c] ciclo #182: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:32 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:42:47 [ddc7f46c] ciclo #183: pedindo job na API…
+23/11/2026 11:42:48 [ddc7f46c] ciclo #183: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:42:48 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:03 [ddc7f46c] ciclo #184: pedindo job na API…
+23/11/2026 11:43:03 [ddc7f46c] ciclo #184: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:03 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:43:18 [ddc7f46c] ciclo #185: pedindo job na API…
+23/11/2026 11:43:19 [ddc7f46c] ciclo #185: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:19 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:34 [ddc7f46c] ciclo #186: pedindo job na API…
+23/11/2026 11:43:34 [ddc7f46c] ciclo #186: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:34 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:43:49 [ddc7f46c] ciclo #187: pedindo job na API…
+23/11/2026 11:43:50 [ddc7f46c] ciclo #187: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:43:50 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:05 [ddc7f46c] ciclo #188: pedindo job na API…
+23/11/2026 11:44:05 [ddc7f46c] ciclo #188: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:05 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:44:20 [ddc7f46c] ciclo #189: pedindo job na API…
+23/11/2026 11:44:20 [ddc7f46c] ciclo #189: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:20 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:35 [ddc7f46c] ciclo #190: pedindo job na API…
+23/11/2026 11:44:36 [ddc7f46c] ciclo #190: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:36 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:44:51 [ddc7f46c] ciclo #191: pedindo job na API…
+23/11/2026 11:44:51 [ddc7f46c] ciclo #191: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:44:51 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:06 [ddc7f46c] ciclo #192: pedindo job na API…
+23/11/2026 11:45:07 [ddc7f46c] ciclo #192: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:07 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:45:22 [ddc7f46c] ciclo #193: pedindo job na API…
+23/11/2026 11:45:22 [ddc7f46c] ciclo #193: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:22 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:37 [ddc7f46c] ciclo #194: pedindo job na API…
+23/11/2026 11:45:38 [ddc7f46c] ciclo #194: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:38 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:45:53 [ddc7f46c] ciclo #195: pedindo job na API…
+23/11/2026 11:45:53 [ddc7f46c] ciclo #195: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:45:53 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:46:08 [ddc7f46c] ciclo #196: pedindo job na API…
+23/11/2026 11:46:08 [ddc7f46c] ciclo #196: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:08 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:23 [ddc7f46c] ciclo #197: pedindo job na API…
+23/11/2026 11:46:24 [ddc7f46c] ciclo #197: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:24 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:39 [ddc7f46c] ciclo #198: pedindo job na API…
+23/11/2026 11:46:39 [ddc7f46c] ciclo #198: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:39 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:46:54 [ddc7f46c] ciclo #199: pedindo job na API…
+23/11/2026 11:46:55 [ddc7f46c] ciclo #199: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:46:55 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:07 [ddc7f46c] · heartbeat OK (próximo em 1min; diz à API que estou vivo)
+23/11/2026 11:47:10 [ddc7f46c] ciclo #200: pedindo job na API…
+23/11/2026 11:47:10 [ddc7f46c] ciclo #200: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:10 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:25 [ddc7f46c] ciclo #201: pedindo job na API…
+23/11/2026 11:47:25 [ddc7f46c] ciclo #201: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:25 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:40 [ddc7f46c] ciclo #202: pedindo job na API…
+23/11/2026 11:47:41 [ddc7f46c] ciclo #202: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:41 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo
+23/11/2026 11:47:56 [ddc7f46c] ciclo #203: pedindo job na API…
+23/11/2026 11:47:56 [ddc7f46c] ciclo #203: fila vazia — sem trabalho na fila (prioridades vazias)
+23/11/2026 11:47:56 [ddc7f46c] sem job — pausa 15s e consulto a fila de novo

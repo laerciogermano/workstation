@@ -241,7 +241,14 @@ h3 .n { color: var(--dado); }
 .spread .page-title { margin: 0; width: calc(100% - 2.5rem); }
 .spread .athens { width: calc(100% - 2.5rem); max-width: 76rem; margin: 1.5rem auto 0; }
 .spread .hero { width: 100%; max-width: 76rem; margin: 0; padding: 0; }
-.spread-flow { justify-content: center; gap: 2.25rem; }
+.spread-flow {
+  justify-content: flex-start;
+  gap: 1.75rem;
+  padding-top: 4.5rem;
+  padding-bottom: 12vh;
+}
+.spread-flow .page-title { margin-top: 0; }
+.spread-flow .quote-confucio { margin-top: .35rem; }
 .quote-confucio { margin-top: 0; }
 .quote-spread {
   width: 100%; max-width: none; margin: 0;
@@ -330,6 +337,7 @@ footer {
   .quote-confucio { margin-top: 1rem; }
   .quote-solo p { font-size: .98rem; }
   .spread { min-height: calc(100vh - 56px); min-height: calc(100dvh - 56px); padding: 10vh 1.15rem 16vh; gap: 1.5rem; }
+  .spread-flow { padding-top: 2.75rem; padding-bottom: 10vh; gap: 1.35rem; }
   .quote-spread { margin: 0; padding: 0; width: 100%; }
   .quote-spread p { font-size: clamp(1.25rem, 6vw, 1.75rem); }
   .hero { padding: .35rem 0 .6rem; border-radius: 0; overflow-x: auto; overflow-y: visible; margin-bottom: 1.5rem; }

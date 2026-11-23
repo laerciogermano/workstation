@@ -751,6 +751,7 @@ var FlowAst = (() => {
           const s0 = b.t === "if" && b.par && prev ? prev.s : step;
           const row = push({ kind: "block", id: b.id, node: b, depth, s: s0, e: s0, leaf: !canClose, closed: isClosed });
           const next = place(b.kids, depth + 1, s0, emit && !isClosed, inAlt), sp = { s: s0, e: Math.max(s0, next - 1) };
+          const mainLast = rows.length - 1;
           prev = sp;
           if (emit) {
             span.set(b.id, sp);
@@ -760,7 +761,7 @@ var FlowAst = (() => {
           let end = next;
           const elsePar = !!(opts.elseParallel && b.t === "if");
           if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? s0 : next, emit, isClosed, elsePar));
-          if (emit) row.last = rows.length - 1;
+          if (emit) row.last = b.t === "try" ? mainLast : rows.length - 1;
           step = Math.max(step, end);
         }
       }
@@ -914,6 +915,27 @@ var FlowAst = (() => {
   // novo/ast/fn-svg.ts
   var G = { RH: 34, HEAD: 52, OX: 120, W: 160, INS: 40, BH: 22, IND: 14, GAP: 16, WS: 100 };
   var esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  var ICO = {
+    file: ["M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4", "M14 2v4a2 2 0 0 0 2 2h4", "m5 12-3 3 3 3", "m9 18 3-3-3-3"],
+    package: ["m7.5 4.27 9 5.15", "M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z", "m3.3 7 8.7 5 8.7-5", "M12 22V12"],
+    user: ["M20 21a8 8 0 0 0-16 0", "circle:12,8,5"],
+    ia: ["M2 21a8 8 0 0 1 10.434-7.62", "circle:10,8,5", "circle:18,18,3", "M18 14v1", "M18 21v1", "M22 18h-1", "M15 18h-1"],
+    cube: ["M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z", "M3.5 7.5 12 12.5l8.5-5", "M12 12.5v9"],
+    plus: ["M5 12h14", "M12 5v14"],
+    triangle: ["M12 3 22 20H2Z"],
+    repeat: ["m17 2 4 4-4 4", "M3 11v-1a4 4 0 0 1 4-4h14", "m7 22-4-4 4-4", "M21 13v1a4 4 0 0 1-4 4H3"],
+    shield: ["M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"],
+    x: ["M18 6 6 18", "m6 6 12 12"],
+    square: ["rect:5,5,14,14,2"]
+  };
+  var ico = (name, x, y, size, cls) => {
+    const body = (ICO[name] ?? []).map((d) => {
+      if (d.startsWith("circle:")) { const [cx, cy, r] = d.slice(7).split(","); return `<circle cx="${cx}" cy="${cy}" r="${r}"/>`; }
+      if (d.startsWith("rect:")) { const [rx0, ry0, w, h, r] = d.slice(5).split(","); return `<rect x="${rx0}" y="${ry0}" width="${w}" height="${h}" rx="${r}"/>`; }
+      return `<path d="${d}"/>`;
+    }).join("");
+    return `<g class="ico ${cls}" transform="translate(${x} ${y}) scale(${size / 24})">${body}</g>`;
+  };
   var tw = (t, px = 6.1) => Math.ceil(t.length * px);
   var rowY = (i) => G.HEAD + i * G.RH;
   var planGutter = (sc) => (sc.maxDepth + 1) * G.IND;
@@ -953,7 +975,7 @@ var FlowAst = (() => {
     const off = hide ? 1 : 0;
     const rows = fnRows(scene).slice(off);
     const cw = colW(scene, opts);
-    const gutter = planGutter(scene);
+    const gutter = opts.rails === true ? 0 : planGutter(scene);
     const rootFile = flowFile(flow).replace(/\.[^.]+$/, "");
     const SRC = {
       maquina: { name: L.machine, cls: "maq" },
@@ -968,9 +990,9 @@ var FlowAst = (() => {
       return SRC[f.agent] ?? { name: f.agent, cls: "maq" };
     };
     const labelOf = (r) => r.kind !== "fn" ? r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(r.node) : r.node.title;
-    const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 54)) : 0;
+    const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 66)) : 0;
     const funcX = opts.table ? srcW + 28 : 0;
-    const funcW = opts.table ? Math.max(40, ...rows.map((r) => r.depth * 12 + tw(labelOf(r), 6.1))) : 0;
+    const funcW = opts.table ? Math.max(40, ...rows.map((r) => r.depth * 12 + 34 + tw(labelOf(r), 6.1))) : 0;
     const TW = opts.table ? Math.ceil(funcX + funcW + 36) : 0;
     const colX = (s) => TW + gutter + G.OX + s * cw;
     const W = colX(scene.nSteps) + 160;
@@ -1014,7 +1036,7 @@ var FlowAst = (() => {
       if (depth === 0) return "conc";
       if (f.kids.length) return "conc";
       if (!f.agent) return "nag";
-      return f.agent === "ia" || f.agent === "pessoa" ? "abs" : "conc";
+      return "conc";
     };
     const fnKinds = /* @__PURE__ */ new Map();
     if (opts.states !== false && opts.fnStates !== false) {
@@ -1044,19 +1066,26 @@ var FlowAst = (() => {
     if (opts.grid !== false) rows.forEach((_, i) => out.push(`<line class="hg" x1="${opts.table ? 0 : gutter}" y1="${rowY(i + 1)}" x2="${W}" y2="${rowY(i + 1)}"/>`));
     if (opts.table) {
       out.push(`<text class="th" x="16" y="${top + 3}">${L.source}</text><text class="th" x="${funcX}" y="${top + 3}">${L.func}</text>`);
+      const car = (x, y, shut, key) => `<g class="car-hit" data-toggle="${esc(key)}"><title>${shut ? "expandir" : "recolher"}</title><rect x="${x - 2}" y="${y - 9}" width="16" height="18" fill="transparent"/><g transform="translate(${x} ${y - 6})"><path class="car" transform="${shut ? "rotate(-90 6 6) " : ""}scale(.5)" d="m6 9 6 6 6-6"/></g></g>`;
       rows.forEach((r, i) => {
-        const y = ym(i);
+        const y = ym(i), bx = funcX + r.depth * 12;
         if (r.kind !== "fn") {
-          const n = r.node;
+          const n = r.node, key = r.kind === "block" ? r.id : `${r.id}:${r.kind}`;
+          const cls2 = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : blockCls(n);
           const txt = r.kind === "catch" ? "catch" : r.kind === "else" ? "else" : blockText(n);
-          out.push(`<text class="tb mut" x="${funcX + r.depth * 12}" y="${y + 3.5}">${esc(txt)}</text>`);
+          const ic = r.kind === "catch" ? "x" : r.kind === "else" ? "triangle" : n.t === "if" ? "triangle" : n.t === "for" ? "repeat" : n.t === "switch" ? "square" : "shield";
+          const flip = r.kind === "else" ? ` transform="rotate(180 ${bx + 14 + 6} ${y})"` : "";
+          out.push(`${r.leaf ? "" : car(bx, y, r.closed, key)}<g${flip}>${ico(ic, bx + 14, y - 6, 12, `k-${cls2 === "el" ? "if" : cls2}`)}</g><text class="tb" x="${bx + 30}" y="${y + 3.5}">${esc(txt)}</text>`);
           return;
         }
         const f = r.node, src = source(f, r.depth, r.leaf);
-        out.push(`<circle class="so ${src.cls}" cx="22" cy="${y}" r="4.5"/><text class="tb" x="34" y="${y + 3.5}">${esc(src.name)}</text>`);
-        out.push(`<text class="tb" x="${funcX + r.depth * 12}" y="${y + 3.5}">${esc(f.title)}</text>`);
+        const sk = src.cls === "arq" ? "file" : src.cls === "maq" ? "package" : src.cls === "pes" ? "user" : src.cls === "ia" ? "ia" : src.cls === "obj" ? "cube" : src.cls === "abs" ? "plus" : "package";
+        out.push(`<circle class="ring ${src.cls}" cx="23" cy="${y}" r="9"/>${ico(sk, 17, y - 6, 12, src.cls)}<text class="tb${src.cls === "abs" ? " abs-l" : ""}" x="40" y="${y + 3.5}">${esc(src.name)}</text>`);
+        const hol = r.leaf && !f.agent;
+        out.push(`${r.leaf ? "" : car(bx, y, r.closed, r.id)}<circle class="fdot${hol ? " hol" : ""}" cx="${bx + 20}" cy="${y}" r="4.5"/><text class="tb" x="${bx + 30}" y="${y + 3.5}">${esc(f.title)}</text>`);
       });
       out.push(`<line class="vg" x1="${funcX - 22}" y1="${top + CHIP}" x2="${funcX - 22}" y2="${rowY(rows.length)}"/>`);
+      out.push(`<line class="tdiv" x1="${TW - 12}" y1="${top - 4}" x2="${TW - 12}" y2="${rowY(rows.length)}"/>`);
     }
     for (const col of stateCols) {
       const items = states.get(col) ?? [];
@@ -1075,18 +1104,22 @@ var FlowAst = (() => {
         }
       }
     }
-    const rail = (depth, y0, h, cls = "co") => {
-      if (opts.rails !== true || depth < 0 || h <= 0) return;
-      bands.push(`<line class="bande ${cls}" x1="${TW + depth * G.IND + 0.5}" y1="${y0}" x2="${TW + depth * G.IND + 0.5}" y2="${y0 + h}"/>`);
+    const railUsed = [];
+    const rail = (x, y0, h, cls = "co") => {
+      if (opts.rails !== true || h <= 0) return;
+      let dx = 0;
+      while (railUsed.some((u) => u.x === x + dx && u.y0 < y0 + h && y0 < u.y1)) dx += 4;
+      railUsed.push({ x: x + dx, y0, y1: y0 + h });
+      bands.push(`<line class="bande ${cls}" x1="${x + dx}" y1="${y0}" x2="${x + dx}" y2="${y0 + h}"/>`);
     };
     const byId = new Map(rows.map((r, i) => [r.id, i]));
     rows.forEach((r, i) => {
       const cls = r.kind === "catch" ? "ca" : r.kind === "else" ? "el" : r.kind === "block" ? blockCls(r.node) : "co";
-      if (!r.leaf && r.last - off > i) rail(r.depth, rowY(i + 1), (r.last - off - i) * G.RH, cls);
+      if (!r.leaf && r.last - off > i) rail(colX(r.s), rowY(i + 1), (r.last - off - i) * G.RH, cls);
     });
     if (off > 0 && opts.rootRail === true) {
       const root = fnRows(scene)[0];
-      if (root && !root.leaf) rail(root.depth, rowY(0), rows.length * G.RH, "co");
+      if (root && !root.leaf) rail(colX(root.s ?? 0), rowY(0), rows.length * G.RH, "co");
     }
     const ioMarks = (f, r, i, x1, x2) => {
       const prod = /* @__PURE__ */ new Set();
@@ -1164,15 +1197,15 @@ var FlowAst = (() => {
 .vg,.hg,.axis{stroke:var(--line,#e7e3db);stroke-width:1}
 .chip rect{fill:var(--paper-2,#f4f1ea);stroke:var(--line,#e7e3db)}
 .chip text{font:600 9px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
-.bande.co{stroke:var(--fn,#dc2626);stroke-width:2}
+.bande{stroke-width:2;stroke-opacity:.32}.bande.co{stroke:var(--fn,#dc2626)}.bande.if,.bande.el,.bande.sw{stroke:#d97706}.bande.lp{stroke:#8b5cf6}.bande.tr{stroke:#22c55e}.bande.ca{stroke:#ef4444}
 .fn{fill:var(--fn,#dc2626)}.fn.abs,.fn.nag{fill:transparent;stroke:var(--fn,#dc2626);stroke-width:1.5}
 .fn.sel,.sum.sel{stroke:var(--ink,#14120f);stroke-width:2.5}
-.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:#fff}
+.fbt{font:600 10px ui-monospace,Menlo,monospace;fill:#fff}.fbt.abs,.fbt.nag{fill:var(--ink,#14120f)}
 .sum{fill:var(--fn,#dc2626)}
 .lbl,.dn{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}
 .dlk{stroke:#9a9a9a;stroke-width:1}
 .dot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb)}.dot.a{fill:var(--paper,#fff);stroke-width:1.5}.cube{fill:var(--dado,#2563eb);stroke:var(--ink,#14120f);stroke-width:.6}
-.bande.if,.bande.el,.bande.sw{stroke:#d97706;stroke-width:2}.bande.lp{stroke:#7c3aed;stroke-width:2}.bande.tr{stroke:#16a34a;stroke-width:2}.bande.ca{stroke:#dc2626;stroke-width:2}
+
 .fif,.fel{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fsw{fill:var(--paper,#fff);stroke:#d97706;stroke-width:1.5}.fca{fill:none;stroke:#dc2626;stroke-width:1.6;stroke-linecap:round}.flp{fill:#7c3aed;font:700 11px ui-monospace,Menlo,monospace}.ftr{fill:var(--paper,#fff);stroke:#16a34a;stroke-width:1.4}
 .pill text{font:600 9px ui-monospace,Menlo,monospace}
 .pill.if rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.if text{fill:#d97706}.pill.el rect{fill:color-mix(in srgb,#d97706 12%,var(--paper,#fff))}.pill.el text{fill:#d97706}
@@ -1186,8 +1219,13 @@ var FlowAst = (() => {
 .th{font:700 8px ui-monospace,Menlo,monospace;letter-spacing:.08em;fill:var(--body,#44423d)}.tb{font:500 10px ui-monospace,Menlo,monospace;fill:var(--ink,#14120f)}.tb.mut{fill:var(--body,#44423d)}
 .so{stroke-width:1.5}.so.arq{fill:var(--body,#44423d);stroke:var(--body,#44423d)}.so.maq{fill:#22c55e;stroke:#22c55e}.so.obj{fill:#f59e0b;stroke:#f59e0b}.so.ia{fill:var(--paper,#fff);stroke:#a855f7}.so.pes{fill:var(--paper,#fff);stroke:#3b82f6}.so.abs{fill:var(--paper,#fff);stroke:var(--body,#44423d);stroke-dasharray:2 2}
 .par{font:600 11px ui-monospace,Menlo,monospace;fill:var(--body,#44423d)}
+.ico{fill:none;stroke:var(--body,#44423d);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ring{fill:none;stroke:var(--body,#44423d);stroke-width:1.3}.ring.abs{stroke:var(--muted,#8a8a83);stroke-dasharray:2.5 2.5}
+.ico.maq,.ring.maq{stroke:#22c55e}.ico.pes,.ring.pes{stroke:#3b82f6}.ico.ia,.ring.ia{stroke:#a855f7}.ico.obj,.ring.obj{stroke:#f59e0b}.ico.abs{stroke:var(--muted,#8a8a83)}
+.ico.k-if,.ico.k-sw{stroke:#d97706}.ico.k-lp{stroke:#8b5cf6}.ico.k-tr{stroke:#22c55e}.ico.k-ca{stroke:#ef4444}
+.car{fill:none;stroke:var(--body,#44423d);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.car-hit{cursor:pointer}.car-hit:hover .car{stroke:var(--ink,#14120f)}
+.fdot{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.fdot.hol{fill:transparent}.tdiv{stroke:var(--line-2,#d4d4cd);stroke-width:1}.tb.abs-l{font-style:italic;fill:var(--muted,#8a8a83)}
 </style>`;
-    const svg = `<svg class="plan fn-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano ${esc(flow.title)}">${style}<g class="bands">${bands.join("")}</g>${out.join("")}${over.join("")}</svg>`;
+    const svg = `<svg class="plan fn-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano ${esc(flow.title)}">${style}${out.join("")}<g class="bands">${bands.join("")}</g>${over.join("")}</svg>`;
     return { svg, scene, width: W, height: H };
   }
   function localItem(name, value, owner) {

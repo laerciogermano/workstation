@@ -850,7 +850,7 @@
         const args = n.args && typeof n.args === "object" ? Object.fromEntries(Object.entries(n.args).map(([k, v]) => [k, String(v)])) : void 0;
         return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...args && Object.keys(args).length ? { args } : {}, ...typeof n.file === "string" && n.file ? { file: n.file } : {} };
       }
-      if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
+      if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []), ...n.par ? { par: true } : {} };
       if (n.t === "for") {
         const loop = n.loop === "while" || n.loop === "do-while" ? n.loop : void 0;
         return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids), ...loop ? { loop } : {} };
@@ -1796,11 +1796,12 @@ ${given.map((g) => `  ${g},`).join("\n")}
             step2 = Math.max(step2, next);
           }
         } else {
-          prev = null;
           const b = n2;
           const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
-          const row = push({ kind: "block", id: b.id, node: b, depth, s: step2, e: step2, leaf: !canClose, closed: isClosed });
-          const next = place(b.kids, depth + 1, step2, emit && !isClosed, inAlt), sp = { s: step2, e: Math.max(step2, next - 1) };
+          const s0 = b.t === "if" && b.par && prev ? prev.s : step2;
+          const row = push({ kind: "block", id: b.id, node: b, depth, s: s0, e: s0, leaf: !canClose, closed: isClosed });
+          const next = place(b.kids, depth + 1, s0, emit && !isClosed, inAlt), sp = { s: s0, e: Math.max(s0, next - 1) };
+          prev = sp;
           if (emit) {
             span.set(b.id, sp);
             row.s = sp.s;
@@ -1808,7 +1809,7 @@ ${given.map((g) => `  ${g},`).join("\n")}
           }
           let end = next;
           const elsePar = !!(opts.elseParallel && b.t === "if");
-          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? step2 : next, emit, isClosed, elsePar));
+          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? s0 : next, emit, isClosed, elsePar));
           if (emit) row.last = rows.length - 1;
           step2 = Math.max(step2, end);
         }

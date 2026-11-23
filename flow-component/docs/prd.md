@@ -90,6 +90,8 @@ Fonte: superfície `Ide` (`flow-dev/app/apps/web/src/features/ide/ide.tsx`), con
 
 **Um parâmetro / uma saída por função:** entrada e saída usam o **mesmo modal** (`dataEditor`): nome + tipo/origem + valor; objeto = type object + Add child. Saída só persiste nomes (campos do objeto → `outs`); entrada também grava `args`. Fantasma abre o editor. Clique no rótulo ou na marca → `editData`. Em lib com 1 entrada, o nome é a referência no flow. Lib void **não** mostra saída. **Antes:** modal de out só com nome + Add child top-level; fantasma out criava na hora.
 
+**If paralelo (`IfB.par`):** cases de switch (e irmãos) no mesmo passo, como `Fn.par`. **Antes:** blocos if sempre sequenciais. **Voltar:** omitir `par` no if.
+
 **Loop label (for/while/do-while):** `ForB.loop` opcional; rótulo no plano via `blockText`/`blockLabel`. **Antes:** while/do-while apareciam como `for (… of …)`. **Voltar:** omitir `loop` (default for).
 
 **Catch / else (layout):** mesma regra em `placeAlt` — sequência no passo seguinte ao último do try/if; o próximo só depois do ramo. Filho folha do else/catch compartilha o passo do cabeçalho; **bloco aninhado** no passo seguinte ao else, salvo `elseParallel` (if aninhado no mesmo passo do else). **Antes:** em paralelo à última célula. **Voltar:** `childStart = after + 1` para bloco mesmo com `elseParallel` (`novo/layout.ts`).

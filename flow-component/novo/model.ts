@@ -14,7 +14,8 @@ export interface Agent { id: string; kind: AgentKind; name: string; tasks: strin
 /** `args`: valor de cada entrada de uma função de lib — um texto/expressão fixa (ex.: "Olá") ou o nome de um dado produzido antes. */
 export interface Fn { t: "fn"; id: string; title: string; agent: string | null; resp: string | null; ins: string[]; outs: string[]; kids: Node[]; par: boolean; args?: Record<string, string>; /** Só em função raiz: arquivo onde ela mora (várias funções podem dividir o mesmo arquivo). */ file?: string }
 /** `elseKids` vazio = sem else; com filhos o else aparece no flow como o catch do try (cabeçalho, faixa e lista própria). */
-export interface IfB { t: "if"; id: string; test: string; kids: Node[]; elseKids: Node[] }
+/** `par`: case/irmão no mesmo passo (ex. cases de switch). */
+export interface IfB { t: "if"; id: string; test: string; kids: Node[]; elseKids: Node[]; par?: boolean }
 /** `loop` omisso = for-of; while/do-while usam `coll` como condição. */
 export interface ForB { t: "for"; id: string; v: string; coll: string; kids: Node[]; loop?: "for" | "while" | "do-while" }
 export interface TryB { t: "try"; id: string; kids: Node[]; catchKids: Node[] }
@@ -669,7 +670,7 @@ export function parseProject(text: string): Project {
       const args = n.args && typeof n.args === "object" ? Object.fromEntries(Object.entries(n.args as Record<string, unknown>).map(([k, v]) => [k, String(v)])) : undefined;
       return { t: "fn", id: n.id, title: n.title, agent, resp, ins: strs(n.ins ?? [], "ins"), outs: strs(n.outs ?? [], "outs"), kids: list(n.kids ?? []), par: !!n.par, ...(args && Object.keys(args).length ? { args } : {}), ...(typeof n.file === "string" && n.file ? { file: n.file } : {}) };
     }
-    if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []) };
+    if (n.t === "if") return { t: "if", id: n.id, test: String(n.test ?? "condition"), kids: list(n.kids), elseKids: list(n.elseKids ?? []), ...(n.par ? { par: true } : {}) };
     if (n.t === "for") {
       const loop = n.loop === "while" || n.loop === "do-while" ? n.loop : undefined;
       return { t: "for", id: n.id, v: String(n.v ?? "item"), coll: String(n.coll ?? "items"), kids: list(n.kids), ...(loop ? { loop } : {}) };

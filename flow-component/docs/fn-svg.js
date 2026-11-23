@@ -745,11 +745,12 @@ var FlowAst = (() => {
             step = Math.max(step, next);
           }
         } else {
-          prev = null;
           const b = n2;
           const alt = altKids(b), canClose = b.kids.length > 0 || !!(alt && alt.length), isClosed = canClose && closed.has(b.id);
-          const row = push({ kind: "block", id: b.id, node: b, depth, s: step, e: step, leaf: !canClose, closed: isClosed });
-          const next = place(b.kids, depth + 1, step, emit && !isClosed, inAlt), sp = { s: step, e: Math.max(step, next - 1) };
+          const s0 = b.t === "if" && b.par && prev ? prev.s : step;
+          const row = push({ kind: "block", id: b.id, node: b, depth, s: s0, e: s0, leaf: !canClose, closed: isClosed });
+          const next = place(b.kids, depth + 1, s0, emit && !isClosed, inAlt), sp = { s: s0, e: Math.max(s0, next - 1) };
+          prev = sp;
           if (emit) {
             span.set(b.id, sp);
             row.s = sp.s;
@@ -757,7 +758,7 @@ var FlowAst = (() => {
           }
           let end = next;
           const elsePar = !!(opts.elseParallel && b.t === "if");
-          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? step : next, emit, isClosed, elsePar));
+          if (alt && alt.length) end = Math.max(end, placeAlt(b, alt, elsePar ? s0 : next, emit, isClosed, elsePar));
           if (emit) row.last = rows.length - 1;
           step = Math.max(step, end);
         }

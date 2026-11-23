@@ -70,6 +70,22 @@ describe("cena: linhas e passos", () => {
     expect(if2.s).toBe(2);
     expect(if2.s).toBeGreaterThan(else1.s);
   });
+
+  it("ifs com par compartilham o passo (cases de switch)", () => {
+    const flow: Fn = {
+      t: "fn", id: "n1", title: "main", agent: "arquivo", resp: null, ins: [], outs: [], kids: [
+        { t: "fn", id: "nsw", title: "switch", agent: "arquivo", resp: null, ins: [], outs: [], par: false, kids: [
+          { t: "if", id: "i1", test: "a", kids: [{ t: "fn", id: "n2", title: "fa", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }], elseKids: [] },
+          { t: "if", id: "i2", test: "b", kids: [{ t: "fn", id: "n3", title: "fb", agent: "arquivo", resp: null, ins: [], outs: [], kids: [], par: false }], elseKids: [], par: true },
+        ] },
+      ], par: false,
+    };
+    const s = layout(flow);
+    const i1 = s.rows.find(r => r.id === "i1")!;
+    const i2 = s.rows.find(r => r.id === "i2")!;
+    expect(i1.s).toBe(i2.s);
+  });
+
   it("else paralelo: if aninhado no else compartilha o passo do else", () => {
     const flow: Fn = {
       t: "fn", id: "n1", title: "main", agent: "arquivo", resp: null, ins: [], outs: [], kids: [

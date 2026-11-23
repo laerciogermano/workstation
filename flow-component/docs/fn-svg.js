@@ -971,7 +971,7 @@ var FlowAst = (() => {
     const srcW = opts.table ? Math.max(40, ...rows.filter((r) => r.kind === "fn").map((r) => tw(source(r.node, r.depth, r.leaf).name, 6.1) + 34)) : 0;
     const funcX = opts.table ? srcW + 6 : 0;
     const funcW = opts.table ? Math.max(40, ...rows.map((r) => r.depth * 12 + tw(labelOf(r), 6.1))) : 0;
-    const TW = opts.table ? Math.ceil(funcX + funcW + 16) : 0;
+    const TW = opts.table ? Math.ceil(funcX + funcW + 36) : 0;
     const colX = (s) => TW + gutter + G.OX + s * cw;
     const W = colX(scene.nSteps) + 160;
     const base = opts.states !== false ? statesByStep(scene, false) : /* @__PURE__ */ new Map();

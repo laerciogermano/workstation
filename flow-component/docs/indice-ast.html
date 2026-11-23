@@ -546,7 +546,7 @@ html { scroll-padding-top: 1.5rem; }
   .athens img { border-radius: 0; }
 }
 </style>
-<script src="fn-svg.js?v=20261123-dado-abs2"></script>
+<script src="fn-svg.js?v=20261123-valor-solido"></script>
 </head>
 <body>
 <a class="skip" href="#out" data-pt="Ir para o conteúdo" data-en="Skip to content">Ir para o conteúdo</a>
@@ -660,7 +660,7 @@ const EXAMPLES = {
   paralela: { num: "2.3.1", title: "Função paralela", sub: true, lead: [["D","Funções paralelas são irmãs que ocupam o mesmo passo."],["P","Funções paralelas executam juntas."],["P","As funções paralelas terminam antes do passo seguinte começar."]],
     showRoot: true,
     code: J("async function main() {", "  const valor = 21;", "  const [dobro, triplo] = await Promise.all([dobrar(valor), triplicar(valor)]);", "}", "", "async function dobrar(valor) {", "  const dobro = valor * 2;", "  return dobro;", "}", "", "async function triplicar(valor) {", "  const triplo = valor * 3;", "  return triplo;", "}"),
-    flow: main([F("n2", "dobrar", { ins: ["valor"], outs: ["dobro"], args: { valor: '21', dobro: '42' } }), F("n3", "triplicar", { ins: ["valor"], outs: ["triplo"], par: true, args: { triplo: '63' } })]) },
+    flow: main([F("n2", "dobrar", { ins: ["valor"], outs: ["dobro"], args: { valor: '21', dobro: '42' } }), F("n3", "triplicar", { ins: ["valor"], outs: ["triplo"], par: true, args: { valor: '21', triplo: '63' } })]) },
   sequencial: { num: "2.3.2", title: "Função sequencial", sub: true, lead: [["P","As funções podem ser sequenciais."],["D","Funções sequenciais são irmãs em passos consecutivos."],["P","Uma função sequencial começa quando a anterior termina."],["P","Funções paralelas e sequenciais podem ser combinadas no mesmo fluxo."]],
     showRoot: true,
     code: J("async function main() {", "  const valor = await ler();", "  const [dobro, triplo] = await Promise.all([dobrar(valor), triplicar(valor)]);", "  const parcelas = { dobro, triplo };", "  const total = await somar(parcelas);", "}", "", "async function ler() {", "  const valor = 21;", "  return valor;", "}", "", "async function dobrar(valor) {", "  const dobro = valor * 2;", "  return dobro;", "}", "", "async function triplicar(valor) {", "  const triplo = valor * 3;", "  return triplo;", "}", "", "async function somar(parcelas) {", "  const total = parcelas.dobro + parcelas.triplo;", "  return total;", "}"),

@@ -1087,7 +1087,10 @@ var FlowAst = (() => {
     });
     const ioMarks = (f, r, i, x1, x2) => {
       const prod = /* @__PURE__ */ new Set();
-      for (const q of rows) if (q.kind === "fn") q.node.outs.forEach((o) => prod.add(o));
+      for (const q of rows) if (q.kind === "fn") {
+        q.node.outs.forEach((o) => prod.add(o));
+        for (const n of q.node.ins) if (q.node.args?.[n]?.trim()) prod.add(n);
+      }
       const mark = (x, list, side) => {
         if (!list.length) return "";
         const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]] ?? "");

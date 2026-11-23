@@ -887,7 +887,7 @@ var FlowAst = (() => {
       for (const n of r.node.ins) if (!r.node.args?.[n]?.trim() && !ext.has(n)) ext.set(n, { col: r.s, owner: r.node.id });
       else if (ext.has(n) && r.s < ext.get(n).col) ext.set(n, { col: r.s, owner: ext.get(n).owner });
     }
-    for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
+    for (const [n, e] of ext) if (!made.has(n) && !loopVars.has(n) && !sc.rows.some((q) => q.kind === "fn" && q.node.title === n)) add(e.col, { name: n, cube: false, fields: [n], abs: true, owner: e.owner, side: "in" });
     if (!all) return m;
     const consumerAt = (col, name) => {
       for (const r of sc.rows) {
@@ -1127,10 +1127,12 @@ var FlowAst = (() => {
         q.node.outs.forEach((o) => prod.add(o));
         for (const n of q.node.ins) if (q.node.args?.[n]?.trim()) prod.add(n);
       }
+      const fnTitles = new Set(rows.filter((q) => q.kind === "fn").map((q) => q.node.title));
       const mark = (x, list, side) => {
         if (!list.length) return "";
         const cube = list.length !== 1 || /^\s*\{/.test(f.args?.[list[0]] ?? "");
         const tip = list.join(", ");
+        if (!cube && side === "in" && !f.args?.[list[0]]?.trim() && !prod.has(list[0]) && fnTitles.has(list[0])) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf a" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;
         if (!cube && /^function\b/.test(f.args?.[list[0]] ?? "")) return `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><circle class="dotf" cx="${x}" cy="${ym(i)}" r="4.5"/><title>${esc(tip)}</title></g>`;
         return cube ? `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><path class="cube" transform="translate(${x - 5} ${ym(i) - 5.5})" d="M5 .5 L9.5 3 L9.5 8 L5 10.5 L.5 8 L.5 3 Z M.5 3 L5 5.5 L9.5 3 M5 5.5 V10.5"/><title>${esc(tip)}</title></g>` : `<g class="dm" data-id="${esc(f.id)}" data-side="${side}"><rect class="dot${side === "in" && !f.args?.[list[0]]?.trim() && !prod.has(list[0]) ? " a" : ""}" x="${x - 4}" y="${ym(i) - 4}" width="8" height="8"/><title>${esc(tip)}</title></g>`;
       };
@@ -1212,7 +1214,7 @@ var FlowAst = (() => {
 .pill.sw rect{fill:color-mix(in srgb,#d97706 20%,var(--paper,#fff))}.pill.sw text{fill:#d97706}
 .pill.lp rect{fill:color-mix(in srgb,#8b5cf6 20%,var(--paper,#fff))}.pill.lp text{fill:#8b5cf6}.pill.tr rect{fill:color-mix(in srgb,#22c55e 20%,var(--paper,#fff))}.pill.tr text{fill:#22c55e}.pill.ca rect{fill:color-mix(in srgb,#ef4444 20%,var(--paper,#fff))}.pill.ca text{fill:#ef4444}
 .ag{font:600 8px ui-monospace,Menlo,monospace;fill:#9a9a9a;text-transform:uppercase;letter-spacing:.04em}
-.dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}
+.dotf{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.dotf.a{fill:transparent}
 .sfn{fill:var(--fn,#dc2626);stroke:var(--fn,#dc2626);stroke-width:1.5}.sfn.a{fill:var(--paper,#fff)}
 .sdot{fill:var(--dado,#2563eb);stroke:var(--dado,#2563eb);stroke-width:1.3}.sdot.a{fill:var(--paper,#fff)}.scube{fill:var(--dado,#2563eb);stroke:var(--paper,#fff);stroke-width:.9;stroke-linejoin:round}.stt{opacity:1}.stt.old{opacity:.38}.dn.st{fill:var(--body,#44423d)}.stt:not(.old) .dn.st{fill:var(--ink,#14120f);font-weight:600}
 .fic{fill:#fff;opacity:.9;pointer-events:none}

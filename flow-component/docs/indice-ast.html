@@ -515,8 +515,21 @@ html { scroll-padding-top: 1.5rem; }
   .hero-plan svg { width: 820px; max-width: none; min-width: 820px; height: auto; min-height: 0; margin: 0; }
   .flow-preface { padding-top: 1rem; }
 }
+/* mobile: número da regra acima do conteúdo; abas e diagrama em largura total e centrados */
+@media (max-width: 48rem) {
+  .rules li { flex-direction: column; gap: .15rem; margin: .6rem 0; }
+  .rules .ix { width: auto; padding-right: 0; line-height: 1.4; }
+  .rules .rb { width: 100%; }
+  .rplan, .tabs { width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
+  .tablist { justify-content: center; gap: .5rem; }
+  .tablist button { flex: 1 1 0; max-width: 11rem; text-align: center; }
+  .tabpanel.flow { display: flex; justify-content: center; padding: .5rem 0; }
+  .tabpanel.flow svg { margin-left: auto; margin-right: auto; }
+  .tabpanel.code pre { margin: 0; }
+}
 /* sem ícones: só índice e texto */
-.brand .mark, svg.ic, svg.di { display: none !important; }
+.brand .mark, svg.ic { display: none !important; }
+.intro svg.di { display: inline-block; }
 .side > ol > li > a { gap: .5rem; }
 .brand { gap: 0; }
 

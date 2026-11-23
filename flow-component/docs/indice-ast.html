@@ -797,15 +797,15 @@ const EXAMPLES = {
     code: J("// pedidos.json como estado/objeto", "async function main() {", "  const pedidos = await lerArquivo();", "  await salvarArquivo(pedidos);", "", "  async function lerArquivo() {", "    const pedidos = { itens: [] };", "    return pedidos;", "  }", "  async function salvarArquivo(pedidos) {", "  }", "}"),
     flow: main([F("n2", "lerArquivo", { outs: ["pedidos"], agent: "arquivo" }), F("n3", "salvarArquivo", { ins: ["pedidos"], agent: "arquivo" })]) },
 
-  responsavel: { num: "11.1", title: "Responsável", lead: [["D","Responsável é quem executa o passo."],["P","É a fonte, a origem da função."],["P","O responsável pode ser sólido ou abstrato."]],
+  responsavel: { num: "10.1", title: "Responsável", lead: [["D","Responsável é quem executa o passo."],["P","É a fonte, a origem da função."],["P","O responsável pode ser sólido ou abstrato."]],
     code: J("async function main() {", "  const carrinho = { adicionar() {} };", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  responsavelSolido: { num: "11.2", title: "Responsável sólido", lead: [["D","Responsável sólido é o que está definido no passo e possui endereço físico."],["P","Toda função que tem responsável se torna sólida."]],
+  responsavelSolido: { num: "10.2", title: "Responsável sólido", lead: [["D","Responsável sólido é o que está definido no passo e possui endereço físico."],["P","Toda função que tem responsável se torna sólida."]],
     code: J("async function main() {", "  await maquina.cobrar();", "  await arquivo.ler();", "  await pessoa.aprovar();", "}"),
     flow: main([F("n2", "cobrar", { agent: "maquina" }), F("n3", "ler", { agent: "arquivo" }), F("n4", "aprovar", { agent: "pessoa" })]) },
 
-  responsavelAbstrato: { num: "11.3", title: "Responsável abstrato", lead: [["D","Responsável abstrato é o que ainda não foi definido."],["P","Ele é o espaço a ser preenchido: ainda não há quem execute."]],
+  responsavelAbstrato: { num: "10.3", title: "Responsável abstrato", lead: [["D","Responsável abstrato é o que ainda não foi definido."],["P","Ele é o espaço a ser preenchido: ainda não há quem execute."]],
     code: J("async function main(cobrar) {", "  await cobrar();", "}"),
     flow: main([F("n2", "cobrar", { agent: null })], { ins: ["cobrar"] }) },
 
@@ -850,10 +850,10 @@ const EXAMPLES = {
     code: J("class Carrinho {", "  async adicionar() {", "  }", "}", "", "async function main() {", "  const carrinho = new Carrinho();", "  await carrinho.adicionar();", "}"),
     flow: main([F("n2", "adicionar", { agent: "obj:carrinho" })]) },
 
-  folha: { num: "10.1", title: "Folha", lead: [["P","Só a folha ocupa um passo no plano."]],
+  folha: { num: "9.1", title: "Folha", lead: [["P","Só a folha ocupa um passo no plano."]],
     code: J("async function main() {", "  await hello();", "}", "", "async function hello() {", "}"),
     flow: main([F("n2", "hello")]) },
-  useCase: { num: "10.2", title: "Use case", lead: [["D","Use case é uma função que tem funções filhas."],["P","Use case também deve ser completamente abstrato."]],
+  useCase: { num: "9.2", title: "Use case", lead: [["D","Use case é uma função que tem funções filhas."],["P","Use case também deve ser completamente abstrato."]],
     code: J("// vendas.ts", "async function vender() {", "  const pedido = await receber();", "  await cobrar(pedido);", "}", "", "async function receber() {", "  const pedido = { id: 1 };", "  return pedido;", "}", "", "async function cobrar(pedido) {", "}"),
     flow: F("n1", "vender", { file: "vendas.ts", kids: [F("n2", "receber", { outs: ["pedido"] }), F("n3", "cobrar", { ins: ["pedido"] })] }) },
 };
@@ -920,9 +920,9 @@ const GROUPS = [
     <div><b>Função abstrata</b><span>sem endereço físico</span></div>
   </div>
 </div>`, rules: ["Sólidos possuem endereço físico: são os entes que compõem os espaços, logo, componentes.", "Abstratos não possuem endereço físico: são o espaço a ser preenchido.", "Dados e funções podem ser sólidos ou abstratos.", "As funções não devem possuir sólidos, apenas abstratos."], keys: ["dadoConcreto","dadoAbstrato","solida","abstrata","estadoAbstrato"] },
-  { id: "publico", hidden: true, n: "9.", title: "Público e privado", keys: ["publica","privada"] },
-  { id: "folhas", n: "10.", title: "Folhas e use cases", rules: ["Folhas são funções sem filhas.", "Use cases são funções com filhas."], keys: ["folha", "useCase"] },
-  { id: "responsaveis", n: "11.", title: "Responsáveis", lead: "Quem executa o passo.", keys: ["responsavel","responsavelSolido","responsavelAbstrato"] },
+  { id: "publico", hidden: true, n: "", title: "Público e privado", keys: ["publica","privada"] },
+  { id: "folhas", n: "9.", title: "Folhas e use cases", rules: ["Folhas são funções sem filhas.", "Use cases são funções com filhas."], keys: ["folha", "useCase"] },
+  { id: "responsaveis", n: "10.", title: "Responsáveis", lead: "Quem executa o passo.", keys: ["responsavel","responsavelSolido","responsavelAbstrato"] },
   { id: "files", hidden: true, n: "", title: "Files", keys: ["fileMesmo","fileOutro","fileObjeto"] },
   { id: "praticas", hidden: true, n: "", title: "Boas práticas de desenvolvimento", lead: "Os princípios SOLID aplicados ao plano.", keys: ["solidSrp","solidDip"] },
   { id: "padroes", hidden: true, n: "", title: "Padrões de projeto", keys: ["padFactory","padSingleton"] },

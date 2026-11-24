@@ -4,7 +4,7 @@ Visão: [`documento-de-visao.md`](documento-de-visao.md) · [`documento-de-visao
 
 | Artefato | Status |
 |----------|--------|
-| Visão | v3.7 |
+| Visão | v3.8 |
 | Análise feedback 18/11 | [`analise-feedback-2026-11-18.md`](analise-feedback-2026-11-18.md) |
 | Ata 18/11 | [`ata-2026-11-18-feedback-prototipo.md`](ata-2026-11-18-feedback-prototipo.md) |
 | Conversa almoço Paulo (~22/11) | [`conversa-almoco-paulo-2026-11-22.md`](conversa-almoco-paulo-2026-11-22.md) |

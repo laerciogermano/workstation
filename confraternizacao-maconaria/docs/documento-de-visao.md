@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.7 · 2026-11-24
+**Versão:** 3.8 · 2026-11-24
 
 ## 1. Contexto
 
@@ -104,6 +104,40 @@ Grupos e conversas privadas. O grupo do evento depende da inscrição.
 - **CU-22** — Editar perfil: altera os dados do perfil.
 - **CU-23** — Alterar senha: redefine a senha de acesso.
 
+### Conta: serviços do participante
+
+Itens do menu “Informações da conta” da referência ([imagens 07–09](referencias/07-conta-menu-1.jpeg)). Cada um é um componente plugável, ligado ou desligado por evento e visível por papel.
+
+- **CU-26** — Ver carteirinha: identificação digital do participante (nome, loja, potência, CIM).
+- **CU-27** — Ver check-ins e ingressos: ingressos dos eventos e registro de presença.
+- **CU-28** — Ver vouchers de alimentação: vouchers de lanchonete/refeições do evento.
+- **CU-29** — Ver vagas de estacionamento: vagas reservadas ao participante.
+- **CU-30** — Ver pedidos: compras feitas pelo app (inclui itens do leilão).
+- **CU-31** — Ver minha assinatura: situação da inscrição/anuidade do participante.
+- **CU-32** — Ver meus rateios: divisão de custos entre participantes (jantares, traslados).
+- **CU-33** — Ver rede de empresas: empresas de irmãos e parceiras do evento.
+- **CU-34** — Ver meu ranking: pontuação do participante no evento.
+- **CU-35** — Abrir central de atendimento: contato com a organização.
+- **CU-36** — Acessar chat: atalho do menu da conta para o Chat.
+- **CU-37** — Configurar atalhos da home: escolhe os atalhos exibidos na tela inicial.
+- **CU-38** — Gerir salas: reserva e ocupação de salas dos locais (organizador).
+
+### Novidades, suporte e links
+
+- **CU-39** — Ver notícias: comunicados e novidades do evento.
+- **CU-40** — Ver perguntas frequentes: respostas às dúvidas comuns.
+- **CU-41** — Ver política de privacidade: texto da política.
+- **CU-42** — Gerir privacidade e cookies: consentimento do participante.
+- **CU-43** — Ver termos de uso: termos do aplicativo.
+- **CU-44** — Abrir links úteis: comprar ingresso e quero me tornar sócio/irmão (cadastro na instituição).
+
+### Dados da conta e aplicativo
+
+- **CU-45** — Ver dados institucionais: dados da entidade do participante (loja, potência, CIM, cargo); na referência: CNPJ, razão social, cargo, setor.
+- **CU-46** — Ver versão do aplicativo e sistema operacional: informação para suporte.
+- **CU-47** — Excluir conta: remove a conta e os dados do participante.
+- **CU-48** — Sair: encerra a sessão.
+
 ### Organização (organizador)
 
 - **CU-24** — Cadastrar local: registra um local da programação na cidade.
@@ -162,6 +196,18 @@ A referência de **cores e estilo visual** do aplicativo é o site [https://gop.
 **Perfil**
 
 ![Perfil e informações da conta](referencias/06-perfil.jpeg)
+
+**Conta: menu de serviços (1/3)**
+
+![Menu da conta: carteirinha, ingressos, vouchers, estacionamento, pedidos, assinatura, rateios, rede, ranking, atendimento, chat](referencias/07-conta-menu-1.jpeg)
+
+**Conta: menu de serviços (2/3)**
+
+![Menu da conta: atalhos da home, gestão de salas, notícias, suporte e links úteis](referencias/08-conta-menu-2.jpeg)
+
+**Conta: dados e saída (3/3)**
+
+![Dados institucionais, versão do app, excluir conta e sair](referencias/09-conta-dados-sair.jpeg)
 
 ---
 

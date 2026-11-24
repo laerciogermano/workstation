@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.6 · 2026-11-16
+**Versão:** 3.7 · 2026-11-24
 
 ## 1. Contexto
 
@@ -18,10 +18,12 @@ Disponibilizar o aplicativo oficial para o controle do evento mundial, asseguran
 
 ## 3. Personas
 
-| Persona | Papel |
-|---------|--------|
-| **Organizador** | Responsável pelo controle do evento e pela organização da programação, dos locais e dos participantes |
-| **Participante** | Pessoa cadastrada que consulta a programação, utiliza locais e serviços do evento e se comunica com outros participantes |
+1. **Criador do evento** — cria e configura o evento; organiza programação, locais e participantes (antes: Organizador).
+2. **Participante do evento** — cadastrado no evento; consulta programação, locais e serviços; comunica-se com outros participantes.
+3. **Leiloeiro** — chama e conduz o leilão; cadastra/expõe os itens à venda.
+4. **Comprador do leilão** — disputa e compra itens do leilão.
+
+Fonte da expansão (leilão): [`conversa-almoco-paulo-2026-11-22.md`](conversa-almoco-paulo-2026-11-22.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.8 · 2026-11-24
+**Versão:** 3.9 · 2026-11-24
 
 ## 1. Contexto
 
@@ -138,10 +138,22 @@ Itens do menu “Informações da conta” da referência ([imagens 07–09](ref
 - **CU-47** — Excluir conta: remove a conta e os dados do participante.
 - **CU-48** — Sair: encerra a sessão.
 
+### Leilão
+
+Módulo plugável, a partir da conversa de 22/11 ([`conversa-almoco-paulo-2026-11-22.md`](conversa-almoco-paulo-2026-11-22.md)). Personas: leiloeiro e comprador.
+
+- **CU-49** — Ver leilão: situação (agendado, ao vivo, encerrado) e lista de lotes com o maior lance.
+- **CU-50** — Ver lote: descrição, maior lance e histórico de lances.
+- **CU-51** — Dar lance: oferta acima do maior lance, só com o leilão ao vivo (comprador).
+- **CU-52** — Chamar leilão: abre os lances e avisa os participantes (leiloeiro).
+- **CU-53** — Cadastrar lote: título, descrição e lance inicial (leiloeiro).
+- **CU-54** — Encerrar lote: vende ao maior lance, que vira pedido do comprador (leiloeiro).
+
 ### Organização (organizador)
 
 - **CU-24** — Cadastrar local: registra um local da programação na cidade.
 - **CU-25** — Cadastrar item da programação: cria o evento com horário e local.
+- **CU-55** — Ativar módulos do evento: liga ou desliga leilão, carteirinha, ingressos, pedidos e notícias (componentes plugáveis).
 
 ---
 

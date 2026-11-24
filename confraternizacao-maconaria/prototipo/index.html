@@ -408,6 +408,72 @@ h1, h2, h3 { text-wrap: balance; }
 .placerow .cap b { font-size: 24px; font-stretch: 72%; font-weight: 800; }
 .placerow .cap span { font-size: 12px; color: var(--muted); }
 
+.grp-label { padding: 22px 20px 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.group.svcs { margin-top: 8px; }
+.svc { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 58px; padding: 0; border: 0; border-top: 1px solid var(--line); background: none; font-size: 17px; font-weight: 600; text-align: left; }
+.svcs .svc:first-child { border-top: 0; }
+.svc > svg:first-child { width: 22px; height: 22px; color: var(--ink); flex: none; }
+.svc span { flex: 1; min-width: 0; }
+.svc svg.chev { width: 18px; height: 18px; color: var(--muted); }
+.svc.soon { color: var(--muted); }
+.svc.soon > svg:first-child { color: var(--muted); }
+.svc em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.svc.danger, .svc.danger > svg:first-child { color: var(--brand); }
+.card-id { margin: 8px 16px 0; border-radius: var(--r-lg); background: var(--brand); color: var(--on-brand); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.card-id small { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.card-id h2 { font-family: var(--font-serif); font-weight: 500; font-size: 28px; line-height: 1.05; letter-spacing: -0.02em; }
+.card-id .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card-id .dl b { display: block; font-size: 16px; }
+.card-id .dl small { display: block; margin-bottom: 2px; }
+.qr { width: 132px; height: 132px; background: #fff; border-radius: 12px; padding: 10px; align-self: center; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.ticket { margin: 0 16px 12px; background: var(--wash); border-radius: var(--r-md); padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; }
+.ticket h3 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.ticket small { color: var(--muted); font-size: 14px; }
+.ticket .btn { min-height: 44px; font-size: 15px; width: auto; padding: 0 16px; }
+.news { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.news:first-of-type { border-top: 0; }
+.news small { color: var(--muted); font-size: 13px; font-weight: 600; }
+.news h3 { font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.15; }
+.news p { color: var(--body); font-size: 16px; }
+.faq { margin: 0 16px; background: var(--wash); border-radius: var(--r-md); }
+.faq details { border-top: 1px solid var(--line); padding: 0 16px; }
+.faq details:first-child { border-top: 0; }
+.faq summary { padding: 16px 0; font-weight: 700; cursor: pointer; }
+.faq details p { padding: 0 0 16px; color: var(--body); font-size: 16px; }
+.prose-block { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; color: var(--body); font-size: 16px; }
+.prose-block h2 { font-size: 18px; color: var(--ink); }
+.swrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+.swrow:first-child { border-top: 0; }
+.swrow b { font-size: 16px; } .swrow small { grid-column: 1; color: var(--muted); font-size: 14px; }
+.swrow .toggle { grid-column: 2; grid-row: 1 / span 2; width: 52px; height: 32px; border-radius: 16px; border: 0; background: var(--line); position: relative; transition: background .2s; }
+.swrow .toggle::after { content: ""; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .25s var(--spring); }
+.swrow .toggle[aria-checked="true"] { background: var(--brand); }
+.swrow .toggle[aria-checked="true"]::after { transform: translateX(20px); }
+.swrow .toggle[disabled] { opacity: .45; cursor: not-allowed; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; border-radius: 999px; padding: 5px 11px; background: var(--wash); color: var(--body); }
+.status.live { background: color-mix(in srgb, var(--brand) 12%, var(--paper)); color: var(--brand); }
+.status.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: pulse 1.4s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.auc-head { margin: 0 16px; border-radius: var(--r-lg); background: var(--brand); color: var(--on-brand); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.auc-head h2 { font-family: var(--font-serif); font-weight: 500; font-size: 26px; line-height: 1.05; letter-spacing: -0.02em; }
+.auc-head p { opacity: .85; font-size: 15px; }
+.auc-head .status { align-self: flex-start; background: color-mix(in srgb, var(--on-brand) 18%, transparent); color: var(--on-brand); }
+.auc-head .status.live::before { background: var(--on-brand); }
+.lot { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; width: 100%; border: 0; background: none; text-align: left; padding: 14px 20px; border-top: 1px solid var(--line); }
+.lot:hover { background: var(--wash); }
+.lot h3 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.lot small { color: var(--muted); font-size: 14px; grid-column: 1; }
+.lot .price { grid-column: 2; grid-row: 1 / span 2; text-align: right; line-height: 1.1; }
+.lot .price b { display: block; font-size: 24px; font-stretch: 72%; font-weight: 800; }
+.lot .price span { font-size: 12px; color: var(--muted); }
+.lot.sold h3 { color: var(--muted); }
+.bids { margin: 0 16px; }
+.bids div { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.bids div:first-child { border-top: 0; font-weight: 700; }
+.panel-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line); }
+.panel-row b { display: block; font-size: 16px; } .panel-row small { color: var(--muted); font-size: 14px; }
+.panel-row .btn { min-height: 40px; font-size: 14px; width: auto; padding: 0 14px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .24s; animation-timing-function: cubic-bezier(.16,1,.3,1); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation: none !important; }
@@ -495,8 +561,36 @@ const PEOPLE = [
   { id: "u8", name: "Ir. Luiz Carlos Prado", from: "São Paulo, SP", av: 2 },
 ];
 const ME = { name: "Paulo Ribeiro", short: "Paulo", initials: "PR", loja: "Loja Luz do Iguaçu nº 41", oriente: "Curitiba, PR", pais: "Brasil",
-  email: "paulo.ribeiro@exemplo.com", phone: "(41) 99999-0000", cim: "12.345", organizer: true };
-const state = { authMode: "login", day: "d22", enrolled: new Set(["e2", "e3", "e5"]), chatTab: "grupos", groupReads: { e2: 4, e3: 2, e5: 0 }, justSent: false };
+  email: "paulo.ribeiro@exemplo.com", phone: "(41) 99999-0000", cim: "12.345", potencia: "GOB-PR · Grande Oriente do Paraná", cargo: "Mestre Instalado", organizer: true, leiloeiro: true };
+const state = { authMode: "login", day: "d22", enrolled: new Set(["e2", "e3", "e5"]), chatTab: "grupos", groupReads: { e2: 4, e3: 2, e5: 0 }, justSent: false,
+  mods: { leilao: true, carteirinha: true, ingressos: true, pedidos: true, noticias: true }, checkins: new Set() };
+const MODULOS = [
+  { id: "leilao", name: "Leilão", icon: "gavel", desc: "Leiloeiro chama o leilão e compradores dão lances." },
+  { id: "carteirinha", name: "Carteirinha", icon: "contact", desc: "Identificação digital do irmão." },
+  { id: "ingressos", name: "Check-ins e ingressos", icon: "ticket", desc: "Ingresso e presença em cada evento." },
+  { id: "pedidos", name: "Pedidos", icon: "package", desc: "Compras feitas pelo app, como lotes do leilão." },
+  { id: "noticias", name: "Notícias", icon: "newspaper", desc: "Comunicados do evento." },
+];
+const SOON = ["Vouchers de alimentação", "Vagas de estacionamento", "Minha assinatura", "Meus rateios", "Rede de empresas", "Meu ranking", "Central de atendimento", "Atalhos da home", "Gestão de salas"];
+const AUCTION = { title: "Leilão beneficente dos 125 anos", day: "d24", time: "16:00", place: "l9", status: "scheduled", step: 100 };
+const LOTES = [
+  { id: "b0", title: "Livro de atas, edição de 1950", desc: "Reedição fac-símile, encadernada à mão.", start: 400, bid: 650, leader: "me", status: "sold", hist: [["Ir. Sérgio Tavares", 500], ["Você", 650]] },
+  { id: "b1", title: "Avental histórico, edição 1902", desc: "Peça restaurada, doada por uma loja de Paranaguá. Acompanha certificado.", start: 500, bid: 1800, leader: "Ir. Roberto Almeida", status: "open", hist: [["Ir. Hernán Ruiz", 1500], ["Ir. Roberto Almeida", 1800]] },
+  { id: "b2", title: "Quadro “Templo de Salomão”, óleo sobre tela", desc: "Obra de 80 x 60 cm de artista paranaense, doada para o acervo.", start: 800, bid: 2400, leader: "Bro. Michael Grant", status: "open", hist: [["Ir. Luiz Carlos Prado", 2000], ["Bro. Michael Grant", 2400]] },
+  { id: "b3", title: "Jantar para 8 com o Grão-Mestre", desc: "Mesa reservada no baile de gala, com os convidados do comprador.", start: 1000, bid: 3200, leader: "Ir. Antônio Kowalski", status: "open", hist: [["Ir. Antônio Kowalski", 3200]] },
+  { id: "b4", title: "Medalha comemorativa nº 001", desc: "Primeira medalha numerada da série dos 125 anos.", start: 300, bid: 300, leader: null, status: "open", hist: [] },
+];
+const NEWS = [
+  { at: "Hoje", t: "Credenciamento abre às 9h na quinta", p: "Leve documento com foto e a carteirinha do app. O ponto fica no Templo sede." },
+  { at: "Ontem", t: "Ônibus para o jantar sai do Guaíra às 19:15", p: "As vagas são por ordem de inscrição no evento. Cunhadas são bem-vindas." },
+  { at: "Seg", t: "Leilão beneficente terá 5 lotes", p: "A renda vai para o acervo da potência. O leiloeiro chama o leilão no sábado, às 16h." },
+];
+const FAQ = [
+  ["Preciso me inscrever em cada evento?", "Sim. A inscrição garante a vaga, libera o grupo no Chat e o ingresso."],
+  ["Como entro no leilão?", "Na aba Leilão, quando o leiloeiro chamar, abra um lote e dê o seu lance."],
+  ["Posso trazer minha esposa?", "Eventos marcados como Família ou Jantar são abertos a familiares."],
+  ["Esqueci minha senha.", "No menu da conta, use Alterar senha."],
+];
 const GROUP_MSGS = {
   e2: [
     { who: "Ir. Antônio Kowalski", at: "09:12", text: "Bom dia, irmãos. Os portões do Guaíra abrem às 14:00." },
@@ -537,7 +631,13 @@ const FLOWS = [
     steps: [["T-40", "Menu"], ["T-41", "Menu da conta"], ["T-42", "Perfil"], ["T-43", "Editar perfil"], ["T-44", "Alterar senha"]] },
   { id: "organizacao", n: "06", title: "Organização", cu: "CU-24 · CU-25",
     desc: "Área do organizador: cadastro dos locais e dos itens da programação, com dia, horário, local e vagas. O que é publicado aparece na hora na lista e no mapa.",
-    steps: [["T-50", "Painel"], ["T-51", "Novo local"], ["T-52", "Novo evento"]] },
+    steps: [["T-50", "Painel"], ["T-51", "Novo local"], ["T-52", "Novo evento"], ["T-53", "Módulos do evento"]] },
+  { id: "servicos", n: "07", title: "Serviços da conta", cu: "CU-26 a CU-48",
+    desc: "Menu de serviços da conta, no padrão do app de referência. Cada serviço é um módulo plugável, ligado pelo criador do evento. Os que ainda não estão no escopo aparecem como “em breve”.",
+    steps: [["T-60", "Conta"], ["T-61", "Carteirinha"], ["T-62", "Ingressos"], ["T-63", "Pedidos"], ["T-64", "Notícias"], ["T-65", "Perguntas frequentes"], ["T-66", "Privacidade e cookies"], ["T-67", "Termos de uso"], ["T-68", "Dados e aplicativo"], ["T-69", "Excluir conta"]] },
+  { id: "leilao", n: "08", title: "Leilão", cu: "CU-49 a CU-54",
+    desc: "Módulo de leilão. O leiloeiro cadastra os lotes e chama o leilão; o comprador abre um lote e dá o lance. Ao encerrar o lote, vai para os pedidos de quem ganhou.",
+    steps: [["T-70", "Leilão"], ["T-71", "Lote"], ["T-72", "Painel do leiloeiro"], ["T-73", "Novo lote"]] },
 ];
 const SCREENS = {
   "T-01": { r: "entrar", auth: "login", name: "Entrar", cu: ["CU-02"], notes: "E-mail e senha. Os erros dizem o que corrigir (e-mail inválido, senha curta). O cartaz dos 125 anos ocupa o topo e o formulário sobe numa folha, ao alcance do polegar." },
@@ -558,6 +658,21 @@ const SCREENS = {
   "T-44": { r: "senha", name: "Alterar senha", cu: ["CU-23"], notes: "Senha atual, nova e repetição. Valida o tamanho mínimo e se as duas novas são iguais." },
   "T-50": { r: "organizacao", name: "Painel", cu: ["CU-24", "CU-25"], notes: "Totais de eventos, locais e inscrições, atalhos para cadastrar e a lista de locais com capacidade." },
   "T-51": { r: "novo-local", name: "Novo local", cu: ["CU-24"], notes: "Nome, endereço, bairro e capacidade. O local passa a aparecer no cadastro de eventos." },
+  "T-53": { r: "modulos", name: "Módulos do evento", cu: ["CU-55"], notes: "O criador liga ou desliga os módulos do evento (Lego). Desligar o Leilão tira a aba e o menu para todos. Os módulos “em breve” ainda não existem. Mesmo app serve qualquer evento do GOB, não só os 125 anos." },
+  "T-60": { r: "conta", name: "Conta", cu: ["CU-20", "CU-26", "CU-27", "CU-28", "CU-29", "CU-30", "CU-31", "CU-32", "CU-33", "CU-34", "CU-35", "CU-36", "CU-37", "CU-38", "CU-44"], notes: "Menu de serviços da conta, como na referência. Carteirinha, ingressos, pedidos e notícias funcionam; vouchers, estacionamento, assinatura, rateios, rede, ranking, atendimento, atalhos e salas aparecem como “em breve”. Itens somem quando o módulo é desligado." },
+  "T-61": { r: "carteirinha", name: "Carteirinha", cu: ["CU-26"], notes: "Identificação do irmão com loja, potência, CIM e oriente, mais código para conferência na entrada." },
+  "T-62": { r: "ingressos", name: "Ingressos", cu: ["CU-27"], notes: "Um ingresso por evento inscrito. “Fazer check-in” registra a presença." },
+  "T-63": { r: "pedidos", name: "Pedidos", cu: ["CU-30"], notes: "Compras do participante. Lotes arrematados no leilão entram aqui quando o leiloeiro encerra o lote." },
+  "T-64": { r: "noticias", name: "Notícias", cu: ["CU-39"], notes: "Comunicados do evento, do mais novo ao mais antigo." },
+  "T-65": { r: "faq", name: "Perguntas frequentes", cu: ["CU-40"], notes: "Perguntas e respostas que abrem ao toque." },
+  "T-66": { r: "privacidade", name: "Privacidade e cookies", cu: ["CU-41", "CU-42"], notes: "Resumo da política de privacidade e escolha de cookies opcionais." },
+  "T-67": { r: "termos", name: "Termos de uso", cu: ["CU-43"], notes: "Termos de uso do aplicativo." },
+  "T-68": { r: "dados", name: "Dados e aplicativo", cu: ["CU-45", "CU-46", "CU-47", "CU-48"], notes: "Dados do irmão na instituição (loja, potência, CIM, cargo), versão do app e sistema, excluir conta e sair." },
+  "T-69": { r: "excluir", name: "Excluir conta", cu: ["CU-47"], notes: "Confirmação antes de apagar a conta. Ao confirmar, volta para a tela de entrada." },
+  "T-70": { r: "leilao", name: "Leilão", cu: ["CU-49"], notes: "Cabeçalho com situação (agendado ou ao vivo) e a lista de lotes com o maior lance. O leiloeiro vê o atalho para o painel. Até o leilão ser chamado, os lances ficam fechados." },
+  "T-71": { r: "lote-b1", name: "Lote", cu: ["CU-50", "CU-51"], notes: "Descrição, maior lance e histórico. O botão dá o próximo lance (acima do atual, de R$ 100 em R$ 100) quando o leilão está ao vivo. Quem lidera vê o aviso." },
+  "T-72": { r: "leiloeiro", name: "Painel do leiloeiro", cu: ["CU-52", "CU-54"], notes: "Persona leiloeiro. “Chamar leilão” abre os lances e avisa os participantes. Cada lote pode ser encerrado e fica vendido para quem lidera." },
+  "T-73": { r: "novo-lote", name: "Novo lote", cu: ["CU-53"], notes: "Título, descrição e lance inicial. O lote entra na lista do leilão." },
   "T-52": { r: "novo-evento", name: "Novo evento", cu: ["CU-25"], notes: "Título, dia, horário, local, vagas e descrição. Ao publicar, abre o evento criado, que entra na lista e no mapa do dia." },
 };
 const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
@@ -574,6 +689,9 @@ const place = id => PLACES.find(p => p.id === id);
 const person = id => PEOPLE.find(p => p.id === id);
 const day = id => DAYS.find(d => d.id === id);
 const fmt = n => n.toLocaleString("pt-BR");
+const brl = n => "R$ " + fmt(n);
+const mod = id => !!state.mods[id];
+const lote = id => LOTES.find(l => l.id === id);
 const initials = n => n.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
 const firstName = n => n.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ")[0];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -586,7 +704,7 @@ function daysLeft() { return Math.max(0, Math.ceil((START - new Date()) / 864e5)
 // ================= peças do app =================
 function tabbar(cur) {
   const unread = Object.entries(state.groupReads).filter(([k]) => state.enrolled.has(k)).reduce((a, [, v]) => a + v, 0) + DMS.reduce((a, d) => a + d.unread, 0);
-  return `<nav class="tabbar" aria-label="Seções">${[["eventos", "calendar-days", "Eventos"], ["inscricoes", "ticket", "Inscrições"], ["chat", "message-circle", "Chat"]].map(([r, i, l]) =>
+  return `<nav class="tabbar" aria-label="Seções">${[["eventos", "calendar-days", "Eventos"], ["inscricoes", "ticket", "Inscrições"], ...(mod("leilao") ? [["leilao", "gavel", "Leilão"]] : []), ["chat", "message-circle", "Chat"]].map(([r, i, l]) =>
     `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}>${icon(i)}${l}${r === "chat" && unread ? `<span class="dot num">${unread}</span>` : ""}</button>`).join("")}</nav>`;
 }
 function navrow(back) {
@@ -776,10 +894,10 @@ function scrConversa(id) {
 function scrPerfil() {
   return `<main class="view">${navrow("eventos")}
     <div class="profile"><span class="av av-0">${ME.initials}</span><h1>Ir. ${esc(ME.name)}</h1><p>${esc(ME.loja)} · ${esc(ME.oriente)}</p>
-      ${ME.organizer ? `<span class="role">${icon("shield-check")}Organizador</span>` : ""}</div>
+      ${ME.organizer ? `<span class="role">${icon("shield-check")}Criador do evento</span>` : ""}${ME.leiloeiro ? `<span class="role">${icon("gavel")}Leiloeiro</span>` : ""}</div>
     <div class="figures"><div><b class="cond num">${state.enrolled.size}</b><span>Inscrições</span></div><div><b class="cond num">${state.enrolled.size}</b><span>Grupos</span></div><div><b class="cond num">${DMS.length}</b><span>Conversas</span></div></div>
     <div class="group">
-      <div class="row2"><span>Loja</span><b>${esc(ME.loja)}</b></div><div class="row2"><span>CIM</span><b class="num">${esc(ME.cim)}</b></div>
+      <div class="row2"><span>Loja</span><b>${esc(ME.loja)}</b></div><div class="row2"><span>Potência</span><b>${esc(ME.potencia)}</b></div><div class="row2"><span>CIM</span><b class="num">${esc(ME.cim)}</b></div>
       <div class="row2"><span>Oriente</span><b>${esc(ME.oriente)}</b></div><div class="row2"><span>País</span><b>${esc(ME.pais)}</b></div>
       <div class="row2"><span>E-mail</span><b>${esc(ME.email)}</b></div><div class="row2"><span>Telefone</span><b class="num">${esc(ME.phone)}</b></div></div>
     <div class="actions"><button class="btn soft" data-go="editar-perfil">${icon("pencil")}Editar</button><button class="btn soft" data-go="senha">${icon("key-round")}Senha</button></div>
@@ -807,6 +925,7 @@ function scrOrganizacao() {
   return page("", "eventos", "Organização", "Locais e programação do evento", `
     <div class="figures"><div><b class="cond num">${EVENTS.length}</b><span>Eventos</span></div><div><b class="cond num">${PLACES.length}</b><span>Locais</span></div><div><b class="cond num">${fmt(total)}</b><span>Inscrições</span></div></div>
     <div class="actions"><button class="btn primary" data-go="novo-evento">${icon("plus")}Evento</button><button class="btn soft" data-go="novo-local">${icon("plus")}Local</button></div>
+    <div class="actions" style="padding-top:10px;grid-template-columns:1fr"><button class="btn tint" data-go="modulos">${icon("puzzle")}Módulos do evento</button></div>
     <section class="section"><div class="section-head"><h2>Locais cadastrados</h2><span class="num">${PLACES.length}</span></div>
       ${PLACES.map(p => `<div class="placerow"><div><b>${esc(p.name)}</b><small>${esc(p.addr)}</small></div><div class="cap"><b class="num">${fmt(p.cap)}</b><br><span>lugares</span></div></div>`).join("")}</section><div style="height:28px"></div>`);
 }
@@ -829,15 +948,149 @@ function scrNovoEvento() {
     <div class="err" role="alert"></div>
     <button class="btn primary" type="submit">Publicar na programação</button></form>`);
 }
+
+// ---------- serviços da conta, leilão e módulos ----------
+const svcRow = (i, l, go) => `<button class="svc" data-go="${go}">${icon(i)}<span>${l}</span>${icon("chevron-right", "chev")}</button>`;
+const soonRow = (i, l) => `<button class="svc soon" data-act="soon">${icon(i)}<span>${l}</span><em>Em breve</em></button>`;
+const linkRow = (i, l) => `<button class="svc" data-act="link">${icon(i)}<span>${l}</span>${icon("external-link", "chev")}</button>`;
+function scrConta() {
+  const soon = { "Vouchers de alimentação": "utensils", "Vagas de estacionamento": "car", "Minha assinatura": "credit-card", "Meus rateios": "users", "Rede de empresas": "briefcase", "Meu ranking": "trophy", "Central de atendimento": "headset", "Atalhos da home": "layout-grid", "Gestão de salas": "building-2" };
+  const sr = n => (n === "Gestão de salas" && !ME.organizer) ? "" : soonRow(soon[n], n);
+  return page("", "eventos", "Conta", `${esc(ME.name)} · ${esc(ME.loja)}`, `
+    <div class="actions" style="padding-top:0"><button class="btn primary" data-go="editar-perfil">Editar perfil</button><button class="btn soft" data-go="perfil">Ver perfil</button></div>
+    <div class="grp-label">Informações da conta</div>
+    <div class="group svcs">
+      ${mod("carteirinha") ? svcRow("contact", "Minha carteirinha", "carteirinha") : ""}${svcRow("key-round", "Alterar senha", "senha")}
+      ${mod("ingressos") ? svcRow("ticket", "Check-ins e ingressos", "ingressos") : ""}${sr("Vouchers de alimentação")}${sr("Vagas de estacionamento")}
+      ${mod("pedidos") ? svcRow("package", "Pedidos", "pedidos") : ""}${sr("Minha assinatura")}${sr("Meus rateios")}${sr("Rede de empresas")}${sr("Meu ranking")}${sr("Central de atendimento")}
+      ${svcRow("message-circle", "Chat", "chat")}${sr("Atalhos da home")}${sr("Gestão de salas")}
+    </div>
+    ${mod("noticias") ? `<div class="grp-label">Novidades</div><div class="group svcs">${svcRow("newspaper", "Notícias", "noticias")}</div>` : ""}
+    <div class="grp-label">Suporte</div>
+    <div class="group svcs">${svcRow("circle-help", "Perguntas frequentes", "faq")}${svcRow("file-text", "Política de privacidade", "privacidade")}${svcRow("cookie", "Privacidade e cookies", "privacidade")}${svcRow("shield-check", "Termos de uso", "termos")}</div>
+    <div class="grp-label">Links úteis</div>
+    <div class="group svcs">${linkRow("link", "Comprar ingresso")}${linkRow("link", "Quero me tornar irmão")}</div>
+    <div class="group svcs">${svcRow("info", "Dados e aplicativo", "dados")}<button class="svc danger" data-act="logout">${icon("log-out")}<span>Sair</span>${icon("chevron-right", "chev")}</button></div>
+    <div style="height:28px"></div>`);
+}
+function qrSVG() {
+  let r = "", seed = 7;
+  for (let y = 0; y < 17; y++) for (let x = 0; x < 17; x++) {
+    seed = (seed * 9301 + 49297) % 233280;
+    const finder = (x < 5 && y < 5) || (x > 11 && y < 5) || (x < 5 && y > 11);
+    if (finder ? (x % 12 === 0 || y % 12 === 0 || x % 12 === 4 || y % 12 === 4 || ((x % 12) > 1 && (x % 12) < 3 && (y % 12) > 1 && (y % 12) < 3)) : seed / 233280 > .52) r += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  }
+  return `<svg viewBox="0 0 17 17" fill="#1d2939" aria-hidden="true">${r}</svg>`;
+}
+function scrCarteirinha() {
+  return page("", "conta", "Carteirinha", "Apresente na entrada dos eventos", `<div class="card-id">
+    <small>Confraternização Maçônica · 125 anos</small><h2>Ir. ${esc(ME.name)}</h2>
+    <div class="dl"><div><small>Loja</small><b>${esc(ME.loja)}</b></div><div><small>CIM</small><b class="num">${esc(ME.cim)}</b></div>
+      <div><small>Potência</small><b>${esc(ME.potencia.split(" · ")[0])}</b></div><div><small>Oriente</small><b>${esc(ME.oriente)}</b></div></div>
+    <div class="qr">${qrSVG()}</div></div>`);
+}
+function scrIngressos() {
+  const list = EVENTS.filter(e => state.enrolled.has(e.id)).sort(byTime);
+  return page("", "conta", "Ingressos", `<span class="num">${list.length}</span> ${list.length === 1 ? "evento" : "eventos"} com ingresso`, list.length ? list.map(e => {
+    const d = day(e.day), done = state.checkins.has(e.id);
+    return `<div class="ticket"><h3>${esc(e.title)}</h3>${done ? `<span class="status">${icon("check")}Presente</span>` : `<button class="btn primary" data-act="checkin" data-id="${e.id}">Check-in</button>`}
+      <small>${d.full} · <span class="num">${e.time}</span> · ${esc(place(e.place).name)}</small></div>`;
+  }).join("") : `<div class="empty"><p>Inscreva-se em um evento para receber o ingresso.</p><button class="btn primary fit" data-go="eventos">Ver programação</button></div>`);
+}
+function scrPedidos() {
+  const mine = LOTES.filter(l => l.status === "sold" && l.leader === "me");
+  return page("", "conta", "Pedidos", `<span class="num">${mine.length}</span> ${mine.length === 1 ? "compra" : "compras"}`, mine.length ? mine.map(l =>
+    `<div class="ticket"><h3>${esc(l.title)}</h3><b class="cond num" style="font-size:24px">${brl(l.bid)}</b><small>Leilão beneficente · arrematado · retirada com a organização</small></div>`).join("")
+    : `<div class="empty"><p>Nenhuma compra ainda. Os lotes arrematados no leilão aparecem aqui.</p>${mod("leilao") ? `<button class="btn primary fit" data-go="leilao">Ver leilão</button>` : ""}</div>`);
+}
+function scrNoticias() {
+  return page("", "conta", "Notícias", "Novidades do evento", `<div>${NEWS.map(n => `<article class="news"><small>${n.at}</small><h3>${esc(n.t)}</h3><p>${esc(n.p)}</p></article>`).join("")}</div>`);
+}
+function scrFaq() {
+  return page("", "conta", "Perguntas frequentes", "", `<div class="faq">${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div><div style="height:28px"></div>`);
+}
+function scrPrivacidade() {
+  return page("", "conta", "Privacidade e cookies", "", `<div class="prose-block"><h2>Política de privacidade</h2>
+    <p>O aplicativo guarda nome, loja, CIM, oriente, e-mail e telefone para organizar o evento. Os dados só são vistos pela organização e, em parte, pelos outros participantes (nome, loja e cidade).</p>
+    <p>Você pode corrigir seus dados em Editar perfil ou apagar a conta a qualquer momento.</p></div>
+    <div class="group svcs" style="margin-top:0"><div class="swrow"><b>Cookies necessários</b><small>Mantêm você conectado.</small><button class="toggle" role="switch" aria-checked="true" disabled aria-label="Cookies necessários"></button></div>
+    <div class="swrow"><b>Cookies de análise</b><small>Ajudam a melhorar o aplicativo.</small><button class="toggle" role="switch" aria-checked="${state.cookies ? "true" : "false"}" data-act="cookies" aria-label="Cookies de análise"></button></div></div><div style="height:28px"></div>`);
+}
+function scrTermos() {
+  return page("", "conta", "Termos de uso", "", `<div class="prose-block"><h2>Uso do aplicativo</h2>
+    <p>O aplicativo é de uso exclusivo dos participantes do evento e dos irmãos convidados. O cadastro é pessoal e intransferível.</p>
+    <h2>Conduta</h2><p>As conversas seguem o decoro da instituição. A organização pode remover conteúdo ou contas que o descumpram.</p>
+    <h2>Leilão</h2><p>Todo lance é uma oferta de compra. O lote é de quem tiver o maior lance quando o leiloeiro encerrar o lote.</p></div>`);
+}
+function scrDados() {
+  return page("", "conta", "Dados e aplicativo", "", `<div class="group" style="margin-top:0">
+    <div class="row2"><span>Loja</span><b>${esc(ME.loja)}</b></div><div class="row2"><span>Potência</span><b>${esc(ME.potencia)}</b></div>
+    <div class="row2"><span>CIM</span><b class="num">${esc(ME.cim)}</b></div><div class="row2"><span>Cargo</span><b>${esc(ME.cargo)}</b></div></div>
+    <div class="group"><div class="row2"><span>Versão do aplicativo</span><b class="num">1.0.0</b></div><div class="row2"><span>Sistema operacional</span><b>iOS 26</b></div></div>
+    <div class="group svcs"><button class="svc danger" data-go="excluir">${icon("trash-2")}<span>Excluir conta</span>${icon("chevron-right", "chev")}</button><button class="svc" data-act="logout">${icon("log-out")}<span>Sair</span>${icon("chevron-right", "chev")}</button></div>
+    <div style="height:28px"></div>`);
+}
+function scrExcluir() {
+  return page("", "dados", "Excluir conta", "", `<div class="prose-block"><p>Seu cadastro, inscrições, grupos e conversas serão apagados. Os lances já dados em lotes arrematados continuam valendo.</p><p><b>Essa ação não pode ser desfeita.</b></p></div>
+    <div class="form"><button class="btn primary" data-act="delete">Excluir minha conta</button><button class="btn soft" data-go="dados">Cancelar</button></div>`);
+}
+const AUC_ST = { scheduled: "Agendado", open: "Ao vivo", closed: "Encerrado" };
+function scrLeilao() {
+  const a = AUCTION, d = day(a.day), live = a.status === "open";
+  return page("leilao", "", "Leilão", "", `<div class="auc-head"><span class="status ${live ? "live" : ""}">${AUC_ST[a.status]}</span><h2>${a.title}</h2>
+      <p>${live ? "Abra um lote e dê o seu lance." : `Começa ${d.full.toLowerCase()}, às ${a.time}, em ${esc(place(a.place).name)}. Os lances abrem quando o leiloeiro chamar.`}</p></div>
+    ${ME.leiloeiro ? `<div class="actions" style="grid-template-columns:1fr;padding-top:12px"><button class="btn tint" data-go="leiloeiro">${icon("gavel")}Painel do leiloeiro</button></div>` : ""}
+    <section class="section" style="padding-top:18px"><div class="section-head"><h2>Lotes</h2><span class="num">${LOTES.length}</span></div>
+      ${LOTES.map(l => `<button class="lot ${l.status === "sold" ? "sold" : ""}" data-go="lote-${l.id}"><h3>${esc(l.title)}</h3>
+        <small>${l.status === "sold" ? `Vendido${l.leader === "me" ? " para você" : ""}` : l.leader ? `Lidera: ${l.leader === "me" ? "você" : esc(firstName(l.leader))}` : "Sem lances"}</small>
+        <div class="price"><b class="num">${brl(l.bid)}</b><span>${l.status === "sold" ? "arrematado" : l.leader ? "maior lance" : "lance inicial"}</span></div></button>`).join("")}</section><div style="height:20px"></div>`);
+}
+function scrLote(id) {
+  const l = lote(id); if (!l) return scrLeilao();
+  const live = AUCTION.status === "open" && l.status === "open", next = l.leader ? l.bid + AUCTION.step : l.start, lead = l.leader === "me";
+  const cta = l.status === "sold" ? `<button class="btn soft" disabled>Lote vendido</button>`
+    : !live ? `<button class="btn soft" disabled>Lances abrem quando o leilão for chamado</button>`
+    : lead ? `<button class="btn ok" disabled>${icon("check")}Você lidera com ${brl(l.bid)}</button>`
+    : `<button class="btn primary" data-act="bid" data-id="${l.id}">Dar lance de ${brl(next)}</button>`;
+  return `<main class="view"><div class="statusgap"></div><div class="navrow"><button class="plain" data-go="leilao" aria-label="Voltar">${icon("chevron-left")}</button><button class="me-btn" data-act="account" aria-label="Abrir menu da conta">${ME.initials}</button></div>
+    <header class="largetitle"><h1>${esc(l.title)}</h1><p>${esc(l.desc)}</p></header>
+    <div class="bento"><div class="tile wide"><small>${l.status === "sold" ? "Arrematado por" : l.leader ? "Maior lance" : "Lance inicial"}</small><span class="big cond num">${brl(l.bid)}</span>
+      <span class="sub">${l.leader ? (lead ? "Você" : esc(l.leader)) + " · " + (l.hist.length) + " lances" : "Nenhum lance ainda"}</span></div></div>
+    <section class="section"><div class="section-head"><h2>Histórico de lances</h2></div>
+      <div class="bids">${l.hist.length ? l.hist.slice().reverse().map(([w, v]) => `<div><span>${esc(w)}</span><b class="num">${brl(v)}</b></div>`).join("") : `<div><span>Seja o primeiro a dar um lance.</span></div>`}</div></section>
+    <div class="cta-dock">${cta}</div></main>`;
+}
+function scrLeiloeiro() {
+  const a = AUCTION;
+  return page("", "leilao", "Leiloeiro", a.title, `<div class="actions" style="grid-template-columns:1fr;padding-top:0">
+      ${a.status === "scheduled" ? `<button class="btn primary" data-act="call">${icon("megaphone")}Chamar leilão</button>` : a.status === "open" ? `<button class="btn soft" data-act="end-auction">${icon("flag")}Encerrar leilão</button>` : `<button class="btn soft" disabled>Leilão encerrado</button>`}
+      <button class="btn tint" data-go="novo-lote">${icon("plus")}Novo lote</button></div>
+    <section class="section" style="padding-top:18px"><div class="section-head"><h2>Lotes</h2><span class="num">${LOTES.length}</span></div>
+      ${LOTES.map(l => `<div class="panel-row"><div><b>${esc(l.title)}</b><small>${l.status === "sold" ? "Vendido por " + brl(l.bid) : `${brl(l.bid)} · ${l.hist.length} lances`}</small></div>
+        ${l.status === "open" ? `<button class="btn soft" data-act="close-lot" data-id="${l.id}" ${a.status === "open" ? "" : "disabled"}>Encerrar lote</button>` : `<span class="status">Vendido</span>`}</div>`).join("")}</section><div style="height:20px"></div>`);
+}
+function scrNovoLote() {
+  return page("", "leiloeiro", "Novo lote", "Item para o leilão", `<form class="form" data-form="lote" novalidate>
+    <div class="field"><label for="b-titulo">Título</label><input id="b-titulo" name="titulo" placeholder="Ex.: Espada cerimonial"></div>
+    <div class="field"><label for="b-desc">Descrição</label><textarea id="b-desc" name="desc" placeholder="Origem, estado, o que acompanha"></textarea></div>
+    <div class="field"><label for="b-lance">Lance inicial (R$)</label><input id="b-lance" name="lance" inputmode="numeric" value="500"></div>
+    <div class="err" role="alert"></div><button class="btn primary" type="submit">Adicionar ao leilão</button></form>`);
+}
+function scrModulos() {
+  const row = m => `<div class="swrow"><b>${m.name}</b><small>${m.desc}</small><button class="toggle" role="switch" aria-checked="${mod(m.id)}" data-act="toggle-mod" data-id="${m.id}" aria-label="${m.name}"></button></div>`;
+  return page("", "organizacao", "Módulos do evento", "Ligue só o que este evento usa", `<div class="group svcs" style="margin-top:0">${MODULOS.map(row).join("")}</div>
+    <div class="grp-label">Em breve</div><div class="group svcs">${SOON.map(n => `<div class="swrow"><b>${n}</b><button class="toggle" role="switch" aria-checked="false" disabled aria-label="${n}"></button></div>`).join("")}</div><div style="height:28px"></div>`);
+}
 function sheets(cur, open) {
   const item = (r, i, l) => `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}>${icon(i)}${l}${icon("chevron-right", "chev")}</button>`;
   return `<div class="scrim ${open ? "open" : ""}" data-act="close-sheet"></div>
     <div class="bsheet ${open === "menu" ? "open" : ""}" data-sheet="menu" role="dialog" aria-label="Menu"><div class="handle"></div><div class="menu">
-      ${item("eventos", "calendar-days", "Eventos")}${item("inscricoes", "ticket", "Inscrições")}${item("chat", "message-circle", "Chat")}
-      ${ME.organizer ? `<div class="sep"></div><div class="lab">Organização</div>${item("organizacao", "clipboard-list", "Painel")}${item("novo-evento", "calendar-plus", "Novo evento")}${item("novo-local", "map-pin-plus", "Novo local")}` : ""}</div></div>
+      ${item("eventos", "calendar-days", "Eventos")}${item("inscricoes", "ticket", "Inscrições")}${mod("leilao") ? item("leilao", "gavel", "Leilão") : ""}${item("chat", "message-circle", "Chat")}${mod("noticias") ? item("noticias", "newspaper", "Notícias") : ""}
+      ${ME.leiloeiro && mod("leilao") ? `<div class="sep"></div><div class="lab">Leiloeiro</div>${item("leiloeiro", "gavel", "Painel do leiloeiro")}` : ""}
+      ${ME.organizer ? `<div class="sep"></div><div class="lab">Organização</div>${item("organizacao", "clipboard-list", "Painel")}${item("novo-evento", "calendar-plus", "Novo evento")}${item("novo-local", "map-pin-plus", "Novo local")}${item("modulos", "puzzle", "Módulos do evento")}` : ""}</div></div>
     <div class="bsheet ${open === "account" ? "open" : ""}" data-sheet="account" role="dialog" aria-label="Menu da conta"><div class="handle"></div>
       <div class="head"><span class="av av-0">${ME.initials}</span><div><b>Ir. ${esc(ME.name)}</b><small>${esc(ME.email)}</small></div></div>
-      <div class="menu">${item("perfil", "user-round", "Ver perfil")}${item("editar-perfil", "pencil", "Editar perfil")}${item("senha", "key-round", "Alterar senha")}
+      <div class="menu">${item("conta", "layout-grid", "Serviços da conta")}${item("perfil", "user-round", "Ver perfil")}${item("editar-perfil", "pencil", "Editar perfil")}${item("senha", "key-round", "Alterar senha")}
       <div class="sep"></div><button class="danger" data-act="logout">${icon("log-out")}Sair</button></div></div>`;
 }
 function screenHTML(r) {
@@ -845,7 +1098,9 @@ function screenHTML(r) {
   const map = {
     entrar: scrAuth, eventos: scrEventos, inscricoes: scrInscricoes, chat: scrChat, perfil: scrPerfil, organizacao: scrOrganizacao, senha: scrSenha, editar: scrEditar,
     evento: () => scrEvento(arg), participantes: () => scrParticipantes(arg), grupo: () => scrGrupo(arg), conversa: () => scrConversa(arg),
-    novo: () => arg === "local" ? scrNovoLocal() : scrNovoEvento(),
+    novo: () => arg === "local" ? scrNovoLocal() : arg === "lote" ? scrNovoLote() : scrNovoEvento(),
+    conta: scrConta, carteirinha: scrCarteirinha, ingressos: scrIngressos, pedidos: scrPedidos, noticias: scrNoticias, faq: scrFaq, privacidade: scrPrivacidade, termos: scrTermos, dados: scrDados, excluir: scrExcluir,
+    leilao: scrLeilao, lote: () => scrLote(arg), leiloeiro: scrLeiloeiro, modulos: scrModulos,
   };
   return (map[base] || scrEventos)();
 }
@@ -895,7 +1150,7 @@ function tFor(spec) {
   const exact = ORDER.find(t => { const s = SCREENS[t]; return s.r === r && !s.sheet && (!s.auth || s.auth === state.authMode) && (!s.tab || s.tab === state.chatTab); });
   if (exact) return exact;
   if (base === "evento") return state.enrolled.has(r.slice(7)) ? "T-11" : "T-12";
-  return { participantes: "T-13", grupo: "T-31", conversa: "T-33" }[base] || "T-10";
+  return { participantes: "T-13", grupo: "T-31", conversa: "T-33", lote: "T-71", novo: r === "novo-lote" ? "T-73" : r === "novo-local" ? "T-51" : "T-52" }[base] || "T-10";
 }
 function fit() {
   const ph = holder.querySelector(".phone"); if (!ph) return;
@@ -958,6 +1213,16 @@ holder.addEventListener("click", e => {
   if (a === "logout") show({ r: "entrar", auth: "login" });
   if (a === "enroll") { const x = ev(t.dataset.id); state.enrolled.add(x.id); x.conf++; state.groupReads[x.id] = state.groupReads[x.id] || 0; paint(cur); toast("Inscrição confirmada. O grupo já está no Chat."); }
   if (a === "unenroll") { const x = ev(t.dataset.id); state.enrolled.delete(x.id); x.conf--; paint(cur); toast("Inscrição cancelada."); }
+  if (a === "soon") toast("Em breve neste evento.");
+  if (a === "link") toast("Abre o site da instituição.");
+  if (a === "cookies") { state.cookies = !state.cookies; paint(cur); }
+  if (a === "checkin") { state.checkins.add(t.dataset.id); paint(cur); toast("Check-in registrado."); }
+  if (a === "toggle-mod") { state.mods[t.dataset.id] = !state.mods[t.dataset.id]; paint(cur); toast(state.mods[t.dataset.id] ? "Módulo ligado." : "Módulo desligado."); }
+  if (a === "delete") { show({ r: "entrar", auth: "signup" }); toast("Conta excluída."); }
+  if (a === "call") { AUCTION.status = "open"; paint(cur); toast("Leilão chamado. Os participantes foram avisados."); }
+  if (a === "end-auction") { AUCTION.status = "closed"; LOTES.filter(l => l.status === "open" && l.leader).forEach(l => l.status = "sold"); paint(cur); toast("Leilão encerrado."); }
+  if (a === "close-lot") { const l = lote(t.dataset.id); l.status = l.leader ? "sold" : "open"; paint(cur); toast(l.leader ? "Lote vendido." : "Sem lances: o lote segue aberto."); }
+  if (a === "bid") { const l = lote(t.dataset.id), v = l.leader ? l.bid + AUCTION.step : l.start; l.bid = v; l.leader = "me"; l.hist.push(["Você", v]); paint(cur); toast("Lance de " + brl(v) + " registrado."); }
   if (a === "dm") {
     let dm = DMS.find(x => x.with === t.dataset.uid);
     if (!dm) { dm = { id: "p" + (DMS.length + 1), with: t.dataset.uid, unread: 0, msgs: [] }; DMS.unshift(dm); }
@@ -1000,6 +1265,12 @@ holder.addEventListener("submit", e => {
     if (v("nova").length < 8) { err.textContent = "A nova senha precisa ter pelo menos 8 caracteres."; return; }
     if (v("nova") !== v("conf")) { err.textContent = "As duas senhas novas não são iguais."; return; }
     show({ r: "perfil" }); toast("Senha alterada.");
+  }
+  if (kind === "lote") {
+    if (!v("titulo")) { err.textContent = "Dê um título ao lote."; return; }
+    const id = "b" + (LOTES.length + 10), start = parseInt(v("lance")) || 100;
+    LOTES.push({ id, title: v("titulo"), desc: v("desc") || "Descrição a definir.", start, bid: start, leader: null, status: "open", hist: [] });
+    show({ r: "leiloeiro" }); toast("Lote adicionado ao leilão.");
   }
   if (kind === "place") {
     if (!v("nome") || !v("end")) { err.textContent = "Preencha o nome e o endereço do local."; return; }

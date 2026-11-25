@@ -12,6 +12,7 @@
 | [`design-system-conect-tech-v1.pdf`](design-system-conect-tech-v1.pdf) / [`.zip`](design-system-conect-tech-v1.zip) | PDF + pacote (HTML + assets) — card [EiaT9dZf](https://trello.com/c/EiaT9dZf) |
 | [`logos/README.md`](logos/README.md) | Propostas de logo (A/B/C) |
 | [`empresas-similares-compras-corporativas.md`](empresas-similares-compras-corporativas.md) | Lista BR + internacional — compras corporativas B2B (card Done local) |
+| [`artes-apresentacao-consultoria/`](artes-apresentacao-consultoria/) | Artes PNG da apresentação (arte-01…06 + logos) — anexadas no card [yNrWTQBc](https://trello.com/c/yNrWTQBc) (Done) |
 | [`contexto-apresentacao-consultoria/README.md`](contexto-apresentacao-consultoria/README.md) | Pacote único: 24 cards Trello + cópia dos artefatos desta pasta + anexos da task IV Conect (~140 MB) |
 
 ## Como gerar PDF

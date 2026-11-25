@@ -11,3 +11,6 @@ Identidade visual ConectTech v1 anexada (HTML + assets em zip, e PDF do manual).
 ## Referências
 - Identidade visual: https://trello.com/c/ZvbzJwub
 - Design system: https://trello.com/c/EiaT9dZf
+
+## Status
+**Concluído** — artes PNG anexadas em 2026-11-25 (`artes-apresentacao-consultoria/`).

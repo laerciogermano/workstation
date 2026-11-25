@@ -1,0 +1,49 @@
+{
+  "id": "6adf6290182a59881eb83d4e",
+  "url": "https://trello.com/c/yNrWTQBc/94-criar-pdf-de-apresenta%C3%A7%C3%A3o-da-empresa-prospec%C3%A7%C3%A3o",
+  "list": "Done",
+  "dateLastActivity": "2026-11-25T13:29:38.000Z",
+  "due": null,
+  "labels": [],
+  "cover": {
+    "color": null,
+    "size": "normal",
+    "brightness": "dark",
+    "idAttachment": null,
+    "idUploadedBackground": null
+  },
+  "attachments": [
+    {
+      "name": "arte-01-destrava-crescimento.png",
+      "id": "6b06e292229439bfa5e12867"
+    },
+    {
+      "name": "arte-02-por-onde-comecar.png",
+      "id": "6b06e293a7064a1182bef637"
+    },
+    {
+      "name": "arte-03-menos-complexidade.png",
+      "id": "6b06e294a1d2361147a136bf"
+    },
+    {
+      "name": "arte-04-do-diagnostico-ao-sistema.png",
+      "id": "6b06e296c0ce32492e8f39a3"
+    },
+    {
+      "name": "arte-05-mesmo-parceiro.png",
+      "id": "6b06e29799d9e59008cc9d7b"
+    },
+    {
+      "name": "arte-06-servicos-cartao.png",
+      "id": "6b06e299a944a15be38a6112"
+    },
+    {
+      "name": "logo-tech-claro.png",
+      "id": "6b06e29abf750a0d8ab3d5f6"
+    },
+    {
+      "name": "logo-tech-noite.png",
+      "id": "6b06e29ccd37aecc13fbf99b"
+    }
+  ]
+}

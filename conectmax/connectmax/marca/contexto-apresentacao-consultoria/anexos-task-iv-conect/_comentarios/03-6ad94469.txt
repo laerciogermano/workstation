@@ -1,0 +1,49 @@
+Ranking — melhores referências de estrutura (benchmarking / brand books) para a identidade visual ConectMax. Ordem = prioridade de uso (cada item com link do anexo/PDF):
+
+• Thoughtworks 2024 Brand Guidelines — modelo-ouro consultoria software
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93feaf83c32aebf6315c3/download/thoughtworks-2024-brand-guidelines.pdf
+  (ou direto: https://www.thoughtworks.com/content/dam/thoughtworks/documents/guide/tw_guide_brand_guidelines_2024_july.pdf)
+
+• Softplan 2025 Brandbook — melhor brandbook BR de software
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe2d3c5880f482d6180/download/softplan-2025-brandbook.pdf
+
+• HashiCorp Brand Style Guide 2019 — TOC mais clara para espelhar no HTML
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fec12363559ce7bcee9/download/hashicorp-2019-brand-style-guide.pdf
+  (ou direto: https://www.datocms-assets.com/2885/1570810811-hashicorp-brand-guide-oct2019v9.pdf)
+
+• AVIO Consulting Brand Guidelines — consultoria: posicionamento → assets
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93feb29a5cab3a572d1e8/download/avio-consulting-brand-guidelines.pdf
+  (ou direto: https://cdn.zephyrcms.com/b6dbc17f-1fc7-4607-8efe-2589fa026a06/-/inline/yes/brand-guildelines.pdf)
+
+• Identidade visual ConectX v1.0 — decisões já feitas a partir do benchmarking
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940b528dc2ea0f66ab74b/download/insumo-identidade_visual_v1.0.pdf
+
+• FIT Gestão Brandbook / Clavis Brandbook — checklist BR enxuto
+  FIT: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93feda2f45bedd65feacf/download/fit-gestao-brandbook.pdf (https://www.fitgestao.com.br/fitgestaobrandbook.pdf)
+  Clavis: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe38d5d408e5007f763/download/clavis-2023-brandbook.pdf
+
+• GlobalLogic / Intertec / Gupy / Vstorm — secundários (layout/tom)
+  GlobalLogic: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe928dc2ea0f669758c/download/globallogic-brand-identity-guidelines.pdf
+  Intertec: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe73a545bc2304370b0/download/intertec-2024-brandbook.pdf
+  Gupy: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fd9fc5f84154194366e/download/gupy-2023-brand-guidelines.pdf
+  Vstorm: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe51e2b4dfae7843525/download/vstorm-brand-guidelines.pdf
+
+• benchmarking_conectx.pdf — síntese dos 12 sites (posicionamento/landing)
+  https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940b8cb03ef61ff6918fc/download/insumo-benchmarking_conectx.pdf
+
+• panorama_empresas_tech.pdf + panorama_empresas_tech_2.pdf — UI/landing
+  Vol.1: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c55c12edc25ced51b9/download/insumo-panorama_empresas_tech.pdf
+  Vol.2: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c882b489de15c054e4/download/insumo-panorama_empresas_tech_2.pdf
+
+• benchmarking consultoria (grandes + pequenas) — mercado, não manual de marca
+  Grandes: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c154ba3acb1efcdfef/download/insumo-benchmarking_consultoria_software_brasil.pdf
+  Pequenas: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c357a2e8fcecd3ac9b/download/insumo-benchmarking_consultorias_pequeno_porte.pdf
+
+Menos prioridade (estrutura clássica, longe do negócio):
+• NASA: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdf627a9b429db23cf4/download/nasa-1976-graphics-standards.pdf
+• PUC-SP: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe1fe297e02333f50b6/download/pucsp-2025-manual-identidade-visual.pdf
+• Vipí: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdb9ed45aeb048965d1/download/vipi-2023-manual-identidade-visual.pdf
+• Firefox: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdd8565f3f0be5f6f8b/download/firefox-brand-book.pdf
+• Pydantic: https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdc12a68ca4f8d47180/download/pydantic-brand-guidelines.pdf
+
+Pasta local: conectmax/tasks/6ad93fb164e6790fe397fe5e/anexos/

@@ -1,0 +1,76 @@
+Conteúdo de cada seção — identidade visual Conect v1 (simples)
+
+Base: `insumo-identidade_visual_v1.0.pdf` (v1.2), `insumo-benchmarking_conectx.pdf`, panoramas, site ConectMax (prints), Softplan/Thoughtworks/HashiCorp/Clavis (estrutura). Marca: Conect / ConectX — consultoria + software, tom boutique com credibilidade B2B.
+
+• Capa / identificação
+  - Nome da marca: Conect (wordmark em minúsculas) + símbolo (dois traços a 45° / 4 nós)
+  - Versão do manual (v1) e data
+  - Tagline curta: “Tecnologia que conecta a sua operação” (ou hero A: “Integrações e automação de compras B2B, do diagnóstico à operação”)
+  - Subtítulo: “Manual de marca — essencial”
+  - Não colocar manifesto longo na capa
+
+• Quem somos
+  - 3–5 linhas: consultoria + desenvolvimento de software; B2B; do diagnóstico à operação
+  - Essência: conectar sistemas, pessoas e processos e provar resultado em número
+  - Promessa: prazo e resultado claros (não “soluções inovadoras” genérico)
+  - Para quem: empresas que compram/fornecem em escala (hipótese de nicho: integrações e automação de compras B2B — marcar como a validar)
+  - Atributos (4): Direta, Sênior, Mensurável, Próxima
+  - O que a marca não é: genérica, cheia de siglas, promessa sem prova
+
+• Logo
+  - Assinatura horizontal preferencial: símbolo + “conect”
+  - Versões: sobre preto, sobre névoa, sobre azul, monocromática
+  - Símbolo isolado (favicon/app): mínimo 16 px digital / 6 mm impressão
+  - Assinatura: mínimo 80 px digital / 25 mm impressão
+  - Respiro: 3× a altura do nó, em todos os lados
+  - Regra: símbolo substitui o “x” e sempre acompanha “conect”; minúsculas (tom direto, menos corporativo que as grandes)
+
+• Usos incorretos do logo
+  - Não esticar / distorcer proporção
+  - Não girar
+  - Não trocar a cor dos nós / do símbolo fora da paleta
+  - Não colocar sobre foto ou fundo sem contraste
+  - Não separar símbolo do wordmark (exceto favicon/app)
+  - Não recriar tipografia do wordmark “no olho”
+
+• Paleta de cores
+  - Primária: Azul #2563EB (botões, links, destaques) — alinhar ao HEX oficial do site ConectMax se divergir
+  - Apoio: Azul claro #6EA2FF (detalhe sobre preto); Azul 600 #1D4ED8 (texto azul sobre claro); Azul 100 #E5EDFF (tags)
+  - Neutros: Preto #0A0C12; Grafite #151A26; Névoa #F3F5F9; Branco #FFFFFF; Pedra #5A6377; Linha #DADEE7
+  - Sistema: Sucesso #1F9D6B; Erro #D93A40
+  - Proporção sugerida: claro 50% / preto 30% / azul 15% / apoio 5%
+  - Contraste: botão azul = texto branco; texto azul sobre claro = Azul 600; meta WCAG AA (4,5:1 texto)
+  - Entregar tabela HEX + RGB (+ CMYK só se já tiver)
+
+• Tipografia
+  - Títulos: Sora Bold (H1/H2) — geométrica, firme
+  - Corpo/botões: Inter Regular/Medium
+  - Rótulos/etapas: JetBrains Mono, caixa-alta (ex.: DIAGNÓSTICO | 01)
+  - Hierarquia mínima: H1 48/52 · H2 32/38 · H3 20/28 · Texto 16/26 · Legenda 12/18 · Rótulo 11/16
+  - Fallback web: system-ui, Segoe UI, Arial, sans-serif
+  - Fonte: Google Fonts (gratuitas)
+
+• Tom de voz
+  - Adjetivos: direta, sênior, mensurável, próxima
+  - Fala do problema do cliente primeiro; frases curtas (padrão das boutiques do benchmarking)
+  - On brand (ex.): “Do diagnóstico à operação, com prazo e resultado claros.”
+  - Off brand (ex.): “Soluções inovadoras e disruptivas para o seu negócio.”
+  - CTA preferencial: “Agendar diagnóstico” (apoio: WhatsApp) — não só “Fale conosco” genérico
+  - Números entram na mensagem quando houver prova (prazo, custo, erro evitado)
+
+• Aplicações essenciais
+  - Site/landing (anatomia do benchmarking): menu curto (~5 itens) + botão azul; hero com promessa + CTA; serviços; método em 4 etapas (diagnóstico → proposta fechada → entrega em ciclos → evolução); provas (logos/números/cases); CTA final
+  - Visual do hero: um acento azul sobre fundo claro ou escuro; botões em pílula; mockups/diagramas/rede de nós — evitar stock photo genérica
+  - Apresentação/PDF institucional: capa com logo + tagline; slide “quem somos”; slide serviços; slide método; slide CTA diagnóstico
+  - LinkedIn: avatar (símbolo ou assinatura legível); capa simples azul/preto/névoa; post com tipografia e CTA alinhados
+  - Componentes mínimos a mostrar: botão primário/secundário, tag/etapa, número em destaque, card de serviço
+
+• Checklist rápido (antes de publicar)
+  - Logo na versão correta para o fundo (claro/escuro/mono) + respiro respeitado
+  - Só cores da paleta; contraste AA ok
+  - Fontes Sora/Inter/Mono (ou fallback); hierarquia coerente
+  - CTA e tom alinhados (direto + diagnóstico, sem jargão vazio)
+  - Sem foto genérica se houver mockup/diagrama disponível
+  - Nome sempre “conect” em minúsculas na assinatura
+
+Fora da v1 (não detalhar agora): iconografia completa, fotografia, patterns avançados, merch, e-mail, submarcas, mega-menu, CMYK fino.

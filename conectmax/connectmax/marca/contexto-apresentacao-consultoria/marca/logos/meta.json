@@ -1,0 +1,17 @@
+[
+  {
+    "id": "A-rede-globo",
+    "title": "A · Rede Globo",
+    "blurb": "Evolução direta do globo wireframe atual — mais limpo e legível em favicon."
+  },
+  {
+    "id": "B-malha-nos",
+    "title": "B · Malha de Nós",
+    "blurb": "Rede de nós densa (conexão/tecnologia), círculo contido — forte em app icon."
+  },
+  {
+    "id": "C-orbita-hex",
+    "title": "C · Órbita Hex",
+    "blurb": "Globo + hexágonos do site — metáfora de rede B2B estruturada."
+  }
+]

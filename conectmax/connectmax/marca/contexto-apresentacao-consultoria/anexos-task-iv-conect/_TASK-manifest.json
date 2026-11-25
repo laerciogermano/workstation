@@ -1,0 +1,360 @@
+{
+  "card": {
+    "id": "6ad93fb164e6790fe397fe5e",
+    "name": "Criar identidade visual Conect (manual HTML → PDF)",
+    "desc": "## Objetivo\nCriar a identidade visual da **Conect** (consultoria / desenvolvimento de software), entregue como **HTML** estruturado para depois gerar PDF (brand guidelines / brand book).\n\n## Princípio da v1\nA **primeira identidade visual deve ser simples e essencial** — só o necessário para usar a marca com consistência (logo, cores, tipografia, usos básicos e 2–3 aplicações). Sem manual enciclopédico; evoluir depois se precisar.\n\n## Entrega\n- Manual de identidade visual em HTML (print-ready / conversível para PDF)\n- Escopo enxuto (ver comentário com seções obrigatórias)\n- Usar os PDFs anexados neste card como **referência** (priorizar Softplan, Thoughtworks, HashiCorp e AVIO)\n\n## Arquivo entregue (em revisão)\n- `identidade-visual-conect-v1.html`: manual A4 paisagem, 14 páginas (inclui um slide de hero para cada estilo: Noite, Dia, Aurora e Oceano). Logo “conect tec” (símbolo X à esquerda), azul/preto/branco, fonte Plus Jakarta Sans, cards sem borda.\n\n## Como será feito\n1. Revisar as referências priorizadas (comentário de ranking)\n2. Definir sistema visual mínimo alinhado a consultoria + software (Conect)\n3. Implementar o HTML só com as seções essenciais\n4. Validar layout para impressão/export PDF\n5. Só mover para Done quando o HTML estiver pronto\n\n## Fora de escopo (neste card)\n- Gerar o PDF final (fica para depois)\n- Implementar o site da Conect\n- Brand book completo tipo Thoughtworks (fica para versões futuras)\n\n## Referências\nTodos os PDFs/links de identidade visual coletados no card anterior estão anexados aqui.\n\n## Insumos (cards Done)\n- [reunir os 2 benchmarking (PDF apresentacao)](https://trello.com/c/O4H2xvcW) — benchmarking_conectx.pdf\n- [Evoluir PDF apresentacao Japa](https://trello.com/c/GmRvvypv)\n- [PDF Catalogo e Apresentacao Dev Software](https://trello.com/c/OZrRl1YN)\n- [Benchmarking consultoria software [Bruno]](https://trello.com/c/kztKgmFg)\n- [Benchmarking empresas menores](https://trello.com/c/F1UrgecP)\n- [Prints primeiro benchmarking](https://trello.com/c/932SOEZi)\n- [Prints segundo benchmarking](https://trello.com/c/7nbiFG9G)\n\n## Relacionados (Priorizados, sem anexo ainda)\n- Evoluir Landing Page conforme informações do Japa\n- Reestruturacao Landing Page Conect ou criacao de uma\n- Reunir todos os insumos, e geral o pdf final de apresentação\n",
+    "url": "https://trello.com/c/xVbwmHm4/78-criar-identidade-visual-conect-manual-html-%E2%86%92-pdf",
+    "shortUrl": "https://trello.com/c/xVbwmHm4",
+    "idList": "69f8f2bd8a4e82a3d5956c0c",
+    "due": null
+  },
+  "attachments": [
+    {
+      "id": "6ad93fd9fc5f84154194366e",
+      "name": "gupy-2023-brand-guidelines.pdf",
+      "bytes": 2863928,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fd9fc5f84154194366e/download/gupy-2023-brand-guidelines.pdf",
+      "saved_as": "anexos/gupy-2023-brand-guidelines.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 2863928
+    },
+    {
+      "id": "6ad93fdb9ed45aeb048965d1",
+      "name": "vipi-2023-manual-identidade-visual.pdf",
+      "bytes": 1090279,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdb9ed45aeb048965d1/download/vipi-2023-manual-identidade-visual.pdf",
+      "saved_as": "anexos/vipi-2023-manual-identidade-visual.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 1090279
+    },
+    {
+      "id": "6ad93fdc12a68ca4f8d47180",
+      "name": "pydantic-brand-guidelines.pdf",
+      "bytes": 1564227,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdc12a68ca4f8d47180/download/pydantic-brand-guidelines.pdf",
+      "saved_as": "anexos/pydantic-brand-guidelines.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 1564227
+    },
+    {
+      "id": "6ad93fdd8565f3f0be5f6f8b",
+      "name": "firefox-brand-book.pdf",
+      "bytes": 2391843,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdd8565f3f0be5f6f8b/download/firefox-brand-book.pdf",
+      "saved_as": "anexos/firefox-brand-book.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 2391843
+    },
+    {
+      "id": "6ad93fdf627a9b429db23cf4",
+      "name": "nasa-1976-graphics-standards.pdf",
+      "bytes": 3525906,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fdf627a9b429db23cf4/download/nasa-1976-graphics-standards.pdf",
+      "saved_as": "anexos/nasa-1976-graphics-standards.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 3525906
+    },
+    {
+      "id": "6ad93fe1fe297e02333f50b6",
+      "name": "pucsp-2025-manual-identidade-visual.pdf",
+      "bytes": 7042205,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe1fe297e02333f50b6/download/pucsp-2025-manual-identidade-visual.pdf",
+      "saved_as": "anexos/pucsp-2025-manual-identidade-visual.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 7042205
+    },
+    {
+      "id": "6ad93fe2d3c5880f482d6180",
+      "name": "softplan-2025-brandbook.pdf",
+      "bytes": 4882201,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe2d3c5880f482d6180/download/softplan-2025-brandbook.pdf",
+      "saved_as": "anexos/softplan-2025-brandbook.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 4882201
+    },
+    {
+      "id": "6ad93fe38d5d408e5007f763",
+      "name": "clavis-2023-brandbook.pdf",
+      "bytes": 1417430,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe38d5d408e5007f763/download/clavis-2023-brandbook.pdf",
+      "saved_as": "anexos/clavis-2023-brandbook.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 1417430
+    },
+    {
+      "id": "6ad93fe51e2b4dfae7843525",
+      "name": "vstorm-brand-guidelines.pdf",
+      "bytes": 4416462,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe51e2b4dfae7843525/download/vstorm-brand-guidelines.pdf",
+      "saved_as": "anexos/vstorm-brand-guidelines.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 4416462
+    },
+    {
+      "id": "6ad93fe73a545bc2304370b0",
+      "name": "intertec-2024-brandbook.pdf",
+      "bytes": 8342960,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe73a545bc2304370b0/download/intertec-2024-brandbook.pdf",
+      "saved_as": "anexos/intertec-2024-brandbook.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 8342960
+    },
+    {
+      "id": "6ad93fe928dc2ea0f669758c",
+      "name": "globallogic-brand-identity-guidelines.pdf",
+      "bytes": 9484582,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad93fe928dc2ea0f669758c/download/globallogic-brand-identity-guidelines.pdf",
+      "saved_as": "anexos/globallogic-brand-identity-guidelines.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 9484582
+    },
+    {
+      "id": "6ad93feaf83c32aebf6315c3",
+      "name": "thoughtworks-2024-brand-guidelines.pdf",
+      "bytes": null,
+      "url": "https://www.thoughtworks.com/content/dam/thoughtworks/documents/guide/tw_guide_brand_guidelines_2024_july.pdf",
+      "saved_as": "anexos/thoughtworks-2024-brand-guidelines.pdf",
+      "kind": "file-external",
+      "ok": true,
+      "size": 20973200
+    },
+    {
+      "id": "6ad93feb29a5cab3a572d1e8",
+      "name": "avio-consulting-brand-guidelines.pdf",
+      "bytes": null,
+      "url": "https://cdn.zephyrcms.com/b6dbc17f-1fc7-4607-8efe-2589fa026a06/-/inline/yes/brand-guildelines.pdf",
+      "saved_as": "anexos/avio-consulting-brand-guidelines.pdf",
+      "kind": "file-external",
+      "ok": true,
+      "size": 10556880
+    },
+    {
+      "id": "6ad93fec12363559ce7bcee9",
+      "name": "hashicorp-2019-brand-style-guide.pdf",
+      "bytes": null,
+      "url": "https://www.datocms-assets.com/2885/1570810811-hashicorp-brand-guide-oct2019v9.pdf",
+      "saved_as": "anexos/hashicorp-2019-brand-style-guide.pdf",
+      "kind": "file-external",
+      "ok": true,
+      "size": 11756764
+    },
+    {
+      "id": "6ad93feda2f45bedd65feacf",
+      "name": "fit-gestao-brandbook.pdf",
+      "bytes": null,
+      "url": "https://www.fitgestao.com.br/fitgestaobrandbook.pdf",
+      "saved_as": "anexos/fit-gestao-brandbook.pdf",
+      "kind": "file-external",
+      "ok": true,
+      "size": 13394787
+    },
+    {
+      "id": "6ad940b8cb03ef61ff6918fc",
+      "name": "insumo-benchmarking_conectx.pdf",
+      "bytes": 995742,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940b8cb03ef61ff6918fc/download/insumo-benchmarking_conectx.pdf",
+      "saved_as": "anexos/insumo-benchmarking_conectx.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 995742
+    },
+    {
+      "id": "6ad940b9b9ab9e98539d486f",
+      "name": "insumo-image.png",
+      "bytes": 94369,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940b9b9ab9e98539d486f/download/insumo-image.png",
+      "saved_as": "anexos/insumo-image.png",
+      "kind": "file",
+      "ok": true,
+      "size": 94369
+    },
+    {
+      "id": "6ad940bcbffc9541b17c52ae",
+      "name": "insumo-6abad9cc-image.png",
+      "bytes": 94369,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940bcbffc9541b17c52ae/download/insumo-6abad9cc-image.png",
+      "saved_as": "anexos/insumo-6abad9cc-image.png",
+      "kind": "file",
+      "ok": true,
+      "size": 94369
+    },
+    {
+      "id": "6ad940be3615768880fb5c7e",
+      "name": "insumo-conectmax-software-apresentacao_2_.html",
+      "bytes": 29835,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940be3615768880fb5c7e/download/insumo-conectmax-software-apresentacao_2_.html",
+      "saved_as": "anexos/insumo-conectmax-software-apresentacao_2_.html",
+      "kind": "file",
+      "ok": true,
+      "size": 29835
+    },
+    {
+      "id": "6ad940c0f252c84c60471d3e",
+      "name": "insumo-ConectMax___Consultoria_e_Desenvolvimento_de_Software.pdf",
+      "bytes": 655602,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c0f252c84c60471d3e/download/insumo-ConectMax___Consultoria_e_Desenvolvimento_de_Software.pdf",
+      "saved_as": "anexos/insumo-ConectMax___Consultoria_e_Desenvolvimento_de_Software.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 655602
+    },
+    {
+      "id": "6ad940c154ba3acb1efcdfef",
+      "name": "insumo-benchmarking_consultoria_software_brasil.pdf",
+      "bytes": 30537,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c154ba3acb1efcdfef/download/insumo-benchmarking_consultoria_software_brasil.pdf",
+      "saved_as": "anexos/insumo-benchmarking_consultoria_software_brasil.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 30537
+    },
+    {
+      "id": "6ad940c357a2e8fcecd3ac9b",
+      "name": "insumo-benchmarking_consultorias_pequeno_porte.pdf",
+      "bytes": 73150,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c357a2e8fcecd3ac9b/download/insumo-benchmarking_consultorias_pequeno_porte.pdf",
+      "saved_as": "anexos/insumo-benchmarking_consultorias_pequeno_porte.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 73150
+    },
+    {
+      "id": "6ad940c55c12edc25ced51b9",
+      "name": "insumo-panorama_empresas_tech.pdf",
+      "bytes": 3022965,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c55c12edc25ced51b9/download/insumo-panorama_empresas_tech.pdf",
+      "saved_as": "anexos/insumo-panorama_empresas_tech.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 3022965
+    },
+    {
+      "id": "6ad940c882b489de15c054e4",
+      "name": "insumo-panorama_empresas_tech_2.pdf",
+      "bytes": 3123199,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad940c882b489de15c054e4/download/insumo-panorama_empresas_tech_2.pdf",
+      "saved_as": "anexos/insumo-panorama_empresas_tech_2.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 3123199
+    },
+    {
+      "id": "6ad940ca9cad27120db07107",
+      "name": "card-fonte-benchmarking-bullets-pdf",
+      "bytes": null,
+      "url": "https://trello.com/c/O4H2xvcW",
+      "saved_as": "links/card-fonte-benchmarking-bullets-pdf.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940cb7eaf74078ffa81d3",
+      "name": "card-fonte-evoluir-pdf-japa",
+      "bytes": null,
+      "url": "https://trello.com/c/GmRvvypv",
+      "saved_as": "links/card-fonte-evoluir-pdf-japa.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940cc0eb67bc18696fdf8",
+      "name": "card-fonte-catalogo-apresentacao",
+      "bytes": null,
+      "url": "https://trello.com/c/OZrRl1YN",
+      "saved_as": "links/card-fonte-catalogo-apresentacao.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940cdd4b96fa250b079f7",
+      "name": "card-fonte-benchmarking-consultoria",
+      "bytes": null,
+      "url": "https://trello.com/c/kztKgmFg",
+      "saved_as": "links/card-fonte-benchmarking-consultoria.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940cec44debb192fd6325",
+      "name": "card-fonte-benchmarking-pequenas",
+      "bytes": null,
+      "url": "https://trello.com/c/F1UrgecP",
+      "saved_as": "links/card-fonte-benchmarking-pequenas.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940cf5a50bef5e7595581",
+      "name": "card-fonte-prints-benchmarking-1",
+      "bytes": null,
+      "url": "https://trello.com/c/932SOEZi",
+      "saved_as": "links/card-fonte-prints-benchmarking-1.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940d016b902b9ebf84f94",
+      "name": "card-fonte-prints-benchmarking-2",
+      "bytes": null,
+      "url": "https://trello.com/c/7nbiFG9G",
+      "saved_as": "links/card-fonte-prints-benchmarking-2.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940d1dbc32fc571f2f237",
+      "name": "card-fonte-landing-page-japa",
+      "bytes": null,
+      "url": "https://trello.com/c/Pn8a5toO",
+      "saved_as": "links/card-fonte-landing-page-japa.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940d2966d8a75bfee821d",
+      "name": "card-fonte-reestruturacao-landing",
+      "bytes": null,
+      "url": "https://trello.com/c/zGmoEw57",
+      "saved_as": "links/card-fonte-reestruturacao-landing.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad940d35b5ce2b13499d365",
+      "name": "card-fonte-reunir-insumos-pdf-final",
+      "bytes": null,
+      "url": "https://trello.com/c/rygb0gZB",
+      "saved_as": "links/card-fonte-reunir-insumos-pdf-final.url.txt",
+      "kind": "link",
+      "ok": true
+    },
+    {
+      "id": "6ad941a964fd6dac0d3dc043",
+      "name": "insumo-conectmax-site-prints.pdf",
+      "bytes": 279988,
+      "url": "https://trello.com/1/cards/6ad93fb164e6790fe397fe5e/attachments/6ad941a964fd6dac0d3dc043/download/insumo-conectmax-site-prints.pdf",
+      "saved_as": "anexos/insumo-conectmax-site-prints.pdf",
+      "kind": "file",
+      "ok": true,
+      "size": 279988
+    },
+    {
+      "id": "6ad952213edfc6fc680a44f9",
+      "name": "identidade-visual-conect-v1.html",
+      "kind": "entrega",
+      "saved_as": "../../../marca/identidade-visual-conect-v1.html",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>conect tech | Design system v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
+<style>
+/* Mesma linha visual ConectMax / identidade conect tech */
+:root{
+  --cx-black:#181818;
+  --cx-graphite:#151A26;
+  --cx-white:#FFFFFF;
+  --cx-mist:#F3F5F9;
+  --cx-blue:#0070BC;
+  --cx-blue-light:#4A9FE0;
+  --cx-blue-600:#005490;
+  --cx-blue-100:#E3F0FA;
+  --cx-navy:#161745;
+  --cx-orange:#FF731D;
+  --cx-stone:#5A6377;
+  --cx-line:#DADEE7;
+  --cx-line-dark:#262D3D;
+  --cx-ok:#1F9D6B;
+  --cx-ok-bg:#E8F7F0;
+  --cx-warn:#D97706;
+  --cx-warn-bg:#FEF3C7;
+  --cx-err:#D93A40;
+  --cx-err-bg:#FDECEC;
+  --cx-radius:12px;
+  --cx-radius-sm:8px;
+  --cx-pill:999px;
+  --cx-font-head:"Plus Jakarta Sans", system-ui, sans-serif;
+  --cx-font-logo:"Montserrat", "Arial Black", Arial, system-ui, sans-serif;
+  --cx-font-body:"Plus Jakarta Sans", system-ui, sans-serif;
+  --cx-font-mono:"JetBrains Mono", ui-monospace, monospace;
+  --cx-shadow:0 1px 2px rgba(24,24,24,.06), 0 8px 24px rgba(24,24,24,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C9CED8;color:var(--cx-black);font-family:var(--cx-font-body);font-size:13px;line-height:1.55;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:24px 0}
+@page{size:297mm 210mm;margin:0}
+.page{width:297mm;height:210mm;margin:0 auto 24px;padding:16mm 18mm 14mm;position:relative;overflow:hidden;
+  background:var(--cx-white);box-shadow:0 8px 30px rgba(10,12,18,.18);display:flex;flex-direction:column}
+.page.dark{background:var(--cx-black);color:var(--cx-white)}
+.page.mist{background:var(--cx-mist)}
+@media print{
+  html,body{background:none;padding:0}
+  .page{margin:0;box-shadow:none;break-after:page}
+  .no-print{display:none!important}
+}
+.eyebrow{font-family:var(--cx-font-head);font-size:13px;line-height:18px;font-weight:700;color:var(--cx-blue-600);display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:10px;height:10px;background:var(--cx-blue);border-radius:2px}
+.dark .eyebrow{color:var(--cx-blue-light)}
+h2{font-family:var(--cx-font-head);font-weight:800;font-size:28px;line-height:1.18;letter-spacing:-.02em;margin:6px 0 14px}
+h3{font-family:var(--cx-font-head);font-weight:700;font-size:15px;margin-bottom:8px}
+.lead{font-size:14px;color:var(--cx-stone);max-width:640px;margin-bottom:12px}
+.foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--cx-line);display:flex;justify-content:space-between;font-size:10px;color:var(--cx-stone)}
+.dark .foot{border-color:var(--cx-line-dark);color:#8C95A8}
+.label{font-family:var(--cx-font-head);font-size:11px;font-weight:700;color:var(--cx-stone);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.panel{border-radius:var(--cx-radius);padding:14px;background:var(--cx-mist)}
+.dark .panel{background:var(--cx-graphite)}
+.logo{display:inline-flex;align-items:center;font-family:var(--cx-font-logo);font-weight:800;font-style:italic;letter-spacing:-.04em;line-height:1;white-space:nowrap;text-transform:uppercase}
+.logo img{height:.95em;width:.95em;margin-right:.32em;object-fit:contain;flex:none}
+.logo .conect{color:var(--cx-blue)}
+.logo .tech{color:var(--cx-black)}
+.on-dark .conect{color:var(--cx-blue-light)}
+.on-dark .tech{color:var(--cx-white)}
+.on-blue .conect,.on-blue .tech{color:var(--cx-white)}
+.screen-help{max-width:297mm;margin:0 auto 16px;font-size:12px;color:#3A4254;padding:0 4px}
+.cover{justify-content:center}
+.cover .logo{font-size:56px}
+.cover .tagline{font-size:20px;color:#C9D1E0;margin-top:18px;max-width:520px}
+.cover .meta{position:absolute;left:18mm;bottom:16mm;font-size:12px;color:#8C95A8;line-height:1.7}
+.gridbg{position:absolute;inset:0;background-image:linear-gradient(rgba(74,159,224,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(74,159,224,.05) 1px,transparent 1px);background-size:40px 40px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:var(--cx-pill);
+  font-family:var(--cx-font-body);font-weight:600;font-size:13px;border:1.5px solid transparent;white-space:nowrap}
+.btn-sm{height:32px;padding:0 14px;font-size:12px}
+.btn-lg{height:48px;padding:0 24px;font-size:14px}
+.btn-primary{background:var(--cx-blue);color:#fff;box-shadow:0 0 0 4px rgba(0,112,188,.14)}
+.btn-cta{background:var(--cx-orange);color:#fff;box-shadow:0 0 0 4px rgba(255,115,29,.14)}
+.btn-secondary{background:transparent;border-color:var(--cx-line);color:var(--cx-black)}
+.btn-ghost{background:transparent;color:var(--cx-blue-600)}
+.btn-danger{background:var(--cx-err);color:#fff}
+.btn.is-disabled{opacity:.45}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:600;color:var(--cx-stone)}
+.input,.select,.textarea{
+  height:40px;padding:0 12px;border:1.5px solid var(--cx-line);border-radius:var(--cx-radius-sm);
+  font:inherit;background:#fff;color:var(--cx-black);outline:none}
+.textarea{height:auto;min-height:72px;padding:10px 12px;resize:none}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--cx-blue);box-shadow:0 0 0 3px rgba(0,112,188,.14)}
+.input.is-error{border-color:var(--cx-err)}
+.hint{font-size:11px;color:var(--cx-stone)}
+.hint.err{color:var(--cx-err)}
+
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:var(--cx-pill);font-size:11px;font-weight:600}
+.badge-blue{background:var(--cx-blue-100);color:var(--cx-blue-600)}
+.badge-ok{background:var(--cx-ok-bg);color:var(--cx-ok)}
+.badge-warn{background:var(--cx-warn-bg);color:var(--cx-warn)}
+.badge-err{background:var(--cx-err-bg);color:var(--cx-err)}
+.badge-neutral{background:#EEF0F4;color:var(--cx-stone)}
+
+.card{background:#fff;border:1px solid var(--cx-line);border-radius:var(--cx-radius);padding:16px;box-shadow:var(--cx-shadow)}
+.card.flat{box-shadow:none;background:var(--cx-mist);border:0}
+.card h4{font-family:var(--cx-font-head);font-size:15px;font-weight:700;margin-bottom:4px}
+.card p{font-size:12px;color:var(--cx-stone)}
+
+.table-wrap{border:1px solid var(--cx-line);border-radius:var(--cx-radius);overflow:hidden;background:#fff}
+table.ds{width:100%;border-collapse:collapse;font-size:12px}
+table.ds th{text-align:left;padding:10px 12px;background:var(--cx-mist);color:var(--cx-stone);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--cx-line)}
+table.ds td{padding:10px 12px;border-bottom:1px solid var(--cx-line);vertical-align:middle}
+table.ds tr:last-child td{border-bottom:0}
+
+.nav-demo{display:flex;align-items:center;gap:16px;padding:10px 16px;border:1px solid var(--cx-line);border-radius:var(--cx-radius);background:#fff}
+.nav-demo .logo{font-size:18px;margin-right:auto}
+.nav-demo a{color:var(--cx-stone);text-decoration:none;font-size:12px;font-weight:500}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--cx-line)}
+.tab{padding:8px 12px;font-size:12px;font-weight:600;color:var(--cx-stone);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.is-active{color:var(--cx-blue-600);border-bottom-color:var(--cx-blue)}
+
+.toggle{width:40px;height:24px;border-radius:999px;background:#C9CED8;position:relative}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on{background:var(--cx-blue)}
+.toggle.on::after{left:19px}
+.check{width:18px;height:18px;border:1.5px solid var(--cx-line);border-radius:5px;display:inline-grid;place-items:center}
+.check.on{background:var(--cx-blue);border-color:var(--cx-blue);color:#fff;font-size:11px}
+
+.token{font-family:var(--cx-font-mono);font-size:10px;background:#EEF0F4;padding:2px 6px;border-radius:4px}
+.swatch{display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border-radius:var(--cx-radius-sm);border:1px solid var(--cx-line)}
+.swatch i{width:36px;height:36px;border-radius:8px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.swatch b{display:block;font-size:12px}
+.swatch code{font-family:var(--cx-font-mono);font-size:10px;color:var(--cx-stone)}
+.stat{padding:14px;border-radius:var(--cx-radius);background:#fff;border:1px solid var(--cx-line)}
+.stat b{display:block;font-family:var(--cx-font-head);font-size:26px;font-weight:800;letter-spacing:-.03em}
+.stat span{font-size:12px;color:var(--cx-stone)}
+</style>
+</head>
+<body>
+
+<p class="screen-help no-print">Design system conect tech v1 · <b>mesma linha visual ConectMax</b> (azul #0070BC, laranja CTA, Montserrat, globo). A4 paisagem.</p>
+
+<!-- CAPA -->
+<section class="page dark cover">
+  <div class="gridbg"></div>
+  <div style="position:relative;z-index:1">
+    <div class="eyebrow">Design system &nbsp;|&nbsp; Versão 1</div>
+    <div style="margin-top:22px"><span class="logo on-dark" style="font-size:56px"><img src="assets-conectmax/icone-512.png" alt="" style="filter:brightness(12)"><span class="conect">CONECT</span><span class="tech">TECH</span></span></div>
+    <p class="tagline">Tokens e componentes na família ConectMax — densidade de produto, CTA laranja, azul oficial.</p>
+  </div>
+  <div class="meta">Documento de componentes<br>Outubro de 2026</div>
+</section>
+
+<!-- TOKENS -->
+<section class="page">
+  <div class="eyebrow">Fundação</div>
+  <h2>Tokens = identidade ConectMax</h2>
+  <p class="lead">Não inventar paleta paralela. Espaço 4/8, radius 8–12, tipografia Plus Jakarta + Montserrat no logo.</p>
+  <div class="grid g2" style="flex:1">
+    <div>
+      <div class="label">Cores oficiais</div>
+      <div class="grid" style="gap:8px">
+        <div class="swatch"><i style="background:#0070BC"></i><div><b>Azul CONECT</b><code>--cx-blue #0070BC</code></div></div>
+        <div class="swatch"><i style="background:#4A9FE0"></i><div><b>Azul claro</b><code>--cx-blue-light #4A9FE0</code></div></div>
+        <div class="swatch"><i style="background:#181818"></i><div><b>Preto / TECH</b><code>--cx-black #181818</code></div></div>
+        <div class="swatch"><i style="background:#FF731D"></i><div><b>Laranja CTA</b><code>--cx-orange #FF731D</code></div></div>
+        <div class="swatch"><i style="background:#161745"></i><div><b>Navy</b><code>--cx-navy #161745</code></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="label">Espaço · raio · tipo</div>
+      <div class="panel" style="margin-bottom:10px">
+        <div style="display:flex;gap:6px;align-items:flex-end;height:48px;margin-bottom:8px">
+          <div style="width:4px;height:4px;background:var(--cx-blue)"></div>
+          <div style="width:8px;height:8px;background:var(--cx-blue)"></div>
+          <div style="width:12px;height:12px;background:var(--cx-blue)"></div>
+          <div style="width:16px;height:16px;background:var(--cx-blue)"></div>
+          <div style="width:24px;height:24px;background:var(--cx-blue)"></div>
+        </div>
+        <p style="font-size:12px;color:var(--cx-stone)">4 · 8 · 12 · 16 · 24 px</p>
+      </div>
+      <div class="panel">
+        <p style="font-size:12px;margin-bottom:8px"><span class="token">radius-sm 8</span> <span class="token">radius 12</span> <span class="token">pill</span></p>
+        <p style="font-size:12px;color:var(--cx-stone)">Logo: Montserrat italic · UI: Plus Jakarta Sans · Mono: JetBrains</p>
+        <p style="font-size:12px;color:var(--cx-stone);margin-top:8px">Símbolo: globo ConectMax (<code>icone-512.png</code> / <code>simbolo-oficial.png</code>)</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>02</span></div>
+</section>
+
+<!-- BUTTONS -->
+<section class="page">
+  <div class="eyebrow">Componentes</div>
+  <h2>Botões, badges e estados</h2>
+  <div class="grid g2" style="flex:1">
+    <div class="panel">
+      <div class="label">Buttons</div>
+      <div class="btn-row" style="margin-bottom:12px">
+        <span class="btn btn-primary">Primário</span>
+        <span class="btn btn-cta">CTA laranja</span>
+        <span class="btn btn-secondary">Secundário</span>
+        <span class="btn btn-ghost">Ghost</span>
+      </div>
+      <div class="btn-row">
+        <span class="btn btn-primary btn-sm">Small</span>
+        <span class="btn btn-primary">Default</span>
+        <span class="btn btn-primary btn-lg">Large</span>
+        <span class="btn btn-danger">Perigo</span>
+        <span class="btn btn-primary is-disabled">Disabled</span>
+      </div>
+      <p class="hint" style="margin-top:12px">Primário = azul #0070BC. CTA conversão = laranja #FF731D (site ConectMax). Um primary por viewport.</p>
+    </div>
+    <div class="panel">
+      <div class="label">Badges / status</div>
+      <div class="btn-row" style="margin-bottom:16px">
+        <span class="badge badge-blue">Em curso</span>
+        <span class="badge badge-ok">Ativo</span>
+        <span class="badge badge-warn">Atenção</span>
+        <span class="badge badge-err">Bloqueado</span>
+        <span class="badge badge-neutral">Rascunho</span>
+      </div>
+      <div class="label">Toggle · checkbox</div>
+      <div class="btn-row">
+        <span class="toggle"></span>
+        <span class="toggle on"></span>
+        <span class="check"></span>
+        <span class="check on">✓</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>03</span></div>
+</section>
+
+<!-- FORM -->
+<section class="page">
+  <div class="eyebrow">Componentes</div>
+  <h2>Inputs e formulário</h2>
+  <div class="grid g3" style="flex:1;align-content:start">
+    <div class="field">
+      <label>Nome do projeto</label>
+      <input class="input" value="Portal de compras">
+      <span class="hint">Apoio opcional</span>
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input class="input is-error" value="ops@">
+      <span class="hint err">Informe um e-mail válido</span>
+    </div>
+    <div class="field">
+      <label>Plano</label>
+      <select class="select"><option>Diagnóstico</option><option>Operação</option></select>
+    </div>
+    <div class="field" style="grid-column:1 / -1">
+      <label>Contexto</label>
+      <textarea class="textarea">Do diagnóstico à operação, com prazo e resultado claros.</textarea>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>04</span></div>
+</section>
+
+<!-- NAV CARDS -->
+<section class="page">
+  <div class="eyebrow">Componentes</div>
+  <h2>Nav, cards e métricas</h2>
+  <div class="nav-demo" style="margin-bottom:14px">
+    <span class="logo" style="font-size:18px"><img src="assets-conectmax/simbolo-oficial.png" alt=""><span class="conect">CONECT</span><span class="tech">TECH</span></span>
+    <a href="#">Serviços</a><a href="#">Método</a><a href="#">Cases</a>
+    <span class="btn btn-primary btn-sm">Agendar diagnóstico</span>
+    <span class="btn btn-cta btn-sm">Saiba mais</span>
+  </div>
+  <div class="tabs" style="margin-bottom:14px">
+    <span class="tab is-active">Visão geral</span>
+    <span class="tab">Entregas</span>
+    <span class="tab">Financeiro</span>
+  </div>
+  <div class="grid g3" style="margin-bottom:14px">
+    <div class="stat"><b>42</b><span>projetos ativos</span></div>
+    <div class="stat"><b>98%</b><span>SLA no prazo</span></div>
+    <div class="stat"><b>12d</b><span>lead time médio</span></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Integração ERP</h4>
+      <p>Conecta pedidos, estoque e financeiro num só fluxo — sem planilha paralela.</p>
+    </div>
+    <div class="card flat">
+      <h4>Card flat</h4>
+      <p>Flat em listagens densas; sombra só em destaque interativo.</p>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>05</span></div>
+</section>
+
+<!-- TABLE -->
+<section class="page">
+  <div class="eyebrow">Componentes</div>
+  <h2>Tabela</h2>
+  <p class="lead">Header mist, badges de status, sem zebra pesada — alinhado ao benchmarking e à UI ConectMax.</p>
+  <div class="table-wrap" style="flex:1">
+    <table class="ds">
+      <thead>
+        <tr><th>Cliente</th><th>Produto</th><th>Owner</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Acme Indústria</td><td>Portal de compras</td><td>Laércio</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+        <tr><td>Beta Log</td><td>Integração WMS</td><td>Bruno</td><td><span class="badge badge-blue">Em curso</span></td></tr>
+        <tr><td>Casa Nova</td><td>API pedidos</td><td>Marcello</td><td><span class="badge badge-warn">Atenção</span></td></tr>
+        <tr><td>Delta Tech</td><td>Diagnóstico</td><td>Gabriele</td><td><span class="badge badge-neutral">Rascunho</span></td></tr>
+        <tr><td>Echo Retail</td><td>Go-live</td><td>Laércio</td><td><span class="badge badge-err">Bloqueado</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>06</span></div>
+</section>
+
+<!-- DARK / MOBILE -->
+<section class="page mist">
+  <div class="eyebrow">Aplicações</div>
+  <h2>Hero escuro e mobile</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.4fr;flex:1;gap:18px">
+    <div style="background:var(--cx-black);border-radius:24px;padding:18px 14px;color:#fff;max-width:240px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
+      <span class="logo on-dark" style="font-size:15px"><img src="assets-conectmax/icone-512.png" alt="" style="filter:brightness(12)"><span class="conect">CONECT</span><span class="tech">TECH</span></span>
+      <div style="background:var(--cx-graphite);border-radius:12px;padding:12px">
+        <div style="font-size:11px;color:#8C95A8">Próximo passo</div>
+        <div style="font-weight:700;font-size:15px;margin:4px 0 8px">Agendar diagnóstico</div>
+        <span class="btn btn-primary btn-sm" style="width:100%">Continuar</span>
+      </div>
+      <span class="btn btn-cta btn-sm" style="width:100%">Saiba mais</span>
+    </div>
+    <div class="panel" style="background:var(--cx-black);color:#fff">
+      <div class="label" style="color:#8C95A8">Superfície escura (Hero Noite)</div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <span class="btn btn-primary btn-sm">Agendar</span>
+        <span class="btn btn-cta btn-sm">CTA</span>
+        <span class="btn btn-secondary btn-sm" style="border-color:#3A4254;color:#C9D1E0">Secundário</span>
+      </div>
+      <div style="border:1px solid #262D3D;border-radius:12px;overflow:hidden;font-size:12px">
+        <div style="padding:10px 12px;border-bottom:1px solid #262D3D;display:flex;justify-content:space-between"><span>CT-142 · API</span><span class="badge badge-blue">Em curso</span></div>
+        <div style="padding:10px 12px;border-bottom:1px solid #262D3D;display:flex;justify-content:space-between;color:#B4BCCC"><span>CT-138 · Onboarding</span><span class="badge badge-ok">Ativo</span></div>
+        <div style="padding:10px 12px;display:flex;justify-content:space-between;color:#B4BCCC"><span>CT-129 · Billing</span><span class="badge badge-warn">Atenção</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>07</span></div>
+</section>
+
+<!-- CHECKLIST -->
+<section class="page">
+  <div class="eyebrow">Checklist</div>
+  <h2>Antes de implementar</h2>
+  <div class="grid g2" style="flex:1">
+    <div class="panel">
+      <h3>Do</h3>
+      <ul style="margin:8px 0 0 16px;font-size:13px;color:var(--cx-stone)">
+        <li>Tokens <span class="token">--cx-*</span> iguais à ConectMax / identidade tech</li>
+        <li>CONECT azul + TECH preto/branco · Montserrat italic</li>
+        <li>Globo oficial nos ícones</li>
+        <li>CTA laranja só para conversão</li>
+        <li>Controles 40px (32 / 48)</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Don’t</h3>
+      <ul style="margin:8px 0 0 16px;font-size:13px;color:var(--cx-stone)">
+        <li>Azul Tailwind genérico (#2563EB) no lugar de #0070BC</li>
+        <li>Símbolo X / outra tipografia de logo</li>
+        <li>Roxo, glow ou cream “AI default”</li>
+        <li>Redesenhar o globo</li>
+        <li>DS sem a identidade fechada</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>conect tech · Design system v1</span><span>08</span></div>
+</section>
+
+</body>
+</html>

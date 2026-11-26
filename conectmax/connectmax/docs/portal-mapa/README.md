@@ -3,7 +3,7 @@
 **Gerado:** 2026-11-12 (CDP perfil `germano` :9230 + human-cdp)  
 **Painel:** https://franqueado.conectmax.com/franqueado/  
 **Sessão:** conta gerenciada **LAERCIO** (banner amarelo “Você está gerenciando a conta de LAERCIO”)  
-**Complementa:** [`portal-franqueado.md`](../portal-franqueado.md) · [`GETS.md`](../../portal-api/GETS.md) · [`SCHEMA-REPLICA.md`](../../portal-api/SCHEMA-REPLICA.md)  
+**Complementa:** [`portal-franqueado.md`](../portal-franqueado.md) · [`GETS.md`](../../portal-api/GETS.md) · [`SCHEMA-REPLICA.md`](../../portal-api/SCHEMA-REPLICA.md) · [`downloads/conectmax-processos.html`](../downloads/conectmax-processos.html)  
 **Regenerar:** `node docs/portal-mapa/mapear-portal-cdp.mjs` (Chrome Germano up) · JSON bruto por tela nesta pasta
 
 ## Visão geral

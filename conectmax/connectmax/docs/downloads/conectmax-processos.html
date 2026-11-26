@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ConectMax – Processos e Pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,800;1,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#071733; --navy2:#0c2550; --azul:#1f7fc4; --azul-esc:#1a5fa8; --ciano:#16d3e8; --verde:#2ee6b8;
+    --bg:#eef3f9; --txt:#13203a; --muted:#61708a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Poppins,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+  body{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  header{
+    background:radial-gradient(circle at 0% 0%,#123a7a 0,transparent 60%),linear-gradient(180deg,var(--navy) 0%,var(--navy2) 70%,#0b3b6e 100%);
+    color:#fff;padding:22px 16px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh;overflow:hidden}
+  header::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.14;
+    background-image:radial-gradient(#3fa9ff 1.2px,transparent 1.6px);background-size:22px 22px}
+  .logo{display:flex;flex-direction:column;line-height:1;position:relative;z-index:1;padding:0 6px}
+  .logo b{font-style:italic;font-weight:800;font-size:26px;letter-spacing:.5px}
+  .logo b span{color:#2a7fd6}
+  .logo small{font-style:italic;font-size:9.5px;letter-spacing:2.6px;margin-top:3px;color:#dfe9f7}
+  nav{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px}
+  nav .sec-t{font-size:10px;letter-spacing:1.5px;color:#8fb0d8;text-transform:uppercase;margin:0 10px 6px}
+  nav button{background:transparent;border:0;border-left:3px solid transparent;color:#d6e3f5;padding:10px 12px;border-radius:0 8px 8px 0;cursor:pointer;text-align:left;font:500 13.5px Poppins,sans-serif}
+  nav button:hover{background:#ffffff12;color:#fff}
+  nav button.on{background:#16d3e81f;border-left-color:var(--ciano);color:#fff;font-weight:600}
+  .rodape{margin-top:auto;font-size:11px;color:#8fb0d8;position:relative;z-index:1;padding:0 8px}
+  /* barra superior: logo + botão do menu à esquerda; tela cheia, notificações e perfil à direita */
+  body{grid-template-columns:240px 1fr;grid-template-rows:64px 1fr;transition:grid-template-columns .2s ease}
+  .topo{grid-column:1/-1;position:sticky;top:0;z-index:70;height:64px;display:flex;align-items:center;
+    background:#fff;border-bottom:1px solid #dbe4f0;box-shadow:0 2px 8px #0a1f440d}
+  .topo-logo{width:240px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 18px;height:100%}
+  .topo-logo img{height:40px;width:auto;display:block}
+  .topo-dir{margin-left:auto;display:flex;align-items:center;gap:6px;padding-right:22px}
+  .tb-btn{width:38px;height:38px;border:0;border-radius:10px;background:transparent;cursor:pointer;color:var(--navy);
+    display:flex;align-items:center;justify-content:center;position:relative;transition:background .15s}
+  .tb-btn:hover{background:#eef3f9}
+  .tb-btn svg{width:21px;height:21px}
+  .tg-menu{flex-direction:column;gap:4px}
+  .tg-menu span{display:block;width:18px;height:2px;border-radius:2px;background:var(--navy)}
+  .badge{position:absolute;top:3px;right:3px;min-width:17px;height:17px;border-radius:9px;background:#e53935;color:#fff;
+    font:700 10px/17px Poppins,sans-serif;padding:0 4px;text-align:center}
+  .badge:empty{display:none}
+  .avatar{width:38px;height:38px;border-radius:50%;border:2px solid #dbe4f0;background:#fff;overflow:hidden;cursor:pointer;padding:0;margin-left:6px}
+  .avatar:hover{border-color:var(--azul)}
+  .avatar{background:#fff url(conectmax-logo.png) no-repeat 2px 50%/auto 40px}
+  .avatar.g{width:46px;height:46px;background-position:2px 50%;background-size:auto 48px;margin:0;flex:none;cursor:default}
+  .pop{position:absolute;top:56px;right:16px;background:#fff;border-radius:12px;box-shadow:0 10px 30px #0a1f4433;min-width:240px;z-index:80;overflow:hidden}
+  .pop[hidden]{display:none}
+  .pop-t{padding:12px 16px;font-weight:700;font-size:13px;border-bottom:1px solid #eef2f8;color:var(--navy)}
+  .pop-l{max-height:340px;overflow-y:auto}
+  .pop-l div{padding:10px 16px;font-size:12.5px;border-bottom:1px solid #eef2f8;cursor:pointer}
+  .pop-l div:hover{background:#f4f8fc}
+  .pop-l div:last-child{border:0}
+  .perfil-nome{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #eef2f8}
+  .perfil-nome b{font-size:14px;color:var(--navy);cursor:pointer}
+  .perfil-nome small{display:block;color:var(--muted);font-size:11px}
+  .btn-sair{width:100%;border:0;background:transparent;padding:12px 16px;text-align:left;font:600 13px Poppins,sans-serif;color:#c62828;cursor:pointer}
+  .btn-sair:hover{background:#fdeeee}
+  #saiu{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,var(--navy),var(--navy2));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff}
+  #saiu[hidden]{display:none}
+  #saiu img{height:60px;filter:brightness(0) invert(1)}
+  .tela-cheia{position:fixed;inset:0;z-index:190;background:linear-gradient(180deg,var(--navy),var(--navy2));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff}
+  .tela-cheia[hidden]{display:none}
+  .tela-cheia > img{height:60px;filter:brightness(0) invert(1)}
+  #semAcesso{z-index:185}
+  .login-box{background:#fff;color:var(--txt);border-radius:16px;padding:28px 30px;width:360px;max-width:92vw;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px #0006}
+  .login-box img{height:46px;align-self:center}
+  .login-box h3{margin:4px 0;text-align:center;color:var(--navy)}
+  .login-box label{font-size:12px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  .login-box input{padding:10px;border:1px solid #cdd7e5;border-radius:8px;font:14px Poppins,sans-serif}
+  .login-box a{font-size:12px;text-align:center;color:var(--azul)}
+  .lg-msg{font-size:12px;color:#c62828;min-height:0}
+  .lg-msg.ok{color:#0f7a4f}
+  #perfilEmail{color:var(--muted);font-size:11px}
+  #perfilComo[hidden]{display:none}
+  header{width:240px;z-index:50;transition:width .2s ease,padding .2s;padding:18px 10px;top:64px;height:calc(100vh - 64px)}
+  /* recolhido: só os ícones, expande ao passar o mouse (a barra de cima não muda) */
+  body.menu-oculto{grid-template-columns:68px 1fr}
+  body.menu-oculto header{width:68px;transition:width .2s ease,box-shadow .2s}
+  body.menu-oculto header:hover{width:240px;box-shadow:8px 0 24px #0008}
+  .lb,.full,.rodape{transition:opacity .15s}
+  nav .sec-t{transition:color .15s}
+  body.menu-oculto .lb,body.menu-oculto .full,body.menu-oculto .rodape{opacity:0}
+  body.menu-oculto header:hover .lb,body.menu-oculto header:hover .full,body.menu-oculto header:hover .rodape{opacity:1;transition-delay:.08s}
+  body.menu-oculto nav .sec-t{color:transparent}
+  body.menu-oculto header:hover nav .sec-t{color:#8fb0d8}
+  nav button{display:flex;align-items:center;gap:12px;white-space:nowrap;padding:10px 12px}
+  nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;margin-right:-4px}
+  nav::-webkit-scrollbar{display:none}
+  header{gap:18px}
+  nav button{padding:8px 12px;font-size:13px}
+  nav .sec-t{margin:14px 10px 4px;border-top:1px solid #ffffff1f;padding-top:10px;color:#8fb0d8;font-weight:600}
+  nav .sec-t:first-child{border-top:0;margin-top:0;padding-top:0}
+  nav .ic{font-size:18px;width:22px;text-align:center;flex:none}
+  .lb,.full,.sec-t,.rodape{white-space:nowrap}
+  .logo{position:relative;height:60px;padding:0}
+  .logo img{filter:brightness(0) invert(1);display:block}
+  /* uma única imagem: recolhido mostra só o globo, expandido revela o resto (mesmo tamanho) */
+  .globo{position:absolute;left:4px;top:6px;width:176px;height:48px;overflow:hidden}
+  .globo img{height:48px;width:auto;max-width:none}
+  main{padding:28px 32px;width:100%;max-width:1400px}
+  /* dashboard */
+  .fat-card{position:relative;overflow:hidden;border-radius:14px;padding:26px 30px;color:#fff;max-width:620px;
+    background:radial-gradient(circle at 100% 0%,#1f7fc455 0,transparent 60%),linear-gradient(120deg,var(--navy),var(--navy2) 70%,#0b3b6e);box-shadow:0 6px 20px #0a1f4430}
+  .fat-card::after{content:"";position:absolute;inset:0;opacity:.14;background-image:radial-gradient(#3fa9ff 1.2px,transparent 1.6px);background-size:22px 22px;pointer-events:none}
+  .fat-t{font-size:13px;font-weight:600;letter-spacing:1.5px;color:var(--ciano)}
+  .fat-v{font-size:40px;font-weight:800;margin:6px 0 4px}
+  .fat-s{font-size:11.5px;color:#9fb6d6}
+  .rank{max-width:620px}
+  .rk{display:grid;grid-template-columns:50px 1fr 160px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid #eef2f8;font-size:14px}
+  .rk-h{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+  .rk .pos{font-weight:800;font-size:16px;color:var(--azul)}
+  .rk .val{text-align:right;font-weight:600}
+  /* orçamentos */
+  .filtros{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px 12px;background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 6px #0a1f4412;margin-bottom:12px}
+  .filtros label,.f-grid label{display:flex;flex-direction:column;font-size:11px;font-weight:600;color:var(--muted);gap:3px}
+  .resumo{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;margin:4px 2px 14px}
+  .resumo span{cursor:pointer}
+  .resumo b{font-weight:600}
+  .api-aviso{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;background:#eef6ff;color:var(--azul-esc);border-radius:10px;padding:9px 14px;margin:0 0 12px}
+  .api-aviso.ok{background:#e9f8f1;color:#0f7a4f}
+  .api-aviso.erro{background:#fdeeee;color:#c62828}
+  .api-aviso .btn{padding:5px 12px;font-size:12px}
+  .oc.ped{grid-template-columns:22px 150px minmax(200px,1.4fr) minmax(160px,1fr) 120px 120px 150px}
+  .oc.ped .acoes{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+  .oc.ped .acoes .btn{padding:5px 10px;font-size:12px;text-align:left;width:100%}
+  .oc.cancelado > span:not(.acoes):not(.sel){opacity:.55}
+  #dlgPed.so-ver .so-edit{display:none!important}
+  #dlgPed.so-ver input,#dlgPed.so-ver select,#dlgPed.so-ver textarea{background:#f4f7fb;color:var(--txt);opacity:1}
+  #dlgPed.so-ver .x{display:none}
+  .oc{display:grid;grid-template-columns:22px 130px minmax(200px,1.4fr) minmax(160px,1fr) 120px 120px 340px;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid #eef2f8;font-size:13px}
+  .oc-h{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+  .oc .n{font-weight:700;color:var(--navy2)} .oc .s{font-size:11.5px;color:var(--muted)}
+  .oc .acoes{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
+  .st-click{cursor:pointer;user-select:none} .st-click:hover{filter:brightness(1.1);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--c,#999)}
+  .st-menu{position:fixed;z-index:50;background:#fff;border-radius:10px;box-shadow:0 8px 24px rgba(12,37,80,.22);padding:6px;display:flex;flex-direction:column;gap:4px;min-width:150px}
+  .st-menu button{border:0;background:#fff;color:var(--c);text-align:left;padding:7px 10px;border-radius:7px;font:600 12.5px Poppins,sans-serif;cursor:pointer;border-left:4px solid var(--c)}
+  .st-menu button:hover{background:#f3f7fc}
+  .st-menu[hidden]{display:none}
+  .lg-grp{margin:18px 0 6px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--c)}
+  .lg-grp::before{content:"";width:6px;height:18px;border-radius:3px;background:var(--c)}
+  .lg-grp small{font-weight:500;letter-spacing:0;color:var(--muted)}
+  .lg{display:grid;grid-template-columns:minmax(190px,1fr) 95px minmax(180px,1.4fr) 120px auto;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid #eef2f8;font-size:13px;border-left:4px solid var(--c)}
+  .lg .n{font-weight:800;font-size:15px;color:var(--navy2);margin-right:8px}
+  .lg .tag{font-size:12px;padding:4px 12px}
+  .lg .acoes{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+  .lg .acoes button{padding:5px 9px;font-size:11.5px}
+  .lg .acoes button.ok{border-color:#16a36a;color:#16a36a;background:#effaf4}
+  .kb{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:14px;overflow-x:auto;padding-bottom:6px;margin-top:16px;align-items:start}
+  .kb-col{background:#e6edf6;border-radius:12px;border-top:5px solid var(--c);display:flex;flex-direction:column;min-height:200px}
+  .kb-h{display:flex;align-items:center;gap:8px;padding:12px 14px 8px;flex-wrap:wrap}
+  .kb-h b{font-size:12.5px;letter-spacing:1px;color:var(--c)}
+  .kb-h .kb-n{background:var(--c);color:#fff;border-radius:10px;padding:1px 9px;font-size:12px;font-weight:700}
+  .kb-h small{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600}
+  .kb-body{display:flex;flex-direction:column;gap:10px;padding:4px 10px 12px;max-height:calc(100vh - 290px);overflow-y:auto}
+  .kb-card{background:#fff;border-radius:10px;padding:11px 12px;box-shadow:0 1px 3px rgba(12,37,80,.12);border-left:4px solid var(--c);display:flex;flex-direction:column;gap:6px}
+  .kb-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .kb-top .n{font-weight:800;font-size:16px;color:var(--navy2)}
+  .kb-top .tag{font-size:11px;padding:3px 10px}
+  .kb-cli{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kb-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)} .kb-info b{color:var(--txt);font-size:13px}
+  .kb-acoes{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px;border-top:1px solid #eef2f8;padding-top:8px}
+  .kb-acoes button{border:1px solid #d7e1ee;background:#fff;border-radius:7px;padding:5px 2px;cursor:pointer;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+  .kb-acoes button span{font:500 9.5px Poppins,sans-serif;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kb-acoes button:hover{border-color:var(--azul);background:#f3f7fc}
+  .kb-acoes button.ok{border-color:#16a36a;background:#effaf4} .kb-acoes button.ok span{color:#16a36a;font-weight:600}
+  .kb-vazio{text-align:center;color:var(--muted);font-size:12.5px;padding:24px 0;border:2px dashed #cfdaea;border-radius:10px}
+  .sel input{width:16px;height:16px;cursor:pointer;accent-color:var(--azul);margin:0}
+  .oc.marcado,.tr.marcado{background:#eaf4ff}
+  .bulk{display:flex;align-items:center;gap:10px;background:#0c2550;color:#fff;border-radius:10px;padding:8px 14px;margin:0 0 10px;font-size:13px;font-weight:600}
+  .bulk[hidden]{display:none}
+  .bulk .x{background:#e53935;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:600;cursor:pointer}
+  .bulk .btn.sec{padding:5px 12px;font-size:12px}
+  .tr{display:grid;grid-template-columns:22px minmax(220px,2fr) 170px 150px minmax(150px,1fr) 90px;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid #eef2f8;font-size:13px}
+  .tr-h{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+  .tr .nm{font-weight:600;color:var(--navy2)}
+  .tr button{padding:5px 10px;font-size:11.5px}
+  .nf-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+  .nf-kpis div{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 1px 3px rgba(12,37,80,.08);border-left:5px solid var(--c);display:flex;flex-direction:column;gap:4px}
+  .nf-kpis span{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .nf-kpis b{font-size:22px;color:var(--c)}
+  .nf{display:grid;grid-template-columns:200px 130px 110px minmax(180px,1.5fr) 95px minmax(140px,1fr) 120px;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid #eef2f8;font-size:13px}
+  .nf-h{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+  .nf .acoes{display:flex;gap:4px} .nf .acoes button{padding:4px 8px;font-size:11.5px}
+  .nf .acoes button:disabled{opacity:.4;cursor:default}
+  .lst-arq{display:flex;flex-direction:column;gap:6px;margin-top:10px;font-size:13px}
+  .lst-arq div{display:flex;justify-content:space-between;align-items:center;background:#f3f7fc;border-radius:8px;padding:6px 10px}
+  .oc .acoes button{padding:5px 9px;font-size:11.5px}
+  .f-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .it-orc input{width:100%;padding:5px 7px}
+  .it-orc td{padding:3px;vertical-align:middle}
+  .it-orc td.pn{font-size:12.5px;font-weight:500}
+  .st-seg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+  .st-seg button{border:2px solid var(--c);background:#fff;color:var(--c);border-radius:20px;padding:6px 14px;font:600 12.5px Poppins,sans-serif;cursor:pointer}
+  .st-seg button.on{background:var(--c);color:#fff}
+  .f-grid input,.f-grid select{width:100%}
+  .f-sec{font-size:12px;font-weight:700;color:var(--azul-esc);text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px;border-top:1px solid #e3eaf4;padding-top:14px}
+  .tot-orc{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-top:14px;flex-wrap:wrap}
+  .tot-orc .desc{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center}
+  .tot-orc .linhas{min-width:280px;font-size:13.5px}
+  .tot-orc .linhas div{display:flex;justify-content:space-between;padding:3px 0}
+  .tot-orc .linhas span{color:var(--muted);text-transform:uppercase;font-size:12px;font-weight:600}
+  .tot-orc .final-t{border-top:2px solid var(--ciano);margin-top:4px;padding-top:6px!important;font-size:17px}
+  /* vendedores */
+  .vd{display:grid;grid-template-columns:1fr 90px 110px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid #eef2f8}
+  .vd-h{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+  .vd.inativo .nome{color:#9aa6b8}
+  .vd .nome{font-weight:600;font-size:14.5px;color:var(--navy2);display:flex;align-items:center;gap:10px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--azul),var(--ciano));color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+  .vd.inativo .avatar{background:#c5cfdc}
+  .st{font-size:11.5px;color:var(--muted);font-weight:400;margin-top:2px}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:#9aa6b8}
+  .dot.on{background:#16a36a;box-shadow:0 0 0 3px #16a36a33}
+  .sw{position:relative;width:44px;height:24px;margin:auto;display:block}
+  .sw input{opacity:0;width:0;height:0}
+  .sw span{position:absolute;inset:0;background:#c5cfdc;border-radius:12px;cursor:pointer;transition:.2s}
+  .sw span::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px #0003}
+  .sw input:checked+span{background:#16a36a}
+  .sw input:checked+span::before{transform:translateX(20px)}
+  dialog{border:0;border-radius:14px;padding:24px;width:420px;max-width:92vw;box-shadow:0 20px 60px #0a1f4466;font-family:inherit}
+  dialog::backdrop{background:#071733aa}
+  dialog label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
+  dialog label input{display:block;width:100%;margin-top:4px}
+  dialog{width:520px;max-height:92vh}
+  .perms{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;max-height:230px;overflow:auto;border:1px solid #e3eaf4;border-radius:8px;padding:8px 10px;background:#f8fbff}
+  .perms label{display:flex;align-items:center;gap:6px;font-weight:400;color:var(--txt);margin:0;font-size:12.5px}
+  .perms label input{display:inline;width:auto;margin:0}
+  .perms .grp{grid-column:1/-1;font-size:10px;font-weight:700;color:var(--azul-esc);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .cargo{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:10px;background:#e3eefb;color:var(--azul-esc)}
+  .cargo.Gerência{background:#e6f7ef;color:#0f7a4f}
+  /* lista de pedidos */
+  .grid-ped{background:#fff;border-radius:12px;box-shadow:0 2px 8px #0a1f4414;overflow:hidden}
+  .lh,.row{display:grid;grid-template-columns:28px 82px 82px 82px minmax(160px,1.6fr) 210px 150px 70px 110px;gap:10px;align-items:center;padding:11px 16px}
+  .lh{background:#f3f7fc;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e3eaf4}
+  .row{cursor:pointer;border-bottom:1px solid #eef2f8;font-size:13px;border-left:4px solid var(--c);transition:background .12s}
+  .row:hover{background:#f5f9ff}
+  .row.aberto{background:#eef6ff}
+  .row .chev{color:var(--azul);font-size:12px;transition:transform .15s}
+  .row.aberto .chev{transform:rotate(90deg)}
+  .row .num{font-weight:600;color:var(--navy2)}
+  .row .cli{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .mini{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+  .row .mini .prog{flex:1;margin:0}
+  .row .dt{font-size:12px;color:var(--muted)}
+  .row .dt.alert{color:#c62828}
+  .detail{padding:16px 22px 18px 48px;background:#fafcff;border-bottom:1px solid #e3eaf4;border-left:4px solid var(--c)}
+  .tab{display:none}.tab.on{display:block}
+  h2{margin:0 0 14px;font-weight:800;font-size:24px;text-transform:uppercase;color:var(--navy2)}
+  h2::after{content:"";display:block;width:70px;height:4px;background:var(--ciano);border-radius:2px;margin-top:6px}
+  h3{color:var(--navy2)}
+  /* fluxograma */
+  .flow{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+  .step{background:#fff;border-radius:12px;padding:12px;width:220px;box-shadow:0 2px 6px #0a1f4412;border-top:5px solid var(--c);position:relative}
+  .step h3{margin:0 0 6px;font-size:15px}
+  .step ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:#334}
+  .step .cnt{position:absolute;top:8px;right:10px;background:var(--c);color:#fff;border-radius:12px;padding:1px 9px;font-size:12px;font-weight:600}
+  .arrow{align-self:center;font-size:22px;color:var(--azul)}
+  .fase{font-size:12px;font-weight:700;color:var(--azul-esc);text-transform:uppercase;letter-spacing:1px;margin:18px 0 8px}
+  /* pedidos */
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  input,select{padding:7px 9px;border:1px solid #c5d2e3;border-radius:8px;font:inherit;font-size:13px}
+  input:focus,select:focus{outline:2px solid var(--ciano);border-color:transparent}
+  .btn{background:linear-gradient(90deg,var(--azul-esc),var(--azul));color:#fff;border:0;padding:8px 16px;border-radius:20px;cursor:pointer;font:600 13px Poppins,sans-serif}
+  .btn.sec{background:#dde7f3;color:var(--navy2)}
+  .orders{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:16px}
+  .card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px #0a1f4414;border-left:6px solid var(--c)}
+  .card.parado{box-shadow:0 0 0 2px #e53935,0 2px 8px #0a1f4414}
+  .card h3{margin:0;font-size:16px;display:flex;justify-content:space-between;gap:8px}
+  .tag{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--c);color:#fff;white-space:nowrap;font-weight:600}
+  .meta{font-size:12px;color:var(--muted);margin:4px 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:6px 4px;border-bottom:1px solid #eef2f8;text-align:left;vertical-align:top}
+  th{font-size:10.5px;color:var(--muted);text-transform:uppercase}
+  td.c{text-align:center}
+  td input[type=date]{padding:3px 5px;font-size:12px;width:128px}
+  .obs-ped{display:block;width:100%;min-height:54px;margin:4px 0 12px;padding:8px 10px;font:13px Poppins,sans-serif;border:1px solid #d6e1ee;border-radius:8px;background:#fff;resize:vertical}
+  .obs{width:100%;margin-top:4px;padding:4px 7px;font-size:12px;border-color:#e1e8f2;background:#f8fbff}
+  .atraso{color:#c62828;font-weight:600;font-size:11px;display:block}
+  .final{display:flex;gap:6px 14px;flex-wrap:wrap;margin-top:12px;font-size:13px}
+  .final label.dis{opacity:.4}
+  .prog{height:6px;background:#e6edf6;border-radius:3px;margin:8px 0;overflow:hidden}
+  .prog div{height:100%;background:linear-gradient(90deg,var(--azul),var(--ciano))}
+  .alert{color:#c62828;font-weight:600;font-size:12px}
+  .add-item{display:flex;gap:6px;margin-top:8px}
+  .add-item input{flex:1}
+  .x{background:none;border:0;color:#c62828;cursor:pointer;font-size:13px;font-family:inherit}
+  /* painel */
+  .kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+  .kpi{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 2px 6px #0a1f4412;min-width:150px;border-top:4px solid var(--c)}
+  .kpi b{display:block;font-size:28px;font-weight:800;color:var(--c)}
+  .kpi span{font-size:12px;color:var(--muted)}
+  .list{background:#fff;border-radius:12px;padding:6px 16px;box-shadow:0 2px 6px #0a1f4412}
+  .list div{padding:8px 0;border-bottom:1px solid #eef2f8;font-size:13.5px}
+  .list div:last-child{border:0}
+</style>
+</head>
+<body>
+<div class="topo">
+  <div class="topo-logo">
+    <img src="conectmax-logo.png" alt="ConectMax – Soluções em Tecnologia">
+    <button type="button" class="tb-btn tg-menu" onclick="document.body.classList.toggle('menu-oculto')" title="Recolher / mostrar o menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="topo-dir">
+    <button type="button" class="tb-btn" id="btnApi" onclick="abrirApi()" title="Conexão com o Portal do Franqueado (API)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/></svg></button>
+    <button type="button" class="tb-btn" id="btnTela" onclick="telaCheia()" title="Tela cheia">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button type="button" class="tb-btn" onclick="abrirNotif(event)" title="Notificações">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <span class="badge" id="notifQtd"></span></button>
+    <button type="button" class="avatar" onclick="abrirPop(event,'popPerfil')" title="Meu perfil"></button>
+  </div>
+  <div class="pop" id="popNotif" hidden onclick="event.stopPropagation()" style="right:66px;width:340px">
+    <div class="pop-t">Notificações</div><div class="pop-l" id="notifLista"></div></div>
+  <div class="pop" id="popPerfil" hidden onclick="event.stopPropagation()">
+    <div class="perfil-nome"><span class="avatar g"></span><div><b id="perfilNome" onclick="editarNome()" title="Clique para alterar o nome"></b><small id="perfilCargo"></small><small id="perfilEmail"></small></div></div>
+    <label id="perfilComo" style="display:block;padding:10px 16px;border-bottom:1px solid #eef2f8;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase">Acessando como
+      <select id="perfilUsuario" onchange="trocarUsuario(this.value)" style="display:block;width:100%;margin-top:4px;text-transform:none"></select></label>
+    <button type="button" class="btn-sair" onclick="sair()">⏻ Sair</button></div>
+</div>
+<!-- Login (só aparece quando a nuvem/Firebase estiver configurada) -->
+<div id="login" class="tela-cheia" hidden>
+  <form class="login-box" onsubmit="event.preventDefault();NUVEM.entrar()">
+    <img src="conectmax-logo.png" alt="ConectMax">
+    <h3>Entrar no portal</h3>
+    <label>E-mail <input id="lgEmail" type="email" autocomplete="username" required></label>
+    <label>Senha <input id="lgSenha" type="password" autocomplete="current-password" required></label>
+    <div id="lgMsg" class="lg-msg"></div>
+    <button class="btn" style="width:100%;padding:11px">Entrar</button>
+    <a href="#" onclick="NUVEM.esqueci();return false">Esqueci minha senha</a>
+  </form>
+</div>
+<div id="carregando" class="tela-cheia" hidden><img src="conectmax-logo.png" alt="ConectMax"><div>Carregando dados…</div></div>
+<div id="semAcesso" class="tela-cheia" hidden><img src="conectmax-logo.png" alt="ConectMax">
+  <div style="max-width:420px;text-align:center">Seu e-mail ainda não está cadastrado no portal.<br>Peça ao administrador para cadastrar você em Vendedores ou Funcionários com este mesmo e-mail.</div>
+  <button type="button" class="btn" onclick="sair()">Sair</button></div>
+<div id="saiu" hidden><img src="conectmax-logo.png" alt="ConectMax"><div>Você saiu do portal.</div>
+  <button type="button" class="btn" onclick="entrar()">Entrar novamente</button></div>
+<header>
+  <nav>
+    <div class="sec-t">Administrador</div>
+    <button data-t="painel" class="on" title="O que está parado"><span class="ic">📊</span><span class="lb">O que está parado</span></button>
+    <button data-t="pedidos" title="Ped. Checklist"><span class="ic">📦</span><span class="lb">Ped. Checklist</span></button>
+    <button data-t="fluxo" title="Fluxograma do processo"><span class="ic">🔀</span><span class="lb">Fluxograma do processo</span></button>
+
+    <div class="sec-t">Sistema</div>
+    <button data-t="dashboard"><span class="ic">🏠</span><span class="lb">Dashboard</span></button>
+    <button data-t="vendedores"><span class="ic">🧑‍💼</span><span class="lb">Vendedores</span></button>
+    <button data-p="Clientes"><span class="ic">👥</span><span class="lb">Clientes</span></button>
+    <button data-t="funcionarios"><span class="ic">🪪</span><span class="lb">Funcionários</span></button>
+
+    <div class="sec-t">Pedidos</div>
+    <button data-t="orcamentos"><span class="ic">📝</span><span class="lb">Orçamentos</span></button>
+    <button data-t="listaPed"><span class="ic">🛒</span><span class="lb">Pedidos</span></button>
+    <button data-t="logistica"><span class="ic">🚚</span><span class="lb">Logística</span></button>
+
+    <div class="sec-t">Notas fiscais</div>
+    <button data-t="transp"><span class="ic">🚛</span><span class="lb">Transportadoras</span></button>
+    <button data-t="notas"><span class="ic">🧾</span><span class="lb">Notas fiscais</span></button>
+
+    <div class="sec-t">Produtos</div>
+    <button data-p="Produtos"><span class="ic">🏷️</span><span class="lb">Produtos</span></button>
+
+    <div class="sec-t">Financeiro</div>
+    <button data-p="Contas a receber"><span class="ic">💰</span><span class="lb">Contas a receber</span></button>
+    <button data-p="Bancos"><span class="ic">🏦</span><span class="lb">Bancos</span></button>
+    <button data-p="Faturamento"><span class="ic">📈</span><span class="lb">Faturamento</span></button>
+    <button data-p="Boletos"><span class="ic">💳</span><span class="lb">Boletos</span></button>
+
+    <div class="sec-t">Fornecedores</div>
+    <button data-p="Fornecedores"><span class="ic">🏭</span><span class="lb">Fornecedores</span></button>
+  </nav>
+  <div class="rodape">Controle interno de pedidos</div>
+</header>
+<main>
+
+<section id="painel" class="tab on">
+  <h2>O que está parado</h2>
+  <div class="bar">Considerar parado após <input id="dias" type="number" min="0" value="3" style="width:60px"> dias sem atualização</div>
+  <div class="kpis" id="kpis"></div>
+  <h3>Pedidos parados</h3>
+  <div class="list" id="parados"></div>
+  <h3>Pendências por item</h3>
+  <div class="list" id="pend"></div>
+</section>
+
+<section id="pedidos" class="tab">
+  <h2>Ped. Checklist</h2>
+  <div class="bar">
+    <input id="nNum" placeholder="Nº do pedido">
+    <input id="nData" type="date" title="Data do pedido">
+    <select id="nVend"><option value="">Vendedor</option></select>
+    <input id="nCli" placeholder="Cliente">
+    <input id="nItens" placeholder="Itens separados por ; (ex: 2x Cabo; 1x Roteador)" style="flex:1;min-width:300px">
+    <button class="btn" onclick="novoPedido()">+ Novo pedido</button>
+  </div>
+  <div class="bar">
+    <select id="filtro" onchange="render()"><option value="">Todas as etapas</option></select>
+    <select id="fVend" onchange="render()"><option value="">Todos os vendedores</option></select>
+    <input id="busca" placeholder="🔍 Buscar nº, cliente ou produto" oninput="render()" style="min-width:240px">
+    <label><input type="checkbox" id="ocultar" onchange="render()"> Ocultar concluídos</label>
+    <button class="btn sec" onclick="expandir(true)">Expandir todos</button>
+    <button class="btn sec" onclick="expandir(false)">Recolher todos</button>
+    <span style="flex:1"></span>
+    <button class="btn sec" onclick="exportar()">Exportar backup</button>
+    <label class="btn sec">Importar backup<input type="file" accept=".json" hidden onchange="importar(this)"></label>
+  </div>
+  <div class="grid-ped">
+    <div class="lh"><span></span><span>Pedido</span><span>Data</span><span>Vendedor</span><span>Cliente</span><span>Etapa</span><span>Progresso</span><span>Itens</span><span>Atualizado</span></div>
+    <div id="orders"></div>
+  </div>
+</section>
+
+<section id="dashboard" class="tab">
+  <h2>Dashboard</h2>
+  <div class="fat-card">
+    <div class="fat-t">MEU FATURAMENTO - <span id="mesAno"></span></div>
+    <div class="fat-v" id="fatValor">R$ —</div>
+    <div class="fat-s">Valor será atualizado automaticamente após a integração</div>
+  </div>
+  <h3 style="margin-top:26px">🏆 Melhor vendedor do mês</h3>
+  <div class="grid-ped rank">
+    <div class="rk rk-h"><span>#</span><span>Vendedor</span><span style="text-align:right">Vendido no mês</span></div>
+    <div id="ranking"></div>
+  </div>
+</section>
+
+<section id="vendedores" class="tab">
+  <h2>Vendedores</h2>
+  <div class="bar"><button class="btn" onclick="abrirVend(null,'vendedores')">+ Novo vendedor</button></div>
+  <div class="grid-ped" style="max-width:820px">
+    <div class="vd vd-h"><span>Vendedor</span><span style="text-align:center">Ativo</span><span style="text-align:right">Ações</span></div>
+    <div id="listaVend"></div>
+  </div>
+</section>
+
+<section id="funcionarios" class="tab">
+  <h2>Funcionários</h2>
+  <p style="color:var(--muted);font-size:13px;margin-top:-6px">Cadastro da equipe de logística e gerência. Em <b>Ações</b> você define o que cada um pode acessar no sistema.</p>
+  <div class="bar"><button class="btn" onclick="abrirVend(null,'funcionarios')">+ Novo funcionário</button>
+    <span style="font-size:12px;color:var(--muted)">Vendedores acessam: Dashboard, O que está parado, Pedidos, Orçamentos, Clientes e Produtos.</span></div>
+  <div class="grid-ped" style="max-width:820px">
+    <div class="vd vd-h"><span>Funcionário</span><span style="text-align:center">Ativo</span><span style="text-align:right">Ações</span></div>
+    <div id="listaFunc"></div>
+  </div>
+</section>
+
+<dialog id="dlgVend">
+  <form method="dialog" onsubmit="salvarVend(event)">
+    <h3 id="dlgVendT" style="margin:0 0 14px">Cadastro do vendedor</h3>
+    <label>Nome<input id="vNome" required></label>
+    <label>E-mail<input id="vEmail" type="email"></label>
+    <label>WhatsApp<input id="vWpp" placeholder="(00) 00000-0000"></label>
+    <label>Usuário (login)<input id="vUser" autocomplete="off"></label>
+    <label>Senha<input id="vSenha" type="password" autocomplete="new-password" placeholder="Deixe em branco para manter a atual"></label>
+    <div id="vFuncExtra">
+      <label>Cargo<select id="vCargo" onchange="aplicarPadraoCargo()" style="display:block;width:100%;margin-top:4px">
+        <option>Logística</option><option>Gerência</option></select></label>
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin:4px 0 6px">Pode acessar:</div>
+      <div id="vPerms" class="perms"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-top:16px">
+      <button type="button" class="x" id="vExcluir" onclick="excluirVend()">Excluir vendedor</button>
+      <span style="display:flex;gap:8px">
+        <button type="button" class="btn sec" onclick="$('dlgVend').close()">Cancelar</button>
+        <button class="btn">Salvar</button>
+      </span>
+    </div>
+  </form>
+</dialog>
+
+<section id="orcamentos" class="tab">
+  <h2>Orçamentos</h2>
+  <div class="filtros">
+    <label>Nº do orçamento<input id="foNum" oninput="renderOrc()"></label>
+    <label>Cliente<input id="foCli" oninput="renderOrc()"></label>
+    <label>Valor<input id="foVal" placeholder="ex: 9170" oninput="renderOrc()"></label>
+    <label>Status<select id="foSt" onchange="carregarApi('orc')"><option value="">Todos</option></select></label>
+    <label>Vendedor<select id="foVend" onchange="renderOrc()"><option value="">Todos</option></select></label>
+    <label>Data inicial<input id="foIni" type="date" onchange="carregarApi('orc')"></label>
+    <label>Data final<input id="foFim" type="date" onchange="carregarApi('orc')"></label>
+    <div style="align-self:end"><button class="btn sec" onclick="limparFiltOrc()">Limpar</button></div>
+  </div>
+  <div id="orcAviso"></div>
+  <div id="orcResumo" class="resumo"></div>
+  <div class="grid-ped">
+    <div class="oc oc-h"><span class="sel"></span><span>Status</span><span>Orçamento</span><span>Cliente</span><span>Vendedor</span><span style="text-align:right">Total</span><span style="text-align:right">Ações</span></div>
+    <div id="listaOrc"></div>
+  </div>
+</section>
+
+<section id="listaPed" class="tab">
+  <h2>Pedidos</h2>
+  <div class="bar"><button class="btn" onclick="abrirPed(null)">+ Adicionar pedido</button></div>
+  <div class="filtros">
+    <label>Nº do pedido<input id="fpNum" oninput="renderListaPed()"></label>
+    <label>Cliente<input id="fpCli" oninput="renderListaPed()"></label>
+    <label>CNPJ/CPF<input id="fpDoc" oninput="renderListaPed()"></label>
+    <label>Ordem de compra<input id="fpOC" oninput="renderListaPed()"></label>
+    <label>Etapa<select id="fpEt" onchange="renderListaPed()"></select></label>
+    <label>Vendedor<select id="fpVend" onchange="renderListaPed()"></select></label>
+    <label>Data inicial<input id="fpIni" type="date" onchange="renderListaPed()"></label>
+    <label>Data final<input id="fpFim" type="date" onchange="renderListaPed()"></label>
+    <div style="align-self:end"><button class="btn sec" onclick="limparFiltPed()">Limpar</button></div>
+  </div>
+  <div id="lpResumo" class="resumo"></div>
+  <div id="bulk_ped" class="bulk" hidden></div>
+  <div class="grid-ped">
+    <div class="oc ped oc-h"><span class="sel"><input type="checkbox" id="todos_ped" title="Selecionar todos" onchange="selTodos('ped',this.checked)"></span><span>Etapa</span><span>Pedido</span><span>Cliente</span><span>Vendedor</span><span style="text-align:right">Total</span><span style="text-align:right">Ações</span></div>
+    <div id="listaPedidos"></div>
+  </div>
+</section>
+
+<section id="logistica" class="tab">
+  <h2>Logística</h2>
+  <div class="filtros">
+    <label>Nota<input id="flNota" oninput="renderLog()"></label>
+    <label>Cliente<input id="flCli" oninput="renderLog()"></label>
+    <label>Ordem de compra<input id="flOC" oninput="renderLog()"></label>
+    <label>Valor<input id="flVal" oninput="renderLog()"></label>
+    <label>Nº do pedido<input id="flNum" oninput="renderLog()"></label>
+    <label>Status<select id="flSt" onchange="renderLog()"></select></label>
+    <label>CEP<input id="flCep" oninput="renderLog()"></label>
+    <label>Vendedor<select id="flVend" onchange="renderLog()"></select></label>
+    <label>Data inicial<input id="flIni" type="date" onchange="renderLog()"></label>
+    <label>Data final<input id="flFim" type="date" onchange="renderLog()"></label>
+    <div style="align-self:end"><button class="btn sec" onclick="limparFiltLog()">Limpar</button></div>
+  </div>
+  <div id="logGrupos"></div>
+</section>
+
+<section id="notas" class="tab">
+  <h2>Notas fiscais</h2>
+  <div class="filtros">
+    <label>Número da nota<input id="fnNum" oninput="renderNF()"></label>
+    <label>Cliente<input id="fnCli" oninput="renderNF()"></label>
+    <label>Valor<input id="fnVal" oninput="renderNF()"></label>
+    <label>Transportadora<input id="fnTr" oninput="renderNF()"></label>
+    <label>Status<select id="fnSt" onchange="carregarApi('nf')"></select></label>
+    <label>Data inicial<input id="fnIni" type="date" onchange="carregarApi('nf')"></label>
+    <label>Data final<input id="fnFim" type="date" onchange="carregarApi('nf')"></label>
+    <div style="align-self:end"><button class="btn sec" onclick="limparFiltNF()">Limpar</button></div>
+  </div>
+  <div id="nfAviso"></div>
+  <div class="nf-kpis">
+    <div style="--c:#16a36a"><span>Total faturado</span><b id="nfTot">R$ 0,00</b></div>
+    <div style="--c:#1f7fc4"><span>Total de notas</span><b id="nfQtd">0</b></div>
+    <div style="--c:#e53935"><span>Notas canceladas</span><b id="nfCanc">0</b></div>
+  </div>
+  <div class="grid-ped">
+    <div class="nf nf-h"><span>Ações</span><span>Status</span><span>Detalhes</span><span>Cliente</span><span>Data</span><span>Transportadora</span><span style="text-align:right">Total</span></div>
+    <div id="listaNF"></div>
+  </div>
+</section>
+
+<dialog id="dlgNF" style="width:720px">
+  <form onsubmit="salvarNF(event)">
+    <h2 id="dlgNFT" style="font-size:18px">Nova nota fiscal</h2>
+    <div class="f-grid" style="grid-template-columns:repeat(3,1fr)">
+      <label>Nº da nota<input id="nNumNF" required></label>
+      <label>Data<input id="nDataNF" type="date" required></label>
+      <label>Status<select id="nStNF"></select></label>
+      <label style="grid-column:1/-1">Pedido (opcional — preenche cliente, CNPJ, vendedor e valor)<select id="nPedNF" onchange="puxarPedNF()"></select></label>
+      <label style="grid-column:span 2">Cliente<input id="nCliNF" required></label>
+      <label>CNPJ/CPF<input id="nDocNF"></label>
+      <label>Vendedor<select id="nVendNF"></select></label>
+      <label>Transportadora<select id="nTrNF"></select></label>
+      <label>Valor da NF (R$)<input id="nValNF" placeholder="0,00"></label>
+    </div>
+    <div class="f-sec">Arquivos</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px">
+      <div>PDF (DANFE): <label class="btn sec" style="cursor:pointer;font-size:12px">📎 Escolher<input type="file" hidden accept=".pdf" onchange="arqNF(this,'pdf')"></label> <span id="nfPdfInfo"></span></div>
+      <div>XML: <label class="btn sec" style="cursor:pointer;font-size:12px">📎 Escolher<input type="file" hidden accept=".xml" onchange="arqNF(this,'xml')"></label> <span id="nfXmlInfo"></span></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-top:16px">
+      <button type="button" class="x" id="nExcluirNF" onclick="excluirNF()">Excluir nota</button>
+      <span style="display:flex;gap:8px"><button type="button" class="btn sec" onclick="$('dlgNF').close()">Cancelar</button><button class="btn">Salvar</button></span>
+    </div>
+  </form>
+</dialog>
+
+<section id="transp" class="tab">
+  <h2>Transportadoras</h2>
+  <div class="bar"><button class="btn" onclick="abrirTr(null)">+ Adicionar</button>
+    <input id="trBusca" placeholder="🔎 Buscar por nome, CNPJ, cidade..." oninput="renderTr()" style="min-width:280px"></div>
+  <div id="bulk_tr" class="bulk" hidden></div>
+  <div class="grid-ped">
+    <div class="tr tr-h"><span class="sel"><input type="checkbox" id="todos_tr" title="Selecionar todos" onchange="selTodos('tr',this.checked)"></span><span>Nome</span><span>CNPJ/CPF</span><span>Telefone</span><span>Cidade/Estado</span><span></span></div>
+    <div id="listaTr"></div>
+  </div>
+</section>
+
+<dialog id="dlgTr" style="width:640px">
+  <form onsubmit="salvarTr(event)">
+    <h2 id="dlgTrT" style="font-size:18px">Nova transportadora</h2>
+    <div class="f-grid" style="grid-template-columns:repeat(2,1fr)">
+      <label style="grid-column:1/-1">Nome<input id="tNome" required></label>
+      <label>E-mail<input id="tEmail" type="email"></label>
+      <label>CNPJ/CPF<input id="tDoc"></label>
+      <label>Inscrição estadual<input id="tIE"></label>
+      <label>Telefone<input id="tTel"></label>
+      <label style="grid-column:1/-1">Endereço<input id="tEnd"></label>
+      <label>Cidade<input id="tCidade"></label>
+      <label>Estado<select id="tUF"></select></label>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-top:16px">
+      <button type="button" class="x" id="tExcluir" onclick="excluirTr()">Excluir transportadora</button>
+      <span style="display:flex;gap:8px"><button type="button" class="btn sec" onclick="$('dlgTr').close()">Cancelar</button><button class="btn">Salvar</button></span>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgLog" style="width:560px">
+  <form onsubmit="salvarLog(event)">
+    <h2 id="dlgLogT" style="font-size:18px"></h2>
+    <div id="dlgLogC"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button type="button" class="btn sec" onclick="$('dlgLog').close()">Cancelar</button>
+      <button class="btn">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgOrc" style="width:1080px">
+  <form onsubmit="salvarOrc(event)">
+    <h2 id="dlgOrcT" style="font-size:20px">Orçamentos - Nº</h2>
+    <input type="hidden" id="oNum">
+    <div class="st-seg" id="oStBtns"></div>
+    <input type="hidden" id="oSt">
+    <div class="f-grid">
+      <label>Data<input id="oData" type="date" required></label>
+      <label style="grid-column:span 2">Nome do orçamento<input id="oNome" placeholder="Ex.: Câmeras para unidade Centro"></label>
+      <label>CNPJ (ConectMax)<select id="oCnpjEmp"><option>62.248.210/0001-50</option><option>54.926.403/0001-95</option></select></label>
+      <label>Vendedor<select id="oVend"><option value="">Selecione</option></select></label>
+      <label>CNPJ/CPF (cliente)<input id="oDoc"></label>
+      <label>Inscrição estadual<input id="oIE"></label>
+      <label>Cliente<input id="oCli" required></label>
+      <label>Comprador<input id="oComp"></label>
+      <label>Telefone<input id="oTel"></label>
+      <label style="grid-column:span 2">E-mail<input id="oEmail" type="email"></label>
+      <label>Prazo de entrega<input id="oPrazo" placeholder="Ex.: 10 dias úteis"></label>
+      <label>Forma de pagamento<select id="oForma"><option value="">Selecione</option><option>Boleto</option><option>Depósito bancário</option><option>PIX</option><option>Sem pagamento</option></select></label>
+      <label>Pagamento<input id="oPag" placeholder="Ex.: 28 dias"></label>
+      <label>Frete<select id="oFrete"><option value="">Selecione</option><option>CIF</option><option>FOB</option></select></label>
+      <label>Validade da proposta<input id="oValid" placeholder="Ex.: 7 dias"></label>
+      <label style="grid-column:1/-1">Observação para o cliente<textarea id="oObs" class="obs-ped" style="min-height:50px;margin:0"></textarea></label>
+      <label style="grid-column:1/-1">Observação interna<textarea id="oObsInt" class="obs-ped" style="min-height:50px;margin:0;background:#fffbea"></textarea></label>
+    </div>
+
+    <div class="f-sec">Produtos</div>
+    <div class="add-item" style="margin:0 0 10px">
+      <input id="oNovoProd" placeholder="Digite o nome do produto..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProdOrc()}">
+      <button type="button" class="btn" onclick="addProdOrc()">+ Adicionar</button>
+    </div>
+    <table class="it-orc"><thead><tr><th>Produto</th><th style="width:80px">Quantidade</th><th style="width:120px">Valor unitário</th><th style="width:100px">Margem de lucro (%)</th><th style="width:110px">Valor extra</th><th style="width:120px;text-align:right">Total</th><th style="width:26px"></th></tr></thead>
+      <tbody id="oItens"></tbody></table>
+
+    <div class="tot-orc">
+      <div class="desc">Aplicar desconto
+        <select id="oDescTipo" onchange="totDlg()"><option value="pct">Porcentagem</option><option value="valor">Valor</option></select>
+        <input id="oDesc" placeholder="0,00" oninput="totDlg()" style="width:100px">
+      </div>
+      <div class="linhas">
+        <div><span>T. un:</span><b id="oTun">R$ 0,00</b></div>
+        <div><span>Subtotal:</span><b id="oSub">R$ 0,00</b></div>
+        <div><span>Desconto:</span><b id="oDescV">R$ 0,00</b></div>
+        <div class="final-t"><span>Total:</span><b id="oTotal">R$ 0,00</b></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-top:12px">
+      <button type="button" class="x" id="oExcluir" onclick="excluirOrc()">Excluir orçamento</button>
+      <span style="display:flex;gap:8px">
+        <button type="button" class="btn sec" onclick="$('dlgOrc').close()">Cancelar</button>
+        <button class="btn">Salvar</button>
+      </span>
+    </div>
+  </form>
+</dialog>
+
+<div id="stMenu" class="st-menu" hidden onclick="event.stopPropagation()"></div>
+
+<dialog id="dlgApi" style="width:560px">
+  <form onsubmit="event.preventDefault();testarApi(true)">
+    <h2 style="font-size:20px">Conexão com o Portal do Franqueado</h2>
+    <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 14px">Orçamentos e Notas fiscais são buscados ao vivo na Connect Max API, sempre que a tela é aberta. A chave fica guardada só neste navegador.</p>
+    <div class="f-grid" style="grid-template-columns:1fr">
+      <label>Endereço da API<input id="apUrl" placeholder="https://connect-max-api.laerciogermano.com"></label>
+      <label>Chave da API (X-API-Key)<input id="apKey" type="password" autocomplete="off" placeholder="cole aqui a chave da API"></label>
+    </div>
+    <div id="apMsg" style="font-size:12.5px;margin-top:10px;min-height:18px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button type="button" class="btn sec" onclick="$('dlgApi').close()">Fechar</button>
+      <button type="button" class="btn sec" onclick="testarApi(false)">Testar</button>
+      <button class="btn">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgPed" style="width:1080px">
+  <form onsubmit="salvarPed(event)">
+    <h2 id="dlgPedT" style="font-size:20px">Pedido - Nº</h2>
+    <div style="margin:0 0 16px"><span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-right:8px">Status</span><span id="pStTag"></span></div>
+    <div class="f-grid">
+      <label>Nº do pedido<input id="pNum" required></label>
+      <label>Data<input id="pData" type="date" required></label>
+      <label>CNPJ (ConectMax)<select id="pCnpjEmp"><option>62.248.210/0001-50</option><option>54.926.403/0001-95</option></select></label>
+      <label>Vendedor<select id="pVend"></select></label>
+      <label>CNPJ/CPF<input id="pDoc"></label>
+      <label>Inscrição estadual<input id="pIE"></label>
+      <label>Isento IE<select id="pIsento"><option value="">Selecione</option><option>Não contribuinte</option><option>Sim</option><option>Não</option></select></label>
+      <label>Contribuinte do ICMS<select id="pIcms"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></label>
+      <label style="grid-column:span 2">Nome<input id="pCli" required></label>
+      <label>E-mail<input id="pEmail" type="email"></label>
+      <label>Telefone<input id="pTel"></label>
+      <label>CEP <span id="pCepSt" style="font-weight:500;text-transform:none;color:var(--azul)"></span><input id="pCep" placeholder="00000-000" oninput="if(this.value.replace(/\D/g,'').length===8)buscarCep()" onchange="buscarCep()"></label>
+      <label style="grid-column:span 2">Endereço<input id="pEnd"></label>
+      <label>Número<input id="pNumEnd"></label>
+      <label>Complemento<input id="pCompl"></label>
+      <label>Bairro<input id="pBairro"></label>
+      <label>Cidade<input id="pCidade"></label>
+      <label>Estado<input id="pUF" maxlength="2" placeholder="SP" style="text-transform:uppercase"></label>
+      <label>Prazo de entrega<input id="pPrazo"></label>
+      <label>Forma de pagamento<select id="pForma"><option value="">Selecione</option><option>Boleto</option><option>Depósito bancário</option><option>PIX</option><option>Sem pagamento</option></select></label>
+      <label>Pagamento<input id="pPag" placeholder="Ex.: 28 dias"></label>
+      <label>Frete<select id="pFrete"><option value="">Selecione</option><option>CIF</option><option>FOB</option></select></label>
+      <label style="grid-column:span 2">Local de entrega<input id="pLocal"></label>
+      <label style="grid-column:1/-1">Observação impressa no pedido<textarea id="pObsImp" class="obs-ped" style="min-height:50px;margin:0"></textarea></label>
+      <label style="grid-column:1/-1">Observação interna<textarea id="pObs" class="obs-ped" style="min-height:50px;margin:0;background:#fffbea"></textarea></label>
+      <label>Ordem de compra (número)<input id="pOC"></label>
+      <div style="grid-column:span 3;display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:600;color:var(--muted)">Ordem de compra (arquivo)
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label class="btn sec so-edit" style="cursor:pointer;font-size:12.5px">📎 Adicionar arquivo<input type="file" id="pOCArq" hidden accept=".pdf,image/*,.doc,.docx,.xls,.xlsx" onchange="carregarOC(this)"></label>
+          <span id="pOCInfo" style="font-size:12.5px;font-weight:500;color:var(--txt)"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="f-sec">Produtos</div>
+    <div class="add-item so-edit" style="margin:0 0 10px">
+      <input id="pNovoProd" placeholder="Digite o nome do produto..." onkeydown="if(event.key==='Enter'){event.preventDefault();addProdOrc('p')}">
+      <button type="button" class="btn" onclick="addProdOrc('p')">+ Adicionar</button>
+    </div>
+    <table class="it-orc"><thead><tr><th>Produto</th><th style="width:80px">Quantidade</th><th style="width:120px">Valor unitário</th><th style="width:100px">Margem de lucro (%)</th><th style="width:110px">Valor extra</th><th style="width:120px;text-align:right">Total</th><th style="width:26px"></th></tr></thead>
+      <tbody id="pItens"></tbody></table>
+
+    <div class="tot-orc">
+      <div class="desc">Aplicar desconto
+        <select id="pDescTipo" onchange="totDlg('p')"><option value="pct">Porcentagem</option><option value="valor">Valor</option></select>
+        <input id="pDesc" placeholder="0,00" oninput="totDlg('p')" style="width:100px">
+      </div>
+      <div class="linhas">
+        <div><span>T. un:</span><b id="pTun">R$ 0,00</b></div>
+        <div><span>Subtotal:</span><b id="pSub">R$ 0,00</b></div>
+        <div><span>Desconto:</span><b id="pDescV">R$ 0,00</b></div>
+        <div class="final-t"><span>Total:</span><b id="pTotal">R$ 0,00</b></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button type="button" class="btn sec" id="pFechar" onclick="$('dlgPed').close()">Cancelar</button>
+      <button class="btn so-edit">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<section id="construcao" class="tab">
+  <h2 id="constr-t"></h2>
+  <div class="list" style="padding:28px;text-align:center;color:var(--muted)">🚧 Esta seção ainda está em construção.</div>
+</section>
+
+<section id="fluxo" class="tab">
+  <h2>Fluxograma – da prospecção à entrega</h2>
+  <p style="color:var(--muted);font-size:13px">O número no canto de cada etapa mostra quantos pedidos estão nela agora.</p>
+  <div id="flow"></div>
+</section>
+
+</main>
+<script>
+// ===== Menu lateral fixo (botão ☰) — lembra a escolha =====
+
+// ===== Processo completo (fluxograma) =====
+const ETAPAS_FLUXO = [
+ {fase:"Prospecção – LinkedIn", c:"#2b3a8c", itens:[
+  {t:"1. Conexão LinkedIn", a:["Enviar convite de conexão ao decisor"]},
+  {t:"2. Mensagem LinkedIn", a:["Mensagem de apresentação da ConectMax"]},
+  {t:"3. Resposta LinkedIn", a:["Cliente responde / demonstra interesse"]},
+ ]},
+ {fase:"Comercial", c:"#1a5fa8", itens:[
+  {t:"4. Enviar e-mail prospecção", a:["E-mail com apresentação e catálogo"]},
+  {t:"5. Receber orçamento", a:["Cliente envia a lista do que precisa"]},
+  {t:"6. Enviar orçamento", a:["Cotar com fornecedores, calcular margem e enviar"]},
+  {t:"7. Receber ordem de compra", a:["Cliente aprova e envia a OC"]},
+ ]},
+ {fase:"Pedido e compra", c:"#1f7fc4", itens:[
+  {t:"8. Gerar pedido no portal ConectMax", key:"novo", a:["Cadastrar pedido e itens no portal"]},
+  {t:"9. Compra dos produtos do pedido", key:"compra", a:["Comprar cada item","Registrar previsão de entrega","✔ checklist: Comprado"]},
+  {t:"10. Recebimento dos produtos", key:"chegada", a:["Conferir cada item que chegou","✔ checklist: Chegou"]},
+ ]},
+ {fase:"Faturamento", c:"#5b3fc4", itens:[
+  {t:"11. Emissão nota fiscal", key:"fat", a:["✔ checklist: Nota fiscal emitida"]},
+  {t:"12. Emissão boleto", a:["✔ checklist: Boleto emitido"]},
+ ]},
+ {fase:"Expedição", c:"#0fb5c9", itens:[
+  {t:"13. Embalar pedido", a:["Separar e embalar os produtos"]},
+  {t:"14. Cotação transportadora / Correios", a:["Comparar preço e prazo do frete"]},
+  {t:"15. Enviar pedido", key:"envio", a:["Despachar mercadoria + NF e boleto","✔ checklist: Enviado / Recebido pelo cliente"]},
+ ]},
+ {fase:"Financeiro", c:"#16a36a", itens:[
+  {t:"16. Receber o valor da venda", key:"recebido", a:["30 dias após a NF","✔ checklist: Pagamento confirmado"]},
+  {t:"17. Cobrança (caso necessário)", a:["Cobrar cliente se o boleto não for pago"]},
+ ]},
+];
+const ETAPAS = {
+ compra:{n:"Aguardando compra",c:"#e53935"},
+ chegada:{n:"Aguardando chegada",c:"#f5c400"},
+ fat:{n:"Emitir NF / boleto",c:"#1f7fc4"},
+ envio:{n:"Enviar ao cliente",c:"#5b3fc4"},
+ recebido:{n:"Recebido",c:"#0fb5c9"},
+ ok:{n:"Concluído",c:"#16a36a"},
+ novo:{n:"Sem itens",c:"#78909c"},
+};
+
+// ===== Dados =====
+const SEED=[
+ ["16650","VALID SOLUCOES S A",["1x MEM NOTE DDR4 16GB 3200MHZ MACROVIP","1x MEM NOTE DDR4 32GB 3200MHZ KEEPDATA"]],
+ ["16832","BORBOREMA MINERACAO LTDA.",["1x SMARTPHONE ULEFONE ARMOR 34 PRO+ 5G 512GB 16GB RAM DUAL SIM TELA 6.95\" - PRETO"]],
+ ["16895","CIX CITIZEN EXPERIENCE S/A",["5x MEM NB DDR5 16GB/5600MHZ ADATA PREMIER AD5S560016G-S","5x MEMÓRIA NOTEBOOK ADATA XPG 16GB 3200MHZ DDR4 CL22 - AD4S320016G22-SGN","3x HUB USB-C UGREEN CM512 6 EM 1 HDMI 4K 30HZ RJ45 GBPS 100W CINZA"]],
+ ["16932","RAIZ EDUCACAO S.A.",["1x SSD NVME KINGSTON 1TB NV3 M.2 2280 PCIE 4.0","3x TECLADO COM FIO USB MULTILASER TC193BU","1x HEADSET LOGITECH H390","4x MOUSE SEM FIO LOGITECH M170 - PRETO"]],
+ ["16967","VALID SOLUCOES S A",["7x MOUSE PAD PRETO"]],
+ ["16980","VALID SOLUCOES S A",["1x CÂMERA INTELBRAS VIPC 1230B G2 IP POE"]],
+ ["16981","VALID SOLUCOES S A (192366)",["1x META QUEST 3S 128GB VR"]],
+ ["16982","VALID SOLUCOES S A (192373)",["1x CÂMERA INTELBRAS VIPC 1230B G2 IP POE FULL HD"]],
+ ["17050","INDUSTRIA DRYKO LTDA",["1x UBIQUITI USW-24-POE-BR UNIFI SWITCH 24P GIGABIT 2P SFP 95W","1x UBIQUITI USW-16-POE UNIFI SWITCH 16P GIGABIT 2P SFP 42W","1x MÓDULO ÓPTICO MONOMODO BIDIRECIONAL 1G"]],
+ ["17134","TRANSZERO TRANSPORTADORA DE VEICULOS LTDA",["10x HEADSET COM FIO USB LOGITECH H390"]],
+ ["17135","CIX CITIZEN EXPERIENCE S/A",["20x BATERIA SELADA 12V 9AH T2 GP12-9 GETPOWER"]],
+ ["17143","POSTO CHIMBA LTDA",["35x CÂMERA EZVIZ IP WIFI CS-H8C PRO 4MP 4MM 360° H.265 EXTERNA"]],
+];
+const KEY="conectmax_v2";
+const novoItem=n=>({n,comp:false,cheg:false,prev:"",obs:""});
+let db = JSON.parse(localStorage.getItem(KEY)||"null") || {pedidos:SEED.map(([num,cli,it],k)=>({
+ id:k+1,num,cli,upd:Date.now(),nf:false,bol:false,env:false,rec:false,pago:false,itens:it.map(novoItem)}))};
+// Data do pedido e vendedor (importado em 18/11/2026)
+if(!db.vendedores) db.vendedores=["Olívia","Bruno","Gabriele","Marcello"].map((n,i)=>({id:i+1,nome:n,email:"",wpp:"",user:"",senha:"",ativo:true,online:false,ultimo:null}));
+const vendNomes=()=>db.vendedores.map(v=>v.nome);
+const INFO={"16650":["2026-09-16","Olívia"],"16832":["2026-10-07","Olívia"],"16895":["2026-10-15","Bruno"],"16932":["2026-10-21","Bruno"],
+ "16967":["2026-10-23","Olívia"],"16980":["2026-10-27","Olívia"],"16981":["2026-10-27","Olívia"],"16982":["2026-10-27","Olívia"],
+ "17050":["2026-11-05","Olívia"],"17134":["2026-11-16","Gabriele"],"17135":["2026-11-16","Bruno"],"17143":["2026-11-17","Olívia"]};
+db.pedidos.forEach(p=>{const i=INFO[p.num]; if(i){ if(!p.data) p.data=i[0]; if(!p.vend) p.vend=i[1]; }
+ // pedidos criados na tela "Pedidos" (gerados de orçamento ou adicionados lá) — os do checklist não entram
+ if(p.lista===undefined) p.lista=!!(p.orc||(p.cnpjEmp&&!INFO[p.num]&&!SEED.some(s=>s[0]===p.num)));});
+// Pedidos da tela "Pedidos" têm numeração própria, começando do Nº 1 (renumera os criados antes dessa regra)
+if(!db.numSeq){ db.pedidos.filter(p=>p.lista).sort((a,b)=>a.id-b.id).forEach((p,i)=>p.num=String(i+1)); db.numSeq=true; }
+// Pedidos da tela "Pedidos" nascem aprovados (vêm de orçamento aprovado); podem ser cancelados
+db.pedidos.forEach(p=>{if(p.lista&&!p.st) p.st="Aprovado"});
+const cancelado=p=>p.st==="Cancelado";
+// Notificação ao vendedor quando o pedido do checklist muda de etapa (itens 1 a 7)
+if(!db.notifs) db.notifs=[];
+function checarEtapas(avisar){
+ db.pedidos.forEach(p=>{const r=rotulo(p);
+  if(avisar&&p._et!==undefined&&p._et!==r&&p.vend)
+   db.notifs.unshift({id:Date.now()+Math.random(),para:p.vend,ped:p.id,num:p.num,cli:p.cli||"",de:p._et,txt:r,t:Date.now(),lida:false,por:nomeUsuario()});
+  p._et=r});
+ if(db.notifs.length>500) db.notifs.length=500;
+}
+const save=()=>{checarEtapas(true);if(window.nuvemSalvar)nuvemSalvar();try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert("Não foi possível salvar: o espaço do navegador está cheio (provavelmente por arquivos anexados). Remova algum arquivo e tente de novo.")} render()};
+const $=id=>document.getElementById(id);
+checarEtapas(false); // registra a etapa atual de cada pedido sem gerar aviso
+
+function etapa(p){
+ if(!p.itens.length) return "novo";
+ if(p.itens.some(i=>!i.comp)) return "compra";
+ if(p.itens.some(i=>!i.cheg)) return "chegada";
+ if(!p.nf||!p.bol) return "fat";
+ if(!p.env||!p.rec) return "envio";
+ if(!p.pago) return "recebido";
+ return "ok";
+}
+function rotulo(p){const e=etapa(p); if(e==="envio"&&p.env) return "Enviado – aguardando cliente"; if(e==="recebido") return "Recebido – aguardando pagamento"; return ETAPAS[e].n}
+function progresso(p){
+ const tot=p.itens.length*2+5; if(!p.itens.length) return 0;
+ const f=p.itens.reduce((s,i)=>s+i.comp+i.cheg,0)+!!p.nf+!!p.bol+!!p.env+!!p.rec+!!p.pago;
+ return Math.round(f/tot*100);
+}
+const diasParado=p=>Math.floor((Date.now()-p.upd)/864e5);
+const limite=()=>+$("dias").value||0;
+const parado=p=>!cancelado(p) && etapa(p)!=="ok" && diasParado(p)>=limite();
+const fmt=t=>new Date(t).toLocaleDateString("pt-BR");
+const fmtD=s=>s?s.split("-").reverse().join("/"):"";
+const hoje=()=>new Date().toISOString().slice(0,10);
+const atrasado=i=>i.comp&&!i.cheg&&i.prev&&i.prev<hoje();
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ===== Ações =====
+function novoPedido(){
+ const num=$("nNum").value.trim(); if(!num) return alert("Informe o nº do pedido");
+ db.pedidos.push({id:Date.now(),num,data:$("nData").value||hoje(),vend:$("nVend").value,cli:$("nCli").value.trim(),upd:Date.now(),nf:false,bol:false,env:false,rec:false,pago:false,
+  itens:$("nItens").value.split(";").map(s=>s.trim()).filter(Boolean).map(novoItem)});
+ $("nNum").value=$("nCli").value=$("nItens").value=$("nData").value=$("nVend").value=""; save();
+}
+const P=id=>db.pedidos.find(p=>p.id===id);
+const abertos=new Set();
+function abrir(id){abertos.has(id)?abertos.delete(id):abertos.add(id);render()}
+// barra superior: tela cheia, notificações e perfil
+function telaCheia(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}
+function abrirPop(ev,id){ev.stopPropagation();document.querySelectorAll(".pop").forEach(p=>{if(p.id!==id)p.hidden=true});const p=$(id);p.hidden=!p.hidden}
+document.addEventListener("click",()=>document.querySelectorAll(".pop").forEach(p=>p.hidden=true));
+const emailNuvem=()=>window.NUVEM&&NUVEM.email?NUVEM.email.toLowerCase():"";
+const mesmoEmail=(a,b)=>!!a&&!!b&&a.trim().toLowerCase()===b;
+const nomePerfil=()=>{const e=emailNuvem(); if(e) return (db.adminNomes&&db.adminNomes[e])||e;
+ try{return localStorage.getItem("conectmax_nome")||"Laércio Germano"}catch(x){return "Laércio Germano"}};
+function sair(){$("popPerfil").hidden=true; if(window.NUVEM&&NUVEM.ativo) return NUVEM.sair(); $("saiu").hidden=false}
+function entrar(){$("saiu").hidden=true}
+// grava sem re-desenhar a tela (ex.: marcar notificações como lidas)
+function salvarSilencioso(){if(window.nuvemSalvar)nuvemSalvar();try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+// Quem está usando o portal. Na nuvem: pelo e-mail do login. Sem nuvem: escolha em "Acessando como".
+// "admin", "f:<id>" (funcionário) ou "v:<id>" (vendedor)
+function usuario(){
+ const e=emailNuvem();
+ if(e){ if((db.admins||[]).includes(e)) return "admin";
+  const f=(db.funcionarios||[]).find(x=>x.ativo!==false&&mesmoEmail(x.email,e)); if(f) return "f:"+f.id;
+  const v=db.vendedores.find(x=>x.ativo&&mesmoEmail(x.email,e)); if(v) return "v:"+v.id;
+  return "nenhum"; }
+ try{return localStorage.getItem("conectmax_usuario")||"admin"}catch(x){return "admin"}
+}
+function quem(){const u=usuario(),[t,id]=u.split(":");
+ if(t==="nenhum") return {tipo:"nenhum",nome:emailNuvem(),cargo:"Sem acesso"};
+ if(t==="f"){const f=(db.funcionarios||[]).find(x=>x.id==id); if(f) return {tipo:"func",nome:f.nome,cargo:f.cargo||""}}
+ if(t==="v"){const v=db.vendedores.find(x=>x.id==id); if(v) return {tipo:"vend",nome:v.nome,cargo:"Vendedor"}}
+ return {tipo:"admin",nome:nomePerfil(),cargo:"Administrador"};
+}
+const nomeUsuario=()=>quem().nome;
+// Só administrador e funcionários do cargo Logística atualizam as etapas 1 a 7 do checklist
+const podeEtapas=()=>{const q=quem();return q.tipo==="admin"||(q.tipo==="func"&&q.cargo==="Logística")};
+function trocarUsuario(v){try{localStorage.setItem("conectmax_usuario",v)}catch(e){} render()}
+function editarNome(){if(quem().tipo!=="admin")return;const n=prompt("Seu nome:",nomePerfil());if(!n||!n.trim())return;
+ const e=emailNuvem(); if(e){db.adminNomes=db.adminNomes||{}; db.adminNomes[e]=n.trim(); return save()}
+ try{localStorage.setItem("conectmax_nome",n.trim())}catch(x){} render()}
+// Mostra no menu só as telas que a pessoa pode acessar (admin: todas; funcionário: permissões do cadastro; vendedor: ACESSO_VENDEDOR)
+function aplicarAcesso(){
+ const q=quem(), u=usuario(); let ok=null;
+ if(q.tipo==="vend") ok=ACESSO_VENDEDOR;
+ else if(q.tipo==="func"){const f=db.funcionarios.find(x=>"f:"+x.id===u); ok=(f&&f.perms)||PADRAO_CARGO[q.cargo]||[]}
+ else if(q.tipo==="nenhum") ok=[];
+ const itens=[...document.querySelectorAll("nav > *")]; let sec=null, vis=0;
+ const fecha=()=>{if(sec)sec.style.display=vis?"":"none"};
+ itens.forEach(el=>{
+  if(el.classList.contains("sec-t")){fecha(); sec=el; vis=0; return}
+  const k=el.dataset.t||el.dataset.p, mostra=!ok||ok.includes(k); el.style.display=mostra?"":"none"; if(mostra) vis++;});
+ fecha();
+ const on=document.querySelector("nav button.on");
+ if(on&&on.style.display==="none"){const pri=itens.find(el=>el.tagName==="BUTTON"&&el.style.display!=="none"); if(pri) pri.click()}
+ $("semAcesso").hidden=q.tipo!=="nenhum";
+}
+const minhasNotifs=()=>{const q=quem();return q.tipo==="vend"?db.notifs.filter(n=>n.para===q.nome):[]};
+function abrirNotif(ev){abrirPop(ev,"popNotif"); if(!$("popNotif").hidden){const ns=minhasNotifs().filter(n=>!n.lida); if(ns.length){ns.forEach(n=>n.lida=true); salvarSilencioso(); renderNotif(true)}}}
+function renderNotif(manterLista){
+ const q=quem(), ms=minhasNotifs(), novas=ms.filter(n=>!n.lida).length;
+ const par=q.tipo==="vend"?[]:db.pedidos.filter(parado).sort((a,b)=>a.upd-b.upd);
+ $("notifQtd").textContent=(novas+par.length)?String(novas+par.length):"";
+ $("perfilNome").textContent=q.nome; $("perfilCargo").textContent=q.cargo;
+ $("perfilNome").title=q.tipo==="admin"?"Clique para alterar o nome":"";
+ $("perfilUsuario").innerHTML=`<option value="admin">Administrador (${esc(nomePerfil())})</option>`+
+  (db.funcionarios||[]).filter(f=>f.ativo!==false).map(f=>`<option value="f:${f.id}">${esc(f.nome)} — ${esc(f.cargo||"Funcionário")}</option>`).join("")+
+  db.vendedores.filter(v=>v.ativo).map(v=>`<option value="v:${v.id}">${esc(v.nome)} — Vendedor</option>`).join("");
+ $("perfilUsuario").value=usuario(); if($("perfilUsuario").value!==usuario()) $("perfilUsuario").value="admin";
+ $("perfilComo").hidden=!!emailNuvem(); // na nuvem quem manda é o login
+ $("perfilEmail").textContent=emailNuvem();
+ if(manterLista===true) return;
+ const html=ms.slice(0,50).map(n=>`<div onclick="irPara(${n.ped})" style="${n.lida?"":"background:#eef6ff"}">🔔 <b>Pedido ${esc(n.num)}</b> (${esc(n.cli||"—")}) passou de etapa:<br>
+   <span style="color:var(--muted)">${esc(n.de)}</span> → <b>${esc(n.txt)}</b><br><small style="color:var(--muted)">${fmtDH(n.t)}${n.por?" · por "+esc(n.por):""}</small></div>`).join("")+
+  par.map(p=>`<div onclick="irPara(${p.id})">🔴 <b>Pedido ${esc(p.num)}</b> (${esc(p.cli||"—")}) parado há <b>${diasParado(p)} dia(s)</b></div>`).join("");
+ $("notifLista").innerHTML=html||`<div style="cursor:default;color:var(--muted)">Nenhuma notificação 🎉</div>`;
+}
+function irPara(id){abertos.add(id);document.querySelector('nav button[data-t="pedidos"]').click();render()}
+function expandir(s){abertos.clear();if(s)db.pedidos.forEach(p=>abertos.add(p.id));render()}
+function tog(id,idx,campo){
+ if(!podeEtapas()){alert("Somente o administrador e a logística podem atualizar as etapas do pedido.");return render()}
+ const p=P(id), alvo=idx<0?p:p.itens[idx];
+ alvo[campo]=!alvo[campo];
+ if(campo==="comp"&&!alvo.comp) alvo.cheg=false;
+ p.upd=Date.now(); save();
+}
+function setPed(id,campo,val){const p=P(id);p[campo]=val;p.upd=Date.now();save()}
+function setItem(id,idx,campo,val){const p=P(id);p.itens[idx][campo]=val;p.upd=Date.now();save()}
+function addItem(id){const inp=$("ai"+id);if(!inp.value.trim())return;P(id).itens.push(novoItem(inp.value.trim()));P(id).upd=Date.now();save()}
+function rmItem(id,idx){if(confirm("Remover item?")){P(id).itens.splice(idx,1);P(id).upd=Date.now();save()}}
+function rmPedido(id){if(confirm("Excluir pedido?")){db.pedidos=db.pedidos.filter(p=>p.id!==id);save()}}
+function exportar(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,1)]));a.download="conectmax-backup-"+hoje()+".json";a.click()}
+function importar(inp){const r=new FileReader();r.onload=()=>{db=JSON.parse(r.result);save()};r.readAsText(inp.files[0])}
+
+// ===== Dashboard =====
+// Valores ainda não integrados: null = mostra "R$ —". Depois da integração, estes números virão do sistema.
+const DASH={faturamento:null, vendas:{}};  // ex.: vendas:{"Olívia":9574.40}
+const brl=v=>v==null?"R$ —":v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function renderDash(){
+ const d=new Date(); $("mesAno").textContent=String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+ $("fatValor").textContent=brl(DASH.faturamento);
+ const med=["🥇","🥈","🥉"];
+ $("ranking").innerHTML=db.vendedores.filter(v=>v.ativo).map(v=>[v.nome,DASH.vendas[v.nome]??null]).sort((a,b)=>(b[1]??-1)-(a[1]??-1))
+  .map(([n,v],i)=>`<div class="rk"><span class="pos">${med[i]||i+1+"º"}</span><span>${esc(n)}</span><span class="val">${brl(v)}</span></div>`).join("");
+}
+
+// ===== Vendedores =====
+const fmtDH=t=>t?new Date(t).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"—";
+// Seções do menu (lidas do próprio menu) — usadas nas permissões dos funcionários
+const SECOES=[]; {let g="Menu"; document.querySelectorAll("nav > *").forEach(el=>{
+ if(el.classList.contains("sec-t")) g=el.textContent.trim();
+ else if(el.tagName==="BUTTON") SECOES.push({k:el.dataset.t||el.dataset.p, n:el.querySelector(".lb").textContent, g});
+});}
+const PADRAO_CARGO={
+ "Gerência":SECOES.map(s=>s.k),
+ "Logística":["painel","pedidos","fluxo","listaPed","logistica","transp","notas","Produtos","Fornecedores"],
+};
+// O que os VENDEDORES podem ver (para comparação; aplicado quando houver login)
+const ACESSO_VENDEDOR=["dashboard","painel","pedidos","listaPed","orcamentos","Clientes","Produtos"];
+if(!db.funcionarios) db.funcionarios=[];
+const TIPOS={vendedores:{lista:"listaVend",sing:"vendedor",vazio:"Nenhum vendedor cadastrado."},
+             funcionarios:{lista:"listaFunc",sing:"funcionário",vazio:"Nenhum funcionário cadastrado ainda."}};
+function renderVend(){
+ for(const [tipo,cfg] of Object.entries(TIPOS)) $(cfg.lista).innerHTML=db[tipo].map(v=>`<div class="vd ${v.ativo?"":"inativo"}">
+  <div class="nome"><span class="avatar">${esc(v.nome[0]||"?")}</span><div>${esc(v.nome)} ${v.cargo?`<span class="cargo ${esc(v.cargo)}">${esc(v.cargo)}</span>`:""}
+   <div class="st"><span class="dot ${v.online?"on":""}"></span>${v.online?"Online":"Offline"} · último acesso: ${fmtDH(v.ultimo)}</div></div></div>
+  <label class="sw" title="${v.ativo?"Ativo":"Desativado"}"><input type="checkbox" ${v.ativo?"checked":""} onchange="togVend(${v.id},'${tipo}')"><span></span></label>
+  <div style="text-align:right"><button class="btn sec" onclick="abrirVend(${v.id},'${tipo}')">⚙️ Ações</button></div>
+ </div>`).join("")||`<p style='padding:16px'>${cfg.vazio}</p>`;
+}
+let vendEdit=null, tipoEdit="vendedores";
+const V=(id,t=tipoEdit)=>db[t].find(v=>v.id===id);
+function togVend(id,t){const v=V(id,t);v.ativo=!v.ativo;save()}
+function renderPerms(lista){
+ let g=""; $("vPerms").innerHTML=SECOES.map(s=>(s.g!==g?`<div class="grp">${esc(g=s.g)}</div>`:"")+
+  `<label><input type="checkbox" value="${esc(s.k)}" ${lista.includes(s.k)?"checked":""}> ${esc(s.n)}</label>`).join("");
+}
+function aplicarPadraoCargo(){renderPerms(PADRAO_CARGO[$("vCargo").value]||[])}
+function abrirVend(id,tipo){
+ vendEdit=id; tipoEdit=tipo; const v=id?V(id):{}, sing=TIPOS[tipo].sing, func=tipo==="funcionarios";
+ $("dlgVendT").textContent=id?`Cadastro do ${sing}`:`Novo ${sing}`;
+ $("vNome").value=v.nome||""; $("vEmail").value=v.email||""; $("vWpp").value=v.wpp||""; $("vUser").value=v.user||""; $("vSenha").value="";
+ $("vSenha").placeholder=v.senha?"•••••• (deixe em branco para manter)":"Definir senha";
+ $("vExcluir").textContent=`Excluir ${sing}`;
+ $("vExcluir").style.visibility=id?"visible":"hidden";
+ $("vFuncExtra").style.display=func?"block":"none";
+ if(func){$("vCargo").value=v.cargo||"Logística"; renderPerms(v.perms||PADRAO_CARGO[$("vCargo").value])}
+ $("dlgVend").showModal();
+}
+async function hashSenha(s){
+ if(!s) return null;
+ if(!crypto.subtle) return null;
+ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+ return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function salvarVend(ev){
+ ev.preventDefault();
+ const nome=$("vNome").value.trim(); if(!nome) return;
+ let v=vendEdit?V(vendEdit):null;
+ if(!v){v={id:Date.now(),ativo:true,online:false,ultimo:null,senha:""};db[tipoEdit].push(v)}
+ const antigo=v.nome;
+ Object.assign(v,{nome,email:$("vEmail").value.trim(),wpp:$("vWpp").value.trim(),user:$("vUser").value.trim()});
+ if(tipoEdit==="funcionarios"){v.cargo=$("vCargo").value; v.perms=[...$("vPerms").querySelectorAll("input:checked")].map(i=>i.value)}
+ const senha=$("vSenha").value;
+ if(window.NUVEM&&NUVEM.ativo){ // na nuvem a senha vira a conta de login (Firebase); não guardamos a senha nos dados
+  if(senha){ if(!v.email){alert("Informe o e-mail: ele é o login da pessoa no portal.");return}
+   const r=await NUVEM.criarConta(v.email,senha); if(!r.ok){alert(r.msg);return} v.senha="conta"; v.conta=true; alert(r.msg)}
+ } else { const h=await hashSenha(senha); if(h) v.senha=h; }
+ if(tipoEdit==="vendedores"&&antigo&&antigo!==nome) db.pedidos.forEach(p=>{if(p.vend===antigo)p.vend=nome});
+ $("dlgVend").close(); save();
+}
+function excluirVend(){
+ const v=V(vendEdit), sing=TIPOS[tipoEdit].sing;
+ if(!v||!confirm(`Excluir o ${sing} ${v.nome}?`+(tipoEdit==="vendedores"?" Os pedidos dele continuam com o nome registrado.":""))) return;
+ db[tipoEdit]=db[tipoEdit].filter(x=>x.id!==vendEdit); $("dlgVend").close(); save();
+}
+
+// ===== Orçamentos =====
+const ST_ORC={"Em aberto":"#1f7fc4","Enviado":"#5b3fc4","Contra proposta":"#ef6c00","Aprovado":"#16a36a","Reprovado":"#e53935"};
+if(!db.orcamentos) db.orcamentos=[];
+const numBR=s=>typeof s==="number"?s:(parseFloat(String(s??"").replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0);
+// Total da linha = qtd × valor unit. × (1 + margem%) + valor extra
+const totItem=i=>(+i.qtd||0)*(+i.valor||0)*(1+(+i.margem||0)/100)+(+i.extra||0);
+function calcOrc(o){
+ const tun=o.itens.reduce((s,i)=>s+(+i.qtd||0)*(+i.valor||0),0);
+ const sub=o.itens.reduce((s,i)=>s+totItem(i),0);
+ const d=+o.desc||0, desc=o.descTipo==="valor"?d:sub*d/100;
+ // veio do Portal do Franqueado sem itens com preço: usa o total informado pela API
+ if(!sub&&+o.totalApi) return {tun,sub:+o.totalApi,desc:0,total:+o.totalApi};
+ return {tun,sub,desc,total:sub-desc};
+}
+const totOrc=o=>calcOrc(o).total;
+const fmtN=v=>v||v===0?(+v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}):"";
+let orcEdit=null;
+function opcoesOrc(){
+ const st=Object.keys(ST_ORC).map(s=>`<option>${s}</option>`).join("");
+ const vd=vendNomes().map(v=>`<option>${esc(v)}</option>`).join("");
+ for(const [id,pri,ops] of [["foSt","Todos",st],["foVend","Todos",vd],["oVend","Selecione",vd]]){const s=$(id),val=s.value;s.innerHTML=`<option value="">${pri}</option>`+ops;s.value=val}
+}
+function setStOrc(s){
+ $("oSt").value=s;
+ $("oStBtns").innerHTML=Object.entries(ST_ORC).map(([n,c])=>`<button type="button" style="--c:${c}" class="${n===s?"on":""}" onclick="setStOrc('${n}')">${n}</button>`).join("");
+}
+// Orçamentos: só os do Portal do Franqueado, buscados ao vivo na API (filtros de texto/status/vendedor aplicados aqui)
+function filtraOrc(o){
+ const t=(id)=>$(id).value.trim().toLowerCase(), dig=s=>String(s??"").replace(/\D/g,"");
+ if(t("foNum")&&!String(o.num).includes(t("foNum"))) return false;
+ if(t("foCli")&&!(o.cli||"").toLowerCase().includes(t("foCli"))) return false;
+ if(t("foVal")){const alvo=dig(t("foVal")), tot=o.total; if(!dig(tot.toFixed(2)).includes(alvo)&&!dig(Math.round(tot)).includes(alvo)) return false}
+ if($("foVend").value&&o.vend!==$("foVend").value) return false;
+ return true;
+}
+function renderOrc(){
+ if($("orcamentos").classList.contains("on")) carregarApi("orc");
+ $("orcAviso").innerHTML=avisoApi("orc");
+ const dados=API.orc.dados, por=API.orc.meta.porStatus;
+ const sts=[...new Set([...(por&&!$("foSt").value?Object.keys(por):[]),...dados.map(o=>o.status)])];
+ opcoesStApi("orc");
+ optSel("foVend","Todos",[...new Set(dados.map(o=>o.vend).filter(Boolean))].sort().map(v=>`<option>${esc(v)}</option>`).join(""));
+ const base=dados.filter(filtraOrc);           // filtros sem o status → para o resumo
+ const lista=base.filter(o=>!$("foSt").value||o.status===$("foSt").value).sort((a,b)=>(+b.num||0)-(+a.num||0));
+ // quantidade por status: a da API (conta tudo do período, mesmo acima de 100); valor: soma do que veio
+ const filtrando=["foNum","foCli","foVal","foVend"].some(id=>$(id).value);
+ $("orcResumo").innerHTML=sts.map(s=>{const os=base.filter(o=>o.status===s), c=corSt(s,ST_ORC), n=por&&!filtrando&&por[s]!=null?por[s]:os.length;
+  return `<span style="color:${c}" onclick="$('foSt').value=this.dataset.s;carregarApi('orc')" data-s="${esc(s)}"><b>${esc(s)}:</b> ${n} - Total: ${brl(os.reduce((t,o)=>t+o.total,0))}</span>`}).join(" / ");
+ $("listaOrc").innerHTML=lista.map(o=>{const ped=db.pedidos.find(p=>p.orcApi===o.id);return `<div class="oc"><span></span>
+  <span><span class="tag" style="background:${corSt(o.status,ST_ORC)}">${esc(o.status)}</span></span>
+  <span><div class="n">Nº ${esc(o.num)}</div><div class="s">${fmtD(o.data)}</div></span>
+  <span>${esc(o.cli||"—")}</span>
+  <span>${esc(o.vend||"—")}</span>
+  <span style="text-align:right;font-weight:600">${brl(o.total)}</span>
+  <span class="acoes">${ped?`<button class="btn sec" onclick="gerarPedidoApi(${o.id})">📦 Pedido Nº ${esc(ped.num)}</button>`:/aprov/i.test(o.status)?`<button class="btn" onclick="gerarPedidoApi(${o.id})">📦 Gerar pedido</button>`:""}</span>
+ </div>`}).join("")||(API.orc.carregando||!apiKey()||API.orc.erro?"":"<p style='padding:16px'>Nenhum orçamento encontrado no período.</p>");
+}
+function limparFiltOrc(){["foNum","foCli","foVal","foSt","foVend","foIni","foFim"].forEach(id=>$(id).value="");renderOrc()}
+const proxNumOrc=()=>Math.max(3643,...db.orcamentos.map(o=>+o.num||0))+1;
+// Tabela de produtos compartilhada: prefixo "o" = orçamento, "p" = pedido
+function linhaOrc(i={},p="o"){
+ return `<tr data-k="${i._k??""}"><td class="pn"><span class="nro"></span> <input class="iP" value="${esc(i.prod||"")}" style="width:calc(100% - 26px)"></td>
+  <td><input class="iQ" type="number" min="0" value="${i.qtd??1}" oninput="totDlg('${p}')"></td>
+  <td><input class="iV" value="${fmtN(i.valor)}" placeholder="R$ 0,00" oninput="totDlg('${p}')"></td>
+  <td><input class="iM" value="${fmtN(i.margem)}" placeholder="0" oninput="totDlg('${p}')"></td>
+  <td><input class="iE" value="${fmtN(i.extra)}" placeholder="R$ 0,00" oninput="totDlg('${p}')"></td>
+  <td class="iT" style="text-align:right;font-weight:600"></td><td><button type="button" class="x" onclick="this.closest('tr').remove();totDlg('${p}')">✕</button></td></tr>`;
+}
+function addLinhaOrc(i,p="o"){$(p+"Itens").insertAdjacentHTML("beforeend",linhaOrc(i,p));totDlg(p)}
+function addProdOrc(p="o"){const inp=$(p+"NovoProd"),n=inp.value.trim(); if(!n) return inp.focus(); addLinhaOrc({prod:n.toUpperCase(),qtd:1},p); inp.value=""; inp.focus()}
+function lerItensDlg(p="o"){return [...$(p+"Itens").rows].map(r=>({k:r.dataset.k,prod:r.querySelector(".iP").value.trim(),qtd:+r.querySelector(".iQ").value||0,
+ valor:numBR(r.querySelector(".iV").value),margem:numBR(r.querySelector(".iM").value),extra:numBR(r.querySelector(".iE").value)})).filter(i=>i.prod||i.valor)}
+function totDlg(p="o"){
+ [...$(p+"Itens").rows].forEach((r,k)=>{r.querySelector(".nro").textContent=(k+1)+".";
+  r.querySelector(".iT").textContent=brl(totItem({qtd:r.querySelector(".iQ").value,valor:numBR(r.querySelector(".iV").value),margem:numBR(r.querySelector(".iM").value),extra:numBR(r.querySelector(".iE").value)}))});
+ const c=calcOrc({itens:lerItensDlg(p),descTipo:$(p+"DescTipo").value,desc:numBR($(p+"Desc").value)});
+ $(p+"Tun").textContent=brl(c.tun); $(p+"Sub").textContent=brl(c.sub); $(p+"DescV").textContent=brl(c.desc); $(p+"Total").textContent=brl(c.total);
+}
+const CAMPOS_ORC={oData:"data",oNome:"nome",oCnpjEmp:"cnpjEmp",oVend:"vend",oDoc:"doc",oIE:"ie",oCli:"cli",oComp:"comprador",oTel:"tel",oEmail:"email",
+ oPrazo:"prazo",oForma:"forma",oPag:"pagamento",oFrete:"frete",oValid:"validade",oObs:"obs",oObsInt:"obsInt",oDescTipo:"descTipo"};
+function abrirOrc(id){
+ opcoesOrc(); orcEdit=id; const o=id?db.orcamentos.find(x=>x.id===id):{num:String(proxNumOrc()),data:hoje(),status:"Em aberto",itens:[],descTipo:"pct"};
+ $("dlgOrcT").textContent=`Orçamentos - Nº ${o.num}`;
+ $("oNum").value=o.num; setStOrc(o.status||"Em aberto");
+ for(const [el,k] of Object.entries(CAMPOS_ORC)) $(el).value=o[k]??"";
+ if(!$("oCnpjEmp").value) $("oCnpjEmp").selectedIndex=0;
+ if(!$("oDescTipo").value) $("oDescTipo").value="pct";
+ $("oDesc").value=o.desc?fmtN(o.desc):""; $("oNovoProd").value="";
+ $("oItens").innerHTML=""; o.itens.forEach(i=>addLinhaOrc(i)); totDlg();
+ $("oExcluir").style.visibility=id?"visible":"hidden";
+ $("dlgOrc").showModal(); $("dlgOrc").scrollTop=0;
+}
+function salvarOrc(ev){
+ ev.preventDefault();
+ const dados={num:$("oNum").value.trim(),status:$("oSt").value,itens:lerItensDlg().map(({k,...i})=>i),desc:numBR($("oDesc").value)};
+ for(const [el,k] of Object.entries(CAMPOS_ORC)) dados[k]=$(el).value.trim();
+ if(db.orcamentos.some(o=>o.num===dados.num&&o.id!==orcEdit)) return alert("Já existe um orçamento com esse número.");
+ if(orcEdit) Object.assign(db.orcamentos.find(o=>o.id===orcEdit),dados); else db.orcamentos.push({id:Date.now(),...dados});
+ $("dlgOrc").close(); save();
+}
+function excluirOrc(){const o=db.orcamentos.find(x=>x.id===orcEdit); if(o&&confirm(`Excluir o orçamento Nº ${o.num}?`)){db.orcamentos=db.orcamentos.filter(x=>x.id!==orcEdit);$("dlgOrc").close();save()}}
+function duplicarOrc(id){
+ const o=db.orcamentos.find(x=>x.id===id);
+ const novo={...JSON.parse(JSON.stringify(o)),id:Date.now(),num:String(proxNumOrc()),data:hoje(),status:"Em aberto"};
+ db.orcamentos.push(novo); save(); abrirOrc(novo.id);
+}
+function verOrc(id){
+ const o=db.orcamentos.find(x=>x.id===id), logo=new URL("conectmax-logo.png",location.href).href;
+ const w=window.open("","_blank"); if(!w) return alert("Permita pop-ups para visualizar o PDF.");
+ w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Orçamento ${esc(o.num)} - ConectMax</title>
+ <style>body{font-family:Poppins,Segoe UI,Arial,sans-serif;color:#13203a;margin:36px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #16d3e8;padding-bottom:14px}
+ header img{height:58px}h1{font-size:20px;margin:0;color:#0c2550;text-align:right}.sub{text-align:right;color:#61708a;font-size:13px}
+ .box{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:20px 0;font-size:13px}.box b{color:#61708a;font-weight:600}
+ table{width:100%;border-collapse:collapse;font-size:13px}th{background:#0c2550;color:#fff;text-align:left;padding:8px}td{padding:8px;border-bottom:1px solid #e3eaf4}
+ .r{text-align:right}.tot{font-size:18px;font-weight:700;text-align:right;margin-top:14px}.obs{margin-top:20px;font-size:12.5px;color:#334}
+ footer{margin-top:40px;font-size:11px;color:#61708a;text-align:center}@media print{body{margin:14mm}}</style></head><body>
+ <header><img src="${logo}"><div><h1>ORÇAMENTO Nº ${esc(o.num)}</h1><div class="sub">${fmtD(o.data)} · ${esc(o.status)}</div></div></header>
+ ${o.nome?`<div style="margin-top:14px;font-weight:600">${esc(o.nome)}</div>`:""}
+ <div class="box">
+  <div><b>Cliente:</b> ${esc(o.cli)}</div><div><b>CNPJ/CPF:</b> ${esc(o.doc||"—")}</div>
+  <div><b>Comprador:</b> ${esc(o.comprador||"—")}</div><div><b>Inscrição estadual:</b> ${esc(o.ie||"—")}</div>
+  <div><b>Telefone:</b> ${esc(o.tel||"—")}</div><div><b>E-mail:</b> ${esc(o.email||"—")}</div>
+  <div><b>Vendedor:</b> ${esc(o.vend||"—")}</div><div><b>CNPJ ConectMax:</b> ${esc(o.cnpjEmp||"—")}</div>
+ </div>
+ <table><tr><th>#</th><th>Produto</th><th class="r">Qtd</th><th class="r">Valor unit.</th><th class="r">Total</th></tr>
+ ${o.itens.map((i,k)=>{const t=totItem(i);return `<tr><td>${k+1}</td><td>${esc(i.prod)}</td><td class="r">${i.qtd}</td><td class="r">${brl(i.qtd?t/i.qtd:0)}</td><td class="r">${brl(t)}</td></tr>`}).join("")||`<tr><td colspan="5">Sem itens</td></tr>`}</table>
+ ${(()=>{const c=calcOrc(o);return `<div class="tot" style="font-size:13px;font-weight:400">Subtotal: ${brl(c.sub)}${c.desc?` · Desconto: ${brl(c.desc)}`:""}</div><div class="tot">Total: ${brl(c.total)}</div>`})()}
+ <div class="box" style="margin-top:22px">
+  <div><b>Prazo de entrega:</b> ${esc(o.prazo||"—")}</div><div><b>Forma de pagamento:</b> ${esc(o.forma||"—")}</div>
+  <div><b>Pagamento:</b> ${esc(o.pagamento||"—")}</div><div><b>Frete:</b> ${esc(o.frete||"—")}</div>
+  <div><b>Validade da proposta:</b> ${esc(o.validade||"—")}</div>
+ </div>
+ ${o.obs?`<div class="obs"><b>Observações:</b> ${esc(o.obs)}</div>`:""}
+ <footer>ConectMax – Soluções em Tecnologia</footer>
+ <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+ w.document.close();
+}
+
+// Trocar status clicando na etiqueta
+function menuSt(ev,id){
+ ev.stopPropagation(); const o=db.orcamentos.find(x=>x.id===id), m=$("stMenu");
+ m.innerHTML=Object.entries(ST_ORC).filter(([n])=>n!==o.status).map(([n,c])=>`<button style="--c:${c}" onclick="trocarSt(${id},'${n}')">${n}</button>`).join("");
+ const r=ev.currentTarget.getBoundingClientRect(); m.style.left=r.left+"px"; m.style.top=(r.bottom+4)+"px"; m.hidden=false;
+}
+function trocarSt(id,s){db.orcamentos.find(x=>x.id===id).status=s; $("stMenu").hidden=true; save()}
+document.addEventListener("click",()=>$("stMenu").hidden=true);
+document.addEventListener("scroll",()=>$("stMenu").hidden=true,true);
+
+// ===== Gerar pedido a partir do orçamento =====
+function gerarPedido(id){
+ const o=db.orcamentos.find(x=>x.id===id);
+ if(o.pedidoId&&P(o.pedidoId)){irListaPed(); return abrirPed(o.pedidoId)}
+ if(!confirm(`Gerar um pedido a partir do orçamento Nº ${o.num}?`)) return;
+ const p={id:Date.now(),lista:true,st:"Aprovado",num:proxNumPed(),orc:o.num,data:hoje(),upd:Date.now(),
+  nf:false,bol:false,env:false,rec:false,pago:false,
+  cnpjEmp:o.cnpjEmp,vend:o.vend,doc:o.doc,ie:o.ie,cli:o.cli,email:o.email,tel:o.tel,prazo:o.prazo,forma:o.forma,
+  pagamento:o.pagamento,frete:o.frete,obsImp:o.obs,obs:o.obsInt,descTipo:o.descTipo||"pct",desc:o.desc,
+  itens:o.itens.map(i=>({...novoItem(`${i.qtd}x ${i.prod}`),prod:i.prod,qtd:i.qtd,valor:i.valor,margem:i.margem,extra:i.extra}))};
+ db.pedidos.push(p); o.pedidoId=p.id; abertos.add(p.id); save();
+ irListaPed(); abrirPed(p.id);
+}
+const proxNumPed=()=>String(Math.max(0,...db.pedidos.filter(x=>x.lista).map(x=>+x.num||0))+1);
+const irListaPed=()=>document.querySelector('nav button[data-t="listaPed"]').click();
+
+// ===== Lista de pedidos (categoria Pedidos) =====
+function filtraPed(p){
+ const t=id=>$(id).value.trim().toLowerCase(), dig=s=>String(s??"").replace(/\D/g,"");
+ if(t("fpNum")&&!String(p.num).includes(t("fpNum"))) return false;
+ if(t("fpCli")&&!(p.cli||"").toLowerCase().includes(t("fpCli"))) return false;
+ if(t("fpDoc")&&!dig(p.doc).includes(dig(t("fpDoc")))) return false;
+ if(t("fpOC")&&!(p.oc||"").toLowerCase().includes(t("fpOC"))) return false;
+ if($("fpEt").value&&etapa(p)!==$("fpEt").value) return false;
+ if($("fpVend").value&&p.vend!==$("fpVend").value) return false;
+ if($("fpIni").value&&(p.data||"")<$("fpIni").value) return false;
+ if($("fpFim").value&&(p.data||"")>$("fpFim").value) return false;
+ return true;
+}
+function renderListaPed(){
+ for(const [id,pri,ops] of [["fpEt","Todas",Object.entries(ETAPAS).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")],
+  ["fpVend","Todos",vendNomes().map(v=>`<option>${esc(v)}</option>`).join("")]]){const s=$(id),val=s.value;s.innerHTML=`<option value="">${pri}</option>`+ops;s.value=val}
+ const lista=db.pedidos.filter(p=>p.lista&&filtraPed(p)).sort((a,b)=>(+b.num||0)-(+a.num||0));
+ const validos=lista.filter(p=>!cancelado(p)), canc=lista.length-validos.length;
+ $("lpResumo").innerHTML=`${validos.length} pedido(s) - Total: ${brl(validos.reduce((s,p)=>s+calcOrc(p).total,0))}${canc?` · ${canc} cancelado(s)`:""}`;
+ VIS.ped=lista.map(p=>p.id); barraSel("ped");
+ $("listaPedidos").innerHTML=lista.map(p=>{const k=etapa(p),e=ETAPAS[k],c=cancelado(p);return `<div class="oc ped ${SEL.ped.has(p.id)?"marcado":""} ${c?"cancelado":""}">${cbSel("ped",p.id)}
+  <span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start">${c?`<span class="tag" style="background:#e53935">Cancelado</span>`:`<span class="tag" style="background:#16a36a">Aprovado</span>
+   <span class="tag" style="background:${e.c};color:${k==="chegada"?"#3a2e00":"#fff"}">${rotulo(p)}</span>`}</span>
+  <span><div class="n">Nº ${esc(p.num)}</div><div class="s">${fmtD(p.data)||"—"}${p.orc?` · orç. ${esc(p.orc)}`:""}${p.oc?` · OC ${esc(p.oc)}`:""}</div></span>
+  <span>${esc(p.cli||"—")}${p.doc?`<div class="s">${esc(p.doc)}</div>`:""}</span>
+  <span>${esc(p.vend||"—")}</span>
+  <span style="text-align:right;font-weight:600">${brl(calcOrc(p).total)}</span>
+  <span class="acoes">${c?`<button class="btn sec" onclick="abrirPed(${p.id},true)">👁 Visualizar</button>
+   <button class="btn sec" onclick="duplicarPed(${p.id})">⧉ Duplicar pedido</button>
+   <button class="btn sec" onclick="reativarPed(${p.id})">↺ Reativar pedido</button>`:
+   `<button class="btn sec" onclick="pdfPed(${p.id})">📄 PDF</button>
+   <button class="btn sec" onclick="abrirPed(${p.id},true)">👁 Visualizar</button>
+   <button class="btn sec" onclick="duplicarPed(${p.id})">⧉ Duplicar pedido</button>
+   <button class="btn sec" onclick="cancelarPed(${p.id})">✖ Cancelar pedido</button>
+   <button class="btn sec" onclick="gerarNotaPed(${p.id})">🧾 ${p.nfNum?`Nota Nº ${esc(p.nfNum)}`:"Gerar nota"}</button>
+   <button class="btn" onclick="abrirPed(${p.id})">✎ Editar</button>
+   ${quem().tipo!=="vend"?`<button class="btn sec" onclick="irPara(${p.id})">☑ Checklist</button>`:""}`}</span>
+ </div>`}).join("")||"<p style='padding:16px'>Nenhum pedido encontrado.</p>";
+}
+// ===== Ações do pedido =====
+function pdfPed(id){
+ const p=P(id), logo=new URL("conectmax-logo.png",location.href).href, c=calcOrc(p);
+ const w=window.open("","_blank"); if(!w) return alert("Permita pop-ups para gerar o PDF.");
+ const end=[p.end&&`${p.end}${p.numEnd?", "+p.numEnd:""}`,p.compl,p.bairro,p.cidade&&`${p.cidade}${p.uf?"/"+p.uf:""}`,p.cep&&"CEP "+p.cep].filter(Boolean).join(" · ");
+ w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Pedido ${esc(p.num)} - ConectMax</title>
+ <style>body{font-family:Poppins,Segoe UI,Arial,sans-serif;color:#13203a;margin:36px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #16d3e8;padding-bottom:14px}
+ header img{height:58px}h1{font-size:20px;margin:0;color:#0c2550;text-align:right}.sub{text-align:right;color:#61708a;font-size:13px}
+ .box{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:20px 0;font-size:13px}.box b{color:#61708a;font-weight:600}
+ table{width:100%;border-collapse:collapse;font-size:13px}th{background:#0c2550;color:#fff;text-align:left;padding:8px}td{padding:8px;border-bottom:1px solid #e3eaf4}
+ .r{text-align:right}.tot{font-size:18px;font-weight:700;text-align:right;margin-top:14px}.obs{margin-top:20px;font-size:12.5px;color:#334}
+ footer{margin-top:40px;font-size:11px;color:#61708a;text-align:center}@media print{body{margin:14mm}}</style></head><body>
+ <header><img src="${logo}"><div><h1>PEDIDO Nº ${esc(p.num)}</h1><div class="sub">${fmtD(p.data)}${p.orc?` · Orçamento Nº ${esc(p.orc)}`:""}${p.oc?` · OC ${esc(p.oc)}`:""}</div></div></header>
+ <div class="box">
+  <div><b>Cliente:</b> ${esc(p.cli||"—")}</div><div><b>CNPJ/CPF:</b> ${esc(p.doc||"—")}</div>
+  <div><b>Inscrição estadual:</b> ${esc(p.ie||"—")}${p.isentoIE?` (isento: ${esc(p.isentoIE)})`:""}</div><div><b>Contribuinte do ICMS:</b> ${esc(p.icms||"—")}</div>
+  <div><b>Telefone:</b> ${esc(p.tel||"—")}</div><div><b>E-mail:</b> ${esc(p.email||"—")}</div>
+  <div style="grid-column:1/-1"><b>Endereço:</b> ${esc(end||"—")}</div>
+  <div><b>Vendedor:</b> ${esc(p.vend||"—")}</div><div><b>CNPJ ConectMax:</b> ${esc(p.cnpjEmp||"—")}</div>
+ </div>
+ <table><tr><th>#</th><th>Produto</th><th class="r">Qtd</th><th class="r">Valor unit.</th><th class="r">Total</th></tr>
+ ${p.itens.map((i,k)=>{const it=itemTab(i,k),t=totItem(it);return `<tr><td>${k+1}</td><td>${esc(it.prod)}</td><td class="r">${it.qtd}</td><td class="r">${brl(it.qtd?t/it.qtd:0)}</td><td class="r">${brl(t)}</td></tr>`}).join("")||`<tr><td colspan="5">Sem itens</td></tr>`}</table>
+ <div class="tot" style="font-size:13px;font-weight:400">Subtotal: ${brl(c.sub)}${c.desc?` · Desconto: ${brl(c.desc)}`:""}</div><div class="tot">Total: ${brl(c.total)}</div>
+ <div class="box" style="margin-top:22px">
+  <div><b>Prazo de entrega:</b> ${esc(p.prazo||"—")}</div><div><b>Forma de pagamento:</b> ${esc(p.forma||"—")}</div>
+  <div><b>Pagamento:</b> ${esc(p.pagamento||"—")}</div><div><b>Frete:</b> ${esc(p.frete||"—")}</div>
+  ${p.local?`<div style="grid-column:1/-1"><b>Local de entrega:</b> ${esc(p.local)}</div>`:""}
+ </div>
+ ${p.obsImp?`<div class="obs"><b>Observações:</b> ${esc(p.obsImp)}</div>`:""}
+ <footer>ConectMax – Soluções em Tecnologia</footer>
+ <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+ w.document.close();
+}
+function duplicarPed(id){
+ const o=P(id); if(!confirm(`Duplicar o pedido Nº ${o.num}? Será criado um novo pedido com os mesmos dados e produtos, com o checklist zerado.`)) return;
+ const c=JSON.parse(JSON.stringify(o));
+ // o novo pedido começa do zero: sem checklist, nota, logística ou vínculo com o orçamento
+ for(const k of ["nfNum","rastreio","freteValor","emails","anexos","etiqueta","logSt","orc","_et","ocArq","oc"]) delete c[k];
+ const novo={...c,id:Date.now(),num:proxNumPed(),data:hoje(),upd:Date.now(),st:"Aprovado",nf:false,bol:false,env:false,rec:false,pago:false,
+  itens:c.itens.map(i=>({...i,comp:false,cheg:false,prev:"",obs:""}))};
+ db.pedidos.push(novo); save(); abrirPed(novo.id);
+}
+function cancelarPed(id){
+ const p=P(id); if(!confirm(`Cancelar o pedido Nº ${p.num}? Ele sai da Logística e dos totais, mas continua na lista como cancelado (dá para reativar depois).`)) return;
+ p.st="Cancelado"; p.upd=Date.now(); save();
+}
+function reativarPed(id){const p=P(id); if(confirm(`Reativar o pedido Nº ${p.num}?`)){p.st="Aprovado"; p.upd=Date.now(); save()}}
+// Gerar nota: abre a nota fiscal já preenchida com os dados do pedido (se já tiver nota, abre a nota existente)
+function gerarNotaPed(id){
+ const p=P(id), n=p.nfNum&&db.notas.find(x=>x.num===p.nfNum&&x.pedido===p.id);
+ if(n) return abrirNF(n.id);
+ abrirNF(null); $("nPedNF").value=String(p.id); puxarPedNF();
+}
+function limparFiltPed(){["fpNum","fpCli","fpDoc","fpOC","fpEt","fpVend","fpIni","fpFim"].forEach(id=>$(id).value="");renderListaPed()}
+
+// Busca o endereço pelo CEP (ViaCEP)
+async function buscarCep(x="p"){
+ const cep=$(x+"Cep").value.replace(/\D/g,""), st=$(x+"CepSt");
+ if(cep.length!==8){st.textContent="";return}
+ $(x+"Cep").value=cep.slice(0,5)+"-"+cep.slice(5);
+ st.textContent="buscando…";
+ try{
+  const r=await (await fetch(`https://viacep.com.br/ws/${cep}/json/`)).json();
+  if(r.erro){st.textContent="CEP não encontrado";return}
+  $(x+"End").value=r.logradouro||""; $(x+"Bairro").value=r.bairro||""; $(x+"Cidade").value=r.localidade||""; $(x+"UF").value=r.uf||"";
+  if(r.complemento&&!$(x+"Compl").value) $(x+"Compl").value=r.complemento;
+  st.textContent="✓"; $(x+"NumEnd").focus();
+ }catch(e){st.textContent="sem conexão — preencha à mão"}
+}
+
+// ===== Dados completos do pedido =====
+const CAMPOS_PED={pData:"data",pCnpjEmp:"cnpjEmp",pVend:"vend",pDoc:"doc",pIE:"ie",pIsento:"isentoIE",pIcms:"icms",pCli:"cli",pEmail:"email",pTel:"tel",
+ pCep:"cep",pEnd:"end",pNumEnd:"numEnd",pCompl:"compl",pBairro:"bairro",pCidade:"cidade",pUF:"uf",pPrazo:"prazo",pForma:"forma",pPag:"pagamento",
+ pFrete:"frete",pLocal:"local",pObsImp:"obsImp",pObs:"obs",pOC:"oc",pDescTipo:"descTipo"};
+// Itens antigos ("35x PRODUTO") viram produto + quantidade
+const itemTab=(i,k)=>{if(i.prod) return {...i,_k:k}; const m=/^(\d+)x\s+(.*)$/.exec(i.n||""); return m?{prod:m[2],qtd:+m[1],_k:k}:{prod:i.n,qtd:1,_k:k}};
+let pedEdit=null, ocArq=null;
+// Arquivo da ordem de compra: guardado junto com o pedido (no navegador, por isso limite de 2 MB)
+function carregarOC(inp){
+ const f=inp.files[0]; inp.value=""; if(!f) return;
+ if(f.size>limArq()) return alert(`Arquivo muito grande (máx. ${limTxt()}). Tente um PDF menor ou comprimido.`);
+ const r=new FileReader(); r.onload=()=>{ocArq={nome:f.name,tipo:f.type,dados:r.result}; mostrarOC()}; r.readAsDataURL(f);
+}
+function mostrarOC(){
+ $("pOCInfo").innerHTML=ocArq?`📄 <a href="#" onclick="abrirOC();return false">${esc(ocArq.nome)}</a> <button type="button" class="x" onclick="ocArq=null;mostrarOC()">✕ remover</button>`:`<span style="color:var(--muted)">nenhum arquivo</span>`;
+}
+function abrirOC(){abrirArq(ocArq)}
+// Na nuvem cada arquivo vai num documento próprio (limite do Firestore ~1 MB), por isso o limite cai para 700 KB
+const limArq=()=>window.NUVEM&&NUVEM.ativo?700*1024:2*1024*1024;
+const limTxt=()=>window.NUVEM&&NUVEM.ativo?"700 KB":"2 MB";
+function abrirArq(f){
+ if(!f) return;
+ if(f.url&&!f.dados) return window.open(f.url,"_blank"); // link do Portal do Franqueado
+ if(!f.dados&&f.ref&&window.NUVEM&&NUVEM.ativo){ // arquivo guardado na nuvem: busca e abre
+  const w=/pdf|image/.test(f.tipo)?window.open("","_blank"):null;
+  NUVEM.lerArquivo(f.ref).then(d=>{if(!d){if(w)w.close();return alert("Arquivo não encontrado na nuvem.")} abrirDados({...f,dados:d},w)}).catch(e=>{if(w)w.close();alert("Não foi possível abrir o arquivo: "+e.message)});
+  return;
+ }
+ if(!f.dados) return alert("Arquivo indisponível neste computador.");
+ abrirDados(f,null);
+}
+function abrirDados(f,w){
+ const b=atob(f.dados.split(",")[1]), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i);
+ const url=URL.createObjectURL(new Blob([u],{type:f.tipo||"application/octet-stream"}));
+ if(w) w.location.href=url;
+ else if(/pdf|image/.test(f.tipo)) window.open(url,"_blank");
+ else {const a=document.createElement("a"); a.href=url; a.download=f.nome; a.click()}
+}
+
+// ===== Seleção e exclusão em massa (orçamentos, pedidos e transportadoras) =====
+const SEL={orc:new Set(),ped:new Set(),tr:new Set()}, VIS={orc:[],ped:[],tr:[]};
+const SEL_CFG={orc:{arr:"orcamentos",nome:"orçamento(s)"},ped:{arr:"pedidos",nome:"pedido(s)"},tr:{arr:"transportadoras",nome:"transportadora(s)"}};
+const cbSel=(t,id)=>`<span class="sel"><input type="checkbox" ${SEL[t].has(id)?"checked":""} onchange="togSel('${t}',${id},this.checked)"></span>`;
+function barraSel(t){
+ const ids=new Set(db[SEL_CFG[t].arr].map(x=>x.id)); [...SEL[t]].forEach(id=>{if(!ids.has(id)) SEL[t].delete(id)});
+ const n=SEL[t].size, b=$("bulk_"+t), todos=$("todos_"+t);
+ b.hidden=!n; b.innerHTML=`${n} ${SEL_CFG[t].nome} selecionado(s) <button class="x" onclick="excluirSel('${t}')">🗑 Excluir selecionados</button><button class="btn sec" onclick="limparSel('${t}')">Limpar seleção</button>`;
+ todos.checked=VIS[t].length>0&&VIS[t].every(id=>SEL[t].has(id)); todos.indeterminate=!todos.checked&&VIS[t].some(id=>SEL[t].has(id));
+}
+function togSel(t,id,on){on?SEL[t].add(id):SEL[t].delete(id); render()}
+function selTodos(t,on){VIS[t].forEach(id=>on?SEL[t].add(id):SEL[t].delete(id)); render()}
+function limparSel(t){SEL[t].clear(); render()}
+function excluirSel(t){
+ const n=SEL[t].size, c=SEL_CFG[t]; if(!n) return;
+ if(!confirm(`Excluir ${n} ${c.nome}? Essa ação não pode ser desfeita.`)) return;
+ db[c.arr]=db[c.arr].filter(x=>!SEL[t].has(x.id)); SEL[t].clear(); save();
+}
+
+// ===== Notas fiscais =====
+if(!db.notas) db.notas=[];
+const ST_NF={"Aguardando envio":"#ef6c00","Enviado":"#16a36a","Rejeitado":"#8e24aa","Cancelado":"#e53935"};
+const nfValida=n=>!/cancel|rejeit|deneg|inutiliz/i.test(n.status||"");
+let nfEdit=null, nfArqs={};
+// Notas fiscais: só as do Portal do Franqueado, buscadas ao vivo na API
+function filtraNF(n){
+ const t=id=>$(id).value.trim().toLowerCase(), dig=s=>String(s??"").replace(/\D/g,"");
+ if(t("fnNum")&&!String(n.num).includes(t("fnNum"))) return false;
+ if(t("fnCli")&&!(n.cli||"").toLowerCase().includes(t("fnCli"))) return false;
+ if(t("fnVal")){const a=dig(t("fnVal")),v=+n.valor||0; if(!dig(v.toFixed(2)).includes(a)&&!dig(Math.round(v)).includes(a)) return false}
+ if(t("fnTr")&&!(n.transp||"").toLowerCase().includes(t("fnTr"))) return false;
+ if($("fnSt").value&&n.status!==$("fnSt").value) return false;
+ return true;
+}
+function limparFiltNF(){["fnNum","fnCli","fnVal","fnTr","fnSt","fnIni","fnFim"].forEach(id=>$(id).value="");renderNF()}
+const optSel=(id,pri,ops)=>{const s=$(id),val=s.value; s.innerHTML=`<option value="">${pri}</option>`+ops; s.value=val};
+function renderNF(){
+ if($("notas").classList.contains("on")) carregarApi("nf");
+ $("nfAviso").innerHTML=avisoApi("nf");
+ const dados=API.nf.dados;
+ opcoesStApi("nf");
+ const lista=dados.filter(filtraNF).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(+b.num||0)-(+a.num||0));
+ $("nfTot").textContent=brl(lista.filter(nfValida).reduce((s,n)=>s+(+n.valor||0),0));
+ $("nfQtd").textContent=lista.length;
+ $("nfCanc").textContent=lista.filter(n=>/cancel/i.test(n.status||"")).length;
+ window._nfVis=lista;
+ $("listaNF").innerHTML=lista.map((n,i)=>`<div class="nf">
+  <span class="acoes">
+   <button class="btn sec" ${n.pdf?"":"disabled title='Sem PDF'"} onclick="abrirLinkApi(_nfVis[${i}].pdf,'NF '+_nfVis[${i}].num+'.pdf')">PDF</button>
+   <button class="btn sec" ${n.xml?"":"disabled title='Sem XML'"} onclick="abrirLinkApi(_nfVis[${i}].xml,'NF '+_nfVis[${i}].num+'.xml')">XML</button></span>
+  <span><span class="tag" style="background:${corSt(n.status,ST_NF)}">${esc(n.status)}</span></span>
+  <span><b style="color:var(--navy2)">NF ${esc(n.num)}</b>${n.tipo?`<div style="font-size:11.5px;color:var(--muted)">${esc(n.tipo)}</div>`:""}</span>
+  <span>${esc(n.cli||"—")}</span>
+  <span>${fmtD(n.data)}</span>
+  <span>${esc(n.transp||"—")}</span>
+  <span style="text-align:right;font-weight:600">${brl(+n.valor||0)}</span></div>`).join("")||(API.nf.carregando||!apiKey()||API.nf.erro?"":"<p style='padding:16px'>Nenhuma nota fiscal encontrada no período.</p>");
+}
+function abrirNF(id){
+ nfEdit=id; const n=id?db.notas.find(x=>x.id===id):{data:hoje(),status:"Aguardando envio"};
+ nfArqs={pdf:n.pdf||null,xml:n.xml||null}; mostrarArqNF();
+ $("nStNF").innerHTML=Object.keys(ST_NF).map(s=>`<option>${s}</option>`).join("");
+ $("nVendNF").innerHTML=`<option value="">Selecione</option>`+[...new Set([...vendNomes(),n.vend].filter(Boolean))].map(v=>`<option>${esc(v)}</option>`).join("");
+ $("nTrNF").innerHTML=`<option value="">Selecione</option>`+db.transportadoras.map(t=>`<option value="${t.id}">${esc(t.nome)}</option>`).join("");
+ $("nPedNF").innerHTML=`<option value="">— nenhum —</option>`+db.pedidos.filter(p=>p.lista).sort((a,b)=>(+b.num||0)-(+a.num||0)).map(p=>`<option value="${p.id}">Pedido Nº ${esc(p.num)} – ${esc(p.cli||"")}</option>`).join("");
+ $("nNumNF").value=n.num||""; $("nDataNF").value=n.data||""; $("nStNF").value=n.status; $("nPedNF").value=n.pedido||"";
+ $("nCliNF").value=n.cli||""; $("nDocNF").value=n.doc||""; $("nVendNF").value=n.vend||""; $("nTrNF").value=n.transp||""; $("nValNF").value=n.valor?fmtN(n.valor):"";
+ $("dlgNFT").textContent=id?`Nota fiscal Nº ${n.num}`:"Nova nota fiscal";
+ $("nExcluirNF").style.visibility=id?"visible":"hidden";
+ $("dlgNF").showModal();
+}
+function puxarPedNF(){
+ const p=P(+$("nPedNF").value); if(!p) return;
+ $("nCliNF").value=p.cli||""; $("nDocNF").value=p.doc||"";
+ if(p.vend){ if(![...$("nVendNF").options].some(o=>o.value===p.vend)) $("nVendNF").insertAdjacentHTML("beforeend",`<option>${esc(p.vend)}</option>`); $("nVendNF").value=p.vend }
+ const v=calcOrc(p).total; if(v) $("nValNF").value=fmtN(v);
+}
+function arqNF(inp,tipo){
+ const f=inp.files[0]; inp.value=""; if(!f) return;
+ if(f.size>limArq()) return alert(`Arquivo muito grande (máx. ${limTxt()}).`);
+ const r=new FileReader(); r.onload=()=>{nfArqs[tipo]={nome:f.name,tipo:f.type||(tipo==="xml"?"text/xml":"application/pdf"),dados:r.result}; mostrarArqNF()}; r.readAsDataURL(f);
+}
+function mostrarArqNF(){
+ for(const t of ["pdf","xml"]) $(t==="pdf"?"nfPdfInfo":"nfXmlInfo").innerHTML=nfArqs[t]?`📄 ${esc(nfArqs[t].nome)} <button type="button" class="x" onclick="nfArqs.${t}=null;mostrarArqNF()">✕</button>`:`<span style="color:var(--muted)">nenhum</span>`;
+}
+function salvarNF(ev){
+ ev.preventDefault();
+ const d={num:$("nNumNF").value.trim(),data:$("nDataNF").value,status:$("nStNF").value,pedido:+$("nPedNF").value||null,cli:$("nCliNF").value.trim(),
+  doc:$("nDocNF").value.trim(),vend:$("nVendNF").value,transp:+$("nTrNF").value||null,valor:numBR($("nValNF").value),pdf:nfArqs.pdf,xml:nfArqs.xml};
+ if(db.notas.some(n=>n.num===d.num&&n.id!==nfEdit)) return alert("Já existe uma nota com esse número.");
+ let n=nfEdit?db.notas.find(x=>x.id===nfEdit):null;
+ const antigo=n?.pedido;
+ if(n) Object.assign(n,d); else db.notas.push(n={id:Date.now(),...d});
+ // Nota válida ligada a um pedido → pedido passa para "Faturado" (checklist: NF emitida)
+ if(antigo&&antigo!==n.pedido){const pa=P(antigo); if(pa&&pa.nfNum===n.num){pa.nf=false;pa.nfNum=""}}
+ const p=n.pedido&&P(n.pedido);
+ if(p){ if(nfValida(n)){p.nf=true;p.nfNum=n.num} else if(p.nfNum===n.num){p.nf=false;p.nfNum=""} p.upd=Date.now() }
+ $("dlgNF").close(); save();
+}
+function excluirNF(){
+ const n=db.notas.find(x=>x.id===nfEdit); if(!n||!confirm(`Excluir a nota fiscal Nº ${n.num}?`)) return;
+ const p=n.pedido&&P(n.pedido); if(p&&p.nfNum===n.num){p.nf=false;p.nfNum=""}
+ db.notas=db.notas.filter(x=>x.id!==nfEdit); $("dlgNF").close(); save();
+}
+
+// ===== Transportadoras =====
+if(!db.transportadoras) db.transportadoras=[];
+const UFS="AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
+const CAMPOS_TR={tNome:"nome",tEmail:"email",tDoc:"doc",tIE:"ie",tTel:"tel",tEnd:"end",tCidade:"cidade",tUF:"uf"};
+let trEdit=null;
+function renderTr(){
+ const q=$("trBusca").value.trim().toLowerCase();
+ const lista=db.transportadoras.filter(t=>!q||Object.values(CAMPOS_TR).map(k=>t[k]||"").join(" ").toLowerCase().includes(q))
+  .sort((a,b)=>a.nome.localeCompare(b.nome));
+ VIS.tr=lista.map(t=>t.id); barraSel("tr");
+ $("listaTr").innerHTML=lista.map(t=>`<div class="tr ${SEL.tr.has(t.id)?"marcado":""}">${cbSel("tr",t.id)}
+  <span class="nm">${esc(t.nome)}</span><span>${esc(t.doc||"—")}</span><span>${esc(t.tel||"—")}</span>
+  <span>${t.cidade||t.uf?esc([t.cidade,t.uf].filter(Boolean).join("/").toUpperCase()):"—"}</span>
+  <span style="text-align:right"><button class="btn sec" onclick="abrirTr(${t.id})">✎ Editar</button></span></div>`).join("")
+  ||"<p style='padding:16px'>Nenhuma transportadora cadastrada.</p>";
+}
+function abrirTr(id){
+ trEdit=id; const t=id?db.transportadoras.find(x=>x.id===id):{};
+ $("tUF").innerHTML=`<option value="">Selecione</option>`+UFS.map(u=>`<option>${u}</option>`).join("");
+ for(const [el,k] of Object.entries(CAMPOS_TR)) $(el).value=t[k]||"";
+ $("dlgTrT").textContent=id?"Editar transportadora":"Nova transportadora";
+ $("tExcluir").style.visibility=id?"visible":"hidden";
+ $("dlgTr").showModal();
+}
+function salvarTr(ev){
+ ev.preventDefault(); const d={};
+ for(const [el,k] of Object.entries(CAMPOS_TR)) d[k]=$(el).value.trim();
+ d.nome=d.nome.toUpperCase();
+ if(trEdit) Object.assign(db.transportadoras.find(x=>x.id===trEdit),d); else db.transportadoras.push({id:Date.now(),...d});
+ $("dlgTr").close(); save();
+}
+function excluirTr(){const t=db.transportadoras.find(x=>x.id===trEdit); if(t&&confirm(`Excluir a transportadora ${t.nome}?`)){db.transportadoras=db.transportadoras.filter(x=>x.id!==trEdit);$("dlgTr").close();save()}}
+
+// ===== Logística =====
+const ST_LOG={"Em separação":"#ef6c00","Faturado":"#1f7fc4","Enviado":"#5b3fc4","Entregue":"#16a36a"};
+const LOG_K=Object.keys(ST_LOG);
+// O status nunca fica "atrás" do checklist: NF emitida → Faturado, enviado → Enviado, recebido → Entregue
+const idxAuto=p=>p.rec?3:p.env?2:p.nf?1:0;
+const stLog=p=>LOG_K[Math.max(idxAuto(p),LOG_K.indexOf(p.logSt))];
+function filtraLog(p){
+ const t=id=>$(id).value.trim().toLowerCase(), dig=s=>String(s??"").replace(/\D/g,"");
+ if(t("flNota")&&!String(p.nfNum||"").toLowerCase().includes(t("flNota"))) return false;
+ if(t("flCli")&&!(p.cli||"").toLowerCase().includes(t("flCli"))) return false;
+ if(t("flOC")&&!(p.oc||"").toLowerCase().includes(t("flOC"))) return false;
+ if(t("flVal")){const a=dig(t("flVal")),v=calcOrc(p).total; if(!dig(v.toFixed(2)).includes(a)&&!dig(Math.round(v)).includes(a)) return false}
+ if(t("flNum")&&!String(p.num).includes(t("flNum"))) return false;
+ if($("flSt").value&&stLog(p)!==$("flSt").value) return false;
+ if(t("flCep")&&!(dig(p.cep)+" "+dig(p.etiqueta?.cep)).includes(dig(t("flCep")))) return false;
+ if($("flVend").value&&p.vend!==$("flVend").value) return false;
+ if($("flIni").value&&(p.data||"")<$("flIni").value) return false;
+ if($("flFim").value&&(p.data||"")>$("flFim").value) return false;
+ return true;
+}
+function limparFiltLog(){["flNota","flCli","flOC","flVal","flNum","flSt","flCep","flVend","flIni","flFim"].forEach(id=>$(id).value="");renderLog()}
+function renderLog(){
+ for(const [id,ops] of [["flSt",LOG_K.map(s=>`<option>${s}</option>`).join("")],["flVend",vendNomes().map(v=>`<option>${esc(v)}</option>`).join("")]]){
+  const s=$(id),val=s.value; s.innerHTML=`<option value="">Todos</option>`+ops; s.value=val}
+ const lista=db.pedidos.filter(p=>p.lista&&!cancelado(p)&&filtraLog(p)).sort((a,b)=>(+b.num||0)-(+a.num||0));
+ $("logGrupos").innerHTML=`<div class="kb">`+LOG_K.map(s=>{const ps=lista.filter(p=>stLog(p)===s), c=ST_LOG[s];
+  return `<div class="kb-col" style="--c:${c}">
+   <div class="kb-h"><b>${s.toUpperCase()}</b><span class="kb-n">${ps.length}</span><small>${brl(ps.reduce((t,p)=>t+calcOrc(p).total,0))}</small></div>
+   <div class="kb-body">${ps.map(p=>{const r=p.rastreio||{}, em=(p.emails||[]).filter(Boolean).length, an=(p.anexos||[]).length;
+   return `<div class="kb-card">
+    <div class="kb-top"><span class="n">Nº ${esc(p.num)}</span><span class="tag st-click" style="background:${c}" title="Clique para trocar o status" onclick="menuLog(event,${p.id})">${s} ▾</span></div>
+    <div class="kb-cli" title="${esc(p.cli)}">${esc(p.cli||"—")}</div>
+    <div class="kb-info"><span>📅 ${fmtD(p.data)||"—"}</span><b>${brl(calcOrc(p).total)}</b></div>
+    ${p.nfNum?`<div class="kb-info"><span>NF ${esc(p.nfNum)}</span></div>`:""}
+    <div class="kb-acoes">
+     <button class="${r.cod||r.link?"ok":""}" title="Rastreio${r.cod?": "+esc(r.cod):""}" onclick="abrirLog(${p.id},'rastreio')">🚚<span>${r.cod?esc(r.cod):"Rastreio"}</span></button>
+     <button class="${p.freteValor?"ok":""}" title="Valor do frete" onclick="abrirLog(${p.id},'frete')">💲<span>${p.freteValor?brl(p.freteValor):"Frete"}</span></button>
+     <button class="${em?"ok":""}" title="E-mails" onclick="abrirLog(${p.id},'emails')">✉<span>E-mails${em?` (${em})`:""}</span></button>
+     <button class="${an?"ok":""}" title="Anexos" onclick="abrirLog(${p.id},'anexos')">📎<span>Anexos${an?` (${an})`:""}</span></button>
+     <button class="${p.etiqueta?"ok":""}" title="Etiqueta" onclick="abrirLog(${p.id},'etiqueta')">🏷<span>Etiqueta</span></button>
+    </div></div>`}).join("")||`<div class="kb-vazio">Nenhum pedido</div>`}</div></div>`}).join("")+`</div>`;
+}
+function menuLog(ev,id){
+ ev.stopPropagation(); const p=P(id), atual=stLog(p), m=$("stMenu");
+ m.innerHTML=LOG_K.filter(s=>s!==atual).map(s=>`<button style="--c:${ST_LOG[s]}" onclick="trocarLog(${id},'${s}')">${s}</button>`).join("");
+ const r=ev.currentTarget.getBoundingClientRect(); m.style.left=r.left+"px"; m.style.top=(r.bottom+4)+"px"; m.hidden=false;
+}
+function trocarLog(id,s){
+ const p=P(id); $("stMenu").hidden=true;
+ if(LOG_K.indexOf(s)<idxAuto(p)) return alert(`O checklist deste pedido já marca "${LOG_K[idxAuto(p)]}". Para voltar, desmarque no Ped. Checklist.`);
+ p.logSt=s; p.upd=Date.now(); save();
+}
+let logEdit=null, logAnexos=[];
+function abrirLog(id,tipo){
+ logEdit={id,tipo}; const p=P(id), r=p.rastreio||{}, c=$("dlgLogC"), inp=(id,lb,v="",x="")=>`<label>${lb}<input id="${id}" value="${esc(v)}" ${x}></label>`;
+ const tit={rastreio:"Rastreio",frete:"Valor do frete",emails:"E-mails do cliente",anexos:"Anexos",etiqueta:"Etiqueta"}[tipo];
+ $("dlgLogT").textContent=`${tit} – Pedido Nº ${p.num}`;
+ if(tipo==="rastreio") c.innerHTML=`<div class="f-grid" style="grid-template-columns:1fr">${inp("lgCod","Código de rastreio",r.cod)}${inp("lgLink","Link de rastreio",r.link,'placeholder="https://..."')}
+  ${r.link?`<a href="${esc(r.link)}" target="_blank" rel="noopener" style="font-size:13px">🔗 Abrir rastreio</a>`:""}</div>`;
+ if(tipo==="frete") c.innerHTML=`<div class="f-grid" style="grid-template-columns:1fr">${inp("lgFrete","Valor do frete (R$)",p.freteValor?fmtN(p.freteValor):"",'placeholder="0,00"')}</div>`;
+ if(tipo==="emails"){const e=p.emails||[p.email||""]; c.innerHTML=`<div class="f-grid" style="grid-template-columns:1fr">${[0,1,2].map(i=>inp("lgE"+i,"E-mail "+(i+1),e[i]||"",'type="email"')).join("")}</div>`}
+ if(tipo==="anexos"){logAnexos=[...(p.anexos||[])]; c.innerHTML=`<label class="btn sec" style="cursor:pointer;display:inline-block">📎 Adicionar arquivos<input type="file" multiple hidden onchange="addAnexos(this)"></label>
+  <span style="font-size:11.5px;color:var(--muted);margin-left:8px">até ${limTxt()} cada</span><div id="lgLista" class="lst-arq"></div>`; listaAnexos()}
+ if(tipo==="etiqueta"){const e=p.etiqueta||{cep:p.cep,end:p.end,num:p.numEnd,compl:p.compl,bairro:p.bairro,cidade:p.cidade,uf:p.uf};
+  c.innerHTML=`<div class="f-grid" style="grid-template-columns:repeat(3,1fr)">
+   <label>CEP <span id="eCepSt" style="font-weight:500;text-transform:none;color:var(--azul)"></span><input id="eCep" value="${esc(e.cep||"")}" placeholder="00000-000" oninput="if(this.value.replace(/\\D/g,'').length===8)buscarCep('e')"></label>
+   <label style="grid-column:span 2">Endereço<input id="eEnd" value="${esc(e.end||"")}"></label>
+   ${inp("eNumEnd","Número",e.num)}${inp("eCompl","Complemento",e.compl)}${inp("eBairro","Bairro",e.bairro)}
+   ${inp("eCidade","Cidade",e.cidade)}${inp("eUF","Estado",e.uf,'maxlength="2" style="text-transform:uppercase"')}</div>
+   ${p.etiqueta?"":`<p style="font-size:12px;color:var(--muted)">${p.cep||p.end?"Preenchido com o endereço do pedido.":"O pedido não tem endereço cadastrado — digite o CEP."}</p>`}`}
+ $("dlgLog").showModal();
+}
+function addAnexos(inp){
+ [...inp.files].forEach(f=>{
+  if(f.size>limArq()) return alert(`"${f.name}" passa de ${limTxt()} e não foi adicionado.`);
+  const r=new FileReader(); r.onload=()=>{logAnexos.push({nome:f.name,tipo:f.type,dados:r.result}); listaAnexos()}; r.readAsDataURL(f);
+ }); inp.value="";
+}
+function listaAnexos(){
+ $("lgLista").innerHTML=logAnexos.map((a,i)=>`<div><a href="#" onclick="abrirArq(logAnexos[${i}]);return false">📄 ${esc(a.nome)}</a><button type="button" class="x" onclick="logAnexos.splice(${i},1);listaAnexos()">✕</button></div>`).join("")||`<span style="color:var(--muted)">Nenhum anexo.</span>`;
+}
+function salvarLog(ev){
+ ev.preventDefault(); const p=P(logEdit.id), v=id=>$(id).value.trim();
+ switch(logEdit.tipo){
+  case "rastreio": p.rastreio={cod:v("lgCod"),link:v("lgLink")}; break;
+  case "frete": p.freteValor=numBR(v("lgFrete")); break;
+  case "emails": p.emails=[0,1,2].map(i=>v("lgE"+i)); break;
+  case "anexos": p.anexos=logAnexos; break;
+  case "etiqueta": p.etiqueta={cep:v("eCep"),end:v("eEnd"),num:v("eNumEnd"),compl:v("eCompl"),bairro:v("eBairro"),cidade:v("eCidade"),uf:v("eUF").toUpperCase()}; break;
+ }
+ p.upd=Date.now(); $("dlgLog").close(); save();
+}
+function abrirPed(id,ver=false){
+ pedEdit=id; const p=id?P(id):{num:proxNumPed(),data:hoje(),itens:[],nf:false,bol:false,env:false,rec:false,pago:false,descTipo:"pct"};
+ // modo visualizar: mesma tela do editar, mas nada pode ser alterado
+ $("dlgPed").classList.toggle("so-ver",ver); $("pFechar").textContent=ver?"Fechar":"Cancelar";
+ $("dlgPed").querySelectorAll("form input,form select,form textarea").forEach(el=>el.disabled=ver);
+ $("pCepSt").textContent=""; ocArq=p.ocArq||null; mostrarOC();
+ $("dlgPedT").textContent=`Pedido - Nº ${p.num}`+(p.orc?` (orçamento Nº ${p.orc})`:"");
+ const e=ETAPAS[etapa(p)]; $("pStTag").innerHTML=`<span class="tag" style="background:${e.c};color:${etapa(p)==="chegada"?"#3a2e00":"#fff"}">${rotulo(p)}</span> <span style="font-size:12px;color:var(--muted)">muda sozinho conforme o checklist</span>`;
+ $("pVend").innerHTML=`<option value="">Selecione</option>`+[...new Set([...vendNomes(),p.vend].filter(Boolean))].map(v=>`<option>${esc(v)}</option>`).join("");
+ $("pNum").value=p.num;
+ for(const [el,k] of Object.entries(CAMPOS_PED)) $(el).value=p[k]??"";
+ if(!$("pCnpjEmp").value) $("pCnpjEmp").selectedIndex=0;
+ if(!$("pDescTipo").value) $("pDescTipo").value="pct";
+ $("pDesc").value=p.desc?fmtN(p.desc):""; $("pNovoProd").value="";
+ $("pItens").innerHTML=""; p.itens.forEach((i,k)=>addLinhaOrc(itemTab(i,k),"p")); totDlg("p");
+ if(ver){ $("dlgPedT").textContent+=" · visualização"; $("pItens").querySelectorAll("input").forEach(el=>el.disabled=true) }
+ if(p.st==="Cancelado") $("pStTag").insertAdjacentHTML("afterbegin",`<span class="tag" style="background:#e53935;margin-right:6px">Cancelado</span>`);
+ $("dlgPed").showModal(); $("dlgPed").scrollTop=0;
+}
+function salvarPed(ev){
+ ev.preventDefault(); if($("dlgPed").classList.contains("so-ver")) return $("dlgPed").close();
+ const num=$("pNum").value.trim();
+ if(!num) return alert("Informe o nº do pedido");
+ const grupo=pedEdit?!!P(pedEdit).lista:true;
+ if(db.pedidos.some(x=>x.num===num&&x.id!==pedEdit&&!!x.lista===grupo)) return alert("Já existe um pedido com esse número.");
+ let p=pedEdit?P(pedEdit):null;
+ if(!p){p={id:Date.now(),lista:true,st:"Aprovado",nf:false,bol:false,env:false,rec:false,pago:false,itens:[]}; db.pedidos.push(p); pedEdit=p.id}
+ for(const [el,k] of Object.entries(CAMPOS_PED)) p[k]=$(el).value.trim();
+ p.num=num; p.uf=p.uf.toUpperCase(); p.ocArq=ocArq; p.desc=numBR($("pDesc").value);
+ p.itens=lerItensDlg("p").map(({k,...i})=>{const old=k!==""?p.itens[+k]:null;
+  return {...(old||novoItem("")),...i,n:`${i.qtd}x ${i.prod}`}});
+ const o=db.orcamentos.find(x=>x.pedidoId===p.id); if(o&&!p.orc) p.orc=o.num;
+ p.upd=Date.now(); $("dlgPed").close(); save();
+}
+
+// ===== Connect Max API (Portal do Franqueado) — leitura AO VIVO =====
+// Orçamentos e Notas fiscais não são copiados: cada vez que a tela abre (ou o período muda) os dados vêm da API.
+// A chave fica só neste navegador (não vai para os dados nem para a nuvem).
+const API_URL_PADRAO="https://connect-max-api.laerciogermano.com";
+const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}}, lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const apiBase=()=>(lsGet("conectmax_api_url")||API_URL_PADRAO).replace(/\/+$/,""), apiKey=()=>lsGet("conectmax_api_key");
+const isoBR=s=>s?s.split("-").reverse().join("/"):"";
+function dataISO(s){if(!s) return ""; s=String(s); let m=/^(\d{2})\/(\d{2})\/(\d{4})/.exec(s); if(m) return `${m[3]}-${m[2]}-${m[1]}`; m=/^(\d{4}-\d{2}-\d{2})/.exec(s); return m?m[1]:""}
+// nome do vendedor na API → vendedor cadastrado aqui (nome completo ou primeiro nome)
+function vendMatch(n){if(!n) return ""; const a=n.trim().toLowerCase(), pri=a.split(/\s+/)[0];
+ const v=db.vendedores.find(v=>v.nome.toLowerCase()===a)||db.vendedores.find(v=>v.nome.toLowerCase().split(/\s+/)[0]===pri); return v?v.nome:n.trim()}
+async function apiGet(path,params={},key=apiKey(),base=apiBase()){
+ if(!key) throw new Error("a chave da API não foi configurada");
+ const q=new URLSearchParams(params).toString();
+ let r; try{ r=await fetch(base+path+(q?"?"+q:""),{headers:{"X-API-Key":key,"Accept":"application/json"}}) }
+ catch(e){ throw new Error("não foi possível falar com a API (sem internet ou servidor fora do ar)") }
+ if(r.status===401) throw new Error("chave da API inválida");
+ if(!r.ok) throw new Error(`a API respondeu ${r.status}`);
+ return r.json();
+}
+// ---- conexão (endereço + chave)
+function abrirApi(){ $("apUrl").value=apiBase(); $("apKey").value=apiKey(); $("apMsg").textContent=""; $("dlgApi").showModal() }
+async function testarApi(salvar){
+ const base=$("apUrl").value.trim().replace(/\/+$/,"")||API_URL_PADRAO, key=$("apKey").value.trim();
+ if(!key) return $("apMsg").textContent="Cole a chave da API.";
+ $("apMsg").textContent="Testando…";
+ try{ await apiGet("/db/health",{},key,base); $("apMsg").textContent="✔ Conectado.";
+  if(salvar){ lsSet("conectmax_api_url",base); lsSet("conectmax_api_key",key); API.orc.chave=API.nf.chave=""; $("dlgApi").close(); render() } }
+ catch(e){ $("apMsg").textContent="✖ "+e.message }
+}
+// ---- cache da tela atual (só em memória); recarrega ao abrir a tela, ao mudar o período ou em "Atualizar"
+// A API devolve no máximo 100 registros por busca (sem paginação): por isso o período padrão é o mês atual
+// e o filtro de Status é enviado para a API (assim dá para achar mais de 100 escolhendo um status).
+const LIMITE_API=100;
+const API={orc:{chave:"",dados:[],meta:{},carregando:false,erro:"",quando:0},nf:{chave:"",dados:[],meta:{},carregando:false,erro:"",quando:0}};
+const CFG_API={
+ // rotas sem /db: leem o Portal do Franqueado na hora (as /db/* usam uma réplica que pode estar atrasada)
+ orc:{rota:"/orcamentos",campo:"orcamentos",ini:"foIni",fim:"foFim",st:"foSt",render:()=>renderOrc(),
+  status:["Em aberto","Enviado","Contra proposta","Aprovado","Reprovado","Cancelado"],
+  map:a=>({id:a.id,num:String(a.numero??a.id),data:dataISO(a.data),status:a.status||"—",cli:a.cliente||"",vend:vendMatch(a.vendedor),total:+a.total||0})},
+ nf:{rota:"/notas-fiscais",campo:"notasFiscais",ini:"fnIni",fim:"fnFim",st:"fnSt",render:()=>renderNF(),
+  status:["Aguardando envio","Enviado","Rejeitado","Cancelado"],
+  map:a=>({id:a.id,num:String(a.numero??a.id),data:dataISO(a.data),status:a.status||"—",tipo:a.tipo||"",cli:a.cliente||"",transp:a.transportadora||"",valor:+a.total||0,pdf:a.pdf||"",xml:a.xml||""})}
+};
+function periodoApi(t){const c=CFG_API[t];
+ if(!$(c.ini).value) $(c.ini).value=hoje().slice(0,8)+"01";   // padrão: do dia 1º do mês até hoje
+ if(!$(c.fim).value) $(c.fim).value=hoje();
+ const p={data_inicial:isoBR($(c.ini).value),data_final:isoBR($(c.fim).value)};
+ if($(c.st).value) p.status=$(c.st).value;
+ return p}
+// opções do Status: as conhecidas + as que vieram da API
+function opcoesStApi(t){const c=CFG_API[t], s=API[t];
+ optSel(c.st,"Todos",[...new Set([...c.status,...Object.keys(s.meta.porStatus||{}),...s.dados.map(x=>x.status)])].filter(x=>x&&x!=="—").map(x=>`<option>${esc(x)}</option>`).join(""))}
+async function carregarApi(t,forcar){
+ const c=CFG_API[t], s=API[t], per=periodoApi(t), chave=JSON.stringify(per)+apiKey();
+ if(!forcar&&(s.chave===chave||s.carregando)) return;
+ s.chave=chave; s.carregando=true; s.erro=""; c.render();
+ try{ const r=await apiGet(c.rota,per); if(s.chave!==chave) return; s.dados=(r[c.campo]||[]).map(c.map);
+  s.meta={total:+r.total||s.dados.length,porStatus:r.porStatus||null,totalValor:r.totalValor}; s.quando=Date.now() }
+ catch(e){ if(s.chave===chave){s.erro=e.message; s.dados=[]; s.meta={}} }
+ if(s.chave===chave){ s.carregando=false; c.render() }
+}
+// aviso acima da lista: carregando / erro / sem chave / última leitura
+function avisoApi(t){const s=API[t];
+ if(!apiKey()) return `<div class="api-aviso">🔌 Para ver os dados do Portal do Franqueado, configure a chave da API. <button class="btn" onclick="abrirApi()">Configurar</button></div>`;
+ if(s.carregando) return `<div class="api-aviso">⏳ Buscando no Portal do Franqueado… (leitura ao vivo, pode levar alguns segundos)</div>`;
+ if(s.erro) return `<div class="api-aviso erro">✖ Não foi possível buscar: ${esc(s.erro)}. <button class="btn sec" onclick="carregarApi('${t}',true)">Tentar de novo</button> <button class="btn sec" onclick="abrirApi()">Conexão</button></div>`;
+ const per=periodoApi(t), cheio=s.dados.length>=LIMITE_API||(s.meta.total>s.dados.length);
+ return `<div class="api-aviso ok">Dados ao vivo do Portal do Franqueado · ${per.data_inicial} a ${per.data_final}${per.status?` · status ${esc(per.status)}`:""} · lido às ${new Date(s.quando).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})} <button class="btn sec" onclick="carregarApi('${t}',true)">↻ Atualizar</button></div>`+
+  (cheio?`<div class="api-aviso erro" style="background:#fff6dd;color:#8a5a00">⚠ A API devolve no máximo ${LIMITE_API} registros por busca${s.meta.total>s.dados.length?` (mostrando ${s.dados.length} de ${s.meta.total})`:""}. Diminua o período ou escolha um status para ver o restante.</div>`:"");
+}
+// cor do status (os da API podem ter nomes diferentes dos daqui)
+function corSt(s,mapa){if(mapa[s]) return mapa[s]; const k=(s||"").toLowerCase();
+ if(/aprov|autoriz|emitid|envi/.test(k)) return "#16a36a"; if(/cancel|reprov/.test(k)) return "#e53935"; if(/rejeit|deneg/.test(k)) return "#8e24aa";
+ if(/aguard|pend|abert/.test(k)) return "#ef6c00"; if(/contra/.test(k)) return "#ef6c00"; return "#1f7fc4"}
+// PDF/XML: se o link é da própria API, baixa com a chave; senão abre direto
+// os links de PDF/XML da API vêm como caminho do Portal do Franqueado (ex.: /franqueado/ajax/notas_fiscais/pdf.php?id_nota=17529):
+// abrem no próprio portal (é preciso estar logado nele neste navegador)
+const PORTAL_FRANQ="https://franqueado.conectmax.com";
+async function abrirLinkApi(u,nome){
+ if(!u) return;
+ if(/^\/?franqueado\//i.test(u)) return window.open(PORTAL_FRANQ+(u.startsWith("/")?"":"/")+u,"_blank");
+ const url=/^https?:/i.test(u)?u:apiBase()+(u.startsWith("/")?"":"/")+u;
+ if(!url.startsWith(apiBase())) return window.open(url,"_blank");
+ const w=window.open("","_blank");
+ try{ const r=await fetch(url,{headers:{"X-API-Key":apiKey()}}); if(!r.ok) throw new Error(`a API respondeu ${r.status}`);
+  const b=await r.blob(), obj=URL.createObjectURL(b);
+  if(/pdf|image/.test(b.type)&&w) w.location.href=obj; else {if(w)w.close(); const a=document.createElement("a"); a.href=obj; a.download=nome; a.click()} }
+ catch(e){ if(w)w.close(); alert("Não foi possível abrir o arquivo: "+e.message) }
+}
+// Gerar pedido a partir de um orçamento aprovado da API (a API não traz os itens: o pedido abre para completar)
+function gerarPedidoApi(apiId){
+ const o=API.orc.dados.find(x=>x.id===apiId); if(!o) return;
+ const ja=db.pedidos.find(p=>p.orcApi===apiId); if(ja){irListaPed(); return abrirPed(ja.id)}
+ if(!confirm(`Gerar um pedido a partir do orçamento Nº ${o.num} (${o.cli})?`)) return;
+ const p={id:Date.now(),lista:true,st:"Aprovado",num:proxNumPed(),orc:o.num,orcApi:apiId,data:hoje(),upd:Date.now(),
+  nf:false,bol:false,env:false,rec:false,pago:false,cli:o.cli,vend:o.vend,totalApi:o.total,descTipo:"pct",desc:0,itens:[]};
+ db.pedidos.push(p); save(); irListaPed(); abrirPed(p.id);
+}
+
+// ===== Render =====
+function chk(p,campo,txt,ok){ok=ok&&podeEtapas();return `<label class="${ok?"":"dis"}"><input type="checkbox" ${p[campo]?"checked":""} ${ok?"":"disabled"} onchange="tog(${p.id},-1,'${campo}')"> ${txt}</label>`}
+function render(){
+ renderDash(); renderVend(); renderOrc(); renderListaPed(); renderLog(); renderTr(); renderNF(); renderNotif(); aplicarAcesso(); if($("fVend")) preencherSelVend();
+ const f=$("filtro").value, oc=$("ocultar").checked, q=$("busca").value.trim().toLowerCase();
+ const bate=p=>!q||(p.num+" "+p.cli+" "+(p.vend||"")+" "+(p.obs||"")+" "+(p.oc||"")+" "+p.itens.map(i=>i.n+" "+i.obs).join(" ")).toLowerCase().includes(q);
+ $("orders").innerHTML=db.pedidos.filter(p=>(!f||etapa(p)===f)&&(!$("fVend").value||p.vend===$("fVend").value)&&!(oc&&etapa(p)==="ok")&&bate(p)).map(p=>{
+  const e=ETAPAS[etapa(p)], chegouTudo=p.itens.length&&p.itens.every(i=>i.cheg), fatOk=chegouTudo&&p.nf&&p.bol;
+  const ab=abertos.has(p.id), pr=progresso(p), qtdOk=p.itens.filter(i=>i.cheg).length, pode=podeEtapas();
+  const linha=`<div class="row ${ab?"aberto":""}" style="--c:${e.c}" onclick="abrir(${p.id})">
+   <span class="chev">▶</span><span class="num">Nº ${esc(p.num)}</span><span class="dt">${fmtD(p.data)||"—"}</span><span>${esc(p.vend||"—")}</span><span class="cli" title="${esc(p.cli)}${p.obs?" — "+esc(p.obs):""}">${p.obs?"📝 ":""}${esc(p.cli||"—")}</span>
+   <span><span class="tag" style="background:${e.c};color:${etapa(p)==="chegada"?"#3a2e00":"#fff"}">${rotulo(p)}</span></span>
+   <span class="mini"><span class="prog"><div style="width:${pr}%"></div></span>${pr}%</span>
+   <span title="itens que chegaram">${qtdOk}/${p.itens.length}</span>
+   <span class="dt ${parado(p)?"alert":""}">${parado(p)?`⚠ ${diasParado(p)}d parado`:fmt(p.upd)}</span></div>`;
+  if(!ab) return linha;
+  return linha+`<div class="detail" style="--c:${e.c}">
+   <div class="bar" style="margin-bottom:10px;font-size:12.5px">
+    <label>Data do pedido <input type="date" value="${esc(p.data)}" onchange="setPed(${p.id},'data',this.value)"></label>
+    <label>Vendedor <select onchange="setPed(${p.id},'vend',this.value)"><option value="">—</option>${[...new Set([...vendNomes(),p.vend].filter(Boolean))].map(v=>`<option ${p.vend===v?"selected":""}>${v}</option>`).join("")}</select></label>
+    ${p.oc?`<span>OC: <b>${esc(p.oc)}</b></span>`:""}${p.orc?`<span>Orçamento: <b>Nº ${esc(p.orc)}</b></span>`:""}
+    <button class="btn" style="margin-left:auto" onclick="abrirPed(${p.id})">✎ Dados do pedido</button>
+   </div>
+   <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase">Observação do pedido</label>
+   <textarea class="obs-ped" placeholder="Ex.: cliente pediu entrega até dia 25, falar com fulano..." onchange="setPed(${p.id},'obs',this.value)">${esc(p.obs)}</textarea>
+   ${pode?"":`<div style="font-size:12px;color:#8a5a00;background:#fff6dd;border-radius:8px;padding:6px 10px;margin:8px 0">🔒 As etapas 1 a 7 só podem ser atualizadas pelo administrador ou pela logística. Você recebe um aviso no sininho quando o pedido mudar de etapa.</div>`}
+   <table><tr><th>Item / observação</th><th class="c">1. Comprado</th><th>Previsão de entrega</th><th class="c">2. Chegou</th><th></th></tr>
+   ${p.itens.map((i,k)=>`<tr><td>${esc(i.n)}
+       <input class="obs" placeholder="Observação…" value="${esc(i.obs)}" onchange="setItem(${p.id},${k},'obs',this.value)"></td>
+     <td class="c"><input type="checkbox" ${i.comp?"checked":""} ${pode?"":"disabled"} onchange="tog(${p.id},${k},'comp')"></td>
+     <td>${i.comp?`<input type="date" value="${esc(i.prev)}" onchange="setItem(${p.id},${k},'prev',this.value)">${atrasado(i)?'<span class="atraso">⚠ atrasado</span>':""}`:'<span style="color:#aab">—</span>'}</td>
+     <td class="c"><input type="checkbox" ${i.cheg?"checked":""} ${i.comp&&pode?"":"disabled"} onchange="tog(${p.id},${k},'cheg')"></td>
+     <td><button class="x" onclick="rmItem(${p.id},${k})">✕</button></td></tr>`).join("")}
+   </table>
+   <div class="add-item"><input id="ai${p.id}" placeholder="Adicionar item"><button class="btn sec" onclick="addItem(${p.id})">+</button></div>
+   <div class="final">
+    ${chk(p,"nf","3. Nota fiscal emitida",chegouTudo)}
+    ${chk(p,"bol","4. Boleto emitido",chegouTudo)}
+    ${chk(p,"env","5. Enviado ao cliente",fatOk)}
+    ${chk(p,"rec","6. Recebido pelo cliente",fatOk&&p.env)}
+    ${chk(p,"pago","7. Pagamento confirmado (concluído)",fatOk&&p.env&&p.rec)}
+   </div>
+   <div style="text-align:right;margin-top:8px"><button class="x" onclick="rmPedido(${p.id})">Excluir pedido</button></div>
+  </div>`}).join("")||"<p style='padding:16px'>Nenhum pedido encontrado.</p>";
+
+ // painel
+ const cont={}; db.pedidos.forEach(p=>cont[etapa(p)]=(cont[etapa(p)]||0)+1);
+ const par=db.pedidos.filter(parado);
+ $("kpis").innerHTML=`<div class="kpi" style="--c:#37474f"><b>${par.length}</b><span>Pedidos parados</span></div>`+
+  ["compra","chegada","fat","envio","recebido","ok"].map(k=>`<div class="kpi" style="--c:${ETAPAS[k].c}"><b>${cont[k]||0}</b><span>${ETAPAS[k].n}</span></div>`).join("");
+ $("parados").innerHTML=par.sort((a,b)=>a.upd-b.upd).map(p=>`<div style="cursor:pointer" onclick="irPara(${p.id})" title="Abrir pedido">🔴 <b>Pedido ${esc(p.num)}</b> (${esc(p.cli||"—")}) — ${rotulo(p)} — parado há <b>${diasParado(p)} dia(s)</b>${p.obs?` <i style="color:var(--muted)">📝 ${esc(p.obs)}</i>`:""}</div>`).join("")||"<div>Nada parado 🎉</div>";
+ const pend=[];
+ db.pedidos.forEach(p=>{
+  p.itens.forEach(i=>{
+   const ob=i.obs?` <i style="color:var(--muted)">(${esc(i.obs)})</i>`:"";
+   if(!i.comp) pend.push(`🔴 Pedido ${esc(p.num)}: <b>${esc(i.n)}</b> — falta comprar${ob}`);
+   else if(!i.cheg) pend.push(`${atrasado(i)?"⚠️":"🟡"} Pedido ${esc(p.num)}: <b>${esc(i.n)}</b> — aguardando chegar${i.prev?` (previsão ${fmtD(i.prev)}${atrasado(i)?" – <b style='color:#c62828'>ATRASADO</b>":""})`:" (sem previsão)"}${ob}`)});
+  const e=etapa(p);
+  if(e==="fat"){ if(!p.nf) pend.push(`🔵 Pedido ${esc(p.num)}: emitir <b>nota fiscal</b>`); if(!p.bol) pend.push(`🔵 Pedido ${esc(p.num)}: emitir <b>boleto</b>`)}
+  if(e==="envio") pend.push(p.env?`🟣 Pedido ${esc(p.num)}: confirmar <b>recebimento</b> pelo cliente`:`🟣 Pedido ${esc(p.num)}: <b>enviar NF + boleto</b> ao cliente`);
+  if(e==="recebido") pend.push(`🩵 Pedido ${esc(p.num)}: aguardando <b>pagamento</b>`);
+ });
+ $("pend").innerHTML=pend.map(x=>`<div>${x}</div>`).join("")||"<div>Sem pendências</div>";
+
+ // fluxograma
+ $("flow").innerHTML=ETAPAS_FLUXO.map(f=>`<div class="fase">${f.fase}</div><div class="flow">`+
+  f.itens.map((s,i)=>`${i?'<div class="arrow">➜</div>':""}<div class="step" style="--c:${f.c}">
+   ${s.key&&cont[s.key]?`<span class="cnt">${cont[s.key]}</span>`:""}<h3>${s.t}</h3><ul>${s.a.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("")+`</div>`).join("");
+}
+
+$("filtro").innerHTML+=Object.entries(ETAPAS).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("");
+$("dias").oninput=render;
+function preencherSelVend(){
+ const opV=vendNomes().map(v=>`<option>${esc(v)}</option>`).join("");
+ for(const [id,pri] of [["fVend","Todos os vendedores"],["nVend","Vendedor"]]){const s=$(id),val=s.value;s.innerHTML=`<option value="">${pri}</option>`+opV;s.value=val}
+}
+preencherSelVend();
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("nav button,.tab").forEach(x=>x.classList.remove("on"));
+ b.classList.add("on");
+ if(b.dataset.p){$("constr-t").textContent=b.dataset.p;$("construcao").classList.add("on")}
+ else $(b.dataset.t).classList.add("on");
+ // telas ao vivo: busca de novo na API toda vez que a tela é aberta
+ if(b.dataset.t==="orcamentos") carregarApi("orc",true); if(b.dataset.t==="notas") carregarApi("nf",true)});
+document.querySelectorAll("nav button").forEach(b=>{if(!b.title)b.title=b.innerText.trim()});
+render();
+</script>
+<script>
+/* ================= NUVEM (Firebase): login + dados compartilhados =================
+   Enquanto FIREBASE_CONFIG estiver vazio, o portal funciona como antes (dados só neste navegador).
+   Para ligar: cole aqui a configuração do seu projeto Firebase (veja o arquivo "COMO-LIGAR-A-NUVEM.md"). */
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+window.NUVEM={ativo:false,email:""};
+(function(){
+ if(!FIREBASE_CONFIG.apiKey) return;
+ NUVEM.ativo=true;
+ const V="10.12.2", base=`https://www.gstatic.com/firebasejs/${V}/`;
+ const carregar=src=>new Promise((ok,erro)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>erro(new Error("sem internet?"));document.head.appendChild(s)});
+ const mostrar=id=>["login","carregando"].forEach(x=>$(x).hidden=x!==id);
+ const msg=(t,ok)=>{$("lgMsg").textContent=t||"";$("lgMsg").className="lg-msg"+(ok?" ok":"")};
+ mostrar("carregando");
+ let auth, fs, docDados, docAcesso, parar=null, timer=null, ultimoEnvio="";
+
+ const ERROS={"auth/invalid-credential":"E-mail ou senha incorretos.","auth/wrong-password":"E-mail ou senha incorretos.","auth/user-not-found":"E-mail ou senha incorretos.",
+  "auth/invalid-email":"E-mail inválido.","auth/too-many-requests":"Muitas tentativas. Aguarde alguns minutos e tente de novo.","auth/network-request-failed":"Sem conexão com a internet.",
+  "auth/email-already-in-use":"Este e-mail já tem conta no portal. Se a pessoa esqueceu a senha, ela pode usar \"Esqueci minha senha\" na tela de entrada.",
+  "auth/weak-password":"Senha fraca: use pelo menos 6 caracteres.","permission-denied":"Sem permissão: este e-mail não está liberado no portal."};
+ const txtErro=e=>ERROS[e&&e.code]||(e&&e.message)||"Erro desconhecido";
+
+ // e-mails que podem entrar (vai para o documento portal/acesso, usado pelas regras de segurança)
+ const listaEmails=()=>[...new Set([...(db.admins||[]),...db.vendedores.filter(v=>v.ativo).map(v=>v.email),...(db.funcionarios||[]).filter(f=>f.ativo!==false).map(f=>f.email)]
+  .filter(Boolean).map(e=>e.trim().toLowerCase()))].sort();
+
+ // tira os arquivos (dataURL) de dentro dos dados e grava cada um em arquivos/{id}
+ const novoId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ function separarArquivos(o,lote){
+  if(Array.isArray(o)) return o.forEach(x=>separarArquivos(x,lote));
+  if(!o||typeof o!=="object") return;
+  if(typeof o.dados==="string"&&o.dados.startsWith("data:")){const id=novoId(); lote.push([id,o.dados]); o.ref=id; delete o.dados; return}
+  Object.values(o).forEach(x=>separarArquivos(x,lote));
+ }
+ NUVEM.lerArquivo=async id=>{const d=await fs.collection("arquivos").doc(id).get(); return d.exists?d.data().dados:null};
+
+ async function enviar(){
+  timer=null; if(!auth.currentUser) return;
+  const lote=[]; separarArquivos(db,lote);
+  try{
+   for(const [id,dados] of lote) await fs.collection("arquivos").doc(id).set({dados,por:NUVEM.email,t:Date.now()});
+   const json=JSON.stringify(db); if(json===ultimoEnvio) return;
+   const dados=JSON.parse(json); dados._t=Date.now(); dados._por=NUVEM.email;
+   await docDados.set(dados); ultimoEnvio=json;
+   if((db.admins||[]).includes(NUVEM.email)) await docAcesso.set({emails:listaEmails(),admins:db.admins},{merge:true});
+   try{localStorage.setItem(KEY,json)}catch(e){}
+  }catch(e){alert("Não foi possível salvar na nuvem: "+txtErro(e)+"\nSuas últimas alterações podem não ter sido gravadas.")}
+ }
+ window.nuvemSalvar=()=>{if(!auth||!auth.currentUser) return; clearTimeout(timer); timer=setTimeout(enviar,400)};
+
+ function normalizar(){for(const k of ["pedidos","vendedores","funcionarios","notifs","orcamentos","notas","transportadoras","admins"]) if(!Array.isArray(db[k])) db[k]=[];}
+
+ async function aoEntrar(user){
+  NUVEM.email=(user.email||"").toLowerCase(); mostrar("carregando");
+  try{
+   const ac=await docAcesso.get();
+   const snap=ac.exists?await docDados.get():{exists:false};
+   if(ac.exists&&!snap.exists) throw {message:"Os dados do portal não foram encontrados na nuvem. Fale com o administrador."};
+   if(!snap.exists){
+    // primeira vez: quem entra vira administrador e os dados deste navegador sobem para a nuvem
+    if(!confirm("A nuvem ainda está vazia. Enviar os dados deste navegador para a nuvem e tornar "+NUVEM.email+" o administrador?")){await auth.signOut();return}
+    db.admins=[NUVEM.email]; if(!db.adminNomes)db.adminNomes={};
+    await docAcesso.set({emails:listaEmails(),admins:db.admins});
+    const lote=[]; separarArquivos(db,lote);
+    for(const [id,dados] of lote) await fs.collection("arquivos").doc(id).set({dados,por:NUVEM.email,t:Date.now()});
+    ultimoEnvio=JSON.stringify(db); await docDados.set(JSON.parse(ultimoEnvio));
+   } else {
+    // sempre começa pelos dados da nuvem (nunca envia a cópia local por cima)
+    const d=snap.data(); delete d._t; delete d._por; db=d; normalizar(); checarEtapas(false); ultimoEnvio=JSON.stringify(db);
+    try{localStorage.setItem(KEY,ultimoEnvio)}catch(e){}
+   }
+   if(parar) parar();
+   parar=docDados.onSnapshot(s=>{
+    if(!s.exists||s.metadata.hasPendingWrites||timer) return; // ignora o eco das nossas próprias gravações
+    const d=s.data(); delete d._t; delete d._por; const json=JSON.stringify(d); if(json===ultimoEnvio) return;
+    db=d; ultimoEnvio=json; normalizar(); checarEtapas(false);
+    try{localStorage.setItem(KEY,json)}catch(e){}
+    render(); mostrar(null);
+   },e=>{mostrar("login");msg(txtErro(e))});
+   // registra o último acesso de quem entrou
+   const v=db.vendedores.find(x=>mesmoEmail(x.email,NUVEM.email))||(db.funcionarios||[]).find(x=>mesmoEmail(x.email,NUVEM.email));
+   if(v){v.ultimo=Date.now(); save()}
+   render(); mostrar(null);
+  }catch(e){mostrar("login"); msg(txtErro(e)); if(e.code==="permission-denied") auth.signOut()}
+ }
+
+ NUVEM.entrar=async()=>{msg("");const e=$("lgEmail").value.trim(), s=$("lgSenha").value;
+  try{await auth.signInWithEmailAndPassword(e,s); $("lgSenha").value=""}catch(x){msg(txtErro(x))}};
+ NUVEM.esqueci=async()=>{const e=$("lgEmail").value.trim(); if(!e) return msg("Digite seu e-mail no campo acima e clique de novo em \"Esqueci minha senha\".");
+  try{await auth.sendPasswordResetEmail(e); msg("Enviamos um e-mail com o link para criar uma nova senha.",true)}catch(x){msg(txtErro(x))}};
+ // ao sair, apaga a cópia local dos dados (computador compartilhado não fica com as informações)
+ NUVEM.sair=async()=>{if(timer){clearTimeout(timer);await enviar()} if(parar){parar();parar=null} await auth.signOut();
+  try{localStorage.removeItem(KEY)}catch(e){} location.reload()};
+ // cria o login de um vendedor/funcionário sem deslogar o administrador (usa uma 2ª instância do Firebase)
+ NUVEM.criarConta=async(email,senha)=>{
+  const sec=firebase.apps.find(a=>a.name==="cadastro")||firebase.initializeApp(FIREBASE_CONFIG,"cadastro");
+  try{await sec.auth().createUserWithEmailAndPassword(email.trim(),senha); await sec.auth().signOut();
+   return {ok:true,msg:`Login criado para ${email}. A pessoa entra no portal com esse e-mail e a senha que você definiu.`}}
+  catch(e){return {ok:e.code==="auth/email-already-in-use",msg:txtErro(e)}}
+ };
+
+ (async()=>{
+  try{ await carregar(base+"firebase-app-compat.js"); await Promise.all([carregar(base+"firebase-auth-compat.js"),carregar(base+"firebase-firestore-compat.js")]); }
+  catch(e){ $("carregando").querySelector("div").textContent="Não foi possível conectar à nuvem (verifique a internet) e recarregue a página."; return }
+  firebase.initializeApp(FIREBASE_CONFIG);
+  auth=firebase.auth(); fs=firebase.firestore();
+  docDados=fs.collection("portal").doc("dados"); docAcesso=fs.collection("portal").doc("acesso");
+  auth.onAuthStateChanged(u=>{ if(u) aoEntrar(u); else { NUVEM.email=""; if(parar){parar();parar=null} mostrar("login"); render() } });
+ })();
+})();
+</script>
+</body>
+</html>

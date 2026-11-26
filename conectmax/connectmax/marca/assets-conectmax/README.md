@@ -9,6 +9,7 @@
 | [`logo-branco.png`](logo-branco.png) | Mono claro (sobre azul) |
 | [`simbolo-oficial.png`](simbolo-oficial.png) | Só o globo (PNG original) |
 | [`icone-512.png`](icone-512.png) | Ícone app |
+| [`logo-branco-100.png`](logo-branco-100.png) | Símbolo branco 100×100 (RGBA, fundo transparente) — gerado a partir de `icone-512.png` |
 
 ## Outros insumos
 

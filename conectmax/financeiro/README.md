@@ -8,5 +8,6 @@ Contas, crédito, faturamento, indicadores e **provedores** de emissão fiscal /
 | [`tecnospeed-sped-xml.md`](tecnospeed-sped-xml.md) | SPED XML — gera SPED a partir dos XMLs (pós-emissão) |
 | [`../extratos/README.md`](../extratos/README.md) | Extratos bancários (Inter) |
 | [`../portal-api/README.md`](../portal-api/README.md) | Portal: faturas, NF, boletos |
+| `certificado/` (gitignored) | A1 e-CNPJ CWB — `Certificado Digital - CNPJ CWB.pfx` + `senha.txt`. CNPJ `62248210000150`, válido até 2027-09-14. Fora do git. |
 
 **Linha TecnoSpeed (resumo):** PlugNotas = emitir nota · SPED XML = escriturar · PlugBank = boleto. Portal hoje: NF + CR → `ajax/boletos/*`.

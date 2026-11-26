@@ -8,3 +8,6 @@ coverage/
 # DB dumps
 backups/
 
+# Certificado A1 (pfx + senha) — só local
+financeiro/certificado/
+

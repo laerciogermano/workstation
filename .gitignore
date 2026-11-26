@@ -30,6 +30,9 @@ e-notas/app/data/
 # Export Instagram (dados pessoais — não versionar)
 /core/instagram-*/
 
+# Export LinkedIn (zips + CSVs com e-mail e mensagens — não versionar)
+/linkedin-exports/
+
 # Clozzy benchmarking compiled PDF (too large for GitHub)
 clozzy/marca/benchmarking-concorrentes/relatorio-compilado.pdf
 dumps/

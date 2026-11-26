@@ -47,6 +47,14 @@ Card **Gestão de CDPs** no hub (`img/gestao-cdps.jpg`, `url: null` = em breve).
 
 **Voltar:** remover o objeto Gestão de CDPs de `site/index.html` e `site/img/gestao-cdps.jpg`; republicar.
 
+## Cards locais (lote 2026-11-26)
+
+Incluídos no hub com `url: null` (em breve): Flow (`img/flow-core.jpg`), Flow Language, Flow Component, screen-robot, Edge Client (`img/cdp-client.jpg`), google-drive-cli, Chines, Provas UFPR, OV (`img/ov-contas.jpg`).
+
+**Antes → depois:** pastas locais sem card → 9 cards no `site/index.html` + JPGs em `site/img/` (espelho em `boards/banners/projects/` quando gerados).
+
+**Voltar:** remover esses 9 objetos de `site/index.html` e os JPGs novos (`flow-core`, `flow-language`, `flow-component`, `screen-robot`, `cdp-client`, `google-drive-cli`, `chines`, `provas-ufpr`, `ov-contas`); republicar se o hub estiver no ar.
+
 ## Teardown (feito 2026-11-20)
 
 1. Hostinger API: `DELETE` em `api/dns/v1/direct/zone/resource-records` com `domain=laerciogermano.com` e `filters: [{ name: 'centralizador', type: 'A' }]` (A `centralizador` removido; wildcard `*` na zona ainda resolve o hostname para o IP Contabo)

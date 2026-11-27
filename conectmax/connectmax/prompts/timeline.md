@@ -77,3 +77,4 @@ Como registrar: [`README.md`](README.md).
 | 067 | 2026-09-19 | TSK em maiúsculo | [067-2026-09-19-tsk-maiusculo.md](067-2026-09-19-tsk-maiusculo.md) | Prefixo das pastas/branches: `TSK-<nn>-<titulo>`. |
 | 068 | 2026-09-19 | Padrão de escrita do PR | [068-2026-09-19-padrao-escrita-pr.md](068-2026-09-19-padrao-escrita-pr.md) | PR com Summary + Test plan; conteúdo por seção + exemplo TSK-002. |
 | 069 | 2026-11-16 | Visão e-mail marketing | [069-2026-11-16-visao-email-marketing.md](069-2026-11-16-visao-email-marketing.md) | Documento de visão do sistema simples de e-mail marketing (campanhas, listas, envio + progresso). |
+| 070 | 2026-11-27 | Pixel de abertura no e-mail marketing | [070-2026-11-27-pixel-de-abertura-email-marketing.md](070-2026-11-27-pixel-de-abertura-email-marketing.md) | CU-06: quem abriu, com e-mail no link do pixel. |

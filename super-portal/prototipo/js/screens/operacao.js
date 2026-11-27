@@ -22,7 +22,7 @@ const detalhePed = (p, ctx) => {
   <div class="row fim">${SP.btn('Dados do pedido', { go: 'pedEditar', id: p.id, icon: 'edit', sm: true })}${pode ? SP.btn('Excluir pedido', { a: 'ckExcluir', p: p.id, sm: true, kind: 'quiet', icon: 'trash' }) : ''}</div></div>`;
 };
 SP.screen('checklist', {
-  code: 'E-40', nome: 'Checklist de pedidos', flow: 'E', src: ['proc:Ped. Checklist', 'proc:Backup', 'proc:Compra', 'proc:Recebimento'],
+  code: 'F21', nome: 'Checklist de pedidos', flow: 'E', src: ['proc:Ped. Checklist', 'proc:Backup', 'proc:Compra', 'proc:Recebimento'],
   nota: 'Por item: comprado, previsão e chegou (com atraso); depois NF, boleto, enviado, recebido e pago. A etapa muda sozinha e dispara as regras. Filtros, ocultar concluídos, expandir, backup e novo pedido interno.',
   render(ctx) {
     const q = SP.fq('ck'), ocultar = SP.S.tab.ckOcultar !== 'nao';
@@ -44,7 +44,7 @@ SP.screen('checklist', {
 
 /* ---------- o que está parado ---------- */
 SP.screen('parados', {
-  code: 'E-41', nome: 'O que está parado', flow: 'E', src: ['proc:O que está parado', 'visao:Automação'],
+  code: 'F22', nome: 'O que está parado', flow: 'E', src: ['proc:O que está parado', 'visao:Automação'],
   nota: 'Prazo configurável, quantidade por etapa, pedidos parados e pendências item a item, com atraso em destaque.',
   render() {
     const l = meus(SP.ativos()), par = l.filter(SP.parado).sort((a, b) => a.atualizado.localeCompare(b.atualizado));
@@ -73,7 +73,7 @@ const FLUXO = [
 ];
 const NIVEL = { executar: ['Automático', 'ok', 'bolt'], preparar: ['Prepara e pede aprovação', 'warn', 'eye'], humano: ['Pessoa', 'info', 'user'] };
 SP.screen('fluxo', {
-  code: 'E-42', nome: 'Fluxograma do processo', flow: 'E', src: ['proc:Fluxograma', 'visao:Automação', 'visao:Handoff humano'],
+  code: 'F23', nome: 'Fluxograma do processo', flow: 'E', src: ['proc:Fluxograma', 'visao:Automação', 'visao:Handoff humano'],
   nota: 'As 17 etapas, da prospecção ao recebimento, com quantos pedidos estão em cada uma e quem faz: automático, preparado para aprovação ou pessoa.',
   render() {
     let n = 0; const cont = k => SP.ativos().filter(p => SP.etapa(p) === k).length;
@@ -97,9 +97,9 @@ const logistica = ctx => {
   const corpo = ctx.m ? `<div class="seg-w">${SP.seg(col, SP.LOG.map(s => [s, `${s.replace('Em separação', 'Separação')} <em>${l.filter(p => SP.logStatus(p) === s).length}</em>`]), 'tab', 'log')}</div><div class="kb-m">${coluna(col)}</div>` : `<div class="kb">${SP.LOG.map(coluna).join('')}</div>`;
   return { titulo: 'Logística', sub: 'O status nunca fica atrás do checklist.', larga: true, corpo: barra + corpo };
 };
-SP.screen('logistica', { code: 'E-43', nome: 'Logística (quadro)', flow: 'E', src: ['proc:Logística', 'proc:Expedição'], nota: 'Quadro Em separação, Faturado, Enviado e Entregue; arraste no desktop ou troque o status na etiqueta. Cada cartão tem rastreio, frete, e-mails, anexos e etiqueta.', render: logistica });
-SP.screen('logEtiqueta', { code: 'E-44', nome: 'Etiqueta de envio', flow: 'E', pai: 'logistica', base: 'logistica', modal: { type: 'log', data: { id: 'd17143', k: 'etiqueta' } }, src: ['proc:Etiqueta', 'proc:CEP'], nota: 'Endereço preenchido pelo pedido ou pelo CEP, com prévia e impressão.', render: logistica });
-SP.screen('logRastreio', { code: 'E-45', nome: 'Rastreio e aviso ao cliente', flow: 'E', pai: 'logistica', base: 'logistica', modal: { type: 'log', data: { id: 'd17135', k: 'rastreio' } }, src: ['proc:Rastreio', 'visao:Templates'], nota: 'Código e link; a mensagem sai pelo template quando o pedido é marcado como enviado.', render: logistica });
+SP.screen('logistica', { code: 'F24', nome: 'Logística (quadro)', flow: 'E', src: ['proc:Logística', 'proc:Expedição'], nota: 'Quadro Em separação, Faturado, Enviado e Entregue; arraste no desktop ou troque o status na etiqueta. Cada cartão tem rastreio, frete, e-mails, anexos e etiqueta.', render: logistica });
+SP.screen('logEtiqueta', { code: 'F25', nome: 'Etiqueta de envio', flow: 'E', pai: 'logistica', base: 'logistica', modal: { type: 'log', data: { id: 'd17143', k: 'etiqueta' } }, src: ['proc:Etiqueta', 'proc:CEP'], nota: 'Endereço preenchido pelo pedido ou pelo CEP, com prévia e impressão.', render: logistica });
+SP.screen('logRastreio', { code: 'F26', nome: 'Rastreio e aviso ao cliente', flow: 'E', pai: 'logistica', base: 'logistica', modal: { type: 'log', data: { id: 'd17135', k: 'rastreio' } }, src: ['proc:Rastreio', 'visao:Templates'], nota: 'Código e link; a mensagem sai pelo template quando o pedido é marcado como enviado.', render: logistica });
 
 SP.modals.log = (data, ctx) => {
   const p = SP.ped(data.id), k = data.k;
@@ -115,17 +115,17 @@ SP.modals.log = (data, ctx) => {
 
 /* ---------- transportadoras ---------- */
 SP.screen('transp', {
-  code: 'E-46', nome: 'Transportadoras', flow: 'E', src: ['proc:Transportadoras'], nota: 'Busca, seleção em massa, novo e editar.',
+  code: 'F27', nome: 'Transportadoras', flow: 'E', src: ['proc:Transportadoras'], nota: 'Busca, seleção em massa, novo e editar.',
   render(ctx) {
     const rows = SP.filtrar('transp', db().transportadoras, t => Object.values(t).join(' ')).sort((a, b) => a.nome.localeCompare(b.nome));
     return { titulo: 'Transportadoras', sub: SP.plural(rows.length, 'cadastro', 'cadastros'), acoes: SP.btn(ctx.m ? '' : 'Nova transportadora', { go: 'transpForm', id: 'novo', icon: 'plus', kind: 'primary', title: 'Nova transportadora' }),
       corpo: SP.filtros(ctx, 'transp', 'Nome, CNPJ ou cidade') + SP.lista(ctx, { key: 'transp', rows, select: 'transp', massa: SP.btn('Excluir', { a: 'excluirSel', p: 'transportadoras:transp', sm: true, kind: 'danger' }), abrir: t => ({ go: 'transpForm', id: t.id }),
-        cols: [{ h: 'Nome', c: t => `<b class="l1">${e(t.nome)}</b>` }, { h: 'CNPJ/CPF', c: t => e(t.cnpj) }, { h: 'Telefone', c: t => e(t.telefone) }, { h: 'Cidade/UF', c: t => e(t.cidade + '/' + t.uf) }, { h: '', r: 1, c: t => SP.btn('Editar', { go: 'transpForm', id: t.id, sm: true, icon: 'edit' }) }],
+        cols: [{ h: 'Nome', c: t => `<b class="l1">${e(t.nome)}</b>`, s: t => t.nome }, { h: 'CNPJ/CPF', c: t => `<span translate="no">${e(t.cnpj)}</span>` }, { h: 'Telefone', c: t => e(t.telefone) }, { h: 'Cidade/UF', c: t => e(t.cidade + '/' + t.uf) }, { h: '', r: 1, c: t => SP.btn('Editar', { go: 'transpForm', id: t.id, sm: true, icon: 'edit' }) }],
         card: t => SP.regLinha(e(t.nome), '', e(t.cnpj), `<small class="mute">${e(t.telefone)} · ${e(t.cidade)}/${t.uf}</small>`) }) };
   },
 });
 SP.UFS = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
-SP.cadastro({ key: 'transpForm', code: 'E-47', nome: 'Cadastro de transportadora', flow: 'E', col: 'transportadoras', lista: 'transp', exemplo: 't02', src: ['proc:Transportadoras'], nota: 'Nome, e-mail, documento, inscrição, telefone e endereço.', titulo: ['Nova transportadora', 'Editar transportadora'],
+SP.cadastro({ key: 'transpForm', code: 'F28', nome: 'Cadastro de transportadora', flow: 'E', col: 'transportadoras', lista: 'transp', exemplo: 't02', src: ['proc:Transportadoras'], nota: 'Nome, e-mail, documento, inscrição, telefone e endereço.', titulo: ['Nova transportadora', 'Editar transportadora'],
   novo: { nome: '', email: '', cnpj: '', ie: '', telefone: '', endereco: '', cidade: '', uf: 'SP' }, maiusculo: 'nome',
   campos: () => [['nome', 'Nome', { req: true, span: 2 }], ['email', 'E-mail', { type: 'email' }], ['cnpj', 'CNPJ/CPF'], ['ie', 'Inscrição estadual'], ['telefone', 'Telefone'], ['endereco', 'Endereço', { span: 2 }], ['cidade', 'Cidade'], ['uf', 'Estado', { options: SP.UFS }]] });
 

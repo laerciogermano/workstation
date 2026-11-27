@@ -21,6 +21,7 @@ Disponibilizar um front-end em que se cadastram listas (base de e-mails), criam-
 | CU-03 | Configurar lista da campanha | Operador de marketing | Define para qual lista a campanha envia. |
 | CU-04 | Enviar e-mails da campanha | Operador de marketing | Dispara o envio da campanha para a lista configurada. |
 | CU-05 | Acompanhar progresso do envio | Operador de marketing | Vê o progresso do envio de e-mails da campanha. |
+| CU-06 | Saber quem abriu | Operador de marketing | Vê quais destinatários abriram o e-mail da campanha, quando e quantas vezes. |
 
 ## Produção
 

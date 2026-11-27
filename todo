@@ -1,44 +1,46 @@
-# connect
-- calculo capital
-- levantar numeros quanto ele me deve
-- criar nossa plataforma
-- Prospecção
-    - Linkedin
-        - Automatizar prospecção
-        - Saber quantas mensagens enviou por dia e qual vendedor
-    - Wpp
-        - enviar wpp para que ja venderam
-        - ja fizeram orcamento
-        - follow up
-    - email
-        - email marketing
-        - campanhas
-- Orcamentos
-    - automatizar orcamentos
-    - verificar mais fornecedores
-- Pedidos
-- Logística
-    - envio de nota
-    - embalar
-
 # Plans (Orquestrador)
+    - separar por epicos
     - criar arvore de execucao para ajudar a saber fazer com as tarefas
-    
+        - vai ajudar a criar todas
+    - criar kanban local tbm
 
-# Procurar emprego
-    - Robo linkedin
-         - buscar todas as empresas
-         - buscar todos os tech recruiters
-         - Buscar todas as vagas de emprego
-            - sites proprios
-            - plataformas de emprego
-                - linkedin
-                - indeed
-                - glassdoor
-                - monster
-                - careerbuilder
-                - ziprecruiter
-                - jobscan...
+# Flow component
+    - com base em toda a documentacao do flow-oriented-programming.com
+    - 
+    - Criar lib frontend que monta a visualizacao flow por meio de uma arvore de entrada
+    - nao possui interacao por equanto
+    - objetivo vai ser apenas montar a visualizacao por meio da arvore
+    - deve ter testea automatizados
+    - deve ser performatico e futuramente ter lazy loading
+        - o desenho pode ter mtos componentes e ficar pesado, deve ser desennhado pesando nisso
+
+# connect
+- criar super portal
+- criar robo prospecao
+- enviar email arketing conect dev
+
+# Clozzy
+    - fechar documento de visao
+        - correr atras plataforma pagamento
+        - personas
+            - assinante
+            - seguidor
+            - influencer
+            - vendedor de conteúdos
+            - carente
+            - agente de marketing
+            - afiliado parceiro (marketing digital)
+        - objetivo da plataforma
+        - estrategia
+            - produto
+                - rede social de conhecr pessoas
+                - venda de conteudo exclusivos
+    - fechar identidade visual
+    - definir prototipo
+    - correr atras plataforma pagamento
+    - desenvolver
+    - implantar
+    - divulgar
 
 # CONFRATERNIZACAO
     - [x] criar documento de implementacao
@@ -48,26 +50,42 @@
         - [x] modelagem de dados → docs/modelagem-dados.md
         - [x] provider de servidor → Contabo
 
-# Clozzy
-    - definir documento de visao
-    - definir identidade visual
-    - definir prorotipo
-    - produto
-        - rede social de conhecr pessoas
-        - venda de conteudo exclusivos
-    - prsonas
-        - assinante
-        - seguidor
-        - influencer
-        - vendedor de conteúdos
-        - carente
-        - 
+
 
 # Role Go
     - definir identidade visual
     - definir novas funcionalidades
     - repaginar site
     - publicar
+
+
+# flow language
+    - Flow language Editor
+        - editor que voce pode criar fluxos de execucao e ver o codigo ao vivo
+            - fjs, fcpp... 
+
+# flow ide
+    - Com base nno flow-oriented-programming.com criar a 
+        - flow editor
+
+# Filme Metafísico
+    - Definir Roteiro
+
+# Jiu Jtsu
+    - Definir documento de visão
+
+# Tinder
+- Marcelo
+    - automatizar instagram
+    - automatizar ometv
+    - automatizar tinder
+    - compra chip
+    - criar insta marcelo
+- Germano
+    - automatizar instagram
+    - fazer novo tinder
+    - automatizar tinder
+    - criar insta germano
 
 # Fitness
     - Definir documento de épicos
@@ -78,8 +96,6 @@
     - Identificar imagens a partir do código de barras
     - Identificar imagens a partir da descrição
 
-# Flow Oriented Programming (Artigo)
-    - Criar roadmap
 
 # connect - Gilson
 
@@ -116,6 +132,20 @@
     - organizar processos, agendas e etc
     - baixar extrato do banco completo
 
+# Procurar emprego
+    - Robo linkedin
+         - buscar todas as empresas
+         - buscar todos os tech recruiters
+         - Buscar todas as vagas de emprego
+            - sites proprios
+            - plataformas de emprego
+                - linkedin
+                - indeed
+                - glassdoor
+                - monster
+                - careerbuilder
+                - ziprecruiter
+                - jobscan...
 
 # Eternos Mutáveis
     - Referncias de modelo de escrita
@@ -239,7 +269,6 @@
 # Flow Language
     - Definir Épicos
 
-
 # Aulas
     - Criar roadmap
 
@@ -249,52 +278,29 @@
 # Chinês
     - Marcar call com Vaime
 
-# Filme Metafísico
-    - Definir Roteiro
-
-
-# Jiu Jtsu
-    - Definir documento de visão
-
 # Trello CLI (app IA Mac)
     - Credenciais e setup: ver [`credenciais.md`](credenciais.md) (seção Trello CLI)
     - Se agente não achar: `export PATH="$HOME/.local/bin:$PATH"` ou `which trello`
 
-
-
-# Tinder
-- Marcelo
-    - automatizar instagram
-    - compra chip
-    - automatizar tinder
-    --------
-    - Airbnb/proposta
-    - ometv
-    - tinder
-    - planos
-- Germano
-    - automatizar instagram
-    - fazer novo tinder
-    - automatizar tinder
---------------------------------
-    - Criar novo lgermeno
-        - configurar tinder germano
-        - criar scripts de
-            - enviar mensagem
-            - ler mensagem
-            - curtir
-            - ler perfil
-            - visualizar ultimas mensagens
-    - Criar novo marcelo
-    - Criar Germano
-
-    ---------
-    - projeto x8 e x$
-        - Marcelo
-        - Criar instagram
-        - Criar tinder
-        - criar wpp
-        - comprar chip
-    - projeto Germano
-        - configurar instagram
-        
+----
+## conect
+- calculo capital
+- levantar numeros quanto ele me deve
+- Prospecção
+    - Linkedin
+        - Automatizar prospecção
+        - Saber quantas mensagens enviou por dia e qual vendedor
+    - Wpp
+        - enviar wpp para que ja venderam
+        - ja fizeram orcamento
+        - follow up
+    - email
+        - email marketing
+        - campanhas
+- Orcamentos
+    - automatizar orcamentos
+    - verificar mais fornecedores
+- Pedidos
+- Logística
+    - envio de nota
+    - embalar

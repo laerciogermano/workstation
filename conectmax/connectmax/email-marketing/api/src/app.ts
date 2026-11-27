@@ -11,6 +11,7 @@ import { campaignsRouter } from './modules/campaigns/routes.ts';
 import { createCampaignsRepository } from './modules/campaigns/repository.ts';
 import { createListsRepository } from './modules/lists/repository.ts';
 import { listsRouter } from './modules/lists/routes.ts';
+import { trackingRouter } from './modules/tracking/routes.ts';
 import { unsubscribeRouter } from './modules/unsubscribe/routes.ts';
 import type { Config } from './shared/config.ts';
 import type { Db } from './shared/db.ts';
@@ -37,6 +38,7 @@ export function createApp({ db, config, logger }: AppDeps) {
   });
 
   app.use('/u', unsubscribeRouter(db));
+  app.use('/t', trackingRouter(db));
 
   const api = express.Router();
   // só JSON: formulários cross-site (CSRF clássico) não chegam a ser lidos

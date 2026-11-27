@@ -176,6 +176,52 @@ describe('CU-02..05 campanha', () => {
   });
 });
 
+describe('CU-06 abertura', () => {
+  it('o pixel do e-mail enviado registra quem abriu', async () => {
+    const list = await listWith('a@x.com\nb@x.com');
+    const c = await readyCampaign(list.id);
+    await agent.post(`/api/campaigns/${c.id}/send`).expect(202);
+    const { worker, sender } = makeWorker();
+    await worker.tick();
+
+    const html = sender.sent.find((m) => m.to === 'a@x.com')!.html;
+    const url = new URL(html.match(/<img src="([^"]+\/t\/o\/[^"]+)"/)![1]!);
+    expect(url.searchParams.get('e')).toBe('a@x.com');
+
+    // público (sem sessão), carregável dentro de outro site e sem cache
+    const res = await request(app).get(url.pathname + url.search).expect(200);
+    expect(res.headers['content-type']).toBe('image/gif');
+    expect(res.headers['cross-origin-resource-policy']).toBe('cross-origin');
+    expect(res.headers['cache-control']).toMatch(/no-store/);
+    // trocar o e-mail do link não atribui a abertura a outra pessoa
+    await request(app).get(`${url.pathname}?e=b@x.com`).expect(200);
+    await request(app).head(url.pathname).expect(200);
+
+    const { body: done } = await agent.get(`/api/campaigns/${c.id}`).expect(200);
+    expect(done.progress).toMatchObject({ sent: 2, opened: 1 });
+
+    const { body: opened } = await agent.get(`/api/campaigns/${c.id}/recipients?filter=opened`).expect(200);
+    expect(opened.total).toBe(1);
+    expect(opened.items[0]).toMatchObject({ email: 'a@x.com', openCount: 2 });
+    expect(Date.parse(opened.items[0].openedAt)).toBeLessThanOrEqual(Date.parse(opened.items[0].lastOpenedAt));
+
+    const { body: rest } = await agent.get(`/api/campaigns/${c.id}/recipients?filter=not_opened`).expect(200);
+    expect(rest.items.map((r: { email: string }) => r.email)).toEqual(['b@x.com']);
+    const { body: all } = await agent.get(`/api/campaigns/${c.id}/recipients`).expect(200);
+    expect(all.items.map((r: { email: string }) => r.email)).toEqual(['a@x.com', 'b@x.com']);
+  });
+
+  it('token desconhecido devolve a mesma imagem; destinatários exigem login', async () => {
+    for (const token of ['nao-existe', '00000000-0000-4000-8000-000000000000']) {
+      const res = await request(app).get(`/t/o/${token}.gif`).expect(200);
+      expect(res.headers['content-type']).toBe('image/gif');
+    }
+    await request(app).get('/api/campaigns/00000000-0000-4000-8000-000000000000/recipients').expect(401);
+    await agent.get('/api/campaigns/00000000-0000-4000-8000-000000000000/recipients').expect(404);
+    await agent.get('/api/campaigns/00000000-0000-4000-8000-000000000000/recipients?filter=x').expect(400);
+  });
+});
+
 describe('descadastro', () => {
   it('GET só confirma; POST descadastra e as próximas campanhas respeitam', async () => {
     const list = await listWith('a@x.com\nb@x.com');

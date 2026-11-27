@@ -16,7 +16,7 @@ npm run typecheck && npm test                            # testes precisam do Po
 
 ## Regras
 
-- Escopo = CU-01..05 do README. Funcionalidade nova só com novo caso de uso.
+- Escopo = CU-01..06 do README. Funcionalidade nova só com novo caso de uso.
 - Toda entrada externa passa por zod (`shared/validate.ts`). SQL sempre parametrizado.
 - Rota nova em `/api` já nasce protegida (montada depois do `requireAuth`).
 - Esquema só muda com migração nova em `api/src/db/migrations/NNNN_*.sql` (nunca editar uma já aplicada). Seguir `core/definir-projeto-moderno/06-banco-postgresql/POSTGRES.md`.

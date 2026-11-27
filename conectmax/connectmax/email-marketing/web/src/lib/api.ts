@@ -20,7 +20,20 @@ export type ImportResult = {
 };
 
 export type CampaignStatus = 'draft' | 'sending' | 'sent';
-export type Progress = { total: number; pending: number; sending: number; sent: number; failed: number; skipped: number };
+export type Progress = { total: number; pending: number; sending: number; sent: number; failed: number; skipped: number; opened: number };
+
+export type RecipientFilter = 'all' | 'opened' | 'not_opened';
+export type Recipient = {
+  id: string;
+  email: string;
+  name: string | null;
+  status: 'pending' | 'sending' | 'sent' | 'failed' | 'skipped';
+  sentAt: string | null;
+  openedAt: string | null;
+  lastOpenedAt: string | null;
+  openCount: number;
+};
+export type RecipientsPage = { items: Recipient[]; total: number; page: number; pageSize: number };
 
 export type Campaign = {
   id: string;
@@ -84,6 +97,8 @@ export const api = {
 
   campaigns: () => request<Campaign[]>('GET', '/campaigns'),
   campaign: (id: string) => request<Campaign>('GET', `/campaigns/${id}`),
+  recipients: (id: string, page: number, filter: RecipientFilter) =>
+    request<RecipientsPage>('GET', `/campaigns/${id}/recipients?${new URLSearchParams({ page: String(page), filter })}`),
   createCampaign: (name: string) => request<Campaign>('POST', '/campaigns', { name }),
   updateCampaign: (id: string, patch: { name?: string; subject?: string; bodyHtml?: string; listId?: string | null }) =>
     request<Campaign>('PATCH', `/campaigns/${id}`, patch),

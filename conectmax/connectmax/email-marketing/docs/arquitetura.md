@@ -4,9 +4,9 @@ Formato lean C4 (`core/definir-projeto-moderno/01-arquitetura/03-c4-e-lean/`). D
 
 ## 1. Escopo
 
-CU-01 a CU-05 do [README](../README.md): listas, campanhas, lista de destino, disparo e progresso. Mais o mínimo legal de e-mail em massa: descadastro (link + One-Click RFC 8058) respeitado nas próximas campanhas.
+CU-01 a CU-06 do [README](../README.md): listas, campanhas, lista de destino, disparo, progresso e abertura por destinatário. Mais o mínimo legal de e-mail em massa: descadastro (link + One-Click RFC 8058) respeitado nas próximas campanhas.
 
-Fora do escopo v1: agendamento, templates, métricas de abertura/clique, bounces via webhook, segmentos.
+Fora do escopo v1: agendamento, templates, métricas de clique, UTM, bounces via webhook, segmentos.
 
 ## 2. Contexto (C4 nível 1)
 
@@ -15,7 +15,7 @@ flowchart LR
   op[Operador de marketing] -->|navegador| sys[E-mail marketing]
   sys -->|SMTP| smtp[Provedor SMTP<br/>Mailpit em dev]
   smtp --> dest[Destinatário]
-  dest -->|link / One-Click| sys
+  dest -->|link / One-Click / pixel de abertura| sys
 ```
 
 ## 3. Containers (C4 nível 2)
@@ -23,7 +23,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   web[web<br/>React + Vite SPA] -->|/api JSON, cookie de sessão| api[api<br/>Express 5 + TS]
-  dest[Destinatário] -->|/u/:token| api
+  dest[Destinatário] -->|/u/:token e /t/o/:token.gif| api
   api --> pg[(PostgreSQL 16<br/>schema email_marketing)]
   worker[worker<br/>Node, processo separado] -->|claim SKIP LOCKED| pg
   worker -->|SMTP| smtp[Provedor SMTP]
@@ -49,6 +49,7 @@ api/src/
     campaigns/          CU-02..05: rascunho, lista de destino, disparo, progresso
     sending/            fila, worker, porta MailSender + adaptador SMTP
     unsubscribe/        páginas públicas de descadastro
+    tracking/           pixel público de abertura
 ```
 
 Módulo só usa outro pelo que ele exporta; SQL fica no repositório de cada módulo.
@@ -62,6 +63,15 @@ Módulo só usa outro pelo que ele exporta; SQL fica no repositório de cada mó
 5. Entrega presa em `sending` por mais de 5 min (worker morreu) volta para `pending`.
 6. Campanha sem `pending`/`sending` → `sent`.
 
+### Abertura (CU-06)
+
+Cada HTML leva uma imagem 1×1: `PUBLIC_BASE_URL/t/o/<public_id da entrega>.gif?e=<e-mail>`. O `GET` grava `opened_at` (primeira vez), `last_opened_at` e soma `open_count`; a tela da campanha lista os destinatários (`GET /api/campaigns/:id/recipients`).
+
+- O **token** identifica a entrega. O `?e=` só deixa o e-mail visível no link e nos logs; alterá-lo não muda nada.
+- A resposta é a mesma imagem para qualquer token, sem cache, com `Cross-Origin-Resource-Policy: cross-origin` (senão o webmail bloqueia).
+- Métrica **aproximada**: imagem bloqueada não conta; pré-carregamento (Apple Mail Privacy Protection, antivírus) conta sem leitura; proxy com cache esconde reaberturas; encaminhado conta para o destinatário original.
+- Entregas enviadas antes da migração `0002` não têm pixel e ficam sem registro.
+
 Garantia: **at-least-once**. Se o worker cair entre o SMTP aceitar e o `markSent`, o e-mail sai de novo. O `Message-ID` estável por entrega ajuda o provedor a deduplicar.
 
 ## 6. Dados
@@ -70,6 +80,7 @@ Tabelas: `operators`, `sessions`, `lists`, `contacts`, `suppressions`, `campaign
 
 - `contacts (list_id, email)` único: o mesmo e-mail pode estar em várias listas.
 - `suppressions.email` é global: quem descadastra não recebe de nenhuma lista.
+- `deliveries.opened_at`, `last_opened_at`, `open_count`: abertura por destinatário.
 - `deliveries (campaign_id, email)` único: ninguém recebe a mesma campanha duas vezes por duplicidade.
 - Lista ligada a campanha não pode ser excluída (`ON DELETE RESTRICT`).
 
@@ -83,7 +94,8 @@ Tabelas: `operators`, `sessions`, `lists`, `contacts`, `suppressions`, `campaign
 | CSRF | `SameSite=Strict` + a API só lê JSON |
 | Input | zod em body/params/query; SQL sempre parametrizado |
 | HTML da campanha | pré-visualização em `<iframe sandbox="">` (sem script, origem isolada) |
-| Brute force | rate limit no login (10/min por IP) e no descadastro |
+| Brute force | rate limit no login (10/min por IP) e no descadastro; o pixel fica sem limite (proxies de imagem concentram IPs) |
+| Dado pessoal no link | o e-mail do destinatário vai no `?e=` do pixel, então aparece nos logs de acesso (nginx e pino) e para o proxy de imagem |
 | Erros | error boundary central; 500 sem stack; pino com redact de cookie/senha |
 | Headers | Helmet (CSP, HSTS etc.) |
 | Segredos | só via env; `.env` no `.gitignore` |

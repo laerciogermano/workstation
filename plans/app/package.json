@@ -1,0 +1,41 @@
+{
+  "name": "plans-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/web",
+    "apps/hub"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n hub,web -c yellow,green \"npm run dev -w @plans/hub\" \"npm run dev -w @plans/web\"",
+    "client:build": "cd apps/client && go build -trimpath -ldflags=\"-s -w\" -o ../../bin/plans-client ./cmd/plans-client",
+    "client:release": "bash scripts/build-client.sh",
+    "vectors": "tsx scripts/make-vectors.ts",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "oxlint apps packages scripts e2e",
+    "test": "npm run test --workspaces --if-present",
+    "test:client": "cd apps/client && go vet ./... && go test ./...",
+    "e2e": "npm run client:build && node e2e/run.mjs && tsx e2e/terminal.ts",
+    "verify": "npm run lint && npm run typecheck && npm test && npm run test:client"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.7",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "@types/ws": "^8.18.2",
+    "@vitejs/plugin-react": "^6.3.0",
+    "concurrently": "^10.0.7",
+    "esbuild": "^0.28.2",
+    "oxlint": "^1.95.0",
+    "playwright-core": "^1.65.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "vite": "^8.4.0",
+    "vitest": "^5.1.2"
+  }
+}

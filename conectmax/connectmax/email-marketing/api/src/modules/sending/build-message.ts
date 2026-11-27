@@ -28,18 +28,25 @@ export function htmlToText(html: string): string {
 }
 
 /**
- * Monta o e-mail final: corpo da campanha + rodapé de descadastro.
+ * Monta o e-mail final: corpo da campanha + rodapé de descadastro + pixel de abertura.
  * List-Unsubscribe + One-Click (RFC 8058) é exigido por Gmail/Yahoo para envio em massa.
  */
 export function buildMessage(d: DeliveryToSend, { from, publicBaseUrl }: { from: string; publicBaseUrl: string }): OutgoingMail {
-  const unsubscribeUrl = `${publicBaseUrl.replace(/\/$/, '')}/u/${d.publicId}`;
+  const baseUrl = publicBaseUrl.replace(/\/$/, '');
+  const unsubscribeUrl = `${baseUrl}/u/${d.publicId}`;
+  // @ fica legível no link; o resto do e-mail vai codificado
+  const openUrl = `${baseUrl}/t/o/${d.publicId}.gif?e=${encodeURIComponent(d.email).replace(/%40/g, '@')}`;
+  // sem display:none — alguns clientes não baixam imagem escondida
+  const pixelHtml = `<img src="${escapeHtml(openUrl)}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0">`;
   const footerHtml = `
 <div style="margin-top:32px;padding-top:16px;border-top:1px solid #DADEE7;font:12px/1.5 Arial,sans-serif;color:#5A6377">
   Você recebeu este e-mail da Connect. <a href="${escapeHtml(unsubscribeUrl)}" style="color:#0070BC">Não quero mais receber</a>.
 </div>`;
+  const tail = `${footerHtml}\n${pixelHtml}`;
+  // função no replace: um "$" no e-mail ou no HTML não vira padrão de substituição
   const html = /<\/body>/i.test(d.bodyHtml)
-    ? d.bodyHtml.replace(/<\/body>/i, `${footerHtml}</body>`)
-    : `${d.bodyHtml}${footerHtml}`;
+    ? d.bodyHtml.replace(/<\/body>/i, () => `${tail}</body>`)
+    : `${d.bodyHtml}${tail}`;
   const text = `${htmlToText(d.bodyHtml)}\n\n—\nPara não receber mais: ${unsubscribeUrl}`;
   const domain = from.match(/@([^>\s]+)/)?.[1] ?? 'connect.local';
 

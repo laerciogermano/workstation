@@ -5,7 +5,7 @@ const TIPOS = { dados: ['Dados faltando', 'edit'], nf: ['Aprovar NF-e', 'nf'], c
 const PRIO = { alta: ['Urgente', 'bad'], media: ['Hoje', 'warn'], baixa: ['Quando der', 'mute'] };
 const ordem = { alta: 0, media: 1, baixa: 2 };
 const itensFila = () => SP.pendentes().sort((a, b) => ordem[a.prio] - ordem[b.prio]);
-const cartaoFila = (f, ativo, go) => `<li><button type="button" class="fi${ativo ? ' on' : ''}" ${go}><span class="fi-i t-${PRIO[f.prio][1]}">${I(TIPOS[f.tipo]?.[1] || 'alert', 17)}</span><span class="fi-c"><b>${e(f.titulo)}</b><small><span class="t-${PRIO[f.prio][1]} txt">${PRIO[f.prio][0]}</span> · ${TIPOS[f.tipo]?.[0] || ''}${f.valor ? ' · ' + SP.brl(f.valor) : ''}</small></span>${I('next', 15)}</button></li>`;
+const cartaoFila = (f, ativo, go, desliza) => `<li${desliza ? ` data-swipe="${f.id}"` : ''}><button type="button" class="fi${ativo ? ' on' : ''}" ${go}><span class="fi-i t-${PRIO[f.prio][1]}">${I(TIPOS[f.tipo]?.[1] || 'alert', 17)}</span><span class="fi-c"><b>${e(f.titulo)}</b><small><span class="t-${PRIO[f.prio][1]} txt">${PRIO[f.prio][0]}</span> · ${TIPOS[f.tipo]?.[0] || ''}${f.valor ? ' · ' + SP.brl(f.valor) : ''}</small></span>${I('next', 15)}</button>${desliza ? `<span class="sw-dir" aria-hidden="true">${I('check', 18)}${f.tipo === 'dados' ? 'Completar' : 'Aprovar'}</span><span class="sw-esq" aria-hidden="true">${I('clock', 18)}Amanhã</span>` : ''}</li>`;
 
 /* ---------- calendário: feriados nacionais e datas do comércio ---------- */
 const pascoa = a => { const b = a % 19, c = Math.floor(a / 100), d = a % 100, f = Math.floor((c + 8) / 25), h = (19 * b + c - Math.floor(c / 4) - Math.floor((c - f + 1) / 3) + 15) % 30, l = (32 + 2 * (c % 4) + 2 * Math.floor(d / 4) - h - d % 4) % 7, m = Math.floor((b + 11 * h + 22 * l) / 451); return new Date(a, Math.floor((h + l - 7 * m + 114) / 31) - 1, (h + l - 7 * m + 114) % 31 + 1); };
@@ -32,13 +32,21 @@ SP.calendario = () => {
 const funil = () => {
   const o = db().orcamentos.filter(x => ['Em aberto', 'Enviado', 'Contra proposta'].includes(x.status)), at = SP.ativos();
   const cont = k => at.filter(p => k.includes(SP.etapa(p)));
-  const et = [['Propostas abertas', o, 'orcLista'], ['Comprar', cont(['compra']), 'checklist'], ['Receber', cont(['chegada']), 'checklist'], ['Faturar', cont(['fat']), 'checklist'], ['Entregar', cont(['envio']), 'logistica'], ['A receber', cont(['recebido']), 'contas']];
-  return `<div class="funil">${et.map(([n, l, go]) => `<button type="button" data-go="${go}"><span>${n}</span><b>${l.length}</b><small>${SP.brlk(l.reduce((s, x) => s + SP.total(x), 0))}</small></button>`).join('')}</div>`;
+  const et = [['Propostas abertas', o, 'orcLista', 5], ['Comprar', cont(['compra']), 'checklist', 4], ['Receber', cont(['chegada']), 'checklist', 4], ['Faturar', cont(['fat']), 'checklist', 6], ['Entregar', cont(['envio']), 'logistica', 4], ['A receber', cont(['recebido']), 'contas', 7]].filter(x => SP.tem(x[3])).map(([n, l, go]) => ({ n, l, go, v: l.reduce((s, x) => s + SP.total(x), 0) }));
+  if (!et.length) return '';
+  const max = Math.max(...et.map(x => x.v), 1);
+  return `<section class="fluxo-h" aria-label="Funil da operação">${et.map(x => `<button type="button" data-go="${x.go}"><span>${x.n}</span><b>${x.l.length}</b><small>${SP.brlk(x.v)}</small><i aria-hidden="true"><u style="width:${x.v / max * 100}%"></u></i></button>`).join('')}</section>`;
+};
+/* resumo em uma frase, calculado dos dados */
+const resumoDia = (fila, auto) => {
+  const urg = fila.filter(f => f.prio === 'alta'), preso = urg.reduce((s, f) => s + f.valor, 0), venc = db().contas.filter(c => SP.contaStatus(c) === 'Vencida'), atr = SP.ativos().filter(p => p.itens.some(SP.atrasado));
+  const perguntas = [['Vencidos', 'contas vencidas'], ['Parados', 'pedidos parados'], ['Propostas sem resposta', 'orçamentos enviados']].filter(([, q]) => SP.interpretar(q));
+  return `<section class="resumo-dia" aria-label="Resumo do dia">${I('spark', 18)}<div><p>Desde ontem o portal concluiu <b>${SP.plural(auto.length, 'ação', 'ações')}</b> sozinho. ${urg.length ? `<b>${SP.plural(urg.length, 'decisão urgente trava', 'decisões urgentes travam')} ${SP.brl(preso)}</b>.` : 'Nada urgente esperando você.'}${venc.length ? ` Há ${SP.brl(venc.reduce((s, c) => s + c.valor, 0))} vencidos.` : ''}${atr.length ? ` ${SP.plural(atr.length, 'compra está atrasada', 'compras estão atrasadas')}.` : ''}</p><div class="row">${urg.length ? SP.btn('Resolver agora', { go: 'filaItem', id: urg[0].id, sm: true, kind: 'primary' }) : ''}${perguntas.map(([l, q]) => SP.btn(l, { a: 'perguntar', p: q, sm: true })).join('')}</div></div></section>`;
 };
 SP.ranking = () => SP.card(`<ol class="rank">${db().vendedores.filter(v => v.ativo).sort((a, b) => b.vendido - a.vendido).map((v, i) => `<li><em>${i + 1}º</em>${SP.avatar(v.nome, true)}<div><b>${e(v.nome)}</b>${SP.barra(Math.round(v.vendido / v.meta * 100))}</div><span><b>${SP.brlk(v.vendido)}</b><small>${Math.round(v.vendido / v.meta * 100)}% da meta</small></span></li>`).join('')}</ol>`, { title: 'Vendedores em novembro' });
 
 SP.screen('hoje', {
-  code: 'B-10', nome: 'Hoje', flow: 'B', exemplo: null, src: ['print:dashboard', 'proc:Dashboard', 'visao:Handoff humano', 'visao:Vendedor'],
+  code: 'F32', nome: 'Hoje', flow: 'B', exemplo: null, src: ['print:dashboard', 'proc:Dashboard', 'visao:Handoff humano', 'visao:Vendedor'],
   nota: 'Abre pelo que depende de uma pessoa; depois mostra o que o portal fez sozinho, o funil, o resultado do mês, o ranking e o calendário. Cada papel vê o próprio recorte.',
   render(ctx) {
     const eu = SP.eu(), fila = itensFila(), vend = SP.S.persona === 'vendedor', log = SP.S.persona === 'logistica';
@@ -52,10 +60,11 @@ SP.screen('hoje', {
     const precisa = SP.card(fila.length ? `<ul class="fila">${fila.slice(0, ctx.m ? 3 : 5).map(f => cartaoFila(f, false, `data-go="filaItem" data-id="${f.id}"`)).join('')}</ul>` : SP.vazio('Nada esperando você', 'O que for automático segue sozinho.'), { title: `Precisa de você <em class="cont">${fila.length}</em>`, actions: SP.btn('Ver tudo', { go: 'fila', sm: true, kind: 'quiet' }) });
     const feito = SP.card(SP.linha(auto.slice(0, ctx.m ? 3 : 5).map(SP.recibo)), { title: SP.S.pausado ? 'Automação pausada' : `O portal fez sozinho <em class="cont">${auto.length}</em>`, actions: SP.btn('Atividade', { go: 'atividade', sm: true, kind: 'quiet' }) });
     const pausa = SP.S.pausado ? SP.aviso('As regras automáticas estão <b>pausadas</b>. Nada é enviado nem emitido.', 'warn', SP.btn('Retomar', { a: 'pausar', sm: true })) : '';
+    const numeros = log ? SP.tem(4) : SP.tem(7), auto8 = SP.tem(8);
     return {
-      titulo: 'Bom dia, ' + eu.nome.split(' ')[0], sub: fila.length ? SP.plural(fila.length, 'item precisa', 'itens precisam') + ' de uma pessoa hoje, ' + SP.data(SP.HOJE) : 'Tudo em dia, ' + SP.data(SP.HOJE),
+      titulo: 'Bom dia, ' + eu.nome.split(' ')[0], sub: !auto8 ? SP.data(SP.HOJE) : fila.length ? SP.plural(fila.length, 'item precisa', 'itens precisam') + ' de uma pessoa hoje, ' + SP.data(SP.HOJE) : 'Tudo em dia, ' + SP.data(SP.HOJE),
       acoes: SP.btn('Novo orçamento', { icon: 'plus', go: log ? 'pedLista' : 'orcNovo', kind: 'primary' }),
-      corpo: `${pausa}<div class="stats">${stats}</div>${funil()}<div class="cols c2"><div class="pilha">${precisa}${feito}</div><div class="pilha">${log ? '' : SP.ranking()}${SP.calendario()}</div></div>`,
+      corpo: `${auto8 ? pausa : ''}${!auto8 || log ? '' : resumoDia(fila, auto)}${numeros ? `<div class="stats">${stats}</div>` : ''}${funil()}${auto8 ? `<div class="cols c2"><div class="pilha">${precisa}${feito}</div><div class="pilha">${log ? '' : SP.ranking()}${SP.calendario()}</div></div>` : `<div class="cols c2">${SP.calendario()}${!log && SP.tem(7) ? SP.ranking() : ''}</div>`}`,
     };
   },
 });
@@ -89,23 +98,23 @@ const detalhe = (f, ctx) => {
 };
 const TIPO_FILA = { Todos: null, Fiscal: ['nf', 'dados', 'boleto'], Vendas: ['contra', 'followup', 'oc', 'gerar'], Financeiro: ['cobranca'], Compras: ['compra'] };
 SP.screen('fila', {
-  code: 'B-11', nome: 'Precisa de você', flow: 'B', src: ['visao:Handoff humano', 'visao:Automação', 'novo:Caixa de aprovações'],
+  code: 'F61', nome: 'Precisa de você', flow: 'B', src: ['visao:Handoff humano', 'visao:Automação', 'novo:Caixa de aprovações'],
   nota: 'Coração do handoff: só entra o que exige julgamento. No desktop é caixa de entrada com lista e detalhe; no celular, lista e tela de decisão. Itens de baixo risco podem ser aprovados em lote.',
   render(ctx) {
     const todos = itensFila(), cat = SP.visao('fila'), l = TIPO_FILA[cat] ? todos.filter(f => TIPO_FILA[cat].includes(f.tipo)) : todos;
     const atual = l.find(f => f.id === SP.S.tab.fila) || l[0], baixos = l.filter(f => f.prio === 'baixa' && f.tipo === 'followup');
     const chips = `<div class="visoes">${Object.keys(TIPO_FILA).map(k => { const n = TIPO_FILA[k] ? todos.filter(f => TIPO_FILA[k].includes(f.tipo)).length : todos.length; return `<button type="button" class="visao${k === cat ? ' on' : ''}" data-a="visao" data-p="fila" data-v="${k}"><span>${k}<em>${n}</em></span></button>`; }).join('')}</div>`;
     const lote = baixos.length > 1 ? SP.btn(`Aprovar ${baixos.length} de baixo risco`, { a: 'lote', icon: 'check', block: true }) : '';
-    const lista = l.length ? `<ul class="fila">${l.map(f => cartaoFila(f, !ctx.m && f.id === atual?.id, ctx.m ? `data-go="filaItem" data-id="${f.id}"` : `data-a="tab" data-p="fila" data-v="${f.id}"`)).join('')}</ul>` : '';
-    return { titulo: 'Precisa de você', sub: 'O resto o portal resolve sozinho.', acoes: SP.btn(SP.S.pausado ? 'Retomar automação' : 'Pausar automação', { a: 'pausar', icon: SP.S.pausado ? 'play' : 'pause' }),
+    const lista = l.length ? `<ul class="fila">${l.map(f => cartaoFila(f, !ctx.m && f.id === atual?.id, ctx.m ? `data-go="filaItem" data-id="${f.id}"` : `data-a="tab" data-p="fila" data-v="${f.id}"`, ctx.m)).join('')}</ul>${ctx.m ? '<p class="pe-lista">Deslize para a direita para aprovar, para a esquerda para adiar.</p>' : '<p class="pe-lista"><kbd>J</kbd> <kbd>K</kbd> trocar · <kbd>A</kbd> aprovar · <kbd>R</kbd> recusar</p>'}` : '';
+    return { titulo: 'Precisa de você', sub: todos.length ? `${SP.brl(todos.reduce((s, f) => s + f.valor, 0))} esperando decisão. O resto o portal resolve sozinho.` : 'O resto o portal resolve sozinho.', acoes: SP.btn(SP.S.pausado ? 'Retomar automação' : 'Pausar automação', { a: 'pausar', icon: SP.S.pausado ? 'play' : 'pause' }),
       corpo: chips + (ctx.m || !l.length ? (lote + (lista || SP.card(detalhe(null, ctx)))) : `<div class="inbox"><div class="inbox-l">${lote}${lista}</div><div class="inbox-d card">${detalhe(atual, ctx)}</div></div>`) };
   },
 });
-SP.screen('filaItem', { code: 'B-12', nome: 'Decidir item', flow: 'B', exemplo: 'q2', pai: 'fila', src: ['visao:Handoff humano', 'novo:Aprovação com conteúdo exato'], nota: 'Mostra motivo, fatos, suposições e exatamente o que vai acontecer. Aprovar, editar, recusar com motivo ou adiar. Toda decisão gera recibo e pode ser desfeita.',
+SP.screen('filaItem', { code: 'F62', nome: 'Decidir item', flow: 'B', exemplo: 'q2', pai: 'fila', src: ['visao:Handoff humano', 'novo:Aprovação com conteúdo exato'], nota: 'Mostra motivo, fatos, suposições e exatamente o que vai acontecer. Aprovar, editar, recusar com motivo ou adiar. Toda decisão gera recibo e pode ser desfeita.',
   render(ctx) { const f = db().fila.find(x => x.id === ctx.id); return { titulo: 'Decisão', voltar: 'fila', corpo: SP.card(detalhe(f, ctx)) }; } });
 
 SP.screen('atividade', {
-  code: 'B-13', nome: 'Atividade e recibos', flow: 'B', src: ['visao:Automação', 'novo:Recibos, pausa e desfazer'],
+  code: 'F63', nome: 'Atividade e recibos', flow: 'B', src: ['visao:Automação', 'novo:Recibos, pausa e desfazer'],
   nota: 'Linha do tempo do que foi feito, por quem e por qual regra. Botão de pausa geral.',
   render(ctx) {
     const f = SP.visao('ativ'), m = { Automação: 'auto', Pessoas: 'pessoa', 'Passou para pessoa': 'humano' };
@@ -117,16 +126,14 @@ SP.screen('atividade', {
 });
 
 SP.screen('notificacoes', {
-  code: 'B-14', nome: 'Notificações', flow: 'B', src: ['print:notificacoes', 'proc:Notificações'],
+  code: 'F78', nome: 'Notificações', flow: 'B', src: ['print:notificacoes', 'proc:Notificações'],
   nota: 'Caixa de avisos com filtro por data, enviado por, abrir e marcar como lida. O sino do topo mostra as últimas.',
   render(ctx) {
     const l = SP.filtrar('notif', db().notificacoes, x => x.assunto + ' ' + x.por, SP.periodo(x => x.data));
     const q = SP.fq('notif');
     return { titulo: 'Notificações', sub: SP.plural(db().notificacoes.filter(n => !n.lida).length, 'não lida', 'não lidas'), acoes: SP.btn(ctx.m ? '' : 'Marcar todas como lidas', { a: 'lerTodas', icon: 'check', title: 'Marcar todas como lidas' }),
-      corpo: `<div class="barra-f"><label class="busca">${I('search', 16)}<input data-q="notif.busca" value="${e(q.busca)}" placeholder="Assunto ou remetente"></label><label class="f inline"><span>De</span><input type="date" data-q="notif.de" value="${e(q.de)}"></label><label class="f inline"><span>Até</span><input type="date" data-q="notif.ate" value="${e(q.ate)}"></label></div>` +
-        SP.lista(ctx, { key: 'notif', rows: l, cls: n => n.lida ? '' : 'novo', abrir: () => null,
-          cols: [{ h: 'Assunto', c: n => `${n.lida ? '' : '<i class="ponto"></i>'}<b class="l1">${e(n.assunto)}</b>` }, { h: 'Enviado por', c: n => e(n.por) }, { h: 'Data', c: n => SP.quando(n.data) }, { h: '', r: 1, c: n => SP.btn('Abrir', { a: 'abrirNotif', p: n.id, sm: true }) + (n.lida ? '' : SP.btn('', { a: 'ler', p: n.id, sm: true, icon: 'check', title: 'Marcar como lida', kind: 'quiet' })) }],
-          card: n => `<div class="reg-t"><b>${n.lida ? '' : '<i class="ponto"></i>'}${e(n.assunto)}</b></div><div class="reg-s">${e(n.por)} · ${SP.quando(n.data)}</div><div class="reg-p">${SP.btn('Abrir', { a: 'abrirNotif', p: n.id, sm: true })}${n.lida ? '' : SP.btn('Marcar lida', { a: 'ler', p: n.id, sm: true, kind: 'quiet' })}</div>` }) };
+      corpo: `<div class="barra-f"><label class="busca">${I('search', 16)}<input data-q="notif.busca" value="${e(q.busca)}" placeholder="Assunto ou remetente" aria-label="Assunto ou remetente"></label><label class="f inline"><span>De</span><input type="date" data-q="notif.de" value="${e(q.de)}"></label><label class="f inline"><span>Até</span><input type="date" data-q="notif.ate" value="${e(q.ate)}"></label></div>` +
+        (l.length ? [['Hoje', n => SP.dias(n.data.slice(0, 10)) <= 0], ['Ontem', n => SP.dias(n.data.slice(0, 10)) === 1], ['Anteriores', n => SP.dias(n.data.slice(0, 10)) > 1]].map(([t, f]) => { const g = l.filter(f); return g.length ? `<section class="grupo-n"><h4>${t}</h4><ul class="regs">${g.map(n => `<li class="reg${n.lida ? '' : ' novo'}"><div class="reg-c"><div class="reg-t"><b>${n.lida ? '' : '<i class="ponto"></i><span class="so-leitor">Não lida: </span>'}${e(n.assunto)}</b></div><div class="reg-s">${e(n.por)} · ${SP.quando(n.data)}</div></div><div class="row nw">${SP.btn('Abrir', { a: 'abrirNotif', p: n.id, sm: true })}${n.lida ? '' : SP.btn('', { a: 'ler', p: n.id, sm: true, icon: 'check', title: 'Marcar como lida', kind: 'quiet' })}</div></li>`).join('')}</ul></section>` : ''; }).join('') : SP.vazio('Nenhum aviso no período', 'Ajuste as datas ou a busca.', SP.btn('Limpar filtros', { a: 'limpar', p: 'notif', sm: true }), 'bell')) };
   },
 });
 
@@ -144,10 +151,11 @@ SP.resultados = q => {
   if (!q) return [...acoes, ...menu.slice(0, 6)];
   return [...acoes, ...menu, ...regs].filter(r => SP.contem(r.t + ' ' + (r.s || ''), q)).slice(0, 12);
 };
-SP.paleta = (ctx, q = '') => { const r = SP.resultados(q); let g = ''; return `<div class="cmd" role="dialog" aria-label="Busca e comandos"><label class="cmd-i">${I('search', 18)}<input data-cmd value="${e(q)}" placeholder="Buscar pedido, cliente, nota ou comando" aria-label="Buscar">${SP.btn(ctx.m ? 'Fechar' : 'esc', { a: 'fechar', sm: true, kind: 'quiet' })}</label><ul>${r.map((x, i) => `${x.g !== g ? `<li class="cmd-g">${g = x.g}</li>` : ''}<li><button type="button" class="${i === 0 ? 'on' : ''}" data-go="${x.go}"${x.id ? ` data-id="${x.id}"` : ''}>${I(x.icon, 16)}<span><b>${e(x.t)}</b><small>${e(x.s || '')}</small></span></button></li>`).join('') || '<li class="mute pad">Nada encontrado.</li>'}</ul></div>`; };
-SP.screen('busca', { code: 'B-15', nome: 'Busca global (⌘K)', flow: 'B', pai: 'hoje', base: 'hoje', paleta: 'pedido', src: ['novo:Command palette'], nota: 'Uma busca para navegar, agir e achar qualquer registro. Atalho ⌘K ou Ctrl+K; no celular, ícone de lupa.', render: () => ({}) });
-SP.screen('menu', { code: 'B-16', nome: 'Menu completo (celular)', flow: 'B', src: ['proc:Menu', 'novo:Navegação na zona do polegar'], nota: 'No celular, as cinco áreas mais usadas ficam na barra flutuante; o restante aqui, agrupado como no desktop.',
-  render() { return { titulo: 'Menu', corpo: `<div class="menu-g">${SP.menuDe().map(g => `<h4>${g.g}</h4><div class="menu-l">${g.itens.map(i => `<button type="button" data-go="${i.go}">${I(i.icon, 20)}<span>${i.label}</span></button>`).join('')}</div>`).join('')}</div><div class="pad">${SP.btn('Minha conta', { go: 'minhaConta', block: true, icon: 'user' })}${SP.btn('Sair', { go: 'saiu', block: true, icon: 'logout', kind: 'quiet' })}</div>` }; } });
+SP.paleta = (ctx, q = '') => { const nl = q && SP.interpretar(q), r = SP.resultados(q); let g = '';
+  const entendi = nl ? `<li class="cmd-g">Entendi assim</li><li><button type="button" class="on nl" data-a="aplicarNL" data-p="${e(q)}">${I('spark', 16)}<span><b>${e(nl.resumo)}</b><small>Enter para filtrar a lista</small></span></button></li>` : ''; return `<div class="cmd" role="dialog" aria-label="Busca e comandos"><label class="cmd-i">${I('search', 18)}<input data-cmd value="${e(q)}" placeholder="${ctx.m ? 'Buscar ou pedir…' : 'Buscar, navegar ou pedir: “vencidos acima de 1.000”'}" aria-label="Buscar ou pedir" autocomplete="off">${SP.btn(ctx.m ? 'Fechar' : 'esc', { a: 'fechar', sm: true, kind: 'quiet' })}</label><ul>${entendi}${r.map((x, i) => `${x.g !== g ? `<li class="cmd-g">${g = x.g}</li>` : ''}<li><button type="button" class="${i === 0 && !nl ? 'on' : ''}" data-go="${x.go}"${x.id ? ` data-id="${x.id}"` : ''}>${I(x.icon, 16)}<span><b>${e(x.t)}</b><small>${e(x.s || '')}</small></span></button></li>`).join('') || (nl ? '' : '<li class="mute pad">Nada encontrado. Tente “pedidos parados da Marina”.</li>')}</ul></div>`; };
+SP.screen('busca', { code: 'F33', nome: 'Busca global (⌘K)', flow: 'B', pai: 'hoje', base: 'hoje', paleta: 'pedido', src: ['novo:Command palette'], nota: 'Uma busca para navegar, agir e achar qualquer registro. Atalho ⌘K ou Ctrl+K; no celular, ícone de lupa.', render: () => ({}) });
+SP.screen('menu', { code: 'F05', nome: 'Menu completo (celular)', flow: 'B', src: ['proc:Menu', 'novo:Navegação na zona do polegar'], nota: 'No celular, as cinco áreas mais usadas ficam na barra flutuante; o restante aqui, agrupado como no desktop.',
+  render(ctx) { return { titulo: 'Menu', corpo: `<div class="menu-g">${SP.menuDe().map(g => `<h4>${g.g}</h4><div class="menu-l">${g.itens.map(i => `<button type="button" data-go="${i.go}">${I(i.icon, 20)}<span>${i.label}</span></button>`).join('')}</div>`).join('')}</div>${!ctx.m ? '' : `<div class="pad">${SP.btn('Minha conta', { go: 'minhaConta', block: true, icon: 'user' })}${SP.btn('Sair', { go: 'saiu', block: true, icon: 'logout', kind: 'quiet' })}${ctx.app ? '<button type="button" class="btn quiet block" data-x="sair-app">Voltar à galeria do protótipo</button>' : ''}</div>`}` }; } /* no desktop, conta e saída ficam no menu do nome, no topo */ });
 
 /* ---------- ações ---------- */
 Object.assign(SP.actions, {
@@ -156,7 +164,7 @@ Object.assign(SP.actions, {
   resolver: el => { const f = db().fila.find(x => x.id === el.dataset.p); const d = SP.S.draft?.v; if (SP.feito('Feito: ' + f.acao.toLowerCase() + '.', () => SP.resolver(db().fila.find(x => x.id === f.id), d?.previsao))) { SP.S.draft = null; if (SP.S.nav.screen === 'filaItem') SP.ir('fila'); } },
   salvarDados: el => { const f = db().fila.find(x => x.id === el.dataset.p), d = SP.S.draft?.v, p = SP.ped(f.ref[1]); const falta = SP.faltantes(d || p); if (falta.length) return SP.toast('Ainda falta: ' + falta.join(', ') + '.'); SP.feito('Dados salvos. NF-e preparada para aprovação.', () => { const x = SP.ped(p.id); ['cep', 'endereco', 'numeroEnd', 'bairro', 'cidade', 'uf'].forEach(k => x[k] = d[k]); db().fila.find(i => i.id === f.id).status = 'resolvido'; SP.tudoChegou(x); }); SP.S.draft = null; if (SP.S.nav.screen === 'filaItem') SP.ir('fila'); },
   recusar: el => { SP.S.modal = { type: 'recusar', data: { id: el.dataset.p } }; },
-  confirmarRecusa: el => { const d = SP.S.mdraft?.v; if (!d?.motivo?.trim()) return SP.toast('Escreva o motivo.'); SP.feito('Item recusado.', () => { const f = db().fila.find(x => x.id === el.dataset.p); f.status = 'recusado'; SP.log(f.regra || '', 'Recusado: ' + f.titulo + ' · motivo: ' + d.motivo, f.ref, 'pessoa'); }); SP.S.modal = null; SP.S.draft = null; SP.S.mdraft = null; if (SP.S.nav.screen === 'filaItem') SP.ir('fila'); },
+  confirmarRecusa: el => { const d = SP.S.mdraft?.v; if (!d?.motivo?.trim()) { SP.S.erros = { motivo: 'Escreva o motivo da recusa.' }; return; } SP.feito('Item recusado.', () => { const f = db().fila.find(x => x.id === el.dataset.p); f.status = 'recusado'; SP.log(f.regra || '', 'Recusado: ' + f.titulo + ' · motivo: ' + d.motivo, f.ref, 'pessoa'); }); SP.S.modal = null; SP.S.draft = null; SP.S.mdraft = null; if (SP.S.nav.screen === 'filaItem') SP.ir('fila'); },
   adiar: el => { SP.feito('Volta amanhã.', () => { db().fila.find(x => x.id === el.dataset.p).status = 'adiado'; }); if (SP.S.nav.screen === 'filaItem') SP.ir('fila'); },
   lote: () => SP.feito('Mensagens de baixo risco enviadas.', () => SP.pendentes().filter(f => f.prio === 'baixa' && f.tipo === 'followup').forEach(f => SP.resolver(f))),
   ler: el => { SP.by('notificacoes', el.dataset.p).lida = true; },

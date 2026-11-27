@@ -192,6 +192,19 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .player .notes .kbd { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.7; }
 .player .notes .kbd b { color: var(--ink); font-family: var(--mono); font-size: 12px; font-weight: 500; }
 .player .notes .temas { margin-top: auto; }
+.player .list nav a span { width: 30px; }
+#pcen { border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+#pcen h4 { font-size: 14px; font-weight: 600; }
+.cen > span { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.cen > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.cen button { font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--paper); color: var(--ink); }
+.cen button:hover { border-color: var(--ink); }
+.cen button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.cen.lista > div { flex-direction: column; align-items: stretch; gap: 3px; }
+.cen.lista button { text-align: left; border-radius: 8px; }
+.player .notes > * { flex: none; }
+.quem { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.quem span { font-size: 12px; font-weight: 600; color: var(--body); border: 1px solid var(--line-2); border-radius: 99px; padding: 3px 10px; }
 .player.hints .holder [data-act], .player.hints .holder [data-node], .player.hints .holder [data-card] { outline: 2px dashed var(--accent); outline-offset: -2px; }
 
 /* ================= janela do app ================= */
@@ -210,6 +223,8 @@ svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
 .av { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; background: var(--t-pessoa); flex: none; }
 .body { flex: 1; display: grid; grid-template-columns: 288px minmax(0, 1fr); min-height: 0; }
 .body.copilot-on { grid-template-columns: 288px minmax(0, 1fr) 340px; }
+.body.sem-ex { grid-template-columns: minmax(0, 1fr); }
+.body.sem-ex.copilot-on { grid-template-columns: minmax(0, 1fr) 340px; }
 
 /* Explorar */
 .ex { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
@@ -812,13 +827,13 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
     <div>
       <div class="brand"><svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="11" height="4" rx="1.5" fill="currentColor"/><rect x="5" y="8" width="13" height="4" rx="1.5" fill="var(--accent)"/><rect x="9" y="14" width="8" height="4" rx="1.5" fill="currentColor"/></svg>Plans · protótipo desktop</div>
       <h1>Uma atividade, vários jeitos de ver</h1>
-      <p>Explorar em Planos (círculo) e Estados (cubo). Board, Gantt, Flow, Fluxograma, Árvore, Estados e Metas no dock. Copiloto à direita. Clique numa tela para navegar.</p>
+      <p>Explorar em Planos (círculo) e Estados (cubo). Board, Gantt, Flow, Fluxograma, Árvore, Estados e Metas no dock. Copiloto à direita. As telas estão separadas por épico; no modo navegável, filtre por persona e por épico.</p>
     </div>
     <div class="hero-actions">
-      <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
+      <button class="play" data-play><i data-lucide="play"></i>Navegar no protótipo</button>
       <div class="temas"><span>Tema</span><div class="sw" data-temas></div></div>
     </div>
-    <nav class="flownav" id="flownav" aria-label="Fluxos"></nav>
+    <nav class="flownav" id="flownav" aria-label="Épicos"></nav>
   </div>
 </header>
 
@@ -831,9 +846,9 @@ pre .k { color: var(--accent); } pre .c { color: var(--muted); } pre .s { color:
 <div class="foot">Pessoas, clientes e datas são de exemplo. O protótipo é só para desktop (janela de 1440 × 900).</div>
 
 <div class="player" id="player" role="dialog" aria-label="Protótipo navegável">
-  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button></aside>
+  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button><nav id="pnav" aria-label="Telas"></nav></aside>
   <div class="stage" id="stage"><div class="holder" id="holder"></div></div>
-  <aside class="notes"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
+  <aside class="notes"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div id="pcen"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
 </div>
 
 <script>
@@ -1147,7 +1162,7 @@ function board(s) {
   const cards = U.filter(u => !u.arch && !isFolder(u) && !isData(u));
   const head = COLS.map(c => {
     const n = cards.filter(u => u.col === c.id).length;
-    return `<div class="colh">${esc(c.name)}<span class="n num">${n}</span>${c.exec ? `<span class="ex-tag">${icon("zap")}execução</span>` : ""}</div>`;
+    return `<div class="colh">${esc(c.name)}<span class="n num">${n}</span>${c.exec ? `<span class="ex-tag" data-ep="6">${icon("zap")}execução</span>` : ""}</div>`;
   }).join("");
   const lanes = LANES.map(l => {
     const lc = cards.filter(u => u.lane === l.id);
@@ -1176,7 +1191,7 @@ function cfgPanel() {
     const n = cards.filter(u => kind === "col" ? u.col === x.id : u.lane === x.id).length;
     return `<div class="cfgrow"><span class="grip">${icon("grip-vertical")}</span>
       <input type="text" value="${esc(x.name)}" data-rename-${kind}="${x.id}" aria-label="Nome">
-      ${kind === "col" ? `<button class="tog" data-act="toggle-exec" data-id="${x.id}" aria-pressed="${x.exec}"><i></i>execução</button>` : ""}
+      ${kind === "col" ? `<button class="tog" data-ep="6" data-act="toggle-exec" data-id="${x.id}" aria-pressed="${x.exec}"><i></i>execução</button>` : ""}
       <span class="cnt num">${n} card${n === 1 ? "" : "s"}</span>
       <button class="ib" data-act="up-${kind}" data-id="${x.id}" title="Subir">${icon("arrow-up")}</button>
       <button class="ib" data-act="rm-${kind}" data-id="${x.id}" title="${n ? "Mova os cards antes de remover" : "Remover"}"${n ? ` style="opacity:.35" aria-disabled="true"` : ""}>${icon("trash-2")}</button></div>`;
@@ -1185,7 +1200,7 @@ function cfgPanel() {
     <div class="side-h"><b style="font-size:15px;font-weight:600">Colunas e raias</b><span class="sp"></span><button class="ib" data-act="cfg">${icon("x")}</button></div>
     <div class="side-b">
       <div><div class="sec-t">Colunas <small>${COLS.length}</small><button class="btn ghost" data-act="add-col">${icon("plus")}Coluna</button></div><div style="margin-top:8px">${COLS.map(c => row(c, "col")).join("")}</div></div>
-      <div class="warnline">${icon("zap")}<span>Card com responsável IA que entra numa coluna de execução começa a rodar. Retry só por ação explícita.</span></div>
+      <div class="warnline" data-ep="6">${icon("zap")}<span>Card com responsável IA que entra numa coluna de execução começa a rodar. Retry só por ação explícita.</span></div>
       <div><div class="sec-t">Raias <small>${LANES.length}</small><button class="btn ghost" data-act="add-lane">${icon("plus")}Raia</button></div><div style="margin-top:8px">${LANES.map(l => row(l, "lane")).join("")}</div></div>
       <p style="font-size:12px;color:var(--muted)">Sem limite de WIP nem de caminho em v1. Coluna ou raia com cards não pode ser removida.</p>
     </div></aside>`;
@@ -1208,11 +1223,11 @@ function drawer(s) {
       <div class="fld"><input class="ttl" data-edit="title" data-id="${u.id}" value="${esc(u.title)}" aria-label="Título">
         <div class="vocab">${Object.entries(VOCAB).map(([k, n]) => `<span class="${k === from ? "on" : ""}">${n}</span>`).join("")}<span style="border:0;padding:0">mesma unidade em todas as visões</span></div></div>
       <div class="fld"><label>Contexto</label><textarea data-edit="ctx" data-id="${u.id}" placeholder="Orçamento, preferências, restrições">${esc(u.ctx || "")}</textarea></div>
-      ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : `<div class="fld"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>`}
-      ${u.st || u.err ? `<div class="fld"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
+      ${isData(u) ? `<div class="fld"><span class="l">Dado</span><div class="list-r"><div>${icon("diamond")}Unidade de informação · 0 passos<span class="r">reúne</span></div>${(u.ins || []).map(n => `<div>${icon("box")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">${esc(fopCheck(u.plan).prod[n]?.title || "contexto")}</span></div>`).join("")}</div></div>` : `<div class="fld" data-ep="5"><span class="l">Responsável</span><button class="resp" data-act="picker">${agChip(u.agent)}${a ? `<small style="color:var(--muted)">${TYPES[a.type].one}</small>` : ""}${icon("chevron-down", "chev")}</button>${picker}</div>`}
+      ${u.st || u.err ? `<div class="fld" data-ep="6"><span class="l">Execução</span><div style="display:flex;gap:8px;align-items:center">${stBadge(u.st)}${u.st === "fail" || u.st === "cancel" ? `<button class="btn" data-act="retry" data-id="${u.id}">${icon("rotate-ccw")}Tentar de novo</button>` : ""}</div>${u.err && u.st === "fail" ? `<p style="font-size:12px;color:var(--fail)">${esc(u.err)}</p>` : ""}</div>` : ""}
       ${isFolder(u) ? "" : from !== "flow" && !isData(u) ? `<div class="g2"><div class="fld"><label>Início</label><input type="text" value="${r.s != null ? dayLabel(r.s).br : "—"}" readonly></div><div class="fld"><label>Fim</label><input type="text" value="${r.e != null ? dayLabel(r.e).br : "—"}" readonly></div></div>` : (() => { const L = flowLayout(u.plan).layout[u.id] || { s: 0, e: 0 }; return `<div class="g2"><div class="fld"><label>Início</label><input type="text" value="passo ${L.s}" readonly></div><div class="fld"><label>Passos</label><input type="text" value="${isData(u) ? "0 · dado" : L.e - L.s + 1}" readonly></div></div>`; })()}
-      ${(u.ins || []).length || (u.outs || []).length ? `<div class="fld"><span class="l">Estado (entradas e saídas)</span><div class="list-r">${(u.ins || []).map(n => `<div>${icon("arrow-down-to-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">entrada</span></div>`).join("")}${(u.outs || []).map(([n, ref]) => `<div>${icon("arrow-up-from-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r mono">${ref}</span></div>`).join("")}</div></div>` : ""}
-      ${isFolder(u) ? "" : `<div class="fld"><span class="l">Função FOP · ${isData(u) ? "dado" : flowKids(u).length ? "composição" : a?.type === "ia" ? "endereço abstrato (IA no contexto)" : a?.type === "pessoa" ? "endereço abstrato (pessoa no contexto)" : a ? "endereço concreto (import)" : "sem agente"}</span><pre class="sig">${fopSig(u)}</pre></div>`}
+      ${(u.ins || []).length || (u.outs || []).length ? `<div class="fld" data-ep="7"><span class="l">Estado (entradas e saídas)</span><div class="list-r">${(u.ins || []).map(n => `<div>${icon("arrow-down-to-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r">entrada</span></div>`).join("")}${(u.outs || []).map(([n, ref]) => `<div>${icon("arrow-up-from-line")}<span class="mono" style="color:var(--accent)">${n}</span><span class="r mono">${ref}</span></div>`).join("")}</div></div>` : ""}
+      ${isFolder(u) ? "" : `<div class="fld" data-ep="7"><span class="l">Função FOP · ${isData(u) ? "dado" : flowKids(u).length ? "composição" : a?.type === "ia" ? "endereço abstrato (IA no contexto)" : a?.type === "pessoa" ? "endereço abstrato (pessoa no contexto)" : a ? "endereço concreto (import)" : "sem agente"}</span><pre class="sig">${fopSig(u)}</pre></div>`}
       <div class="fld"><span class="l">Hierarquia</span><div class="list-r">
         ${p ? `<button data-act="drawer" data-id="${p.id}">${icon("corner-left-up")}${esc(p.title)}<span class="r">pai</span></button>` : `<div style="color:var(--muted)">${icon("corner-left-up")}Raiz</div>`}
         ${ks.map(k => `<button data-act="drawer" data-id="${k.id}">${icon("corner-down-right")}${esc(k.title)}<span class="r">${agChip(k.agent, true)}${stBadge(k.st)}</span></button>`).join("")}
@@ -2147,42 +2162,54 @@ function exportDlg(s) {
   </div></div>`;
 }
 
-// ================= fluxos e telas =================
-const FLOWS = [
-  { id: "explorar", n: "01", title: "Explorar", us: "US-17 · US-18 · US-20 a US-33",
-    desc: "Painel fixo à esquerda. Duas seções: Planos (círculo) e Estados (cubo). Planos = atividades/arquivos; Estados = saídas/dados atuais. A árvore não é uma tela: está sempre visível.",
-    steps: [["T-01", "Revelar no Explorar"], ["T-02", "Novo arquivo"], ["T-03", "Menu de contexto"], ["T-04", "Buscar na árvore"], ["T-05", "Remover com filhos"], ["T-06", "Seção Estados"]] },
-  { id: "board", n: "02", title: "Board", us: "US-04 a US-07",
-    desc: "Kanban de colunas × raias. Cards nascem com título e contexto opcional, mudam de coluna arrastando e mostram o responsável tipado. Coluna de execução dispara a IA do card; falha e cancelamento pedem retry explícito.",
-    steps: [["T-10", "Board"], ["T-11", "Novo card"], ["T-12", "Colunas e raias"]] },
-  { id: "detalhe", n: "03", title: "Detalhe da unidade", us: "US-01 · US-02",
-    desc: "Painel lateral comum às visões. Mesmo UUID, vocabulário da visão de origem (card, tarefa, etapa, atividade, arquivo), responsável escolhido do catálogo, estado, hierarquia e atalhos para abrir em outra visão.",
-    steps: [["T-20", "Detalhe"], ["T-21", "Atribuir responsável"]] },
-  { id: "gantt", n: "04", title: "Gantt", us: "US-08 a US-11",
-    desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas. Zoom/pan no mesmo padrão do Fluxograma. Roll-up no pai; tarefas sem data à parte.",
-    steps: [["T-30", "Gantt"], ["T-31", "Execução via IAs"]] },
-  { id: "flow", n: "05", title: "Flow", us: "US-12 a US-14 · US-19",
-    desc: "Visual do gantt-sample: tabela (nome, início, passos, % feito, agente) + barras por passo com progresso e conectores. Recursos da Programação Orientada a Fluxo: função, dado (◆), composição, sequência, paralelo, seleção, repetição, camadas e contexto completo. Máquina se programa aqui; exporta código.",
-    steps: [["T-32", "Flow"], ["T-37", "Contexto e camadas"], ["T-33", "Programar máquina"], ["T-35", "Exportar código"]] },
-  { id: "diagram", n: "06", title: "Fluxograma", us: "US-12 · US-19",
-    desc: "Canvas de nós no espírito do n8n: portas, fios, zoom/pan. Sem sticky de plano nem Executar via IAs na barra.",
-    steps: [["T-36", "Fluxograma"]] },
-  { id: "arvore", n: "07", title: "Árvore de execução", us: "US-15 · US-16",
-    desc: "Floresta de atividades com zoom/pan (mesmo padrão do Fluxograma). Criar filha, desaninhar, excluir; nó de máquina abre o procedimento.",
-    steps: [["T-40", "Árvore"], ["T-41", "Nova atividade filha"], ["T-42", "Procedimento da máquina"]] },
-  { id: "copilot", n: "08", title: "Copiloto", us: "harness",
-    desc: "Painel fixo à direita (como o Explorar à esquerda). Ícone de chat no canto superior abre/fecha. Abas no estilo Cursor: cada aba amarra o harness a um arquivo.",
-    steps: [["T-60", "Painel à direita"], ["T-61", "Aba com resposta"]] },
-  { id: "estados", n: "09", title: "Estados", us: "o que existe",
-    desc: "O que já existe. Árvore L→R: root → planos (círculo) → dados (cubo = outs). Zoom/pan. Sem painel JSON.",
-    steps: [["T-70", "Árvore de estado"]] },
-  { id: "metas", n: "10", title: "Metas", us: "o que se deseja",
-    desc: "O que se deseja no futuro. Mesma árvore dos Estados; folhas mostram o alvo (e o estado atual em “hoje”).",
-    steps: [["T-80", "Árvore de metas"]] },
-  { id: "config", n: "11", title: "Configurações", us: "US-03",
-    desc: "Fixas embaixo do Explorar. Em v1, o catálogo de responsáveis por tipo. Quem está em uso não sai do catálogo; a tela lista as unidades a trocar.",
-    steps: [["T-50", "Responsáveis"], ["T-51", "Remoção bloqueada"]] },
+// ================= épicos, personas e telas =================
+// Cada tela entra em exatamente um épico. Mesma lista de ../epics/README.md e ../README.md: mudou aqui, mude lá.
+const PERSONAS = [["org", "Organizador"], ["cond", "Condutor de projetos"], ["orq", "Orquestrador"], ["mod", "Modelador de fluxo"], ["adm", "Administrador do projeto"]];
+// telas: [código, nome curto na galeria, personas que acessam]
+const EPICOS = [
+  { n: 1, titulo: "Árvore de execução", us: "US-15 · US-16",
+    desc: "Árvore de atividades pais e filhas. Criar e remover nó, atribuir responsável e descrição.",
+    telas: [["T-40", "Árvore", "org cond orq mod adm"], ["T-41", "Nova atividade filha", "cond"]] },
+  { n: 2, titulo: "Explorar", us: "US-17 · US-18 · US-20 a US-33",
+    desc: "Painel fixo à esquerda, no estilo de um explorador de IDE. Planos aparecem como círculo; a árvore não é uma tela: está sempre visível.",
+    telas: [["T-01", "Revelar no Explorar", "org cond orq mod adm"], ["T-02", "Novo arquivo", "org cond"], ["T-03", "Menu de contexto", "org cond"], ["T-04", "Buscar na árvore", "org cond mod"], ["T-05", "Remover com filhos", "org cond"]] },
+  { n: 3, titulo: "Board", us: "US-01 · US-04 a US-06",
+    desc: "Kanban de colunas × raias. Cards nascem com título e contexto opcional, mudam de coluna arrastando e abrem o detalhe da unidade.",
+    telas: [["T-10", "Board", "org cond orq mod adm"], ["T-11", "Novo card", "org cond"], ["T-12", "Colunas e raias", "cond orq"], ["T-20", "Detalhe", "org cond orq mod"]] },
+  { n: 4, titulo: "Gantt", us: "US-08 a US-10",
+    desc: "Cronograma com calendário: barras por início e fim, setas sequenciais e paralelas, roll-up no pai e tarefas sem data à parte.",
+    telas: [["T-30", "Gantt", "cond orq mod"]] },
+  { n: 5, titulo: "Responsáveis", us: "US-02 · US-03",
+    desc: "Catálogo de pessoas, IAs e máquinas e atribuição de um responsável por unidade. Quem está em uso não sai do catálogo.",
+    telas: [["T-21", "Atribuir responsável", "orq"], ["T-50", "Responsáveis", "adm"], ["T-51", "Remoção bloqueada", "adm"]] },
+  { n: 6, titulo: "Execução por IA", us: "US-07 · US-11",
+    desc: "Coluna de execução no Board e “Executar via IAs” no Gantt, com estados, cancelamento e nova tentativa só por ação explícita.",
+    telas: [["T-31", "Execução via IAs", "orq"]] },
+  { n: 7, titulo: "Flow e fluxograma", us: "US-12 · US-19",
+    desc: "O plano como roteiro de Programação Orientada a Fluxo: função, dado, composição, paralelo, seleção, repetição, camadas e contexto.",
+    telas: [["T-32", "Flow", "orq mod"], ["T-37", "Contexto e camadas", "mod"], ["T-36", "Fluxograma", "mod"]] },
+  { n: 8, titulo: "Máquina e exportação", us: "US-13 · US-14",
+    desc: "Procedimento de máquina no Flow e na Árvore, compilação em FOP-IR e exportação de código.",
+    telas: [["T-33", "Programar máquina", "mod"], ["T-42", "Procedimento da máquina", "cond mod"], ["T-35", "Exportar código", "mod"]] },
+  { n: 9, titulo: "Estados e metas", us: "sem história ainda",
+    desc: "O que já existe e o que se deseja, na mesma árvore: root, planos e dados. A seção Estados entra no Explorar.",
+    telas: [["T-06", "Seção Estados", "cond orq mod"], ["T-70", "Árvore de estado", "cond orq mod"], ["T-80", "Árvore de metas", "org cond"]] },
+  { n: 10, titulo: "Copiloto", us: "sem história ainda",
+    desc: "Painel fixo à direita, aberto pelo ícone de chat. Cada aba amarra a conversa a um arquivo.",
+    telas: [["T-60", "Painel à direita", "org cond orq mod"], ["T-61", "Aba com resposta", "org cond orq mod"]] },
 ];
+EPICOS.forEach(e => e.id = "EP-" + String(e.n).padStart(2, "0"));
+const TELA = {};
+EPICOS.forEach(e => e.telas.forEach(([t, , quem]) => TELA[t] = { e, quem: quem.split(" ") }));
+
+// filtros do modo navegável: persona "" = todas; ep 0 = tudo (cumulativo até o épico escolhido)
+const FILTRO = { persona: "", ep: 0 };
+try { const m = JSON.parse(localStorage.getItem("cenario-plans")) || {}; if (PERSONAS.some(p => p[0] === m.persona)) FILTRO.persona = m.persona; if (EPICOS.some(e => e.n === m.ep)) FILTRO.ep = m.ep; } catch (e) {}
+const lembrar = () => { try { localStorage.setItem("cenario-plans", JSON.stringify(FILTRO)); } catch (e) {} };
+const fase = n => !FILTRO.ep || n <= FILTRO.ep;
+const entregue = t => fase(TELA[t].e.n);
+const daPersona = t => !FILTRO.persona || TELA[t].quem.includes(FILTRO.persona);
+const pode = t => entregue(t) && daPersona(t);
 
 const SCREENS = {
   "T-01": { s: { v: "tree", sel: "u13", flash: "u13", rev: true }, name: "Revelar no Explorar", us: ["US-17", "US-22", "US-32"], notes: "“Abrir no Explorar” destaca o plano (círculo) na seção Planos e abre o caminho até ele. Clique seleciona; duplo clique abre o detalhe. Seção Estados lista os dados (cubo) à parte." },
@@ -2213,7 +2240,9 @@ const SCREENS = {
   "T-50": { s: { v: "catalog", catTab: "ia" }, name: "Responsáveis", us: ["US-03"], notes: "Catálogo por tipo: pessoas, IAs e máquinas, com quantas unidades usam cada um. Incluir na linha de cima. Item livre sai na hora." },
   "T-51": { s: { v: "catalog", catTab: "pessoa", catBlock: "p1" }, name: "Remoção bloqueada", us: ["US-03"], notes: "Remover alguém em uso não apaga: mostra as unidades em que é responsável, com atalho para cada uma, para trocar antes." },
 };
-const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
+const ORDER = EPICOS.flatMap(e => e.telas.map(t => t[0]));
+const visiveis = () => ORDER.filter(pode);
+const casaT = () => pode("T-10") ? "T-10" : visiveis()[0];
 const TEMAS = [
   { id: "papel", name: "Papel", a: "#d4432a", b: "#f8f6f2", desc: "Claro editorial — accent terracota no papel quente." },
   { id: "teal", name: "Teal", a: "#0f766e", b: "#f6f8f8", desc: "Verde-água sóbrio para leitura longa." },
@@ -2236,9 +2265,13 @@ function specFor(t) { return { ...DEF, ...JSON.parse(JSON.stringify(SCREENS[t].s
 
 // ================= galeria =================
 function buildGallery() {
-  document.getElementById("gallery").innerHTML = FLOWS.map(f => `<section class="flow" id="${f.id}">
-    <div class="flow-head"><span class="n cond num">${f.n}</span><h2>${f.title}<small>${f.us}</small></h2><p>${f.desc}</p></div>
-    <div class="row">${f.steps.map(([id, label], i) => {
+  // a galeria mostra sempre o produto completo, sem os filtros nem o copiloto aberto no player
+  const copiloto = COPILOT.open, filtro = { ...FILTRO };
+  COPILOT.open = false; Object.assign(FILTRO, { persona: "", ep: 0 });
+  document.getElementById("gallery").innerHTML = EPICOS.map(e => `<section class="flow" id="${e.id.toLowerCase()}">
+    <div class="flow-head"><span class="n cond num">${e.id.slice(3)}</span><h2>${e.titulo}<small>${e.id} · ${e.us}</small></h2><p>${e.desc}</p>
+      <div class="quem">${PERSONAS.filter(([k]) => e.telas.some(t => TELA[t[0]].quem.includes(k))).map(([, n]) => `<span>${n}</span>`).join("")}</div></div>
+    <div class="row">${e.telas.map(([id, label], i) => {
       const sc = SCREENS[id], s = specFor(id);
       const html = (sc.s.runDemo ? withRunDemo(() => win(s)) : win(s)).replace(/ (id)="[^"]*"/g, "");
       return `${i ? `<span class="arrow" aria-hidden="true"><i></i>${icon("chevron-right")}</span>` : ""}
@@ -2246,6 +2279,7 @@ function buildGallery() {
           <div class="thumb" role="button" tabindex="0" data-open="${id}" aria-label="Abrir ${id}, ${sc.name}"><div inert>${html}</div></div>
           <span class="meta"><b>${id} · ${sc.name}</b> · ${sc.us.join(" · ")}</span></div>`;
     }).join("")}</div></section>`).join("");
+  COPILOT.open = copiloto; Object.assign(FILTRO, filtro);
   lucide.createIcons();
 }
 
@@ -2278,7 +2312,58 @@ paintTemas();
 // ================= modo navegável =================
 const player = document.getElementById("player"), holder = document.getElementById("holder"), plist = document.getElementById("plist"), pnotes = document.getElementById("pnotes");
 let cur = null, curT = null; const hist = [];
-plist.insertAdjacentHTML("beforeend", FLOWS.map(f => `<h4>${f.n} · ${f.title}</h4>` + f.steps.map(([id]) => `<a data-t="${id}"><span>${id}</span>${SCREENS[id].name}</a>`).join("")).join(""));
+// lista: só o que a persona acessa até o épico escolhido; clicar nela nunca troca a persona
+function pintarLista() {
+  document.getElementById("pnav").innerHTML = EPICOS.map(e => {
+    const l = e.telas.filter(([t]) => pode(t));
+    return l.length ? `<h4>${e.id} · ${e.titulo}</h4>` + l.map(([id]) => `<a data-t="${id}"><span>${id}</span>${SCREENS[id].name}</a>`).join("") : "";
+  }).join("");
+}
+function pintarCenarios() {
+  const grupo = (k, titulo, ops, cls = "") => `<div class="cen ${cls}" role="group" aria-label="${titulo}"><span>${titulo}</span><div>${ops.map(([v, n]) => `<button type="button" data-f="${k}" data-v="${v}" aria-pressed="${String(FILTRO[k]) === String(v)}">${n}</button>`).join("")}</div></div>`;
+  document.getElementById("pcen").innerHTML = `<h4>Cenários</h4>` + grupo("persona", "Personas", [["", "Todas"], ...PERSONAS])
+    + grupo("ep", "Épico", [[0, "Tudo"], ...EPICOS.map(e => [e.n, `${e.id} - ${e.titulo}`])], "lista");
+}
+function filtrar(k, v) {
+  FILTRO[k] = k === "ep" ? +v : v; lembrar(); pintarLista();
+  const alvo = pode(curT) ? curT : (k === "ep" && visiveis().find(t => TELA[t].e.n === FILTRO.ep)) || casaT();
+  COPILOT.open = false; hist.length = 0; show(specFor(alvo), false);
+}
+const TELA_DA_VISAO = { board: "T-10", gantt: "T-30", flow: "T-32", diagram: "T-36", tree: "T-40", estados: "T-70", metas: "T-80", catalog: "T-50" };
+// o que cada tela libera na janela
+const PODA = [
+  ['[data-act="catalog"]', "T-50"], ['.ex-sec[data-sec="estados"]', "T-06"], ['[data-act="copilot-toggle"], [data-act="copilot-open"]', "T-60"],
+  ['[data-act="new-file"], [data-act="new-folder"]', "T-02"], ['[data-act="search"]', "T-04"], ['[data-act="ask-rm"]:not(.tnode [data-act="ask-rm"])', "T-05"], ['.tnode [data-act="ask-rm"]', "T-41"],
+  ['[data-act="newcard"]', "T-11"], ['[data-act="cfg"]', "T-12"], ['[data-act="tnew"], [data-act="tnew-root"], [data-act="unnest"]', "T-41"],
+  ['[data-act="run-plan"], [data-act="retry"], [data-act="cancel-run"], .runbar', "T-31"], ['[data-act="export"]', "T-35"],
+  ['[data-act="mach"]', "T-33"], ['[data-act="flow-ctx"]', "T-37"], ['[data-act="tproc"]', "T-42"],
+];
+// fecha o que a persona ou a fase não permitem, antes de desenhar
+function limpar(s) {
+  if (!pode("T-20")) { delete s.drawer; delete s.picker; }
+  [["picker", "T-21"], ["cfg", "T-12"], ["newCard", "T-11"], ["exp", "T-35"], ["mach", "T-33"], ["ctxPanel", "T-37"], ["tnode", "T-42"], ["tnew", "T-41"],
+    ["ctx", "T-03"], ["ren", "T-03"], ["q", "T-04"], ["newn", "T-02"], ["copilot", "T-60"], ["estado", "T-06"]].forEach(([k, t]) => { if (s[k] != null && !pode(t)) delete s[k]; });
+  if (!pode("T-60")) COPILOT.open = false;
+  if (s.confirm && !pode("T-05") && !pode("T-41")) delete s.confirm;
+  if (s.v === "catalog" && !pode("T-50")) s.v = "board";
+  // visão que ainda não foi entregue nesta fase: fica na árvore de execução, a base
+  if (!entregue(TELA_DA_VISAO[s.v])) s.v = "tree";
+}
+function podar(raiz) {
+  const tira = q => raiz.querySelectorAll(q).forEach(el => el.remove());
+  PODA.forEach(([q, t]) => { if (!pode(t)) tira(q); });
+  Object.entries(TELA_DA_VISAO).forEach(([v, t]) => { if (!pode(t)) tira(`[data-act="open-in"][data-v="${v}"], [data-act="open-in-${v}"], .bar [data-act="view"][data-v="${v}"]`); });
+  // no dock, a visão aberta continua marcada se já foi entregue, mesmo fora da persona
+  raiz.querySelectorAll(".vdock button").forEach(b => { const v = b.dataset.v, t = TELA_DA_VISAO[v]; if (!pode(t) && !(v === cur.v && entregue(t))) b.remove(); });
+  if (!raiz.querySelector(".vdock button")) tira(".vdock");
+  if (!raiz.querySelector(".ex-cfg button")) tira(".ex-cfg");
+  if (!pode("T-21")) raiz.querySelectorAll('[data-act="picker"]').forEach(b => { b.removeAttribute("data-act"); b.style.cursor = "default"; b.querySelector(".chev")?.remove(); });
+  raiz.querySelectorAll("[data-ep]").forEach(el => { if (!fase(+el.dataset.ep)) el.remove(); });
+  if (!fase(5)) tira(".ag, .c-ag > :not(button), .ex .node[data-node] .meta > :not(.st)");
+  if (!fase(6)) tira(".st");
+  raiz.querySelectorAll(".ctx hr").forEach(h => { if (!h.previousElementSibling || !h.nextElementSibling || h.nextElementSibling.tagName === "HR") h.remove(); });
+  if (!entregue("T-01")) { tira(".ex"); raiz.querySelector(".body")?.classList.add("sem-ex"); }
+}
 
 function tFor(s) {
   if (s.exp) return "T-35";
@@ -2288,6 +2373,7 @@ function tFor(s) {
   if (s.q != null) return "T-04";
   if (s.v === "catalog") return s.catBlock ? "T-51" : "T-50";
   if (s.drawer) return s.picker ? "T-21" : "T-20";
+  if (s.copilot) return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
   if (s.v === "board") return s.cfg ? "T-12" : s.newCard ? "T-11" : "T-10";
   if (s.v === "gantt") {
     return U.some(u => u.st === "exec" && u.plan === s.plan && agent(u.agent)?.type === "ia") ? "T-31" : "T-30";
@@ -2296,7 +2382,6 @@ function tFor(s) {
   if (s.v === "diagram") return "T-36";
   if (s.v === "estados") return s.estado ? "T-06" : "T-70";
   if (s.v === "metas") return "T-80";
-  if (s.copilot) return (s.chatSeed || (CHAT[s.sel] || []).length) ? "T-61" : "T-60";
   if (s.v === "tree") return s.tnode ? "T-42" : s.tnew ? "T-41" : s.rev ? "T-01" : "T-40";
   return "T-10";
 }
@@ -2313,15 +2398,20 @@ function fit() {
 }
 function paint(keepScroll = true) {
   const sc = {}; if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => sc[el.className + i] = [el.scrollTop, el.scrollLeft]);
+  limpar(cur);
   holder.innerHTML = win(cur);
+  podar(holder);
   if (keepScroll) holder.querySelectorAll("[data-tree], .board, .gscroll, .tree, .cat, .side-b, [data-chat-thread]").forEach((el, i) => { const v = sc[el.className + i]; if (v) { el.scrollTop = v[0]; el.scrollLeft = v[1]; } });
   const chatThread = holder.querySelector("[data-chat-thread]");
   if (chatThread && cur.v === "chat") chatThread.scrollTop = chatThread.scrollHeight;
   const t = tFor(cur); curT = t; const s = SCREENS[t];
   plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
+  const ep = TELA[t].e;
   const zoomHint = ["diagram", "gantt", "flow", "tree"].includes(cur.v) ? "<br><b>Scroll</b> zoom · arrastar fundo = pan · − / + / ajustar" : "";
-  pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
+  pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus"><span>${ep.id} · ${ep.titulo}</span>${s.us.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
+    <p style="font-size:13px;color:var(--muted)">Quem usa: ${PERSONAS.filter(([k]) => TELA[t].quem.includes(k)).map(p => p[1]).join(", ")}.</p>
     <div class="kbd">Clique, arraste e use o botão direito como num app de verdade.<br><b>← →</b> tela anterior e próxima<br><b>Backspace</b> voltar · <b>Esc</b> fechar<br><b>F</b> só a janela · <b>H</b> áreas clicáveis${zoomHint}</div>`;
+  pintarCenarios();
   lucide.createIcons();
   fit();
   applyZView();
@@ -2338,13 +2428,17 @@ function show(spec, push = true) {
   if (document.startViewTransition && !reduced && push) document.startViewTransition(() => paint(false)); else paint(false);
 }
 function openT(t) {
+  // pela galeria dá para abrir qualquer tela: o filtro que a esconderia volta ao completo
+  if (!entregue(t)) FILTRO.ep = 0;
+  if (!daPersona(t)) FILTRO.persona = "";
+  lembrar(); pintarLista(); COPILOT.open = false;
   hist.length = 0; player.classList.add("open"); document.body.style.overflow = "hidden"; cur = null; show(specFor(t), false);
   requestAnimationFrame(() => { fit(); requestAnimationFrame(fit); });
   setTimeout(fit, 80);
 }
 function closePlayer() { player.classList.remove("open", "focus"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
 function goBack() { const p = hist.pop(); if (p) { cur = p; paint(false); } }
-function step(d) { const i = ORDER.indexOf(tFor(cur)); show(specFor(ORDER[(i + d + ORDER.length) % ORDER.length]), true); }
+function step(d) { const l = visiveis(), i = l.indexOf(curT); show(specFor(l[(i + d + l.length) % l.length]), true); }
 function toast(msg, ic = "circle-check") {
   setTimeout(() => {
     const t = holder.querySelector(".toast"); if (!t) return;
@@ -2354,7 +2448,7 @@ function toast(msg, ic = "circle-check") {
 }
 const unset = (...k) => k.forEach(x => delete cur[x]);
 function closeOverlays() { unset("ctx", "picker"); }
-function view(v, extra = {}) { unset("rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from"); cur.v = v; Object.assign(cur, extra); }
+function view(v, extra = {}) { unset("copilot", "chatSeed", "rev", "drawer", "picker", "cfg", "mach", "tnode", "tnew", "newCard", "ctx", "exp", "catBlock", "from"); cur.v = v; Object.assign(cur, extra); }
 
 // execução de IA (US-07, US-11)
 function startRun(ids) {
@@ -2417,7 +2511,7 @@ const ACT = {
       if (u && !isFolder(u)) ensureCopilotTab(u.id);
       else ensureCopilotTab(null);
     }
-    unset("chatSeed");
+    unset("copilot", "chatSeed");
   },
   "copilot-open": t => {
     const id = t.dataset.id;
@@ -2597,7 +2691,7 @@ holder.addEventListener("click", e => {
 let lastNode = {};
 holder.addEventListener("contextmenu", e => {
   const node = e.target.closest("[data-node]"); if (!node) return;
-  e.preventDefault(); const p = winPoint(e); cur.sel = node.dataset.node; cur.ctx = { id: node.dataset.node, x: p.x, y: p.y }; paint();
+  e.preventDefault(); if (!pode("T-03")) return; const p = winPoint(e); cur.sel = node.dataset.node; cur.ctx = { id: node.dataset.node, x: p.x, y: p.y }; paint();
 });
 holder.addEventListener("input", e => {
   if (e.target.matches("[data-q]")) { cur.q = e.target.value; const pos = e.target.selectionStart; paint(); const i = holder.querySelector("[data-q]"); i.focus(); i.setSelectionRange(pos, pos); return; }
@@ -2687,12 +2781,13 @@ holder.addEventListener("drop", e => {
     const moved = [u, ...desc(u.id).filter(k => !isFolder(k))];
     moved.forEach(k => { k.col = cell.dataset.col; k.lane = cell.dataset.lane; });
     drag = null;
-    if (col.exec && agent(u.agent)?.type === "ia" && u.st !== "exec") { delete u.err; startRun([u.id]); toast(`${u.title}: execução iniciada`, "zap"); return; }
+    if (col.exec && pode("T-31") && agent(u.agent)?.type === "ia" && u.st !== "exec") { delete u.err; startRun([u.id]); toast(`${u.title}: execução iniciada`, "zap"); return; }
     paint();
-    if (col.exec && agent(u.agent)?.type !== "ia") toast("Coluna de execução: só card com responsável IA roda", "info");
+    if (col.exec && pode("T-31") && agent(u.agent)?.type !== "ia") toast("Coluna de execução: só card com responsável IA roda", "info");
     else if (moved.length > 1) toast(`${u.title} e ${moved.length - 1} filhos movidos juntos`);
     return;
   }
+  if (!pode("T-03")) { drag = null; return; }
   const n = e.target.closest("[data-node]");
   const u = $u(drag.id);
   let dest = null;
@@ -2703,6 +2798,8 @@ holder.addEventListener("drop", e => {
 document.addEventListener("click", e => {
   const tb = e.target.closest("button[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
   const o = e.target.closest("[data-open]"); if (o) { openT(o.dataset.open); return; }
+  if (e.target.closest("[data-play]")) { openT(casaT()); return; }
+  const f = e.target.closest("#pcen [data-f]"); if (f) { filtrar(f.dataset.f, f.dataset.v); return; }
   if (e.target.closest("[data-close]")) { closePlayer(); return; }
   const a = e.target.closest("#plist a[data-t]"); if (a) { show(specFor(a.dataset.t)); return; }
 });
@@ -2720,6 +2817,9 @@ document.addEventListener("keydown", e => {
   if (typing) return;
   const sel = cur.sel && $u(cur.sel);
   const mod = e.metaKey || e.ctrlKey;
+  const edita = pode("T-03");
+  if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod)) && !pode("T-05") && !(cur.v === "tree" && pode("T-41"))) { e.preventDefault(); return; }
+  if (!edita && (e.key === "F2" || (mod && ["d", "x", "c", "v"].includes(e.key.toLowerCase())))) return;
   if (sel && e.key === "F2") { e.preventDefault(); cur.ren = sel.id; paint(); return; }
   if (sel && (e.key === "Delete" || (e.key === "Backspace" && mod))) { e.preventDefault(); ACT["ask-rm"]({ dataset: { id: sel.id } }); paint(); return; }
   if (sel && mod && e.key.toLowerCase() === "d") { e.preventDefault(); ACT.dup({ dataset: { id: sel.id } }); paint(); return; }
@@ -2736,11 +2836,12 @@ document.addEventListener("keydown", e => {
 addEventListener("resize", fit);
 
 // ================= início =================
-document.getElementById("flownav").innerHTML = FLOWS.map(f => `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`).join("");
+document.getElementById("flownav").innerHTML = EPICOS.map(e => `<a href="#${e.id.toLowerCase()}"><b>${e.id}</b>${e.titulo}</a>`).join("");
 let saved = "papel"; try { saved = localStorage.getItem("tema-plans") || "papel"; } catch (e) {}
 setTema(TEMAS.some(t => t.id === saved) ? saved : "papel");
 buildGallery();
-const h0 = location.hash.slice(1); if (SCREENS[h0]) openT(h0);
+// o link não desfaz a persona nem o épico escolhidos
+const h0 = location.hash.slice(1); if (SCREENS[h0]) openT(pode(h0) ? h0 : casaT());
 </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ SP.HOJE = '2026-11-27';
 SP.esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 SP.brl = v => (+v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 SP.brlk = v => v >= 1e6 ? 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + ' mi' : v >= 1e4 ? 'R$ ' + (v / 1e3).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : SP.brl(v);
+SP.dinheiro = v => (+v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 SP.num = v => (+v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 SP.data = s => s ? s.slice(0, 10).split('-').reverse().join('/') : '—';
 SP.dataCurta = s => s ? s.slice(8, 10) + '/' + s.slice(5, 7) : '—';
@@ -18,8 +19,30 @@ SP.soDig = s => String(s ?? '').replace(/\D/g, '');
 SP.contem = (a, b) => String(a ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(String(b ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
 SP.iniciais = n => String(n || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
 SP.plural = (n, um, varios) => n + ' ' + (n === 1 ? um : varios);
+SP.diasTxt = n => SP.plural(n, 'dia', 'dias');
 SP.baixar = (nome, texto, tipo = 'text/plain') => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([texto], { type: tipo + ';charset=utf-8' })); a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
 SP.csv = linhas => '﻿' + linhas.map(l => l.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(';')).join('\n');
+
+/* ---------- CNPJ (numérico e alfanumérico, IN RFB 2.229/2024) e CPF ---------- */
+const alnum = SP.alnum = s => String(s ?? '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+const P1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+const dvCnpj = base => { const um = (b, p) => { const r = [...b].reduce((s, c, i) => s + (c.charCodeAt(0) - 48) * p[i], 0) % 11; return r < 2 ? 0 : 11 - r; }; const a = um(base, P1); return '' + a + um(base + a, [6, ...P1]); };
+SP.cnpj = base => SP.mascarar('doc', base + dvCnpj(base));
+SP.cnpjValido = v => { const c = alnum(v); return /^[0-9A-Z]{12}\d{2}$/.test(c) && !/^(.)\1+$/.test(c) && dvCnpj(c.slice(0, 12)) === c.slice(12); };
+SP.cpfValido = v => { const c = SP.soDig(v); if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false; return [9, 10].every(n => { const r = [...c.slice(0, n)].reduce((s, d, i) => s + d * (n + 1 - i), 0) * 10 % 11 % 10; return r === +c[n]; }); };
+
+/* ---------- máscaras ---------- */
+const molde = (s, m) => { let i = 0, out = ''; for (const ch of m) { if (i >= s.length) break; out += ch === '#' ? s[i++] : ch; } return out; };
+SP.mascaraDe = path => { const k = path.split('.').pop(); return /^(cnpj|doc)$/.test(k) ? 'doc' : /^(telefone|whats)$/.test(k) ? 'tel' : k === 'cep' ? 'cep' : k === 'email' || /^emails\.\d$/.test(path) ? 'email' : ''; };
+SP.mascarar = (m, v) => {
+  if (!m || v == null) return v ?? '';
+  if (m === 'doc') { const c = alnum(v).slice(0, 14); return /^\d{0,11}$/.test(c) ? molde(c, '###.###.###-##') : molde(c, '##.###.###/####-##'); }
+  if (m === 'tel') { const c = SP.soDig(v).slice(0, 11); return molde(c, c.length > 10 ? '(##) #####-####' : '(##) ####-####'); }
+  if (m === 'cep') return molde(SP.soDig(v).slice(0, 8), '#####-###');
+  return v;
+};
+SP.attrsMask = m => m ? ` data-mask="${m}"` + ({ doc: ' autocomplete="off" spellcheck="false" autocapitalize="characters"', tel: ' autocomplete="tel" inputmode="tel"', cep: ' autocomplete="postal-code" inputmode="numeric"', email: ' autocomplete="email" spellcheck="false" autocapitalize="off"' }[m] || '') : '';
+SP.exemplo = m => ({ doc: 'CNPJ ou CPF', tel: '(11) 90000-0000', cep: '00000-000', email: 'nome@empresa.com.br' }[m] || '');
 
 /* ---------- ícones de linha (24×24) ---------- */
 const P = {
@@ -43,6 +66,8 @@ const P = {
   barcode: 'M4 5v14M7 5v14M10 5v11M13 5v14M17 5v11M20 5v14',
   bank: 'M3 9l9-5 9 5M5 10v7M10 10v7M14 10v7M19 10v7M3 20h18',
   chart: 'M4 4v16h16M8 16v-4M12 16V8M16 16v-6',
+  kanban: 'M4 4h4v16H4zM10 4h4v10h-4zM16 4h4v13h-4z',
+  trophy: 'M8 4h8v5a4 4 0 01-8 0zM8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 13v4M10 17h4M8 20h8',
   line: 'M4 4v16h16M7 15l4-5 3 3 5-7',
   factory: 'M3 20V9l6 4V9l6 4V4h5v16zM7 17h.01M12 17h.01M17 17h.01',
   team: 'M12 8a3 3 0 100-6 3 3 0 000 6zM5 21v-2a7 7 0 0114 0v2',
@@ -105,7 +130,7 @@ SP.contraste = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) 
 SP.misturar = (a, b, t) => { const x = rgb(a), y = rgb(b); return hex(x.map((v, i) => v + (y[i] - v) * t)); };
 SP.inkSobre = c => SP.contraste(c, '#ffffff') >= SP.contraste(c, '#111111') ? '#ffffff' : '#111111';
 /* ajusta a cor até ter contraste 4,5:1 como texto sobre o fundo */
-SP.comoTexto = (c, fundo) => { const alvo = lum(fundo) > .4 ? '#000000' : '#ffffff'; let out = c, t = 0; while (SP.contraste(out, fundo) < 4.5 && t < 1) { t += .05; out = SP.misturar(c, alvo, t); } return out; };
+SP.comoTexto = (c, fundo) => { const alvo = lum(fundo) > .4 ? '#000000' : '#ffffff'; let out = c, t = 0; while (SP.contraste(out, fundo) < 5.4 && t < 1) { t += .05; out = SP.misturar(c, alvo, t); } return out; };
 SP.tokens = (tenant, tema) => {
   const surf = tema === 'dark' ? '#0f0f0f' : '#ffffff';
   const b = tenant.cor, a = tenant.destaque;

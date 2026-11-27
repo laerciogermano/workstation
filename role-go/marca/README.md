@@ -1,5 +1,13 @@
 # RoleGo — Marca
 
+## Logo toda em pincel (em escolha)
+
+[`logo-pincel-rolego/`](logo-pincel-rolego/README.md) — “ROLÊGO” inteiro em pincel, sem o símbolo antigo: 12 variações, ícones e posts.
+
+## Logo pincel + Go (em escolha)
+
+[`logo-pincel-go/`](logo-pincel-go/README.md) — 18 possibilidades com o ROLÊ em pincel e o Go da logo atual (PDF + SVG).
+
 ## Cores escolhidas
 
 [`cores-escolhidas/`](cores-escolhidas/README.md) — ciano `#68E2E3`, roxo `#6D34CC`, rosa `#CB4C7B` (HTML + PDF).

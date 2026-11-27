@@ -18,6 +18,7 @@ Regras para a IA na esteira: [`../config/config-ia.md`](../config/config-ia.md).
 | Componentes | [`components.md`](components.md) | Inventário de UI para implementar |
 | Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado |
 | Protótipo desktop (galeria + navegável) | [`../prototipo/index.html`](../prototipo/index.html) | Mesmo padrão dos protótipos RoleGo, Confraternização e Fitness: telas T-xx por fluxo com as US, modo navegável com notas e temas. Só desktop |
+| Plano de implementação | [`plano-implementacao.md`](plano-implementacao.md) | Front sobre pasta local, hub WebSocket, client que executa comandos e instaladores; proposta a validar |
 | Marca / logo | [`../marca/logo/LOGO.md`](../marca/logo/LOGO.md) | Spec da logo Plans (reutilizável no Flow IDE) + referências |
 
 ## Próximos passos

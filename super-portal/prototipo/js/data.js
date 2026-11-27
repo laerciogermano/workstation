@@ -1,9 +1,9 @@
 /* Dados de exemplo. Pessoas, empresas, CNPJs e valores são fictícios. */
 SP.seed = function () {
   const tenants = [
-    { id: 't1', nome: 'ConectMax', razao: 'ConectMax Unidade Exemplo Ltda', slogan: 'Soluções em Tecnologia', cor: '#0070BC', destaque: '#FF731D', fonte: 'Plus Jakarta Sans', raio: 10, logo: 'assets/logo-header.png', logoEscuro: 'assets/logo-noite.png', icone: 'assets/icone-512.png', dominio: 'portal.conectmax.exemplo', saudacao: 'Compras de tecnologia em um só lugar.', cnpjs: ['11.222.333/0001-81', '22.333.444/0001-05'] },
-    { id: 't2', nome: 'Vértice', razao: 'Vértice Suprimentos Ltda', slogan: 'Suprimentos corporativos', cor: '#17694F', destaque: '#C2540C', fonte: 'Figtree', raio: 14, logo: '', logoEscuro: '', icone: '', dominio: 'portal.vertice.exemplo', saudacao: 'Seu estoque sem correria.', cnpjs: ['33.444.555/0001-20'] },
-    { id: 't3', nome: 'Porto Norte', razao: 'Porto Norte Distribuidora S.A.', slogan: 'Distribuição e logística', cor: '#8A2432', destaque: '#E0A100', fonte: 'IBM Plex Sans', raio: 4, logo: '', logoEscuro: '', icone: '', dominio: 'clientes.portonorte.exemplo', saudacao: 'Do pedido à doca, sem ruído.', cnpjs: ['44.555.666/0001-37'] },
+    { id: 't1', nome: 'ConectMax', razao: 'ConectMax Unidade Exemplo Ltda', slogan: 'Soluções em Tecnologia', cor: '#0070BC', destaque: '#FF731D', fonte: 'Plus Jakarta Sans', raio: 10, logo: 'assets/logo-header.png', logoEscuro: 'assets/logo-noite.png', icone: 'assets/icone-512.png', dominio: 'portal.conectmax.exemplo', saudacao: 'Compras de tecnologia em um só lugar.', cnpjs: [SP.cnpj('112223330001'), SP.cnpj('223334440001')] },
+    { id: 't2', nome: 'Vértice', razao: 'Vértice Suprimentos Ltda', slogan: 'Suprimentos corporativos', cor: '#17694F', destaque: '#C2540C', fonte: 'Figtree', raio: 14, logo: '', logoEscuro: '', icone: '', dominio: 'portal.vertice.exemplo', saudacao: 'Seu estoque sem correria.', cnpjs: [SP.cnpj('334445550001')] },
+    { id: 't3', nome: 'Porto Norte', razao: 'Porto Norte Distribuidora S.A.', slogan: 'Distribuição e logística', cor: '#8A2432', destaque: '#E0A100', fonte: 'IBM Plex Sans', raio: 4, logo: '', logoEscuro: '', icone: '', dominio: 'clientes.portonorte.exemplo', saudacao: 'Do pedido à doca, sem ruído.', cnpjs: [SP.cnpj('445556660001')] },
   ];
 
   const vendedores = [
@@ -13,21 +13,22 @@ SP.seed = function () {
     { id: 'v4', nome: 'Diego Prado', email: 'diego@exemplo.com', whats: '(19) 90000-0104', usuario: 'diego', ativo: false, online: false, ultimo: '2026-10-30 17:20', meta: 30000, vendido: 0 },
   ];
   const funcionarios = [
-    { id: 'f1', nome: 'Paulo Reis', email: 'paulo@exemplo.com', whats: '(11) 90000-0201', usuario: 'paulo', cargo: 'Logística', ativo: true, online: true, ultimo: '2026-11-27 07:55', perms: ['hoje', 'fila', 'checklist', 'parados', 'fluxo', 'pedLista', 'logistica', 'transp', 'nfLista', 'produtos', 'fornecedores', 'notificacoes', 'chamados', 'atividade'] },
-    { id: 'f2', nome: 'Helena Duarte', email: 'helena@exemplo.com', whats: '(11) 90000-0202', usuario: 'helena', cargo: 'Gerência', ativo: true, online: false, ultimo: '2026-11-26 19:11', perms: ['*'] },
+    { id: 'f1', nome: 'Paulo Reis', email: 'paulo@exemplo.com', whats: '(11) 90000-0201', usuario: 'paulo', cargo: 'Logística', ativo: true, online: true, ultimo: '2026-11-27 07:55' },
+    { id: 'f2', nome: 'Helena Duarte', email: 'helena@exemplo.com', whats: '(11) 90000-0202', usuario: 'helena', cargo: 'Gerência', ativo: true, online: false, ultimo: '2026-11-26 19:11' },
   ];
 
   const C = (id, nome, cnpj, contato, email, cidade, uf, extra = {}) => ({ id, nome, cnpj, comprador: contato, email, telefone: '(11) 4000-' + id.slice(1).padStart(4, '0'), whats: '(11) 9' + id.slice(1).padStart(4, '0') + '-1200', ie: 'Isento', isento: 'Não contribuinte', icms: 'Não', cep: '13010-' + id.slice(1).padStart(3, '0'), endereco: 'Avenida das Palmeiras', numero: String(100 + 37 * +id.slice(1)), complemento: '', bairro: 'Centro', cidade, uf, ...extra });
   const clientes = [
-    C('c1', 'Alvorada Soluções S.A.', '10.100.200/0001-11', 'Juliana Moraes', 'compras@alvorada.exemplo', 'Campinas', 'SP', { ie: '244.118.903.110', isento: 'Não', icms: 'Sim' }),
-    C('c2', 'Mineração Serra Azul Ltda', '10.200.300/0001-22', 'Otávio Lima', 'suprimentos@serraazul.exemplo', 'Belo Horizonte', 'MG', { ie: '062.307.904.00', isento: 'Não', icms: 'Sim' }),
-    C('c3', 'Cidade Viva Experiências S/A', '10.300.400/0001-33', 'Bianca Torres', 'bianca@cidadeviva.exemplo', 'São Paulo', 'SP'),
-    C('c4', 'Raiz Educação S.A.', '10.400.500/0001-44', 'Marcos Vidal', 'ti@raizeducacao.exemplo', 'Rio de Janeiro', 'RJ'),
-    C('c5', 'Indústria Marfim Ltda', '10.500.600/0001-55', 'Sandra Pires', 'compras@marfim.exemplo', 'Curitiba', 'PR', { ie: '905.112.440', isento: 'Não', icms: 'Sim' }),
-    C('c6', 'Transrota Veículos Ltda', '10.600.700/0001-66', 'Eduardo Sales', 'eduardo@transrota.exemplo', 'Sorocaba', 'SP'),
-    C('c7', 'Posto Ipê Ltda', '10.700.800/0001-77', 'Carlos Mota', 'financeiro@postoipe.exemplo', 'Jundiaí', 'SP', { cep: '', endereco: '', numero: '', bairro: '' }),
-    C('c8', 'Mercado Bom Preço Alimentos', '10.800.900/0001-88', 'Larissa Gomes', 'larissa@bompreco.exemplo', 'Limeira', 'SP', { ie: '417.220.118.119', isento: 'Não', icms: 'Sim' }),
-    C('c9', 'Clínica Vida Plena', '10.900.100/0001-99', 'Renata Freitas', 'adm@vidaplena.exemplo', 'Campinas', 'SP'),
+    C('c1', 'Alvorada Soluções S.A.', SP.cnpj('101002000001'), 'Juliana Moraes', 'compras@alvorada.exemplo', 'Campinas', 'SP', { ie: '244.118.903.110', isento: 'Não', icms: 'Sim' }),
+    C('c2', 'Mineração Serra Azul Ltda', SP.cnpj('102003000001'), 'Otávio Lima', 'suprimentos@serraazul.exemplo', 'Belo Horizonte', 'MG', { ie: '062.307.904.00', isento: 'Não', icms: 'Sim' }),
+    C('c3', 'Cidade Viva Experiências S/A', SP.cnpj('103004000001'), 'Bianca Torres', 'bianca@cidadeviva.exemplo', 'São Paulo', 'SP'),
+    C('c4', 'Raiz Educação S.A.', SP.cnpj('104005000001'), 'Marcos Vidal', 'ti@raizeducacao.exemplo', 'Rio de Janeiro', 'RJ'),
+    C('c5', 'Indústria Marfim Ltda', SP.cnpj('105006000001'), 'Sandra Pires', 'compras@marfim.exemplo', 'Curitiba', 'PR', { ie: '905.112.440', isento: 'Não', icms: 'Sim' }),
+    C('c6', 'Transrota Veículos Ltda', SP.cnpj('106007000001'), 'Eduardo Sales', 'eduardo@transrota.exemplo', 'Sorocaba', 'SP'),
+    C('c7', 'Posto Ipê Ltda', SP.cnpj('107008000001'), 'Carlos Mota', 'financeiro@postoipe.exemplo', 'Jundiaí', 'SP', { cep: '', endereco: '', numero: '', bairro: '' }),
+    C('c8', 'Mercado Bom Preço Alimentos', SP.cnpj('108009000001'), 'Larissa Gomes', 'larissa@bompreco.exemplo', 'Limeira', 'SP', { ie: '417.220.118.119', isento: 'Não', icms: 'Sim' }),
+    C('c10', 'Nova Rota Logística Ltda', SP.cnpj('12ABC34501DE'), 'Tiago Ramos', 'compras@novarota.exemplo', 'Campinas', 'SP'),
+    C('c9', 'Clínica Vida Plena', SP.cnpj('109001000001'), 'Renata Freitas', 'adm@vidaplena.exemplo', 'Campinas', 'SP'),
   ];
 
   const Pr = (id, nome, ncm, custo, preco, estoque, fornecedor) => ({ id, nome, ncm, cfop: '5102', cest: '', custo, preco, margem: Math.round((preco / custo - 1) * 100), estoque, fornecedor, ativo: true });
@@ -46,16 +47,16 @@ SP.seed = function () {
     Pr('p12', 'Nobreak 1500VA bivolt', '8504.40.40', 690, 949, 2, 'f04'),
   ];
   const fornecedores = [
-    { id: 'f01', nome: 'Distribuidora Atlas', cnpj: '50.100.100/0001-01', contato: 'Vendas Atlas', email: 'vendas@atlas.exemplo', telefone: '(11) 3000-0001', prazo: 3, cidade: 'Barueri', uf: 'SP', pagamento: '28 dias' },
-    { id: 'f02', nome: 'Periféricos Sul', cnpj: '50.200.200/0001-02', contato: 'Ana Sul', email: 'pedidos@perifsul.exemplo', telefone: '(41) 3000-0002', prazo: 5, cidade: 'Curitiba', uf: 'PR', pagamento: 'Boleto 21 dias' },
-    { id: 'f03', nome: 'RedeMais Telecom', cnpj: '50.300.300/0001-03', contato: 'Comercial', email: 'comercial@redemais.exemplo', telefone: '(11) 3000-0003', prazo: 7, cidade: 'São Paulo', uf: 'SP', pagamento: 'PIX antecipado' },
-    { id: 'f04', nome: 'Energia & Cia', cnpj: '50.400.400/0001-04', contato: 'Roberto', email: 'roberto@energiacia.exemplo', telefone: '(19) 3000-0004', prazo: 4, cidade: 'Americana', uf: 'SP', pagamento: '30 dias' },
+    { id: 'f01', nome: 'Distribuidora Atlas', cnpj: SP.cnpj('501001000001'), contato: 'Vendas Atlas', email: 'vendas@atlas.exemplo', telefone: '(11) 3000-0001', prazo: 3, cidade: 'Barueri', uf: 'SP', pagamento: '28 dias' },
+    { id: 'f02', nome: 'Periféricos Sul', cnpj: SP.cnpj('502002000001'), contato: 'Ana Sul', email: 'pedidos@perifsul.exemplo', telefone: '(41) 3000-0002', prazo: 5, cidade: 'Curitiba', uf: 'PR', pagamento: 'Boleto 21 dias' },
+    { id: 'f03', nome: 'RedeMais Telecom', cnpj: SP.cnpj('503003000001'), contato: 'Comercial', email: 'comercial@redemais.exemplo', telefone: '(11) 3000-0003', prazo: 7, cidade: 'São Paulo', uf: 'SP', pagamento: 'PIX antecipado' },
+    { id: 'f04', nome: 'Energia & Cia', cnpj: SP.cnpj('504004000001'), contato: 'Roberto', email: 'roberto@energiacia.exemplo', telefone: '(19) 3000-0004', prazo: 4, cidade: 'Americana', uf: 'SP', pagamento: '30 dias' },
   ];
   const transportadoras = [
-    { id: 't01', nome: 'AGÊNCIA DE CORREIOS', cnpj: '60.100.100/0001-01', ie: '', email: 'agencia@correios.exemplo', telefone: '(19) 3100-0001', endereco: 'Rua Central, 10', cidade: 'Campinas', uf: 'SP' },
-    { id: 't02', nome: 'RÁPIDO BANDEIRANTE', cnpj: '60.200.200/0001-02', ie: '244.000.111.000', email: 'coleta@bandeirante.exemplo', telefone: '(11) 3100-0002', endereco: 'Rod. Anhanguera, km 98', cidade: 'Campinas', uf: 'SP' },
-    { id: 't03', nome: 'MINAS CARGO', cnpj: '60.300.300/0001-03', ie: '', email: 'comercial@minascargo.exemplo', telefone: '(31) 3100-0003', endereco: 'Av. do Contorno, 800', cidade: 'Belo Horizonte', uf: 'MG' },
-    { id: 't04', nome: 'ENTREGA LOCAL EXPRESSA', cnpj: '60.400.400/0001-04', ie: '', email: 'ola@expressa.exemplo', telefone: '(19) 3100-0004', endereco: 'Rua das Flores, 55', cidade: 'Campinas', uf: 'SP' },
+    { id: 't01', nome: 'AGÊNCIA DE CORREIOS', cnpj: SP.cnpj('601001000001'), ie: '', email: 'agencia@correios.exemplo', telefone: '(19) 3100-0001', endereco: 'Rua Central, 10', cidade: 'Campinas', uf: 'SP' },
+    { id: 't02', nome: 'RÁPIDO BANDEIRANTE', cnpj: SP.cnpj('602002000001'), ie: '244.000.111.000', email: 'coleta@bandeirante.exemplo', telefone: '(11) 3100-0002', endereco: 'Rod. Anhanguera, km 98', cidade: 'Campinas', uf: 'SP' },
+    { id: 't03', nome: 'MINAS CARGO', cnpj: SP.cnpj('603003000001'), ie: '', email: 'comercial@minascargo.exemplo', telefone: '(31) 3100-0003', endereco: 'Av. do Contorno, 800', cidade: 'Belo Horizonte', uf: 'MG' },
+    { id: 't04', nome: 'ENTREGA LOCAL EXPRESSA', cnpj: SP.cnpj('604004000001'), ie: '', email: 'ola@expressa.exemplo', telefone: '(19) 3100-0004', endereco: 'Rua das Flores, 55', cidade: 'Campinas', uf: 'SP' },
   ];
 
   const it = (pid, qtd, o = {}) => { const p = produtos.find(x => x.id === pid); return { produto: pid, nome: p.nome, ncm: p.ncm, qtd, valor: p.custo, margem: p.margem, extra: 0, obs: '', comprado: false, chegou: false, previsao: '', ...o }; };
@@ -75,14 +76,14 @@ SP.seed = function () {
   ];
 
   const parc = { tabela: '28 dias', primeiro: '', vezes: 1 };
-  const Pe = (numero, data, status, cid, vend, itens, flags = {}, extra = {}) => ({ id: 'd' + numero, numero, data, status, orc: null, ...base(cid, vend), ocNum: '', ocArq: '', ...parc, itens, nf: false, boleto: false, enviado: false, recebido: false, pago: false, rastreio: { codigo: '', link: '' }, frete_valor: 0, emails: [], anexos: [], etiqueta: null, logSt: '', obsPedido: '', cancelObs: '', atualizado: data, hist: [{ txt: 'Pedido criado', em: data + ' 11:00' }], ...extra });
+  const Pe = (numero, data, status, cid, vend, itens, flags = {}, extra = {}) => ({ id: 'd' + numero, numero, data, status, orc: null, ...base(cid, vend), ocNum: '', ocArq: '', ...parc, itens, nf: false, boleto: false, enviado: false, recebido: false, pago: false, rastreio: { codigo: '', link: '' }, frete_valor: 0, emails: [], anexos: [], etiqueta: null, logSt: '', obsPedido: '', cancelObs: '', atualizado: data, hist: [{ txt: 'Pedido criado', em: data + ' 11:00' }], ...flags, ...extra });
   const ok = { comprado: true, chegou: true };
   const pedidos = [
     Pe(17160, '2026-11-26', 'Aprovado', 'c1', 'v1', [it('p1', 10), it('p2', 5)], {}, { orc: 3650, ocNum: 'OC-8812', ocArq: 'OC-8812.pdf', obsPedido: 'Cliente pediu entrega até 04/12.' }),
     Pe(17155, '2026-11-24', 'Aprovado', 'c3', 'v2', [it('p9', 3, { comprado: true, previsao: '2026-11-25' }), it('p1', 5, { comprado: true, chegou: true })], {}, { orc: 3647, atualizado: '2026-11-24' }),
     Pe(17150, '2026-11-20', 'Aprovado', 'c7', 'v1', [it('p6', 35, ok)], {}, { orc: 3645, atualizado: '2026-11-26' }),
     Pe(17143, '2026-11-18', 'Faturado', 'c6', 'v3', [it('p3', 10, ok)], { nf: true, boleto: true }, { atualizado: '2026-11-21', logSt: 'Faturado' }),
-    Pe(17135, '2026-11-16', 'Faturado', 'c3', 'v2', [it('p10', 20, ok)], { nf: true, boleto: true, enviado: true }, { atualizado: '2026-11-25', rastreio: { codigo: 'BR448812093SP', link: 'https://rastreio.exemplo/BR448812093SP' }, frete_valor: 84.5, emails: ['bianca@cidadeviva.exemplo'] }),
+    Pe(17135, '2026-11-16', 'Faturado', 'c1', 'v2', [it('p10', 20, ok)], { nf: true, boleto: true, enviado: true }, { atualizado: '2026-11-25', rastreio: { codigo: 'BR448812093SP', link: 'https://rastreio.exemplo/BR448812093SP' }, frete_valor: 84.5, emails: ['compras@alvorada.exemplo'] }),
     Pe(17134, '2026-11-12', 'Faturado', 'c6', 'v3', [it('p3', 10, ok)], { nf: true, boleto: true, enviado: true, recebido: true }, { atualizado: '2026-11-19' }),
     Pe(17050, '2026-11-05', 'Faturado', 'c5', 'v1', [it('p7', 1, ok), it('p8', 1, ok)], { nf: true, boleto: true, enviado: true, recebido: true, pago: true }, { atualizado: '2026-11-22', anexos: ['canhoto-17050.jpg'] }),
     Pe(16982, '2026-10-27', 'Faturado', 'c1', 'v1', [it('p6', 1, ok)], { nf: true, boleto: true, enviado: true, recebido: true, pago: true }, { atualizado: '2026-11-04' }),
@@ -94,7 +95,7 @@ SP.seed = function () {
 
   const NF = (numero, data, status, cid, pedido, total, transp, extra = {}) => ({ id: 'n' + numero, numero, data, status, cliente: cid, pedido, total, transportadora: transp, tipo: '1 - Saída', cfop: '5102', ...extra });
   const notas = [
-    NF(340, '2026-11-25 11:41', 'Enviado', 'c3', 17135, 1880, 't01'),
+    NF(340, '2026-11-25 11:41', 'Enviado', 'c1', 17135, 1880, 't01'),
     NF(339, '2026-11-21 15:44', 'Enviado', 'c6', 17143, 1699, 't04'),
     NF(338, '2026-11-19 09:20', 'Enviado', 'c6', 17134, 1699, 't02'),
     NF(337, '2026-11-13 16:03', 'Rejeitado', 'c5', null, 1740, 't02', { motivo: 'Rejeição 539: duplicidade de NF-e com diferença na chave de acesso.' }),
@@ -106,7 +107,7 @@ SP.seed = function () {
 
   const Co = (id, status, venc, titulo, cid, valor, extra = {}) => ({ id, status, vencimento: venc, pagamento: '', titulo, cliente: cid, valor, banco: 'b1', descricao: '', anexos: [], boleto: true, ...extra });
   const contas = [
-    Co('cr1', 'Aberta', '2026-12-23', 'Fatura 1 da nota fiscal nº 340', 'c3', 1880, { pedido: 17135, nota: 340 }),
+    Co('cr1', 'Aberta', '2026-12-23', 'Fatura 1 da nota fiscal nº 340', 'c1', 1880, { pedido: 17135, nota: 340 }),
     Co('cr2', 'Aberta', '2026-12-19', 'Fatura 1 da nota fiscal nº 339', 'c6', 849.5, { pedido: 17143, nota: 339 }),
     Co('cr3', 'Aberta', '2027-01-02', 'Fatura 2 da nota fiscal nº 339', 'c6', 849.5, { pedido: 17143, nota: 339 }),
     Co('cr4', 'Aberta', '2026-11-30', 'Fatura 1 da nota fiscal nº 338', 'c6', 1699, { pedido: 17134, nota: 338 }),
@@ -212,5 +213,61 @@ SP.seed = function () {
     { id: 'i6', nome: 'Portal legado (importação)', desc: 'Traz orçamentos, pedidos, notas e títulos do portal anterior', ok: false, detalhe: 'Necessário informar a chave de API' },
   ];
 
-  return { tenants, vendedores, funcionarios, clientes, produtos, fornecedores, transportadoras, orcamentos, pedidos, notas, contas, bancos, chamados, notificacoes, regras, templates, fila, entradas, atividade, faturamentoMes, params, integracoes };
+  const comentarios = [{ ref: 'd17160', txt: 'Cliente pediu entrega até 04/12. @Paulo consegue priorizar a compra?', por: 'Marina Alves', em: '2026-11-26 15:10' }, { ref: 'd17155', txt: 'Fornecedor confirmou o hub para segunda.', por: 'Paulo Reis', em: '2026-11-26 11:32' }];
+
+  const colunas = [{ id: 'fazer', nome: 'A fazer', limite: 0, tom: 'mute' }, { id: 'fazendo', nome: 'Fazendo', limite: 3, tom: 'info' }, { id: 'revisao', nome: 'Em revisão', limite: 2, tom: 'warn' }, { id: 'feito', nome: 'Feito', limite: 0, tom: 'ok' }];
+  const Tf = (id, nome, dono, prazo, prioridade, coluna, detalhe = '') => ({ id, nome, dono, prazo, prioridade, coluna, detalhe });
+  const tarefas = [
+    Tf('k1', 'Cotar switches para a loja de Limeira', 'Marina Alves', '2026-11-27', 'Alta', 'fazendo', 'Responder a contra proposta 3651.'),
+    Tf('k2', 'Confirmar entrega do hub com o fornecedor', 'Paulo Reis', '2026-11-30', 'Média', 'fazendo'),
+    Tf('k3', 'Ligar para o Mercado Bom Preço sobre o título', 'Helena Duarte', '2026-11-25', 'Alta', 'fazer'),
+    Tf('k4', 'Atualizar preços de memórias', 'Rafael Costa', '2026-12-03', 'Baixa', 'fazer'),
+    Tf('k5', 'Revisar proposta de volta às aulas', 'Rafael Costa', '2026-11-28', 'Média', 'revisao'),
+    Tf('k6', 'Separar câmeras do pedido 17150', 'Paulo Reis', '2026-11-27', 'Alta', 'fazendo'),
+    Tf('k7', 'Cadastrar novo comprador da Alvorada', 'Camila Nunes', '', 'Baixa', 'fazer'),
+    Tf('k8', 'Enviar NF 340 ao cliente', 'Helena Duarte', '2026-11-25', 'Média', 'feito'),
+  ];
+  const campanhas = [
+    { id: 'm1', nome: 'Reposição de periféricos', assunto: 'Mouse, teclado e headset com entrega em 7 dias', publico: 'todos', mensagem: 'Olá, {comprador}. Temos periféricos em estoque para reposição. Quer receber a cotação?', status: 'Enviada', data: '2026-11-12', enviados: 9, entregues: 8, aberturas: 5, cliques: 2, saidas: 1, destinatarios: [['c1', 'clicou'], ['c3', 'clicou'], ['c4', 'abriu'], ['c6', 'abriu'], ['c7', 'abriu'], ['c2', 'entregue'], ['c8', 'entregue'], ['c9', 'entregue'], ['c5', 'não entregue']] },
+    { id: 'm2', nome: 'Câmeras para o fim de ano', assunto: 'Monitoramento instalado antes do recesso', publico: 'sp', mensagem: 'Olá, {comprador}. Antes do recesso, revise o monitoramento. Montamos o kit com você.', status: 'Agendada', data: '2026-12-02', enviados: 0, entregues: 0, aberturas: 0, cliques: 0, saidas: 0, destinatarios: [] },
+    { id: 'm3', nome: 'Nobreaks e baterias', assunto: 'Proteja o servidor nas chuvas de verão', publico: 'sem', mensagem: 'Olá, {comprador}. Chegaram nobreaks 1500VA e baterias seladas.', status: 'Rascunho', data: '', enviados: 0, entregues: 0, aberturas: 0, cliques: 0, saidas: 0, destinatarios: [] },
+  ];
+  const descadastros = ['c5'];
+  const ia = { le: { orcamentos: true, pedidos: true, financeiro: true }, tom: 'Cordial' };
+  const conversa = [];
+  const painel = ['propostas', 'parados', 'receber', 'status', 'etapas'];
+
+  const Ld = (id, empresa, nome, email, origem, status, dono, valor, criado, interesse, hist = []) => ({ id, empresa, nome, email, telefone: '(11) 90000-03' + id.slice(2).padStart(2, '0'), cidade: 'Campinas', uf: 'SP', origem, status, dono, valor, criado, interesse, hist: hist.map(([txt, em, por]) => ({ txt, em, por })), ...(status === 'Convertido' ? { cliente: 'c3' } : {}) });
+  const leads = [
+    Ld('ld1', 'Colégio Novo Saber', 'Patrícia Leme', 'patricia@novosaber.exemplo', 'Indicação', 'Qualificado', 'v1', 18400, '2026-11-18', '40 notebooks para o laboratório em janeiro.', [['Enviou a lista de equipamentos', '2026-11-24 15:00', 'Marina Alves'], ['Ligação de apresentação', '2026-11-19 10:30', 'Marina Alves']]),
+    Ld('ld2', 'Clínica Bem Estar', 'André Souto', 'andre@bemestar.exemplo', 'Site', 'Em contato', 'v2', 6200, '2026-11-23', 'Rede sem fio e câmeras na recepção.', [['Respondeu pelo WhatsApp', '2026-11-25 09:10', 'Rafael Costa']]),
+    Ld('ld3', 'Metalúrgica Ferraz', 'Sônia Ferraz', 'sonia@ferraz.exemplo', 'Feira', 'Novo', '', 12500, '2026-11-27', 'Trocar switches do galpão.'),
+    Ld('ld4', 'Padaria Trigo de Ouro', 'Marcelo Reis', 'marcelo@trigodeouro.exemplo', 'WhatsApp', 'Novo', 'v3', 1800, '2026-11-26', 'Nobreak para o caixa.'),
+    Ld('ld5', 'Cidade Viva Experiências S/A', 'Bianca Torres', 'bianca@cidadeviva.exemplo', 'LinkedIn', 'Convertido', 'v1', 2100, '2026-11-02', 'Hubs e memórias.', [['Convertido em cliente', '2026-11-05 11:00', 'Marina Alves']]),
+    Ld('ld6', 'Escritório Prado & Lima', 'Renato Prado', 'renato@pradolima.exemplo', 'E-mail', 'Descartado', 'v2', 900, '2026-11-08', 'Pediu só assistência técnica.', [['Fora do que vendemos', '2026-11-09 14:20', 'Rafael Costa']]),
+    Ld('ld7', 'Condomínio Jardim Sul', 'Vera Nogueira', 'vera@jardimsul.exemplo', 'Site', 'Em contato', 'v1', 9800, '2026-11-20', 'Monitoramento das portarias.', [['Visita marcada para 02/12', '2026-11-26 16:40', 'Marina Alves']]),
+  ];
+  const captacao = { rodizio: true };
+
+  const Rp = (id, nome, quando, pontos) => ({ id, nome, quando, pontos, ligada: true });
+  const regrasPontos = [
+    Rp('contato', 'Contato com lead', 'Registro no histórico do lead', 5), Rp('enviada', 'Proposta enviada', 'Orçamento sai para o cliente', 10), Rp('aprovada', 'Proposta aprovada', 'Cliente aprova', 40),
+    Rp('pago', 'Pedido pago', 'Pagamento confirmado', 20), Rp('convertido', 'Lead convertido', 'Lead vira cliente', 50), Rp('tarefa', 'Tarefa concluída', 'Cartão chega em Feito', 5),
+  ];
+  const desafios = [
+    { id: 'g1', nome: 'Sprint de fim de mês', regra: 'aprovada', meta: 3, fim: '2026-11-30', premio: 'Vale-compras de R$ 300' },
+    { id: 'g2', nome: 'Semana das propostas', regra: 'enviada', meta: 3, fim: '2026-11-30', premio: 'Folga na sexta à tarde' },
+    { id: 'g3', nome: 'Novos clientes', regra: 'convertido', meta: 2, fim: '2026-12-15', premio: 'Jantar para duas pessoas' },
+  ];
+
+  const It = (lido, produto, qtd, conf) => ({ lido, produto, qtd, conf, fornecedor: '' });
+  const cotacoes = [
+    { id: 'ct1', canal: 'E-mail', cliente: 'c4', assunto: 'Periféricos para duas salas', recebido: '2026-11-27 08:05', status: 'Novo', texto: 'Bom dia! Podem cotar para as salas novas?\n30 mouses sem fio\n30 teclados USB\n12 headsets com microfone\n2 switches', itens: [It('mouses sem fio', 'p4', 30, 98), It('teclados USB', 'p5', 30, 98), It('headsets com microfone', 'p3', 12, 95), It('switches', 'p7', 2, 62)] },
+    { id: 'ct2', canal: 'WhatsApp', cliente: 'c7', assunto: 'Nobreak e baterias', recebido: '2026-11-27 07:40', status: 'Novo', texto: '1 nobreak 1500va\n4 baterias 12v 9ah', itens: [It('nobreak 1500va', 'p12', 1, 98), It('baterias 12v 9ah', 'p10', 4, 98)] },
+    { id: 'ct3', canal: 'Site', cliente: 'c3', assunto: 'Monitores para o estúdio', recebido: '2026-11-26 17:12', status: 'Novo', texto: '6 monitores 24 polegadas\n6 suportes articulados', itens: [It('monitores 24 polegadas', 'p11', 6, 79), It('suportes articulados', '', 6, 0)] },
+  ];
+  const precos = { volume: [{ qtd: 10, desc: 3 }, { qtd: 30, desc: 6 }], recorrente: 2, limite: 2000 };
+  const follow = { ligado: true, pausados: [], passos: [{ id: 'fp1', nome: 'Lembrete cordial', canal: 'WhatsApp', dias: 2, ligado: true }, { id: 'fp2', nome: 'Reenvio da proposta', canal: 'E-mail', dias: 4, ligado: true }, { id: 'fp3', nome: 'Aviso de validade', canal: 'E-mail', dias: 6, ligado: true }] };
+
+  return { cotacoes, precos, follow, regrasPontos, desafios, leads, captacao, colunas, tarefas, campanhas, descadastros, ia, conversa, painel, comentarios, tenants, vendedores, funcionarios, clientes, produtos, fornecedores, transportadoras, orcamentos, pedidos, notas, contas, bancos, chamados, notificacoes, regras, templates, fila, entradas, atividade, faturamentoMes, params, integracoes };
 };

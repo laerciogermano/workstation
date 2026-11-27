@@ -5,6 +5,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/) (`functionalities` → `user-stories` → `bdd` → `screens` → `screens-bdd` → `components` → `prototype`). Orienta toda a esteira; não substitui BDD nem UI.
 
 Derivados: [`docs/`](docs/).  
+Épicos: [`epics/`](epics/README.md).  
 Fundamentos de fluxo: [`inputs/`](inputs/README.md) (quando houver).
 
 **URL protótipo:** https://plans.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)  
@@ -12,7 +13,7 @@ Fundamentos de fluxo: [`inputs/`](inputs/README.md) (quando houver).
 
 ---
 
-## Visão
+## Contexto
 
 O Plans é o **orquestrador de atividades**: o lugar único onde **intenções** e **roteiros** viram trabalho acompanhável — executado por **humano**, **IA** ou **máquina** — e a **mesma unidade** aparece no Board, **Gantt**, **Flow**, **Fluxograma**, Árvore, **Estados** (o que existe), **Metas** (o que se deseja), **Copiloto** (painel direito) e Explorar. Planos são modelados como **linguagem visual de fluxo** exportável para código.
 
@@ -22,7 +23,7 @@ Sistemas também são fluxos de execução: o próprio Plans serve para **codifi
 
 No **Gantt**, só calendário (barras + deps). **Estados** = o que já existe (`root` → planos → dados/outs). **Metas** = o que se deseja (mesma árvore; folha = alvo + “hoje”). No **Flow**, mesmo visual do Flow IDE (`flow-dev/`, ref. gantt-sample): tabela **Nome · Início · Passos · % feito · Agente** + barras por passo com progresso; **função** = barra, **dado** = ◆ (0 passos), **composição** = barra-resumo, **sequência** = conector, tags **∥ paralelo**, **if** (seleção, tracejado volta) e **↻** repetição; painel **Contexto · camadas** (IA e pessoa = endereço abstrato; máquina = import concreto) e export **JavaScript** no estilo do documento FOP. Dados ◆ só aparecem no Flow e no Explorar. **Gantt**, **Flow**, **Árvore**, **Estados**, **Metas** e **Fluxograma** compartilham zoom/pan. O **Copiloto** é painel fixo à **direita**. Menu de visões **fixo no centro inferior**.
 
-## Problema
+### Problema
 
 Ferramentas de gestão impõem hierarquias rígidas e fragmentam a mesma atividade conforme a tela. Quem planeja, executa e explora perde o norte ao trocar de ferramenta ou de vocabulário.
 
@@ -30,21 +31,11 @@ Ferramentas de desenvolvimento e automação, por sua vez, acoplam **roteiro** e
 
 Orquestrações misturam humano, IA e máquina em silos distintos: não há um lugar único para decompor o trabalho em partes sequenciais (com saída→entrada), validar checkpoints e atribuir o agente certo a cada etapa — em vez de despejar o lote inteiro numa única execução de IA.
 
-## Para quem
-
-| Persona | Para quem | Necessidade |
-|---------|-----------|-------------|
-| **Organizador** | Quem organiza o próprio trabalho | Registrar intenções e acompanhar sem trocar de ferramenta |
-| **Condutor de projetos** | Quem conduz projetos | Ver a mesma unidade em board, tempo (Gantt), hierarquia e arquivos |
-| **Orquestrador** | Quem orquestra atividades de humanos, IAs e máquinas | Atribuir agentes tipados, encadear etapas e acompanhar a execução |
-| **Modelador de fluxo** | Quem modela e exporta fluxo como código / sistema | Tratar planos como FOP (roteiro de sistema) e gerar TypeScript / Python |
-| **Administrador do projeto** | Quem mantém o catálogo de atores | Incluir e remover pessoas, IAs e máquinas atribuíveis no projeto |
-
 ## Objetivo
 
 Orquestrar, organizar, acompanhar e visualizar o trabalho do projeto em **Board**, **Gantt**, **Flow**, **Fluxograma**, **Árvore**, **Estados**, **Metas**, **Copiloto** e **Explorar** — com agentes tipados (pessoa, IA, máquina/biblioteca) e planos tratáveis como **roteiros FOP** de sistema — estado + procedimentos, camadas substituíveis e exportação via FOP-IR.
 
-## Proposta de valor
+### Proposta de valor
 
 O Plans ajuda a **orquestrar e acompanhar** atividades — pessoais, de projeto ou de sistema — na mesma unidade de trabalho, sem trocar de ferramenta conforme a etapa ou o tipo de agente. Quando o trabalho é fluxo, o Gantt deixa de ser só cronograma: vira **linguagem visual de programação orientada a fluxo** e meio de **codificar sistemas** como planos executáveis.
 
@@ -69,6 +60,143 @@ O Plans ajuda a **orquestrar e acompanhar** atividades — pessoais, de projeto 
 
 **Modelar e exportar um sistema** — um plano no Gantt liga **saídas** de uma tarefa às **entradas** de outra (sequencial ou paralelo; com seleção e repetição quando couber). O mesmo roteiro compila em **FOP-IR** e exporta para TypeScript ou Python sem redesenhar o fluxo.
 
+## Personas
+
+| Persona | Para quem | Necessidade | Épicos |
+|---------|-----------|-------------|--------|
+| **Organizador** | Quem organiza o próprio trabalho | Registrar intenções e acompanhar sem trocar de ferramenta | EP-01 a EP-03, EP-09, EP-10 |
+| **Condutor de projetos** | Quem conduz projetos | Ver a mesma unidade em board, tempo, hierarquia e arquivos | EP-01 a EP-04, EP-08 a EP-10 |
+| **Orquestrador** | Quem orquestra atividades de humanos, IAs e máquinas | Atribuir agentes, encadear etapas e acompanhar a execução | EP-01 a EP-07, EP-09, EP-10 |
+| **Modelador de fluxo** | Quem modela e exporta fluxo como código | Tratar planos como roteiro de sistema e gerar TypeScript ou Python | EP-01 a EP-04, EP-07 a EP-10 |
+| **Administrador do projeto** | Quem mantém o catálogo de atores | Incluir e remover pessoas, IAs e máquinas | EP-01 a EP-03, EP-05 |
+
+## Épicos
+
+Os épicos são cumulativos: cada um parte do que os anteriores entregaram. A lista abaixo é o escopo do produto; o [protótipo](prototipo/index.html) mostra uma parte dele, separado por épico, com filtros de persona e de épico no modo navegável.
+
+| ID | Épico | Intenção | Telas |
+|----|-------|----------|-------|
+| [EP-01](epics/EP-01-arvore-de-execucao.md) | Árvore de execução | Árvore com todas as atividades pais e filhas | T-40, T-41 |
+| [EP-02](epics/EP-02-explorar.md) | Explorar | Criar uma árvore de componentes parecida com IDE | T-01 a T-05 |
+| [EP-03](epics/EP-03-board.md) | Board | Para cada arquivo, saber o status | T-10, T-11, T-12, T-20 |
+| [EP-04](epics/EP-04-gantt.md) | Gantt | Controle de sequência e paralelismo das atividades | T-30 |
+| [EP-05](epics/EP-05-responsaveis.md) | Responsáveis | Dizer quem ou o quê executa cada atividade | T-21, T-50, T-51 |
+| [EP-06](epics/EP-06-execucao-por-ia.md) | Execução por IA | Fazer a IA trabalhar só onde couber, com falha visível | T-31 |
+| [EP-07](epics/EP-07-flow-e-fluxograma.md) | Flow e fluxograma | Descrever o plano como roteiro de sistema | T-32, T-37, T-36 |
+| [EP-08](epics/EP-08-maquina-e-exportacao.md) | Máquina e exportação | Programar a etapa de máquina e levar o fluxo para código | T-33, T-42, T-35 |
+| [EP-09](epics/EP-09-estados-e-metas.md) | Estados e metas | Separar o que já existe do que se deseja | T-06, T-70, T-80 |
+| [EP-10](epics/EP-10-copiloto.md) | Copiloto | Conversar sobre um arquivo sem sair da visão | T-60, T-61 |
+
+### EP-01 · Árvore de execução
+
+**Personas:** Todas consultam; criar, remover e atribuir: Condutor.
+
+- F01 · Criar nó raiz ou filho, com título obrigatório
+- F02 · Remover o nó e a subárvore, com confirmação quando houver filhos
+- F03 · Atribuir responsável ao nó
+- F04 · Atribuir descrição ao nó
+
+### EP-02 · Explorar
+
+**Personas:** Todas (operações na árvore: Organizador e Condutor).
+
+- Painel fixo à esquerda, com a hierarquia navegável como árvore de arquivos
+- Toda atividade é um arquivo, com o mesmo UUID das outras visões
+- Criar arquivo e pasta, renomear, duplicar, recortar, copiar e colar
+- Mover por arrastar e soltar, reordenar irmãos e bloquear ciclos
+- Menu de contexto, atalhos de teclado e seleção múltipla
+- Buscar e filtrar pelo título, abrindo o caminho até o resultado
+- Expandir e recolher, copiar caminho e revelar um item na árvore
+- Remover com confirmação quando houver filhos
+
+### EP-03 · Board
+
+**Personas:** Organizador, Condutor, Orquestrador, Modelador (Administrador só consulta).
+
+- Cards em colunas e raias, em quantidade livre
+- Criar card com título obrigatório e contexto opcional
+- Mover cards entre quaisquer colunas e raias; mover o pai leva a subárvore
+- Aninhar e desaninhar sem limite de profundidade
+- Adicionar, renomear, reordenar e remover colunas e raias vazias
+- Detalhe da unidade: título, contexto, datas, hierarquia e “Abrir em”
+- Arquivar, desarquivar e excluir em todas as visões
+
+### EP-04 · Gantt
+
+**Personas:** Condutor, Orquestrador, Modelador.
+
+- Planos nomeados e plano padrão do projeto
+- Datas de início e fim, com duração derivada
+- Barras no calendário, com hoje marcado
+- Relações sequenciais (fim para início) e paralelas
+- Roll-up de datas e de falha no pai
+- Tarefas sem data listadas e sinalizadas
+- Zoom e pan
+
+### EP-05 · Responsáveis
+
+**Personas:** Orquestrador (atribui), Administrador (catálogo).
+
+- Catálogo do projeto com pessoas, IAs e máquinas
+- Incluir item no catálogo e remover o que não está em uso
+- Bloquear a remoção de item em uso e listar onde ele é usado
+- Atribuir, trocar ou remover um responsável por unidade
+- Filho não herda o responsável do pai
+- Trocar o responsável sem redesenhar o roteiro
+
+### EP-06 · Execução por IA
+
+**Personas:** Orquestrador.
+
+- Marcar colunas do Board como de execução
+- Disparar ao mover um card com responsável IA para a coluna de execução
+- “Executar via IAs” no plano, só nas tarefas pendentes de IA
+- Estados pendente, em execução, concluída, falhou e cancelada
+- Cancelar o que está rodando
+- Nova tentativa só por ação explícita
+- Saída de uma etapa vira entrada da próxima
+
+### EP-07 · Flow e fluxograma
+
+**Personas:** Modelador (Flow também para o Orquestrador).
+
+- Função, dado e composição, com entradas e saídas
+- Ligação de saída com entrada
+- Sequência, paralelo, seleção e repetição
+- Endereços concretos e abstratos em camadas substituíveis
+- Checagem de contexto completo, ciclo de estado e saída órfã
+- Fluxograma em canvas de nós, com portas, fios, zoom e pan
+
+### EP-08 · Máquina e exportação
+
+**Personas:** Modelador (procedimento na Árvore também para o Condutor).
+
+- Editor de procedimento no Flow, com bibliotecas stdio, fs e http
+- Laços for e while, execução da etapa e console
+- Edição parcial do procedimento na Árvore
+- Compilar o plano consistente em FOP-IR
+- Exportar TypeScript e Python, com prévia e download
+- Bloquear com ciclo ou contexto incompleto; avisar saída órfã
+
+### EP-09 · Estados e metas
+
+**Personas:** Condutor, Orquestrador, Modelador (Metas: Organizador e Condutor).
+
+- Seção Estados no Explorar, com cada saída como dado
+- Visão Estados: árvore root, planos e dados atuais
+- Visão Metas: mesma árvore, com o alvo em cada folha e o valor de hoje
+- Abrir um estado a partir do Explorar, com destaque
+- Zoom, pan e atalho para o Gantt
+
+### EP-10 · Copiloto
+
+**Personas:** Organizador, Condutor, Orquestrador, Modelador.
+
+- Painel fixo à direita, aberto e fechado pelo ícone de chat
+- Várias abas, cada uma ligada a um arquivo
+- Nova aba a partir do arquivo selecionado no Explorar
+- Resposta com o contexto do arquivo (simulada no protótipo)
+
 ## Princípios
 
 1. **Uma unidade** — mesma entidade em todas as visões; só muda o nome. **Toda atividade é também um arquivo** no Explorar (estilo IDE).
@@ -81,20 +209,7 @@ O Plans ajuda a **orquestrar e acompanhar** atividades — pessoais, de projeto 
 8. **Camadas e contexto** — endereços que se conhecem formam uma camada substituível; a execução ocorre quando o **contexto** está completo.
 9. **Linguagem visual unificada** — uma composição visual → **FOP-IR** → exportação para outras linguagens; várias visualizações (board/todo, Gantt, árvore, Explorar) sobre o mesmo modelo.
 
-## Escopo da visão
-
-### Capacidades
-
-| Área | Em escopo |
-|------|-----------|
-| **Visões** | Menu transversal **ao lado do conteúdo** (não no Explorar); **fixo no topo**, **centralizado**; Board · Gantt · Árvore |
-| **Gestão de atividades** | Cards no board (título + contexto) |
-| **Board** | Colunas e raias; cards; coluna de execução |
-| **Gantt** | Ordens no tempo; sequencial/paralelo/seleção/repetição; planos; FOP; exportação |
-| **Árvore de execução** | Floresta (múltiplas raízes); hierarquia infinita; responsáveis |
-| **Explorar** | Painel transversal **estilo explorador de IDE**; **toda atividade** materializa-se como **arquivo** na árvore; lista embutida (não é tela); Configurações fixas embaixo |
-
-### Fora de escopo (v1)
+## Fora de escopo (v1)
 
 - Merge de unidades
 - WIP limits e permissões de caminho no board

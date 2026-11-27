@@ -1,9 +1,10 @@
 /* Regras de negócio e automação (estado em memória). */
 (() => {
 const S = SP.S = {};
+SP.pref = (k, v) => { try { if (v === undefined) return localStorage.getItem('sp.' + k); localStorage.setItem('sp.' + k, v); } catch (_) { return null; } };
 SP.reset = () => {
   S.db = SP.seed();
-  Object.assign(S, { tenant: 't1', tema: 'light', persona: 'admin', q: {}, view: {}, tab: {}, sel: {}, modal: null, mdraft: null, nav: { screen: 'hoje' }, hist: [], peek: null, pop: null, cmd: null, toast: null, draft: null, pausado: false, impersonar: null, menuFechado: false, undo: null, cliente: 'c1', completa: {}, expand: {}, calMes: null, chart: {} });
+  Object.assign(S, { tenant: 't1', tema: 'light', persona: 'admin', q: {}, view: {}, tab: {}, sel: {}, modal: null, mdraft: null, nav: { screen: 'hoje' }, hist: [], peek: null, epico: null, ordem: {}, pagina: {}, colunas: {}, erros: {}, crit: {}, rede: 'normal', naFila: 0, densidade: SP.pref('densidade') || 'confortavel', pop: null, cmd: null, toast: null, draft: null, pausado: false, impersonar: null, menuFechado: false, undo: null, cliente: 'c1', completa: {}, expand: {}, calMes: null, chart: {} });
 };
 SP.reset();
 
@@ -56,7 +57,7 @@ SP.TOM = {
 
 /* ---------- templates ---------- */
 SP.preencher = (txt, ref = {}) => {
-  const t = SP.tenant(), p = ref.pedido, o = ref.orc, c = ref.conta, cl = SP.cli(ref.cliente || p?.cliente || o?.cliente || c?.cliente);
+  const t = SP.tenant(), p = ref.pedido, o = ref.orc, c = ref.conta, cl = SP.cli(ref.cliente || p?.cliente || o?.cliente || c?.cliente || 'c1');
   const v = {
     comprador: (cl.comprador || 'cliente').split(' ')[0], cliente: cl.nome, empresa: t.nome,
     orcamento: o?.numero ?? '3650', pedido: p?.numero ?? c?.pedido ?? '17160', nota: ref.nota ?? c?.nota ?? '340',
@@ -75,7 +76,7 @@ SP.log = (regra, txt, ref, tipo = 'auto', por) => {
 SP.avisar = (assunto, ir, por) => S.db.notificacoes.unshift({ id: SP.uid('a'), assunto, por: por || SP.eu().nome, data: SP.agora(), lida: false, ir });
 SP.toast = (msg, undo) => { S.toast = { msg, undo: !!undo, id: SP.uid('t') }; };
 /* toda ação relevante gera um recibo e pode ser desfeita */
-SP.feito = (msg, fn) => { const antes = JSON.stringify(S.db); const r = fn(); if (r === false) return false; S.undo = antes; SP.toast(msg, true); return true; };
+SP.feito = (msg, fn) => { const antes = JSON.stringify(S.db); const r = fn(); if (r === false) return false; S.undo = antes; if (S.rede === 'offline') { S.naFila++; msg += ' Será enviado quando a conexão voltar.'; } SP.toast(msg, true); return true; };
 SP.desfazer = () => { if (!S.undo) return; S.db = JSON.parse(S.undo); S.undo = null; SP.toast('Ação desfeita.'); };
 SP.eu = () => ({
   admin: { nome: 'Helena Duarte', cargo: 'Administrador' }, vendedor: { nome: 'Marina Alves', cargo: 'Vendedor', id: 'v1' },

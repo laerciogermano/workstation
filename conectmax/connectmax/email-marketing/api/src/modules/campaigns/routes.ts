@@ -5,6 +5,11 @@ import { parse } from '../../shared/validate.ts';
 import type { CampaignsRepository } from './repository.ts';
 
 const params = z.object({ campaignId: publicIdSchema });
+const recipientsQuery = z.object({
+  filter: z.enum(['all', 'opened', 'not_opened']).default('all'),
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
+});
+const PAGE_SIZE = 50;
 const createBody = z.object({ name: z.string().trim().min(1, 'Informe o nome').max(120) });
 const patchBody = z
   .object({
@@ -30,6 +35,14 @@ export function campaignsRouter(repo: CampaignsRepository) {
   router.get('/:campaignId', async (req, res) => {
     const { campaignId } = parse(params, req.params);
     res.json(await repo.get(campaignId));
+  });
+
+  // CU-06
+  router.get('/:campaignId/recipients', async (req, res) => {
+    const { campaignId } = parse(params, req.params);
+    const { filter, page } = parse(recipientsQuery, req.query);
+    const result = await repo.recipients(campaignId, { filter, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE });
+    res.json({ ...result, page, pageSize: PAGE_SIZE });
   });
 
   router.patch('/:campaignId', async (req, res) => {

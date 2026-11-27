@@ -1,0 +1,48 @@
+name: plans-app
+
+on:
+  push:
+    paths: ['plans/app/**', '.github/workflows/plans-app.yml']
+  pull_request:
+    paths: ['plans/app/**', '.github/workflows/plans-app.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: plans/app/apps/client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: plans/app/apps/client/go.mod
+          cache-dependency-path: plans/app/apps/client/go.sum
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go build ./cmd/plans-client
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plans/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: plans/app/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build -w @plans/web && npm run build -w @plans/hub

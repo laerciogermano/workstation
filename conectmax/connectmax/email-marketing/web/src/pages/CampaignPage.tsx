@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Send, Trash2 } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import { ConfirmDialog, doneCount, ErrorNote, PageHeader, ProgressBar, StatusBadge } from '../components/ui.tsx';
-import { api, type Campaign } from '../lib/api.ts';
+import { ConfirmDialog, doneCount, EmptyState, ErrorNote, PageHeader, ProgressBar, StatusBadge } from '../components/ui.tsx';
+import { api, type Campaign, type Recipient, type RecipientFilter } from '../lib/api.ts';
 import { fmtDate, fmtNumber, plural } from '../lib/format.ts';
 
 export function CampaignPage() {
@@ -11,8 +11,8 @@ export function CampaignPage() {
   const campaign = useQuery({
     queryKey: ['campaign', id],
     queryFn: () => api.campaign(id),
-    // CU-05: acompanha o progresso enquanto envia
-    refetchInterval: (q) => (q.state.data?.status === 'sending' ? 2000 : false),
+    // CU-05: acompanha o progresso enquanto envia; CU-06: aberturas continuam chegando depois
+    refetchInterval: (q) => (q.state.data?.status === 'sending' ? 2000 : q.state.data?.status === 'sent' ? 15_000 : false),
   });
 
   const back = (
@@ -218,6 +218,10 @@ function SendingView({ campaign: c, back }: { campaign: Campaign; back: React.Re
             <dd className="num">{fmtNumber(p.skipped)}</dd>
           </div>
           <div>
+            <dt>Abriram</dt>
+            <dd className="num">{fmtNumber(p.opened)}</dd>
+          </div>
+          <div>
             <dt>Total</dt>
             <dd className="num">{fmtNumber(p.total)}</dd>
           </div>
@@ -228,8 +232,111 @@ function SendingView({ campaign: c, back }: { campaign: Campaign; back: React.Re
         </p>
       </section>
 
+      <RecipientsTable campaignId={c.id} sending={c.status === 'sending'} />
+
       <EmailPreview subject={c.subject} html={c.bodyHtml} />
     </>
+  );
+}
+
+const RECIPIENT_STATUS: Record<Recipient['status'], string> = {
+  pending: 'Na fila',
+  sending: 'Enviando',
+  sent: 'Enviado',
+  failed: 'Falhou',
+  skipped: 'Descadastrado',
+};
+
+/** CU-06: quem abriu. */
+function RecipientsTable({ campaignId, sending }: { campaignId: string; sending: boolean }) {
+  const filterId = useId();
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState<RecipientFilter>('all');
+
+  const recipients = useQuery({
+    queryKey: ['recipients', campaignId, page, filter],
+    queryFn: () => api.recipients(campaignId, page, filter),
+    placeholderData: keepPreviousData,
+    refetchInterval: sending ? 2000 : 15_000,
+  });
+
+  const data = recipients.data;
+  const pages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
+
+  return (
+    <section className="recipients" aria-labelledby="recipients-title">
+      <div className="contacts-head">
+        <h2 id="recipients-title">Destinatários</h2>
+        <div>
+          <label htmlFor={filterId} className="sr-only">
+            Filtrar destinatários
+          </label>
+          <select
+            id={filterId}
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value as RecipientFilter);
+              setPage(1);
+            }}
+          >
+            <option value="all">Todos</option>
+            <option value="opened">Abriram</option>
+            <option value="not_opened">Não abriram</option>
+          </select>
+        </div>
+      </div>
+      <ErrorNote error={recipients.error} />
+
+      {data?.total === 0 ? (
+        <EmptyState title="Ninguém neste filtro" />
+      ) : (
+        <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">E-mail</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Envio</th>
+                <th scope="col">Abriu em</th>
+                <th scope="col">Última abertura</th>
+                <th scope="col">Vezes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.items.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.email}</td>
+                  <td>{r.name ?? <span className="muted">—</span>}</td>
+                  <td>{RECIPIENT_STATUS[r.status]}</td>
+                  <td>{r.openedAt ? fmtDate(r.openedAt) : <span className="muted">sem registro</span>}</td>
+                  <td>{fmtDate(r.lastOpenedAt)}</td>
+                  <td>{fmtNumber(r.openCount)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {pages > 1 && (
+        <nav className="pager" aria-label="Paginação dos destinatários">
+          <button type="button" className="btn btn-secondary" onClick={() => setPage(page - 1)} disabled={page <= 1}>
+            Anterior
+          </button>
+          <span className="num small">
+            {page} de {pages}
+          </span>
+          <button type="button" className="btn btn-secondary" onClick={() => setPage(page + 1)} disabled={page >= pages}>
+            Próxima
+          </button>
+        </nav>
+      )}
+
+      <p className="muted small">
+        A abertura é aproximada: quem bloqueia imagens não aparece, e alguns provedores (como o Apple Mail) carregam a imagem
+        sem a pessoa abrir. E-mail encaminhado conta para o destinatário original.
+      </p>
+    </section>
   );
 }
 

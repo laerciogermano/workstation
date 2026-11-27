@@ -11,6 +11,27 @@ export type Progress = {
   sent: number;
   failed: number;
   skipped: number;
+  opened: number;
+};
+
+export type RecipientFilter = 'all' | 'opened' | 'not_opened';
+
+export type Recipient = {
+  id: string;
+  email: string;
+  name: string | null;
+  status: 'pending' | 'sending' | 'sent' | 'failed' | 'skipped';
+  sentAt: string | null;
+  openedAt: string | null;
+  lastOpenedAt: string | null;
+  openCount: number;
+};
+
+// trechos fixos: o filtro vindo da requisição só escolhe a chave
+const RECIPIENT_FILTERS: Record<RecipientFilter, string> = {
+  all: '',
+  opened: 'and d.opened_at is not null',
+  not_opened: "and d.status = 'sent' and d.opened_at is null",
 };
 
 export type Campaign = {
@@ -52,6 +73,7 @@ type Row = {
   sent: string;
   failed: string;
   skipped: string;
+  opened: string;
 };
 
 const SELECT = `
@@ -60,7 +82,8 @@ const SELECT = `
          l.public_id as list_public_id, l.name as list_name,
          coalesce(p.total, 0) as total, coalesce(p.pending, 0) as pending,
          coalesce(p.sending, 0) as sending, coalesce(p.sent, 0) as sent,
-         coalesce(p.failed, 0) as failed, coalesce(p.skipped, 0) as skipped
+         coalesce(p.failed, 0) as failed, coalesce(p.skipped, 0) as skipped,
+         coalesce(p.opened, 0) as opened
     from campaigns c
     left join lists l on l.id = c.list_id
     left join lateral (
@@ -69,7 +92,8 @@ const SELECT = `
              count(*) filter (where d.status = 'sending') as sending,
              count(*) filter (where d.status = 'sent') as sent,
              count(*) filter (where d.status = 'failed') as failed,
-             count(*) filter (where d.status = 'skipped') as skipped
+             count(*) filter (where d.status = 'skipped') as skipped,
+             count(*) filter (where d.opened_at is not null) as opened
         from deliveries d
        where d.campaign_id = c.id
     ) p on true`;
@@ -89,6 +113,7 @@ function toCampaign(r: Row, { withBody }: { withBody: boolean }): Campaign {
       sent: Number(r.sent),
       failed: Number(r.failed),
       skipped: Number(r.skipped),
+      opened: Number(r.opened),
     },
     startedAt: r.started_at?.toISOString() ?? null,
     finishedAt: r.finished_at?.toISOString() ?? null,
@@ -108,6 +133,46 @@ export function createCampaignsRepository(db: Db) {
       const { rows } = await db.query<Row>(`${SELECT} where c.public_id = $1`, [publicId]);
       if (!rows[0]) throw notFound('Campanha');
       return toCampaign(rows[0], { withBody: true });
+    },
+
+    /** CU-06: destinatários do disparo, com quem abriu primeiro (abertura mais recente no topo). */
+    async recipients(
+      publicId: string,
+      { filter, limit, offset }: { filter: RecipientFilter; limit: number; offset: number },
+    ): Promise<{ total: number; items: Recipient[] }> {
+      const { rows: found } = await db.query<{ id: string }>('select id from campaigns where public_id = $1', [publicId]);
+      if (!found[0]) throw notFound('Campanha');
+      const where = `where d.campaign_id = $1 ${RECIPIENT_FILTERS[filter]}`;
+      const { rows: count } = await db.query<{ n: string }>(`select count(*) as n from deliveries d ${where}`, [found[0].id]);
+      const { rows } = await db.query<{
+        public_id: string;
+        email: string;
+        name: string | null;
+        status: Recipient['status'];
+        sent_at: Date | null;
+        opened_at: Date | null;
+        last_opened_at: Date | null;
+        open_count: number;
+      }>(
+        `select d.public_id, d.email, d.name, d.status, d.sent_at, d.opened_at, d.last_opened_at, d.open_count
+           from deliveries d ${where}
+          order by d.last_opened_at desc nulls last, d.email
+          limit $2 offset $3`,
+        [found[0].id, limit, offset],
+      );
+      return {
+        total: Number(count[0]?.n ?? 0),
+        items: rows.map((r) => ({
+          id: r.public_id,
+          email: r.email,
+          name: r.name,
+          status: r.status,
+          sentAt: r.sent_at?.toISOString() ?? null,
+          openedAt: r.opened_at?.toISOString() ?? null,
+          lastOpenedAt: r.last_opened_at?.toISOString() ?? null,
+          openCount: r.open_count,
+        })),
+      };
     },
 
     async create(name: string): Promise<Campaign> {

@@ -39,6 +39,18 @@ describe('buildMessage', () => {
     expect(m.messageId).toBe(`<${d.publicId}@connect.com.br>`);
   });
 
+  it('inclui o pixel de abertura com o token e o e-mail no link', () => {
+    const m = buildMessage({ ...d, email: 'ana+news@x.com' }, { from: 'a@b.com', publicBaseUrl: 'https://mk.x.com/' });
+    expect(m.html).toContain(`<img src="https://mk.x.com/t/o/${d.publicId}.gif?e=ana%2Bnews@x.com" width="1" height="1"`);
+    expect(m.text).not.toContain('/t/o/');
+  });
+
+  it('mantém o pixel antes de </body> e não interpreta "$" do e-mail', () => {
+    const m = buildMessage({ ...d, email: 'a$&b@x.com', bodyHtml: '<body></body>' }, { from: 'a@b.com', publicBaseUrl: 'http://l' });
+    expect(m.html).toContain('?e=a%24%26b@x.com"');
+    expect(m.html.indexOf('/t/o/')).toBeLessThan(m.html.indexOf('</body>'));
+  });
+
   it('coloca o rodapé antes de </body> quando o HTML é documento completo', () => {
     const m = buildMessage({ ...d, bodyHtml: '<html><body><p>x</p></body></html>' }, { from: 'a@b.com', publicBaseUrl: 'http://l' });
     expect(m.html.indexOf('Não quero mais receber')).toBeLessThan(m.html.indexOf('</body>'));

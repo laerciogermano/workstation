@@ -1,0 +1,12 @@
+{
+  "name": "Super Portal (protótipo)",
+  "short_name": "Super Portal",
+  "lang": "pt-BR",
+  "start_url": "./index.html#app",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f7f5",
+  "theme_color": "#161615",
+  "icons": [{ "src": "assets/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }],
+  "shortcuts": [{ "name": "Precisa de você", "url": "./index.html#app/F61" }, { "name": "Pedidos", "url": "./index.html#app/F15" }]
+}

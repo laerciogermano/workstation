@@ -37,9 +37,9 @@
   }
   .swatches {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 28px;
-    max-width: 520px;
+    max-width: 920px;
   }
   .swatch {
     display: flex;
@@ -68,6 +68,7 @@
   }
   .ciano { background: #68E2E3; }
   .roxo { background: #6D34CC; }
+  .rosa { background: #CB4C7B; }
 </style>
 </head>
 <body>
@@ -75,7 +76,7 @@
     <div>
       <h1>Cores escolhidas — <span>RoleGo</span></h1>
       <p class="lead" style="margin-top: 16px;">
-        Estas duas cores serão as cores da marca RoleGo.
+        Estas três cores serão as cores da marca RoleGo.
       </p>
     </div>
     <div class="swatches">
@@ -91,6 +92,13 @@
         <div class="meta">
           <strong>Roxo</strong>
           <code>#6D34CC</code>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip rosa" aria-label="Rosa"></div>
+        <div class="meta">
+          <strong>Rosa</strong>
+          <code>#CB4C7B</code>
         </div>
       </div>
     </div>

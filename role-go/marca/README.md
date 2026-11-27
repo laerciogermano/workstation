@@ -2,7 +2,7 @@
 
 ## Cores escolhidas
 
-[`cores-escolhidas/`](cores-escolhidas/README.md) — ciano `#68E2E3`, roxo `#6D34CC` (HTML + PDF).
+[`cores-escolhidas/`](cores-escolhidas/README.md) — ciano `#68E2E3`, roxo `#6D34CC`, rosa `#CB4C7B` (HTML + PDF).
 
 ## Identidade visual v6 (atual)
 

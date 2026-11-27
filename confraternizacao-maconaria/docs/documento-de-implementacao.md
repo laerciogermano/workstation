@@ -11,7 +11,7 @@
 Monólito modular: API + SPA PWA + PostgreSQL. Um app atende vários eventos do GOB; módulos plugáveis ligados por evento.
 
 ```text
-[Participante / Organizador / Leiloeiro]
+[Attendee / Organizer / Auctioneer]
             │  HTTPS
             ▼
      [Nginx Contabo]

@@ -2,378 +2,378 @@
 
 Fonte: [`documento-de-visao.md`](documento-de-visao.md) · stack: [`documento-de-implementacao.md`](documento-de-implementacao.md)
 
-PostgreSQL. IDs `uuid`. Timestamps `created_at` / `updated_at` implícitos onde fizer sentido.
+PostgreSQL. IDs `uuid`. Timestamps `created_at` / `updated_at` implícitos onde fizer sentido. **Nomes de tabelas, colunas, enums e flags em inglês.**
 
 ```mermaid
 classDiagram
   direction TB
 
-  class Organizacao {
+  class Organization {
     +uuid id PK
-    +text nome
-    +text sigla
+    +text name
+    +text acronym
   }
 
-  class Evento {
+  class Event {
     +uuid id PK
-    +uuid organizacao_id FK
-    +text nome
+    +uuid organization_id FK
+    +text name
     +text slug
-    +date data_inicio
-    +date data_fim
-    +text cidade
+    +date starts_on
+    +date ends_on
+    +text city
     +text status
-    +jsonb modulos
+    +jsonb modules
   }
 
-  class Usuario {
+  class User {
     +uuid id PK
     +text email UK
-    +text senha_hash
-    +text nome
-    +text telefone
-    +text cidade
-    +text pais
-    +bool mfa_ativo
+    +text password_hash
+    +text name
+    +text phone
+    +text city
+    +text country
+    +bool mfa_enabled
   }
 
-  class FatorMfa {
+  class MfaFactor {
     +uuid id PK
-    +uuid usuario_id FK
-    +text metodo
-    +text segredo
-    +bool ativo
+    +uuid user_id FK
+    +text method
+    +text secret
+    +bool active
   }
 
-  class CodigoReserva {
+  class BackupCode {
     +uuid id PK
-    +uuid usuario_id FK
-    +text codigo_hash
-    +bool usado
+    +uuid user_id FK
+    +text code_hash
+    +bool used
   }
 
-  class AparelhoConfiavel {
+  class TrustedDevice {
     +uuid id PK
-    +uuid usuario_id FK
+    +uuid user_id FK
     +text token_hash
-    +timestamptz expira_em
+    +timestamptz expires_at
   }
 
-  class Participante {
+  class Attendee {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid usuario_id FK
-    +text loja
-    +text potencia
+    +uuid event_id FK
+    +uuid user_id FK
+    +text lodge
+    +text obedience
     +text cim
-    +text cargo
-    +text papel
-    +int pontos
+    +text office
+    +text role
+    +int points
   }
 
-  class Local {
+  class Venue {
     +uuid id PK
-    +uuid evento_id FK
-    +text nome
-    +text endereco
+    +uuid event_id FK
+    +text name
+    +text address
     +float lat
     +float lng
   }
 
-  class Sala {
+  class Room {
     +uuid id PK
-    +uuid local_id FK
-    +text nome
-    +int capacidade
+    +uuid venue_id FK
+    +text name
+    +int capacity
   }
 
-  class Programacao {
+  class Session {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid local_id FK
-    +uuid sala_id FK
-    +text titulo
-    +text descricao
-    +timestamptz inicio
-    +timestamptz fim
-    +text imagem_url
+    +uuid event_id FK
+    +uuid venue_id FK
+    +uuid room_id FK
+    +text title
+    +text description
+    +timestamptz starts_at
+    +timestamptz ends_at
+    +text image_url
   }
 
-  class Inscricao {
+  class Registration {
     +uuid id PK
-    +uuid programacao_id FK
-    +uuid participante_id FK
+    +uuid session_id FK
+    +uuid attendee_id FK
     +text status
   }
 
   class CheckIn {
     +uuid id PK
-    +uuid inscricao_id FK
-    +timestamptz em
+    +uuid registration_id FK
+    +timestamptz at
   }
 
-  class IngressoTipo {
+  class TicketType {
     +uuid id PK
-    +uuid evento_id FK
-    +text nome
-    +float preco
+    +uuid event_id FK
+    +text name
+    +float price
   }
 
-  class Ingresso {
+  class Ticket {
     +uuid id PK
-    +uuid ingresso_tipo_id FK
-    +uuid participante_id FK
+    +uuid ticket_type_id FK
+    +uuid attendee_id FK
     +text status
-    +text codigo
+    +text code
   }
 
-  class ChatGrupo {
+  class GroupChat {
     +uuid id PK
-    +uuid programacao_id FK
+    +uuid session_id FK
   }
 
-  class ChatPrivado {
+  class DirectChat {
     +uuid id PK
-    +uuid evento_id FK
+    +uuid event_id FK
   }
 
-  class ChatMembro {
+  class ChatMember {
     +uuid chat_id PK
-    +uuid participante_id PK_FK
-    +text tipo_chat
+    +uuid attendee_id PK_FK
+    +text chat_type
   }
 
-  class Mensagem {
+  class Message {
     +uuid id PK
     +uuid chat_id FK
-    +uuid autor_id FK
-    +text tipo_chat
-    +text corpo
-    +timestamptz enviada_em
+    +uuid author_id FK
+    +text chat_type
+    +text body
+    +timestamptz sent_at
   }
 
-  class Pedido {
+  class Order {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid participante_id FK
-    +text origem
+    +uuid event_id FK
+    +uuid attendee_id FK
+    +text source
     +text status
     +float total
   }
 
-  class PedidoItem {
-    +uuid pedido_id PK_FK
+  class OrderItem {
+    +uuid order_id PK_FK
     +int seq PK
-    +text descricao
-    +float quantidade
-    +float valor_unitario
+    +text description
+    +float quantity
+    +float unit_price
     +uuid ref_id
   }
 
-  class Produto {
+  class Product {
     +uuid id PK
-    +uuid evento_id FK
-    +text nome
-    +float preco
-    +int estoque
+    +uuid event_id FK
+    +text name
+    +float price
+    +int stock
   }
 
-  class Leilao {
+  class Auction {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid programacao_id FK
+    +uuid event_id FK
+    +uuid session_id FK
     +text status
-    +timestamptz chamado_em
+    +timestamptz called_at
   }
 
-  class Lote {
+  class Lot {
     +uuid id PK
-    +uuid leilao_id FK
-    +text titulo
-    +text descricao
-    +float lance_inicial
+    +uuid auction_id FK
+    +text title
+    +text description
+    +float starting_bid
     +text status
-    +uuid vencedor_id FK
+    +uuid winner_id FK
   }
 
-  class Lance {
+  class Bid {
     +uuid id PK
-    +uuid lote_id FK
-    +uuid participante_id FK
-    +float valor
-    +timestamptz em
+    +uuid lot_id FK
+    +uuid attendee_id FK
+    +float amount
+    +timestamptz at
   }
 
   class Voucher {
     +uuid id PK
-    +uuid participante_id FK
-    +text tipo
+    +uuid attendee_id FK
+    +text type
     +text status
   }
 
-  class VagaEstacionamento {
+  class ParkingSpot {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid participante_id FK
-    +text codigo
+    +uuid event_id FK
+    +uuid attendee_id FK
+    +text code
   }
 
-  class Assinatura {
+  class Membership {
     +uuid id PK
-    +uuid participante_id FK
+    +uuid attendee_id FK
     +text status
-    +date vigencia
+    +date valid_until
   }
 
-  class Rateio {
+  class CostShare {
     +uuid id PK
-    +uuid evento_id FK
-    +text titulo
+    +uuid event_id FK
+    +text title
     +float total
   }
 
-  class RateioParte {
-    +uuid rateio_id PK_FK
-    +uuid participante_id PK_FK
-    +float valor
-    +bool pago
+  class CostShareMember {
+    +uuid cost_share_id PK_FK
+    +uuid attendee_id PK_FK
+    +float amount
+    +bool paid
   }
 
-  class EmpresaRede {
+  class NetworkCompany {
     +uuid id PK
-    +uuid evento_id FK
-    +uuid participante_id FK
-    +text nome
-    +text ramo
+    +uuid event_id FK
+    +uuid attendee_id FK
+    +text name
+    +text industry
   }
 
-  class Noticia {
+  class News {
     +uuid id PK
-    +uuid evento_id FK
-    +text titulo
-    +text corpo
-    +timestamptz publicada_em
+    +uuid event_id FK
+    +text title
+    +text body
+    +timestamptz published_at
   }
 
-  class Notificacao {
+  class Notification {
     +uuid id PK
-    +uuid participante_id FK
-    +text titulo
-    +text corpo
-    +text destino
-    +bool lida
+    +uuid attendee_id FK
+    +text title
+    +text body
+    +text target
+    +bool read
   }
 
-  class AcervoItem {
+  class CollectionItem {
     +uuid id PK
-    +uuid evento_id FK
-    +text categoria
-    +text titulo
-    +text conservacao
-    +text seguranca
+    +uuid event_id FK
+    +text category
+    +text title
+    +text conservation
+    +text security
   }
 
-  class Risco {
+  class Risk {
     +uuid id PK
-    +uuid evento_id FK
-    +text titulo
-    +text nivel
-    +uuid responsavel_id FK
-    +text plano
+    +uuid event_id FK
+    +text title
+    +text level
+    +uuid owner_id FK
+    +text plan
     +text status
   }
 
-  class Consentimento {
+  class Consent {
     +uuid id PK
-    +uuid usuario_id FK
-    +text tipo
-    +bool aceito
-    +timestamptz em
+    +uuid user_id FK
+    +text type
+    +bool accepted
+    +timestamptz at
   }
 
   class FacialOptIn {
     +uuid id PK
-    +uuid participante_id FK
+    +uuid attendee_id FK
     +text template_ref
-    +bool ativo
+    +bool active
   }
 
-  Organizacao "1" --> "*" Evento
-  Evento "1" --> "*" Participante
-  Evento "1" --> "*" Local
-  Evento "1" --> "*" Programacao
-  Evento "1" --> "*" IngressoTipo
-  Evento "1" --> "*" Produto
-  Evento "1" --> "*" Leilao
-  Evento "1" --> "*" Noticia
-  Evento "1" --> "*" Rateio
-  Evento "1" --> "*" EmpresaRede
-  Evento "1" --> "*" AcervoItem
-  Evento "1" --> "*" Risco
-  Evento "1" --> "*" Pedido
-  Evento "1" --> "*" VagaEstacionamento
-  Evento "1" --> "*" ChatPrivado
+  Organization "1" --> "*" Event
+  Event "1" --> "*" Attendee
+  Event "1" --> "*" Venue
+  Event "1" --> "*" Session
+  Event "1" --> "*" TicketType
+  Event "1" --> "*" Product
+  Event "1" --> "*" Auction
+  Event "1" --> "*" News
+  Event "1" --> "*" CostShare
+  Event "1" --> "*" NetworkCompany
+  Event "1" --> "*" CollectionItem
+  Event "1" --> "*" Risk
+  Event "1" --> "*" Order
+  Event "1" --> "*" ParkingSpot
+  Event "1" --> "*" DirectChat
 
-  Usuario "1" --> "*" Participante
-  Usuario "1" --> "*" FatorMfa
-  Usuario "1" --> "*" CodigoReserva
-  Usuario "1" --> "*" AparelhoConfiavel
-  Usuario "1" --> "*" Consentimento
+  User "1" --> "*" Attendee
+  User "1" --> "*" MfaFactor
+  User "1" --> "*" BackupCode
+  User "1" --> "*" TrustedDevice
+  User "1" --> "*" Consent
 
-  Participante "1" --> "*" Inscricao
-  Participante "1" --> "*" Ingresso
-  Participante "1" --> "*" Pedido
-  Participante "1" --> "*" Voucher
-  Participante "1" --> "*" Assinatura
-  Participante "1" --> "*" Notificacao
-  Participante "1" --> "0..1" FacialOptIn
-  Participante "1" --> "*" Lance
-  Participante "1" --> "*" EmpresaRede
+  Attendee "1" --> "*" Registration
+  Attendee "1" --> "*" Ticket
+  Attendee "1" --> "*" Order
+  Attendee "1" --> "*" Voucher
+  Attendee "1" --> "*" Membership
+  Attendee "1" --> "*" Notification
+  Attendee "1" --> "0..1" FacialOptIn
+  Attendee "1" --> "*" Bid
+  Attendee "1" --> "*" NetworkCompany
 
-  Local "1" --> "*" Sala
-  Local "1" --> "*" Programacao
-  Sala "0..1" --> "*" Programacao
-  Programacao "1" --> "*" Inscricao
-  Programacao "1" --> "0..1" ChatGrupo
-  Programacao "1" --> "0..1" Leilao
-  Inscricao "1" --> "*" CheckIn
-  IngressoTipo "1" --> "*" Ingresso
+  Venue "1" --> "*" Room
+  Venue "1" --> "*" Session
+  Room "0..1" --> "*" Session
+  Session "1" --> "*" Registration
+  Session "1" --> "0..1" GroupChat
+  Session "1" --> "0..1" Auction
+  Registration "1" --> "*" CheckIn
+  TicketType "1" --> "*" Ticket
 
-  ChatGrupo "1" --> "*" Mensagem
-  ChatPrivado "1" --> "*" Mensagem
-  ChatGrupo "1" --> "*" ChatMembro
-  ChatPrivado "1" --> "*" ChatMembro
-  Participante "1" --> "*" Mensagem
+  GroupChat "1" --> "*" Message
+  DirectChat "1" --> "*" Message
+  GroupChat "1" --> "*" ChatMember
+  DirectChat "1" --> "*" ChatMember
+  Attendee "1" --> "*" Message
 
-  Pedido "1" --> "*" PedidoItem
-  Produto "1" --> "*" PedidoItem
+  Order "1" --> "*" OrderItem
+  Product "1" --> "*" OrderItem
 
-  Leilao "1" --> "*" Lote
-  Lote "1" --> "*" Lance
-  Lote "0..1" --> "0..1" Pedido
-  Participante "0..1" --> "*" Lote : vencedor
+  Auction "1" --> "*" Lot
+  Lot "1" --> "*" Bid
+  Lot "0..1" --> "0..1" Order
+  Attendee "0..1" --> "*" Lot : winner
 
-  Rateio "1" --> "*" RateioParte
-  Participante "1" --> "*" RateioParte
-  Risco "*" --> "0..1" Participante : responsavel
+  CostShare "1" --> "*" CostShareMember
+  Attendee "1" --> "*" CostShareMember
+  Risk "*" --> "0..1" Attendee : owner
 ```
 
-## Papéis (`Participante.papel`)
+## Roles (`Attendee.role`)
 
 | Valor | Uso |
 |-------|-----|
-| `participante` | Irmão / inscrito |
-| `familiar` | Visibilidade restrita de módulos |
-| `organizador` | Criador / gestão do evento |
-| `leiloeiro` | Chama leilão e lotes |
+| `attendee` | Irmão / inscrito |
+| `family` | Visibilidade restrita de módulos |
+| `organizer` | Criador / gestão do evento |
+| `auctioneer` | Chama leilão e lotes |
 
-## Módulos (`Evento.modulos` jsonb)
+## Modules (`Event.modules` jsonb)
 
-Flags plugáveis: `leilao`, `carteirinha`, `ingressos`, `pedidos`, `noticias`, `vouchers`, `estacionamento`, `assinatura`, `rateios`, `rede`, `ranking`, `atendimento`, `produtos`, `salas`, `museu`, `riscos`.
+Flags plugáveis: `auction`, `membership_card`, `tickets`, `orders`, `news`, `vouchers`, `parking`, `membership`, `cost_shares`, `network`, `ranking`, `support`, `products`, `rooms`, `museum`, `risks`.
 
-## Origem do pedido (`Pedido.origem`)
+## Order source (`Order.source`)
 
-`loja` · `leilao` · `ingresso`
+`shop` · `auction` · `ticket`
 
 ## Rollback
 

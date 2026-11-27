@@ -4,7 +4,7 @@ Extraído dos mockups em [`input/rolego_mvp_completo_dark.pdf`](input/rolego_mvp
 
 **Estrutura de card/manual (insumo):** modelo ConectTech v1 em [`input/referencia-marca/README.md`](input/referencia-marca/README.md) — layout A4 e seções; cores/logo RoleGo ficam neste documento.
 
-**Kit atual (v4, 2026-11-10):** [`marca/identidade-v4/`](marca/identidade-v4/README.md) — manual 26 págs., `BRAND.md`, `tokens.css`, motion, posts e stories. Onde este documento divergir do v4, vale o v4.
+**Identidade atual (v6, 2026-11-27):** [`marca/identidade-v6/`](marca/identidade-v6/README.md) — documento de 40 págs., `BRAND.md`, `tokens.css`, logos, posts e stories. Roxo `#6D34CC` e ciano `#68E2E3` principais; rosa `#EA3D7A` só em texto ou detalhe, nunca fundo; sem degradê. Onde este documento divergir da v6, vale a v6.
 
 **Manual HTML/PDF v1:** [`marca/README.md`](marca/README.md) · [card Trello](https://trello.com/c/gU37I2lg) · [card logo](https://trello.com/c/S7jWwUbC) · [card benchmarking](https://trello.com/c/pXPmdI7g)
 

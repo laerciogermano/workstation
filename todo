@@ -1,47 +1,64 @@
-
-# Flow
-    - criar arvore de componentes
-        - AST (Abstract Syntax Tree)
-        - AST par visao
-        - visao para AST
-        - codigo para AST
-        - AST para codigo
-    - criar flow component
-        - escrver artigo com representacoes
-        - criar visualizacao com funcao
-            - solidos e abstratos
-            - publico e privado
-        - criar visualizacao com dado
-            - solidos e abstratos
-            - publico e privado
-        - criar visualizacao com agentes
-            - arquivos, pessoas, ias, agentes como um todo
-            - solidos e abstratos
-        - criar visualizacao com estruturas de repeticao
-        - criar visualizacao com try catch
-        - criar visualizacao com estruturas de condicao
-        - criar visualizacao com estruturas de loop
-        - criar visualizacao com estruturas de switch
-        - criar visualziacao com solidos e abstratos
+# connect
+- calculo capital
+- levantar numeros quanto ele me deve
+- criar nossa plataforma
+- Prospecção
+    - Linkedin
+        - Automatizar prospecção
+        - Saber quantas mensagens enviou por dia e qual vendedor
+    - Wpp
+        - enviar wpp para que ja venderam
+        - ja fizeram orcamento
+        - follow up
+    - email
+        - email marketing
+        - campanhas
+- Orcamentos
+    - automatizar orcamentos
+    - verificar mais fornecedores
+- Pedidos
+- Logística
+    - envio de nota
+    - embalar
 
 
-----
-- criar robo tinder
-- criar robo instagram
-- criar robo ometv
-- criar robo wpp
-- criar cobo 
-# Compras
-    - Orçamento automatizado (preços portal + PNCP) → card Trello Connect/Backlog
+# Tinder
+- Marcelo
+    - automatizar instagram
+    - compra chip
+    - automatizar tinder
+    --------
+    - Airbnb/proposta
+    - ometv
+    - tinder
+    - planos
+- Germano
+    - automatizar instagram
+    - fazer novo tinder
+    - automatizar tinder
+--------------------------------
+    - Criar novo lgermeno
+        - configurar tinder germano
+        - criar scripts de
+            - enviar mensagem
+            - ler mensagem
+            - curtir
+            - ler perfil
+            - visualizar ultimas mensagens
+    - Criar novo marcelo
+    - Criar Germano
 
-# Limpeza
+    ---------
+    - projeto x8 e x$
+        - Marcelo
+        - Criar instagram
+        - Criar tinder
+        - criar wpp
+        - comprar chip
+    - projeto Germano
+        - configurar instagram
+        
 
-# Corpo
-
-# Board
-
-# Controle de gastos
-    - ajustar
 
 # Procurar emprego
     - Robo linkedin
@@ -58,21 +75,28 @@
                 - ziprecruiter
                 - jobscan...
 
-# connect
-    - oferecer servico de sofware
-    - Passo semanal vendedores: checar nº de conexões → KPIs / metas → card Trello Connect/Backlog
+# CONFRATERNIZACAO
+    - criar novos epicos
+    - desenvolver v1
+        - 
 
 # Clozzy
     - Definir roadmap
+
+# Role Go
+    - definir identidade visual
+    - definir novas funcionalidades
+    - repaginar site
+    - publicar
+
+# Fitness
+    - Definir documento de épicos
 
 # E-Notas
     - Criar protótipo
     - Identificar código de barras a partir da descrição
     - Identificar imagens a partir do código de barras
     - Identificar imagens a partir da descrição
-
-# Role Go
-    - gerar primeira versao
 
 # Flow Oriented Programming (Artigo)
     - Criar roadmap
@@ -113,8 +137,6 @@
     - baixar extrato do banco completo
 
 
-
-
 # Eternos Mutáveis
     - Referncias de modelo de escrita
     - Referncias externas bsucar na net para cada capitulo
@@ -124,8 +146,6 @@
 
 # Estudos
     - Estudar orca orquestrador de IA
-
-
 
 # Screen Robot
     - Criar board
@@ -256,8 +276,6 @@
 # Filme Metafísico
     - Definir Roteiro
 
-# Fitness
-    - Definir documento de épicos
 
 # Jiu Jtsu
     - Definir documento de visão
@@ -265,26 +283,3 @@
 # Trello CLI (app IA Mac)
     - Credenciais e setup: ver [`credenciais.md`](credenciais.md) (seção Trello CLI)
     - Se agente não achar: `export PATH="$HOME/.local/bin:$PATH"` ou `which trello`
-
-# Tinder
-    - Criar novo lgermeno
-        - configurar tinder germano
-        - criar scripts de
-            - enviar mensagem
-            - ler mensagem
-            - curtir
-            - ler perfil
-            - visualizar ultimas mensagens
-    - Criar novo marcelo
-    - Criar Germano
-
-    ---------
-    - projeto x8 e x$
-        - Marcelo
-        - Criar instagram
-        - Criar tinder
-        - criar wpp
-        - comprar chip
-    - projeto Germano
-        - configurar instagram
-        

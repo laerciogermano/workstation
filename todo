@@ -41,25 +41,27 @@
                 - jobscan...
 
 # CONFRATERNIZACAO
-    - criar novos epicos
-    - finalizar prtptipo
-    - criar documento de implementacao
-        - arquitetura
-            - frontend
-                - linguagem frontend
-                - framework frontend
-            - backend
-                - banco de dados
-                - linguagem backend
-                - framework backend
-        - modelagem de dados
-        - provider de servidor
+    - [x] criar documento de implementacao
+        - [x] arquitetura
+            - [x] frontend (TypeScript + React/Vite)
+            - [x] backend (TypeScript + NestJS + PostgreSQL)
+        - [x] modelagem de dados → docs/modelagem-dados.md
+        - [x] provider de servidor → Contabo
 
 # Clozzy
     - definir documento de visao
     - definir identidade visual
     - definir prorotipo
-    - 
+    - produto
+        - rede social de conhecr pessoas
+        - venda de conteudo exclusivos
+    - prsonas
+        - assinante
+        - seguidor
+        - influencer
+        - vendedor de conteúdos
+        - carente
+        - 
 
 # Role Go
     - definir identidade visual

@@ -8,6 +8,10 @@ Aplicativo oficial do evento mundial em Curitiba (125 anos).
 
 → [`docs/documento-de-visao.md`](docs/documento-de-visao.md)
 
+## Implementação
+
+→ [`docs/documento-de-implementacao.md`](docs/documento-de-implementacao.md) · modelagem [`docs/modelagem-dados.md`](docs/modelagem-dados.md)
+
 | | |
 |--|--|
 | Insumos | [`input/README.md`](input/README.md) |

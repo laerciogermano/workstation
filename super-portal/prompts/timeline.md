@@ -11,3 +11,4 @@
 | 007 | 2026-11-27 | Remover FaturamentoLinha/Chamado/Notificacao | [007-2026-11-27-remover-faturamento-chamado-notificacao.md](007-2026-11-27-remover-faturamento-chamado-notificacao.md) | Fora do diagrama de modelagem. |
 | 008 | 2026-11-27 | Normalizar modelagem | [008-2026-11-27-normalizar-modelagem.md](008-2026-11-27-normalizar-modelagem.md) | Remove cópias denormalizadas; adiciona Produto; NF→Pedido. |
 | 009 | 2026-11-27 | Refs protótipos HTML | [009-2026-11-27-refs-prototipos-html.md](009-2026-11-27-refs-prototipos-html.md) | Clozzy, RoleGo, Notinhas, Confraternização em refs/. |
+| 010 | 2026-11-27 | Inputs identidade visual | [010-2026-11-27-inputs-identidade-visual.md](010-2026-11-27-inputs-identidade-visual.md) | Manuais IV ConectMax/ConectTech + assets em inputs/. |

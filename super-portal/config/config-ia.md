@@ -32,9 +32,10 @@ Alteração na esteira → seguir **Próximos passos** até o próximo nó exist
 ```text
 README (visão)
   → docs/README
+    → docs/modelagem-dados.md
     → PRD / discovery (a produzir)
 ```
 
 ## Próximos passos
 
-→ Visão estável → PRD (substituição, white-label, automação, templates, handoff).
+→ Visão + modelagem estáveis → PRD (substituição, white-label, automação, templates, handoff).

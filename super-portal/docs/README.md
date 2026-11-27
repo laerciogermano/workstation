@@ -6,8 +6,9 @@
 | Artefato | Status |
 |----------|--------|
 | Visão | [`../README.md`](../README.md) |
+| Modelagem de dados (classes) | [`modelagem-dados.md`](modelagem-dados.md) |
 | PRD / funcionalidades / US / BDD | A produzir |
 
 ## Próximos passos
 
-→ Manter visão estável · em seguida PRD a partir da visão (white-label, automação, templates, handoff humano, substituição do portal ConnectMax).
+→ Visão + modelagem estáveis · em seguida PRD (white-label, automação, templates, handoff humano, migração).

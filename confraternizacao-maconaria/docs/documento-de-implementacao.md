@@ -65,17 +65,30 @@ Diagrama e entidades: [`modelagem-dados.md`](modelagem-dados.md).
 | Item | Valor |
 |------|-------|
 | Provider | Contabo VPS |
-| Host atual (protótipo) | `185.250.37.82` · [`deploy/README.md`](../deploy/README.md) |
+| Host | `185.250.37.82` · [`deploy/README.md`](../deploy/README.md) |
 | Domínio | `confraternizacao.laerciogermano.com` (Hostinger DNS) |
-| Produção app | Mesmo VPS: Nginx → estáticos SPA + proxy API; PostgreSQL no host ou container |
+| Produção app | Nginx → proxy Node `:3333` (SPA+API); protótipo estático em `/prototipo/`; Postgres 18 em Docker `:5439` |
 
-**Antes → depois:** só HTML estático em `/opt/confraternizacao` → SPA build + API Node + Postgres no mesmo Contabo.
+**Antes → depois:** só HTML estático em `/opt/confraternizacao` → app em `/` + protótipo em `/prototipo/`.
 
-**Rollback:** voltar ao deploy só do `prototipo/`; desligar API e Postgres; manter Nginx do site estático.
+**Rollback:** ver [`deploy/README.md`](../deploy/README.md).
 
 ---
 
-## 4. Fora deste documento
+## 4. Implementação 1.0
+
+Código em [`../app/`](../app/README.md). Ajustes em relação ao planejado:
+
+| Planejado | Feito | Motivo |
+|-----------|-------|--------|
+| `GroupChat` e `DirectChat` | Tabela única `chats` com `type` | Mensagem e membro passam a ter chave estrangeira real |
+| `Attendee.role` (um papel) | `attendees.roles` (lista) | A mesma pessoa é organizadora e leiloeira |
+| Entidades da modelagem | Também `challenges`, `parking_areas`, `membership_payments`, `support_tickets`, `join_requests` | Casos de uso que não tinham onde guardar |
+| `Session` | Campos `kind` e `capacity` | Vagas por item da programação |
+| PWA | Manifesto web, sem funcionamento offline | Fica para depois |
+| Esteira (functionalities → BDD → telas) | Código direto a partir da visão e do protótipo | Pedido de 27/11 |
+
+## 5. Fora deste documento
 
 - Functionalities / US / BDD / screens (esteira de produto ainda a produzir)
 - Backoffice web detalhado (pendência da ata 18/11)

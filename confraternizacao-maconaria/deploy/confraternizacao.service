@@ -1,0 +1,16 @@
+[Unit]
+Description=Confraternização Maçônica (API + SPA)
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/confraternizacao/app
+EnvironmentFile=/srv/confraternizacao/.env
+ExecStart=/usr/bin/node --env-file=/srv/confraternizacao/.env /opt/confraternizacao/app/api/dist/main.js
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

@@ -2,13 +2,15 @@
 
 Aplicativo oficial do evento mundial em Curitiba (125 anos).
 
-**Protótipo:** https://confraternizacao.laerciogermano.com/ · deploy Contabo: [`deploy/README.md`](deploy/README.md)
+**App:** https://confraternizacao.laerciogermano.com/ · **Protótipo:** https://confraternizacao.laerciogermano.com/prototipo/ · deploy: [`deploy/README.md`](deploy/README.md)
 
 ## Documento de visão
 
 → [`docs/documento-de-visao.md`](docs/documento-de-visao.md)
 
 ## Implementação
+
+Sistema em [`app/`](app/README.md): `./app/scripts/up.sh` e abrir http://localhost:3333.
 
 → [`docs/documento-de-implementacao.md`](docs/documento-de-implementacao.md) · modelagem [`docs/modelagem-dados.md`](docs/modelagem-dados.md)
 

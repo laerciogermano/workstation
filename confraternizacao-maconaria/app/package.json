@@ -1,0 +1,13 @@
+{
+  "name": "confraternizacao",
+  "private": true,
+  "scripts": {
+    "db:up": "docker compose up -d --wait db",
+    "db:reset": "pnpm db:up && pnpm --filter api db:reset",
+    "build": "pnpm --filter web build && pnpm --filter api build",
+    "start": "pnpm --filter api start",
+    "dev:api": "pnpm --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "test": "pnpm --filter api build && pnpm --filter api test"
+  }
+}

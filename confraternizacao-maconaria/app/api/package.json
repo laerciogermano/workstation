@@ -1,0 +1,39 @@
+{
+  "name": "api",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "start": "node --env-file=../.env dist/main.js",
+    "dev": "pnpm build && node --env-file=../.env --watch dist/main.js",
+    "db:migrate": "node --env-file=../.env dist/db/migrate.js",
+    "db:seed": "node --env-file=../.env dist/db/seed.js",
+    "db:reset": "pnpm build && node --env-file=../.env dist/db/migrate.js --reset && node --env-file=../.env dist/db/seed.js",
+    "test": "node --env-file=../.env --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.6.3",
+    "@nestjs/core": "^12.6.3",
+    "@nestjs/platform-express": "^12.6.3",
+    "@nestjs/throttler": "^6.8.0",
+    "@node-rs/argon2": "^2.2.2",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1",
+    "qrcode": "^1.5.4",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "22",
+    "@types/pg": "^8.23.1",
+    "@types/qrcode": "^1.5.6",
+    "typescript": "5"
+  },
+  "type": "module"
+}

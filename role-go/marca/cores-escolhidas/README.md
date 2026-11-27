@@ -1,15 +1,14 @@
 # RoleGo — Cores escolhidas
 
-Documento simples com as **três cores escolhidas** para a marca.
+Documento simples com as **duas cores escolhidas** para a marca.
 
 | Cor | Hex |
 |-----|-----|
-| Rosa | `#EA3D7A` |
 | Ciano | `#68E2E3` |
 | Roxo | `#6D34CC` |
 
 - [`cores-escolhidas-rolego.html`](cores-escolhidas-rolego.html) · [`cores-escolhidas-rolego.pdf`](cores-escolhidas-rolego.pdf)
-- Amostras de origem: `rosa.png`, `ciano.png`, `roxo.png`
+- Amostras de origem: `ciano.png`, `roxo.png`
 
 ## Gerar PDF
 

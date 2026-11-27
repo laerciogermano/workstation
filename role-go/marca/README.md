@@ -2,11 +2,13 @@
 
 ## Cores escolhidas
 
-[`cores-escolhidas/`](cores-escolhidas/README.md) — rosa `#EA3D7A`, ciano `#68E2E3`, roxo `#6D34CC` (HTML + PDF).
+[`cores-escolhidas/`](cores-escolhidas/README.md) — ciano `#68E2E3`, roxo `#6D34CC` (HTML + PDF).
 
-## Identidade visual final (atual)
+## Identidade visual v6 (atual)
 
-[`identidade-final-v2/`](identidade-final-v2/README.md) — documento final de 40 págs. (HTML + PDF), `BRAND.md`, `tokens.css` e logos. Roxo + ciano principais; melancia `#FF4D6A` só em texto ou detalhe. Card: https://trello.com/c/d1duCYiO
+[`identidade-v6/`](identidade-v6/README.md) — documento de 40 págs. (HTML + PDF), `BRAND.md`, `tokens.css`, logos, posts e stories sobre as [`cores-escolhidas/`](cores-escolhidas/README.md): roxo `#6D34CC` e ciano `#68E2E3`.
+
+Anteriores: [`identidade-final-v2/`](identidade-final-v2/README.md) (melancia como terceira cor) · [`identidade-final/`](identidade-final/README.md) (descartada).
 
 ## Identidade visual v4
 

@@ -125,39 +125,6 @@ classDiagram
     +timestamptz synced_at
   }
 
-  class FaturamentoLinha {
-    +uuid id PK
-    +uuid tenant_id FK
-    +text vendedor_nome
-    +text nota
-    +text pedido
-    +text data
-    +float total
-  }
-
-  class Chamado {
-    +uuid id PK
-    +uuid tenant_id FK
-    +text status
-    +text assunto
-    +text envolvidos
-    +text criado_em
-    +text editado_por
-    +text ultima_interacao
-    +jsonb payload
-    +timestamptz synced_at
-  }
-
-  class Notificacao {
-    +uuid id PK
-    +uuid tenant_id FK
-    +text assunto
-    +text enviado_por
-    +text data
-    +jsonb payload
-    +timestamptz synced_at
-  }
-
   Tenant "1" --> "*" Vendedor
   Tenant "1" --> "*" Cliente
   Tenant "1" --> "*" Orcamento
@@ -165,9 +132,6 @@ classDiagram
   Tenant "1" --> "*" PedidoItem
   Tenant "1" --> "*" NotaFiscal
   Tenant "1" --> "*" ContaReceber
-  Tenant "1" --> "*" FaturamentoLinha
-  Tenant "1" --> "*" Chamado
-  Tenant "1" --> "*" Notificacao
 
   Vendedor "1" --> "*" Orcamento
   Vendedor "1" --> "*" Pedido

@@ -1,6 +1,7 @@
 // F03 e F04: responsável e descrição.
+import { STATUS_LABEL, STATUSES } from '@plans/domain';
 import { useEffect, useRef, useState } from 'react';
-import type { StoredActivity } from '../folder/project.ts';
+import type { Patch, StoredActivity } from '../folder/project.ts';
 import { askRemove, updateNode, type State } from '../store/app.ts';
 
 type Status = 'idle' | 'saving' | 'saved' | 'conflict';
@@ -25,7 +26,7 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
   }, [node.rev, node.description]);
 
   const saving = useRef<Promise<unknown>>(Promise.resolve());
-  const save = (patch?: { assignee: string | null }) => {
+  const save = (patch?: Patch) => {
     saving.current = saving.current.then(async () => {
       const description = live.current.draft;
       if (!patch && description === base.current.description) return;
@@ -51,6 +52,16 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
         <h2>{node.title}</h2>
         <button type="button" className="btn ghost danger" onClick={() => void askRemove(node.id)} disabled={app.readOnly}>Remover</button>
       </header>
+      <div className="field">
+        <span id="status-label">Status</span>
+        <div className="segmented" role="radiogroup" aria-labelledby="status-label">
+          {STATUSES.map((s) => (
+            <button key={s} type="button" role="radio" aria-checked={(node.status ?? 'todo') === s} className={`status-${s}`} disabled={app.readOnly} onClick={() => save({ status: s })}>
+              {STATUS_LABEL[s]}
+            </button>
+          ))}
+        </div>
+      </div>
       <label className="field">
         <span>Responsável</span>
         <select value={node.assignee ?? ''} disabled={app.readOnly} onChange={(e) => save({ assignee: e.target.value || null })}>

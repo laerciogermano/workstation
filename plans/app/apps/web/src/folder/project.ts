@@ -1,13 +1,14 @@
 // Leitura e gravação do projeto na pasta. É o único lugar que toca nos arquivos do Plans.
 import {
   assigneesSchema, DEFAULT_ASSIGNEES, DESCRIPTION_MAX, parseActivity, projectSchema, runRecordSchema, SCHEMA_VERSION,
-  serializeActivity, subtreeLeavesFirst, titleSchema, uiSchema,
-  type Activity, type Assignee, type Project, type RunRecord, type UiState,
+  planMove, serializeActivity, subtreeLeavesFirst, titleSchema, uiSchema,
+  type Activity, type Assignee, type Project, type RunRecord, type Status, type UiState,
 } from '@plans/domain';
 import type { DirLike } from './types.ts';
 
 export type StoredActivity = Activity & { rev: string };
 export type Problem = { file: string; message: string };
+export type Patch = { title?: string; assignee?: string | null; description?: string; status?: Status };
 export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; problems: Problem[] };
 
 export class ConflictError extends Error {
@@ -178,7 +179,7 @@ export class ProjectStore {
     });
   }
 
-  update(id: string, rev: string, patch: { assignee?: string | null; description?: string }): Promise<StoredActivity> {
+  update(id: string, rev: string, patch: Patch): Promise<StoredActivity> {
     return this.mutate(async () => {
       if (patch.description !== undefined && patch.description.length > DESCRIPTION_MAX) {
         throw new Error('Descrição grande demais (máximo de 100 mil caracteres).');
@@ -186,9 +187,23 @@ export class ProjectStore {
       const dir = await this.activitiesDir();
       const { activity } = await this.read(dir, id, rev);
       const next = { ...activity, ...patch };
+      if (patch.title !== undefined) next.title = titleSchema.parse(patch.title);
       const text = serializeActivity(next);
       await writeText(dir, `${id}.md`, text);
       return { ...parseActivity(text), rev: await hashText(text) };
+    });
+  }
+
+  /** Muda o pai e/ou a posição. `before` é o irmão que vem depois (null = no fim). */
+  move(id: string, rev: string, parent: string | null, before: string | null): Promise<void> {
+    return this.mutate(async () => {
+      const dir = await this.activitiesDir();
+      await this.read(dir, id, rev);
+      for (const { id: target, ...patch } of planMove((await this.load()).activities, id, parent, before)) {
+        const text = await readText(dir, `${target}.md`);
+        if (text === null) throw new ConflictError();
+        await writeText(dir, `${target}.md`, serializeActivity({ ...parseActivity(text), ...patch }));
+      }
     });
   }
 

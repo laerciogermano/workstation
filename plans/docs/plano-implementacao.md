@@ -147,7 +147,9 @@ id: 7c1f0c9e-4b7a-4a1e-9a41-2f6c0d1b8e22
 title: Comprar celular
 parent: null
 assignee: ana
+status: doing          # todo, doing ou done; sem ele vale todo
 createdAt: 2026-11-27T12:00:00Z
+order: 1500            # só depois de arrastado; sem ele vale a ordem de criação
 ---
 Até R$ 3.000, câmera boa, 256 GB.
 ```

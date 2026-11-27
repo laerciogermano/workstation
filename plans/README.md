@@ -95,6 +95,11 @@ Os épicos são cumulativos: cada um parte do que os anteriores entregaram. A li
 - F02 · Remover o nó e a subárvore, com confirmação quando houver filhos
 - F03 · Atribuir responsável ao nó
 - F04 · Atribuir descrição ao nó
+- F05 · Zoom e pan
+- F06 · Minimizar e expandir ramos, um a um ou todos de uma vez
+- F07 · Renomear o nó no próprio título
+- F08 · Arrastar e soltar para reordenar, aninhar e desaninhar, sem ciclos
+- F09 · Definir o status: To do, Doing ou Done
 
 ### EP-02 · Explorar
 

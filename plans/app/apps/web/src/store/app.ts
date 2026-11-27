@@ -1,12 +1,13 @@
 // Estado da tela em memória (useSyncExternalStore). A verdade está sempre nos arquivos.
 import { useSyncExternalStore } from 'react';
-import { buildTree, type TreeNode } from '@plans/domain';
+import { buildTree, type Status, type TreeNode } from '@plans/domain';
 import { decodePairingCode, encodePairingCode, newSecret, type Command } from '@plans/protocol';
 import { createHubLink, type HubLink, type LinkState } from '../connection/hub.ts';
 import { askPermission, demoFolder, demoName, hasPermission, kv, pickFolder, supportsFolders } from '../folder/handles.ts';
-import { ConflictError, HasChildrenError, initFolder, inspectFolder, ProjectStore, type Snapshot } from '../folder/project.ts';
+import { ConflictError, HasChildrenError, initFolder, inspectFolder, ProjectStore, type Patch, type Snapshot } from '../folder/project.ts';
 import type { DirLike } from '../folder/types.ts';
 import { createRunner, type Runner, type RunView } from '../runs/runner.ts';
+import { applyTheme, isTheme, paintedTheme, type ThemeId } from '../ui/themes.ts';
 
 export const HUB_URL: string =
   import.meta.env.VITE_HUB_URL ?? (import.meta.env.DEV ? 'ws://localhost:4780/ws' : `wss://${location.host}/ws`);
@@ -20,6 +21,11 @@ export type State = {
   snapshot: Snapshot;
   tree: TreeNode[];
   selected: string | null;
+  /** nós minimizados: os filhos ficam escondidos */
+  collapsed: string[];
+  theme: ThemeId;
+  /** painel lateral (atividade e comandos) aberto */
+  panel: boolean;
   /** nó sendo criado: pai ou 'root' */
   creating: string | null;
   removing: { id: string; count: number } | null;
@@ -32,7 +38,7 @@ export type State = {
 
 const empty: Snapshot = { activities: [], assignees: [], problems: [] };
 let state: State = {
-  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null,
+  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true,
   creating: null, removing: null, runs: [], link: { state: 'unpaired' }, pairing: null, pairingOpen: false, error: null,
 };
 const listeners = new Set<() => void>();
@@ -59,6 +65,7 @@ export const dismissError = () => set({ error: null });
 const asDir = (h: FileSystemDirectoryHandle) => h as unknown as DirLike;
 
 export async function boot() {
+  applyTheme(state.theme);
   try {
     if (demoName !== null) return await openFolder(await demoFolder(demoName));
     if (!supportsFolders) return set({ phase: 'unsupported' });
@@ -102,7 +109,10 @@ async function openFolder(h: FileSystemDirectoryHandle) {
   store = new ProjectStore(asDir(h), found.project);
   const ui = await store.loadUi();
   runner = createRunner({ store, send: (m) => link?.send(m) ?? false, onChange: (runs) => set({ runs }), onError: fail });
-  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, error: null });
+  // projeto sem tema salvo mantém o que já está na tela
+  const theme = isTheme(ui.theme) ? ui.theme : state.theme;
+  applyTheme(theme);
+  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, error: null });
   await refresh();
   await runner.reload();
   watch(h, found.project.id);
@@ -137,7 +147,7 @@ export async function closeFolder() {
   close();
   await kv.del('folder');
   if (demoName !== null) location.search = '';
-  set({ phase: 'welcome', snapshot: empty, tree: [], runs: [], selected: null, pairing: null, pairingOpen: false, link: { state: 'unpaired' } });
+  set({ phase: 'welcome', snapshot: empty, tree: [], runs: [], selected: null, collapsed: [], pairing: null, pairingOpen: false, link: { state: 'unpaired' } });
 }
 
 let refreshing: Promise<void> | null = null;
@@ -200,11 +210,54 @@ async function changed() {
   channel?.postMessage('changed');
 }
 
+const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel }).catch(fail);
+
+export function togglePanel() {
+  set({ panel: !state.panel });
+  saveUi();
+}
+
+export function chooseTheme(theme: ThemeId) {
+  applyTheme(theme);
+  set({ theme });
+  saveUi();
+}
+
 export function select(id: string | null) {
   set({ selected: id, creating: null });
-  store?.saveUi({ selected: id }).catch(fail);
+  saveUi();
 }
-export const startCreate = (parent: string | null) => set({ creating: parent ?? 'root' });
+/** Minimiza ou expande o ramo. `hidden` são os descendentes: se o selecionado sumir, a seleção sobe. */
+export function toggleCollapse(id: string, hidden: string[]) {
+  const closing = !state.collapsed.includes(id);
+  const exists = new Set(state.snapshot.activities.map((a) => a.id));
+  const collapsed = (closing ? [...state.collapsed, id] : state.collapsed.filter((c) => c !== id)).filter((c) => exists.has(c));
+  const selected = closing && state.selected && hidden.includes(state.selected) ? id : state.selected;
+  set({ collapsed, selected, creating: null });
+  saveUi();
+}
+/** Minimiza todos os níveis de uma vez; a seleção sobe para a raiz que continua à vista. */
+export function minimizeAll() {
+  const all: string[] = [];
+  let selected = state.selected;
+  const walk = (n: TreeNode, root: string) => {
+    if (n.children.length) all.push(n.activity.id);
+    if (n.activity.id === state.selected) selected = root;
+    n.children.forEach((c) => walk(c, root));
+  };
+  state.tree.forEach((r) => walk(r, r.activity.id));
+  set({ collapsed: all, selected, creating: null });
+  saveUi();
+}
+export function expandAll() {
+  set({ collapsed: [], creating: null });
+  saveUi();
+}
+export function startCreate(parent: string | null) {
+  // criar filho num nó minimizado abre o ramo
+  if (parent && state.collapsed.includes(parent)) toggleCollapse(parent, []);
+  set({ creating: parent ?? 'root' });
+}
 export const cancelCreate = () => set({ creating: null });
 
 export async function createNode(parent: string | null, title: string) {
@@ -245,8 +298,25 @@ export async function confirmRemove() {
   }
 }
 
+/** Uma alteração por vez: a seguinte já enxerga a revisão que a anterior gravou. */
+let writing: Promise<unknown> = Promise.resolve();
+function queued<T>(fn: () => Promise<T>): Promise<T> {
+  const next = writing.then(fn);
+  writing = next.catch(() => {});
+  return next;
+}
+
 /** Devolve a nova revisão, ou 'conflict'. */
-export async function updateNode(id: string, rev: string, patch: { assignee?: string | null; description?: string }): Promise<string | 'conflict' | null> {
+export const updateNode = (id: string, rev: string, patch: Patch) => queued(() => writeNode(id, rev, patch));
+
+/** Muda um campo a partir da versão que estiver na tela quando chegar a vez. */
+async function writeCurrent(id: string, patch: Patch, conflictMessage: string) {
+  const node = state.snapshot.activities.find((a) => a.id === id);
+  if (node && !state.readOnly && (await writeNode(id, node.rev, patch)) === 'conflict') fail(new Error(conflictMessage));
+}
+export const setStatus = (id: string, status: Status) => queued(() => writeCurrent(id, { status }, 'O arquivo mudou fora desta tela. Escolha o status de novo.'));
+
+async function writeNode(id: string, rev: string, patch: Patch): Promise<string | 'conflict' | null> {
   try {
     const node = await store!.update(id, rev, patch);
     await changed();
@@ -256,6 +326,34 @@ export async function updateNode(id: string, rev: string, patch: { assignee?: st
     if (e instanceof ConflictError) return 'conflict';
     fail(e);
     return null;
+  }
+}
+
+/** `from` é o título quando a edição começou: se mudou fora daqui, não sobrescreve. */
+export function renameNode(id: string, from: string, title: string) {
+  const next = title.trim();
+  if (!next || next === from) return Promise.resolve();
+  const message = 'O arquivo mudou fora desta tela. Renomeie de novo.';
+  return queued(async () => {
+    const node = state.snapshot.activities.find((a) => a.id === id);
+    if (node && node.title !== from) return fail(new Error(message));
+    await writeCurrent(id, { title: next }, message);
+  });
+}
+
+/** Arrastar e soltar: novo pai e posição. */
+export async function moveNode(id: string, parent: string | null, before: string | null) {
+  const node = state.snapshot.activities.find((a) => a.id === id);
+  if (!node || state.readOnly) return;
+  try {
+    await store!.move(id, node.rev, parent, before);
+    // soltar dentro de um nó minimizado abre o ramo, para o resultado aparecer
+    if (parent && state.collapsed.includes(parent)) toggleCollapse(parent, []);
+    await changed();
+    select(id);
+  } catch (e) {
+    fail(e);
+    await refresh();
   }
 }
 

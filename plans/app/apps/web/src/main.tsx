@@ -4,6 +4,7 @@ import '@fontsource/ibm-plex-sans/600.css';
 import '@fontsource/ibm-plex-sans/700.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import './ui/styles.css';
+import './ui/themes.css';
 import { createRoot } from 'react-dom/client';
 import { App } from './App.tsx';
 import { boot } from './store/app.ts';

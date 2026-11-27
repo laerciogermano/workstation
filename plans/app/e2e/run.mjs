@@ -65,10 +65,13 @@ try {
 
   await page.goto(`http://localhost:${WEB}/?demo=e2e`);
   await page.getByRole('button', { name: 'Criar projeto aqui' }).click();
-  await page.getByRole('button', { name: '+ Atividade' }).click();
+  await page.getByRole('button', { name: 'Nova atividade', exact: true }).waitFor();
+  await page.screenshot({ path: path.join(root, 'test-results-vazio.png') });
+  await page.getByRole('button', { name: 'Nova atividade', exact: true }).click();
   await page.getByLabel('Título da atividade').fill('Comprar celular');
   await page.keyboard.press('Enter');
   await node('Comprar celular').waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Nova atividade', exact: true }).count(), 0);
   await node('Comprar celular').press('Enter');
   await page.getByLabel('Título da atividade').fill('Definir orçamento');
   await page.keyboard.press('Enter');
@@ -78,6 +81,7 @@ try {
   await page.keyboard.press('Enter');
   await node('Pesquisar preços').waitFor();
   assert.equal(await node('Pesquisar preços').getAttribute('aria-level'), '3');
+  assert.equal(await page.getByRole('button', { name: 'Trocar pasta' }).evaluate((el) => getComputedStyle(el).position), 'static');
   step('F01 cria nó raiz e filhos, pelo botão e pelo teclado');
 
   await node('Definir orçamento').click();
@@ -88,10 +92,28 @@ try {
   await until(async () => { const x = await fileOf('Definir orçamento'); return x.text.includes('assignee: claude') && x.text.endsWith('---\nAté R$ 3.000\nsegunda linha\n'); }, 'arquivo com responsável e descrição');
   step('F03 e F04 gravados no .md');
 
+  const marcado = (nome) => page.getByRole('radio', { name: nome, exact: true }).getAttribute('aria-checked');
+  assert.equal(await marcado('To do'), 'true', 'sem status no arquivo vale To do');
+  await page.getByRole('radio', { name: 'Doing' }).click();
+  await until(async () => (await fileOf('Definir orçamento')).text.includes('status: doing'), 'status gravado pelo painel');
+  await page.getByRole('button', { name: 'Status de Definir orçamento: Doing' }).click();
+  await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).waitFor();
+  await until(async () => (await fileOf('Definir orçamento')).text.includes('status: done'), 'status gravado pelo cartão');
+  await until(async () => (await marcado('Done')) === 'true', 'painel acompanha o cartão');
+  await page.getByLabel('Descrição').fill('Até R$ 3.000\nsegunda linha\nterceira');
+  await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).click();
+  await until(async () => { const x = (await fileOf('Definir orçamento')).text; return x.includes('status: todo') && x.endsWith('terceira\n'); }, 'mudar o status com texto em edição salva os dois');
+  assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
+  await page.getByLabel('Descrição').fill('Até R$ 3.000\nsegunda linha');
+  await page.getByRole('radio', { name: 'Doing' }).click();
+  await until(async () => { const x = (await fileOf('Definir orçamento')).text; return x.includes('status: doing') && x.endsWith('segunda linha\n'); }, 'volta');
+  step('status To do, Doing e Done pelo painel e pelo cartão');
+
   await page.reload();
   await node('Definir orçamento').waitFor();
   assert.equal(await page.getByLabel('Descrição').inputValue(), 'Até R$ 3.000\nsegunda linha');
   assert.equal(await page.getByLabel('Responsável').inputValue(), 'claude');
+  assert.equal(await page.getByRole('radio', { name: 'Doing' }).getAttribute('aria-checked'), 'true');
   step('tudo volta dos arquivos depois de recarregar');
 
   const edited = await fileOf('Pesquisar preços');
@@ -102,6 +124,93 @@ try {
   }, edited);
   await node('Editado fora').waitFor();
   step('edição externa do arquivo aparece na tela');
+
+  const field = page.getByLabel('Renomear atividade');
+  const cursor = (locator) => locator.evaluate((el) => getComputedStyle(el).cursor);
+  const titulo = node('Definir orçamento').getByText('Definir orçamento');
+  assert.equal(await cursor(titulo), 'pointer', 'passar sobre o título não mostra cursor de texto');
+  await titulo.click();
+  assert.equal(await field.count(), 0, 'um clique só seleciona');
+  await titulo.dblclick();
+  assert.equal(await cursor(field), 'text');
+  await field.press('Escape');
+  await node('Definir orçamento').getByText('Definir orçamento').dblclick();
+  assert.equal(await field.inputValue(), 'Definir orçamento');
+  await field.press('End');
+  await field.press('Backspace');
+  assert.equal(await page.getByRole('treeitem').count(), 3, 'apagar texto não pode remover o nó');
+  await field.fill('Orçamento fechado');
+  await field.press('Enter');
+  await node('Orçamento fechado').waitFor();
+  await until(async () => !!(await fileOf('Orçamento fechado'))?.text.includes('assignee: claude'), 'título novo no mesmo arquivo');
+  assert.equal(await page.getByRole('heading', { name: 'Orçamento fechado' }).count(), 1);
+  await node('Orçamento fechado').press('F2');
+  await field.fill('descartado');
+  await field.press('Escape');
+  await node('Orçamento fechado').waitFor();
+  await node('Orçamento fechado').getByText('Orçamento fechado').dblclick();
+  await field.fill('Definir orçamento');
+  await page.getByLabel('Comando', { exact: true }).focus();
+  await node('Definir orçamento').waitFor();
+  await until(async () => !!(await fileOf('Definir orçamento')), 'sair do campo salva');
+  step('renomear com dois cliques no título (Enter e sair salvam, Esc cancela, F2)');
+
+  const longo = 'calcular custo de cada agente por máquina e por celular e a capacidade de operações, funis e etc para identificarmos a viabilidade do projeto';
+  const inteiro = (nome) => node(nome).evaluate((el) => { const b = el.querySelector('b'), c = el.getBoundingClientRect(), t = b.getBoundingClientRect();
+    return b.scrollWidth <= b.clientWidth && t.top >= c.top && el.querySelector('.meta').getBoundingClientRect().bottom <= c.bottom + 0.5; });
+  await node('Definir orçamento').press('F2');
+  await field.fill(longo);
+  await field.press('Enter');
+  await node(longo).waitFor();
+  const alto = await node(longo).boundingBox();
+  assert.ok(alto.height > 100, 'o cartão cresce com o título');
+  assert.ok(await inteiro(longo), 'título inteiro dentro do cartão');
+  const semSobrepor = await page.getByRole('treeitem').evaluateAll((els) => { const r = els.map((e) => e.getBoundingClientRect());
+    return r.every((a, i) => r.every((b, j) => i >= j || a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top)); });
+  assert.ok(semSobrepor, 'cartões não se sobrepõem');
+  await node(longo).press('F2');
+  await field.fill('Definir orçamento');
+  await field.press('Enter');
+  await node('Definir orçamento').waitFor();
+  step('título longo aparece inteiro, o cartão cresce e nada se sobrepõe');
+
+  await node('Definir orçamento').click();
+  const parado = await node('Comprar celular').boundingBox();
+  await page.getByRole('button', { name: 'Minimizar Comprar celular' }).click();
+  await node('Definir orçamento').waitFor({ state: 'detached' });
+  assert.equal(await node('Editado fora').count(), 0);
+  assert.equal(await node('Comprar celular').getAttribute('aria-expanded'), 'false');
+  assert.equal(await node('Comprar celular').getAttribute('aria-selected'), 'true', 'a seleção sobe para o nó minimizado');
+  assert.equal(await page.getByRole('button', { name: 'Expandir Comprar celular (2 ocultas)' }).innerText(), '+2');
+  const depois = await node('Comprar celular').boundingBox();
+  assert.ok(Math.abs(depois.y - parado.y) < 2 && Math.abs(depois.x - parado.x) < 2, 'o nó clicado não pode pular');
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).collapsed.length === 1, 'minimizado gravado em ui.json');
+  await page.reload();
+  await node('Comprar celular').waitFor();
+  assert.equal(await node('Definir orçamento').count(), 0);
+  await node('Comprar celular').press('ArrowRight');
+  await node('Definir orçamento').waitFor();
+  await node('Comprar celular').press('ArrowLeft');
+  await node('Definir orçamento').waitFor({ state: 'detached' });
+  await node('Comprar celular').press('Enter');
+  await node('Definir orçamento').waitFor();
+  await page.keyboard.press('Escape');
+  step('minimizar e expandir, pelo botão e pelo teclado, lembrado no arquivo');
+
+  await node('Definir orçamento').click();
+  await page.getByRole('button', { name: 'Minimizar tudo' }).click();
+  await node('Definir orçamento').waitFor({ state: 'detached' });
+  assert.equal(await page.getByRole('treeitem').count(), 1);
+  assert.equal(await node('Comprar celular').getAttribute('aria-selected'), 'true');
+  assert.ok(await page.getByRole('button', { name: 'Minimizar tudo' }).isDisabled());
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).collapsed.length === 2, 'todos os níveis gravados');
+  await node('Comprar celular').press('ArrowRight');
+  await node('Definir orçamento').waitFor();
+  assert.equal(await node('Editado fora').count(), 0, 'o nível de baixo continua minimizado');
+  await page.getByRole('button', { name: 'Expandir tudo' }).click();
+  await node('Editado fora').waitFor();
+  assert.ok(await page.getByRole('button', { name: 'Expandir tudo' }).isDisabled());
+  step('minimizar tudo e expandir tudo');
 
   // ----- client -----
   await page.getByRole('button', { name: 'Parear client' }).click();
@@ -154,16 +263,215 @@ try {
   await page.getByRole('button', { name: /Client conectado/ }).waitFor();
   step('client reinicia e a tela reconecta sozinha');
 
+  await node('Comprar celular').click();
+  const tool = page.getByRole('button', { name: 'Remover Comprar celular' });
+  await page.mouse.move(600, 700);
+  assert.equal(await tool.isVisible(), false, 'sem o mouse em cima, o cartão selecionado e focado não mostra + e ×');
+  await node('Comprar celular').hover();
+  assert.equal(await tool.isVisible(), true);
+  await page.mouse.move(600, 700);
+  step('+ e × do cartão aparecem só com o mouse em cima');
+
   await page.screenshot({ path: path.join(root, 'test-results-tela.png') });
+
+  const selected = page.locator('[role="treeitem"][aria-selected="true"]');
+  const area = await page.getByRole('region', { name: 'Árvore de execução' }).boundingBox();
+  const vazio = [area.x + area.width - 80, area.y + area.height - 160];
+  await node('Comprar celular').click();
+  await page.mouse.move(...vazio);
+  await page.mouse.down();
+  await page.mouse.move(vazio[0] - 60, vazio[1] + 20, { steps: 4 });
+  await page.mouse.up();
+  assert.equal(await selected.count(), 1, 'arrastar o fundo mantém a seleção');
+  await page.getByLabel('Descrição').fill('escrita antes de clicar fora');
+  await page.mouse.click(...vazio);
+  assert.equal(await selected.count(), 0);
+  await page.getByText('Selecione uma atividade').waitFor();
+  await until(async () => (await fileOf('Comprar celular')).text.includes('escrita antes de clicar fora'), 'a descrição é salva ao clicar fora');
+  await node('Comprar celular').click();
+  assert.equal(await selected.count(), 1);
+  assert.equal(await page.getByLabel('Descrição').inputValue(), 'escrita antes de clicar fora');
+  await page.getByRole('button', { name: 'Ajustar à tela' }).click();
+  await page.getByRole('button', { name: /^Zoom \d+%/ }).click();
+  assert.equal(await selected.count(), 1, 'usar os controles não tira a seleção');
+  step('clicar fora tira a seleção; arrastar e usar os controles mantêm');
+
+  const level = page.getByRole('button', { name: /^Zoom \d+%/ });
+  const box = () => node('Comprar celular').boundingBox();
+  await page.getByRole('button', { name: 'Aumentar zoom' }).click();
+  assert.equal(await level.innerText(), '125%');
+  await page.getByRole('button', { name: 'Diminuir zoom' }).click();
+  await page.getByRole('button', { name: 'Diminuir zoom' }).click();
+  assert.equal(await level.innerText(), '80%');
+  assert.ok(Math.abs((await box()).width - 236 * 0.8) < 2);
+  await level.click();
+  assert.equal(await level.innerText(), '100%');
+  const canvas = await page.getByRole('region', { name: 'Árvore de execução' }).boundingBox();
+  const before = await box();
+  await page.mouse.move(before.x + 20, before.y + 20);
+  await page.mouse.wheel(0, 400);
+  await until(async () => (await box()).width < before.width * 0.7, 'zoom pela roda');
+  assert.ok(Math.abs((await box()).x + 20 * ((await box()).width / before.width) - (before.x + 20)) < 2, 'o ponto sob o cursor não pode andar');
+  const at = await box();
+  await page.mouse.move(canvas.x + canvas.width - 60, canvas.y + canvas.height - 120);
+  await page.mouse.down();
+  await page.mouse.move(canvas.x + canvas.width - 160, canvas.y + canvas.height - 70, { steps: 5 });
+  await page.mouse.up();
+  const moved = await box();
+  assert.ok(Math.abs(moved.x - (at.x - 100)) < 2 && Math.abs(moved.y - (at.y + 50)) < 2, 'arrastar o fundo move a árvore');
+  step('zoom pelos botões e pela roda; arrastar o fundo move');
+
+  // árvore grande: ajustar mostra tudo e o teclado leva a tela até o nó
+  await page.evaluate(async () => {
+    const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('demo-e2e')).getDirectoryHandle('activities');
+    for (let i = 0; i < 80; i++) {
+      const id = `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`;
+      const w = await (await dir.getFileHandle(`${id}.md`, { create: true })).createWritable();
+      await w.write(`---\nid: ${id}\ntitle: Extra ${i}\nparent: null\nassignee: null\ncreatedAt: 2027-01-01T00:${String(i % 60).padStart(2, '0')}:${String(Math.floor(i / 60)).padStart(2, '0')}Z\n---\n`);
+      await w.close();
+    }
+    window.dispatchEvent(new Event('focus'));
+  });
+  await node('Extra 79').waitFor();
+  await page.getByRole('button', { name: 'Ajustar' }).click();
+  await page.screenshot({ path: path.join(root, 'test-results-zoom.png') });
+  const inside = async (name) => { const b = await node(name).boundingBox(); return b.y >= canvas.y - 1 && b.y + b.height <= canvas.y + canvas.height + 1; };
+  assert.ok(await inside('Comprar celular') && await inside('Extra 79') && await inside('Extra 59'));
+  await node('Comprar celular').click();
+  await level.click();
+  // o foco ficou no botão de zoom: volta para o nó antes de navegar
+  await node('Comprar celular').evaluate((el) => el.focus({ preventScroll: true }));
+  for (let i = 0; i < 30; i++) await page.keyboard.press('ArrowDown');
+  await until(async () => inside(await page.evaluate(() => document.activeElement.getAttribute('aria-label'))), 'teclado revela o nó');
+  step('ajustar à tela mostra a árvore inteira; setas levam a tela até o nó');
+  await page.evaluate(async () => {
+    const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('demo-e2e')).getDirectoryHandle('activities');
+    for (let i = 0; i < 80; i++) await dir.removeEntry(`00000000-0000-4000-8000-${String(i).padStart(12, '0')}.md`);
+    window.dispatchEvent(new Event('focus'));
+  });
+  await node('Extra 0').waitFor({ state: 'detached' });
+  await page.getByRole('button', { name: 'Ajustar' }).click();
 
   await node('Comprar celular').click();
   await node('Comprar celular').press('Delete');
   await page.getByRole('dialog').getByRole('button', { name: 'Remover 3 atividades' }).click();
   await until(async () => (await fsRead('activities')).length === 0, 'arquivos removidos');
+  await page.getByRole('button', { name: 'Nova atividade', exact: true }).waitFor();
   const trash = await fsRead('.plans/trash');
   assert.equal(trash.length, 1);
   assert.equal((await fsRead('.plans/trash/' + trash[0])).length, 4);
   step('F02 remove a subárvore com confirmação e guarda na lixeira');
+
+  await page.getByRole('button', { name: 'Nova atividade', exact: true }).click();
+  await page.getByLabel('Título da atividade').fill('Raiz');
+  await page.keyboard.press('Enter');
+  for (const nome of ['Um', 'Dois', 'Três']) {
+    await node('Raiz').press('Enter');
+    await page.getByLabel('Título da atividade').fill(nome);
+    await page.keyboard.press('Enter');
+    await node(nome).waitFor();
+  }
+  await page.getByRole('button', { name: 'Ajustar à tela' }).click();
+  /** leva o cartão até uma altura (fração) de outro e, se pedido, solta */
+  const drag = async (from, to, fraction, { drop = true } = {}) => {
+    const a = await node(from).boundingBox();
+    await page.mouse.move(a.x + 40, a.y + a.height / 2);
+    await page.mouse.down();
+    const b = await node(to).boundingBox();
+    await page.mouse.move(b.x + 60, b.y + b.height * fraction, { steps: 8 });
+    if (drop) await page.mouse.up();
+  };
+  /** forma da árvore lida dos arquivos: filhos em ordem */
+  const shape = async () => {
+    const list = await Promise.all((await fsRead('activities')).map(async (f) => {
+      const text = await fsRead('activities/' + f);
+      const get = (k) => text.match(new RegExp(`^${k}: (.*)$`, 'm'))?.[1];
+      return { id: get('id'), title: get('title'), parent: get('parent'), key: Number(get('order') ?? Date.parse(get('createdAt'))) };
+    }));
+    const walk = (p) => list.filter((n) => n.parent === p).sort((x, y) => x.key - y.key).map((n) => { const k = walk(n.id); return n.title + (k ? `(${k})` : ''); }).join(' ');
+    return walk('null');
+  };
+  const becomes = (expected) => until(async () => (await shape()) === expected, `árvore ${expected}`, 6000).catch(async (err) => { throw new Error(`${err.message}; está ${await shape()}`); });
+  await becomes('Raiz(Um Dois Três)');
+
+  await drag('Três', 'Um', 0.1);
+  await becomes('Raiz(Três Um Dois)');
+  await until(async () => (await node('Três').boundingBox()).y < (await node('Um').boundingBox()).y, 'tela reordenada');
+  await drag('Três', 'Dois', 0.92);
+  await becomes('Raiz(Um Dois Três)');
+  step('arrastar reordena os cartões (antes e depois de outro)');
+
+  await drag('Um', 'Dois', 0.5, { drop: false });
+  assert.match(await node('Dois').getAttribute('class'), /drop-child/);
+  await page.mouse.up();
+  await becomes('Raiz(Dois(Um) Três)');
+  await page.getByRole('button', { name: 'Minimizar Dois' }).click();
+  await drag('Três', 'Dois', 0.5);
+  await becomes('Raiz(Dois(Um Três))');
+  await node('Três').waitFor();
+  step('soltar no meio de um cartão o torna filho, abrindo o ramo minimizado');
+
+  await drag('Raiz', 'Um', 0.5);
+  await drag('Dois', 'Dois', 0.5);
+  await drag('Três', 'Raiz', 0.5, { drop: false });
+  await page.keyboard.press('Escape');
+  await page.mouse.up();
+  await new Promise((r) => setTimeout(r, 300));
+  await becomes('Raiz(Dois(Um Três))');
+  step('não move para dentro de si mesmo; Esc cancela');
+
+  await drag('Um', 'Raiz', 0.1);
+  await becomes('Um Raiz(Dois(Três))');
+  await node('Três').click();
+  assert.equal(await node('Três').getAttribute('aria-selected'), 'true', 'clicar continua selecionando');
+  await page.reload();
+  await node('Três').waitFor();
+  await becomes('Um Raiz(Dois(Três))');
+  assert.ok((await node('Um').boundingBox()).y < (await node('Raiz').boundingBox()).y);
+  step('arrastar até o nível das raízes; tudo continua depois de recarregar');
+
+  const comandos = page.getByRole('region', { name: 'Comandos' });
+  const largura = async () => (await page.getByRole('region', { name: 'Árvore de execução' }).boundingBox()).width;
+  assert.equal(await node('Um').evaluate((el) => getComputedStyle(el).borderTopWidth), '0px', 'cartão sem borda');
+  await node('Três').click();
+  // confere num cartão não selecionado: o anel de seleção é desenhado com box-shadow
+  assert.notEqual(await node('Um').evaluate((el) => getComputedStyle(el).boxShadow), 'none', 'cartão com sombra');
+  const estreita = await largura();
+  await page.getByLabel('Descrição').fill('guardada ao minimizar');
+  await page.getByRole('button', { name: 'Minimizar painel' }).click();
+  assert.equal(await comandos.isVisible(), false);
+  assert.ok((await largura()) - estreita > 430, 'a árvore ocupa o lugar do painel');
+  await until(async () => (await fileOf('Três')).text.includes('guardada ao minimizar'), 'texto salvo ao minimizar');
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).panel === false, 'painel minimizado em ui.json');
+  await page.reload();
+  await node('Três').waitFor();
+  assert.equal(await comandos.isVisible(), false);
+  await node('Um').click();
+  assert.equal(await comandos.isVisible(), false, 'selecionar não reabre o painel');
+  await page.getByRole('button', { name: 'Mostrar painel' }).click();
+  await comandos.waitFor();
+  assert.equal(await page.getByRole('heading', { name: 'Um' }).count(), 1);
+  step('painel lateral minimiza e volta, lembrado no arquivo');
+
+  const css = (selector, prop) => page.locator(selector).first().evaluate((el, prop) => getComputedStyle(el)[prop], prop);
+  assert.equal(await page.getByRole('group', { name: 'Tema' }).getByRole('button').count(), 9);
+  await page.getByRole('button', { name: 'Tema Preto' }).click();
+  assert.equal(await css('.viewport', 'backgroundColor'), 'rgb(0, 0, 0)');
+  assert.equal(await css('body', 'backgroundColor'), 'rgb(14, 14, 14)');
+  assert.equal(await page.getByRole('button', { name: 'Tema Preto' }).getAttribute('aria-pressed'), 'true');
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).theme === 'preto', 'tema gravado em ui.json');
+  await page.reload();
+  await node('Três').waitFor();
+  assert.equal(await css('body', 'backgroundColor'), 'rgb(14, 14, 14)');
+  await node('Três').click();
+  await page.screenshot({ path: path.join(root, 'test-results-preto.png') });
+  await page.getByRole('button', { name: /^Client|Aguardando o client/ }).click();
+  assert.equal(await css('.dialog', 'backgroundColor'), 'rgb(14, 14, 14)');
+  await page.screenshot({ path: path.join(root, 'test-results-preto-dialogo.png') });
+  await page.getByRole('button', { name: 'Fechar', exact: true }).click();
+  await page.getByRole('button', { name: 'Tema Papel' }).click();
+  assert.equal(await css('body', 'backgroundColor'), 'rgb(255, 255, 255)');
+  step('bolinhas de tema no topo; o preto fica salvo no arquivo');
 
   assert.deepEqual(errors, []);
   console.log('\nTudo passou.');

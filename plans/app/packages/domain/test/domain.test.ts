@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildTree, parseActivity, serializeActivity, subtreeLeavesFirst, titleSchema, tokenize, type Activity } from '../src/index.ts';
+import { buildTree, parseActivity, planMove, serializeActivity, subtreeLeavesFirst, titleSchema, tokenize, type Activity, type TreeNode } from '../src/index.ts';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const act = (n: number, parent: number | null = null): Activity => ({
@@ -41,6 +41,54 @@ describe('árvore', () => {
     const flat = (n: ReturnType<typeof buildTree>): string[] => n.flatMap((x) => [x.activity.id, ...flat(x.children)]);
     expect(flat(roots).sort()).toEqual([id(1), id(2), id(3), id(4)]);
     expect(roots.every((r) => r.warning)).toBe(true);
+  });
+});
+
+describe('mover', () => {
+  const apply = (list: Activity[], target: number, parent: number | null, before: number | null) => {
+    const patches = planMove(list, id(target), parent === null ? null : id(parent), before === null ? null : id(before));
+    return { patches, list: list.map((a) => ({ ...a, ...patches.find((p) => p.id === a.id) })) };
+  };
+  const shape = (nodes: TreeNode[]): string => nodes.map((n) => n.activity.title.slice(3) + (n.children.length ? `(${shape(n.children)})` : '')).join(' ');
+  const base = [act(1), act(2, 1), act(3, 1), act(4, 1), act(5)];
+
+  it('reordena irmãos, muda de pai e volta a raiz, mudando só o arquivo movido', () => {
+    let r = apply(base, 4, 1, 2);
+    expect(shape(buildTree(r.list))).toBe('1(4 2 3) 5');
+    expect(r.patches).toHaveLength(1);
+    r = apply(r.list, 2, 3, null);
+    expect(shape(buildTree(r.list))).toBe('1(4 3(2)) 5');
+    r = apply(r.list, 3, null, 1);
+    expect(shape(buildTree(r.list))).toBe('3(2) 1(4) 5');
+    r = apply(r.list, 5, 1, null);
+    expect(shape(buildTree(r.list))).toBe('3(2) 1(4 5)');
+  });
+
+  it('não grava nada quando já está no lugar e recusa ciclo', () => {
+    expect(planMove(base, id(3), id(1), id(4))).toEqual([]);
+    expect(planMove(base, id(4), id(1), null)).toEqual([]);
+    expect(() => planMove(base, id(1), id(1), null)).toThrow(/dentro dela mesma/);
+    expect(() => planMove(base, id(1), id(3), null)).toThrow(/dentro dela mesma/);
+  });
+
+  it('renumera os irmãos quando não cabe mais nada entre dois, e novos continuam no fim', () => {
+    let list = base;
+    for (let i = 0; i < 80; i++) list = apply(list, i % 2 ? 4 : 3, 1, i % 2 ? 3 : 4).list;
+    expect(shape(buildTree(list))).toBe('1(2 4 3) 5');
+    expect(shape(buildTree([...list, { ...act(6, 1), createdAt: new Date().toISOString() }]))).toBe('1(2 4 3 6) 5');
+  });
+
+  it('o status vai e volta; valor desconhecido vira problema', () => {
+    const a = { ...act(1), status: 'doing' as const };
+    expect(parseActivity(serializeActivity(a))).toEqual(a);
+    expect(serializeActivity(act(1))).not.toContain('status');
+    expect(() => parseActivity(serializeActivity(a).replace('doing', 'pronto'))).toThrow(/status/);
+  });
+
+  it('a posição vai e volta no arquivo', () => {
+    const a = { ...act(1), order: 12.5 };
+    expect(parseActivity(serializeActivity(a))).toEqual(a);
+    expect(serializeActivity(act(1))).not.toContain('order');
   });
 });
 

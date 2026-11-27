@@ -23,7 +23,7 @@ npm run dev            # hub em :4780 e front em http://localhost:5280
 ```
 
 1. Abra <http://localhost:5280>, escolha uma pasta e crie o projeto.
-2. Crie atividades, defina responsável e descrição.
+2. Crie atividades, defina status (To do, Doing, Done), responsável e descrição. Na árvore, role para aproximar ou afastar, arraste o fundo para mover e use − / % / + / Ajustar. O botão **−** na borda de um nó minimiza o ramo; **+N** expande. No rodapé, **Minimizar tudo** e **Expandir tudo**. Dois cliques no título (ou F2) renomeiam. Clicar no fundo tira a seleção. Arraste um cartão para cima ou para baixo de outro para reordenar, ou para o meio dele para virar filho; **Esc** cancela. As bolinhas no topo trocam o tema (salvo em `.plans/ui.json`). O botão no canto da árvore minimiza o painel lateral.
 3. Clique em **Client não pareado**, informe o caminho da pasta e rode no terminal os dois comandos mostrados (`pair` e `run`).
 4. Execute um comando numa atividade; no terminal do client, responda `u` (uma vez), `s` (sempre) ou `n` (negar).
 

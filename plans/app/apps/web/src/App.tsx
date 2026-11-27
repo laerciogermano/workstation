@@ -5,8 +5,10 @@ import { linkLabel } from './features/status.ts';
 import { Tree } from './features/Tree.tsx';
 import { Welcome } from './features/Welcome.tsx';
 import { demoName } from './folder/handles.ts';
-import { cancelRemove, closeFolder, confirmRemove, dismissError, openPairing, useApp } from './store/app.ts';
+import { cancelRemove, closeFolder, confirmRemove, dismissError, openPairing, togglePanel, useApp } from './store/app.ts';
 import { Dialog } from './ui/Dialog.tsx';
+import { Icon } from './ui/Icon.tsx';
+import { ThemePicker } from './ui/ThemePicker.tsx';
 
 export function App() {
   const app = useApp();
@@ -30,6 +32,7 @@ export function App() {
             <span className="project" title="Projeto">{app.folderName}{demoName !== null && ' · demonstração'}</span>
             {app.readOnly && <span className="badge">somente leitura</span>}
             <span className="spacer" />
+            <ThemePicker current={app.theme} />
             <button type="button" className={`link-chip ${app.link.state}`} onClick={() => void openPairing(true)}>
               <i aria-hidden="true" /> {linkLabel(app.link)}
             </button>
@@ -41,9 +44,21 @@ export function App() {
               <ul>{app.snapshot.problems.map((p) => <li key={p.file}><code>{p.file}</code>: {p.message}</li>)}</ul>
             </details>
           )}
-          <div className="body">
+          <div className={`body${app.panel ? '' : ' no-side'}`}>
             <Tree app={app} />
-            <aside className="side">
+            <button
+              type="button"
+              className="panel-toggle"
+              aria-label={app.panel ? 'Minimizar painel' : 'Mostrar painel'}
+              title={app.panel ? 'Minimizar painel' : 'Mostrar painel'}
+              aria-expanded={app.panel}
+              aria-controls="side-panel"
+              onClick={togglePanel}
+            >
+              <Icon name={app.panel ? 'panelClose' : 'panelOpen'} size={18} />
+            </button>
+            {/* escondido, não desmontado: um texto em edição não se perde */}
+            <aside id="side-panel" className="side" hidden={!app.panel}>
               {selected ? <NodePanel key={selected.id} app={app} node={selected} /> : <p className="muted pad">Selecione uma atividade para definir responsável e descrição.</p>}
               <Runs app={app} />
             </aside>

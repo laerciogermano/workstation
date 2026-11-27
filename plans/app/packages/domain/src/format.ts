@@ -13,12 +13,20 @@ export const titleSchema = z
   .max(TITLE_MAX, `Título com no máximo ${TITLE_MAX} caracteres`)
   .refine((t) => !/[\r\n]/.test(t), 'Título em uma linha só');
 
+export const STATUSES = ['todo', 'doing', 'done'] as const;
+export type Status = (typeof STATUSES)[number];
+export const STATUS_LABEL: Record<Status, string> = { todo: 'To do', doing: 'Doing', done: 'Done' };
+
 const headerSchema = z.looseObject({
   id: z.uuid(),
   title: z.string().min(1).max(TITLE_MAX),
   parent: z.uuid().nullable().default(null),
   assignee: z.string().min(1).max(64).nullable().default(null),
   createdAt: z.string().min(1),
+  /** ausente = todo */
+  status: z.enum(STATUSES).optional(),
+  /** posição entre os irmãos; ausente = ordem de criação */
+  order: z.number().finite().optional(),
 });
 
 export type Activity = {
@@ -27,6 +35,8 @@ export type Activity = {
   parent: string | null;
   assignee: string | null;
   createdAt: string;
+  status?: Status;
+  order?: number;
   description: string;
   /** chaves do cabeçalho que não conhecemos: preservadas na regravação */
   extra: Record<string, unknown>;
@@ -40,14 +50,17 @@ export function parseActivity(text: string): Activity {
   if (!header.success) {
     throw new Error(header.error.issues.map((i) => `${i.path.join('.') || 'cabeçalho'}: ${i.message}`).join('; '));
   }
-  const { id, title, parent, assignee, createdAt, ...extra } = header.data;
+  const { id, title, parent, assignee, createdAt, status, order, ...extra } = header.data;
   const description = m[2]!.replace(/\r\n/g, '\n').replace(/\n$/, '');
-  return { id, title, parent, assignee, createdAt, description, extra };
+  return { id, title, parent, assignee, createdAt, ...(status === undefined ? {} : { status }), ...(order === undefined ? {} : { order }), description, extra };
 }
 
 export function serializeActivity(a: Activity): string {
-  const { id, title, parent, assignee, createdAt, description, extra } = a;
-  const header = toYaml({ id, title, parent, assignee, createdAt, ...extra }, { schema: 'core', lineWidth: 0 });
+  const { id, title, parent, assignee, createdAt, status, order, description, extra } = a;
+  const header = toYaml(
+    { id, title, parent, assignee, ...(status === undefined ? {} : { status }), createdAt, ...(order === undefined ? {} : { order }), ...extra },
+    { schema: 'core', lineWidth: 0 },
+  );
   const body = description.replace(/\r\n/g, '\n');
   return `---\n${header}---\n${body ? body + '\n' : ''}`;
 }
@@ -73,7 +86,7 @@ export const DEFAULT_ASSIGNEES: Assignee[] = [
   { id: 'terminal', name: 'Terminal', type: 'machine' },
 ];
 
-export const uiSchema = z.object({ selected: z.string().nullable().default(null) });
+export const uiSchema = z.object({ selected: z.string().nullable().default(null), collapsed: z.array(z.string()).default([]), theme: z.string().optional(), panel: z.boolean().default(true) });
 export type UiState = z.infer<typeof uiSchema>;
 
 export const runRecordSchema = z.object({

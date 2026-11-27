@@ -1,0 +1,45 @@
+/* Mesmas paletas do protótipo (plans/prototipo), mais o "preto": fundo #000 e cinzas neutros. */
+:root[data-theme="teal"] { --accent: #0f766e; --accent-2: #0b5f58; --line: #e3e7e8; --line-2: #d3d9da; --panel: #f6f8f8; --wash: #eef2f2; }
+:root[data-theme="indigo"] { --accent: #3d4fb8; --accent-2: #31419c; --line: #e3e5ee; --line-2: #d3d6e3; --panel: #f6f7fb; --wash: #eef0f7; --ai: #a2458e; }
+:root[data-theme="cobalto"] { --accent: #2563eb; --accent-2: #1d4ed8; --line: #dbe4f3; --line-2: #c9d6ea; --panel: #f3f6fc; --wash: #eaf0fa; --run: #2563eb; --person: #2563eb; }
+:root[data-theme="musgo"] { --accent: #3f8f3a; --accent-2: #2f6f2c; --line: #dde8db; --line-2: #c9d8c6; --panel: #f3f7f2; --wash: #e9f0e7; --ok: #3f8f3a; --machine: #3f8f3a; }
+:root[data-theme="ardosia"] {
+  --accent: #f08b4c; --accent-2: #f6a06a; --on-accent: #1d2430;
+  --ink: #eef1f5; --body: #c4cbd6; --muted: #9aa3b2; --line: #364051; --line-2: #435067;
+  --paper: #232a36; --panel: #1e2430; --wash: #2b3341;
+  --ok: #5cc98d; --run: #6ea4ec; --warn: #e5ac4d; --fail: #f07a6e;
+  --person: #79aee6; --ai: #d59ad8; --machine: #7fc29c;
+  --card: #2a3342;
+  --shadow: 0 1px 3px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+:root[data-theme="gantt"] {
+  --accent: #4981f6; --accent-2: #6b9af8; --on-accent: #0a0a0a;
+  --ink: #f2f2f2; --body: #b8b8b8; --muted: #8a8a8a; --line: #2a2a2a; --line-2: #353535;
+  --paper: #121212; --panel: #0a0a0a; --wash: #1e1e1e;
+  --ok: #52a943; --run: #4981f6; --warn: #d4a017; --fail: #ef6a6a;
+  --person: #4981f6; --ai: #7aa2ff; --machine: #52a943;
+  --card: #1a1a1a;
+  --shadow: 0 1px 3px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+:root[data-theme="graphite"] {
+  --accent: #61c24f; --accent-2: #7ed96b; --on-accent: #0a0a0a;
+  --ink: #ececec; --body: #b3b3b3; --muted: #909090; --line: #2c2c2c; --line-2: #3a3a3a;
+  --paper: #202020; --panel: #1a1a1a; --wash: #2a2a2a;
+  --ok: #61c24f; --run: #6c9bf8; --warn: #e0b040; --fail: #ef6a6a;
+  --person: #6c9bf8; --ai: #c084fc; --machine: #61c24f;
+  --card: #272727;
+  --shadow: 0 1px 3px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+:root[data-theme="preto"] {
+  --accent: #f0644b; --accent-2: #ff7d66; --on-accent: #0a0a0a;
+  --ink: #f5f5f5; --body: #bdbdbd; --muted: #8c8c8c; --line: #242424; --line-2: #343434;
+  --paper: #0e0e0e; --panel: #000000; --wash: #191919;
+  --ok: #5fc977; --run: #7fb0f5; --warn: #e5ac4d; --fail: #ff6f61;
+  --person: #7fb0f5; --ai: #d59ad8; --machine: #7fc29c;
+  --card: #171717;
+  --shadow: 0 1px 3px rgba(0,0,0,.6);
+  color-scheme: dark;
+}

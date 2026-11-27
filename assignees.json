@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "eu",
+      "name": "Eu",
+      "type": "person"
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "type": "ai"
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal",
+      "type": "machine"
+    }
+  ]
+}

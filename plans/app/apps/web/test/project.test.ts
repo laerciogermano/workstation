@@ -44,6 +44,15 @@ describe('EP-01', () => {
     await expect(store.create(null, '  ')).rejects.toThrow();
   });
 
+  it('renomeia sem trocar o arquivo e recusa título vazio', async () => {
+    const { store, activities } = await setup();
+    const a = await store.create(null, 'antigo');
+    const b = await store.update(a.id, a.rev, { title: '  novo nome  ' });
+    expect(b.title).toBe('novo nome');
+    expect((await activities.getFileHandle(`${a.id}.md`)).text).toContain('title: novo nome');
+    await expect(store.update(a.id, b.rev, { title: '   ' })).rejects.toThrow();
+  });
+
   it('recusa gravar por cima de uma edição externa', async () => {
     const { store, activities } = await setup();
     const a = await store.create(null, 'x');

@@ -101,6 +101,62 @@
       }
     ]
   },
+  "super-portal": {
+    "name": "Super Portal",
+    "blurb": "Portal white-label · automação máxima",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "super-portal-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "super-portal-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "Super Portal (Super Traço Portal): substituto white-label do portal ConnectMax, desenhado para automatizar ao máximo a operação — humano só no que é humano; templates e tudo configurável.",
+    "context": "O portal atual da ConnectMax (franqueado) concentra operação manual em fluxos que poderiam ser automatizados. Precisamos de um portal novo, white-label, que substitua o atual e deixe a operação o mais automática e otimizada possível.",
+    "objective": "Ser o portal padrão white-label que substitui o portal ConnectMax: automação máxima (humano só na parte humana), templates e configurações para tudo que puder ser automatizado.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo / operação",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
+  },
   "clozzy": {
     "name": "Clozzy",
     "blurb": "Conteúdo exclusivo",

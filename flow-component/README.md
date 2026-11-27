@@ -6,6 +6,8 @@
 
 **PRD:** [`docs/prd.md`](docs/prd.md) (inventário + lacunas vs v0.1)
 
+**POCs de visualização Flow:** [`pocs/`](pocs/README.md) (Plans → Flow IDE → Language editor → mountFlowView → flow-novo)
+
 **FOP (flow-novo) público:** https://fop.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
 
 ## Relação

@@ -5,7 +5,7 @@ classDiagram
   direction TB
 
   class Tenant {
-    +int id PK
+    +uuid id PK
     +text razao_social
     +text cnpj
     +text nome
@@ -14,15 +14,15 @@ classDiagram
   }
 
   class Vendedor {
-    +bigint id PK
-    +int tenant_id FK
+    +uuid id PK
+    +uuid tenant_id FK
     +int portal_id
     +text nome
   }
 
   class Cliente {
-    +bigint id PK
-    +int tenant_id FK
+    +uuid id PK
+    +uuid tenant_id FK
     +text cnpj
     +text nome
     +text email
@@ -31,10 +31,10 @@ classDiagram
   }
 
   class Orcamento {
-    +bigint id PK
-    +int tenant_id PK_FK
-    +bigint vendedor_id FK
-    +bigint cliente_id FK
+    +uuid id PK
+    +uuid tenant_id PK_FK
+    +uuid vendedor_id FK
+    +uuid cliente_id FK
     +int numero
     +text data
     +text status
@@ -46,11 +46,11 @@ classDiagram
   }
 
   class Pedido {
-    +bigint id PK
-    +int tenant_id FK
-    +bigint orcamento_id FK
-    +bigint vendedor_id FK
-    +bigint cliente_id FK
+    +uuid id PK
+    +uuid tenant_id FK
+    +uuid orcamento_id FK
+    +uuid vendedor_id FK
+    +uuid cliente_id FK
     +int numero
     +text data
     +text status
@@ -66,9 +66,9 @@ classDiagram
   }
 
   class PedidoItem {
-    +bigint pedido_id PK_FK
+    +uuid pedido_id PK_FK
     +int seq PK
-    +int tenant_id FK
+    +uuid tenant_id FK
     +int id_produto
     +text produto
     +text ncm
@@ -81,9 +81,9 @@ classDiagram
   }
 
   class NotaFiscal {
-    +bigint id PK
-    +int tenant_id FK
-    +bigint cliente_id FK
+    +uuid id PK
+    +uuid tenant_id FK
+    +uuid cliente_id FK
     +int numero
     +text status
     +text tipo
@@ -98,17 +98,17 @@ classDiagram
   }
 
   class NotaFiscalXml {
-    +bigint nota_id PK_FK
+    +uuid nota_id PK_FK
     +text xml
     +timestamptz synced_at
   }
 
   class ContaReceber {
-    +bigint id PK
-    +int tenant_id FK
-    +bigint nota_id FK
-    +bigint pedido_id FK
-    +bigint cliente_id FK
+    +uuid id PK
+    +uuid tenant_id FK
+    +uuid nota_id FK
+    +uuid pedido_id FK
+    +uuid cliente_id FK
     +text status
     +text vencimento
     +text titulo
@@ -126,8 +126,8 @@ classDiagram
   }
 
   class FaturamentoLinha {
-    +bigint id PK
-    +int tenant_id FK
+    +uuid id PK
+    +uuid tenant_id FK
     +text vendedor_nome
     +text nota
     +text pedido
@@ -136,8 +136,8 @@ classDiagram
   }
 
   class Chamado {
-    +bigint id PK
-    +int tenant_id FK
+    +uuid id PK
+    +uuid tenant_id FK
     +text status
     +text assunto
     +text envolvidos
@@ -149,8 +149,8 @@ classDiagram
   }
 
   class Notificacao {
-    +bigint id PK
-    +int tenant_id FK
+    +uuid id PK
+    +uuid tenant_id FK
     +text assunto
     +text enviado_por
     +text data

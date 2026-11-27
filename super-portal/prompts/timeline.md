@@ -7,3 +7,4 @@
 | 003 | 2026-11-27 | Modelagem com campos completos | [003-2026-11-27-modelagem-campos-completos.md](003-2026-11-27-modelagem-campos-completos.md) | Diagrama e tabela com todas as colunas do schema + marca (Tenant). |
 | 004 | 2026-11-27 | Tenant, não franquia | [004-2026-11-27-tenant-nao-franquia.md](004-2026-11-27-tenant-nao-franquia.md) | Isolamento do modelo: Tenant / tenant_id no lugar de franquia / franquia_id. |
 | 005 | 2026-11-27 | Modelagem só essencial | [005-2026-11-27-modelagem-so-essencial.md](005-2026-11-27-modelagem-so-essencial.md) | Doc reduzido a título + diagrama de classes. |
+| 006 | 2026-11-27 | IDs como UUID | [006-2026-11-27-ids-uuid.md](006-2026-11-27-ids-uuid.md) | PK/FK de entidade → uuid na modelagem. |

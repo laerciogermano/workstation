@@ -23,7 +23,7 @@ O **Super Portal** (Super Traço Portal) é o portal **white-label** que substit
 O portal atual da ConnectMax concentra a operação do franqueado (pedidos, notas, financeiro, etc.) num painel onde muita coisa ainda depende de trabalho manual repetitivo. Queremos um portal **novo**, nosso, que:
 
 1. **Substitua** o portal ConnectMax como superfície operacional.
-2. Seja **white-label** — marca, identidade e aparência configuráveis por cliente/franquia, sem fork por marca.
+2. Seja **white-label** — marca, identidade e aparência configuráveis por **tenant**, sem fork por marca.
 3. Trate **automação como default**: fluxos, templates e regras configuráveis cobrem o que for automatizável; o operador intervém só onde julgamento humano é necessário.
 
 | Dor | O que acontece hoje |
@@ -40,9 +40,10 @@ Já existem mapa e APIs de apoio ao portal atual no lab. Falta o **produto de po
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Operador** | Quem roda o dia a dia no portal | Fluxos curtos; só entra quando a etapa é humana |
-| **Gestor / franquia** | Quem define processo e marca | White-label, templates e regras configuráveis |
-| **Operação lab / produto** | Quem mantém o portal nosso | Um produto configurável, não um clone por cliente |
+| **Investidor** | Quem entra na unidade/modelo como fonte de renda | Visão clara de operação e resultado (time, vendas, faturamento); sem operar o miolo do fluxo |
+| **Administrador** | Quem configura e governa o tenant (marca, usuários, regras, templates) | White-label, cadastros, permissões e automação configurável sem fork |
+| **Vendedor** | Quem vende no dia a dia (orçamentos, pedidos, clientes) | Fluxos curtos na ponta comercial; só intervém no que for humano |
+| **Cliente** | Comprador atendido pelo tenant | Acompanhar propostas/pedidos/cobrança com clareza; mínimo atrito |
 
 ## Objetivo
 

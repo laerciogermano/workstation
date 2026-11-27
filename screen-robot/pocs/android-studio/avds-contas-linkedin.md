@@ -17,6 +17,8 @@ CSV: [`contas-linkedin-clozzy.csv`](contas-linkedin-clozzy.csv) — cols conta +
 
 **Antes → depois (Marina signup CDP):** `nao_criada` → `criada_chrome_cdp` via `./signup-marina-costa.sh` (botão **Avançar** + nome); onboarding location→profile-edit. Rollback: status `nao_criada`; fechar sessão Chrome `marina-costa`.
 
+**Antes → depois (Marina banida 2026-11-27):** `restrita=nao` / ativa → `restrita=sim` banida/desativada (CDP :9224 não usar); próximo CDP ativo = **Lucas Mendes** (`lucas-mendes` :9225). Rollback: `restrita=nao` + limpar nota de banimento nas obs.
+
 **Antes → depois (Pedro Almeida 2026-11-01):** sem linha → CSV `pedro.almeida@clozzy.com.br` + Chrome `:9227` + script until-email (para no PIN, probe `/feed`). Rollback: remover linha CSV; apagar mailbox/perfil; senha em `credenciais.md`.
 
 **Antes → depois (Pedro Almeida signup):** `nao_criada` → `signup_incompleto` — pediu confirmação de número por retentativa de IPs cadastros. Rollback: status `nao_criada`; limpar obs do pedido de número.

@@ -6,6 +6,7 @@
 **No fluxo:** **este documento** → [`docs/`](docs/README.md) → PRD / discovery → implementação.
 
 Derivados: [`docs/`](docs/README.md).  
+Inputs (processos + prints do portal): [`inputs/`](inputs/README.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

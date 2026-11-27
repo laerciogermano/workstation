@@ -9,3 +9,4 @@
 | 005 | 2026-11-27 | Modelagem só essencial | [005-2026-11-27-modelagem-so-essencial.md](005-2026-11-27-modelagem-so-essencial.md) | Doc reduzido a título + diagrama de classes. |
 | 006 | 2026-11-27 | IDs como UUID | [006-2026-11-27-ids-uuid.md](006-2026-11-27-ids-uuid.md) | PK/FK de entidade → uuid na modelagem. |
 | 007 | 2026-11-27 | Remover FaturamentoLinha/Chamado/Notificacao | [007-2026-11-27-remover-faturamento-chamado-notificacao.md](007-2026-11-27-remover-faturamento-chamado-notificacao.md) | Fora do diagrama de modelagem. |
+| 008 | 2026-11-27 | Normalizar modelagem | [008-2026-11-27-normalizar-modelagem.md](008-2026-11-27-normalizar-modelagem.md) | Remove cópias denormalizadas; adiciona Produto; NF→Pedido. |

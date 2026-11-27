@@ -10,13 +10,11 @@ classDiagram
     +text cnpj
     +text nome
     +marca
-    +timestamptz synced_at
   }
 
   class Vendedor {
     +uuid id PK
     +uuid tenant_id FK
-    +int portal_id
     +text nome
   }
 
@@ -30,19 +28,22 @@ classDiagram
     +text whatsapp
   }
 
+  class Produto {
+    +uuid id PK
+    +uuid tenant_id FK
+    +text nome
+    +text ncm
+  }
+
   class Orcamento {
     +uuid id PK
-    +uuid tenant_id PK_FK
+    +uuid tenant_id FK
     +uuid vendedor_id FK
     +uuid cliente_id FK
     +int numero
     +text data
     +text status
-    +text cliente_nome
-    +text vendedor_nome
     +float total
-    +text total_texto
-    +timestamptz synced_at
   }
 
   class Pedido {
@@ -54,53 +55,38 @@ classDiagram
     +int numero
     +text data
     +text status
-    +text cliente_nome
-    +text vendedor_nome
-    +text cnpj
-    +text email
-    +text telefone
-    +text whatsapp
     +float total
-    +text total_texto
-    +timestamptz synced_at
   }
 
   class PedidoItem {
     +uuid pedido_id PK_FK
     +int seq PK
-    +uuid tenant_id FK
-    +int id_produto
-    +text produto
-    +text ncm
+    +uuid produto_id FK
     +float quantidade
     +float valor_unitario
     +float lucro_percentual
     +float valor_extra
     +float total
-    +float total_unidade
   }
 
   class NotaFiscal {
     +uuid id PK
     +uuid tenant_id FK
     +uuid cliente_id FK
+    +uuid pedido_id FK
     +int numero
     +text status
     +text tipo
-    +text cliente_nome
     +text data
     +text transportadora
     +float total
-    +text total_texto
     +text pdf
     +text xml_url
-    +timestamptz synced_at
   }
 
   class NotaFiscalXml {
     +uuid nota_id PK_FK
     +text xml
-    +timestamptz synced_at
   }
 
   class ContaReceber {
@@ -113,23 +99,15 @@ classDiagram
     +text vencimento
     +text titulo
     +int fatura_n
-    +int nf_numero
-    +text cliente_nome
-    +text cnpj
     +text descricao
     +float valor
-    +text valor_texto
-    +text email
-    +text telefone
-    +text whatsapp
-    +timestamptz synced_at
   }
 
   Tenant "1" --> "*" Vendedor
   Tenant "1" --> "*" Cliente
+  Tenant "1" --> "*" Produto
   Tenant "1" --> "*" Orcamento
   Tenant "1" --> "*" Pedido
-  Tenant "1" --> "*" PedidoItem
   Tenant "1" --> "*" NotaFiscal
   Tenant "1" --> "*" ContaReceber
 
@@ -139,9 +117,11 @@ classDiagram
   Cliente "1" --> "*" Pedido
   Cliente "1" --> "*" NotaFiscal
   Cliente "1" --> "*" ContaReceber
+  Produto "1" --> "*" PedidoItem
 
   Orcamento "1" --> "*" Pedido
   Pedido "1" --> "*" PedidoItem
+  Pedido "1" --> "*" NotaFiscal
   Pedido "1" --> "*" ContaReceber
   NotaFiscal "1" --> "0..1" NotaFiscalXml
   NotaFiscal "1" --> "*" ContaReceber

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>clozzy · protótipo v1</title>
+<style>
+@font-face{font-family:Gabarito;src:url("../marca/identidade-nova/fonts/Gabarito-Variable.ttf");font-weight:400 900}
+@font-face{font-family:Figtree;src:url("../marca/identidade-nova/fonts/Figtree-Variable.ttf");font-weight:300 900}
+
+/* ---------- tokens (marca/uso-da-marca/tokens.css) ---------- */
+:root{
+  --cz-rosa:#FF0065;--cz-pink-deep:#E0005A;--cz-roxo:#7C48C4;--cz-ink:#14090F;--cz-branco:#FFFFFF;
+  --cz-cream:#FFF6F0;--cz-lavanda:#EBE3FA;--cz-rosa-suave:#FFD9E7;--cz-muted:#6B5A62;
+  --ok:#2BB673;--r-card:20px;--r-tile:14px;
+  --t-display:Gabarito,system-ui,sans-serif;--t-body:Figtree,system-ui,sans-serif;
+}
+[data-tema="preto"]{--superficie:#14090F;--superficie-2:#241A20;--linha:#3A3035;--titulo:#FFFFFF;--texto:#E8E6E7;--apoio:#B4B0B2;--destaque:#FF0065;--botao:#FFFFFF;--botao-texto:#14090F;--secundario:#959093;--link:#FF0065;--chip:#2C2227;--chip-texto:#FFFFFF;--chip-ativo:#FFFFFF;--chip-ativo-texto:#14090F;
+  --lg-ring:#FF0065;--lg-star:#FFFFFF;--lg-word:#FFFFFF;--selo-bg:transparent;--selo-fg:#FF0065;--selo-bd:#FF0065;--campo:#1C1318}
+[data-tema="branco"]{--superficie:#FFFFFF;--superficie-2:#FFF6F0;--linha:#DEDDDD;--titulo:#14090F;--texto:#14090F;--apoio:#6B5A62;--destaque:#E0005A;--botao:#E0005A;--botao-texto:#FFFFFF;--secundario:#14090F;--link:#E0005A;--chip:#FFD9E7;--chip-texto:#14090F;--chip-ativo:#14090F;--chip-ativo-texto:#FFFFFF;
+  --lg-ring:#E0005A;--lg-star:#E0005A;--lg-word:#14090F;--selo-bg:#E0005A;--selo-fg:#FFFFFF;--selo-bd:#E0005A;--campo:#FFFFFF}
+[data-tema="roxo"]{--superficie:#7C48C4;--superficie-2:#8C5ECB;--linha:#A37FD6;--titulo:#FFFFFF;--texto:#FFFFFF;--apoio:#EBE3FA;--destaque:#EBE3FA;--botao:#FFFFFF;--botao-texto:#7C48C4;--secundario:#FFFFFF;--link:#FFFFFF;--chip:#9165CD;--chip-texto:#FFFFFF;--chip-ativo:#FFFFFF;--chip-ativo-texto:#7C48C4;
+  --lg-ring:#FFFFFF;--lg-star:#FFFFFF;--lg-word:#FFFFFF;--selo-bg:#FFFFFF;--selo-fg:#7C48C4;--selo-bd:#FFFFFF;--campo:#8C5ECB}
+[data-tema="rosa"]{--superficie:#FF0065;--superficie-2:#E0005A;--linha:#FF66A3;--titulo:#FFFFFF;--texto:#FFFFFF;--apoio:#FFFFFF;--destaque:#FFFFFF;--botao:#FFFFFF;--botao-texto:#E0005A;--secundario:#FFFFFF;--link:#FFFFFF;--chip:#FF3384;--chip-texto:#FFFFFF;--chip-ativo:#FFFFFF;--chip-ativo-texto:#E0005A;
+  --lg-ring:#FFFFFF;--lg-star:#FFFFFF;--lg-word:#FFFFFF;--selo-bg:#FFFFFF;--selo-fg:#E0005A;--selo-bd:#FFFFFF;--campo:#E0005A}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font:400 16px/1.5 var(--t-body);background:var(--superficie);color:var(--texto);-webkit-font-smoothing:antialiased;min-height:100vh}
+[data-tema]{background:var(--superficie);color:var(--texto)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+a{color:var(--link);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+img{display:block;max-width:100%}
+svg{display:block}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.narrow{max-width:760px}
+
+/* ---------- tipografia ---------- */
+.d1,.d2,.d3,.h4{font-family:var(--t-display);color:var(--titulo);letter-spacing:-.035em;line-height:.98}
+.d1{font-weight:900;font-size:clamp(48px,7.4vw,96px)}
+.d2{font-weight:900;font-size:clamp(36px,4.8vw,60px)}
+.d3{font-weight:800;font-size:clamp(26px,3vw,34px);line-height:1.05}
+.h4{font-weight:800;font-size:20px;letter-spacing:-.02em;line-height:1.15}
+.hl{color:var(--destaque)}
+.kicker{font:700 12px/1 var(--t-body);letter-spacing:.14em;text-transform:uppercase;color:var(--apoio)}
+.lead{font-size:18px;color:var(--apoio);max-width:52ch}
+.apoio{color:var(--apoio)}
+.small{font-size:14px}.xs{font-size:12px}
+.price{font-family:var(--t-display);font-weight:800;color:var(--destaque);letter-spacing:-.02em;white-space:nowrap}
+.num{font-family:var(--t-display);font-weight:900;letter-spacing:-.035em;color:var(--titulo)}
+
+/* ---------- botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:999px;font:800 16px/1 var(--t-display);letter-spacing:-.01em;background:var(--botao);color:var(--botao-texto);border:2px solid var(--botao);white-space:nowrap;transition:transform .12s,opacity .12s;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn.lg{height:56px;padding:0 30px;font-size:17px}
+.btn.sm{height:36px;padding:0 16px;font-size:14px}
+.btn.block{width:100%}
+.btn.sec{background:transparent;color:var(--titulo);border-color:var(--secundario)}
+.btn.ghost{background:var(--chip);border-color:var(--chip);color:var(--chip-texto)}
+.btn[disabled],.btn.off{background:var(--chip);border-color:var(--chip);color:var(--apoio);cursor:not-allowed}
+.btn svg{width:18px;height:18px}
+.link{background:none;border:0;color:var(--link);font:700 15px/1 var(--t-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--titulo)}
+.iconbtn:hover{background:var(--chip)}
+.iconbtn svg{width:22px;height:22px}
+
+/* ---------- chips, selos ---------- */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:34px;padding:0 14px;border-radius:999px;background:var(--chip);color:var(--chip-texto);font:700 14px/34px var(--t-body);white-space:nowrap}
+.chip.on{background:var(--chip-ativo);color:var(--chip-ativo-texto)}
+.selo{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px;border-radius:999px;font:800 11px/1 var(--t-body);letter-spacing:.01em;background:var(--selo-bg);color:var(--selo-fg);border:1.5px solid var(--selo-bd);white-space:nowrap}
+.selo svg{width:10px;height:10px}
+.status{display:inline-flex;align-items:center;gap:6px;font:700 13px/1 var(--t-body);color:var(--apoio)}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--apoio)}
+.status.ativa i{background:var(--ok)}.status.ativa{color:var(--titulo)}
+.status.pend i{background:#F5B83D;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.3}}
+
+/* ---------- campos ---------- */
+.field{display:grid;gap:6px}
+.field label,.lbl{font:700 13px/1.2 var(--t-body);color:var(--titulo)}
+.field .hint{font-size:12px;color:var(--apoio)}
+.input,select.input,textarea.input{width:100%;height:50px;border-radius:14px;border:1.5px solid var(--linha);background:var(--campo);padding:0 16px;font-size:16px;color:var(--titulo);outline:none;transition:border-color .15s}
+textarea.input{height:auto;min-height:96px;padding:12px 16px;resize:vertical;line-height:1.45}
+.input:focus{border-color:var(--titulo)}
+.input::placeholder{color:var(--apoio);opacity:.8}
+.prefix{position:relative}.prefix span{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--apoio);font-weight:600}.prefix .input{padding-left:var(--pl,44px)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--texto);cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--destaque);flex:none;margin-top:1px}
+.switch{position:relative;width:46px;height:28px;flex:none}
+.switch input{opacity:0;position:absolute;inset:0;cursor:pointer;z-index:1}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--linha);transition:.2s}
+.switch span:after{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}
+.switch input:checked+span{background:var(--destaque)}
+.switch input:checked+span:after{transform:translateX(18px)}
+.seg{display:inline-flex;background:var(--chip);border-radius:999px;padding:3px}
+.seg button{height:30px;padding:0 12px;border-radius:999px;font:700 13px/1 var(--t-body);color:var(--chip-texto)}
+.seg button.on{background:var(--chip-ativo);color:var(--chip-ativo-texto)}
+
+/* ---------- superfícies ---------- */
+.card{background:var(--superficie-2);border-radius:var(--r-card);padding:24px}
+.card.line{background:transparent;border:1.5px solid var(--linha)}
+.hr{height:1px;background:var(--linha);border:0}
+.row{display:flex;align-items:center;gap:12px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.stack>*+*{margin-top:var(--gap,16px)}
+.grid{display:grid;gap:20px}
+.band{padding:96px 0}
+.spacer{height:32px}
+
+/* ---------- logo ---------- */
+.logo{display:inline-flex;align-items:center;gap:0;height:28px;cursor:pointer}
+.logo svg{height:100%;width:auto}
+.sym{display:inline-block}
+
+/* ---------- mídia ---------- */
+.ph{position:relative;overflow:hidden;background:#241A20 center/cover no-repeat;border-radius:var(--r-tile)}
+.ph .blur{position:absolute;inset:-24px;background:inherit;filter:blur(22px) saturate(1.1);transform:scale(1.1)}
+.ph .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,9,15,.15),rgba(20,9,15,.55))}
+.ph .lock{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;color:#fff;text-align:center;font:700 14px/1.3 var(--t-body)}
+.lockdot{width:46px;height:46px;border-radius:50%;background:rgba(20,9,15,.55);display:grid;place-items:center;margin:0 auto;backdrop-filter:blur(6px)}
+.lockdot svg{width:20px;height:20px}
+.ph .badge{position:absolute;left:10px;bottom:10px;display:flex;gap:6px;align-items:center;color:#fff;font:700 12px/1 var(--t-body);background:rgba(20,9,15,.6);padding:6px 9px;border-radius:999px;backdrop-filter:blur(6px)}
+.ph .badge svg{width:12px;height:12px}
+.ar-sq{aspect-ratio:1}.ar-34{aspect-ratio:3/4}.ar-45{aspect-ratio:4/5}
+
+/* avatar com anel (destaque do tema) */
+.av{--s:44px;width:var(--s);height:var(--s);border-radius:50%;background:#241A20 center/cover;flex:none;position:relative}
+.av.ring{box-shadow:0 0 0 2.5px var(--superficie),0 0 0 5px var(--destaque)}
+.av.ini{display:grid;place-items:center;font:800 calc(var(--s)*.38)/1 var(--t-display);color:#fff;background:#3A3035}
+
+/* ---------- header / nav ---------- */
+.top{position:sticky;top:0;z-index:40;border-bottom:1px solid var(--linha);backdrop-filter:blur(12px);background:rgba(20,9,15,.88)}
+.top .in{height:68px;display:flex;align-items:center;gap:28px}
+.top nav{display:flex;gap:24px}
+.top nav a{color:var(--texto);text-decoration:none;font:600 15px/1 var(--t-body);opacity:.85}
+.top nav a.on,.top nav a:hover{opacity:1;color:var(--titulo)}
+.top nav a.on{box-shadow:0 2px 0 var(--destaque);padding-bottom:6px;margin-bottom:-8px}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.burger{display:none}
+.tabbar{display:none}
+.mnav{display:none}
+@media (max-width:820px){
+  .top nav,.top .hide-m{display:none}
+  .burger{display:grid}
+  .wrap{padding:0 18px}
+  .band{padding:64px 0}
+  body.has-tabs{padding-bottom:72px}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;height:66px;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid var(--linha);background:rgba(20,9,15,.94);backdrop-filter:blur(12px)}
+  .tabbar a{flex:1;display:grid;place-items:center;align-content:center;gap:4px;color:var(--apoio);text-decoration:none;font:600 11px/1 var(--t-body)}
+  .tabbar a svg{width:22px;height:22px}
+  .tabbar a.on{color:var(--destaque)}
+  .mnav.open{display:block;position:fixed;inset:68px 0 0;z-index:39;background:var(--superficie);padding:24px 18px}
+  .mnav a{display:block;font:800 28px/1 var(--t-display);letter-spacing:-.03em;color:var(--titulo);text-decoration:none;padding:16px 0;border-bottom:1px solid var(--linha)}
+}
+
+/* ---------- landing ---------- */
+.hero{padding:72px 0 96px;position:relative;overflow:hidden}
+.hero .grid{grid-template-columns:1.1fr .9fr;align-items:center;gap:56px}
+.hero-art{position:relative;height:560px}
+.hero-art .ph{position:absolute;border-radius:24px;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.hero-art .a{width:62%;height:78%;right:0;top:0}
+.hero-art .b{width:46%;height:52%;left:0;bottom:0;border:6px solid var(--superficie)}
+.hero-card{position:absolute;left:8%;top:12%;width:230px;background:rgba(36,26,32,.92);backdrop-filter:blur(10px);border-radius:18px;padding:14px;color:#fff;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.steps{grid-template-columns:repeat(3,1fr);gap:20px}
+.step .n{font:900 56px/1 var(--t-display);color:var(--destaque);letter-spacing:-.04em}
+.faq details{border-bottom:1.5px solid var(--linha);padding:20px 0}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;font:800 19px/1.25 var(--t-display);letter-spacing:-.015em;color:var(--titulo)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary b{color:var(--destaque);font-size:24px;line-height:1;transition:transform .2s}
+.faq details[open] summary b{transform:rotate(45deg)}
+.faq details p{margin-top:10px;color:var(--apoio);max-width:68ch}
+.foot{padding:56px 0 40px;border-top:1px solid var(--linha)}
+.foot .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+.foot h5{font:800 14px/1 var(--t-display);color:var(--titulo);margin-bottom:14px}
+.foot a{display:block;color:var(--apoio);text-decoration:none;font-size:14px;padding:4px 0}
+.foot a:hover{color:var(--titulo)}
+.age18{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--apoio);font:800 12px/1 var(--t-display);color:var(--apoio)}
+@media (max-width:900px){
+  .hero .grid{grid-template-columns:1fr}
+  .hero-art{height:420px}
+  .steps{grid-template-columns:1fr}
+  .foot .cols{grid-template-columns:1fr 1fr}
+}
+
+/* ---------- vitrine / cards criador ---------- */
+.ccards{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.ccard{cursor:pointer;display:block;text-decoration:none;color:inherit}
+.ccard .ph{aspect-ratio:4/5;border-radius:18px}
+.ccard .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(20,9,15,.85))}
+.ccard .meta{position:absolute;left:14px;right:14px;bottom:14px;z-index:1;color:#fff}
+.ccard .meta b{font:800 19px/1.1 var(--t-display);letter-spacing:-.02em;display:flex;gap:6px;align-items:center}
+.ccard .meta b svg{width:14px;height:14px;color:#FF0065}
+.ccard .meta span{font-size:13px;opacity:.8}
+.ccard .ph{transition:transform .25s}
+.ccard:hover .ph{transform:translateY(-4px)}
+.ccard .row{margin-top:10px}
+
+/* ---------- perfil ---------- */
+.cover{height:300px;position:relative;overflow:hidden}
+.cover .ph{position:absolute;inset:0;border-radius:0}
+.cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,9,15,.1),var(--superficie))}
+.phead{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:end;margin-top:-80px;position:relative;z-index:2}
+.phead .av{--s:132px}
+.pgrid{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
+.aside{position:sticky;top:92px}
+.tabs{display:flex;gap:28px;border-bottom:1px solid var(--linha)}
+.tabs button{padding:14px 0;font:800 16px/1 var(--t-display);color:var(--apoio);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--titulo);border-color:var(--destaque)}
+.offer{display:grid;grid-template-columns:150px 1fr;gap:18px;background:var(--superficie-2);border-radius:var(--r-card);padding:14px;align-items:center}
+.offer .ph{aspect-ratio:4/5}
+.incl{display:grid;gap:8px;font-size:14px}
+.incl div{display:flex;gap:8px;align-items:center}
+.incl svg{width:16px;height:16px;color:var(--destaque);flex:none}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tgrid .ph{aspect-ratio:1;border-radius:10px}
+@media (max-width:900px){
+  .pgrid{grid-template-columns:1fr}
+  .aside{position:static}
+  .phead{grid-template-columns:1fr;gap:14px;margin-top:-64px}
+  .phead .av{--s:104px}
+  .cover{height:200px}
+  .offer{grid-template-columns:96px 1fr}
+}
+
+/* ---------- checkout ---------- */
+.co{display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:start}
+.qr{background:#fff;border-radius:20px;padding:16px;width:236px;margin:0 auto}
+.qr svg{width:100%;height:auto}
+.timer{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:var(--chip);color:var(--titulo);font:700 13px/1 var(--t-body)}
+.timer svg{width:14px;height:14px}
+.code{font:500 13px/1.4 ui-monospace,Menlo,monospace;color:var(--apoio);word-break:break-all;background:var(--campo);border:1.5px dashed var(--linha);border-radius:12px;padding:12px}
+.simbar{border:1.5px dashed var(--linha);border-radius:14px;padding:12px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:900px){.co{grid-template-columns:1fr}}
+
+/* ---------- momento rosa ---------- */
+.moment{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:28px 24px 36px;text-align:center}
+.moment .mid{display:grid;place-items:center;align-content:center;gap:22px;max-width:560px;margin:0 auto}
+.moment .ok{width:96px;height:96px;border-radius:50%;background:#fff;color:var(--cz-pink-deep);display:grid;place-items:center;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.moment .ok svg{width:48px;height:48px;stroke-width:3}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.moment p{font-size:20px;line-height:1.4}
+.moment .acts{display:grid;gap:12px;width:min(420px,100%);margin:0 auto}
+
+/* ---------- acesso / viewer ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.mgrid .ph{aspect-ratio:3/4;cursor:zoom-in;transition:opacity .2s}
+.mgrid .ph:hover{opacity:.9}
+.viewer{position:fixed;inset:0;z-index:80;background:rgba(10,4,8,.96);display:grid;grid-template-rows:auto 1fr auto;color:#fff}
+.viewer .bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+.viewer .stage{position:relative;display:grid;place-items:center;overflow:hidden;padding:0 70px}
+.viewer .img{height:min(78vh,900px);aspect-ratio:3/4;border-radius:12px;background:center/cover no-repeat;position:relative;overflow:hidden;max-width:100%}
+.wm{position:absolute;inset:-50%;display:flex;flex-wrap:wrap;gap:60px 80px;transform:rotate(-24deg);opacity:.12;font:800 18px/1 var(--t-display);pointer-events:none;align-content:center;justify-content:center}
+.viewer .nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;color:#fff}
+.viewer .nav svg{width:24px;height:24px}
+.viewer .prev{left:14px}.viewer .next{right:14px}
+.viewer .play{position:absolute;inset:0;display:grid;place-items:center}
+.viewer .play span{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);color:#14090F;display:grid;place-items:center}
+.viewer .play svg{width:30px;height:30px;margin-left:4px}
+.viewer .prog{position:absolute;left:16px;right:16px;bottom:16px;height:4px;border-radius:2px;background:rgba(255,255,255,.25)}
+.viewer .prog i{display:block;height:100%;width:0;background:#FF0065;border-radius:2px;transition:width .3s linear}
+.viewer .foot2{padding:14px 18px;text-align:center;font-size:13px;opacity:.7}
+@media (max-width:700px){.viewer .stage{padding:0 10px}.viewer .nav{display:none}}
+
+/* ---------- biblioteca ---------- */
+.lib-row{display:grid;grid-template-columns:76px 1fr auto;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--linha)}
+.lib-row .ph{width:76px;height:76px;border-radius:14px}
+
+/* ---------- auth ---------- */
+.auth{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.auth .art{position:relative;overflow:hidden}
+.auth .art .ph{position:absolute;inset:0;border-radius:0}
+.auth .art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,9,15,.2),rgba(20,9,15,.85))}
+.auth .art .txt{position:absolute;left:48px;right:48px;bottom:48px;z-index:1}
+.auth .form{display:grid;align-content:center;padding:48px;max-width:520px;width:100%;margin:0 auto}
+@media (max-width:900px){.auth{grid-template-columns:1fr}.auth .art{height:260px}.auth .art .txt{left:20px;bottom:20px}.auth .form{padding:32px 20px}}
+
+/* ---------- painel ---------- */
+.dash{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.side{background:var(--superficie-2);padding:24px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.side a{display:flex;align-items:center;gap:12px;height:46px;padding:0 14px;border-radius:12px;color:var(--texto);text-decoration:none;font:600 15px/1 var(--t-body)}
+.side a svg{width:20px;height:20px;opacity:.8}
+.side a:hover{background:var(--chip)}
+.side a.on{background:var(--chip-ativo);color:var(--chip-ativo-texto)}
+.side a.on svg{opacity:1}
+.dmain{padding:32px 40px 80px;min-width:0}
+.dhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.kpis{grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi .num{font-size:clamp(24px,2.6vw,34px);margin-top:10px;white-space:nowrap}
+.kpi .d{font-size:13px;margin-top:6px;color:var(--apoio)}
+.kpi .d b{color:var(--ok)}
+.chart{position:relative}
+.chart svg{width:100%;height:240px;overflow:visible}
+.chart rect.bar{fill:#FF0065;transition:opacity .15s}
+.chart .hit{fill:transparent;cursor:pointer}
+.chart .hit:hover+rect.bar,.chart rect.bar.on{opacity:1}
+.chart.hovering rect.bar{opacity:.45}
+.chart.hovering rect.bar.on{opacity:1}
+.tip{position:fixed;z-index:90;pointer-events:none;background:#FFFFFF;color:#14090F;border-radius:10px;padding:8px 12px;font:600 13px/1.35 var(--t-body);box-shadow:0 8px 24px rgba(0,0,0,.3);transform:translate(-50%,calc(-100% - 12px));display:none;white-space:nowrap}
+.tip b{font:800 15px/1.2 var(--t-display)}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th{text-align:left;font:700 12px/1 var(--t-body);letter-spacing:.08em;text-transform:uppercase;color:var(--apoio);padding:12px 10px;border-bottom:1px solid var(--linha)}
+.table td b{white-space:nowrap}
+.table td{padding:14px 10px;border-bottom:1px solid var(--linha);vertical-align:middle}
+.table tr:last-child td{border-bottom:0}
+.drop{border:2px dashed var(--linha);border-radius:var(--r-card);padding:36px;text-align:center;cursor:pointer;transition:border-color .2s}
+.drop:hover{border-color:var(--destaque)}
+.drop svg{width:32px;height:32px;margin:0 auto 10px;color:var(--destaque)}
+.bar-prog{height:6px;border-radius:3px;background:var(--linha);overflow:hidden}
+.bar-prog i{display:block;height:100%;background:var(--destaque);width:0;transition:width .2s}
+.mini{border-radius:28px;overflow:hidden;border:8px solid #2C2227;background:var(--superficie);max-width:340px;margin:0 auto}
+.dtabs{display:none}
+@media (max-width:1000px){.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){
+  .dash{grid-template-columns:1fr}
+  .side{display:none}
+  .dmain{padding:20px 18px 90px}
+  .dtabs{display:flex;gap:8px;overflow-x:auto;padding:12px 18px;border-bottom:1px solid var(--linha);position:sticky;top:0;z-index:30;background:var(--superficie)}
+  .dtabs::-webkit-scrollbar{display:none}
+  .hide-sm{display:none}
+}
+
+/* ---------- onboarding roxo ---------- */
+.onb{min-height:100vh;display:grid;grid-template-rows:auto 1fr}
+.onb .topo{display:flex;justify-content:space-between;align-items:center;padding:20px 24px}
+.onb .body{width:min(560px,100%);margin:0 auto;padding:20px 24px 60px}
+.pbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:28px}
+.pbar i{height:4px;border-radius:2px;background:var(--linha)}
+.pbar i.on{background:#fff}
+.upl{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.upl button{border:2px dashed var(--linha);border-radius:18px;padding:22px 12px;display:grid;gap:8px;place-items:center;color:var(--titulo);font:700 14px/1.3 var(--t-body)}
+.upl button svg{width:28px;height:28px}
+.upl button.done{border-style:solid;border-color:#fff;background:var(--superficie-2)}
+
+/* ---------- overlays ---------- */
+.ov{position:fixed;inset:0;z-index:70;background:rgba(10,4,8,.72);display:grid;place-items:center;padding:20px;backdrop-filter:blur(8px);animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(520px,100%);max-height:calc(100vh - 40px);overflow:auto;border-radius:24px;padding:28px;position:relative;animation:up .25s cubic-bezier(.2,.9,.3,1)}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+.modal .x{position:absolute;right:14px;top:14px}
+.age{width:min(480px,100%);text-align:center;padding:40px 32px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:95;background:#FFFFFF;color:#14090F;border-radius:999px;padding:12px 20px;font:700 14px/1.2 var(--t-body);box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;gap:8px;align-items:center;animation:up .25s}
+.toast svg{width:18px;height:18px;color:#E0005A}
+body.has-tabs .toast{bottom:90px}
+
+/* ---------- ferramenta do protótipo (fora do produto) ---------- */
+.pt-btn{position:fixed;right:16px;bottom:16px;z-index:100;height:40px;padding:0 14px;border-radius:999px;background:#FFFFFF;color:#14090F;font:700 13px/1 var(--t-body);display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.35);border:1px solid #DEDDDD}
+body.has-tabs .pt-btn{bottom:82px}
+.pt-btn svg{width:16px;height:16px}
+.pt{position:fixed;right:16px;bottom:64px;z-index:100;width:320px;max-height:calc(100vh - 90px);overflow:auto;background:#FFFFFF;color:#14090F;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:16px;font-size:13px;display:none}
+body.has-tabs .pt{bottom:130px;max-height:calc(100vh - 150px)}
+.pt.open{display:block}
+.pt h6{font:700 11px/1 var(--t-body);letter-spacing:.12em;text-transform:uppercase;color:#6B5A62;margin:14px 0 6px}
+.pt h6:first-child{margin-top:0}
+.pt a{display:flex;gap:8px;padding:6px 8px;border-radius:8px;color:#14090F;text-decoration:none;font-weight:600}
+.pt a:hover{background:#FFF6F0}
+.pt a code{font:700 11px/1.6 ui-monospace,Menlo,monospace;color:#6B5A62;min-width:28px}
+.pt .who{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.pt .who button{height:32px;border-radius:8px;background:#F3F1F2;font-weight:700;font-size:12px}
+.pt .who button.on{background:#14090F;color:#fff}
+.pt .tools{display:flex;gap:6px;flex-wrap:wrap}
+.pt .tools button{height:30px;padding:0 10px;border-radius:8px;background:#F3F1F2;font-weight:600;font-size:12px}
+
+.fade-in{animation:fade .25s}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}.mt32{margin-top:32px}.mt48{margin-top:48px}
+.center{text-align:center}
+.hidden{display:none!important}
+</style>
+</head>
+<body data-tema="preto">
+<div id="app"></div>
+<div id="tip" class="tip"></div>
+
+<script>
+/* ============================================================
+   clozzy · protótipo de alta fidelidade (v1, web responsivo)
+   Fonte: README (visão) · docs/functionalities.md (P01–P15)
+          marca/uso-da-marca (temas, papéis, regras)
+   ============================================================ */
+
+const SYM_INNER='<path d="M89.1 53.42A39.25 39.25 0 0 1 10.85 47.19" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><circle cx="16.53" cy="29.49" r="5.75" fill="var(--lg-ring)"/><path d="M29.72 16.39A39.25 39.25 0 0 1 32.86 14.69" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><path d="M51.3 10.77A39.25 39.25 0 0 1 79.63 24.25" fill="none" stroke="var(--lg-ring)" stroke-width="11.5" stroke-linecap="round"/><polygon points="50,32 55.08,43.01 67.12,44.44 58.22,52.67 60.58,64.56 50,58.64 39.42,64.56 41.78,52.67 32.88,44.44 44.92,43.01" fill="var(--lg-star)" stroke="var(--lg-star)" stroke-width="4.39" stroke-linejoin="round"/>';
+const WORD_INNER='<g transform="translate(1173.7 0)"><path d="M271.3 13.0Q196.3 13.0 139.4 -20.2Q82.5 -53.4 50.9 -112.0Q19.4 -170.5 19.4 -245.5Q19.4 -319.7 50.9 -377.9Q82.5 -436.0 139.4 -469.3Q196.3 -502.5 271.3 -502.5Q356.1 -502.5 417.1 -461.7Q478.2 -421.0 504.2 -351.6L358.7 -286.3Q345.7 -313.8 326.0 -329.5Q306.2 -345.3 272.9 -345.3Q234.3 -345.3 207.7 -318.4Q181.1 -291.4 181.1 -245.5Q181.1 -198.8 207.7 -172.2Q234.3 -145.7 272.9 -145.7Q306.2 -145.7 326.0 -161.0Q345.7 -176.4 358.7 -203.1L504.2 -138.6Q478.0 -70.0 416.3 -28.5Q354.5 13.0 271.3 13.0Z" fill="var(--lg-word)"/></g><g transform="translate(1666.7 0)"><path d="M201.2 5.0Q160.6 5.0 125.7 -10.5Q90.8 -26.1 69.3 -60.8Q47.9 -95.5 47.9 -154.2V-681.0H209.4V-211.4Q209.4 -172.8 221.8 -162.5Q234.3 -152.3 255.8 -152.3V1.1Q246.6 3.0 230.1 4.0Q213.6 5.0 201.2 5.0Z" fill="var(--lg-word)"/></g><g transform="translate(1926.7 0)"><path d="M279.0 13.0Q202.4 13.0 143.9 -19.9Q85.5 -53.0 52.6 -111.1Q19.6 -169.2 19.6 -244.1Q19.6 -320.0 52.6 -378.1Q85.5 -436.2 143.9 -469.4Q202.4 -502.5 279.0 -502.5Q356.7 -502.5 415.3 -469.4Q474.0 -436.2 506.7 -378.1Q539.3 -320.0 539.3 -244.1Q539.3 -169.2 506.7 -111.1Q474.0 -53.0 415.3 -19.9Q356.7 13.0 279.0 13.0ZM279.2 -144.9Q321.1 -144.9 348.2 -172.6Q375.3 -200.3 375.3 -245.0Q375.3 -290.2 348.2 -317.8Q321.1 -345.3 279.2 -345.3Q237.9 -345.3 211.1 -317.8Q184.4 -290.3 184.4 -245.4Q184.4 -200.5 211.1 -172.7Q237.9 -144.9 279.2 -144.9Z" fill="var(--lg-word)"/></g><g transform="translate(2468.7 0)"><path d="M451.7 -142.5V0.0H36.4V-125.4L318.4 -422.9L381.3 -347.0H41.7V-489.5H447.7V-364.8L164.7 -65.8L125.1 -142.5Z" fill="var(--lg-word)"/></g><g transform="translate(2938.7 0)"><path d="M451.7 -142.5V0.0H36.4V-125.4L318.4 -422.9L381.3 -347.0H41.7V-489.5H447.7V-364.8L164.7 -65.8L125.1 -142.5Z" fill="var(--lg-word)"/></g><g transform="translate(3408.7 0)"><path d="M204.1 -28.3 6.5 -489.5H169.7L361.4 -41.3ZM107.5 190.0 397.1 -489.5H560.3L270.7 190.0Z" fill="var(--lg-word)"/></g>';
+
+const FOTOS='../marca/aplicacoes-v2/fotos/';
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- ícones (traço 2, linha) ---------- */
+const IC={
+ home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+ lib:'<path d="M4 4v16M9 4v16"/><path d="m14 4.5 5.5 15"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ play:'<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>',
+ check:'<path d="m4.5 12.5 5 5 10-11"/>',
+ copy:'<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',
+ left:'<path d="m15 5-7 7 7 7"/>',right:'<path d="m9 5 7 7-7 7"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ up:'<path d="M12 16V4M6.5 9.5 12 4l5.5 5.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+ star:'<path d="m12 2.8 2.8 6 6.5.8-4.8 4.5 1.2 6.4L12 17.3l-5.7 3.2 1.2-6.4L2.7 9.6l6.5-.8z" fill="currentColor" stroke="none"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ wallet:'<path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="16.5" cy="13.5" r="1.3" fill="currentColor"/>',
+ grid:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+ tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/>',
+ image:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
+ video:'<rect x="3" y="5" width="13" height="14" rx="2.5"/><path d="m16 10 5-3v10l-5-3"/>',
+ pix:'<path d="m12 3 9 9-9 9-9-9z"/><path d="m8.5 12 3.5-3.5 3.5 3.5-3.5 3.5z"/>',
+ menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+ bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+ out:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 8l-4 4 4 4M6 12h10"/>',
+ shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+ eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ ext:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+ pause:'<path d="M8 5v14M16 5v14"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+ camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ id:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2.2"/><path d="M5.5 16c.8-1.6 2-2.4 3.5-2.4s2.7.8 3.5 2.4M15 10h3M15 13h3"/>',
+ layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+ flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+ back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+ bars:'<path d="M5 20V10M12 20V4M19 20v-7"/>'
+};
+const ic=(n,extra='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${IC[n]}</svg>`;
+const logo=(h=28)=>`<span class="logo" data-go="" style="height:${h}px" aria-label="clozzy"><svg viewBox="0 -809.2 3969.11 999.2"><g transform="translate(-52.97 -862.17) scale(10.59)">${SYM_INNER}</g>${WORD_INNER}</svg></span>`;
+const sym=(s=40)=>`<svg class="sym" viewBox="5 5 90 90" width="${s}" height="${s}">${SYM_INNER}</svg>`;
+
+/* ---------- dados de exemplo ---------- */
+const bg=(m)=>`background-image:url(${FOTOS}${m.f}.jpg);background-size:${m.z?m.z+'% auto':'cover'};background-position:${m.x??50}% ${m.y??40}%`;
+function tiles(fotos,n,seed=0,vids=[]){
+  const out=[];
+  for(let i=0;i<n;i++){const k=i+seed;out.push({f:fotos[k%fotos.length],x:(k*37+10)%100,y:(k*53+20)%100,z:110+(k*29)%130,v:vids.includes(i)?['0:48','1:32','2:40','3:05'][k%4]:null})}
+  return out;
+}
+const CRIADORES=[
+ {nick:'laramendes',nome:'Lara Mendes',cat:'Ensaios',f:'costas',x:50,y:30,bio:'Fotos de verão, bastidor e o que não vai pro feed.',membros:'3,2 mil',fotosMix:['costas','cetim','labios']},
+ {nick:'melsantos',nome:'Mel Santos',cat:'Beleza',f:'labios',x:60,y:50,bio:'Batom, luz baixa e close de verdade. Drop toda terça.',membros:'5,8 mil',fotosMix:['labios','cetim']},
+ {nick:'dudaprado',nome:'Duda Prado',cat:'Lingerie',f:'cetim',x:40,y:40,bio:'Tecido, textura e o resto fica entre a gente.',membros:'1,9 mil',fotosMix:['cetim','costas']},
+ {nick:'theovidal',nome:'Theo Vidal',cat:'Fitness',f:'homem',x:50,y:40,bio:'Treino, pós-treino e o que o Instagram não deixa.',membros:'2,4 mil',fotosMix:['homem','cetim']},
+ {nick:'biarocha',nome:'Bia Rocha',cat:'Bastidores',f:'costas',x:30,y:20,z:180,bio:'Criadora desde março. Bastidor de ensaio toda semana.',membros:'980',fotosMix:['costas','labios']},
+ {nick:'ninaalves',nome:'Nina Alves',cat:'Cosplay',f:'labios',x:30,y:30,z:170,bio:'Personagens, maquiagem e versões que só sai aqui.',membros:'4,1 mil',fotosMix:['labios','cetim','costas']}
+];
+const OFERTAS={};
+const OF=(o)=>{OFERTAS[o.id]=o;return o};
+const DEF={
+ laramendes:{close:19.90,packs:[['Pack Verão',12,3,29.90],['Noite de cetim',18,2,39.90],['Sem filtro',9,1,24.90]],itens:[['Banho de luz',0,1,9.90],['Costas, 22h',1,0,4.90]]},
+ melsantos:{close:24.90,packs:[['Batom vermelho',14,2,34.90],['Luz baixa',10,3,29.90]],itens:[['Close de terça',1,0,5.90]]},
+ dudaprado:{close:14.90,packs:[['Drop de sexta',0,3,19.90],['Renda preta',16,1,32.90]],itens:[['Provador',0,1,7.90]]},
+ theovidal:{close:17.90,packs:[['Pós-treino',12,2,24.90],['Camisa aberta',8,1,19.90]],itens:[['Vestiário',1,0,4.90]]},
+ biarocha:{close:12.90,packs:[['Polaroids',20,0,22.90]],itens:[['Bastidor do ensaio',20,0,14.90]]},
+ ninaalves:{close:21.90,packs:[['Personagem 03',15,2,36.90],['Antes do figurino',10,1,27.90]],itens:[['Make em 2 min',0,1,6.90]]}
+};
+CRIADORES.forEach((c,ci)=>{
+  const d=DEF[c.nick];c.ofertas=[];
+  const cl=OF({id:c.nick+'-close',nick:c.nick,tipo:'assinatura',titulo:'Close de '+c.nome.split(' ')[0],preco:d.close,periodo:'mês',fotos:40,videos:8,
+     inclui:['Tudo do canal enquanto ativo','1 pack novo por mês','Drops de sexta, 20h'],media:tiles(c.fotosMix,16,ci*3,[3,7,12]),desc:'Tudo que '+c.nome.split(' ')[0]+' posta no canal, enquanto o close estiver ativo. Cancela quando quiser.'});
+  c.ofertas.push(cl);
+  d.packs.forEach((p,i)=>c.ofertas.push(OF({id:`${c.nick}-p${i}`,nick:c.nick,tipo:'pacote',titulo:p[0],fotos:p[1],videos:p[2],preco:p[3],inclui:[`${p[1]} fotos`,`${p[2]} vídeos`,'Acesso pra sempre na biblioteca'].filter(s=>!s.startsWith('0 ')),media:tiles(c.fotosMix,Math.min(p[1]+p[2],15)||4,ci*5+i*7,Array.from({length:p[2]},(_,k)=>k*3+2)),desc:'Pack fechado: pagou, é seu. Fica na biblioteca sem prazo.'})));
+  d.itens.forEach((p,i)=>c.ofertas.push(OF({id:`${c.nick}-i${i}`,nick:c.nick,tipo:'item',titulo:p[0],fotos:p[1],videos:p[2],preco:p[3],inclui:[p[2]?'1 vídeo':(p[1]>1?p[1]+' fotos':'1 foto'),'Acesso pra sempre'],media:tiles(c.fotosMix,p[2]?1:Math.max(p[1],1),ci*11+i*5,p[2]?[0]:[]),desc:'Item avulso, sem assinatura.'})));
+  c.aPartir=Math.min(...c.ofertas.map(o=>o.preco));
+});
+const CR=n=>CRIADORES.find(c=>c.nick===n);
+const tipoLbl={assinatura:'Close mensal',pacote:'Pack',item:'Item avulso'};
+const resumo=o=>[o.fotos?o.fotos+(o.fotos>1?' fotos':' foto'):'',o.videos?o.videos+(o.videos>1?' vídeos':' vídeo'):''].filter(Boolean).join(' · ');
+
+/* ---------- estado (localStorage) ---------- */
+const KEY='clozzy-proto-v1';
+const SEED=()=>({
+  ageOk:false,
+  user:null, // {nome,email,role:'fan'|'criador',criador:'nao'|'analise'|'ativo'}
+  compras:[
+    {id:'melsantos-close',status:'ativa',data:'12/10/2026',renova:'12/12'},
+    {id:'dudaprado-p0',status:'ativa',data:'31/10/2026'},
+    {id:'biarocha-i0',status:'ativa',data:'05/11/2026'},
+    {id:'theovidal-close',status:'expirada',data:'02/08/2026',renova:'02/10'},
+    {id:'ninaalves-close',status:'cancelada',data:'14/06/2026'}
+  ],
+  painel:{publicado:true,ofertaStatus:{},bio:CRIADORES[0].bio,nome:'Lara Mendes',nick:'laramendes',links:'instagram.com/laramendes',
+    conteudos:null,saldo:2340,liberar:412,saques:[{data:'04/11',valor:500,status:'Pago'},{data:'21/10',valor:820,status:'Pago'}],extras:[]},
+  notif:{compra:true,drops:true,novidades:false}
+});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||SEED()}catch(e){S=SEED()}
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+function initConteudos(){if(S.painel.conteudos)return;
+  const L=CR('laramendes');let n=0;
+  S.painel.conteudos=L.ofertas.flatMap(o=>o.media.slice(0,4).map((m,i)=>({id:'m'+(n++),m,titulo:(m.v?'Vídeo ':'Foto ')+String(n).padStart(2,'0'),tipo:m.v?'vídeo':'foto',vis:n%5===0?'teaser':'pago',ofertas:[o.id]})));
+}initConteudos();
+
+const LOGINS={
+  fan:{nome:'Rafa Lima',email:'rafa@email.com',role:'fan',criador:'nao'},
+  criador:{nome:'Lara Mendes',email:'lara@email.com',role:'criador',criador:'ativo',nick:'laramendes'}
+};
+const temCompra=id=>S.compras.find(c=>c.id===id&&c.status==='ativa');
+
+/* ---------- roteador ---------- */
+let route={},timers=[];
+function go(h){if(('#/'+h)===location.hash)render();else location.hash='#/'+h}
+function parse(){const raw=location.hash.replace(/^#\/?/,'');const [p,q]=raw.split('?');const parts=p.split('/').filter(Boolean);return {parts,q:new URLSearchParams(q||''),raw}}
+const PAGES={};
+function render(){
+  timers.forEach(clearInterval);timers=[];
+  $('.viewer')?.remove();closeModal();
+  route=parse();const [a,b,c]=route.parts;
+  let page;
+  if(!a) page=PAGES.landing();
+  else if(a==='explorar') page=PAGES.explorar();
+  else if(a==='c') page=PAGES.perfil(b);
+  else if(a==='checkout') page=need('fan')||PAGES.checkout(b);
+  else if(a==='liberado') page=need('fan')||PAGES.liberado(b);
+  else if(a==='acesso') page=need('fan')||PAGES.acesso(b);
+  else if(a==='biblioteca') page=need('fan')||PAGES.biblioteca();
+  else if(a==='conta') page=need('fan')||PAGES.conta();
+  else if(a==='entrar'||a==='cadastro'||a==='recuperar'||a==='confirmar') page=PAGES.auth(a);
+  else if(a==='painel') page=need('criador')||PAGES.painel(b||'geral');
+  else if(a==='legal') page=PAGES.legal(b||'termos');
+  else if(a==='abrir-close') page=need('fan')||PAGES.onboarding();
+  else page=PAGES.landing();
+  document.body.dataset.tema=page.tema||'preto';
+  document.body.classList.toggle('has-tabs',!!page.tabs&&!!S.user);
+  $('#app').innerHTML=page.html+protoTool();
+  page.mount&&page.mount();
+  if(S.ageOk) $('#age')?.remove();
+  if(!S.ageOk&&!['legal'].includes(a)&&!page.noAge) ageGate();
+  if(!route.keepScroll) window.scrollTo(0,0);
+}
+function need(role){
+  if(!S.user) return {redirect:true,...PAGES.auth('entrar',route.raw)};
+  if(role==='criador'&&S.user.criador!=='ativo'){setTimeout(()=>go('abrir-close'));return {html:'',tema:'roxo'}}
+  return null;
+}
+window.addEventListener('hashchange',render);
+
+/* ---------- shell ---------- */
+function header(active=''){
+  const u=S.user;
+  const nav=[['explorar','Explorar'],u?['biblioteca','Biblioteca']:null,u&&u.criador==='ativo'?['painel','Painel']:['abrir-close','Para criadores']].filter(Boolean);
+  return `<header class="top" data-tema="preto"><div class="wrap in">
+    ${logo(28)}
+    <nav>${nav.map(([h,l])=>`<a data-go="${h}" class="${active===h?'on':''}">${l}</a>`).join('')}</nav>
+    <div class="right">
+      <button class="iconbtn hide-m" data-go="explorar" aria-label="Buscar">${ic('search')}</button>
+      ${u?`<button class="row" data-go="conta" style="gap:10px"><span class="av ini" style="--s:36px">${u.nome[0]}</span><span class="hide-m" style="font-weight:700;color:var(--titulo)">${u.nome.split(' ')[0]}</span></button>`
+         :`<button class="link hide-m" style="color:var(--titulo);text-decoration:none" data-go="entrar">Entrar</button><button class="btn sm" data-go="cadastro">Criar conta</button>`}
+      <button class="iconbtn burger" data-act="burger" aria-label="Menu">${ic('menu')}</button>
+    </div></div>
+    <div class="mnav" id="mnav">${nav.map(([h,l])=>`<a data-go="${h}">${l}</a>`).join('')}${u?'<a data-go="conta">Conta</a>':'<a data-go="entrar">Entrar</a>'}<a data-go="legal/ajuda">Ajuda</a></div>
+  </header>`;
+}
+function tabbar(active){
+  const u=S.user;if(!u) return '';
+  const t=[['explorar','Explorar','search'],['biblioteca','Biblioteca','lib'],u.criador==='ativo'?['painel','Painel','bars']:null,['conta','Conta','user']].filter(Boolean);
+  return `<nav class="tabbar" data-tema="preto">${t.map(([h,l,i])=>`<a data-go="${h}" class="${active===h?'on':''}">${ic(i)}${l}</a>`).join('')}</nav>`;
+}
+function footer(){
+  return `<footer class="foot" data-tema="preto"><div class="wrap cols">
+    <div class="stack" style="--gap:14px">${logo(30)}<p class="apoio small" style="max-width:34ch">Seu close, seu preço. Pago no Pix, liberado na hora.</p><div class="row"><span class="age18">18+</span><span class="xs apoio">Conteúdo para maiores de 18 anos.</span></div></div>
+    <div><h5>Produto</h5><a data-go="explorar">Explorar</a><a data-go="abrir-close">Para criadores</a><a data-go="legal/ajuda">Como funciona</a></div>
+    <div><h5>Ajuda</h5><a data-go="legal/ajuda">Perguntas</a><a data-go="legal/denuncia">Denunciar conteúdo</a><a data-go="legal/18">Aviso 18+</a></div>
+    <div><h5>Legal</h5><a data-go="legal/termos">Termos de uso</a><a data-go="legal/privacidade">Privacidade</a><a data-go="legal/denuncia">DMCA</a></div>
+  </div><div class="wrap mt48 xs apoio">© 2026 clozzy · no extrato aparece “clozzy”.</div></footer>`;
+}
+const ph=(m,cls='',inner='',st='')=>`<div class="ph ${cls}" style="${bg(m)};${st}">${inner}</div>`;
+const locked=(m,cls='',label='',st='')=>`<div class="ph ${cls}" style="${bg(m)};${st}"><div class="blur"></div><div class="veil"></div><div class="lock"><span class="lockdot">${ic('lock')}</span>${label}</div></div>`;
+const avatar=(c,s=44,ring=false)=>`<span class="av ${ring?'ring':''}" style="--s:${s}px;${bg({f:c.f,x:c.x,y:c.y,z:c.z||220})}"></span>`;
+const selo=(t='exclusivo')=>`<span class="selo">${ic('star')}${t}</span>`;
+
+/* ============================================================
+   P01 — Landing (preto → branco → rosa → preto → roxo → branco → preto)
+   ============================================================ */
+PAGES.landing=()=>{
+  const L=CR('laramendes');
+  return {tema:'preto',html:`${header()}
+  <section class="hero" data-tema="preto"><div class="wrap grid">
+    <div class="stack" style="--gap:24px">
+      ${selo('conteúdo exclusivo')}
+      <h1 class="d1">Seu close,<br><span class="hl">seu preço.</span></h1>
+      <p class="lead">Venda packs, drops e o seu canal pra quem te segue de perto. Pago no Pix, liberado na hora.</p>
+      <div class="row" style="flex-wrap:wrap;gap:12px"><button class="btn lg" data-go="abrir-close">Criar meu close</button><button class="btn lg sec" data-go="explorar">Sou fã, quero entrar</button></div>
+      <div class="row apoio small" style="gap:18px;flex-wrap:wrap"><span class="row" style="gap:6px">${ic('pix','style="width:16px;height:16px;color:var(--destaque)"')}Pix na hora</span><span class="row" style="gap:6px">${ic('shield','style="width:16px;height:16px;color:var(--destaque)"')}Aparece “clozzy” no extrato</span></div>
+    </div>
+    <div class="hero-art">
+      ${ph({f:'costas',x:50,y:30},'a')}
+      ${ph({f:'labios',x:60,y:55},'b')}
+      <div class="hero-card"><div class="row" style="gap:10px">${avatar(L,36,true)}<div><b style="font:800 14px/1.1 var(--t-display)">Lara Mendes</b><div class="xs" style="opacity:.7">Pack Verão · 12 fotos</div></div></div>
+        <div class="between mt12"><span class="price" style="color:#FF0065;font-size:20px">R$ 29,90</span><span class="btn sm" style="height:30px;font-size:12px;padding:0 12px">Desbloquear</span></div></div>
+    </div>
+  </div></section>
+
+  <section class="band" data-tema="branco"><div class="wrap">
+    <p class="kicker">Como funciona</p>
+    <h2 class="d2 mt12">Três passos e tá <span class="hl">no ar.</span></h2>
+    <div class="grid steps mt48">
+      ${[['Sobe o conteúdo','Fotos e vídeos direto do celular. Você escolhe o que é prévia e o que é pago.'],['Define o preço','Close mensal, pack fechado ou item avulso. O preço é seu.'],['Manda o link','No story, na bio, no grupo. Quem paga no Pix vê na hora.']].map((s,i)=>`
+        <div class="card step"><div class="n">${i+1}</div><h3 class="h4 mt16">${s[0]}</h3><p class="apoio mt8">${s[1]}</p></div>`).join('')}
+    </div>
+  </div></section>
+
+  <section class="band" data-tema="rosa" style="padding:72px 0"><div class="wrap between" style="flex-wrap:wrap">
+    <h2 class="d2">Pago no Pix.<br>Liberado na hora.</h2>
+    <div class="stack" style="--gap:12px"><button class="btn lg" data-go="explorar">Explorar criadores</button><p style="font-size:20px">Sem cartão, sem cadastro longo.</p></div>
+  </div></section>
+
+  <section class="band" data-tema="preto"><div class="wrap">
+    <div class="between" style="align-items:flex-end;flex-wrap:wrap"><h2 class="d2">Quem já tá<br>no <span class="hl">close.</span></h2><button class="link" data-go="explorar">Ver todos</button></div>
+    <div class="grid ccards mt32">${CRIADORES.slice(0,4).map(ccard).join('')}</div>
+  </div></section>
+
+  <section class="band" data-tema="roxo"><div class="wrap grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:center;gap:48px">
+    <div class="stack" style="--gap:20px"><p class="kicker">Para criadores</p><h2 class="d2">Você só paga<br>se vender.</h2><p class="lead">Sem mensalidade, sem plano. A taxa sai da venda e o resto cai no seu Pix.</p></div>
+    <div class="card" style="padding:32px">
+      <p class="h4">Taxa por venda</p><p class="num" style="font-size:88px;line-height:1;margin-top:6px">10%</p>
+      <div class="incl mt16" style="font-size:16px">${['R$ 0 de mensalidade','Saque no Pix em 1 dia útil','Você define preço, pack e close'].map(t=>`<div style="border-top:1px solid var(--linha);padding-top:10px">${ic('check')}${t}</div>`).join('')}</div>
+      <button class="btn lg block mt24" data-go="abrir-close">Abrir meu close</button>
+    </div>
+  </div></section>
+
+  <section class="band" data-tema="branco"><div class="wrap narrow">
+    <h2 class="d2">Perguntas rápidas</h2>
+    <div class="faq mt32">${FAQ.slice(0,5).map(faqItem).join('')}</div>
+  </div></section>
+  ${footer()}`};
+};
+const FAQ=[
+ ['Aparece clozzy no extrato?','Sim. No Pix e no extrato aparece só “clozzy”, nunca o nome do criador nem do conteúdo.'],
+ ['Quanto tempo o Pix demora?','Na hora. Assim que o banco confirma, o conteúdo entra na sua biblioteca — normalmente em segundos.'],
+ ['Dá pra comprar sem conta?','Não. A conta guarda o que você comprou e garante o acesso depois. Leva menos de um minuto.'],
+ ['Posso baixar o conteúdo?','O conteúdo é assistido dentro do clozzy, com marca d’água da sua conta. Assim o criador continua vendendo.'],
+ ['Como cancelo um close?','Na Biblioteca, em Assinaturas. O acesso continua até o fim do período já pago.'],
+ ['Pago e não liberou. E agora?','Se o Pix caiu e o conteúdo não apareceu em 10 minutos, fale com a gente em Ajuda com o horário do pagamento.']
+];
+const faqItem=([q,a])=>`<details><summary>${q}<b>+</b></summary><p>${a}</p></details>`;
+function ccard(c){
+  return `<a class="ccard" data-go="c/${c.nick}">
+    <div class="ph" style="${bg({f:c.f,x:c.x,y:c.y,z:c.z})}"><div class="meta"><b>${c.nome}${ic('star')}</b><span>@${c.nick} · ${c.cat}</span></div></div>
+    <div class="row between"><span class="apoio small">a partir de <span class="price" style="font-size:15px">${brl(c.aPartir)}</span></span><span class="apoio xs">${c.membros} no close</span></div></a>`;
+}
+
+/* ============================================================
+   P02 — Explorar
+   ============================================================ */
+let filtro={q:'',cat:'Tudo'};
+PAGES.explorar=()=>{
+  const cats=['Tudo',...new Set(CRIADORES.map(c=>c.cat))];
+  const lista=CRIADORES.filter(c=>(filtro.cat==='Tudo'||c.cat===filtro.cat)&&(c.nome+c.nick).toLowerCase().includes(filtro.q.toLowerCase()));
+  return {tema:'preto',tabs:true,html:`${header('explorar')}
+  <main class="wrap" style="padding-top:40px;padding-bottom:80px">
+    <h1 class="d2">Explorar</h1>
+    <p class="lead mt8">Perfis de quem vende no clozzy. Abre um e vê o que tem no close.</p>
+    <div class="prefix mt24" style="max-width:520px"><span>${ic('search','style="width:20px;height:20px"')}</span><input class="input" id="q" placeholder="Buscar por nome ou @" value="${esc(filtro.q)}" autocomplete="off"></div>
+    <div class="chips mt16">${cats.map(c=>`<button class="chip ${filtro.cat===c?'on':''}" data-act="cat" data-v="${c}">${c}</button>`).join('')}</div>
+    <div class="grid ccards mt32" id="lista">${lista.map(ccard).join('')||`<div class="card center" style="grid-column:1/-1;padding:48px"><p class="h4">Ninguém com “${esc(filtro.q)}”.</p><p class="apoio mt8">Confere o @ ou tenta outro nome.</p></div>`}</div>
+  </main>${footer()}${tabbar('explorar')}`,
+  mount(){const q=$('#q');q.oninput=()=>{filtro.q=q.value;const p=q.selectionStart;route.keepScroll=true;render();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}};
+};
+
+/* ============================================================
+   P03 — Perfil do criador (vitrine)
+   ============================================================ */
+let ptab='ofertas';
+PAGES.perfil=(nick)=>{
+  const c=CR(nick)||CRIADORES[0];
+  const close=c.ofertas.find(o=>o.tipo==='assinatura');
+  const packs=c.ofertas.filter(o=>o.tipo==='pacote'),itens=c.ofertas.filter(o=>o.tipo==='item');
+  const prev=close.media.slice(0,12);
+  const tem=temCompra(close.id);
+  const offerRow=o=>{const own=temCompra(o.id);return `
+    <div class="offer">
+      ${own?ph(o.media[0],'ar-45'):locked(o.media[0],'ar-45')}
+      <div class="stack" style="--gap:8px;min-width:0">
+        <div class="row" style="gap:8px;flex-wrap:wrap"><span class="kicker" style="font-size:11px">${tipoLbl[o.tipo]}</span>${own?'<span class="status ativa"><i></i>é seu</span>':''}</div>
+        <h3 class="h4">${o.titulo}</h3>
+        <p class="apoio small">${resumo(o)}</p>
+        <div class="between mt8" style="flex-wrap:wrap;gap:10px"><span class="price" style="font-size:20px">${brl(o.preco)}</span>
+          ${own?`<button class="btn sm sec" data-go="acesso/${o.id}">Abrir</button>`:`<button class="btn sm" data-go="checkout/${o.id}">Desbloquear</button>`}</div>
+      </div></div>`};
+  return {tema:'preto',tabs:true,html:`${header()}
+  <div class="cover">${ph({f:c.f,x:c.x,y:c.y,z:c.z})}</div>
+  <main class="wrap" style="padding-bottom:80px">
+    <div class="phead">
+      ${avatar(c,132,true)}
+      <div class="stack" style="--gap:8px;padding-bottom:6px">
+        <h1 class="d3 row" style="gap:10px">${c.nome}<span style="color:var(--destaque);width:22px">${ic('star')}</span></h1>
+        <p class="apoio">@${c.nick} · ${c.cat}</p>
+      </div>
+      <div class="row" style="gap:8px;padding-bottom:10px"><button class="iconbtn" data-act="share" title="Copiar link">${ic('ext')}</button></div>
+    </div>
+    <div class="pgrid mt32">
+      <div>
+        <p style="font-size:18px;max-width:60ch;color:var(--titulo)">${c.bio}</p>
+        <div class="row mt16" style="gap:24px"><span><b class="num" style="font-size:20px">${c.ofertas.length+40}</b> <span class="apoio small">posts</span></span><span><b class="num" style="font-size:20px">${packs.length}</b> <span class="apoio small">packs</span></span><span><b class="num" style="font-size:20px">${c.membros}</b> <span class="apoio small">no close</span></span></div>
+        <div class="tabs mt32">${[['ofertas','Ofertas'],['previa','Prévia']].map(([k,l])=>`<button class="${ptab===k?'on':''}" data-act="ptab" data-v="${k}">${l}</button>`).join('')}</div>
+        ${ptab==='ofertas'?`
+          <h2 class="kicker mt32">Packs</h2><div class="grid mt12" style="gap:12px">${packs.map(offerRow).join('')}</div>
+          <h2 class="kicker mt32">Itens avulsos</h2><div class="grid mt12" style="gap:12px">${itens.map(offerRow).join('')}</div>`
+        :`<p class="apoio small mt16">A prévia é o que ${c.nome.split(' ')[0]} liberou de graça. O resto abre com o close.</p>
+          <div class="tgrid mt16">${prev.map((m,i)=>(i%4===0||tem)?ph(m,'',m.v?`<span class="badge">${ic('play')}${m.v}</span>`:''):locked(m)).join('')}</div>`}
+      </div>
+      <aside class="aside">
+        <div class="card" style="padding:24px">
+          <div class="between"><span class="h4">${close.titulo}</span><span class="selo">${ic('star')}mais pedido</span></div>
+          <p class="mt12"><span class="price" style="font-size:36px">${brl(close.preco)}</span> <span class="apoio">/mês</span></p>
+          <div class="incl mt16">${close.inclui.map(t=>`<div>${ic('check')}${t}</div>`).join('')}</div>
+          ${tem?`<button class="btn lg block mt24" data-go="acesso/${close.id}">Abrir meu close</button><p class="center apoio xs mt12">Ativo · renova ${tem.renova||'todo mês'}</p>`
+            :`<button class="btn lg block mt24" data-go="checkout/${close.id}">Entrar no close</button><p class="center apoio xs mt12">Pago no Pix. Cancela quando quiser.</p>`}
+        </div>
+        <p class="xs apoio mt16 center">Conteúdo +18. <a data-go="legal/denuncia">Denunciar perfil</a></p>
+      </aside>
+    </div>
+  </main>${footer()}${tabbar()}`};
+};
+
+/* ============================================================
+   P04 — Checkout Pix
+   ============================================================ */
+let pix={id:null,status:'aguardando',fim:0};
+function qrSVG(seed){
+  let s=0;for(const ch of seed)s=(s*31+ch.charCodeAt(0))>>>0;
+  const rnd=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+  const N=29;let r='';
+  const finder=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" fill="#14090F"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#14090F"/>`;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const inF=(x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);if(!inF&&rnd()>.52)r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`}
+  const cx=(N-7)/2;
+  return `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges"><g fill="#14090F">${r}</g>${finder(0,0)}${finder(N-7,0)}${finder(0,N-7)}<rect x="${cx-.5}" y="${cx-.5}" width="8" height="8" rx="2" fill="#fff"/><g transform="translate(${cx} ${cx}) scale(.0778)"><g style="--lg-ring:#E0005A;--lg-star:#E0005A">${SYM_INNER.replace(/var\(--lg-star\)/g,'#E0005A').replace(/var\(--lg-ring\)/g,'#E0005A')}</g></g></svg>`;
+}
+PAGES.checkout=(id)=>{
+  const o=OFERTAS[id];if(!o)return PAGES.explorar();
+  const c=CR(o.nick);
+  const ja=temCompra(id);
+  if(pix.id!==id||pix.status==='confirmado'){pix={id,status:'aguardando',fim:Date.now()+15*60e3}}
+  const code=`00020126580014br.gov.bcb.pix0136clozzy-${id}-${(o.preco*100)|0}5204000053039865406${o.preco.toFixed(2)}5802BR5906CLOZZY6009SAO PAULO62070503***6304A1F3`;
+  const st=pix.status;
+  return {tema:'preto',html:`${header()}
+  <main class="wrap" style="padding-top:28px;padding-bottom:80px">
+    <button class="row link" style="text-decoration:none;color:var(--titulo);gap:6px" data-go="c/${c.nick}">${ic('left','style="width:20px;height:20px"')}Voltar pro perfil</button>
+    <h1 class="d2 mt16">Pagar com Pix</h1>
+    <div class="co mt32">
+      <div class="stack" style="--gap:16px">
+        <div class="card row" style="gap:16px;padding:16px">
+          ${locked(o.media[0],'','','width:88px;height:110px;flex:none')}
+          <div class="stack" style="--gap:6px;flex:1;min-width:0">
+            <span class="kicker" style="font-size:11px">${tipoLbl[o.tipo]}</span>
+            <h2 class="h4">${o.titulo}</h2>
+            <p class="apoio small">${c.nome} · ${resumo(o)}</p>
+          </div>
+          <span class="price" style="font-size:24px">${brl(o.preco)}${o.tipo==='assinatura'?'<span class="apoio small" style="font-weight:500">/mês</span>':''}</span>
+        </div>
+        <div class="card line"><p class="lbl">O que entra</p><div class="incl mt12">${o.inclui.map(t=>`<div>${ic('check')}${t}</div>`).join('')}</div>
+          <p class="apoio small mt16">${o.desc}</p></div>
+        <div class="card line"><div class="between small"><span class="apoio">Subtotal</span><span>${brl(o.preco)}</span></div>
+          <div class="between small mt8"><span class="apoio">Taxa</span><span>R$ 0,00</span></div>
+          <hr class="hr mt12"><div class="between mt12"><b class="h4">Total</b><span class="price" style="font-size:22px">${brl(o.preco)}</span></div></div>
+        <p class="row apoio xs" style="gap:8px">${ic('shield','style="width:16px;height:16px"')}Pagamento protegido · no extrato aparece “clozzy”.</p>
+      </div>
+      <div class="card" style="padding:28px">
+      ${ja?`<div class="center stack" style="--gap:14px"><span class="status ativa" style="justify-content:center"><i></i>Você já tem isso</span><h3 class="d3">Tá na sua biblioteca.</h3><p class="apoio">Não precisa pagar de novo.</p><button class="btn lg block" data-go="acesso/${id}">Abrir</button></div>`
+      : st==='expirado'||st==='falhou'?`<div class="center stack" style="--gap:14px"><h3 class="d3">${st==='expirado'?'O Pix expirou.':'Não deu certo.'}</h3><p class="apoio">${st==='expirado'?'Passaram 15 minutos sem pagamento. Gera outro, é rapidinho.':'O banco recusou a transação. Nada foi cobrado.'}</p><button class="btn lg block" data-act="novoPix">Gerar novo Pix</button></div>`
+      :`<div class="center stack" style="--gap:16px">
+          <div class="between"><span class="status pend"><i></i>Aguardando pagamento</span><span class="timer">${ic('clock')}<span id="tmr">15:00</span></span></div>
+          <div class="qr">${qrSVG(id)}</div>
+          <p class="apoio small">Abre o app do banco, escolhe Pix e aponta pro QR — ou copia o código.</p>
+          <div class="code">${code.slice(0,72)}…</div>
+          <button class="btn lg block" data-act="copiar" data-v="${code}">${ic('copy')}Copiar código Pix</button>
+          <p class="apoio xs">Liberado na hora, assim que o Pix cair. Esta tela atualiza sozinha.</p>
+          <div class="simbar"><span class="xs apoio" style="width:100%;text-align:left">Simular retorno do banco (protótipo):</span><button class="btn sm sec" data-act="pix" data-v="confirmado">Pix pago</button><button class="btn sm sec" data-act="pix" data-v="expirado">Expirar</button><button class="btn sm sec" data-act="pix" data-v="falhou">Falhar</button></div>
+        </div>`}
+      </div>
+    </div>
+  </main>`,
+  mount(){const t=$('#tmr');if(!t)return;const tick=()=>{const r=Math.max(0,pix.fim-Date.now());t.textContent=`${String(Math.floor(r/60e3)).padStart(2,'0')}:${String(Math.floor(r/1e3)%60).padStart(2,'0')}`;if(!r){pix.status='expirado';render()}};tick();timers.push(setInterval(tick,1000))}};
+};
+
+/* momento rosa: pagamento aprovado */
+PAGES.liberado=(id)=>{
+  const o=OFERTAS[id];const c=CR(o.nick);
+  return {tema:'rosa',noAge:true,html:`<div class="moment" data-tema="rosa">
+    <div>${logo(30)}</div>
+    <div class="mid"><div class="ok">${ic('check')}</div><h1 class="d1">Liberado.</h1><p>O Pix caiu. ${o.tipo==='assinatura'?'Você tá no close de '+c.nome.split(' ')[0]:'“'+o.titulo+'” já tá'} na sua biblioteca.</p></div>
+    <div class="acts"><button class="btn lg block" data-go="acesso/${id}">Ver agora</button><button class="btn lg block sec" data-go="c/${c.nick}">Voltar pro perfil</button></div>
+  </div>`};
+};
+
+/* ============================================================
+   P05 — Acesso ao conteúdo
+   ============================================================ */
+PAGES.acesso=(id)=>{
+  const o=OFERTAS[id];if(!o)return PAGES.biblioteca();
+  const c=CR(o.nick);const comp=S.compras.find(x=>x.id===id);
+  if(!comp||comp.status!=='ativa') return {tema:'preto',tabs:true,html:`${header('biblioteca')}<main class="wrap narrow center" style="padding:96px 24px"><span class="lockdot" style="width:64px;height:64px">${ic('lock')}</span><h1 class="d3 mt24">${comp&&comp.status==='expirada'?'Esse close expirou.':'Ainda não é seu.'}</h1><p class="apoio mt12">${comp?'Renova pra voltar a ver tudo do canal.':'Esse conteúdo libera depois que o Pix cair.'}</p><button class="btn lg mt24" data-go="checkout/${id}">${comp?'Renovar · '+brl(o.preco):'Desbloquear · '+brl(o.preco)}</button></main>${tabbar('biblioteca')}`};
+  return {tema:'preto',tabs:true,html:`${header('biblioteca')}
+  <main class="wrap" style="padding-top:28px;padding-bottom:80px">
+    <button class="row link" style="text-decoration:none;color:var(--titulo);gap:6px" data-go="biblioteca">${ic('left','style="width:20px;height:20px"')}Biblioteca</button>
+    <div class="between mt16" style="flex-wrap:wrap;align-items:flex-end">
+      <div class="stack" style="--gap:10px"><div class="row" style="gap:10px">${avatar(c,32)}<a data-go="c/${c.nick}" style="color:var(--titulo);text-decoration:none;font-weight:700">${c.nome}</a>${selo(tipoLbl[o.tipo].toLowerCase())}</div>
+        <h1 class="d2">${o.titulo}</h1><p class="apoio">${resumo(o)} · comprado em ${comp.data}${o.tipo==='assinatura'?' · renova '+(comp.renova||'12/12'):''}</p></div>
+      <div class="status ativa"><i></i>${o.tipo==='assinatura'?'Assinatura ativa':'É seu, sem prazo'}</div>
+    </div>
+    <div class="mgrid mt32">${o.media.map((m,i)=>ph(m,'',m.v?`<span class="badge">${ic('play')}${m.v}</span>`:'').replace('class="ph "',`class="ph " data-act="ver" data-i="${i}"`)).join('')}</div>
+    <p class="row apoio xs mt24" style="gap:8px">${ic('shield','style="width:16px;height:16px"')}Assiste aqui dentro. Cada mídia leva a marca d’água da sua conta.</p>
+  </main>${tabbar('biblioteca')}`,
+  mount(){window._viewer=o}};
+};
+function viewer(o,i){
+  const n=o.media.length;const m=o.media[i];const who='@'+(S.user?.nome||'fã').split(' ')[0].toLowerCase()+' · clozzy';
+  const el=document.createElement('div');el.className='viewer';el.dataset.tema='preto';
+  el.innerHTML=`<div class="bar"><span class="small" style="font-weight:700">${o.titulo} <span style="opacity:.6;font-weight:500">· ${i+1} de ${n}</span></span><button class="iconbtn" style="color:#fff" data-act="fechaViewer">${ic('x')}</button></div>
+   <div class="stage"><div class="img" style="${bg(m)}"><div class="wm">${Array(40).fill(`<span>${who}</span>`).join('')}</div>${m.v?`<div class="play"><span>${ic('play')}</span></div><div class="prog"><i id="vprog"></i></div>`:''}</div>
+    <button class="nav prev" data-act="nav" data-v="${(i-1+n)%n}">${ic('left')}</button><button class="nav next" data-act="nav" data-v="${(i+1)%n}">${ic('right')}</button></div>
+   <div class="foot2">${m.v?'Vídeo '+m.v+' · só streaming':'Foto'} · sem download</div>`;
+  $('.viewer')?.remove();document.body.appendChild(el);
+  if(m.v){let p=0;const t=setInterval(()=>{p=Math.min(100,p+2);const b=$('#vprog');if(!b)return clearInterval(t);b.style.width=p+'%'},200)}
+}
+document.addEventListener('keydown',e=>{const v=$('.viewer');if(!v)return;if(e.key==='Escape')v.remove();if(e.key==='ArrowRight')$('.viewer .next')?.click();if(e.key==='ArrowLeft')$('.viewer .prev')?.click()});
+
+/* ============================================================
+   P06 — Biblioteca
+   ============================================================ */
+let btab='tudo';
+PAGES.biblioteca=()=>{
+  const map={tudo:null,assinaturas:'assinatura',pacotes:'pacote',itens:'item'};
+  const rows=S.compras.filter(x=>OFERTAS[x.id]&&(!map[btab]||OFERTAS[x.id].tipo===map[btab]));
+  const stl={ativa:'Ativa',expirada:'Expirada',cancelada:'Cancelada'};
+  return {tema:'preto',tabs:true,html:`${header('biblioteca')}
+  <main class="wrap narrow" style="padding-top:40px;padding-bottom:80px">
+    <h1 class="d2">Biblioteca</h1><p class="lead mt8">Tudo que você comprou, num lugar só.</p>
+    <div class="chips mt24">${[['tudo','Tudo'],['assinaturas','Assinaturas'],['pacotes','Pacotes'],['itens','Itens']].map(([k,l])=>`<button class="chip ${btab===k?'on':''}" data-act="btab" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="mt16">${rows.length?rows.map(x=>{const o=OFERTAS[x.id],c=CR(o.nick);const ativa=x.status==='ativa';
+      return `<div class="lib-row">
+        ${ativa?ph(o.media[0]):locked(o.media[0])}
+        <div style="min-width:0"><div class="row" style="gap:8px;flex-wrap:wrap"><b class="h4" style="font-size:18px">${o.titulo}</b>${x.data==='hoje'?selo('novo'):''}</div>
+          <p class="apoio small">${c.nome} · ${tipoLbl[o.tipo]}${o.tipo==='assinatura'&&ativa?' · renova '+(x.renova||'12/12'):''}</p>
+          <span class="status ${ativa?'ativa':''} mt8">${'<i></i>'+stl[x.status]}</span></div>
+        <div class="row" style="gap:8px">${ativa?`<button class="btn sm" data-go="acesso/${o.id}">Abrir</button>${o.tipo==='assinatura'?`<button class="iconbtn hide-sm" title="Cancelar" data-act="cancelar" data-v="${o.id}">${ic('x')}</button>`:''}`
+          :`<button class="btn sm sec" data-go="checkout/${o.id}">${x.status==='cancelada'?'Assinar de novo':'Renovar'}</button>`}</div>
+      </div>`}).join(''):`<div class="card center mt16" style="padding:48px"><p class="h4">Nada aqui ainda.</p><p class="apoio mt8">O que você comprar aparece nesta lista.</p><button class="btn mt24" data-go="explorar">Explorar criadores</button></div>`}</div>
+  </main>${tabbar('biblioteca')}`};
+};
+
+/* ============================================================
+   P07 — Conta (tema branco: leitura e formulário)
+   ============================================================ */
+PAGES.conta=()=>{
+  const u=S.user;
+  return {tema:'branco',tabs:true,html:`${header()}
+  <main data-tema="branco" style="padding:40px 0 80px"><div class="wrap narrow">
+    <h1 class="d2">Conta</h1>
+    <div class="card mt32 row" style="gap:18px;flex-wrap:wrap"><span class="av ini" style="--s:72px;background:#14090F">${u.nome[0]}</span>
+      <div style="flex:1"><b class="h4">${u.nome}</b><p class="apoio small">${u.email} · ${u.role==='criador'?'criadora':'fã'}</p></div><button class="btn sm sec" data-act="toast" data-v="Foto atualizada">${ic('camera')}Trocar foto</button></div>
+    <form class="stack mt32" style="--gap:18px" data-form="conta">
+      <h2 class="h4">Dados</h2>
+      <div class="field"><label>Nome</label><input class="input" value="${u.nome}"></div>
+      <div class="field"><label>E-mail</label><input class="input" type="email" value="${u.email}"></div>
+      <button class="btn" style="justify-self:start">Salvar</button>
+    </form>
+    <hr class="hr mt32">
+    <form class="stack mt32" style="--gap:18px" data-form="senha">
+      <h2 class="h4">Senha</h2>
+      <div class="field"><label>Senha atual</label><input class="input" type="password" value="••••••••"></div>
+      <div class="field"><label>Nova senha</label><input class="input" type="password" placeholder="mínimo 8 caracteres" minlength="8" required></div>
+      <button class="btn sec" style="justify-self:start">Alterar senha</button>
+    </form>
+    <hr class="hr mt32">
+    <h2 class="h4 mt32">Notificações por e-mail</h2>
+    <div class="mt16">${[['compra','Compra confirmada e acesso liberado'],['drops','Drops novos de quem você assina'],['novidades','Novidades do clozzy']].map(([k,l])=>`
+      <label class="between" style="padding:14px 0;border-bottom:1px solid var(--linha);cursor:pointer"><span>${l}</span><span class="switch"><input type="checkbox" data-act="notif" data-v="${k}" ${S.notif[k]?'checked':''}><span></span></span></label>`).join('')}</div>
+    ${u.criador!=='ativo'?`<div class="card mt32 between" style="flex-wrap:wrap"><div><b class="h4">Quero vender no clozzy</b><p class="apoio small mt8">Abre seu close em 4 passos. Você só paga se vender.</p></div><button class="btn" data-go="abrir-close">${u.criador==='analise'?'Ver status':'Abrir meu close'}</button></div>`
+     :`<div class="card mt32 between"><div><b class="h4">Painel de criadora</b><p class="apoio small mt8">Conta ativa · @${S.painel.nick}</p></div><button class="btn" data-go="painel">Abrir painel</button></div>`}
+    <div class="row mt32" style="gap:12px;flex-wrap:wrap"><button class="btn sec" data-act="sair">${ic('out')}Sair</button><button class="link" data-go="legal/privacidade">Privacidade e dados</button></div>
+  </div></main>${footer()}${tabbar('conta')}`};
+};
+
+/* ============================================================
+   P08 — Login / cadastro / recuperação / confirmação
+   ============================================================ */
+PAGES.auth=(modo,next)=>{
+  next=next||route.q.get('next')||'';
+  const art=`<div class="art">${ph({f:modo==='cadastro'?'labios':'costas',x:50,y:35})}<div class="txt">${logo(32)}<h2 class="d2 mt24" style="color:#fff">${modo==='cadastro'?'Chega mais<br><span style="color:#FF0065">perto.</span>':'Só quem entra,<br><span style="color:#FF0065">vê.</span>'}</h2></div></div>`;
+  const nx=next?`<input type="hidden" name="next" value="${esc(next)}">`:'';
+  const forms={
+   entrar:`<h1 class="d2">Entrar</h1><p class="apoio mt8">${next?'Entra pra continuar a compra.':'Bom te ver de novo.'}</p>
+     <form class="stack mt32" style="--gap:16px" data-form="entrar">${nx}
+       <div class="field"><label>E-mail</label><input class="input" name="email" type="email" required placeholder="voce@email.com" value="rafa@email.com"></div>
+       <div class="field"><div class="between"><label>Senha</label><a class="small" data-go="recuperar">Esqueci a senha</a></div><input class="input" type="password" required value="12345678"></div>
+       <button class="btn lg block mt8">Entrar</button>
+       <p class="center apoio small">Não tem conta? <a data-go="cadastro${next?'?next='+encodeURIComponent(next):''}">Criar conta</a></p></form>`,
+   cadastro:`<h1 class="d2">Criar conta</h1><p class="apoio mt8">Menos de um minuto. A conta guarda tudo que você comprar.</p>
+     <form class="stack mt32" style="--gap:16px" data-form="cadastro">${nx}
+       <div class="field"><label>Nome</label><input class="input" name="nome" required placeholder="Como te chamam" value=""></div>
+       <div class="field"><label>E-mail</label><input class="input" name="email" type="email" required placeholder="voce@email.com"></div>
+       <div class="field"><label>Senha</label><input class="input" type="password" required minlength="8" placeholder="mínimo 8 caracteres"></div>
+       <div class="field"><label>Data de nascimento</label><input class="input" name="nasc" type="date" required max="2008-11-11"><span class="hint">Só maiores de 18 anos.</span></div>
+       <label class="check"><input type="checkbox" required>Tenho 18 anos ou mais e aceito os <a data-go="legal/termos">Termos</a> e a <a data-go="legal/privacidade">Privacidade</a>.</label>
+       <button class="btn lg block mt8">Criar conta</button>
+       <p class="center apoio small">Já tem conta? <a data-go="entrar">Entrar</a></p></form>`,
+   recuperar:`<h1 class="d2">Esqueceu?</h1><p class="apoio mt8">Manda o e-mail da conta que a gente envia um link pra criar outra senha.</p>
+     <form class="stack mt32" style="--gap:16px" data-form="recuperar"><div class="field"><label>E-mail</label><input class="input" type="email" required placeholder="voce@email.com"></div>
+       <button class="btn lg block">Enviar link</button><p class="center small"><a data-go="entrar">Voltar pra entrar</a></p></form>`,
+   confirmar:`<span class="lockdot" style="width:64px;height:64px;background:var(--superficie-2)">${ic('check','style="width:28px;height:28px;color:var(--destaque)"')}</span>
+     <h1 class="d2 mt24">Confere seu e-mail.</h1><p class="apoio mt12">Mandamos um link pra <b style="color:var(--titulo)">${esc(route.q.get('e')||'seu e-mail')}</b>. Clica nele pra ativar a conta.</p>
+     <button class="btn lg block mt32" data-act="confirmou" data-v="${esc(next)}">Já confirmei</button><p class="center apoio small mt16">Não chegou? <a data-act="toast" data-v="Link reenviado">Reenviar</a></p>`
+  };
+  return {tema:'preto',noAge:false,html:`<div class="auth">${art}<div class="form"><div class="row" style="margin-bottom:24px"><button class="row link" style="text-decoration:none;color:var(--apoio);gap:6px" data-go="">${ic('left','style="width:18px;height:18px"')}Início</button></div>${forms[modo]}</div></div>`};
+};
+
+/* ============================================================
+   P09–P13 — Painel do criador
+   ============================================================ */
+const VENDAS=[182,240,96,310,288,420,512,198,260,344,402,286,476,588];
+function dash(sec,tema,body){
+  const items=[['geral','Visão geral','grid'],['perfil','Perfil público','user'],['ofertas','Ofertas','tag'],['conteudos','Conteúdos','layers'],['financeiro','Financeiro','wallet']];
+  return {tema,html:`<div class="dash">
+    <aside class="side" data-tema="preto">
+      <div style="padding:6px 10px 22px">${logo(26)}</div>
+      ${items.map(([k,l,i])=>`<a data-go="painel${k==='geral'?'':'/'+k}" class="${sec===k?'on':''}">${ic(i)}${l}</a>`).join('')}
+      <div style="margin-top:auto" class="stack">
+        <a data-go="c/${S.painel.nick}">${ic('eye')}Ver minha página</a>
+        <a data-go="conta">${ic('user')}Conta</a>
+        <div class="row" style="padding:12px 10px;gap:10px;border-top:1px solid var(--linha);margin-top:8px">${avatar(CR('laramendes'),36)}<div><b class="small" style="color:var(--titulo)">${S.painel.nome}</b><div class="status ativa xs"><i></i>conta ativa</div></div></div>
+      </div>
+    </aside>
+    <div style="min-width:0" data-tema="${tema}">
+      <nav class="dtabs" data-tema="${tema}"><button class="chip" data-go="">${ic('left','style="width:16px;height:16px;display:inline"')}</button>${items.map(([k,l])=>`<button class="chip ${sec===k?'on':''}" data-go="painel${k==='geral'?'':'/'+k}">${l}</button>`).join('')}</nav>
+      <main class="dmain">${body}</main>
+    </div></div>`};
+}
+PAGES.painel=(sec)=>{
+  initConteudos();
+  const P=S.painel;const L=CR('laramendes');
+  if(sec==='geral'){
+    const max=Math.max(...VENDAS),W=700,H=220,bw=W/VENDAS.length;
+    const bars=VENDAS.map((v,i)=>{const h=v/max*(H-30),x=i*bw+2,y=H-h;const dia=new Date(2026,9,29+i).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+      return `<g><rect class="hit" x="${i*bw}" y="0" width="${bw}" height="${H}" data-tip="<b>${brl(v)}</b><br>${dia} · ${Math.round(v/22)} vendas"/><rect class="bar" x="${x}" y="${y}" width="${bw-4}" height="${h}" rx="4"/>${i%2===0?`<text x="${x+(bw-4)/2}" y="${H+18}" text-anchor="middle" font-size="11" fill="var(--apoio)">${dia}</text>`:''}</g>`}).join('');
+    return dash('geral','preto',`
+      <div class="dhead"><div><p class="kicker">Painel</p><h1 class="d2 mt8">Oi, ${P.nome.split(' ')[0]}.</h1></div><div class="row" style="gap:10px"><button class="btn sec" data-go="c/${P.nick}">${ic('eye')}Ver página</button><button class="btn" data-go="painel/ofertas?nova=1">${ic('plus')}Nova oferta</button></div></div>
+      <div class="grid kpis">
+        ${[['Vendas em novembro',brl(4812.3),'<b>+18%</b> vs. outubro'],['No close',L.membros,'<b>+126</b> esta semana'],['Saldo disponível',brl(P.saldo),brl(P.liberar)+' a liberar'],['Ofertas ativas',String(L.ofertas.length-Object.values(P.ofertaStatus).filter(s=>s==='pausada').length),'1 close · '+(L.ofertas.length-1)+' packs e itens']].map(([k,v,d])=>`
+        <div class="card kpi"><p class="apoio small">${k}</p><p class="num">${v}</p><p class="d">${d}</p></div>`).join('')}
+      </div>
+      <div class="grid mt24" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+        <div class="card"><div class="between"><h2 class="h4">Vendas por dia · últimos 14 dias</h2><span class="apoio xs">R$</span></div>
+          <div class="chart mt24" id="chart"><svg viewBox="0 0 ${W} ${H+24}" preserveAspectRatio="none">${[.25,.5,.75,1].map(f=>`<line x1="0" x2="${W}" y1="${H-f*(H-30)}" y2="${H-f*(H-30)}" stroke="var(--linha)" stroke-width="1"/>`).join('')}${bars}<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--linha)"/></svg></div>
+          <details class="mt16 small apoio"><summary style="cursor:pointer">Ver em tabela</summary><table class="table mt8"><tr><th>Dia</th><th>Vendas (R$)</th></tr>${VENDAS.map((v,i)=>`<tr><td>${new Date(2026,9,29+i).toLocaleDateString('pt-BR')}</td><td>${brl(v)}</td></tr>`).join('')}</table></details></div>
+        <div class="card"><div class="between"><h2 class="h4">Vendas recentes</h2><button class="link small" data-go="painel/financeiro">Extrato</button></div>
+          <div class="mt16">${[['Rafa L.','Pack Verão',29.9,'agora'],['@joao.m','Close de Lara',19.9,'12 min'],['@dani','Noite de cetim',39.9,'1 h'],['@bru','Banho de luz',9.9,'3 h'],['@tiago','Close de Lara',19.9,'5 h']].map(([w,o,v,t])=>`
+            <div class="between" style="padding:12px 0;border-bottom:1px solid var(--linha)"><div class="row"><span class="av ini" style="--s:34px">${w.replace(/[@ ]/g,'')[0].toUpperCase()}</span><div><b class="small" style="color:var(--titulo)">${o}</b><div class="apoio xs">${w} · ${t}</div></div></div><span class="price small" style="font-size:15px">+ ${brl(v)}</span></div>`).join('')}</div></div>
+      </div>
+      <h2 class="kicker mt48">Atalhos</h2>
+      <div class="grid mt12" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">${[['perfil','Editar perfil','user'],['ofertas','Preços e packs','tag'],['conteudos','Subir conteúdo','up'],['financeiro','Sacar no Pix','pix']].map(([k,l,i])=>`<button class="card line row" style="text-align:left" data-go="painel/${k}">${ic(i,'style="width:22px;height:22px;color:var(--destaque)"')}<b style="color:var(--titulo)">${l}</b></button>`).join('')}</div>`);
+  }
+  if(sec==='perfil'){
+    return {...dash('perfil','preto',`
+      <div class="dhead"><div><p class="kicker">Painel</p><h1 class="d2 mt8">Perfil público</h1></div><label class="row" style="gap:10px;cursor:pointer"><span class="small">${P.publicado?'Publicado':'Despublicado'}</span><span class="switch"><input type="checkbox" data-act="publicar" ${P.publicado?'checked':''}><span></span></span></label></div>
+      <div class="grid" style="grid-template-columns:minmax(0,1fr) 360px;gap:40px" id="pp">
+        <form class="stack" style="--gap:18px" data-form="perfil">
+          <div class="row" style="gap:16px">${avatar(L,88,true)}<div class="stack" style="--gap:8px"><button type="button" class="btn sm sec" data-act="toast" data-v="Foto atualizada">${ic('camera')}Trocar foto</button><button type="button" class="btn sm sec" data-act="toast" data-v="Capa atualizada">${ic('image')}Trocar capa</button></div></div>
+          <div class="field"><label>Nome</label><input class="input" name="nome" value="${esc(P.nome)}" data-live></div>
+          <div class="field"><label>@ do seu close</label><div class="prefix" style="--pl:118px"><span>clozzy.com/</span><input class="input" name="nick" value="${esc(P.nick)}" data-live></div></div>
+          <div class="field"><label>Bio</label><textarea class="input" name="bio" maxlength="140" data-live>${esc(P.bio)}</textarea><span class="hint"><span id="bioc">${P.bio.length}</span>/140 · uma frase sobre o que tem no close.</span></div>
+          <div class="field"><label>Links</label><input class="input" name="links" value="${esc(P.links)}"><span class="hint">Aparecem no perfil. Sem link de outras plataformas de venda.</span></div>
+          <button class="btn lg" style="justify-self:start">Salvar perfil</button>
+        </form>
+        <div class="hide-sm"><p class="lbl center">Como o fã vê</p>
+          <div class="mini mt12" data-tema="preto"><div style="height:110px;position:relative">${ph({f:L.f,x:L.x,y:L.y},'','','position:absolute;inset:0;border-radius:0')}</div>
+            <div style="padding:0 18px 22px;margin-top:-34px;position:relative">${avatar(L,68,true)}<h3 class="h4 mt12" id="pv-nome">${esc(P.nome)}</h3><p class="apoio xs" id="pv-nick">@${esc(P.nick)}</p><p class="small mt8" id="pv-bio" style="color:var(--titulo)">${esc(P.bio)}</p>
+            <button class="btn block mt16">Entrar no close · ${brl(19.9)}</button>
+            <div class="tgrid mt16">${L.ofertas[0].media.slice(0,6).map((m,i)=>i%3===0?ph(m):locked(m)).join('')}</div></div></div></div>
+      </div>`),mount(){$$('[data-live]').forEach(i=>i.oninput=()=>{const k=i.name;const el=$('#pv-'+k);if(el)el.textContent=(k==='nick'?'@':'')+i.value;if(k==='bio')$('#bioc').textContent=i.value.length})}};
+  }
+  if(sec==='ofertas'){
+    const st=id=>P.ofertaStatus[id]||'ativa';
+    const all=L.ofertas;
+    const sect=(t,tipo)=>`<h2 class="kicker mt32">${t}</h2><div class="card mt12" style="padding:6px 20px;overflow-x:auto"><table class="table">
+      <tr><th>Oferta</th><th class="hide-sm">Inclui</th><th>Preço</th><th>Status</th><th></th></tr>
+      ${all.filter(o=>o.tipo===tipo).map(o=>`<tr><td><div class="row">${ph(o.media[0],'','','width:44px;height:44px;border-radius:10px;flex:none')}<b style="color:var(--titulo)">${o.titulo}</b></div></td><td class="hide-sm apoio">${resumo(o)}</td><td><span class="price">${brl(o.preco)}</span>${tipo==='assinatura'?'<span class="apoio xs">/mês</span>':''}</td>
+        <td><span class="status ${st(o.id)==='ativa'?'ativa':''}"><i></i>${st(o.id)==='ativa'?'Ativa':'Pausada'}</span></td>
+        <td style="text-align:right;white-space:nowrap"><button class="iconbtn" style="display:inline-grid" title="${st(o.id)==='ativa'?'Pausar':'Ativar'}" data-act="pausar" data-v="${o.id}">${ic(st(o.id)==='ativa'?'pause':'play')}</button><button class="iconbtn" style="display:inline-grid" title="Editar" data-act="novaOferta" data-v="${o.id}">${ic('edit')}</button></td></tr>`).join('')}</table></div>`;
+    return {...dash('ofertas','preto',`
+      <div class="dhead"><div><p class="kicker">Painel</p><h1 class="d2 mt8">Ofertas</h1><p class="apoio mt8">O que tá à venda no seu perfil. Um close, quantos packs e itens quiser.</p></div><button class="btn" data-act="novaOferta">${ic('plus')}Nova oferta</button></div>
+      ${sect('Close mensal (assinatura)','assinatura')}${sect('Packs','pacote')}${sect('Itens avulsos','item')}`),
+      mount(){if(route.q.get('nova'))modalOferta()}};
+  }
+  if(sec==='conteudos'){
+    const C=P.conteudos;
+    return {...dash('conteudos','preto',`
+      <div class="dhead"><div><p class="kicker">Painel</p><h1 class="d2 mt8">Conteúdos</h1><p class="apoio mt8">${C.length} mídias · prévia aparece de graça no perfil, pago só abre com compra.</p></div></div>
+      <div class="drop" data-act="upload">${ic('up')}<b class="h4">Arrasta fotos e vídeos aqui</b><p class="apoio small mt8">ou clica pra escolher · JPG, PNG, MP4 até 2 GB · marca d’água automática</p><div class="bar-prog mt16 hidden" id="up"><i></i></div></div>
+      <div class="between mt32"><div class="chips"><span class="chip on">Tudo</span><span class="chip">Fotos</span><span class="chip">Vídeos</span><span class="chip">Prévia</span></div></div>
+      <div class="card mt16" style="padding:6px 20px;overflow-x:auto"><table class="table">
+        <tr><th>Mídia</th><th class="hide-sm">Oferta</th><th>Visibilidade</th><th></th></tr>
+        ${C.map(x=>`<tr><td><div class="row">${ph(x.m,'',x.m.v?`<span class="badge" style="left:4px;bottom:4px;padding:3px 5px">${ic('play')}</span>`:'','width:52px;height:52px;border-radius:10px;flex:none')}<div><b style="color:var(--titulo)">${x.titulo}</b><div class="apoio xs">${x.tipo}${x.m.v?' · '+x.m.v:''}</div></div></div></td>
+          <td class="hide-sm">${x.ofertas.map(id=>`<span class="chip" style="height:26px;line-height:26px;font-size:12px;display:inline-block">${OFERTAS[id]?.titulo||'—'}</span>`).join(' ')}</td>
+          <td><div class="seg"><button class="${x.vis==='teaser'?'on':''}" data-act="vis" data-v="${x.id}|teaser">Prévia</button><button class="${x.vis==='pago'?'on':''}" data-act="vis" data-v="${x.id}|pago">Pago</button></div></td>
+          <td style="text-align:right"><button class="iconbtn" style="display:inline-grid" title="Arquivar" data-act="arquivar" data-v="${x.id}">${ic('trash')}</button></td></tr>`).join('')}
+      </table></div>`)};
+  }
+  if(sec!=='financeiro') return PAGES.painel('geral');
+  {
+    const ext=[['Venda · Pack Verão','hoje 14:02',29.9],['Taxa clozzy 10%','hoje 14:02',-2.99],['Close · Rafa L.','hoje 11:40',19.9],['Taxa clozzy 10%','hoje 11:40',-1.99],...P.saques.map(s=>['Saque Pix · '+s.status,s.data,-s.valor]),['Venda · Noite de cetim','03/11',39.9]];
+    return dash('financeiro','branco',`
+      <div class="dhead"><div><p class="kicker">Painel</p><h1 class="d2 mt8">Carteira</h1></div></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <div class="card"><p class="apoio small">Disponível pra saque</p><p class="num" style="font-size:48px;margin-top:6px">${brl(P.saldo)}</p><p class="apoio small">+ ${brl(P.liberar)} a liberar em 2 dias</p><button class="btn lg block mt24" data-act="saque" ${P.saldo<=0?'disabled':''}>${ic('pix')}Sacar no Pix</button></div>
+        <div class="card line"><h2 class="h4">Como funciona o repasse</h2><div class="incl mt16">${['Taxa de 10% por venda, sem mensalidade','Venda fica 2 dias “a liberar” (prazo do Pix e estorno)','Saque cai na sua chave Pix em até 1 dia útil','Saque mínimo de R$ 20,00'].map(t=>`<div>${ic('check')}${t}</div>`).join('')}</div></div>
+      </div>
+      <div class="grid mt24" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+        <div><h2 class="h4">Extrato</h2><div class="mt12">${ext.map(([t,d,v])=>`<div class="between" style="padding:14px 0;border-bottom:1px solid var(--linha)"><div><b class="small">${t}</b><div class="apoio xs">${d}</div></div><b class="${v>0?'price':''}" style="font-size:15px">${v>0?'+ ':'− '}${brl(Math.abs(v))}</b></div>`).join('')}</div></div>
+        <div><h2 class="h4">Saques</h2><div class="mt12">${P.saques.map(s=>`<div class="between" style="padding:14px 0;border-bottom:1px solid var(--linha)"><div><b class="small">${brl(s.valor)}</b><div class="apoio xs">${s.data} · chave ***.482.***-10</div></div><span class="status ${s.status==='Pago'?'ativa':'pend'}"><i></i>${s.status}</span></div>`).join('')}</div></div>
+      </div>`);
+  }
+};
+function modalOferta(editId){
+  initConteudos();
+  const L=CR('laramendes');const o=editId?OFERTAS[editId]:null;
+  openModal('preto',`<h2 class="d3">${o?'Editar oferta':'Nova oferta'}</h2>
+    <form class="stack mt24" style="--gap:16px" data-form="oferta"><input type="hidden" name="id" value="${o?o.id:''}">
+      <div class="field"><label>Tipo</label><div class="chips" id="tipo">${['assinatura','pacote','item'].map(t=>`<label class="chip ${(o?o.tipo:'pacote')===t?'on':''}" style="cursor:pointer"><input type="radio" name="tipo" value="${t}" ${(o?o.tipo:'pacote')===t?'checked':''} hidden>${tipoLbl[t]}</label>`).join('')}</div></div>
+      <div class="field"><label>Título</label><input class="input" name="titulo" required value="${o?esc(o.titulo):''}" placeholder="Ex.: Pack Verão"></div>
+      <div class="field"><label>Preço</label><div class="prefix"><span>R$</span><input class="input" name="preco" required inputmode="decimal" value="${o?o.preco.toFixed(2).replace('.',','):''}" placeholder="29,90"></div><span class="hint">Você recebe 90%. Em R$ 29,90 caem R$ 26,91.</span></div>
+      <div class="field"><label>Conteúdos que essa oferta libera</label><div class="tgrid" style="grid-template-columns:repeat(6,1fr)">${S.painel.conteudos.slice(0,12).map((x,i)=>`<label style="position:relative;cursor:pointer">${ph(x.m,'','')}<input type="checkbox" ${o&&x.ofertas.includes(o.id)||(!o&&i<4)?'checked':''} style="position:absolute;right:6px;top:6px;width:18px;height:18px;accent-color:#FF0065"></label>`).join('')}</div></div>
+      <button class="btn lg block mt8">${o?'Salvar':'Publicar oferta'}</button>
+    </form>`);
+  $$('#tipo label').forEach(l=>l.onclick=()=>{$$('#tipo label').forEach(x=>x.classList.remove('on'));l.classList.add('on')});
+}
+
+/* ============================================================
+   P14 — Institucional / legal (branco)
+   ============================================================ */
+PAGES.legal=(tab)=>{
+  const tabs=[['termos','Termos de uso'],['privacidade','Privacidade'],['18','Aviso 18+'],['ajuda','Ajuda'],['denuncia','Denúncia e DMCA']];
+  const body={
+   termos:`<h1 class="d2">Termos de uso</h1><p class="apoio mt8">Atualizado em 11/11/2026</p>
+     ${[['1. O que é o clozzy','Plataforma onde criadores vendem conteúdo exclusivo (close mensal, packs e itens) e fãs compram e acessam esse conteúdo.'],['2. Conta','Para comprar ou vender é preciso ter 18 anos ou mais e uma conta com e-mail confirmado. Você responde pelo acesso à sua conta.'],['3. Compras','O pagamento é feito por Pix. O acesso é liberado após a confirmação do banco. Packs e itens ficam na biblioteca sem prazo; o close mensal vale enquanto estiver ativo.'],['4. Uso do conteúdo','O conteúdo é licenciado para uso pessoal. É proibido baixar, gravar a tela, redistribuir ou revender. Cada mídia leva marca d’água da conta que comprou.'],['5. Criadores','Criadores passam por verificação de identidade, declaram que têm os direitos e o consentimento de todas as pessoas no conteúdo e recebem 90% de cada venda.'],['6. Cancelamento e reembolso','O close pode ser cancelado a qualquer momento; o acesso segue até o fim do período pago. Reembolso só em caso de falha de entrega comprovada.']].map(([h,p])=>`<h2 class="h4 mt32">${h}</h2><p class="mt8" style="max-width:68ch">${p}</p>`).join('')}`,
+   privacidade:`<h1 class="d2">Privacidade</h1><p class="apoio mt8">Como a gente trata seus dados (LGPD).</p>
+     ${[['O que coletamos','Nome, e-mail, data de nascimento e histórico de compras. Criadores: também documento, selfie de verificação e chave Pix.'],['Pra quê','Liberar acesso ao que você comprou, pagar criadores, prevenir fraude e cumprir a lei.'],['Discrição','No extrato e no Pix aparece só “clozzy”. Não mostramos para ninguém o que você compra.'],['Seus direitos','Você pode baixar ou apagar seus dados em Conta → Privacidade e dados.']].map(([h,p])=>`<h2 class="h4 mt32">${h}</h2><p class="mt8" style="max-width:68ch">${p}</p>`).join('')}`,
+   '18':`<h1 class="d2">Aviso 18+</h1><p class="mt16" style="max-width:68ch;font-size:18px">O clozzy tem conteúdo adulto. Ao entrar, você confirma que tem 18 anos ou mais e que esse tipo de conteúdo é permitido onde você está.</p><p class="mt16 apoio" style="max-width:68ch">Criadores são verificados com documento e selfie. Conteúdo com menores, sem consentimento ou ilegal é removido e denunciado às autoridades.</p>`,
+   ajuda:`<h1 class="d2">Ajuda</h1><p class="apoio mt8">As perguntas que mais chegam.</p><div class="faq mt24">${FAQ.map(faqItem).join('')}</div><div class="card mt32 between" style="flex-wrap:wrap"><div><b class="h4">Não achou?</b><p class="apoio small mt8">Responde em até 1 dia útil.</p></div><button class="btn" data-act="toast" data-v="Mensagem enviada para ajuda@clozzy.com">Falar com a gente</button></div>`,
+   denuncia:`<h1 class="d2">Denúncia e DMCA</h1><p class="apoio mt8" style="max-width:60ch">Viu algo ilegal, sem consentimento, ou um conteúdo seu publicado por outra pessoa? Conta pra gente. A análise começa em até 24 h.</p>
+     <form class="stack mt32" style="--gap:16px;max-width:560px" data-form="denuncia">
+       <div class="field"><label>Motivo</label><select class="input" required><option value="">Escolha</option><option>Conteúdo com menor de idade</option><option>Sem consentimento</option><option>É meu conteúdo (DMCA)</option><option>Golpe ou perfil falso</option><option>Outro</option></select></div>
+       <div class="field"><label>Link do perfil ou conteúdo</label><input class="input" required placeholder="clozzy.com/..."></div>
+       <div class="field"><label>O que aconteceu</label><textarea class="input" required></textarea></div>
+       <div class="field"><label>Seu e-mail</label><input class="input" type="email" required></div>
+       <button class="btn lg" style="justify-self:start">Enviar denúncia</button></form>`
+  }[tab]||'';
+  return {tema:'branco',noAge:true,html:`${header()}<main data-tema="branco" style="padding:40px 0 96px"><div class="wrap">
+    <div class="chips">${tabs.map(([k,l])=>`<button class="chip ${tab===k?'on':''}" data-go="legal/${k}">${l}</button>`).join('')}</div>
+    <div class="narrow mt32">${body}</div></div></main>${footer()}`};
+};
+
+/* ============================================================
+   P15 — Abrir meu close (onboarding, tema roxo — sem rosa)
+   ============================================================ */
+let onb={passo:1,selfie:false,doc:false,preco:'19,90',nick:''};
+PAGES.onboarding=()=>{
+  const u=S.user;
+  if(u.criador==='analise') return {tema:'roxo',html:`<div class="onb" data-tema="roxo"><div class="topo">${logo(28)}<button class="iconbtn" data-go="conta">${ic('x')}</button></div>
+    <div class="body center stack" style="--gap:18px;padding-top:12vh"><span class="lockdot" style="width:72px;height:72px;background:var(--superficie-2)">${ic('clock','style="width:32px;height:32px"')}</span><h1 class="d2">Tá em análise.</h1><p style="font-size:18px">A gente confere documento e selfie em até 24 h. Você recebe um e-mail quando o close abrir.</p>
+    <p class="apoio small">Enquanto isso dá pra deixar perfil e ofertas em rascunho.</p>
+    <div class="simbar" style="justify-content:center"><span class="xs" style="width:100%">Simular (protótipo):</span><button class="btn sm" data-act="aprovar">Aprovar conta</button></div></div></div>`};
+  const p=onb.passo;
+  const passos={
+   1:`<p class="kicker">Passo 1 de 4</p><h1 class="d2 mt12">Abra seu close.</h1><p class="mt12" style="font-size:18px">Escolhe o @ e quanto vale entrar. Dá pra mudar depois.</p>
+     <form class="stack mt32" style="--gap:18px" data-form="onb1"><div class="field"><label>Seu @</label><div class="prefix" style="--pl:118px"><span style="color:var(--apoio)">clozzy.com/</span><input class="input" name="nick" required value="${esc(onb.nick||u.nome.split(' ')[0].toLowerCase()+'oficial')}"></div></div>
+     <div class="field"><label>Preço do close por mês</label><div class="prefix"><span style="color:var(--apoio)">R$</span><input class="input" name="preco" id="preco" required value="${onb.preco}"></div>
+       <div class="chips mt8">${['9,90','19,90','29,90'].map(v=>`<button type="button" class="chip ${onb.preco===v?'on':''}" data-act="precoSug" data-v="${v}">R$ ${v}</button>`).join('')}</div></div>
+     <div class="card" style="font-size:15px">Você só paga se vender: taxa de 10%, sem mensalidade.</div>
+     <button class="btn lg block">Continuar</button></form>`,
+   2:`<p class="kicker">Passo 2 de 4</p><h1 class="d2 mt12">Seus dados.</h1><p class="mt12" style="font-size:18px">Pra pagar você e cumprir a lei. Ninguém vê isso no perfil.</p>
+     <form class="stack mt32" style="--gap:18px" data-form="onb2"><div class="field"><label>Nome completo</label><input class="input" required value="${u.nome}"></div>
+     <div class="field"><label>CPF</label><input class="input" required placeholder="000.000.000-00" inputmode="numeric"></div>
+     <div class="field"><label>País</label><select class="input"><option>Brasil</option></select></div>
+     <div class="field"><label>Data de nascimento</label><input class="input" type="date" required max="2008-11-11"></div>
+     <button class="btn lg block">Continuar</button></form>`,
+   3:`<p class="kicker">Passo 3 de 4</p><h1 class="d2 mt12">Quem é você.</h1><p class="mt12" style="font-size:18px">Foto do documento e uma selfie. Leva 1 minuto e protege você e quem compra.</p>
+     <div class="upl mt32"><button class="${onb.doc?'done':''}" data-act="onbUp" data-v="doc">${ic(onb.doc?'check':'id')}${onb.doc?'Documento enviado':'Foto do documento<br><span class="xs" style="opacity:.8">RG ou CNH, frente</span>'}</button>
+       <button class="${onb.selfie?'done':''}" data-act="onbUp" data-v="selfie">${ic(onb.selfie?'check':'camera')}${onb.selfie?'Selfie enviada':'Selfie<br><span class="xs" style="opacity:.8">rosto inteiro, boa luz</span>'}</button></div>
+     <button class="btn lg block mt24 ${onb.doc&&onb.selfie?'':'off'}" data-act="onbNext" ${onb.doc&&onb.selfie?'':'disabled'}>Continuar</button>`,
+   4:`<p class="kicker">Passo 4 de 4</p><h1 class="d2 mt12">Pra onde vai o dinheiro.</h1><p class="mt12" style="font-size:18px">Saque no Pix em até 1 dia útil.</p>
+     <form class="stack mt32" style="--gap:18px" data-form="onb4"><div class="field"><label>Chave Pix</label><input class="input" required placeholder="CPF, e-mail, celular ou aleatória"></div>
+     <label class="check"><input type="checkbox" required>Tenho os direitos e o consentimento de todas as pessoas que aparecem no meu conteúdo.</label>
+     <label class="check"><input type="checkbox" required>Li e aceito os <a data-go="legal/termos">Termos de criador</a> e a regra de repasse (90% pra mim).</label>
+     <button class="btn lg block">Enviar pra análise</button></form>`
+  };
+  return {tema:'roxo',html:`<div class="onb" data-tema="roxo"><div class="topo">${logo(28)}<button class="iconbtn" data-go="conta" aria-label="Fechar">${ic('x')}</button></div>
+    <div class="body"><div class="pbar">${[1,2,3,4].map(i=>`<i class="${i<=p?'on':''}"></i>`).join('')}</div>
+    ${p>1?`<button class="row link" style="text-decoration:none;gap:6px;margin-bottom:16px" data-act="onbBack">${ic('left','style="width:18px;height:18px"')}Voltar</button>`:''}
+    ${passos[p]}</div></div>`};
+};
+
+/* ---------- age gate / modal / toast ---------- */
+function ageGate(){
+  if($('#age'))return;
+  const el=document.createElement('div');el.className='ov';el.id='age';
+  el.innerHTML=`<div class="modal age" data-tema="preto">${sym(64).replace('class="sym"','class="sym" style="margin:0 auto"')}<h2 class="d3 mt24">Aqui é só pra maiores de 18.</h2><p class="apoio mt12">O clozzy tem conteúdo adulto. Confirma que você tem 18 anos ou mais pra continuar.</p>
+    <button class="btn lg block mt32" data-act="age18">Tenho 18 anos ou mais</button><button class="btn lg block sec mt12" data-act="ageNo">Sair</button>
+    <p class="xs apoio mt16">Ao entrar, você aceita os <a data-act="ageLegal">Termos</a>.</p></div>`;
+  document.body.appendChild(el);
+}
+function openModal(tema,html){
+  closeModal();const el=document.createElement('div');el.className='ov';el.id='modal';
+  el.innerHTML=`<div class="modal" data-tema="${tema}"><button class="iconbtn x" data-act="closeModal">${ic('x')}</button>${html}</div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeModal()});
+  document.body.appendChild(el);
+}
+function closeModal(){$('#modal')?.remove()}
+function toast(t){$('.toast')?.remove();const el=document.createElement('div');el.className='toast';el.innerHTML=ic('check')+esc(t);document.body.appendChild(el);setTimeout(()=>el.remove(),2400)}
+
+/* ---------- ferramenta do protótipo ---------- */
+let ptOpen=false;
+function protoTool(){
+  const who=!S.user?'v':S.user.role==='criador'?'c':'f';
+  const L=[['Público',[['P01','','Landing'],['P02','explorar','Explorar'],['P03','c/laramendes','Perfil do criador'],['P08','entrar','Entrar'],['P08','cadastro','Criar conta'],['P08','recuperar','Recuperar senha'],['P14','legal/termos','Legal e ajuda']]],
+           ['Fã',[['P04','checkout/laramendes-p0','Checkout Pix'],['—','liberado/laramendes-p0','Pagamento aprovado'],['P05','acesso/melsantos-close','Acesso ao conteúdo'],['P06','biblioteca','Biblioteca'],['P07','conta','Conta'],['P15','abrir-close','Abrir meu close']]],
+           ['Criadora',[['P09','painel','Visão geral'],['P10','painel/perfil','Perfil público'],['P11','painel/ofertas','Ofertas'],['P12','painel/conteudos','Conteúdos'],['P13','painel/financeiro','Financeiro']]]];
+  return `<button class="pt-btn" data-act="pt">${ic('grid')}Telas</button>
+  <div class="pt ${ptOpen?'open':''}" id="pt"><h6>Entrar como</h6><div class="who"><button class="${who==='v'?'on':''}" data-act="como" data-v="v">Visitante</button><button class="${who==='f'?'on':''}" data-act="como" data-v="f">Fã · Rafa</button><button class="${who==='c'?'on':''}" data-act="como" data-v="c">Criadora</button></div>
+   ${L.map(([g,ls])=>`<h6>${g}</h6>${ls.map(([c,h,l])=>`<a data-go="${h}" data-pt="1"><code>${c}</code>${l}</a>`).join('')}`).join('')}
+   <h6>Estado</h6><div class="tools"><button data-act="ageReset">Mostrar 18+ de novo</button><button data-act="reset">Resetar protótipo</button></div></div>`;
+}
+
+/* ---------- ações (delegação) ---------- */
+const ACT={
+  burger(){$('#mnav').classList.toggle('open')},
+  cat(a){filtro.cat=a.dataset.v;route.keepScroll=true;render()},
+  ptab(a){ptab=a.dataset.v;route.keepScroll=true;render()},
+  btab(a){btab=a.dataset.v;route.keepScroll=true;render()},
+  share(){toast('Link do perfil copiado')},
+  copiar(a){navigator.clipboard?.writeText(a.dataset.v).catch(()=>{});toast('Código Pix copiado')},
+  pix(a){const v=a.dataset.v;pix.status=v;if(v==='confirmado'){const id=pix.id;const o=OFERTAS[id];S.compras=S.compras.filter(x=>x.id!==id);S.compras.unshift({id,status:'ativa',data:'hoje',renova:o.tipo==='assinatura'?'11/12':undefined});save();go('liberado/'+id)}else render()},
+  novoPix(){pix={id:pix.id,status:'aguardando',fim:Date.now()+15*60e3};render()},
+  ver(a){viewer(window._viewer,+a.dataset.i)},
+  nav(a){viewer(window._viewer,+a.dataset.v)},
+  fechaViewer(){$('.viewer')?.remove()},
+  cancelar(a){const o=OFERTAS[a.dataset.v];openModal('preto',`<h2 class="d3">Cancelar o close?</h2><p class="apoio mt12">Você continua vendo tudo de ${CR(o.nick).nome.split(' ')[0]} até 12/12. Depois disso, o acesso fecha.</p><div class="row mt32" style="gap:10px;flex-wrap:wrap"><button class="btn" data-act="closeModal">Manter close</button><button class="btn sec" data-act="cancelarOk" data-v="${o.id}">Cancelar mesmo</button></div>`)},
+  cancelarOk(a){const c=S.compras.find(x=>x.id===a.dataset.v);c.status='cancelada';save();closeModal();route.keepScroll=true;render();toast('Close cancelado')},
+  notif(a){S.notif[a.dataset.v]=a.checked;save();toast('Preferência salva')},
+  sair(){S.user=null;save();go('');toast('Você saiu')},
+  confirmou(a){S.user={...LOGINS.fan,nome:S._pend?.nome||'Rafa Lima',email:S._pend?.email||'rafa@email.com'};save();go(a.dataset.v||'explorar');toast('Conta criada')},
+  publicar(a){S.painel.publicado=a.checked;save();route.keepScroll=true;render();toast(a.checked?'Perfil publicado':'Perfil fora do ar')},
+  pausar(a){const id=a.dataset.v;S.painel.ofertaStatus[id]=(S.painel.ofertaStatus[id]||'ativa')==='ativa'?'pausada':'ativa';save();route.keepScroll=true;render();toast(S.painel.ofertaStatus[id]==='ativa'?'Oferta ativa':'Oferta pausada')},
+  novaOferta(a){modalOferta(a.dataset.v)},
+  vis(a){const [id,v]=a.dataset.v.split('|');S.painel.conteudos.find(x=>x.id===id).vis=v;save();route.keepScroll=true;render()},
+  arquivar(a){S.painel.conteudos=S.painel.conteudos.filter(x=>x.id!==a.dataset.v);save();route.keepScroll=true;render();toast('Mídia arquivada')},
+  upload(){const b=$('#up');b.classList.remove('hidden');let p=0;const t=setInterval(()=>{p+=8;b.firstElementChild.style.width=Math.min(p,100)+'%';if(p>=100){clearInterval(t);const n=S.painel.conteudos.length;S.painel.conteudos.unshift({id:'u'+Date.now(),m:{f:['cetim','costas','labios'][n%3],x:(n*31)%100,y:(n*17)%100,z:160},titulo:'Novo upload',tipo:'foto',vis:'pago',ofertas:['laramendes-p0']});save();route.keepScroll=true;render();toast('3 fotos enviadas · marca d’água aplicada')}},90)},
+  saque(){const P=S.painel;openModal('branco',`<h2 class="d3">Sacar no Pix</h2><p class="apoio mt8">Disponível: ${brl(P.saldo)}</p><form class="stack mt24" style="--gap:16px" data-form="saque"><div class="field"><label>Valor</label><div class="prefix"><span>R$</span><input class="input" name="v" value="${P.saldo.toFixed(2).replace('.',',')}" required></div></div><div class="field"><label>Chave Pix</label><input class="input" value="***.482.***-10 (CPF)" disabled></div><button class="btn lg block">${ic('pix')}Confirmar saque</button><p class="apoio xs center">Cai em até 1 dia útil.</p></form>`)},
+  aprovar(){S.user.criador='ativo';S.user.role='criador';save();go('painel');toast('Seu close abriu')},
+  precoSug(a){onb.preco=a.dataset.v;$('#preco').value=a.dataset.v;$$('[data-act=precoSug]').forEach(x=>x.classList.toggle('on',x===a))},
+  onbUp(a){onb[a.dataset.v]=true;route.keepScroll=true;render()},
+  onbNext(){onb.passo++;render()},
+  onbBack(){onb.passo--;render()},
+  age18(){S.ageOk=true;save();$('#age')?.remove()},
+  ageNo(){$('#age .modal').innerHTML=`<h2 class="d3">Tudo bem.</h2><p class="apoio mt12">Volte quando tiver 18 anos.</p>`},
+  ageLegal(){S.ageOk=true;save();$('#age')?.remove();go('legal/18')},
+  closeModal(){closeModal()},
+  toast(a){toast(a.dataset.v)},
+  pt(){ptOpen=!ptOpen;$('#pt').classList.toggle('open',ptOpen)},
+  como(a){const v=a.dataset.v;S.user=v==='v'?null:{...LOGINS[v==='f'?'fan':'criador']};S.ageOk=true;save();$('#age')?.remove();render()},
+  ageReset(){S.ageOk=false;save();render()},
+  reset(){localStorage.removeItem(KEY);location.hash='#/';location.reload()}
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]');
+  if(a&&ACT[a.dataset.act]){if(a.tagName!=='INPUT')e.preventDefault();ACT[a.dataset.act](a);return}
+  const g=e.target.closest('[data-go]');
+  if(g){e.preventDefault();$('.viewer')?.remove();closeModal();$('#mnav')?.classList.remove('open');if(!g.dataset.pt){ptOpen=false}go(g.dataset.go)}
+});
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();
+  const k=f.dataset.form;const d=Object.fromEntries(new FormData(f));
+  if(k==='entrar'){S.user={...LOGINS[d.email?.startsWith('lara')?'criador':'fan'],email:d.email};save();go(d.next||'explorar');toast('Bem-vindo de volta')}
+  else if(k==='cadastro'){S._pend={nome:d.nome,email:d.email};save();go('confirmar?e='+encodeURIComponent(d.email)+(d.next?'&next='+encodeURIComponent(d.next):''))}
+  else if(k==='recuperar'){f.outerHTML=`<div class="card mt32"><b class="h4">Link enviado.</b><p class="apoio mt8">Se tiver conta com esse e-mail, o link chega em alguns minutos. Vale por 1 hora.</p></div><p class="center small mt16"><a data-go="entrar">Voltar pra entrar</a></p>`}
+  else if(k==='conta'||k==='senha'){toast(k==='conta'?'Dados salvos':'Senha alterada')}
+  else if(k==='perfil'){Object.assign(S.painel,{nome:d.nome,nick:d.nick,bio:d.bio,links:d.links});save();toast('Perfil salvo')}
+  else if(k==='oferta'){const preco=parseFloat(String(d.preco).replace(',','.'))||0;
+    if(d.id){OFERTAS[d.id].titulo=d.titulo;OFERTAS[d.id].preco=preco;const ex=S.painel.extras.find(x=>x.id===d.id);if(ex)Object.assign(ex,{titulo:d.titulo,preco})}
+    else{const id='laramendes-x'+Date.now();const base=OFERTAS['laramendes-p0'];const ex={id,tipo:d.tipo,titulo:d.titulo,preco,seed:S.painel.extras.length*7+3};S.painel.extras.push(ex);addExtra(ex)}
+    save();closeModal();go('painel/ofertas');toast(d.id?'Oferta salva':'Oferta publicada no seu perfil')}
+  else if(k==='saque'){const v=parseFloat(String(d.v).replace(/\./g,'').replace(',','.'))||0;if(v<20||v>S.painel.saldo){toast('Valor entre R$ 20,00 e o saldo');return}
+    S.painel.saldo=+(S.painel.saldo-v).toFixed(2);S.painel.saques.unshift({data:'hoje',valor:v,status:'Processando'});save();closeModal();route.keepScroll=true;render();toast('Saque pedido · cai em até 1 dia útil')}
+  else if(k==='denuncia'){f.outerHTML=`<div class="card mt32"><b class="h4">Recebido.</b><p class="apoio mt8">Protocolo #CZ-48213. A gente responde por e-mail em até 24 h.</p></div>`}
+  else if(k==='onb1'){onb.nick=d.nick;onb.preco=d.preco;onb.passo=2;render()}
+  else if(k==='onb2'){onb.passo=3;render()}
+  else if(k==='onb4'){S.user.criador='analise';save();onb.passo=1;render()}
+});
+/* tooltip do gráfico */
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');const tip=$('#tip');const ch=$('#chart');
+  $$('.chart rect.bar.on').forEach(b=>b.classList.remove('on'));
+  if(!t){tip.style.display='none';ch&&ch.classList.remove('hovering');return}
+  tip.innerHTML=t.dataset.tip;tip.style.display='block';const r=t.nextElementSibling.getBoundingClientRect();tip.style.left=(r.left+r.width/2)+'px';tip.style.top=r.top+'px';
+  t.nextElementSibling.classList.add('on');ch&&ch.classList.add('hovering')});
+
+/* restaura saques/ofertas extras criados no localStorage */
+function addExtra(ex){const base=OFERTAS['laramendes-p0'];OF({...base,...ex,inclui:['6 fotos','Acesso pra sempre na biblioteca'],fotos:6,videos:0,media:tiles(['cetim','costas'],6,ex.seed)});CR('laramendes').ofertas.push(OFERTAS[ex.id])}
+S.painel.extras=S.painel.extras.filter(x=>typeof x==='object');S.painel.extras.forEach(addExtra);
+render();
+</script>
+</body>
+</html>

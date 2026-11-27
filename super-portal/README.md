@@ -7,6 +7,7 @@
 
 Derivados: [`docs/`](docs/README.md) · modelagem [`docs/modelagem-dados.md`](docs/modelagem-dados.md).  
 Inputs (processos + prints do portal): [`inputs/`](inputs/README.md).  
+Refs (protótipos HTML Clozzy / RoleGo / Notinhas / Confraternização): [`refs/`](refs/README.md).  
 Timeline de prompts: [`prompts/`](prompts/README.md).  
 Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 

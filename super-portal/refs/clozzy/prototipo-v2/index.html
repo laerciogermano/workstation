@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="meia-rosa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clozzy · Protótipo v2</title>
+<meta name="description" content="Protótipo navegável v2 do Clozzy: todas as funcionalidades (P01–P15 e pós-v1) na identidade Estrela macia · verde close · letras redondas, com sete temas na paleta da marca.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Gabarito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=20261116e">
+</head>
+<body>
+
+<header class="wrap masthead">
+  <div>
+    <span class="wm" id="wm-top"></span>
+    <h1>Protótipo <span>v2</span></h1>
+    <p class="lede-xl">O Clozzy inteiro no celular: chegar, achar a criadora, entrar no close pelo Pix e abrir na biblioteca. Do outro lado, a criadora vira criadora, publica, monta oferta e saca. <b>Identidade mais recente</b>, sete temas dentro da paleta da marca e estado de verdade entre as telas.</p>
+    <div class="actions">
+      <button class="sbtn p" data-start="C-10">Navegar como fã</button>
+      <button class="sbtn s" data-start="C-20">Ir direto à vitrine</button>
+      <button class="sbtn s" data-start="C-50">Abrir o Studio</button>
+      <button class="sbtn s" data-start="C-01">Começar pela landing</button>
+      <a class="sbtn s" href="../marca/">Manual da marca</a>
+      <a class="sbtn s" href="../">Início</a>
+    </div>
+    <div class="themebar" id="themebar"><span>Tema</span></div>
+  </div>
+  <div class="stats">
+    <div><b id="st-screens">–</b><span>telas navegáveis</span></div>
+    <div><b id="st-flows">–</b><span>fluxos</span></div>
+    <div><b id="st-p">–</b><span>páginas de functionalities.md</span></div>
+    <div><b id="st-themes">–</b><span>temas</span></div>
+  </div>
+</header>
+
+<nav class="flownav" aria-label="Fluxos"><div class="wrap">
+  <a href="#f01">01 Chegada</a><a href="#f02">02 Descobrir</a><a href="#f03">03 Compra</a><a href="#f04">04 Fã</a><a href="#f05">05 Virar criadora</a><a href="#f06">06 Studio</a><a href="#temas">Temas</a><a href="#decisoes">Decisões</a><a href="#rastreio">Rastreio</a>
+</div></nav>
+
+<main class="wrap" id="gallery"></main>
+
+<section class="doc" id="temas"><div class="wrap">
+  <h2>Temas para escolher</h2>
+  <p class="d">Sete direções sem sair da paleta fechada: Pink Deep <code>#E0005A</code>, roxo <code>#7C48C4</code>, preto <code>#000</code>, branco e cinzas neutros, mais o verde <code>#69C353</code> só no que é do close. Meia-rosa espelha a Meia-noite com pink no lugar do roxo. As regras da marca valem em todos: no preto o rosa é detalhe e o botão é branco; no rosa e no roxo tudo é branco; rosa e roxo nunca um sobre o outro. A tela “Liberado” e as telas de foto e câmera não mudam com o tema.</p>
+  <div class="themes" id="themes"></div>
+</div></section>
+
+<section class="doc" id="decisoes"><div class="wrap">
+  <h2>Decisões de design</h2>
+  <p class="d">Pesquisa de tendências de UI mobile de 2026 e dos sinais de “cara de IA”, filtrada pela marca. O que entrou e o que ficou de fora de propósito.</p>
+  <div class="cols">
+    <div><h3>Tendências que entraram</h3><ul>
+      <li><b>Tipo como imagem.</b> Gabarito 800–900 grande e apertado, em caixa baixa como a marca, sobre foto cheia</li>
+      <li><b>Foto primeiro.</b> Perfil, landing e story em tela cheia; véu escuro só onde tem texto</li>
+      <li><b>Zona do polegar.</b> Ação principal sempre na base; folhas inferiores para resumo da compra e confirmações</li>
+      <li><b>Vidro com função.</b> Só na barra de abas flutuante e nos botões sobre foto, onde o fundo precisa aparecer</li>
+      <li><b>Bento no Studio.</b> Saldo, vendas da semana e assinantes em blocos de tamanhos diferentes</li>
+      <li><b>Passe de carteira</b> para a assinatura; QR do Pix sempre em branco</li>
+      <li><b>Movimento que explica.</b> View Transitions entre telas, mola no toque, respeita movimento reduzido</li>
+    </ul></div>
+    <div><h3>O que tiramos (cara de IA)</h3><ul>
+      <li>Degradê roxo-azul, brilho “sparkle”, ícone de varinha</li>
+      <li>Rótulo em caixa alta em cima de todo título</li>
+      <li>Três cards iguais lado a lado, borda colorida de um lado só</li>
+      <li>Cartão com borda em tudo e sombra genérica</li>
+      <li>Emoji no lugar de ícone (ícones de linha próprios, traço 1,8)</li>
+      <li>Frases de narrador (“Explore nossa plataforma incrível”). A voz é a da criadora: curta, caixa baixa, sem promessa</li>
+      <li>Fonte padrão do sistema: o par é Gabarito + Figtree, o da marca</li>
+    </ul></div>
+    <div><h3>Regras da marca aplicadas</h3><ul>
+      <li>Um rosa só, o Pink Deep. Nenhum <code>#FF0065</code></li>
+      <li>No preto: arco rosa inteiro, estrela branca, botão branco com texto preto; rosa só em ponto de não lida, progresso do story e curtida</li>
+      <li>Lado da criadora com arco roxo; roxo nunca em texto no preto</li>
+      <li>Verde = close (anel com post novo, selo, estrela do trancado), pequeno; no rosa e no roxo o verde sai e tudo fica branco</li>
+      <li>Estrela sozinha com o ponto da câmera; dentro do arco, sem o ponto</li>
+      <li>Símbolo sempre ao lado do “clozzy”, nunca fundido ao “c”; letras com cantos redondos</li>
+      <li>Fotos de criadoras 18–22 no tom TikTok, nada sensual</li>
+    </ul></div>
+  </div>
+  <p class="src">Fontes da pesquisa: <a href="https://muz.li/blog/whats-changing-in-mobile-app-design-ui-patterns-that-matter-in-2026/" target="_blank" rel="noopener">Muzli · UI patterns 2026</a> · <a href="https://vp0.com/blogs/mobile-app-ui-design-inspiration-2026" target="_blank" rel="noopener">VP0 · inspiração 2026</a> · <a href="https://vp0.com/blogs/creator-economy-app-design" target="_blank" rel="noopener">VP0 · creator economy</a> · <a href="https://www.blendnow.com/blog/design-trends-2026-you-need-to-know" target="_blank" rel="noopener">Blend · 13 trends 2026</a> · <a href="https://www.925studios.co/blog/ai-slop-web-design-guide" target="_blank" rel="noopener">925studios · AI slop</a> · <a href="https://superdesign.dev/blog/how-to-make-ai-ui-look-less-generic" target="_blank" rel="noopener">superdesign · less generic</a> · <a href="https://world.hey.com/kostac/spot-the-slop-a-ui-designer-s-guide-to-fixing-ai-defaults-4c448c9c" target="_blank" rel="noopener">Kosta Canatselis · spot the slop</a></p>
+</div></section>
+
+<section class="doc" id="rastreio"><div class="wrap">
+  <h2>Rastreabilidade</h2>
+  <p class="d">Cada tela declara as páginas de <code>docs/functionalities.md</code> que cobre. Feed, stories e conversas estão marcados como pós-v1, como na lista de “Não fazer na v1”. Clique numa linha para abrir a tela.</p>
+  <p class="covh">Cobertura · <span id="cov-n"></span></p><div class="cov" id="cov"></div>
+  <div class="tablewrap"><table class="mt" id="trace"><thead><tr><th>Tela</th><th>Nome</th><th>Fluxo</th><th>Páginas</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<footer class="wrap site">Clozzy · protótipo v2 · 2026-11-16 · marca: <code>marca/identidade-verde-letras-redondas</code> · escopo: <code>docs/functionalities.md</code> · pessoas e fotos ilustrativas (Pexels, só uso interno)</footer>
+
+<div id="player" role="dialog" aria-modal="true" aria-label="Protótipo navegável">
+  <nav id="plist" aria-label="Telas"><span class="wm" id="wm-pl"></span></nav>
+  <div id="stage">
+    <div class="stagebar"><button class="sbtn s" id="stage-close">← Galeria</button><button class="sbtn s" id="pn-toggle">Notas e cenários</button></div>
+    <div class="stage-themes" id="stage-themes" role="radiogroup" aria-label="Tema"></div>
+    <div id="live"></div>
+  </div>
+  <aside id="pnotes">
+    <div id="pnotes-body"></div>
+    <div class="scen">
+      <h4>Cenários</h4>
+      <div class="sc"><span>Conta</span><div><button data-scen="auth:fan">Logado</button><button data-scen="auth:anon">Sem conta</button></div></div>
+      <div class="sc"><span>Close da Lara</span><div><button data-scen="sub:true">Assina</button><button data-scen="sub:false">Não assina</button></div></div>
+      <div class="sc"><span>Pix</span><div><button data-scen="pix:ok">Confirma</button><button data-scen="pix:expira">Expira</button></div></div>
+      <div class="sc"><span>Biblioteca</span><div><button data-scen="libEmpty:false">Com compras</button><button data-scen="libEmpty:true">Vazia</button></div></div>
+      <div class="sc"><span>Criadora</span><div><button data-scen="creator:fan">Só fã</button><button data-scen="creator:analise">Em análise</button><button data-scen="creator:ativa">Ativa</button></div></div>
+      <div class="sc"><span>Tema</span><div id="scen-theme"></div></div>
+      <div class="sc"><span>Movimento</span><div><button data-scen="reduced:false">Normal</button><button data-scen="reduced:true">Reduzido</button></div></div>
+      <button class="sbtn s" id="scen-reset">Reiniciar estado</button>
+    </div>
+    <p class="kbd"><kbd>←</kbd> <kbd>→</kbd> telas · <kbd>⌫</kbd> voltar · <kbd>H</kbd> áreas clicáveis · <kbd>T</kbd> próximo tema · <kbd>Esc</kbd> fechar · link direto: <code>#C-20</code> · <code>?tema=meia-rosa</code></p>
+  </aside>
+</div>
+
+<script src="js/brand.js?v=20261116e"></script>
+<script src="js/data.js?v=20261116e"></script>
+<script src="js/ui.js?v=20261116e"></script>
+<script src="js/screens.js?v=20261116e"></script>
+<script src="js/app.js?v=20261116e"></script>
+<script>document.querySelectorAll('#wm-top,#wm-pl').forEach((el) => { el.innerHTML = logo('lg-chrome'); });</script>
+</body>
+</html>

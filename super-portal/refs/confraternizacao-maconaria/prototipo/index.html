@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="bordo">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confraternização 125 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Newsreader:opsz,wght@6..72,400..600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+/* Estrutura: galeria de telas por fluxo (código T-xx + casos de uso) e modo navegável em 3 colunas (lista | celular | notas).
+   Visual: programa de cerimônia, serifa nos títulos, números condensados. Quatro temas, nenhum preto. */
+:root {
+  --brand: #740012; --brand-2: #8f1222; --on-brand: #ffffff;
+  --ink: #1d2939; --body: #475467; --muted: #6b7686; --line: #e4e7ec;
+  --paper: #ffffff; --wash: #f4f5f7; --stage: #eceef2; --bezel: #cfd3da;
+  --ok: #157a3c; --map: #ebedf0; --park: #d9e5d6; --road: #ffffff; --water: #d3dde8;
+  --glass: rgba(255,255,255,.74); --bar: rgba(255,255,255,.86);
+  --font-ui: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --r-md: 16px; --r-lg: 24px;
+  --spring: cubic-bezier(.34, 1.4, .64, 1); --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: light;
+}
+:root[data-tema="azul"] {
+  --brand: #1f4e8c; --brand-2: #2a62ab; --ink: #17243a; --body: #44536b; --muted: #66758c; --line: #dfe5ee;
+  --wash: #f2f5f9; --stage: #e7ecf3; --bezel: #c7d0dc; --map: #e9eef4; --water: #cddbec;
+}
+:root[data-tema="dourado"] {
+  --brand: #84601a; --brand-2: #9c7422; --ink: #2a2620; --body: #554f45; --muted: #7a7366; --line: #e6e2d8;
+  --wash: #f6f5f1; --stage: #ecebe6; --bezel: #d3cfc5; --map: #eeede8; --park: #dfe6d2; --water: #d6dde2;
+}
+:root[data-tema="marinho"] {
+  --brand: #c9a24a; --brand-2: #d8b45e; --on-brand: #15223b;
+  --ink: #f0f3f8; --body: #c5cfdf; --muted: #93a1b8; --line: #2c3e62;
+  --paper: #172540; --wash: #1f2f4f; --stage: #22345a; --bezel: #3a4f78;
+  --ok: #5fd08d; --map: #1d2c4a; --park: #24404a; --road: #2c3e62; --water: #253f62;
+  --glass: rgba(23,37,64,.74); --bar: rgba(31,47,79,.9);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--stage); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+.num { font-variant-numeric: tabular-nums; }
+.cond { font-stretch: 72%; font-weight: 800; letter-spacing: -0.01em; }
+
+/* ================= página: galeria ================= */
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+.hero { padding: 48px 0 24px; border-bottom: 1px solid var(--line); background: var(--paper); }
+.hero .wrap { display: grid; grid-template-columns: 1fr auto; gap: 24px 32px; align-items: end; }
+.hero h1 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(36px, 5vw, 56px); line-height: 1; letter-spacing: -0.025em; }
+.hero p { color: var(--body); font-size: 17px; margin-top: 14px; max-width: 62ch; }
+.hero-actions { display: flex; flex-direction: column; gap: 14px; align-items: flex-end; }
+.play { display: inline-flex; align-items: center; gap: 10px; background: var(--brand); color: var(--on-brand); border: 0; border-radius: 28px; height: 54px; padding: 0 24px; font-weight: 700; font-size: 17px; }
+.play svg { width: 20px; height: 20px; }
+.play:hover { background: var(--brand-2); }
+.temas { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.temas .sw { display: flex; gap: 6px; }
+.temas button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--line); padding: 0; position: relative; }
+.temas button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--ink); }
+.temas button span { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.flownav { display: flex; flex-wrap: wrap; gap: 8px; grid-column: 1 / -1; }
+.flownav a { text-decoration: none; color: var(--body); font-size: 14px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; display: inline-flex; gap: 8px; }
+.flownav a b { color: var(--brand); font-stretch: 72%; font-weight: 800; }
+.flownav a:hover { border-color: var(--ink); color: var(--ink); }
+
+.flow { padding: 44px 0 8px; border-bottom: 1px solid var(--line); }
+.flow-head { display: grid; grid-template-columns: 70px 1fr; gap: 6px 18px; align-items: baseline; }
+.flow-head .n { font-size: 56px; line-height: .85; color: var(--brand); grid-row: span 2; }
+.flow-head h2 { font-family: var(--font-serif); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; line-height: 1.05; }
+.flow-head h2 small { font-family: var(--font-ui); font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: 0; margin-left: 10px; }
+.flow-head p { color: var(--body); font-size: 16px; max-width: 72ch; }
+.row { display: flex; align-items: flex-start; overflow-x: auto; padding: 26px 14px 30px; scrollbar-width: thin; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: none; }
+.step .lbl { font-weight: 700; font-size: 16px; }
+.step .meta { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.35; max-width: 226px; }
+.step .meta b { color: var(--ink); }
+.arrow { flex: none; align-self: center; margin: -40px 10px 0; color: var(--muted); display: flex; align-items: center; }
+.arrow i { display: block; width: 34px; height: 1.5px; background: currentColor; }
+.arrow svg { width: 16px; height: 16px; margin-left: -6px; }
+.thumb { width: 226px; height: 490px; position: relative; border-radius: 30px; margin-top: 6px; cursor: pointer; display: block; }
+.thumb .phone { position: absolute; top: 0; left: 0; transform: scale(.58); transform-origin: 0 0; pointer-events: none; }
+.thumb:hover .phone { box-shadow: 0 0 0 11px var(--brand), 0 30px 60px -30px rgba(20,30,50,.5); }
+.foot { padding: 28px 24px 48px; color: var(--muted); font-size: 14px; }
+@media (max-width: 760px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero-actions { align-items: flex-start; }
+  .wrap { padding: 0 16px; }
+  .flow-head { grid-template-columns: 1fr; }
+  .flow-head .n { grid-row: auto; font-size: 40px; }
+}
+
+/* ================= modo navegável ================= */
+.player { position: fixed; inset: 0; z-index: 100; background: var(--stage); display: none; grid-template-columns: 260px 1fr 330px; }
+.player.open { display: grid; }
+.player .list { background: var(--paper); border-right: 1px solid var(--line); overflow-y: auto; padding: 16px 12px 24px; }
+.player .list .close { display: flex; align-items: center; gap: 8px; border: 0; background: var(--wash); border-radius: 22px; height: 44px; padding: 0 16px; font-weight: 700; font-size: 15px; margin: 0 4px 10px; }
+.player .list .close svg { width: 18px; height: 18px; }
+.player .list h4 { font-size: 13px; color: var(--muted); margin: 16px 8px 6px; font-weight: 700; }
+.player .list a { display: flex; gap: 10px; padding: 8px 10px; border-radius: 10px; color: var(--body); text-decoration: none; font-size: 15px; cursor: pointer; }
+.player .list a span { color: var(--muted); font-size: 13px; width: 40px; flex: none; font-weight: 700; padding-top: 1px; }
+.player .list a:hover { background: var(--wash); }
+.player .list a.on { background: color-mix(in srgb, var(--brand) 12%, var(--paper)); color: var(--ink); font-weight: 600; }
+.player .list a.on span { color: var(--brand); }
+.player .stage { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.player .stage .holder { position: relative; }
+.player .stage .phone { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.player .ctrls { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; }
+.player .ctrls button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--paper); color: var(--ink); display: grid; place-items: center; box-shadow: 0 4px 14px -6px rgba(20,30,50,.35); }
+.player .ctrls svg { width: 20px; height: 20px; }
+.player .notes { background: var(--paper); border-left: 1px solid var(--line); padding: 26px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+.player .notes .id { color: var(--brand); font-size: 22px; }
+.player .notes h3 { font-family: var(--font-serif); font-weight: 500; font-size: 30px; letter-spacing: -0.02em; line-height: 1.05; }
+.player .notes .cus { display: flex; flex-wrap: wrap; gap: 6px; }
+.player .notes .cus span { font-size: 13px; font-weight: 700; color: var(--brand); background: color-mix(in srgb, var(--brand) 12%, var(--paper)); border-radius: 8px; padding: 4px 8px; }
+.player .notes p { font-size: 16px; color: var(--body); line-height: 1.55; }
+.player .notes .kbd { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; line-height: 1.6; }
+.player .notes .kbd b { color: var(--ink); }
+.player .notes .temas { margin-top: auto; }
+.player.hints .stage [data-go], .player.hints .stage [data-act], .player.hints .stage [data-day], .player.hints .stage [data-tab] { outline: 2px dashed var(--brand); outline-offset: -2px; }
+@media (max-width: 980px) {
+  .player { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .player .list { display: none; }
+  .player .notes { max-height: 30vh; border-left: 0; border-top: 1px solid var(--line); padding: 16px; gap: 8px; }
+  .player .notes h3 { font-size: 22px; }
+  .player .notes .kbd { display: none; }
+  .player .ctrls { display: flex; }
+}
+
+/* ================= celular ================= */
+.phone {
+  width: 390px; height: 844px; background: var(--paper); border-radius: 48px; overflow: hidden; position: relative; isolation: isolate;
+  box-shadow: 0 0 0 11px var(--bezel), 0 30px 60px -30px rgba(20,30,50,.45); text-align: left; color: var(--ink); font-size: 17px; line-height: 1.45;
+}
+.app { height: 100%; display: flex; flex-direction: column; }
+.view { flex: 1; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.view::-webkit-scrollbar { display: none; }
+.view.has-bar { padding-bottom: 104px; }
+.statusgap { height: 44px; flex: none; }
+.island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 110px; height: 32px; border-radius: 16px; background: var(--bezel); z-index: 40; }
+
+.glass-btn { width: 46px; height: 46px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--glass); color: var(--ink); backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6); box-shadow: 0 6px 18px -8px rgba(20,30,50,.35); }
+.glass-btn svg { width: 21px; height: 21px; }
+.me-btn { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--paper); background: var(--brand); color: var(--on-brand); font-weight: 700; font-size: 15px; box-shadow: 0 6px 18px -8px rgba(20,30,50,.4); }
+
+.tabbar { position: absolute; left: 14px; right: 14px; bottom: 16px; z-index: 10; height: 68px; border-radius: 34px; background: var(--bar); backdrop-filter: blur(22px) saturate(1.5); -webkit-backdrop-filter: blur(22px) saturate(1.5); border: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); padding: 6px; box-shadow: 0 14px 30px -14px rgba(20,30,50,.35); }
+.tabbar button { border: 0; background: none; color: var(--muted); border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 600; position: relative; transition: background .25s var(--ease), color .2s; }
+.tabbar button svg { width: 23px; height: 23px; }
+.tabbar button[aria-current="page"] { background: color-mix(in srgb, var(--brand) 12%, transparent); color: var(--brand); }
+.tabbar .dot { position: absolute; top: 9px; left: calc(50% + 9px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--brand); color: var(--on-brand); font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+.navrow { display: flex; justify-content: space-between; align-items: center; padding: 6px 16px 0; }
+.navrow .plain { border: 0; background: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); }
+.navrow .plain:hover { background: var(--wash); }
+.navrow .plain svg { width: 24px; height: 24px; }
+.largetitle { padding: 8px 20px 18px; display: flex; flex-direction: column; gap: 4px; }
+.largetitle h1 { font-family: var(--font-serif); font-weight: 500; font-size: 38px; line-height: 1.02; letter-spacing: -0.025em; }
+.largetitle p { color: var(--body); font-size: 16px; }
+
+.mapwrap { position: relative; height: 330px; flex: none; }
+.mapwrap svg.city { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mapwrap .over { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; padding: 52px 16px 0; }
+.pin { position: absolute; transform: translate(-50%, -100%); border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; transition: transform .2s var(--spring); }
+.pin:hover { transform: translate(-50%, -100%) scale(1.08); }
+.pin .tag { background: var(--paper); color: var(--ink); border-radius: 10px; padding: 4px 8px 4px 4px; display: flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; box-shadow: 0 6px 16px -6px rgba(20,30,50,.45); white-space: nowrap; }
+.pin .tag b { background: var(--brand); color: var(--on-brand); border-radius: 7px; padding: 2px 6px; font-stretch: 72%; font-weight: 800; font-size: 14px; }
+.pin.mine .tag b { background: var(--ok); color: #fff; }
+.pin .tail { width: 10px; height: 10px; background: var(--paper); transform: rotate(45deg); margin-top: -6px; }
+.sheet-body { position: relative; margin-top: -30px; background: var(--paper); border-radius: 30px 30px 0 0; padding: 10px 0 0; z-index: 2; }
+.handle { width: 38px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 14px; }
+
+.greet { padding: 4px 20px 20px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+.greet small { color: var(--muted); font-size: 15px; }
+.greet h1 { font-family: var(--font-serif); font-weight: 500; font-size: 34px; line-height: 1.02; letter-spacing: -0.025em; margin-top: 2px; }
+.greet p { color: var(--body); font-size: 16px; margin-top: 6px; max-width: 26ch; }
+.count { text-align: right; line-height: 1; }
+.count b { display: block; font-size: 52px; color: var(--brand); }
+.count span { font-size: 13px; color: var(--muted); }
+
+.pass { margin: 0 16px; border-radius: var(--r-lg); background: var(--brand); color: var(--on-brand); display: grid; grid-template-columns: 1fr 86px; position: relative; border: 0; width: calc(100% - 32px); text-align: left; padding: 0; overflow: hidden; transition: transform .18s var(--spring); }
+.pass:active { transform: scale(.97); }
+.pass .main { padding: 16px 16px 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pass .main small { font-size: 13px; opacity: .82; font-weight: 600; }
+.pass .main h3 { font-family: var(--font-serif); font-weight: 500; font-size: 23px; line-height: 1.1; letter-spacing: -0.015em; }
+.pass .main .where { font-size: 14px; opacity: .85; display: flex; align-items: center; gap: 5px; }
+.pass .main .where svg { width: 14px; height: 14px; }
+.pass .stub { border-left: 2px dashed color-mix(in srgb, var(--on-brand) 38%, transparent); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: .95; position: relative; }
+.pass .stub b { font-size: 34px; }
+.pass .stub span { font-size: 12px; opacity: .8; font-weight: 600; margin-top: 4px; }
+.pass .stub::before, .pass .stub::after { content: ""; position: absolute; left: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--paper); }
+.pass .stub::before { top: -10px; } .pass .stub::after { bottom: -10px; }
+.pass.soft { background: var(--wash); color: var(--ink); }
+.pass.soft .stub { border-left-color: var(--line); }
+.pass.soft .stub b { color: var(--brand); }
+
+.section { padding: 26px 0 0; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 20px 12px; gap: 12px; }
+.section-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; }
+.section-head span { font-size: 14px; color: var(--muted); }
+
+.dates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px; }
+.date { border: 1.5px solid var(--line); background: var(--paper); border-radius: 20px; padding: 10px 0 12px; display: flex; flex-direction: column; align-items: center; transition: background .25s var(--ease), border-color .25s, color .2s, transform .18s var(--spring); }
+.date:active { transform: scale(.95); }
+.date .wd { font-size: 13px; font-weight: 600; color: var(--muted); }
+.date .dn { font-size: 38px; line-height: 1.05; }
+.date .n { display: flex; gap: 3px; height: 6px; }
+.date .n i { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); opacity: .5; }
+.date[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.date[aria-pressed="true"] .wd { color: var(--on-brand); opacity: .75; }
+.date[aria-pressed="true"] .n i { background: var(--on-brand); opacity: .8; }
+
+.slot { display: grid; grid-template-columns: 70px 1fr 24px; gap: 14px; padding: 16px 16px 16px 20px; border: 0; background: none; width: 100%; text-align: left; position: relative; border-top: 1px solid var(--line); align-items: start; }
+.slot:first-child { border-top: 0; }
+.slot:hover { background: var(--wash); }
+.slot .t { font-size: 26px; line-height: 1; }
+.slot .t small { display: block; font-stretch: 100%; font-weight: 500; font-size: 13px; color: var(--muted); margin-top: 5px; letter-spacing: 0; }
+.slot h3 { font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.15; letter-spacing: -0.015em; }
+.slot .m { font-size: 14px; color: var(--body); margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.slot .m span { display: inline-flex; gap: 5px; align-items: center; }
+.slot .m svg { width: 15px; height: 15px; color: var(--muted); }
+.slot > svg { width: 20px; height: 20px; color: var(--muted); margin-top: 4px; }
+.mine-mark { color: var(--ok); font-weight: 700; }
+.full-mark { color: var(--muted); font-weight: 700; }
+.left-mark { color: var(--brand); font-weight: 700; }
+.slot.is-mine::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 3px; border-radius: 0 3px 3px 0; background: var(--ok); }
+
+.ev-hero { background: var(--brand); color: var(--on-brand); padding: 52px 20px 26px; display: flex; flex-direction: column; gap: 18px; }
+.ev-hero .top { display: flex; justify-content: space-between; align-items: center; }
+.ev-hero .glass-btn { background: color-mix(in srgb, var(--on-brand) 16%, transparent); color: var(--on-brand); box-shadow: none; }
+.ev-hero .kind { font-size: 14px; font-weight: 600; opacity: .85; }
+.ev-hero h1 { font-family: var(--font-serif); font-weight: 500; font-size: 38px; line-height: 1.02; letter-spacing: -0.025em; }
+.ev-hero .where { display: flex; align-items: center; gap: 6px; font-size: 15px; opacity: .9; }
+.ev-hero .where svg { width: 16px; height: 16px; }
+
+.bento { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
+.tile { background: var(--wash); border-radius: var(--r-md); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tile small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.tile .big { font-size: 40px; line-height: 1; }
+.tile .sub { font-size: 14px; color: var(--body); }
+.tile.wide { grid-column: span 2; }
+.tile.place { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+.tile.place b { font-size: 17px; font-weight: 700; display: block; }
+.tile .minimap { width: 76px; height: 64px; border-radius: 12px; overflow: hidden; }
+.meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.meter i { display: block; height: 100%; background: var(--brand); border-radius: 3px; }
+.faces { display: flex; align-items: center; margin-top: 10px; }
+.faces .av { width: 34px; height: 34px; font-size: 12px; border: 2px solid var(--wash); margin-left: -8px; }
+.faces .av:first-child { margin-left: 0; }
+.faces .txt { margin-left: 10px; font-size: 14px; color: var(--body); }
+
+.prose { font-family: var(--font-serif); font-size: 19px; line-height: 1.55; color: var(--body); padding: 0 20px; }
+.cta-dock { position: sticky; bottom: 0; padding: 14px 16px 22px; background: linear-gradient(to top, var(--paper) 72%, transparent); display: flex; gap: 10px; }
+
+.btn { min-height: 56px; border-radius: 28px; border: 0; font-weight: 700; font-size: 17px; padding: 0 22px; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .18s var(--spring), background .2s; }
+.btn:active { transform: scale(.97); }
+.btn svg { width: 20px; height: 20px; }
+.btn.primary { background: var(--brand); color: var(--on-brand); }
+.btn.primary:hover { background: var(--brand-2); }
+.btn.tint { background: color-mix(in srgb, var(--brand) 12%, var(--paper)); color: var(--brand); }
+.btn.soft { background: var(--wash); color: var(--ink); }
+.btn.soft:hover { background: var(--line); }
+.btn.ok { background: color-mix(in srgb, var(--ok) 14%, var(--paper)); color: var(--ok); }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+.btn.fit { width: auto; }
+
+.av { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; flex: none; }
+.av-0 { background: var(--brand); color: var(--on-brand); } .av-1 { background: #556580; } .av-2 { background: #7a5a3c; } .av-3 { background: #3c6b56; }
+.av-4 { background: #66497a; } .av-5 { background: #8a4130; } .av-6 { background: #2f5b7a; }
+.people { padding: 0 4px; }
+.person { display: grid; grid-template-columns: 46px 1fr auto; gap: 14px; align-items: center; padding: 10px 16px; }
+.person b { display: block; font-size: 16px; font-weight: 700; }
+.person small { font-size: 14px; color: var(--muted); }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--wash); color: var(--ink); display: grid; place-items: center; }
+.icon-btn:hover { background: var(--line); }
+.icon-btn svg { width: 19px; height: 19px; }
+.textlink { border: 0; background: none; color: var(--brand); font-weight: 700; font-size: 16px; padding: 10px 20px; display: inline-flex; gap: 6px; align-items: center; }
+.textlink svg { width: 17px; height: 17px; }
+.search { margin: 0 16px 8px; display: flex; align-items: center; gap: 10px; background: var(--wash); border-radius: 14px; padding: 0 14px; height: 50px; }
+.search svg { width: 19px; height: 19px; color: var(--muted); }
+.search input { border: 0; background: none; flex: 1; font-size: 17px; height: 100%; outline: none; min-width: 0; }
+
+.passes { display: flex; flex-direction: column; gap: 12px; }
+.day-label { padding: 18px 20px 10px; font-size: 15px; font-weight: 700; color: var(--muted); }
+.day-label:first-child { padding-top: 0; }
+.empty { padding: 30px 24px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.empty p { font-family: var(--font-serif); font-size: 20px; color: var(--body); max-width: 24ch; }
+
+.tabs-text { display: flex; gap: 22px; padding: 0 20px; border-bottom: 1px solid var(--line); }
+.tabs-text button { border: 0; background: none; padding: 10px 0 12px; font-size: 16px; font-weight: 600; color: var(--muted); position: relative; }
+.tabs-text button[aria-pressed="true"] { color: var(--ink); }
+.tabs-text button[aria-pressed="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: 2px; background: var(--brand); }
+.thread { display: grid; grid-template-columns: 54px 1fr auto; gap: 14px; align-items: center; padding: 13px 20px; border: 0; background: none; width: 100%; text-align: left; }
+.thread:hover { background: var(--wash); }
+.gtile { width: 54px; height: 54px; border-radius: 16px; background: var(--wash); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: .95; flex: none; }
+.gtile b { font-size: 24px; color: var(--brand); }
+.gtile span { font-size: 11px; color: var(--muted); font-weight: 700; }
+.thread .av { width: 54px; height: 54px; }
+.thread .name { font-size: 17px; font-weight: 700; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.thread .last { font-size: 15px; color: var(--body); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.thread.unread .last { color: var(--ink); font-weight: 600; }
+.thread .when { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 13px; color: var(--muted); }
+.thread .badge { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--brand); color: var(--on-brand); font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+.locked { margin: 10px 20px 0; padding: 14px 16px; border-radius: var(--r-md); background: var(--wash); display: flex; gap: 12px; font-size: 15px; color: var(--body); align-items: center; }
+.locked svg { width: 20px; height: 20px; color: var(--muted); flex: none; }
+.hint-line { padding: 14px 20px; font-size: 15px; color: var(--muted); }
+
+.convo { display: flex; flex-direction: column; height: 100%; }
+.convo-head { display: grid; grid-template-columns: 44px 1fr; gap: 8px; align-items: center; padding: 50px 14px 10px; border-bottom: 1px solid var(--line); background: var(--paper); }
+.convo-head .back { background: none; }
+.convo-head .who { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.convo-head .av, .convo-head .gtile { width: 40px; height: 40px; font-size: 13px; border-radius: 12px; }
+.convo-head .av { border-radius: 50%; }
+.convo-head .gtile b { font-size: 19px; }
+.convo-head .name { display: block; font-size: 16px; font-weight: 700; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.convo-head small { font-size: 13px; color: var(--muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msgs { flex: 1; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; background: var(--paper); }
+.daymark { align-self: center; font-size: 12px; font-weight: 600; color: var(--muted); margin: 4px 0 6px; }
+.msg { max-width: 80%; display: flex; flex-direction: column; margin-top: 10px; }
+.msg.same { margin-top: 3px; }
+.msg .who { font-size: 13px; font-weight: 700; color: var(--brand); margin: 0 0 3px 12px; }
+.msg .bubble { background: var(--wash); padding: 10px 14px; border-radius: 20px 20px 20px 6px; font-size: 16px; line-height: 1.4; }
+.msg .at { font-size: 11px; color: var(--muted); margin: 3px 12px 0; }
+.msg.me { align-self: flex-end; align-items: flex-end; }
+.msg.me .bubble { background: var(--brand); color: var(--on-brand); border-radius: 20px 20px 6px 20px; }
+.msg.pop { animation: pop .32s var(--spring); }
+@keyframes pop { from { transform: translateY(8px) scale(.96); opacity: 0; } }
+.composer { display: grid; grid-template-columns: 1fr 50px; gap: 8px; padding: 8px 12px 22px; background: var(--paper); }
+.composer input { height: 50px; border: 1.5px solid var(--line); border-radius: 25px; padding: 0 18px; background: var(--paper); font-size: 16px; min-width: 0; }
+.composer input:focus { outline: none; border-color: var(--brand); }
+.composer button { width: 50px; height: 50px; border-radius: 50%; border: 0; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; transition: transform .18s var(--spring); }
+.composer button:active { transform: scale(.9); }
+.composer button svg { width: 21px; height: 21px; }
+
+.form { display: flex; flex-direction: column; gap: 16px; padding: 0 16px 28px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.field label { font-size: 14px; font-weight: 700; padding-left: 4px; }
+.field input, .field select, .field textarea { height: 56px; border: 1.5px solid transparent; border-radius: 16px; padding: 0 16px; background: var(--wash); font-size: 17px; width: 100%; transition: border-color .2s, background .2s; }
+.field textarea { height: auto; min-height: 110px; padding: 14px 16px; resize: vertical; font-family: var(--font-serif); font-size: 18px; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--brand); background: var(--paper); }
+.field .hint { font-size: 13px; color: var(--muted); padding-left: 4px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.err { font-size: 15px; color: var(--brand); font-weight: 600; }
+.err:empty { display: none; }
+
+.auth { min-height: 100%; display: flex; flex-direction: column; background: var(--brand); color: var(--on-brand); }
+.poster { padding: 60px 22px 46px; display: flex; flex-direction: column; }
+.poster .kicker { font-size: 15px; font-weight: 600; opacity: .85; }
+.poster .huge { font-size: 172px; line-height: .8; letter-spacing: -0.04em; margin-top: 24px; }
+.poster .anos { font-family: var(--font-serif); font-size: 40px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; margin-top: 8px; }
+.poster p { font-size: 16px; opacity: .85; margin-top: 16px; max-width: 30ch; }
+.auth-sheet { background: var(--paper); color: var(--ink); border-radius: 30px 30px 0 0; padding: 24px 0 0; flex: 1; }
+.auth-sheet h2 { font-family: var(--font-serif); font-weight: 500; font-size: 30px; letter-spacing: -0.02em; padding: 0 20px 16px; }
+.switch { text-align: center; color: var(--body); font-size: 16px; padding: 0 0 26px; }
+.switch button { border: 0; background: none; color: var(--brand); font-weight: 700; padding: 8px 4px; }
+
+.scrim { position: absolute; inset: 0; z-index: 20; background: rgba(20,30,50,.38); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease); }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.bsheet { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 21; background: var(--paper); border-radius: 34px; padding: 10px 8px 14px; transform: translateY(110%); transition: transform .42s var(--spring); box-shadow: 0 20px 50px -20px rgba(20,30,50,.5); }
+.bsheet.open { transform: none; }
+.bsheet .handle { margin-bottom: 8px; }
+.bsheet .head { display: flex; gap: 14px; align-items: center; padding: 6px 14px 14px; }
+.bsheet .head .av { width: 54px; height: 54px; font-size: 18px; }
+.bsheet .head b { display: block; font-family: var(--font-serif); font-weight: 500; font-size: 22px; letter-spacing: -0.015em; }
+.bsheet .head small { color: var(--muted); font-size: 14px; }
+.menu { display: flex; flex-direction: column; }
+.menu button { display: flex; align-items: center; gap: 14px; border: 0; background: none; min-height: 58px; padding: 0 16px; border-radius: 18px; font-size: 18px; font-weight: 600; text-align: left; }
+.menu button:hover { background: var(--wash); }
+.menu button svg { width: 22px; height: 22px; color: var(--muted); }
+.menu button svg.chev { margin-left: auto; width: 18px; height: 18px; }
+.menu button[aria-current="page"] { background: var(--wash); }
+.menu button[aria-current="page"] svg:first-child { color: var(--brand); }
+.menu .sep { height: 1px; background: var(--line); margin: 6px 16px; }
+.menu .lab { font-size: 13px; font-weight: 700; color: var(--muted); padding: 10px 16px 4px; }
+.menu .danger, .menu .danger svg { color: var(--brand); }
+
+.toast { position: absolute; left: 50%; top: 52px; z-index: 30; transform: translate(-50%, -220px); opacity: 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 24px; padding: 12px 18px; font-size: 15px; font-weight: 600; display: flex; gap: 10px; align-items: center; width: max-content; max-width: calc(100% - 32px); transition: transform .45s var(--spring), opacity .2s; box-shadow: 0 12px 30px -12px rgba(20,30,50,.4); }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+.toast svg { width: 20px; height: 20px; color: var(--ok); flex: none; }
+
+.profile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 0 20px 22px; }
+.profile .av { width: 96px; height: 96px; font-size: 32px; }
+.profile h1 { font-family: var(--font-serif); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; line-height: 1.05; margin-top: 6px; }
+.profile p { color: var(--body); font-size: 15px; }
+.role { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; color: var(--brand); background: color-mix(in srgb, var(--brand) 12%, var(--paper)); padding: 5px 11px; border-radius: 999px; }
+.role svg { width: 15px; height: 15px; }
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0 20px; gap: 12px; }
+.figures div { display: flex; flex-direction: column; }
+.figures b { font-size: 46px; line-height: 1; }
+.figures span { font-size: 13px; color: var(--muted); font-weight: 600; }
+.group { margin: 22px 16px 0; background: var(--wash); border-radius: var(--r-md); padding: 0 16px; }
+.group .row2 { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 16px; }
+.group .row2:first-child { border-top: 0; }
+.group .row2 span { color: var(--muted); }
+.group .row2 b { font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 18px 16px 0; }
+.placerow { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--line); align-items: center; }
+.placerow:first-of-type { border-top: 0; }
+.placerow b { display: block; font-size: 17px; font-weight: 700; }
+.placerow small { font-size: 14px; color: var(--muted); }
+.placerow .cap { text-align: right; line-height: 1; }
+.placerow .cap b { font-size: 24px; font-stretch: 72%; font-weight: 800; }
+.placerow .cap span { font-size: 12px; color: var(--muted); }
+
+.grp-label { padding: 22px 20px 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.group.svcs { margin-top: 8px; }
+.svc { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 58px; padding: 0; border: 0; border-top: 1px solid var(--line); background: none; font-size: 17px; font-weight: 600; text-align: left; }
+.svcs .svc:first-child { border-top: 0; }
+.svc > svg:first-child { width: 22px; height: 22px; color: var(--ink); flex: none; }
+.svc span { flex: 1; min-width: 0; }
+.svc svg.chev { width: 18px; height: 18px; color: var(--muted); }
+.svc.soon { color: var(--muted); }
+.svc.soon > svg:first-child { color: var(--muted); }
+.svc em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.svc.danger, .svc.danger > svg:first-child { color: var(--brand); }
+.card-id { margin: 8px 16px 0; border-radius: var(--r-lg); background: var(--brand); color: var(--on-brand); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.card-id small { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.card-id h2 { font-family: var(--font-serif); font-weight: 500; font-size: 28px; line-height: 1.05; letter-spacing: -0.02em; }
+.card-id .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card-id .dl b { display: block; font-size: 16px; }
+.card-id .dl small { display: block; margin-bottom: 2px; }
+.qr { width: 132px; height: 132px; background: #fff; border-radius: 12px; padding: 10px; align-self: center; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.ticket { margin: 0 16px 12px; background: var(--wash); border-radius: var(--r-md); padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; }
+.ticket h3 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.ticket small { color: var(--muted); font-size: 14px; }
+.ticket .btn { min-height: 44px; font-size: 15px; width: auto; padding: 0 16px; }
+.news { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.news:first-of-type { border-top: 0; }
+.news small { color: var(--muted); font-size: 13px; font-weight: 600; }
+.news h3 { font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.15; }
+.news p { color: var(--body); font-size: 16px; }
+.faq { margin: 0 16px; background: var(--wash); border-radius: var(--r-md); }
+.faq details { border-top: 1px solid var(--line); padding: 0 16px; }
+.faq details:first-child { border-top: 0; }
+.faq summary { padding: 16px 0; font-weight: 700; cursor: pointer; }
+.faq details p { padding: 0 0 16px; color: var(--body); font-size: 16px; }
+.prose-block { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px; color: var(--body); font-size: 16px; }
+.prose-block h2 { font-size: 18px; color: var(--ink); }
+.swrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+.swrow:first-child { border-top: 0; }
+.swrow b { font-size: 16px; } .swrow small { grid-column: 1; color: var(--muted); font-size: 14px; }
+.swrow .toggle { grid-column: 2; grid-row: 1 / span 2; width: 52px; height: 32px; border-radius: 16px; border: 0; background: var(--line); position: relative; transition: background .2s; }
+.swrow .toggle::after { content: ""; position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .25s var(--spring); }
+.swrow .toggle[aria-checked="true"] { background: var(--brand); }
+.swrow .toggle[aria-checked="true"]::after { transform: translateX(20px); }
+.swrow .toggle[disabled] { opacity: .45; cursor: not-allowed; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; border-radius: 999px; padding: 5px 11px; background: var(--wash); color: var(--body); }
+.status.live { background: color-mix(in srgb, var(--brand) 12%, var(--paper)); color: var(--brand); }
+.status.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: pulse 1.4s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.auc-head { margin: 0 16px; border-radius: var(--r-lg); background: var(--brand); color: var(--on-brand); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.auc-head h2 { font-family: var(--font-serif); font-weight: 500; font-size: 26px; line-height: 1.05; letter-spacing: -0.02em; }
+.auc-head p { opacity: .85; font-size: 15px; }
+.auc-head .status { align-self: flex-start; background: color-mix(in srgb, var(--on-brand) 18%, transparent); color: var(--on-brand); }
+.auc-head .status.live::before { background: var(--on-brand); }
+.lot { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; width: 100%; border: 0; background: none; text-align: left; padding: 14px 20px; border-top: 1px solid var(--line); }
+.lot:hover { background: var(--wash); }
+.lot h3 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.lot small { color: var(--muted); font-size: 14px; grid-column: 1; }
+.lot .price { grid-column: 2; grid-row: 1 / span 2; text-align: right; line-height: 1.1; }
+.lot .price b { display: block; font-size: 24px; font-stretch: 72%; font-weight: 800; }
+.lot .price span { font-size: 12px; color: var(--muted); }
+.lot.sold h3 { color: var(--muted); }
+.bids { margin: 0 16px; }
+.bids div { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.bids div:first-child { border-top: 0; font-weight: 700; }
+.panel-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line); }
+.panel-row b { display: block; font-size: 16px; } .panel-row small { color: var(--muted); font-size: 14px; }
+.panel-row .btn { min-height: 40px; font-size: 14px; width: auto; padding: 0 14px; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .24s; animation-timing-function: cubic-bezier(.16,1,.3,1); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Confraternização Maçônica, 125 anos</h1>
+      <p>Protótipo do aplicativo oficial do evento em Curitiba. As telas estão agrupadas pelos fluxos do documento de visão, com os casos de uso de cada uma. Toque em qualquer tela para navegar.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="play" data-open="T-10"><i data-lucide="play"></i>Navegar no protótipo</button>
+      <div class="temas"><span>Tema</span><div class="sw" data-temas></div></div>
+    </div>
+    <nav class="flownav" id="flownav" aria-label="Fluxos"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="gallery"></main>
+<div class="wrap foot">Datas, locais e pessoas são de exemplo. A data real do evento ainda será definida.</div>
+
+<div class="player" id="player" role="dialog" aria-label="Protótipo navegável">
+  <aside class="list" id="plist"><button class="close" data-close><i data-lucide="x"></i>Fechar</button></aside>
+  <div class="stage" id="stage">
+    <div class="holder" id="holder"></div>
+    <div class="ctrls"><button data-step="-1" aria-label="Tela anterior"><i data-lucide="chevron-left"></i></button><button data-close aria-label="Fechar"><i data-lucide="x"></i></button><button data-step="1" aria-label="Próxima tela"><i data-lucide="chevron-right"></i></button></div>
+  </div>
+  <aside class="notes"><div id="pnotes" style="display:flex;flex-direction:column;gap:14px"></div><div class="temas"><span>Tema</span><div class="sw" data-temas></div></div></aside>
+</div>
+
+<script>
+// ================= dados de exemplo =================
+const START = new Date(2027, 3, 22);
+const DAYS = [
+  { id: "d22", wd: "Qui", dn: 22, long: "Quinta-feira", full: "Quinta, 22 de abril" },
+  { id: "d23", wd: "Sex", dn: 23, long: "Sexta-feira", full: "Sexta, 23 de abril" },
+  { id: "d24", wd: "Sáb", dn: 24, long: "Sábado", full: "Sábado, 24 de abril" },
+  { id: "d25", wd: "Dom", dn: 25, long: "Domingo", full: "Domingo, 25 de abril" },
+];
+const PLACES = [
+  { id: "l1", name: "Templo sede", addr: "Rua XV de Novembro, Centro", cap: 500, x: 186, y: 156 },
+  { id: "l2", name: "Teatro Guaíra", addr: "Praça Santos Andrade, Centro", cap: 2100, x: 236, y: 130 },
+  { id: "l3", name: "Santa Felicidade", addr: "Av. Manoel Ribas, Santa Felicidade", cap: 800, x: 78, y: 132 },
+  { id: "l4", name: "Praça Tiradentes", addr: "Ponto da Linha Turismo, Centro", cap: 120, x: 176, y: 146 },
+  { id: "l5", name: "Museu Oscar Niemeyer", addr: "Rua Mal. Hermes, 999, Centro Cívico", cap: 450, x: 214, y: 100 },
+  { id: "l6", name: "Ópera de Arame", addr: "Rua João Gava, 970, Abranches", cap: 1500, x: 150, y: 80 },
+  { id: "l7", name: "Parque Barigui", addr: "Av. Cândido Hartmann, Bigorrilho", cap: 300, x: 112, y: 140 },
+  { id: "l8", name: "Jardim Botânico", addr: "Rua Eng. Ostoja Roguski, Jardim Botânico", cap: 80, x: 280, y: 182 },
+  { id: "l9", name: "Expo Barigui", addr: "Rua Prof. Pedro V. Parigot de Souza, Mossunguê", cap: 1600, x: 96, y: 186 },
+];
+const EVENTS = [
+  { id: "e1", day: "d22", time: "09:00", end: "12:00", title: "Credenciamento e café de boas-vindas", place: "l1", conf: 312, cap: 500, kind: "Recepção",
+    desc: "Retirada de credenciais e kits das delegações. Café servido no salão nobre, com recepção dos irmãos vindos de fora do país." },
+  { id: "e2", day: "d22", time: "15:00", end: "18:30", title: "Sessão magna de abertura", place: "l2", conf: 1840, cap: 2100, kind: "Sessão",
+    desc: "Abertura oficial das comemorações dos 125 anos, com a presença das potências convidadas e das delegações estrangeiras. Traje: terno escuro." },
+  { id: "e3", day: "d22", time: "20:00", end: "23:30", title: "Jantar de confraternização", place: "l3", conf: 620, cap: 800, kind: "Jantar",
+    desc: "Jantar típico no bairro italiano de Curitiba, aberto a irmãos e cunhadas. O ônibus sai do Teatro Guaíra às 19:15." },
+  { id: "e4", day: "d23", time: "09:30", end: "12:30", title: "Linha Turismo com as delegações", place: "l4", conf: 120, cap: 120, kind: "Passeio",
+    desc: "Percurso pelos principais pontos da cidade em ônibus reservado, com guia bilíngue." },
+  { id: "e5", day: "d23", time: "14:00", end: "17:00", title: "Painel: 125 anos de história", place: "l5", conf: 410, cap: 450, kind: "Painel",
+    desc: "Historiadores e ex-grão-mestres revisitam a fundação, os templos e as figuras que marcaram a potência no Paraná." },
+  { id: "e6", day: "d23", time: "19:30", end: "21:30", title: "Concerto comemorativo", place: "l6", conf: 1390, cap: 1500, kind: "Cultura",
+    desc: "Orquestra convidada apresenta repertório preparado para o aniversário, com abertura pelo coral das lojas." },
+  { id: "e7", day: "d24", time: "08:00", end: "10:00", title: "Caminhada no Barigui", place: "l7", conf: 140, cap: 300, kind: "Família",
+    desc: "Caminhada leve de 3 km em volta do lago, com café ao final. Aberta a familiares." },
+  { id: "e8", day: "d24", time: "10:30", end: "12:00", title: "Visita guiada ao Jardim Botânico", place: "l8", conf: 76, cap: 80, kind: "Família",
+    desc: "Grupo reduzido, com guia. Ponto de encontro em frente à estufa." },
+  { id: "e9", day: "d24", time: "21:00", end: "02:00", title: "Baile de gala dos 125 anos", place: "l9", conf: 1210, cap: 1600, kind: "Gala",
+    desc: "Noite de gala com orquestra ao vivo. Traje: black tie. Mesas organizadas por delegação." },
+  { id: "e10", day: "d25", time: "11:00", end: "12:30", title: "Sessão de encerramento", place: "l1", conf: 288, cap: 500, kind: "Sessão",
+    desc: "Encerramento solene, entrega de medalhas comemorativas e leitura da carta dos 125 anos." },
+];
+const PEOPLE = [
+  { id: "u1", name: "Ir. João Ferreira", from: "Lisboa, Portugal", av: 1 },
+  { id: "u2", name: "Ir. Roberto Almeida", from: "Londrina, PR", av: 2 },
+  { id: "u3", name: "Bro. Michael Grant", from: "Edimburgo, Escócia", av: 3 },
+  { id: "u4", name: "Ir. Antônio Kowalski", from: "Curitiba, PR", av: 4 },
+  { id: "u5", name: "Ir. Hernán Ruiz", from: "Montevidéu, Uruguai", av: 5 },
+  { id: "u6", name: "Ir. Sérgio Tavares", from: "Ponta Grossa, PR", av: 6 },
+  { id: "u7", name: "Ir. Marcos Bittencourt", from: "Florianópolis, SC", av: 1 },
+  { id: "u8", name: "Ir. Luiz Carlos Prado", from: "São Paulo, SP", av: 2 },
+];
+const ME = { name: "Paulo Ribeiro", short: "Paulo", initials: "PR", loja: "Loja Luz do Iguaçu nº 41", oriente: "Curitiba, PR", pais: "Brasil",
+  email: "paulo.ribeiro@exemplo.com", phone: "(41) 99999-0000", cim: "12.345", potencia: "GOB-PR · Grande Oriente do Paraná", cargo: "Mestre Instalado", organizer: true, leiloeiro: true };
+const state = { authMode: "login", day: "d22", enrolled: new Set(["e2", "e3", "e5"]), chatTab: "grupos", groupReads: { e2: 4, e3: 2, e5: 0 }, justSent: false,
+  mods: { leilao: true, carteirinha: true, ingressos: true, pedidos: true, noticias: true }, checkins: new Set() };
+const MODULOS = [
+  { id: "leilao", name: "Leilão", icon: "gavel", desc: "Leiloeiro chama o leilão e compradores dão lances." },
+  { id: "carteirinha", name: "Carteirinha", icon: "contact", desc: "Identificação digital do irmão." },
+  { id: "ingressos", name: "Check-ins e ingressos", icon: "ticket", desc: "Ingresso e presença em cada evento." },
+  { id: "pedidos", name: "Pedidos", icon: "package", desc: "Compras feitas pelo app, como lotes do leilão." },
+  { id: "noticias", name: "Notícias", icon: "newspaper", desc: "Comunicados do evento." },
+];
+const SOON = ["Vouchers de alimentação", "Vagas de estacionamento", "Minha assinatura", "Meus rateios", "Rede de empresas", "Meu ranking", "Central de atendimento", "Atalhos da home", "Gestão de salas"];
+const AUCTION = { title: "Leilão beneficente dos 125 anos", day: "d24", time: "16:00", place: "l9", status: "scheduled", step: 100 };
+const LOTES = [
+  { id: "b0", title: "Livro de atas, edição de 1950", desc: "Reedição fac-símile, encadernada à mão.", start: 400, bid: 650, leader: "me", status: "sold", hist: [["Ir. Sérgio Tavares", 500], ["Você", 650]] },
+  { id: "b1", title: "Avental histórico, edição 1902", desc: "Peça restaurada, doada por uma loja de Paranaguá. Acompanha certificado.", start: 500, bid: 1800, leader: "Ir. Roberto Almeida", status: "open", hist: [["Ir. Hernán Ruiz", 1500], ["Ir. Roberto Almeida", 1800]] },
+  { id: "b2", title: "Quadro “Templo de Salomão”, óleo sobre tela", desc: "Obra de 80 x 60 cm de artista paranaense, doada para o acervo.", start: 800, bid: 2400, leader: "Bro. Michael Grant", status: "open", hist: [["Ir. Luiz Carlos Prado", 2000], ["Bro. Michael Grant", 2400]] },
+  { id: "b3", title: "Jantar para 8 com o Grão-Mestre", desc: "Mesa reservada no baile de gala, com os convidados do comprador.", start: 1000, bid: 3200, leader: "Ir. Antônio Kowalski", status: "open", hist: [["Ir. Antônio Kowalski", 3200]] },
+  { id: "b4", title: "Medalha comemorativa nº 001", desc: "Primeira medalha numerada da série dos 125 anos.", start: 300, bid: 300, leader: null, status: "open", hist: [] },
+];
+const NEWS = [
+  { at: "Hoje", t: "Credenciamento abre às 9h na quinta", p: "Leve documento com foto e a carteirinha do app. O ponto fica no Templo sede." },
+  { at: "Ontem", t: "Ônibus para o jantar sai do Guaíra às 19:15", p: "As vagas são por ordem de inscrição no evento. Cunhadas são bem-vindas." },
+  { at: "Seg", t: "Leilão beneficente terá 5 lotes", p: "A renda vai para o acervo da potência. O leiloeiro chama o leilão no sábado, às 16h." },
+];
+const FAQ = [
+  ["Preciso me inscrever em cada evento?", "Sim. A inscrição garante a vaga, libera o grupo no Chat e o ingresso."],
+  ["Como entro no leilão?", "Na aba Leilão, quando o leiloeiro chamar, abra um lote e dê o seu lance."],
+  ["Posso trazer minha esposa?", "Eventos marcados como Família ou Jantar são abertos a familiares."],
+  ["Esqueci minha senha.", "No menu da conta, use Alterar senha."],
+];
+const GROUP_MSGS = {
+  e2: [
+    { who: "Ir. Antônio Kowalski", at: "09:12", text: "Bom dia, irmãos. Os portões do Guaíra abrem às 14:00." },
+    { who: "Ir. Hernán Ruiz", at: "09:40", text: "La delegación uruguaya llega al aeropuerto a las 11. ¿Hay traslado?" },
+    { who: "Ir. Antônio Kowalski", at: "09:52", text: "Há sim, Ir. Hernán. Van na saída do desembarque, com placa do evento." },
+    { who: "Ir. Roberto Almeida", at: "10:05", text: "Alguém de Londrina indo de carro? Sobram duas vagas." },
+  ],
+  e3: [
+    { who: "Ir. Sérgio Tavares", at: "Ontem", text: "Ônibus sai do Guaíra às 19:15 em ponto." },
+    { who: "Ir. Marcos Bittencourt", at: "Ontem", text: "As cunhadas podem sentar na mesa da delegação?" },
+  ],
+  e5: [ { who: "Ir. Luiz Carlos Prado", at: "Seg", text: "Vou levar fotos do templo antigo para o painel." } ],
+};
+const DMS = [
+  { id: "p1", with: "u1", unread: 1, msgs: [ { me: false, at: "08:31", text: "Paulo, chego quinta cedo. Podemos nos encontrar no credenciamento?" } ] },
+  { id: "p2", with: "u3", unread: 0, msgs: [
+    { me: true, at: "Ter", text: "Welcome to Curitiba, brother! Let me know if you need anything." },
+    { me: false, at: "Ter", text: "Thank you, Paulo. Looking forward to the concert at the Ópera de Arame." } ] },
+  { id: "p3", with: "u2", unread: 0, msgs: [ { me: false, at: "Seg", text: "Fechado, te pego no hotel às 14:15." } ] },
+];
+
+// ================= fluxos e telas =================
+const FLOWS = [
+  { id: "acesso", n: "01", title: "Acesso", cu: "CU-01 · CU-02",
+    desc: "Entrada no app oficial. Quem já tem conta entra com e-mail e senha; quem chega pela primeira vez cria a conta com os dados maçônicos (loja, CIM, cidade e país).",
+    steps: [["T-01", "Entrar"], ["T-02", "Criar conta"]] },
+  { id: "eventos", n: "02", title: "Eventos", cu: "CU-03 a CU-11",
+    desc: "Tela inicial com o mapa da programação na cidade, boas-vindas, calendário dos dias e lista de eventos. Pelo mapa ou pela lista se chega ao evento, onde o participante se inscreve e vê quem vai.",
+    steps: [["T-10", "Início"], ["T-11", "Evento inscrito"], ["T-12", "Evento"], ["T-13", "Participantes"]] },
+  { id: "inscricoes", n: "03", title: "Inscrições", cu: "CU-12",
+    desc: "A agenda pessoal: os eventos em que o participante está inscrito, por dia, cada um como um ingresso.",
+    steps: [["T-20", "Inscrições"]] },
+  { id: "chat", n: "04", title: "Chat", cu: "CU-13 a CU-17",
+    desc: "Grupos de cada evento, liberados pela inscrição, e conversas privadas entre participantes. A conversa privada começa pela lista de participantes de um evento.",
+    steps: [["T-30", "Grupos"], ["T-31", "Grupo do evento"], ["T-32", "Privadas"], ["T-33", "Conversa"]] },
+  { id: "conta", n: "05", title: "Menu e conta", cu: "CU-18 a CU-23",
+    desc: "Menu principal com as seções e, para organizadores, a área de organização. Menu da conta com perfil, edição e troca de senha.",
+    steps: [["T-40", "Menu"], ["T-41", "Menu da conta"], ["T-42", "Perfil"], ["T-43", "Editar perfil"], ["T-44", "Alterar senha"]] },
+  { id: "organizacao", n: "06", title: "Organização", cu: "CU-24 · CU-25",
+    desc: "Área do organizador: cadastro dos locais e dos itens da programação, com dia, horário, local e vagas. O que é publicado aparece na hora na lista e no mapa.",
+    steps: [["T-50", "Painel"], ["T-51", "Novo local"], ["T-52", "Novo evento"], ["T-53", "Módulos do evento"]] },
+  { id: "servicos", n: "07", title: "Serviços da conta", cu: "CU-26 a CU-48",
+    desc: "Menu de serviços da conta, no padrão do app de referência. Cada serviço é um módulo plugável, ligado pelo criador do evento. Os que ainda não estão no escopo aparecem como “em breve”.",
+    steps: [["T-60", "Conta"], ["T-61", "Carteirinha"], ["T-62", "Ingressos"], ["T-63", "Pedidos"], ["T-64", "Notícias"], ["T-65", "Perguntas frequentes"], ["T-66", "Privacidade e cookies"], ["T-67", "Termos de uso"], ["T-68", "Dados e aplicativo"], ["T-69", "Excluir conta"]] },
+  { id: "leilao", n: "08", title: "Leilão", cu: "CU-49 a CU-54",
+    desc: "Módulo de leilão. O leiloeiro cadastra os lotes e chama o leilão; o comprador abre um lote e dá o lance. Ao encerrar o lote, vai para os pedidos de quem ganhou.",
+    steps: [["T-70", "Leilão"], ["T-71", "Lote"], ["T-72", "Painel do leiloeiro"], ["T-73", "Novo lote"]] },
+];
+const SCREENS = {
+  "T-01": { r: "entrar", auth: "login", name: "Entrar", cu: ["CU-02"], notes: "E-mail e senha. Os erros dizem o que corrigir (e-mail inválido, senha curta). O cartaz dos 125 anos ocupa o topo e o formulário sobe numa folha, ao alcance do polegar." },
+  "T-02": { r: "entrar", auth: "signup", name: "Criar conta", cu: ["CU-01"], notes: "Cadastro com nome, loja, CIM, cidade, país, e-mail e senha (mínimo de 8 caracteres). País em lista porque o evento recebe delegações estrangeiras. Ao criar, entra direto na tela inicial." },
+  "T-10": { r: "eventos", name: "Início", cu: ["CU-03", "CU-04", "CU-05", "CU-06", "CU-07", "CU-08"], notes: "Ordem da visão: mapa no topo, boas-vindas, calendário e lista. O mapa mostra os eventos do dia escolhido (marcador verde = inscrito). Contagem de dias até a abertura e o próximo evento da agenda como ingresso. Tocar num marcador ou num item abre o evento." },
+  "T-11": { r: "evento-e2", name: "Evento inscrito", cu: ["CU-09", "CU-11"], notes: "Data, horário, local com mapa, confirmados com barra de lotação, descrição e participantes. Inscrito: botão para cancelar e atalho para o grupo do evento no Chat." },
+  "T-12": { r: "evento-e1", name: "Evento", cu: ["CU-09", "CU-10"], notes: "Mesmo layout, sem inscrição. “Inscrever-se” confirma a participação, soma um confirmado e libera o grupo do evento no Chat. Evento lotado mostra o botão desativado." },
+  "T-13": { r: "participantes-e2", name: "Participantes", cu: ["CU-11", "CU-16"], notes: "Lista de inscritos com cidade e país, busca por nome ou cidade e botão para mandar mensagem privada." },
+  "T-20": { r: "inscricoes", name: "Inscrições", cu: ["CU-12"], notes: "Eventos inscritos agrupados por dia. O primeiro da agenda aparece em destaque. Tocar abre o evento. Sem inscrições, a tela leva à programação." },
+  "T-30": { r: "chat", tab: "grupos", name: "Grupos", cu: ["CU-13"], notes: "Um grupo por evento inscrito, com a última mensagem e as não lidas. Um aviso mostra quantos grupos ainda estão fechados por falta de inscrição." },
+  "T-31": { r: "grupo-e2", name: "Grupo do evento", cu: ["CU-14", "CU-17"], notes: "Conversa coletiva do evento, com o nome de quem escreveu. Mensagens seguidas da mesma pessoa ficam agrupadas. Campo de envio no rodapé." },
+  "T-32": { r: "chat", tab: "privadas", name: "Privadas", cu: ["CU-15"], notes: "Conversas individuais do participante, com a última mensagem e as não lidas." },
+  "T-33": { r: "conversa-p2", name: "Conversa", cu: ["CU-16", "CU-17"], notes: "Diálogo direto com outro participante, inclusive de outros países." },
+  "T-40": { r: "eventos", sheet: "menu", name: "Menu", cu: ["CU-18", "CU-19"], notes: "Menu principal numa folha que sobe de baixo: Eventos, Inscrições e Chat. Organizadores veem também a área de organização. As mesmas seções ficam na barra de abas." },
+  "T-41": { r: "eventos", sheet: "account", name: "Menu da conta", cu: ["CU-20"], notes: "Aberto pelo avatar. Ver perfil, editar perfil, alterar senha e sair." },
+  "T-42": { r: "perfil", name: "Perfil", cu: ["CU-21"], notes: "Dados cadastrais (loja, CIM, oriente, país, contato) e números do participante no evento." },
+  "T-43": { r: "editar-perfil", name: "Editar perfil", cu: ["CU-22"], notes: "Campos do perfil já preenchidos. Salvar volta ao perfil com confirmação." },
+  "T-44": { r: "senha", name: "Alterar senha", cu: ["CU-23"], notes: "Senha atual, nova e repetição. Valida o tamanho mínimo e se as duas novas são iguais." },
+  "T-50": { r: "organizacao", name: "Painel", cu: ["CU-24", "CU-25"], notes: "Totais de eventos, locais e inscrições, atalhos para cadastrar e a lista de locais com capacidade." },
+  "T-51": { r: "novo-local", name: "Novo local", cu: ["CU-24"], notes: "Nome, endereço, bairro e capacidade. O local passa a aparecer no cadastro de eventos." },
+  "T-53": { r: "modulos", name: "Módulos do evento", cu: ["CU-55"], notes: "O criador liga ou desliga os módulos do evento (Lego). Desligar o Leilão tira a aba e o menu para todos. Os módulos “em breve” ainda não existem. Mesmo app serve qualquer evento do GOB, não só os 125 anos." },
+  "T-60": { r: "conta", name: "Conta", cu: ["CU-20", "CU-26", "CU-27", "CU-28", "CU-29", "CU-30", "CU-31", "CU-32", "CU-33", "CU-34", "CU-35", "CU-36", "CU-37", "CU-38", "CU-44"], notes: "Menu de serviços da conta, como na referência. Carteirinha, ingressos, pedidos e notícias funcionam; vouchers, estacionamento, assinatura, rateios, rede, ranking, atendimento, atalhos e salas aparecem como “em breve”. Itens somem quando o módulo é desligado." },
+  "T-61": { r: "carteirinha", name: "Carteirinha", cu: ["CU-26"], notes: "Identificação do irmão com loja, potência, CIM e oriente, mais código para conferência na entrada." },
+  "T-62": { r: "ingressos", name: "Ingressos", cu: ["CU-27"], notes: "Um ingresso por evento inscrito. “Fazer check-in” registra a presença." },
+  "T-63": { r: "pedidos", name: "Pedidos", cu: ["CU-30"], notes: "Compras do participante. Lotes arrematados no leilão entram aqui quando o leiloeiro encerra o lote." },
+  "T-64": { r: "noticias", name: "Notícias", cu: ["CU-39"], notes: "Comunicados do evento, do mais novo ao mais antigo." },
+  "T-65": { r: "faq", name: "Perguntas frequentes", cu: ["CU-40"], notes: "Perguntas e respostas que abrem ao toque." },
+  "T-66": { r: "privacidade", name: "Privacidade e cookies", cu: ["CU-41", "CU-42"], notes: "Resumo da política de privacidade e escolha de cookies opcionais." },
+  "T-67": { r: "termos", name: "Termos de uso", cu: ["CU-43"], notes: "Termos de uso do aplicativo." },
+  "T-68": { r: "dados", name: "Dados e aplicativo", cu: ["CU-45", "CU-46", "CU-47", "CU-48"], notes: "Dados do irmão na instituição (loja, potência, CIM, cargo), versão do app e sistema, excluir conta e sair." },
+  "T-69": { r: "excluir", name: "Excluir conta", cu: ["CU-47"], notes: "Confirmação antes de apagar a conta. Ao confirmar, volta para a tela de entrada." },
+  "T-70": { r: "leilao", name: "Leilão", cu: ["CU-49"], notes: "Cabeçalho com situação (agendado ou ao vivo) e a lista de lotes com o maior lance. O leiloeiro vê o atalho para o painel. Até o leilão ser chamado, os lances ficam fechados." },
+  "T-71": { r: "lote-b1", name: "Lote", cu: ["CU-50", "CU-51"], notes: "Descrição, maior lance e histórico. O botão dá o próximo lance (acima do atual, de R$ 100 em R$ 100) quando o leilão está ao vivo. Quem lidera vê o aviso." },
+  "T-72": { r: "leiloeiro", name: "Painel do leiloeiro", cu: ["CU-52", "CU-54"], notes: "Persona leiloeiro. “Chamar leilão” abre os lances e avisa os participantes. Cada lote pode ser encerrado e fica vendido para quem lidera." },
+  "T-73": { r: "novo-lote", name: "Novo lote", cu: ["CU-53"], notes: "Título, descrição e lance inicial. O lote entra na lista do leilão." },
+  "T-52": { r: "novo-evento", name: "Novo evento", cu: ["CU-25"], notes: "Título, dia, horário, local, vagas e descrição. Ao publicar, abre o evento criado, que entra na lista e no mapa do dia." },
+};
+const ORDER = FLOWS.flatMap(f => f.steps.map(s => s[0]));
+const TEMAS = [
+  { id: "bordo", name: "Bordô", a: "#740012", b: "#ffffff" },
+  { id: "azul", name: "Azul", a: "#1f4e8c", b: "#ffffff" },
+  { id: "dourado", name: "Dourado", a: "#84601a", b: "#f6f5f1" },
+  { id: "marinho", name: "Marinho", a: "#172540", b: "#c9a24a" },
+];
+
+// ================= utilidades =================
+const ev = id => EVENTS.find(e => e.id === id);
+const place = id => PLACES.find(p => p.id === id);
+const person = id => PEOPLE.find(p => p.id === id);
+const day = id => DAYS.find(d => d.id === id);
+const fmt = n => n.toLocaleString("pt-BR");
+const brl = n => "R$ " + fmt(n);
+const mod = id => !!state.mods[id];
+const lote = id => LOTES.find(l => l.id === id);
+const initials = n => n.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+const firstName = n => n.replace(/^(Ir\.|Bro\.)\s*/, "").split(" ")[0];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const icon = (n, cls = "") => `<i data-lucide="${n}"${cls ? ` class="${cls}"` : ""}></i>`;
+const byTime = (a, b) => (a.day + a.time).localeCompare(b.day + b.time);
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function greeting() { const h = new Date().getHours(); return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"; }
+function daysLeft() { return Math.max(0, Math.ceil((START - new Date()) / 864e5)); }
+
+// ================= peças do app =================
+function tabbar(cur) {
+  const unread = Object.entries(state.groupReads).filter(([k]) => state.enrolled.has(k)).reduce((a, [, v]) => a + v, 0) + DMS.reduce((a, d) => a + d.unread, 0);
+  return `<nav class="tabbar" aria-label="Seções">${[["eventos", "calendar-days", "Eventos"], ["inscricoes", "ticket", "Inscrições"], ...(mod("leilao") ? [["leilao", "gavel", "Leilão"]] : []), ["chat", "message-circle", "Chat"]].map(([r, i, l]) =>
+    `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}>${icon(i)}${l}${r === "chat" && unread ? `<span class="dot num">${unread}</span>` : ""}</button>`).join("")}</nav>`;
+}
+function navrow(back) {
+  return `<div class="statusgap"></div><div class="navrow">
+    ${back ? `<button class="plain" data-go="${back}" aria-label="Voltar">${icon("chevron-left")}</button>` : `<button class="plain" data-act="menu" aria-label="Abrir menu">${icon("menu")}</button>`}
+    <button class="me-btn" data-act="account" aria-label="Abrir menu da conta">${ME.initials}</button></div>`;
+}
+function page(cur, back, title, sub, body) {
+  return `<main class="view ${cur ? "has-bar" : ""}">${navrow(back)}<header class="largetitle"><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</header>${body}</main>${cur ? tabbar(cur) : ""}`;
+}
+function passCard(e, tone = "") {
+  const p = place(e.place), d = day(e.day);
+  return `<button class="pass ${tone}" data-go="evento-${e.id}">
+    <div class="main"><small>${d.full} · <span class="num">${e.time}</span></small><h3>${esc(e.title)}</h3><span class="where">${icon("map-pin")}${esc(p.name)}</span></div>
+    <div class="stub"><b class="cond num">${d.dn}</b><span>ABR</span></div></button>`;
+}
+function slot(e) {
+  const p = place(e.place), mine = state.enrolled.has(e.id), full = e.conf >= e.cap && !mine, left = e.cap - e.conf;
+  const status = mine ? `<span class="mine-mark">Inscrito</span>` : full ? `<span class="full-mark">Lotado</span>`
+    : left <= 50 ? `<span class="left-mark num">Restam ${left}</span>` : `<span class="num">${icon("users")}${fmt(e.conf)} de ${fmt(e.cap)}</span>`;
+  return `<button class="slot ${mine ? "is-mine" : ""}" data-go="evento-${e.id}">
+    <div class="t cond num">${e.time}<small>até ${e.end}</small></div>
+    <div><h3>${esc(e.title)}</h3><div class="m"><span>${icon("map-pin")}${esc(p.name)}</span>${status}</div></div>${icon("chevron-right")}</button>`;
+}
+const MAP_INNER = `
+  <rect x="-100" y="-100" width="560" height="530" fill="var(--map)"/>
+  <path d="M92 124 q24 -14 40 6 q10 20 -10 30 q-26 10 -36 -12 q-4 -16 6 -24z" fill="var(--park)"/>
+  <ellipse cx="114" cy="140" rx="12" ry="7" fill="var(--water)"/>
+  <path d="M262 168 q22 -10 36 6 q8 18 -12 24 q-24 4 -28 -12z" fill="var(--park)"/>
+  <path d="M136 60 q18 -8 28 8 q4 14 -12 20 q-18 0 -18 -16z" fill="var(--park)"/>
+  <path d="M200 86 q16 -4 24 6 q2 12 -12 14 q-14 0 -14 -12z" fill="var(--park)"/>
+  <path d="M0 250 q60 -10 110 -30 q40 -14 90 -10" stroke="var(--water)" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <g stroke="var(--road)" stroke-linecap="round" fill="none">
+    <path d="M0 196 L120 170 L200 150 L360 126" stroke-width="9"/>
+    <path d="M10 40 L80 90 L150 124 L200 150 L260 200 L320 330" stroke-width="9"/>
+    <path d="M210 0 L206 150 L196 330" stroke-width="7"/>
+    <path d="M0 104 L70 96 L150 86 L240 70 L360 56" stroke-width="6"/>
+    <path d="M100 330 L120 170 L112 100 L132 0" stroke-width="5"/>
+    <path d="M270 0 L262 90 L280 182 L300 330" stroke-width="5"/>
+    <path d="M0 160 L92 168 L200 150" stroke-width="4"/>
+    <path d="M150 124 L236 100 L360 92" stroke-width="4"/>
+    <path d="M40 330 L92 168" stroke-width="3"/><path d="M200 150 L360 250" stroke-width="3"/>
+  </g>`;
+function mapSVG() {
+  return `<svg class="city" viewBox="0 0 360 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${MAP_INNER}
+    <g font-family="Archivo, sans-serif" font-size="9" font-weight="700" fill="var(--muted)" letter-spacing=".08em">
+      <text x="222" y="172">CENTRO</text><text x="20" y="74">SANTA FELICIDADE</text><text x="246" y="226">JARDIM BOTÂNICO</text>
+      <text x="282" y="82">CABRAL</text><text x="18" y="214">MOSSUNGUÊ</text><text x="140" y="52">ABRANCHES</text>
+    </g></svg>`;
+}
+function pins(dayId) {
+  return EVENTS.filter(e => e.day === dayId).map(e => {
+    const p = place(e.place), label = p.name.length > 16 ? p.name.slice(0, 15) + "…" : p.name;
+    return `<button class="pin ${state.enrolled.has(e.id) ? "mine" : ""}" style="left:${p.x / 360 * 100}%;top:${p.y / 330 * 100}%" data-go="evento-${e.id}" aria-label="${esc(e.title)}, ${e.time}, ${esc(p.name)}">
+      <span class="tag"><b class="num">${e.time}</b>${esc(label)}</span><span class="tail"></span></button>`;
+  }).join("");
+}
+function personRow(u) {
+  return `<div class="person"><span class="av av-${u.av}">${initials(u.name)}</span><div><b>${esc(u.name)}</b><small>${esc(u.from)}</small></div>
+    <button class="icon-btn" data-act="dm" data-uid="${u.id}" aria-label="Enviar mensagem para ${esc(u.name)}">${icon("message-circle")}</button></div>`;
+}
+
+// ================= telas do app =================
+function scrAuth() {
+  const login = state.authMode === "login";
+  return `<main class="view"><div class="auth">
+    <div class="poster"><span class="kicker">Confraternização Maçônica · Curitiba</span>
+      <span class="huge cond num">125</span><span class="anos">anos</span>
+      <p>22 a 25 de abril de 2027. Programação pela cidade, para irmãos de todas as delegações.</p></div>
+    <div class="auth-sheet"><h2>${login ? "Entrar" : "Criar conta"}</h2>
+      <form class="form" data-form="auth" novalidate>
+        ${login ? "" : `
+        <div class="field"><label for="f-nome">Nome completo</label><input id="f-nome" name="nome" autocomplete="name"></div>
+        <div class="grid2"><div class="field"><label for="f-loja">Loja</label><input id="f-loja" name="loja" placeholder="Nome e nº"></div>
+          <div class="field"><label for="f-cim">CIM</label><input id="f-cim" name="cim" inputmode="numeric"></div></div>
+        <div class="grid2"><div class="field"><label for="f-cidade">Cidade</label><input id="f-cidade" name="cidade"></div>
+          <div class="field"><label for="f-pais">País</label><select id="f-pais" name="pais"><option>Brasil</option><option>Portugal</option><option>Uruguai</option><option>Argentina</option><option>Outro</option></select></div></div>`}
+        <div class="field"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" value="${login ? ME.email : ""}"></div>
+        <div class="field"><label for="f-senha">Senha</label><input id="f-senha" name="senha" type="password" autocomplete="${login ? "current-password" : "new-password"}" value="${login ? "123456789" : ""}">${login ? "" : `<span class="hint">Mínimo de 8 caracteres.</span>`}</div>
+        <div class="err" role="alert"></div>
+        <button class="btn primary" type="submit">${login ? "Entrar" : "Criar conta"}</button>
+      </form>
+      <div class="switch">${login ? "Primeira vez no evento?" : "Já tem conta?"} <button data-act="authmode">${login ? "Criar conta" : "Entrar"}</button></div>
+    </div></div></main>`;
+}
+function scrEventos() {
+  const list = EVENTS.filter(e => e.day === state.day).sort(byTime);
+  const next = EVENTS.filter(e => state.enrolled.has(e.id)).sort(byTime)[0];
+  const d = day(state.day);
+  return `<main class="view has-bar">
+    <div class="mapwrap">${mapSVG()}${pins(state.day)}
+      <div class="over"><button class="glass-btn" data-act="menu" aria-label="Abrir menu">${icon("menu")}</button><button class="me-btn" data-act="account" aria-label="Abrir menu da conta">${ME.initials}</button></div></div>
+    <div class="sheet-body"><div class="handle"></div>
+      <div class="greet"><div><small>${greeting()},</small><h1>Ir. ${esc(ME.short)}</h1><p>Seja bem-vindo às comemorações dos 125 anos.</p></div>
+        <div class="count"><b class="cond num">${daysLeft()}</b><span>dias para<br>a abertura</span></div></div>
+      ${next ? `<div class="section-head" style="padding-top:2px"><h2>Próximo na sua agenda</h2></div>${passCard(next)}` : ""}
+      <section class="section"><div class="section-head"><h2>Programação</h2><span>Abril de 2027</span></div>
+        <div class="dates" role="group" aria-label="Dias da programação">${DAYS.map(x => {
+          const n = EVENTS.filter(e => e.day === x.id).length;
+          return `<button class="date" data-day="${x.id}" aria-pressed="${x.id === state.day}" aria-label="${x.full}, ${n} eventos"><span class="wd">${x.wd}</span><span class="dn cond num">${x.dn}</span><span class="n">${"<i></i>".repeat(Math.min(n, 4))}</span></button>`;
+        }).join("")}</div></section>
+      <section class="section"><div class="section-head"><h2>${d.long}</h2><span class="num">${list.length} ${list.length === 1 ? "evento" : "eventos"}</span></div>
+        <div>${list.map(slot).join("") || `<div class="empty"><p>Nenhum evento neste dia.</p></div>`}</div></section>
+    </div></main>${tabbar("eventos")}`;
+}
+function scrEvento(id) {
+  const e = ev(id); if (!e) return scrEventos();
+  const p = place(e.place), d = day(e.day), mine = state.enrolled.has(id), full = e.conf >= e.cap && !mine;
+  const pct = Math.min(100, Math.round(e.conf / e.cap * 100));
+  return `<main class="view">
+    <header class="ev-hero"><div class="top"><button class="glass-btn" data-go="eventos" aria-label="Voltar">${icon("chevron-left")}</button><span class="kind">${esc(e.kind)}</span><span style="width:46px"></span></div>
+      <h1>${esc(e.title)}</h1><span class="where">${icon("map-pin")}${esc(p.name)}</span></header>
+    <div class="bento">
+      <div class="tile"><small>${d.long}</small><span class="big cond num">${d.dn} abr</span><span class="sub">2027</span></div>
+      <div class="tile"><small>Horário</small><span class="big cond num">${e.time}</span><span class="sub num">até ${e.end}</span></div>
+      <div class="tile wide place"><div><small>Local</small><b>${esc(p.name)}</b><span class="sub">${esc(p.addr)}</span></div>
+        <div class="minimap"><svg viewBox="${p.x - 40} ${p.y - 34} 80 68" width="76" height="64" aria-hidden="true">${MAP_INNER}<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--brand)" stroke="#fff" stroke-width="2"/></svg></div></div>
+      <div class="tile wide"><small>Confirmados</small><span class="big cond num">${fmt(e.conf)} <span style="font-size:20px;color:var(--muted)">de ${fmt(e.cap)}</span></span>
+        <div class="meter"><i style="width:${pct}%"></i></div>
+        <div class="faces">${PEOPLE.slice(0, 5).map(u => `<span class="av av-${u.av}">${initials(u.name)}</span>`).join("")}<span class="txt">${firstName(PEOPLE[0].name)}, ${firstName(PEOPLE[2].name)} e outros irmãos</span></div></div>
+    </div>
+    <section class="section" style="padding-top:12px"><div class="section-head"><h2>Sobre</h2></div><p class="prose">${esc(e.desc)}</p></section>
+    <section class="section"><div class="section-head"><h2>Participantes</h2><span class="num">${fmt(e.conf)}</span></div>
+      <div class="people">${PEOPLE.slice(0, 4).map(personRow).join("")}</div>
+      <button class="textlink" data-go="participantes-${id}">Ver todos os participantes ${icon("arrow-right")}</button></section>
+    <div class="cta-dock">
+      ${mine ? `<button class="btn ok" data-act="unenroll" data-id="${id}">${icon("check")}Inscrito</button><button class="btn tint" data-go="grupo-${id}">${icon("message-circle")}Grupo</button>`
+        : full ? `<button class="btn soft" disabled>Vagas esgotadas</button>`
+        : `<button class="btn primary" data-act="enroll" data-id="${id}">Inscrever-se</button>`}
+    </div></main>`;
+}
+function scrParticipantes(id) {
+  const e = ev(id);
+  return page("", `evento-${id}`, "Participantes", `${esc(e.title)} · <span class="num">${fmt(e.conf)}</span> confirmados`,
+    `<label class="search">${icon("search")}<input placeholder="Buscar por nome ou cidade" data-filter="people" aria-label="Buscar participante"></label>
+     <div class="people" data-list="people">${PEOPLE.map(personRow).join("")}</div>`);
+}
+function scrInscricoes() {
+  const list = EVENTS.filter(e => state.enrolled.has(e.id)).sort(byTime);
+  const body = list.length ? DAYS.map(d => {
+    const l = list.filter(e => e.day === d.id); if (!l.length) return "";
+    return `<div class="day-label">${d.full}</div><div class="passes">${l.map(e => passCard(e, list[0] === e ? "" : "soft")).join("")}</div>`;
+  }).join("") : `<div class="empty"><p>Você ainda não se inscreveu em nenhum evento.</p><button class="btn primary fit" data-go="eventos">Ver programação</button></div>`;
+  return page("inscricoes", "", "Inscrições", `<span class="num">${list.length}</span> ${list.length === 1 ? "evento" : "eventos"} na sua agenda`, body);
+}
+function scrChat() {
+  const groups = EVENTS.filter(e => state.enrolled.has(e.id)).sort(byTime);
+  const locked = EVENTS.length - groups.length, g = state.chatTab === "grupos";
+  const body = `<div class="tabs-text" role="group" aria-label="Tipo de conversa">
+      <button data-tab="grupos" aria-pressed="${g}">Grupos dos eventos</button><button data-tab="privadas" aria-pressed="${!g}">Privadas</button></div>
+    <div style="padding-top:6px">${g ? groups.map(e => {
+      const m = (GROUP_MSGS[e.id] || []).slice(-1)[0], un = state.groupReads[e.id] || 0, d = day(e.day);
+      return `<button class="thread ${un ? "unread" : ""}" data-go="grupo-${e.id}"><span class="gtile"><b class="cond num">${d.dn}</b><span>${d.wd.toUpperCase()}</span></span>
+        <div><div class="name">${esc(e.title)}</div><div class="last">${m ? `${m.who === "me" ? "Você" : esc(firstName(m.who))}: ${esc(m.text)}` : "Grupo criado. Diga olá."}</div></div>
+        <div class="when"><span class="num">${m ? m.at : ""}</span>${un ? `<span class="badge num">${un}</span>` : ""}</div></button>`;
+    }).join("") + (locked ? `<div class="locked">${icon("lock")}<span>Mais <b class="num">${locked}</b> grupos abrem quando você se inscreve nos eventos.</span></div>` : "")
+    : DMS.map(dm => {
+      const u = person(dm.with), m = dm.msgs.slice(-1)[0];
+      return `<button class="thread ${dm.unread ? "unread" : ""}" data-go="conversa-${dm.id}"><span class="av av-${u.av}">${initials(u.name)}</span>
+        <div><div class="name">${esc(u.name)}</div><div class="last">${m ? (m.me ? "Você: " : "") + esc(m.text) : esc(u.from)}</div></div>
+        <div class="when"><span class="num">${m ? m.at : ""}</span>${dm.unread ? `<span class="badge num">${dm.unread}</span>` : ""}</div></button>`;
+    }).join("") + `<p class="hint-line">Para falar com outro irmão, abra os participantes de um evento.</p>`}</div>`;
+  return page("chat", "", "Chat", "", body);
+}
+function convo(kind, id, title, sub, avatar, msgs) {
+  const pop = state.justSent; state.justSent = false;
+  return `<main class="view" style="overflow:hidden"><div class="convo">
+    <div class="convo-head"><button class="icon-btn back" data-go="chat" aria-label="Voltar">${icon("chevron-left")}</button>
+      <div class="who">${avatar}<div style="min-width:0"><span class="name">${esc(title)}</span><small>${esc(sub)}</small></div></div></div>
+    <div class="msgs"><span class="daymark">Hoje</span>${msgs.map((m, i) => {
+      const me = kind === "g" ? m.who === "me" : m.me, prev = msgs[i - 1], same = !!prev && (kind === "g" ? prev.who === m.who : prev.me === m.me);
+      return `<div class="msg ${me ? "me" : ""} ${same ? "same" : ""} ${pop && i === msgs.length - 1 ? "pop" : ""}">${kind === "g" && !me && !same ? `<span class="who">${esc(m.who)}</span>` : ""}<div class="bubble">${esc(m.text)}</div><span class="at num">${m.at}</span></div>`;
+    }).join("")}</div>
+    <form class="composer" data-form="msg" data-kind="${kind}" data-id="${id}"><input name="msg" placeholder="Mensagem" aria-label="Mensagem" autocomplete="off"><button type="submit" aria-label="Enviar">${icon("arrow-up")}</button></form>
+  </div></main>`;
+}
+function scrGrupo(id) {
+  const e = ev(id); if (!e) return scrChat();
+  if (!state.enrolled.has(id)) return page("chat", "chat", "Grupo fechado", "", `<div class="empty"><p>O grupo de “${esc(e.title)}” abre quando você se inscreve no evento.</p><button class="btn primary fit" data-go="evento-${id}">Ver evento</button></div>`);
+  const d = day(e.day);
+  return convo("g", id, e.title, `${fmt(e.conf)} participantes · ${place(e.place).name}`, `<span class="gtile"><b class="cond num">${d.dn}</b></span>`, GROUP_MSGS[id] || (GROUP_MSGS[id] = []));
+}
+function scrConversa(id) {
+  const dm = DMS.find(x => x.id === id); if (!dm) return scrChat(); const u = person(dm.with);
+  return convo("p", id, u.name, u.from, `<span class="av av-${u.av}">${initials(u.name)}</span>`, dm.msgs);
+}
+function scrPerfil() {
+  return `<main class="view">${navrow("eventos")}
+    <div class="profile"><span class="av av-0">${ME.initials}</span><h1>Ir. ${esc(ME.name)}</h1><p>${esc(ME.loja)} · ${esc(ME.oriente)}</p>
+      ${ME.organizer ? `<span class="role">${icon("shield-check")}Criador do evento</span>` : ""}${ME.leiloeiro ? `<span class="role">${icon("gavel")}Leiloeiro</span>` : ""}</div>
+    <div class="figures"><div><b class="cond num">${state.enrolled.size}</b><span>Inscrições</span></div><div><b class="cond num">${state.enrolled.size}</b><span>Grupos</span></div><div><b class="cond num">${DMS.length}</b><span>Conversas</span></div></div>
+    <div class="group">
+      <div class="row2"><span>Loja</span><b>${esc(ME.loja)}</b></div><div class="row2"><span>Potência</span><b>${esc(ME.potencia)}</b></div><div class="row2"><span>CIM</span><b class="num">${esc(ME.cim)}</b></div>
+      <div class="row2"><span>Oriente</span><b>${esc(ME.oriente)}</b></div><div class="row2"><span>País</span><b>${esc(ME.pais)}</b></div>
+      <div class="row2"><span>E-mail</span><b>${esc(ME.email)}</b></div><div class="row2"><span>Telefone</span><b class="num">${esc(ME.phone)}</b></div></div>
+    <div class="actions"><button class="btn soft" data-go="editar-perfil">${icon("pencil")}Editar</button><button class="btn soft" data-go="senha">${icon("key-round")}Senha</button></div>
+    <div style="height:28px"></div></main>`;
+}
+function scrEditar() {
+  return page("", "perfil", "Editar perfil", "", `<form class="form" data-form="profile">
+    <div class="field"><label for="p-nome">Nome</label><input id="p-nome" name="nome" value="${esc(ME.name)}"></div>
+    <div class="field"><label for="p-loja">Loja</label><input id="p-loja" name="loja" value="${esc(ME.loja)}"></div>
+    <div class="grid2"><div class="field"><label for="p-oriente">Oriente</label><input id="p-oriente" name="oriente" value="${esc(ME.oriente)}"></div><div class="field"><label for="p-pais">País</label><input id="p-pais" name="pais" value="${esc(ME.pais)}"></div></div>
+    <div class="field"><label for="p-email">E-mail</label><input id="p-email" name="email" type="email" value="${esc(ME.email)}"></div>
+    <div class="field"><label for="p-tel">Telefone</label><input id="p-tel" name="tel" inputmode="tel" value="${esc(ME.phone)}"></div>
+    <button class="btn primary" type="submit">Salvar</button></form>`);
+}
+function scrSenha() {
+  return page("", "perfil", "Alterar senha", "", `<form class="form" data-form="pw" novalidate>
+    <div class="field"><label for="s-atual">Senha atual</label><input id="s-atual" name="atual" type="password" autocomplete="current-password"></div>
+    <div class="field"><label for="s-nova">Nova senha</label><input id="s-nova" name="nova" type="password" autocomplete="new-password"><span class="hint">Mínimo de 8 caracteres.</span></div>
+    <div class="field"><label for="s-conf">Repita a nova senha</label><input id="s-conf" name="conf" type="password" autocomplete="new-password"></div>
+    <div class="err" role="alert"></div>
+    <button class="btn primary" type="submit">Alterar senha</button></form>`);
+}
+function scrOrganizacao() {
+  const total = EVENTS.reduce((a, e) => a + e.conf, 0);
+  return page("", "eventos", "Organização", "Locais e programação do evento", `
+    <div class="figures"><div><b class="cond num">${EVENTS.length}</b><span>Eventos</span></div><div><b class="cond num">${PLACES.length}</b><span>Locais</span></div><div><b class="cond num">${fmt(total)}</b><span>Inscrições</span></div></div>
+    <div class="actions"><button class="btn primary" data-go="novo-evento">${icon("plus")}Evento</button><button class="btn soft" data-go="novo-local">${icon("plus")}Local</button></div>
+    <div class="actions" style="padding-top:10px;grid-template-columns:1fr"><button class="btn tint" data-go="modulos">${icon("puzzle")}Módulos do evento</button></div>
+    <section class="section"><div class="section-head"><h2>Locais cadastrados</h2><span class="num">${PLACES.length}</span></div>
+      ${PLACES.map(p => `<div class="placerow"><div><b>${esc(p.name)}</b><small>${esc(p.addr)}</small></div><div class="cap"><b class="num">${fmt(p.cap)}</b><br><span>lugares</span></div></div>`).join("")}</section><div style="height:28px"></div>`);
+}
+function scrNovoLocal() {
+  return page("", "organizacao", "Novo local", "", `<form class="form" data-form="place" novalidate>
+    <div class="field"><label for="l-nome">Nome do local</label><input id="l-nome" name="nome" placeholder="Ex.: Memorial de Curitiba"></div>
+    <div class="field"><label for="l-end">Endereço</label><input id="l-end" name="end" placeholder="Rua e número"></div>
+    <div class="grid2"><div class="field"><label for="l-bairro">Bairro</label><input id="l-bairro" name="bairro"></div><div class="field"><label for="l-cap">Capacidade</label><input id="l-cap" name="cap" inputmode="numeric" placeholder="Pessoas"></div></div>
+    <div class="err" role="alert"></div>
+    <button class="btn primary" type="submit">Cadastrar local</button></form>`);
+}
+function scrNovoEvento() {
+  return page("", "organizacao", "Novo evento", "Item da programação", `<form class="form" data-form="event" novalidate>
+    <div class="field"><label for="n-titulo">Título</label><input id="n-titulo" name="titulo" placeholder="Ex.: Almoço das delegações"></div>
+    <div class="grid2"><div class="field"><label for="n-dia">Dia</label><select id="n-dia" name="dia">${DAYS.map(d => `<option value="${d.id}">${d.wd}, ${d.dn} abr</option>`).join("")}</select></div>
+      <div class="field"><label for="n-hora">Horário</label><input id="n-hora" name="hora" type="time" value="12:30"></div></div>
+    <div class="field"><label for="n-local">Local</label><select id="n-local" name="local">${PLACES.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select></div>
+    <div class="field"><label for="n-vagas">Vagas</label><input id="n-vagas" name="vagas" inputmode="numeric" value="200"></div>
+    <div class="field"><label for="n-desc">Descrição</label><textarea id="n-desc" name="desc" placeholder="O que acontece, traje, transporte"></textarea></div>
+    <div class="err" role="alert"></div>
+    <button class="btn primary" type="submit">Publicar na programação</button></form>`);
+}
+
+// ---------- serviços da conta, leilão e módulos ----------
+const svcRow = (i, l, go) => `<button class="svc" data-go="${go}">${icon(i)}<span>${l}</span>${icon("chevron-right", "chev")}</button>`;
+const soonRow = (i, l) => `<button class="svc soon" data-act="soon">${icon(i)}<span>${l}</span><em>Em breve</em></button>`;
+const linkRow = (i, l) => `<button class="svc" data-act="link">${icon(i)}<span>${l}</span>${icon("external-link", "chev")}</button>`;
+function scrConta() {
+  const soon = { "Vouchers de alimentação": "utensils", "Vagas de estacionamento": "car", "Minha assinatura": "credit-card", "Meus rateios": "users", "Rede de empresas": "briefcase", "Meu ranking": "trophy", "Central de atendimento": "headset", "Atalhos da home": "layout-grid", "Gestão de salas": "building-2" };
+  const sr = n => (n === "Gestão de salas" && !ME.organizer) ? "" : soonRow(soon[n], n);
+  return page("", "eventos", "Conta", `${esc(ME.name)} · ${esc(ME.loja)}`, `
+    <div class="actions" style="padding-top:0"><button class="btn primary" data-go="editar-perfil">Editar perfil</button><button class="btn soft" data-go="perfil">Ver perfil</button></div>
+    <div class="grp-label">Informações da conta</div>
+    <div class="group svcs">
+      ${mod("carteirinha") ? svcRow("contact", "Minha carteirinha", "carteirinha") : ""}${svcRow("key-round", "Alterar senha", "senha")}
+      ${mod("ingressos") ? svcRow("ticket", "Check-ins e ingressos", "ingressos") : ""}${sr("Vouchers de alimentação")}${sr("Vagas de estacionamento")}
+      ${mod("pedidos") ? svcRow("package", "Pedidos", "pedidos") : ""}${sr("Minha assinatura")}${sr("Meus rateios")}${sr("Rede de empresas")}${sr("Meu ranking")}${sr("Central de atendimento")}
+      ${svcRow("message-circle", "Chat", "chat")}${sr("Atalhos da home")}${sr("Gestão de salas")}
+    </div>
+    ${mod("noticias") ? `<div class="grp-label">Novidades</div><div class="group svcs">${svcRow("newspaper", "Notícias", "noticias")}</div>` : ""}
+    <div class="grp-label">Suporte</div>
+    <div class="group svcs">${svcRow("circle-help", "Perguntas frequentes", "faq")}${svcRow("file-text", "Política de privacidade", "privacidade")}${svcRow("cookie", "Privacidade e cookies", "privacidade")}${svcRow("shield-check", "Termos de uso", "termos")}</div>
+    <div class="grp-label">Links úteis</div>
+    <div class="group svcs">${linkRow("link", "Comprar ingresso")}${linkRow("link", "Quero me tornar irmão")}</div>
+    <div class="group svcs">${svcRow("info", "Dados e aplicativo", "dados")}<button class="svc danger" data-act="logout">${icon("log-out")}<span>Sair</span>${icon("chevron-right", "chev")}</button></div>
+    <div style="height:28px"></div>`);
+}
+function qrSVG() {
+  let r = "", seed = 7;
+  for (let y = 0; y < 17; y++) for (let x = 0; x < 17; x++) {
+    seed = (seed * 9301 + 49297) % 233280;
+    const finder = (x < 5 && y < 5) || (x > 11 && y < 5) || (x < 5 && y > 11);
+    if (finder ? (x % 12 === 0 || y % 12 === 0 || x % 12 === 4 || y % 12 === 4 || ((x % 12) > 1 && (x % 12) < 3 && (y % 12) > 1 && (y % 12) < 3)) : seed / 233280 > .52) r += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  }
+  return `<svg viewBox="0 0 17 17" fill="#1d2939" aria-hidden="true">${r}</svg>`;
+}
+function scrCarteirinha() {
+  return page("", "conta", "Carteirinha", "Apresente na entrada dos eventos", `<div class="card-id">
+    <small>Confraternização Maçônica · 125 anos</small><h2>Ir. ${esc(ME.name)}</h2>
+    <div class="dl"><div><small>Loja</small><b>${esc(ME.loja)}</b></div><div><small>CIM</small><b class="num">${esc(ME.cim)}</b></div>
+      <div><small>Potência</small><b>${esc(ME.potencia.split(" · ")[0])}</b></div><div><small>Oriente</small><b>${esc(ME.oriente)}</b></div></div>
+    <div class="qr">${qrSVG()}</div></div>`);
+}
+function scrIngressos() {
+  const list = EVENTS.filter(e => state.enrolled.has(e.id)).sort(byTime);
+  return page("", "conta", "Ingressos", `<span class="num">${list.length}</span> ${list.length === 1 ? "evento" : "eventos"} com ingresso`, list.length ? list.map(e => {
+    const d = day(e.day), done = state.checkins.has(e.id);
+    return `<div class="ticket"><h3>${esc(e.title)}</h3>${done ? `<span class="status">${icon("check")}Presente</span>` : `<button class="btn primary" data-act="checkin" data-id="${e.id}">Check-in</button>`}
+      <small>${d.full} · <span class="num">${e.time}</span> · ${esc(place(e.place).name)}</small></div>`;
+  }).join("") : `<div class="empty"><p>Inscreva-se em um evento para receber o ingresso.</p><button class="btn primary fit" data-go="eventos">Ver programação</button></div>`);
+}
+function scrPedidos() {
+  const mine = LOTES.filter(l => l.status === "sold" && l.leader === "me");
+  return page("", "conta", "Pedidos", `<span class="num">${mine.length}</span> ${mine.length === 1 ? "compra" : "compras"}`, mine.length ? mine.map(l =>
+    `<div class="ticket"><h3>${esc(l.title)}</h3><b class="cond num" style="font-size:24px">${brl(l.bid)}</b><small>Leilão beneficente · arrematado · retirada com a organização</small></div>`).join("")
+    : `<div class="empty"><p>Nenhuma compra ainda. Os lotes arrematados no leilão aparecem aqui.</p>${mod("leilao") ? `<button class="btn primary fit" data-go="leilao">Ver leilão</button>` : ""}</div>`);
+}
+function scrNoticias() {
+  return page("", "conta", "Notícias", "Novidades do evento", `<div>${NEWS.map(n => `<article class="news"><small>${n.at}</small><h3>${esc(n.t)}</h3><p>${esc(n.p)}</p></article>`).join("")}</div>`);
+}
+function scrFaq() {
+  return page("", "conta", "Perguntas frequentes", "", `<div class="faq">${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div><div style="height:28px"></div>`);
+}
+function scrPrivacidade() {
+  return page("", "conta", "Privacidade e cookies", "", `<div class="prose-block"><h2>Política de privacidade</h2>
+    <p>O aplicativo guarda nome, loja, CIM, oriente, e-mail e telefone para organizar o evento. Os dados só são vistos pela organização e, em parte, pelos outros participantes (nome, loja e cidade).</p>
+    <p>Você pode corrigir seus dados em Editar perfil ou apagar a conta a qualquer momento.</p></div>
+    <div class="group svcs" style="margin-top:0"><div class="swrow"><b>Cookies necessários</b><small>Mantêm você conectado.</small><button class="toggle" role="switch" aria-checked="true" disabled aria-label="Cookies necessários"></button></div>
+    <div class="swrow"><b>Cookies de análise</b><small>Ajudam a melhorar o aplicativo.</small><button class="toggle" role="switch" aria-checked="${state.cookies ? "true" : "false"}" data-act="cookies" aria-label="Cookies de análise"></button></div></div><div style="height:28px"></div>`);
+}
+function scrTermos() {
+  return page("", "conta", "Termos de uso", "", `<div class="prose-block"><h2>Uso do aplicativo</h2>
+    <p>O aplicativo é de uso exclusivo dos participantes do evento e dos irmãos convidados. O cadastro é pessoal e intransferível.</p>
+    <h2>Conduta</h2><p>As conversas seguem o decoro da instituição. A organização pode remover conteúdo ou contas que o descumpram.</p>
+    <h2>Leilão</h2><p>Todo lance é uma oferta de compra. O lote é de quem tiver o maior lance quando o leiloeiro encerrar o lote.</p></div>`);
+}
+function scrDados() {
+  return page("", "conta", "Dados e aplicativo", "", `<div class="group" style="margin-top:0">
+    <div class="row2"><span>Loja</span><b>${esc(ME.loja)}</b></div><div class="row2"><span>Potência</span><b>${esc(ME.potencia)}</b></div>
+    <div class="row2"><span>CIM</span><b class="num">${esc(ME.cim)}</b></div><div class="row2"><span>Cargo</span><b>${esc(ME.cargo)}</b></div></div>
+    <div class="group"><div class="row2"><span>Versão do aplicativo</span><b class="num">1.0.0</b></div><div class="row2"><span>Sistema operacional</span><b>iOS 26</b></div></div>
+    <div class="group svcs"><button class="svc danger" data-go="excluir">${icon("trash-2")}<span>Excluir conta</span>${icon("chevron-right", "chev")}</button><button class="svc" data-act="logout">${icon("log-out")}<span>Sair</span>${icon("chevron-right", "chev")}</button></div>
+    <div style="height:28px"></div>`);
+}
+function scrExcluir() {
+  return page("", "dados", "Excluir conta", "", `<div class="prose-block"><p>Seu cadastro, inscrições, grupos e conversas serão apagados. Os lances já dados em lotes arrematados continuam valendo.</p><p><b>Essa ação não pode ser desfeita.</b></p></div>
+    <div class="form"><button class="btn primary" data-act="delete">Excluir minha conta</button><button class="btn soft" data-go="dados">Cancelar</button></div>`);
+}
+const AUC_ST = { scheduled: "Agendado", open: "Ao vivo", closed: "Encerrado" };
+function scrLeilao() {
+  const a = AUCTION, d = day(a.day), live = a.status === "open";
+  return page("leilao", "", "Leilão", "", `<div class="auc-head"><span class="status ${live ? "live" : ""}">${AUC_ST[a.status]}</span><h2>${a.title}</h2>
+      <p>${live ? "Abra um lote e dê o seu lance." : `Começa ${d.full.toLowerCase()}, às ${a.time}, em ${esc(place(a.place).name)}. Os lances abrem quando o leiloeiro chamar.`}</p></div>
+    ${ME.leiloeiro ? `<div class="actions" style="grid-template-columns:1fr;padding-top:12px"><button class="btn tint" data-go="leiloeiro">${icon("gavel")}Painel do leiloeiro</button></div>` : ""}
+    <section class="section" style="padding-top:18px"><div class="section-head"><h2>Lotes</h2><span class="num">${LOTES.length}</span></div>
+      ${LOTES.map(l => `<button class="lot ${l.status === "sold" ? "sold" : ""}" data-go="lote-${l.id}"><h3>${esc(l.title)}</h3>
+        <small>${l.status === "sold" ? `Vendido${l.leader === "me" ? " para você" : ""}` : l.leader ? `Lidera: ${l.leader === "me" ? "você" : esc(firstName(l.leader))}` : "Sem lances"}</small>
+        <div class="price"><b class="num">${brl(l.bid)}</b><span>${l.status === "sold" ? "arrematado" : l.leader ? "maior lance" : "lance inicial"}</span></div></button>`).join("")}</section><div style="height:20px"></div>`);
+}
+function scrLote(id) {
+  const l = lote(id); if (!l) return scrLeilao();
+  const live = AUCTION.status === "open" && l.status === "open", next = l.leader ? l.bid + AUCTION.step : l.start, lead = l.leader === "me";
+  const cta = l.status === "sold" ? `<button class="btn soft" disabled>Lote vendido</button>`
+    : !live ? `<button class="btn soft" disabled>Lances abrem quando o leilão for chamado</button>`
+    : lead ? `<button class="btn ok" disabled>${icon("check")}Você lidera com ${brl(l.bid)}</button>`
+    : `<button class="btn primary" data-act="bid" data-id="${l.id}">Dar lance de ${brl(next)}</button>`;
+  return `<main class="view"><div class="statusgap"></div><div class="navrow"><button class="plain" data-go="leilao" aria-label="Voltar">${icon("chevron-left")}</button><button class="me-btn" data-act="account" aria-label="Abrir menu da conta">${ME.initials}</button></div>
+    <header class="largetitle"><h1>${esc(l.title)}</h1><p>${esc(l.desc)}</p></header>
+    <div class="bento"><div class="tile wide"><small>${l.status === "sold" ? "Arrematado por" : l.leader ? "Maior lance" : "Lance inicial"}</small><span class="big cond num">${brl(l.bid)}</span>
+      <span class="sub">${l.leader ? (lead ? "Você" : esc(l.leader)) + " · " + (l.hist.length) + " lances" : "Nenhum lance ainda"}</span></div></div>
+    <section class="section"><div class="section-head"><h2>Histórico de lances</h2></div>
+      <div class="bids">${l.hist.length ? l.hist.slice().reverse().map(([w, v]) => `<div><span>${esc(w)}</span><b class="num">${brl(v)}</b></div>`).join("") : `<div><span>Seja o primeiro a dar um lance.</span></div>`}</div></section>
+    <div class="cta-dock">${cta}</div></main>`;
+}
+function scrLeiloeiro() {
+  const a = AUCTION;
+  return page("", "leilao", "Leiloeiro", a.title, `<div class="actions" style="grid-template-columns:1fr;padding-top:0">
+      ${a.status === "scheduled" ? `<button class="btn primary" data-act="call">${icon("megaphone")}Chamar leilão</button>` : a.status === "open" ? `<button class="btn soft" data-act="end-auction">${icon("flag")}Encerrar leilão</button>` : `<button class="btn soft" disabled>Leilão encerrado</button>`}
+      <button class="btn tint" data-go="novo-lote">${icon("plus")}Novo lote</button></div>
+    <section class="section" style="padding-top:18px"><div class="section-head"><h2>Lotes</h2><span class="num">${LOTES.length}</span></div>
+      ${LOTES.map(l => `<div class="panel-row"><div><b>${esc(l.title)}</b><small>${l.status === "sold" ? "Vendido por " + brl(l.bid) : `${brl(l.bid)} · ${l.hist.length} lances`}</small></div>
+        ${l.status === "open" ? `<button class="btn soft" data-act="close-lot" data-id="${l.id}" ${a.status === "open" ? "" : "disabled"}>Encerrar lote</button>` : `<span class="status">Vendido</span>`}</div>`).join("")}</section><div style="height:20px"></div>`);
+}
+function scrNovoLote() {
+  return page("", "leiloeiro", "Novo lote", "Item para o leilão", `<form class="form" data-form="lote" novalidate>
+    <div class="field"><label for="b-titulo">Título</label><input id="b-titulo" name="titulo" placeholder="Ex.: Espada cerimonial"></div>
+    <div class="field"><label for="b-desc">Descrição</label><textarea id="b-desc" name="desc" placeholder="Origem, estado, o que acompanha"></textarea></div>
+    <div class="field"><label for="b-lance">Lance inicial (R$)</label><input id="b-lance" name="lance" inputmode="numeric" value="500"></div>
+    <div class="err" role="alert"></div><button class="btn primary" type="submit">Adicionar ao leilão</button></form>`);
+}
+function scrModulos() {
+  const row = m => `<div class="swrow"><b>${m.name}</b><small>${m.desc}</small><button class="toggle" role="switch" aria-checked="${mod(m.id)}" data-act="toggle-mod" data-id="${m.id}" aria-label="${m.name}"></button></div>`;
+  return page("", "organizacao", "Módulos do evento", "Ligue só o que este evento usa", `<div class="group svcs" style="margin-top:0">${MODULOS.map(row).join("")}</div>
+    <div class="grp-label">Em breve</div><div class="group svcs">${SOON.map(n => `<div class="swrow"><b>${n}</b><button class="toggle" role="switch" aria-checked="false" disabled aria-label="${n}"></button></div>`).join("")}</div><div style="height:28px"></div>`);
+}
+function sheets(cur, open) {
+  const item = (r, i, l) => `<button data-go="${r}" ${cur === r ? 'aria-current="page"' : ""}>${icon(i)}${l}${icon("chevron-right", "chev")}</button>`;
+  return `<div class="scrim ${open ? "open" : ""}" data-act="close-sheet"></div>
+    <div class="bsheet ${open === "menu" ? "open" : ""}" data-sheet="menu" role="dialog" aria-label="Menu"><div class="handle"></div><div class="menu">
+      ${item("eventos", "calendar-days", "Eventos")}${item("inscricoes", "ticket", "Inscrições")}${mod("leilao") ? item("leilao", "gavel", "Leilão") : ""}${item("chat", "message-circle", "Chat")}${mod("noticias") ? item("noticias", "newspaper", "Notícias") : ""}
+      ${ME.leiloeiro && mod("leilao") ? `<div class="sep"></div><div class="lab">Leiloeiro</div>${item("leiloeiro", "gavel", "Painel do leiloeiro")}` : ""}
+      ${ME.organizer ? `<div class="sep"></div><div class="lab">Organização</div>${item("organizacao", "clipboard-list", "Painel")}${item("novo-evento", "calendar-plus", "Novo evento")}${item("novo-local", "map-pin-plus", "Novo local")}${item("modulos", "puzzle", "Módulos do evento")}` : ""}</div></div>
+    <div class="bsheet ${open === "account" ? "open" : ""}" data-sheet="account" role="dialog" aria-label="Menu da conta"><div class="handle"></div>
+      <div class="head"><span class="av av-0">${ME.initials}</span><div><b>Ir. ${esc(ME.name)}</b><small>${esc(ME.email)}</small></div></div>
+      <div class="menu">${item("conta", "layout-grid", "Serviços da conta")}${item("perfil", "user-round", "Ver perfil")}${item("editar-perfil", "pencil", "Editar perfil")}${item("senha", "key-round", "Alterar senha")}
+      <div class="sep"></div><button class="danger" data-act="logout">${icon("log-out")}Sair</button></div></div>`;
+}
+function screenHTML(r) {
+  const [base, ...rest] = r.split("-"), arg = rest.join("-");
+  const map = {
+    entrar: scrAuth, eventos: scrEventos, inscricoes: scrInscricoes, chat: scrChat, perfil: scrPerfil, organizacao: scrOrganizacao, senha: scrSenha, editar: scrEditar,
+    evento: () => scrEvento(arg), participantes: () => scrParticipantes(arg), grupo: () => scrGrupo(arg), conversa: () => scrConversa(arg),
+    novo: () => arg === "local" ? scrNovoLocal() : arg === "lote" ? scrNovoLote() : scrNovoEvento(),
+    conta: scrConta, carteirinha: scrCarteirinha, ingressos: scrIngressos, pedidos: scrPedidos, noticias: scrNoticias, faq: scrFaq, privacidade: scrPrivacidade, termos: scrTermos, dados: scrDados, excluir: scrExcluir,
+    leilao: scrLeilao, lote: () => scrLote(arg), leiloeiro: scrLeiloeiro, modulos: scrModulos,
+  };
+  return (map[base] || scrEventos)();
+}
+// uma tela dentro do celular; spec = { r, auth, tab, sheet }
+function phoneHTML(spec, temporary) {
+  const keep = { auth: state.authMode, tab: state.chatTab };
+  if (spec.auth) state.authMode = spec.auth;
+  if (spec.tab) state.chatTab = spec.tab;
+  const html = `<div class="phone"><div class="island"></div><div class="app">${screenHTML(spec.r)}</div>${sheets(spec.r, spec.sheet)}<div class="toast" role="status" aria-live="polite"></div></div>`;
+  if (temporary) { state.authMode = keep.auth; state.chatTab = keep.tab; }
+  return html;
+}
+
+// ================= galeria =================
+function buildGallery() {
+  document.getElementById("gallery").innerHTML = FLOWS.map(f => `<section class="flow" id="${f.id}">
+    <div class="flow-head"><span class="n cond num">${f.n}</span><h2>${f.title}<small>${f.cu}</small></h2><p>${f.desc}</p></div>
+    <div class="row">${f.steps.map(([id, label], i) => {
+      const s = SCREENS[id];
+      const ph = phoneHTML(s, true).replace(/ (id|for)="[^"]*"/g, "");
+      return `${i ? `<span class="arrow" aria-hidden="true"><i></i>${icon("chevron-right")}</span>` : ""}
+        <div class="step"><span class="lbl">${label}</span>
+          <div class="thumb" role="button" tabindex="0" data-open="${id}" aria-label="Abrir ${id}, ${s.name}"><div inert>${ph}</div></div>
+          <span class="meta"><b>${id} · ${s.name}</b><br>${s.cu.join(" · ")}</span></div>`;
+    }).join("")}</div></section>`).join("");
+  lucide.createIcons();
+}
+
+// ================= temas =================
+function setTema(id) {
+  document.documentElement.dataset.tema = id;
+  try { localStorage.setItem("tema-125", id); } catch (e) {}
+  document.querySelectorAll("[data-temas] button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tema === id));
+}
+document.querySelectorAll("[data-temas]").forEach(el => {
+  el.innerHTML = TEMAS.map(t => `<button data-tema="${t.id}" title="${t.name}" aria-label="Tema ${t.name}"><span><i style="background:${t.a}"></i><i style="background:${t.b}"></i></span></button>`).join("");
+});
+
+// ================= modo navegável =================
+const player = document.getElementById("player"), holder = document.getElementById("holder"), plist = document.getElementById("plist"), pnotes = document.getElementById("pnotes");
+let cur = null; const hist = [];
+plist.insertAdjacentHTML("beforeend", FLOWS.map(f => `<h4>${f.n} · ${f.title}</h4>` + f.steps.map(([id]) => `<a data-t="${id}"><span>${id}</span>${SCREENS[id].name}</a>`).join("")).join(""));
+
+function tFor(spec) {
+  if (spec.sheet) return spec.sheet === "menu" ? "T-40" : "T-41";
+  const r = spec.r, base = r.split("-")[0];
+  const exact = ORDER.find(t => { const s = SCREENS[t]; return s.r === r && !s.sheet && (!s.auth || s.auth === state.authMode) && (!s.tab || s.tab === state.chatTab); });
+  if (exact) return exact;
+  if (base === "evento") return state.enrolled.has(r.slice(7)) ? "T-11" : "T-12";
+  return { participantes: "T-13", grupo: "T-31", conversa: "T-33", lote: "T-71", novo: r === "novo-lote" ? "T-73" : r === "novo-local" ? "T-51" : "T-52" }[base] || "T-10";
+}
+function fit() {
+  const ph = holder.querySelector(".phone"); if (!ph) return;
+  const st = document.getElementById("stage"), mobile = innerWidth <= 980;
+  const s = Math.min(1, (st.clientHeight - (mobile ? 90 : 48)) / 866, (st.clientWidth - 32) / 412);
+  ph.style.transform = `scale(${s})`; holder.style.width = 390 * s + "px"; holder.style.height = 844 * s + "px";
+  holder.style.marginBottom = mobile ? "56px" : "0";
+}
+function paint(spec) {
+  if (spec.r.startsWith("grupo-")) state.groupReads[spec.r.slice(6)] = 0;
+  if (spec.r.startsWith("conversa-")) { const dm = DMS.find(x => x.id === spec.r.slice(9)); if (dm) dm.unread = 0; }
+  holder.innerHTML = phoneHTML(spec, false);
+  const t = tFor(spec), s = SCREENS[t];
+  plist.querySelectorAll("a").forEach(a => a.classList.toggle("on", a.dataset.t === t));
+  pnotes.innerHTML = `<span class="id cond num">${t}</span><h3>${s.name}</h3><div class="cus">${s.cu.map(c => `<span>${c}</span>`).join("")}</div><p>${s.notes}</p>
+    <div class="kbd">Toque nos elementos da tela para navegar.<br><b>← →</b> tela anterior e próxima · <b>Backspace</b> voltar · <b>H</b> mostrar áreas clicáveis · <b>Esc</b> fechar</div>`;
+  lucide.createIcons();
+  fit();
+  const m = holder.querySelector(".msgs"); if (m) m.scrollTop = m.scrollHeight;
+  try { history.replaceState(null, "", "#" + t); } catch (e) {}
+}
+function show(spec, push = true, animate = true) {
+  if (push && cur) hist.push({ ...cur, auth: state.authMode, tab: state.chatTab });
+  if (spec.auth) state.authMode = spec.auth;
+  if (spec.tab) state.chatTab = spec.tab;
+  cur = { r: spec.r, sheet: spec.sheet || null };
+  const run = () => paint(cur);
+  if (animate && document.startViewTransition && !reduced) document.startViewTransition(run); else run();
+}
+function openT(t) { hist.length = 0; player.classList.add("open"); document.body.style.overflow = "hidden"; show(SCREENS[t], false, false); }
+function closePlayer() { player.classList.remove("open"); document.body.style.overflow = ""; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} buildGallery(); }
+function goBack() { const p = hist.pop(); if (p) show(p, false); }
+function step(d) { const i = ORDER.indexOf(tFor(cur)); show(SCREENS[ORDER[(i + d + ORDER.length) % ORDER.length]], true); }
+function toast(msg) {
+  const t = holder.querySelector(".toast"); if (!t) return;
+  t.innerHTML = icon("circle-check") + `<span>${esc(msg)}</span>`; lucide.createIcons();
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add("show"))); setTimeout(() => t.classList.remove("show"), 2600);
+}
+function openSheet(name) { holder.querySelector(".scrim").classList.add("open"); holder.querySelector(`[data-sheet="${name}"]`).classList.add("open"); }
+function closeSheet() { holder.querySelectorAll(".scrim, .bsheet").forEach(x => x.classList.remove("open")); if (cur) cur.sheet = null; }
+
+document.addEventListener("click", e => {
+  // button[data-tema]: <html data-tema> também existe — sem "button" todo clique virava setTema
+  const tb = e.target.closest("button[data-tema]"); if (tb) { setTema(tb.dataset.tema); return; }
+  const o = e.target.closest("[data-open]"); if (o) { openT(o.dataset.open); return; }
+  if (e.target.closest("[data-close]")) { closePlayer(); return; }
+  const sp = e.target.closest("[data-step]"); if (sp) { step(+sp.dataset.step); return; }
+  const a = e.target.closest("#plist a[data-t]"); if (a) { show(SCREENS[a.dataset.t]); return; }
+});
+holder.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-act],[data-day],[data-tab]"); if (!t) return;
+  if (t.dataset.go) { show({ r: t.dataset.go }); return; }
+  if (t.dataset.day) { state.day = t.dataset.day; paint(cur); return; }
+  if (t.dataset.tab) { state.chatTab = t.dataset.tab; paint(cur); return; }
+  const a = t.dataset.act;
+  if (a === "menu") openSheet("menu");
+  if (a === "account") openSheet("account");
+  if (a === "close-sheet") closeSheet();
+  if (a === "authmode") show({ r: "entrar", auth: state.authMode === "login" ? "signup" : "login" });
+  if (a === "logout") show({ r: "entrar", auth: "login" });
+  if (a === "enroll") { const x = ev(t.dataset.id); state.enrolled.add(x.id); x.conf++; state.groupReads[x.id] = state.groupReads[x.id] || 0; paint(cur); toast("Inscrição confirmada. O grupo já está no Chat."); }
+  if (a === "unenroll") { const x = ev(t.dataset.id); state.enrolled.delete(x.id); x.conf--; paint(cur); toast("Inscrição cancelada."); }
+  if (a === "soon") toast("Em breve neste evento.");
+  if (a === "link") toast("Abre o site da instituição.");
+  if (a === "cookies") { state.cookies = !state.cookies; paint(cur); }
+  if (a === "checkin") { state.checkins.add(t.dataset.id); paint(cur); toast("Check-in registrado."); }
+  if (a === "toggle-mod") { state.mods[t.dataset.id] = !state.mods[t.dataset.id]; paint(cur); toast(state.mods[t.dataset.id] ? "Módulo ligado." : "Módulo desligado."); }
+  if (a === "delete") { show({ r: "entrar", auth: "signup" }); toast("Conta excluída."); }
+  if (a === "call") { AUCTION.status = "open"; paint(cur); toast("Leilão chamado. Os participantes foram avisados."); }
+  if (a === "end-auction") { AUCTION.status = "closed"; LOTES.filter(l => l.status === "open" && l.leader).forEach(l => l.status = "sold"); paint(cur); toast("Leilão encerrado."); }
+  if (a === "close-lot") { const l = lote(t.dataset.id); l.status = l.leader ? "sold" : "open"; paint(cur); toast(l.leader ? "Lote vendido." : "Sem lances: o lote segue aberto."); }
+  if (a === "bid") { const l = lote(t.dataset.id), v = l.leader ? l.bid + AUCTION.step : l.start; l.bid = v; l.leader = "me"; l.hist.push(["Você", v]); paint(cur); toast("Lance de " + brl(v) + " registrado."); }
+  if (a === "dm") {
+    let dm = DMS.find(x => x.with === t.dataset.uid);
+    if (!dm) { dm = { id: "p" + (DMS.length + 1), with: t.dataset.uid, unread: 0, msgs: [] }; DMS.unshift(dm); }
+    show({ r: "conversa-" + dm.id });
+  }
+});
+holder.addEventListener("input", e => {
+  if (e.target.dataset.filter !== "people") return;
+  const q = e.target.value.toLowerCase();
+  holder.querySelector('[data-list="people"]').innerHTML = PEOPLE.filter(p => (p.name + p.from).toLowerCase().includes(q)).map(personRow).join("") || `<div class="empty"><p>Ninguém encontrado com “${esc(e.target.value)}”.</p></div>`;
+  lucide.createIcons();
+});
+holder.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target, v = n => (f.elements[n]?.value || "").trim(), err = f.querySelector(".err"), kind = f.dataset.form;
+  if (kind === "auth") {
+    const signup = state.authMode === "signup";
+    if (signup && !v("nome")) { err.textContent = "Informe seu nome completo."; return; }
+    if (!/\S+@\S+\.\S+/.test(v("email"))) { err.textContent = "Informe um e-mail válido."; return; }
+    if (v("senha").length < 8) { err.textContent = "A senha precisa ter pelo menos 8 caracteres."; return; }
+    if (signup) {
+      ME.name = v("nome"); ME.short = ME.name.split(" ")[0]; ME.initials = initials(ME.name); ME.email = v("email"); ME.pais = v("pais");
+      if (v("loja")) ME.loja = v("loja"); if (v("cidade")) ME.oriente = v("cidade"); if (v("cim")) ME.cim = v("cim");
+    }
+    show({ r: "eventos" }); if (signup) toast("Conta criada. Bem-vindo ao evento.");
+  }
+  if (kind === "msg") {
+    const text = v("msg"); if (!text) return;
+    const at = new Date().toTimeString().slice(0, 5);
+    if (f.dataset.kind === "g") GROUP_MSGS[f.dataset.id].push({ who: "me", at, text }); else DMS.find(x => x.id === f.dataset.id).msgs.push({ me: true, at, text });
+    state.justSent = true; paint(cur); holder.querySelector('[name="msg"]').focus();
+  }
+  if (kind === "profile") {
+    ME.name = v("nome") || ME.name; ME.short = ME.name.split(" ")[0]; ME.initials = initials(ME.name);
+    ME.loja = v("loja"); ME.oriente = v("oriente"); ME.pais = v("pais"); ME.email = v("email"); ME.phone = v("tel");
+    show({ r: "perfil" }); toast("Perfil atualizado.");
+  }
+  if (kind === "pw") {
+    if (!v("atual")) { err.textContent = "Informe a senha atual."; return; }
+    if (v("nova").length < 8) { err.textContent = "A nova senha precisa ter pelo menos 8 caracteres."; return; }
+    if (v("nova") !== v("conf")) { err.textContent = "As duas senhas novas não são iguais."; return; }
+    show({ r: "perfil" }); toast("Senha alterada.");
+  }
+  if (kind === "lote") {
+    if (!v("titulo")) { err.textContent = "Dê um título ao lote."; return; }
+    const id = "b" + (LOTES.length + 10), start = parseInt(v("lance")) || 100;
+    LOTES.push({ id, title: v("titulo"), desc: v("desc") || "Descrição a definir.", start, bid: start, leader: null, status: "open", hist: [] });
+    show({ r: "leiloeiro" }); toast("Lote adicionado ao leilão.");
+  }
+  if (kind === "place") {
+    if (!v("nome") || !v("end")) { err.textContent = "Preencha o nome e o endereço do local."; return; }
+    PLACES.push({ id: "l" + (PLACES.length + 1), name: v("nome"), addr: v("end") + (v("bairro") ? ", " + v("bairro") : ""), cap: parseInt(v("cap")) || 100, x: 150 + Math.random() * 110, y: 110 + Math.random() * 90 });
+    show({ r: "organizacao" }); toast("Local cadastrado.");
+  }
+  if (kind === "event") {
+    if (!v("titulo")) { err.textContent = "Dê um título ao evento."; return; }
+    if (!v("hora")) { err.textContent = "Informe o horário."; return; }
+    const id = "e" + (100 + EVENTS.length), [h, m] = v("hora").split(":").map(Number);
+    EVENTS.push({ id, day: v("dia"), time: v("hora"), end: String((h + 2) % 24).padStart(2, "0") + ":" + String(m).padStart(2, "0"),
+      title: v("titulo"), place: v("local"), conf: 0, cap: parseInt(v("vagas")) || 100, kind: "Evento", desc: v("desc") || "Descrição a definir." });
+    state.day = v("dia"); show({ r: "evento-" + id }); toast("Evento publicado na programação.");
+  }
+});
+document.addEventListener("keydown", e => {
+  if (!player.classList.contains("open")) { const th = e.target.closest?.(".thumb"); if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openT(th.dataset.open); } return; }
+  const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
+  if (e.key === "Escape") { if (holder.querySelector(".bsheet.open")) closeSheet(); else closePlayer(); return; }
+  if (typing) return;
+  if (e.key === "ArrowRight") step(1);
+  else if (e.key === "ArrowLeft") step(-1);
+  else if (e.key === "Backspace") { e.preventDefault(); goBack(); }
+  else if (e.key.toLowerCase() === "h") player.classList.toggle("hints");
+});
+addEventListener("resize", fit);
+
+// ================= início =================
+document.getElementById("flownav").innerHTML = FLOWS.map(f => `<a href="#${f.id}"><b>${f.n}</b>${f.title}</a>`).join("");
+let saved = "bordo"; try { saved = localStorage.getItem("tema-125") || "bordo"; } catch (e) {}
+setTema(TEMAS.some(t => t.id === saved) ? saved : "bordo");
+buildGallery();
+const h0 = location.hash.slice(1); if (SCREENS[h0]) openT(h0);
+</script>
+</body>
+</html>

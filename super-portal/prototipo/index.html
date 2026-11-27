@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Super Portal · Protótipo</title>
+<meta name="description" content="Protótipo navegável do Super Portal: portal white-label com automação, em desktop e celular.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111'/%3E%3Cpath d='M9 21l7-11 7 11' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/portal.css">
+<link rel="stylesheet" href="styles/site.css">
+</head>
+<body>
+
+<div id="site">
+<header class="wrap abre">
+  <div>
+    <p class="marca-p">Super Portal</p>
+    <h1>O portal que só chama quando precisa de você</h1>
+    <p class="lede">Protótipo navegável do portal white-label que substitui o portal ConnectMax. Tudo o que existe no legado e no mapa de processos, mais automação, fila de decisão e portal do cliente, em <b>desktop e celular</b>, com estado de verdade: aprovar um orçamento cria o pedido, receber os itens prepara a nota, quitar a última parcela conclui o pedido.</p>
+    <div class="acoes-s">
+      <button class="bs p" data-x="abrir" data-v="hoje" data-d="d">Navegar no desktop</button>
+      <button class="bs" data-x="abrir" data-v="hoje" data-d="m">Navegar no celular</button>
+      <button class="bs" data-x="abrir" data-v="fila" data-d="2">Os dois lado a lado</button>
+      <button class="bs" data-x="app">Abrir como app (tela cheia)</button>
+    </div>
+    <div class="temas-b" id="temas-b" aria-label="Marca e tema"></div>
+  </div>
+  <dl class="num-s">
+    <div><dd id="st-telas">–</dd><dt>telas, cada uma nos dois formatos</dt></div>
+    <div><dd id="st-print">–</dd><dt>prints do legado cobertos</dt></div>
+    <div><dd id="st-proc">–</dd><dt>itens do mapa de processos</dt></div>
+    <div><dd id="st-visao">–</dd><dt>capacidades da visão</dt></div>
+  </dl>
+</header>
+<nav class="fluxos-n" aria-label="Seções"><div class="wrap" id="fluxos"></div></nav>
+<main class="wrap" id="galeria"></main>
+<section class="wrap doc" id="tendencias">
+  <h2>O que há de atual no desenho</h2>
+  <p>Pesquisa feita em 27/11/2026. As fontes são na maioria artigos de produto e de agências: servem como direção, não como norma.</p>
+  <div class="rol"><table class="mt"><thead><tr><th>Prática</th><th>Onde está</th><th>Fonte</th></tr></thead><tbody id="tend-b"></tbody></table></div>
+</section>
+<section class="wrap doc" id="cobertura">
+  <h2>Cobertura das funcionalidades</h2>
+  <p>Cada item das fontes e as telas que o atendem. Calculado a partir das próprias telas.</p>
+  <div class="cob" id="cob"></div>
+</section>
+<footer class="wrap pe">Super Portal · protótipo de 27/11/2026 · pessoas, empresas, CNPJs e valores são fictícios · integrações (SEFAZ, banco, e-mail, WhatsApp, CEP) são simuladas</footer>
+</div>
+
+<div id="player" role="dialog" aria-modal="true" aria-label="Protótipo navegável">
+  <nav id="plista" aria-label="Telas"></nav>
+  <div class="meio">
+    <div class="barra-p">
+      <button class="bs sm" data-x="fechar">← Galeria</button>
+      <div class="seg-p" role="radiogroup" aria-label="Formato"><button data-x="dev" data-v="d">Desktop</button><button data-x="dev" data-v="m">Celular</button><button data-x="dev" data-v="2">Os dois</button></div>
+      <button class="bs sm" data-x="app">Tela cheia</button>
+      <button class="bs sm" data-x="notas">Notas e cenários</button>
+    </div>
+    <div id="palco"></div>
+  </div>
+  <aside id="lateral">
+    <div id="nota"></div>
+    <h4>Cenários</h4>
+    <div id="cenarios"></div>
+    <button class="bs sm" data-x="reiniciar">Reiniciar dados</button>
+    <p class="teclas"><kbd>←</kbd> <kbd>→</kbd> telas · <kbd>⌫</kbd> voltar · <kbd>D</kbd> formato · <kbd>⌘K</kbd> buscar · <kbd>Esc</kbd> fechar</p>
+  </aside>
+</div>
+
+<div id="app"><div class="vp" data-live="app"></div><button class="sair-app" data-x="sair-app" title="Sair do modo app">← Galeria</button></div>
+
+<script src="js/util.js"></script>
+<script src="js/data.js"></script>
+<script src="js/domain.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/screens/inicio.js"></script>
+<script src="js/screens/comercial.js"></script>
+<script src="js/screens/operacao.js"></script>
+<script src="js/screens/financeiro.js"></script>
+<script src="js/screens/cadastros.js"></script>
+<script src="js/screens/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

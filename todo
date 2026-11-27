@@ -21,44 +21,9 @@
     - envio de nota
     - embalar
 
-
-# Tinder
-- Marcelo
-    - automatizar instagram
-    - compra chip
-    - automatizar tinder
-    --------
-    - Airbnb/proposta
-    - ometv
-    - tinder
-    - planos
-- Germano
-    - automatizar instagram
-    - fazer novo tinder
-    - automatizar tinder
---------------------------------
-    - Criar novo lgermeno
-        - configurar tinder germano
-        - criar scripts de
-            - enviar mensagem
-            - ler mensagem
-            - curtir
-            - ler perfil
-            - visualizar ultimas mensagens
-    - Criar novo marcelo
-    - Criar Germano
-
-    ---------
-    - projeto x8 e x$
-        - Marcelo
-        - Criar instagram
-        - Criar tinder
-        - criar wpp
-        - comprar chip
-    - projeto Germano
-        - configurar instagram
-        
-
+# Plans (Orquestrador)
+    - criar arvore de execucao para ajudar a saber fazer com as tarefas
+    
 
 # Procurar emprego
     - Robo linkedin
@@ -77,11 +42,24 @@
 
 # CONFRATERNIZACAO
     - criar novos epicos
-    - desenvolver v1
-        - 
+    - finalizar prtptipo
+    - criar documento de implementacao
+        - arquitetura
+            - frontend
+                - linguagem frontend
+                - framework frontend
+            - backend
+                - banco de dados
+                - linguagem backend
+                - framework backend
+        - modelagem de dados
+        - provider de servidor
 
 # Clozzy
-    - Definir roadmap
+    - definir documento de visao
+    - definir identidade visual
+    - definir prorotipo
+    - 
 
 # Role Go
     - definir identidade visual
@@ -259,11 +237,7 @@
 # Flow Language
     - Definir Épicos
 
-# Plans (Orquestrador)
-    - Enfatizar que deve ser criado um orquestrador de ias urgentemente
-    - [ok] Princípio: dividir atividades (mesmo por IA) em partes para validação parcial
-    - Definir documento de visão
-    
+
 # Aulas
     - Criar roadmap
 
@@ -283,3 +257,42 @@
 # Trello CLI (app IA Mac)
     - Credenciais e setup: ver [`credenciais.md`](credenciais.md) (seção Trello CLI)
     - Se agente não achar: `export PATH="$HOME/.local/bin:$PATH"` ou `which trello`
+
+
+
+# Tinder
+- Marcelo
+    - automatizar instagram
+    - compra chip
+    - automatizar tinder
+    --------
+    - Airbnb/proposta
+    - ometv
+    - tinder
+    - planos
+- Germano
+    - automatizar instagram
+    - fazer novo tinder
+    - automatizar tinder
+--------------------------------
+    - Criar novo lgermeno
+        - configurar tinder germano
+        - criar scripts de
+            - enviar mensagem
+            - ler mensagem
+            - curtir
+            - ler perfil
+            - visualizar ultimas mensagens
+    - Criar novo marcelo
+    - Criar Germano
+
+    ---------
+    - projeto x8 e x$
+        - Marcelo
+        - Criar instagram
+        - Criar tinder
+        - criar wpp
+        - comprar chip
+    - projeto Germano
+        - configurar instagram
+        

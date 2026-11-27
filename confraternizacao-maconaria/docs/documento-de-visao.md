@@ -1,6 +1,6 @@
 # Documento de visão — Confraternização Maçônica
 
-**Versão:** 3.9 · 2026-11-24
+**Versão:** 4.0 · 2026-11-27
 
 ## 1. Contexto
 
@@ -58,6 +58,16 @@ Funcionalidades agrupadas pela tela em que o usuário as realiza:
 
 - **CU-01** — Cadastrar participante: cria a conta no aplicativo.
 - **CU-02** — Autenticar: entra com as credenciais da conta.
+
+### Verificação em duas etapas
+
+Autenticação multifator: além da senha, um segundo fator.
+
+- **CU-56** — Confirmar acesso: informa o código do segundo fator ao entrar, com a opção de confiar no aparelho por 30 dias.
+- **CU-57** — Usar outro método: SMS, aplicativo autenticador, e-mail ou código reserva.
+- **CU-58** — Ativar a verificação: escolhe o método e confirma com um código.
+- **CU-59** — Guardar códigos reserva: códigos de uso único para quando o celular não está à mão.
+- **CU-60** — Gerir a segurança: ligar ou desligar, trocar o método, gerar códigos e remover o aparelho confiável.
 
 ### Eventos (Home)
 
@@ -153,7 +163,26 @@ Módulo plugável, a partir da conversa de 22/11 ([`conversa-almoco-paulo-2026-1
 
 - **CU-24** — Cadastrar local: registra um local da programação na cidade.
 - **CU-25** — Cadastrar item da programação: cria o evento com horário e local.
-- **CU-55** — Ativar módulos do evento: liga ou desliga leilão, carteirinha, ingressos, pedidos e notícias (componentes plugáveis).
+- **CU-55** — Ativar módulos do evento: liga ou desliga cada serviço (componentes plugáveis).
+- **CU-70** — Gerir eventos do GOB: o mesmo app atende outros eventos; criar e alternar entre eles.
+- **CU-72** — Gerir riscos: registrar riscos com nível, responsável e plano, e marcar como resolvidos (módulo plugável).
+- **CU-73** — Definir papéis e acessos: quem vê cada módulo (irmãos, familiares, organização).
+
+### Notificações, ingressos e loja
+
+- **CU-61** — Ver notificações: avisos do evento, com acesso ao assunto.
+- **CU-62** — Ver acesso rápido e situação: atalhos, adimplência, potência e check-ins na tela inicial.
+- **CU-63** — Ver todos os eventos: programação completa com imagem e confirmados.
+- **CU-64** — Abrir ações do evento: fazer check-in ou comprar ingresso.
+- **CU-65** — Comprar ingresso: tipo, quantidade e pagamento.
+- **CU-66** — Comprar produtos: itens comemorativos do evento.
+- **CU-67** — Cadastrar reconhecimento facial: opcional, com consentimento, para a entrada nos eventos.
+
+### Museu e acervo
+
+Módulo plugável, a partir do áudio de 18/11.
+
+- **CU-71** — Consultar o acervo: documentos, imóveis, joias e selos, com conservação e segurança.
 
 ---
 

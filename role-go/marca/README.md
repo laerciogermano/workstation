@@ -1,6 +1,14 @@
 # RoleGo — Marca
 
-## Identidade visual v4 (atual)
+## Cores escolhidas
+
+[`cores-escolhidas/`](cores-escolhidas/README.md) — rosa `#EA3D7A`, ciano `#68E2E3`, roxo `#6D34CC` (HTML + PDF).
+
+## Identidade visual final (atual)
+
+[`identidade-final-v2/`](identidade-final-v2/README.md) — documento final de 40 págs. (HTML + PDF), `BRAND.md`, `tokens.css` e logos. Roxo + ciano principais; melancia `#FF4D6A` só em texto ou detalhe. Card: https://trello.com/c/d1duCYiO
+
+## Identidade visual v4
 
 Kit completo sobre o logo v4: [`identidade-v4/`](identidade-v4/README.md) — manual de 26 págs. (logo system, cor + contraste, tipo, voz, motion, posts, stories, merch, eventos, rua), `BRAND.md`, `tokens.css`, posts e stories em PNG.
 

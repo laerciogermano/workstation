@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>RoleGo — Cores escolhidas</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: #000;
+    color: #fff;
+    font-family: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  }
+  .page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 56px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 48px;
+  }
+  h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  h1 span { color: #68E2E3; }
+  p.lead {
+    max-width: 42rem;
+    font-size: 18px;
+    font-weight: 500;
+    color: #C9CDD6;
+    line-height: 1.45;
+  }
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 920px;
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .chip {
+    aspect-ratio: 1;
+    border-radius: 28px;
+    width: 100%;
+    max-width: 220px;
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta strong {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .meta code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px;
+    color: #9CA3AF;
+  }
+  .rosa { background: #EA3D7A; }
+  .ciano { background: #68E2E3; }
+  .roxo { background: #6D34CC; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div>
+      <h1>Cores escolhidas — <span>RoleGo</span></h1>
+      <p class="lead" style="margin-top: 16px;">
+        Estas três cores serão as cores da marca RoleGo.
+      </p>
+    </div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip rosa" aria-label="Rosa"></div>
+        <div class="meta">
+          <strong>Rosa</strong>
+          <code>#EA3D7A</code>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip ciano" aria-label="Ciano"></div>
+        <div class="meta">
+          <strong>Ciano</strong>
+          <code>#68E2E3</code>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip roxo" aria-label="Roxo"></div>
+        <div class="meta">
+          <strong>Roxo</strong>
+          <code>#6D34CC</code>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

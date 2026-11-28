@@ -69,7 +69,7 @@ Quem usa a rede pra flertar e aproximar.
 
 ## Objetivo
 
-Ser a **rede social padrão onde criadores e pessoas comuns se conhecem** — estilo Instagram, focada em **desconhecidos** — com conta para cada pessoa; o pretexto é o encontro social e, por dentro, a venda de conteúdo acontece de forma **discreta** no close privado, com acesso claro ao que foi liberado.
+**SER A REDE SOCIAL PADRÃO ONDE CRIADORES E PESSOAS COMUNS SE CONHECEM** — estilo Instagram, focada em **desconhecidos** — com conta para cada pessoa; o pretexto é o encontro social e, por dentro, a venda de conteúdo acontece de forma **discreta** no close privado, com acesso claro ao que foi liberado.
 
 ## Estratégia
 

@@ -15,7 +15,7 @@ Regras IA: [`config/config-ia.md`](config/config-ia.md).
 O **Clozzy** é uma **rede social** (referências máximas: TikTok + Instagram Reels) com **três usos na mesma conta**:
 
 1. **Atenção** — publicar e ser visto (fotos, vídeos, reels); sem interesse em relacionamento dentro da plataforma.
-2. **Relacionamento** — conhecer gente, chat, foto, foto temporária, stories, ligação / videochamada; mais privado, publica pouco.
+2. **Relacionamento** — conhecer gente, DM, bate-papo por salas/categorias (ref. Bate-papo UOL), foto, foto temporária, stories, ligação / videochamada; mais privado, publica pouco.
 3. **Conteúdo exclusivo** — close, packs e liberação no privado; existe, mas **não é a ideia principal**.
 
 O núcleo é **encontrar pessoas, seguir, conectar e acompanhar presença** (reels, MMTV, perfil). A venda de exclusivo fica por dentro, discreta. Na **área pública**, o site **proíbe conteúdo +18**.
@@ -27,7 +27,7 @@ Quem quer atenção, quem quer se relacionar e quem vende exclusivo hoje vivem e
 | Dor | Hoje |
 |-----|------|
 | **Atenção sem rede própria** | Influencer / quem quer ser visto depende de TikTok/IG alheio; não há casa onde publicar e crescer público sem vender. |
-| **Relacionamento sem profundidade na mesma rede** | Dating e DM ficam fora do feed; quem quer conhecer gente nova não tem reels + chat + chamada no mesmo produto. |
+| **Relacionamento sem profundidade na mesma rede** | Dating e DM ficam fora do feed; salas tipo Bate-papo UOL sumiram; quem quer conhecer gente não tem reels + salas + DM + chamada no mesmo produto. |
 | **Venda como cartaz** | Plataformas de pack anunciam o pago de cara — espantam quem só quer ver ou flertar. |
 | **Entrada com fricção** | Cadastro pesado antes de ver qualquer coisa; perde o público trazido pelo link do perfil. |
 
@@ -38,7 +38,7 @@ Três perfis de uso (mesma conta; a pessoa pode misturar papéis).
 | Perfil | Quem | Quer |
 |--------|------|------|
 | **Atenção** | Quem publica e quer ser visto; não vende (ou ainda não) e não busca relacionamento | Público, seguir, presença — sem obrigação de chat |
-| **Relacionamento** | Quem entra mais privado; publica pouco | Conhecer gente, mensagem, foto, stories, ligação / videochamada |
+| **Relacionamento** | Quem entra mais privado; publica pouco | Conhecer gente, DM, salas de bate-papo, foto, stories, ligação / videochamada |
 | **Conteúdo exclusivo** | Quem monetiza no privado; quem compra | Close, pack, liberação e acesso claro |
 
 O **público final** chega em geral pelo link de alguém (ex.: menina divulgando o perfil): abre o site, cai em reels / MMTV, rola, pesquisa, segue — e só depois completa identidade.
@@ -54,7 +54,7 @@ O **público final** chega em geral pelo link de alguém (ex.: menina divulgando
 | Camada | Papel |
 |--------|--------|
 | **Atenção / presença** | Reels, MMTV, perfil público, seguir |
-| **Relacionamento** | Chat, mídia, stories, chamada; descoberta de gente nova |
+| **Relacionamento** | DM, bate-papo (salas por categoria), mídia, stories, chamada; descoberta de gente nova |
 | **Exclusivo** | Close, bloqueio, oferta e liberação no privado |
 
 ## Conta e sessão
@@ -66,7 +66,7 @@ O **público final** chega em geral pelo link de alguém (ex.: menina divulgando
 
 ## Superfície (o que a pessoa encontra)
 
-Referências: **TikTok** (abre em reels) e **Instagram** (explorar, perfil, seguir, close friends).
+Referências: **TikTok** (abre em reels), **Instagram** (explorar, perfil, seguir, close friends) e **Bate-papo UOL** (salas por categoria).
 
 | Superfície | Essência |
 |------------|----------|
@@ -76,7 +76,8 @@ Referências: **TikTok** (abre em reels) e **Instagram** (explorar, perfil, segu
 | **Perfil** | Fotos públicas e privadas; bio; quem visualizou; seguir — área pública sem +18 |
 | **Seguir / conectar** | Público: segue direto. Privado: precisa aceitar; pode pedir seguir de volta |
 | **Close friends / listas** | Círculos e listas de transmissão; influenciador pode ter grupo — ao seguir e ser aceito, a pessoa pode entrar na lista/grupo |
-| **Relacionamento** | Chat, foto, foto temporária, reação a stories, ligação / videochamada |
+| **Bate-papo** | Salas por categoria (espírito Bate-papo UOL) — entrar, conversar, conhecer gente por tema |
+| **Relacionamento** | DM 1:1, foto, foto temporária, reação a stories, ligação / videochamada |
 | **Exclusivo** | Conteúdo trancado; close / pack / liberação no privado |
 
 Ordem exata da home (MMTV vs Reels primeiro) fica aberta — **os dois são carro-forte**.
@@ -89,7 +90,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 |-------------|--------|
 | Entrar e ver | Sem login; sessão por fingerprint |
 | Atenção / público | Publicar e ser encontrado sem obrigação de vender ou flertar |
-| Relacionamento | Conhecer gente, chat, mídia, chamada |
+| Relacionamento | Conhecer gente, DM, salas de bate-papo, mídia, chamada |
 | Seguir com controle | Perfil privado + aceite; listas / close friends |
 | Exclusivo discreto | Close e packs por dentro; capa não é loja |
 | Área pública limpa | Sem conteúdo +18 na superfície pública |
@@ -117,7 +118,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | **Sessão / conta** | Fingerprint → sessão persistente; cadastro progressivo e vínculo |
 | **Presença** | Reels, MMTV, perfil (público / privado), explorar / busca — área pública sem +18 |
 | **Grafo social** | Seguir, aceite em perfil privado, quem visualizou, close friends, listas / grupos de transmissão |
-| **Relacionamento** | Chat, foto, foto temporária, stories, ligação / videochamada |
+| **Relacionamento** | DM, bate-papo (salas por categoria), foto, foto temporária, stories, ligação / videochamada |
 | **Exclusivo** | Close, conteúdo bloqueado, pack/avulso, checkout, biblioteca / acesso |
 | **Gestão** | Publicar, gerenciar círculos/listas, precificar, ver vendas |
 
@@ -136,6 +137,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | **Conta** | Identidade vinculada (dados progressivos + histórico da sessão) |
 | **Atenção** | Uso focado em publicar e ser visto |
 | **Relacionamento** | Uso focado em conhecer e conversar |
+| **Bate-papo** | Área de salas por categoria (ref. Bate-papo UOL) para conversa em grupo / tema |
 | **Close / lista** | Círculo ou transmissão; seguir+aceite pode incluir a pessoa no grupo do criador |
 | **Conteúdo bloqueado** | Mídia trancada até close ou compra |
 | **Oferta** | Close, pack ou item com preço e regra de acesso |
@@ -145,7 +147,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 
 - Pessoa chega pelo link, **vê reels/MMTV sem login** (sem +18 na área pública) e mantém sessão por fingerprint.
 - Perfis de **atenção** crescem público sem serem obrigados a chat ou venda.
-- Perfis de **relacionamento** conseguem conhecer gente, conversar e usar chamada / mídia.
+- Perfis de **relacionamento** conseguem conhecer gente (DM + salas de bate-papo), conversar e usar chamada / mídia.
 - Seguir em perfil **privado** exige aceite; listas / close friends funcionam.
 - Exclusivo vende e libera **no privado**, sem a capa parecer loja de packs.
 - Ao completar cadastro, o histórico da sessão **fica vinculado** à conta.
@@ -155,7 +157,8 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | Termo | Significado |
 |-------|-------------|
 | **Atenção** | Perfil/uso de quem publica para ser visto |
-| **Relacionamento** | Uso de conhecer gente + chat / mídia / chamada |
+| **Relacionamento** | Uso de conhecer gente + DM / bate-papo / mídia / chamada |
+| **Bate-papo** | Salas por categoria (ref. Bate-papo UOL) — conversa temática / em grupo |
 | **Reels** | Feed vertical (espírito TikTok / IG Reels) |
 | **MMTV** | Canal / TV de presença contínua |
 | **Fingerprint** | Identificador de dispositivo que cria a sessão implícita |
@@ -168,4 +171,4 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 
 ## Próximos passos
 
-→ [`docs/README.md`](docs/README.md) — alinhar `functionalities.md` e épicos a esta visão (fingerprint · reels/MMTV · três usos · exclusivo secundário)
+→ [`docs/README.md`](docs/README.md) — alinhar `functionalities.md` e épicos a esta visão (fingerprint · reels/MMTV · bate-papo · três usos · exclusivo secundário)

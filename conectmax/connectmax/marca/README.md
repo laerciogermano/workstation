@@ -12,7 +12,7 @@
 | [`design-system-conect-tech-v1.pdf`](design-system-conect-tech-v1.pdf) / [`.zip`](design-system-conect-tech-v1.zip) | PDF + pacote (HTML + assets) — card [EiaT9dZf](https://trello.com/c/EiaT9dZf) |
 | [`logos/README.md`](logos/README.md) | Propostas de logo (A/B/C) |
 | [`empresas-similares-compras-corporativas.md`](empresas-similares-compras-corporativas.md) | Lista BR + internacional — compras corporativas B2B (card Done local) |
-| [`artes-apresentacao-consultoria/`](artes-apresentacao-consultoria/) | Artes PNG (arte-01…06 + logos) + [`email-apresentacao-conect-tech.html`](artes-apresentacao-consultoria/email-apresentacao-conect-tech.html) (assunto/corpo p/ marketing.conectmax.email) — card [yNrWTQBc](https://trello.com/c/yNrWTQBc) |
+| [`artes-apresentacao-consultoria/`](artes-apresentacao-consultoria/) | Artes PNG (arte-01…06 + logos) + [`email-apresentacao-conect-tech.html`](artes-apresentacao-consultoria/email-apresentacao-conect-tech.html) + [`insumos-mensagem-email.md`](artes-apresentacao-consultoria/insumos-mensagem-email.md) (artes/textos p/ evoluir o e-mail) — card [yNrWTQBc](https://trello.com/c/yNrWTQBc) |
 | [`contexto-apresentacao-consultoria/README.md`](contexto-apresentacao-consultoria/README.md) | Pacote único: 24 cards Trello + cópia dos artefatos desta pasta + anexos da task IV Conect (~140 MB) |
 
 ## Como gerar PDF

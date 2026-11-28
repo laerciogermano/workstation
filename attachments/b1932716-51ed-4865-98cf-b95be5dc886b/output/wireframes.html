@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clozzy · wireframes</title>
+<style>
+@font-face{font-family:Gabarito;src:url("../../../clozzy/marca/identidade-nova/fonts/Gabarito-Variable.ttf");font-weight:400 900}
+@font-face{font-family:Figtree;src:url("../../../clozzy/marca/identidade-nova/fonts/Figtree-Variable.ttf");font-weight:300 900}
+:root{
+  --pink:#E0005A;--purple:#7C48C4;--green:#69C353;
+  --ink:#000;--s2:#141414;--s3:#222;--line:#2A2A2A;--line2:#3D3D3D;
+  --tx:#fff;--soft:#E6E6E6;--apoio:#8C8C8C;--muted:#666;
+  --fd:Gabarito,system-ui,sans-serif;--fb:Figtree,system-ui,sans-serif;
+  --wire:#3A3A3A;--wire2:#4A4A4A;--label:#B3B3B3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--ink);color:var(--tx);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--pink)}
+.wrap{max-width:1400px;margin:0 auto;padding:0 32px}
+.hero{padding:48px 0 28px;border-bottom:1px solid var(--line)}
+.hero .kicker{font:700 12px var(--fb);color:var(--pink);letter-spacing:.04em;margin-bottom:12px}
+.hero h1{font:900 clamp(40px,6vw,72px)/.92 var(--fd);letter-spacing:-.04em}
+.hero h1 span{color:var(--pink)}
+.hero p{margin-top:14px;max-width:720px;color:var(--apoio);font-size:15px;line-height:1.55}
+.meta{margin-top:18px;display:flex;gap:16px;flex-wrap:wrap;font:700 13px var(--fb);color:var(--soft)}
+.meta b{color:var(--pink)}
+.nav{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:12px 32px;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:8px 14px;border-radius:999px;border:1px solid var(--line2);color:var(--soft);text-decoration:none;font:600 13px var(--fb)}
+.nav a:hover{border-color:var(--pink);color:#fff}
+.flow{padding:48px 0 12px}
+.flow h2{font:900 32px/1 var(--fd);letter-spacing:-.03em;padding-left:16px;border-left:6px solid var(--pink)}
+.flow h2.studio{border-color:var(--purple)}
+.flow .desc{margin:10px 0 0 22px;color:var(--apoio);font-size:14px;max-width:820px}
+.row{display:flex;gap:28px;overflow-x:auto;padding:28px 4px 36px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.card{flex:none;width:280px}
+.card .code{font:800 13px var(--fd);color:var(--pink);margin-bottom:8px}
+.card .name{font:800 18px/1.1 var(--fd);letter-spacing:-.02em;margin-bottom:6px}
+.card .note{font-size:12px;color:var(--apoio);line-height:1.4;min-height:34px;margin-bottom:12px}
+.phone{width:280px;height:580px;border-radius:40px;padding:6px;background:#0a0a0a;border:2px solid var(--pink);box-shadow:0 24px 50px rgba(0,0,0,.55)}
+.phone.studio{border-color:var(--purple)}
+.scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#0d0d0d;display:flex;flex-direction:column;color:var(--soft);font-size:11px}
+.notch{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:78px;height:20px;border-radius:12px;background:#000;z-index:5}
+.sb{height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 18px 0;font:700 10px var(--fb);color:var(--tx)}
+.body{flex:1;min-height:0;padding:6px 10px 10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.body.flush{padding:0;gap:0}
+.w{border:1.5px dashed var(--wire2);background:var(--s2);border-radius:10px;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--label);font:700 10px/1.25 var(--fb);padding:6px;min-height:28px}
+.w.solid{border-style:solid;border-color:var(--wire)}
+.w.accent{border-color:var(--pink);color:#ffb3d0}
+.w.close{border-color:var(--green);color:#b8f0a8}
+.w.purple{border-color:var(--purple);color:#d4b8ff}
+.w.dark{background:#090909}
+.w.full{flex:1;min-height:0}
+.w.sm{min-height:22px;font-size:9px;padding:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.stack{display:flex;flex-direction:column;gap:6px;flex:1;min-height:0}
+.topbar{display:grid;grid-template-columns:36px 1fr 36px;gap:6px;align-items:center}
+.pill{height:36px;border-radius:999px}
+.circle{width:36px;height:36px;border-radius:50%;flex:none}
+.tab{margin-top:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px;border-radius:999px;background:rgba(20,20,20,.95);border:1px solid var(--line);flex:none}
+.tab .w{min-height:34px;border-radius:999px;font-size:8px}
+.tab .w.on{border-color:var(--pink);color:#fff;background:#1a1a1a}
+.chiprow{display:flex;gap:4px;overflow:hidden}
+.chip{flex:none;padding:0 8px;height:24px;border-radius:999px;display:flex;align-items:center;border:1.5px dashed var(--wire2);background:var(--s3);color:var(--label);font:700 9px var(--fb)}
+.chip.on{border-color:var(--pink);color:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 0 22px;font-size:12px;color:var(--apoio)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;border:1.5px dashed;margin-right:5px;vertical-align:-1px}
+.legend .a{border-color:var(--pink)}.legend .c{border-color:var(--green)}.legend .p{border-color:var(--purple)}.legend .n{border-color:var(--wire2)}
+footer{padding:40px 0 64px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--line)}
+@media(max-width:700px){.wrap{padding:0 16px}.nav .wrap{padding:12px 16px}.phone,.card{width:260px}.phone{height:540px}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <div class="kicker">Clozzy · estrutura de UI</div>
+  <h1>Wireframes <span>estruturais</span></h1>
+  <p>Zonas e elementos por tela, a partir de <code>docs/screens.md</code> e da visão (rede primeiro; exclusivo no privado; público sem +18). Identidade final: Pink Deep · preto · verde close · Gabarito/Figtree.</p>
+  <div class="meta"><span><b>29</b> telas</span><span><b>6</b> fluxos</span><span>fidelidade baixa · layout + labels</span></div>
+</header>
+
+<nav class="nav"><div class="wrap">
+  <a href="#f1">01 Presença</a>
+  <a href="#f2">02 Perfil</a>
+  <a href="#f3">03 Relacionamento</a>
+  <a href="#f4">04 Exclusivo</a>
+  <a href="#f5">05 Conta</a>
+  <a href="#f6">06 Criador</a>
+</div></nav>
+
+<section class="flow wrap" id="f1">
+  <h2>01 · Presença</h2>
+  <p class="desc">Entrada sem login: Reels / MMTV, age gate, explorar e busca.</p>
+  <div class="legend"><span><i class="n"></i>zona</span><span><i class="a"></i>ação / acento</span><span><i class="c"></i>close</span><span><i class="p"></i>studio</span></div>
+  <div class="row" id="r1"></div>
+</section>
+<section class="flow wrap" id="f2">
+  <h2>02 · Perfil e grafo</h2>
+  <p class="desc">Perfil, visualizações, pedidos, listas e stories.</p>
+  <div class="row" id="r2"></div>
+</section>
+<section class="flow wrap" id="f3">
+  <h2>03 · Relacionamento</h2>
+  <p class="desc">DM, bate-papo, roleta e chamada.</p>
+  <div class="row" id="r3"></div>
+</section>
+<section class="flow wrap" id="f4">
+  <h2>04 · Exclusivo (privado)</h2>
+  <p class="desc">Oferta, Pix, viewer, biblioteca e passe — sem cartaz na capa pública.</p>
+  <div class="row" id="r4"></div>
+</section>
+<section class="flow wrap" id="f5">
+  <h2>05 · Conta e sistema</h2>
+  <p class="desc">Conta progressiva, avisos, legal e denúncia.</p>
+  <div class="row" id="r5"></div>
+</section>
+<section class="flow wrap" id="f6">
+  <h2 class="studio">06 · Criador</h2>
+  <p class="desc">Onboarding e Studio (roxo).</p>
+  <div class="row" id="r6"></div>
+</section>
+
+<footer class="wrap">Fonte: visão · screens.md · identidade-final · <a href="../../../clozzy/docs/screens.md">mapa de telas</a></footer>
+
+<script>
+const tab = (on=0) => `<div class="tab">${['Reels','Explorar','+','Chat','Conta'].map((t,i)=>`<div class="w sm${i===on?' on':''}">${t}</div>`).join('')}</div>`;
+const phone = (inner, studio=false) => `<div class="phone${studio?' studio':''}"><div class="scr"><div class="notch"></div><div class="sb"><span>9:41</span><span>●●●</span></div>${inner}</div></div>`;
+
+const SCREENS = [
+  {f:1, id:'TELA-01', name:'Reels', note:'Feed vertical na entrada · sem +18', html:()=>phone(`
+    <div class="body flush">
+      <div class="stack" style="padding:6px 10px 10px">
+        <div class="w accent full dark">vídeo / presença<br><span style="opacity:.7">swipe ↑↓</span></div>
+        <div class="row2"><div class="w sm">@perfil</div><div class="w sm accent">curtir · comentar · salvar</div></div>
+        <div class="w sm">legenda / áudio</div>
+        ${tab(0)}
+      </div>
+    </div>`)},
+  {f:1, id:'TELA-02', name:'MMTV', note:'Canal / grade contínua', html:()=>phone(`
+    <div class="body">
+      <div class="w sm accent">canal ao vivo / grade</div>
+      <div class="w full dark">player contínuo<br>presença</div>
+      <div class="row2"><div class="w sm">sair do canal</div><div class="w sm">abrir perfil</div></div>
+      ${tab(0)}
+    </div>`)},
+  {f:1, id:'TELA-03', name:'Age gate 18+', note:'Uma vez por aparelho', html:()=>phone(`
+    <div class="body" style="justify-content:center;gap:10px">
+      <div class="w circle" style="width:56px;height:56px;margin:0 auto;border-radius:50%">marca</div>
+      <div class="w" style="min-height:64px">Você tem 18 anos<br>ou mais?</div>
+      <div class="w pill accent">tenho 18+</div>
+      <div class="w pill sm">sair</div>
+    </div>`)},
+  {f:1, id:'TELA-04', name:'Explorar', note:'Grade de perfis · sem preço na capa', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">Explorar</div>
+      <div class="chiprow"><span class="chip on">tudo</span><span class="chip">dança</span><span class="chip">lifestyle</span><span class="chip">+</span></div>
+      <div class="row2" style="flex:1">
+        <div class="stack"><div class="w full">perfil</div><div class="w full">perfil</div></div>
+        <div class="stack"><div class="w full">perfil</div><div class="w full">perfil</div></div>
+      </div>
+      ${tab(1)}
+    </div>`)},
+  {f:1, id:'TELA-05', name:'Busca', note:'Nome / @ · limite progressivo', html:()=>phone(`
+    <div class="body">
+      <div class="w pill accent">buscar nome / @</div>
+      <div class="w sm">recentes no aparelho</div>
+      <div class="stack" style="flex:1">
+        <div class="w">resultado</div><div class="w">resultado</div><div class="w">resultado</div>
+      </div>
+      <div class="w sm">gate: enriquecer conta</div>
+    </div>`)},
+  {f:1, id:'LAND', name:'Landing', note:'Headline rede · CTA explorar / criar', html:()=>phone(`
+    <div class="body">
+      <div class="row2"><div class="w sm accent">logo</div><div class="w sm">entrar</div></div>
+      <div class="w full dark">foto presença<br>headline rede</div>
+      <div class="w pill accent">explorar</div>
+      <div class="w pill sm">criar presença</div>
+      <div class="w sm">lista de espera · legal</div>
+    </div>`)},
+
+  {f:2, id:'TELA-06', name:'Perfil', note:'Público/privado · close sem preço na capa', html:()=>phone(`
+    <div class="body">
+      <div class="w" style="min-height:72px">capa</div>
+      <div class="row2"><div class="w circle" style="width:48px;height:48px;border-radius:50%">foto</div><div class="stack"><div class="w sm">nome · @</div><div class="w sm">bio / links</div></div></div>
+      <div class="row2"><div class="w sm accent">seguir</div><div class="w sm close">entrar no close</div></div>
+      <div class="row3"><div class="w sm">grid</div><div class="w sm">grid</div><div class="w sm">🔒 prévia</div></div>
+      <div class="w sm">compartilhar link</div>
+      ${tab(1)}
+    </div>`)},
+  {f:2, id:'TELA-07', name:'Quem visualizou', note:'Lista · pode pedir mais dados', html:()=>phone(`
+    <div class="body">
+      <div class="topbar"><div class="w circle sm">←</div><div class="w sm">quem visualizou</div><div class="w circle sm">·</div></div>
+      <div class="stack" style="flex:1"><div class="w">viewer</div><div class="w">viewer</div><div class="w">viewer</div></div>
+      <div class="w pill accent">completar conta p/ ver mais</div>
+    </div>`)},
+  {f:2, id:'TELA-08', name:'Pedidos de seguir', note:'Aceitar / recusar / pedir de volta', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">pedidos</div>
+      <div class="stack" style="flex:1">
+        <div class="row2"><div class="w">pedido</div><div class="w sm accent">ok · não</div></div>
+        <div class="row2"><div class="w">pedido</div><div class="w sm accent">ok · não</div></div>
+        <div class="w sm">seguir de volta</div>
+      </div>
+    </div>`)},
+  {f:2, id:'TELA-09', name:'Close friends / listas', note:'Círculos · incluir / remover', html:()=>phone(`
+    <div class="body">
+      <div class="row2"><div class="w sm">listas</div><div class="w sm accent">+ criar</div></div>
+      <div class="w close">círculo close</div>
+      <div class="stack" style="flex:1"><div class="w">membro</div><div class="w">membro</div><div class="w sm">remover</div></div>
+    </div>`)},
+  {f:2, id:'TELA-10', name:'Stories', note:'Público vs close / lista', html:()=>phone(`
+    <div class="body flush">
+      <div class="stack" style="padding:6px 10px 10px">
+        <div class="w sm">barras progresso</div>
+        <div class="w full dark accent">story<br>público | close | lista</div>
+        <div class="row2"><div class="w sm">reagir</div><div class="w sm">destaques</div></div>
+      </div>
+    </div>`)},
+
+  {f:3, id:'TELA-11', name:'Conversas', note:'DMs · não lidas · pedidos', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">conversas</div>
+      <div class="chiprow"><span class="chip on">todas</span><span class="chip">pedidos</span></div>
+      <div class="stack" style="flex:1"><div class="w accent">DM · não lida</div><div class="w">DM</div><div class="w">pedido msg</div></div>
+      ${tab(3)}
+    </div>`)},
+  {f:3, id:'TELA-12', name:'Conversa 1:1', note:'Texto · foto temp · oferta no fio', html:()=>phone(`
+    <div class="body">
+      <div class="topbar"><div class="w circle sm">←</div><div class="w sm">@pessoa</div><div class="w circle sm">⋮</div></div>
+      <div class="stack" style="flex:1"><div class="w sm">bolha texto</div><div class="w sm">foto temp</div><div class="w sm close">oferta exclusivo (sem cartaz)</div></div>
+      <div class="row2"><div class="w sm">bloqueio / denúncia</div><div class="w sm accent">convite ligação</div></div>
+      <div class="w pill">campo mensagem</div>
+    </div>`)},
+  {f:3, id:'TELA-13', name:'Bate-papo (salas)', note:'Salas por categoria', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">bate-papo</div>
+      <div class="chiprow"><span class="chip on">música</span><span class="chip">games</span><span class="chip">+</span></div>
+      <div class="stack" style="flex:1"><div class="w accent">sala · entrar</div><div class="w">sala</div><div class="w">sala</div></div>
+      ${tab(3)}
+    </div>`)},
+  {f:3, id:'TELA-14', name:'Sala', note:'Mensagens · moderação · DM', html:()=>phone(`
+    <div class="body">
+      <div class="topbar"><div class="w circle sm">←</div><div class="w sm">sala / tema</div><div class="w circle sm">sair</div></div>
+      <div class="stack" style="flex:1"><div class="w">msg</div><div class="w">msg · abrir perfil</div><div class="w sm">pedir DM</div></div>
+      <div class="w sm">moderação básica</div>
+      <div class="w pill">escrever</div>
+    </div>`)},
+  {f:3, id:'TELA-15', name:'Roleta', note:'Parear · aceitar / pular', html:()=>phone(`
+    <div class="body">
+      <div class="w full dark accent">pareamento ao vivo<br>desconhecido</div>
+      <div class="row3"><div class="w sm">pular</div><div class="w sm accent">aceitar</div><div class="w sm">encerrar</div></div>
+      <div class="row2"><div class="w sm">denunciar</div><div class="w sm">→ DM</div></div>
+    </div>`)},
+  {f:3, id:'TELA-16', name:'Ligação / videochamada', note:'Consentimento 1:1', html:()=>phone(`
+    <div class="body">
+      <div class="w full dark">vídeo / áudio<br>1:1</div>
+      <div class="row3"><div class="w sm">mudo</div><div class="w sm accent">encerrar</div><div class="w sm">câmera</div></div>
+      <div class="w sm">denunciar</div>
+    </div>`)},
+
+  {f:4, id:'TELA-17', name:'Oferta no privado', note:'Close / pack · preview sem pago', html:()=>phone(`
+    <div class="body">
+      <div class="topbar"><div class="w circle sm">←</div><div class="w sm">oferta</div><div class="w circle sm">·</div></div>
+      <div class="w full">preview bloqueado<br>não entrega pago</div>
+      <div class="w close">close / pack / item</div>
+      <div class="w pill accent">pagar</div>
+    </div>`)},
+  {f:4, id:'TELA-18', name:'Checkout / Pix', note:'QR · status · sem cobrança dupla', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">resumo da oferta</div>
+      <div class="w full accent">QR / copia-cola Pix<br>status</div>
+      <div class="w sm">liberado → biblioteca</div>
+      <div class="w sm">expirado: novo código</div>
+    </div>`)},
+  {f:4, id:'TELA-19', name:'Conteúdo', note:'Viewer do liberado', html:()=>phone(`
+    <div class="body">
+      <div class="w full dark">viewer liberado</div>
+      <div class="stack"><div class="w sm">item do pack</div><div class="w sm">item</div><div class="w sm">item</div></div>
+    </div>`)},
+  {f:4, id:'TELA-20', name:'Biblioteca', note:'Ativa / expirada / renovar', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">biblioteca</div>
+      <div class="chiprow"><span class="chip on">ativas</span><span class="chip">expiradas</span></div>
+      <div class="stack" style="flex:1"><div class="w close">close · ativa</div><div class="w">pack · renovar</div><div class="w sm">recomprar</div></div>
+      ${tab(4)}
+    </div>`)},
+  {f:4, id:'TELA-21', name:'Passe do close', note:'Próxima cobrança · cancelar', html:()=>phone(`
+    <div class="body">
+      <div class="w close" style="min-height:100px">passe close<br>carteira</div>
+      <div class="w sm">próxima cobrança</div>
+      <div class="w pill">cancelar (acesso até o fim)</div>
+    </div>`)},
+
+  {f:5, id:'TELA-22', name:'Conta', note:'Identidade progressiva · quero vender', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">conta</div>
+      <div class="stack" style="flex:1">
+        <div class="w">dados / identidade</div>
+        <div class="w">notificações</div>
+        <div class="w purple">quero vender</div>
+        <div class="w sm">sair · desativar · excluir</div>
+      </div>
+      ${tab(4)}
+    </div>`)},
+  {f:5, id:'TELA-23', name:'Identidade / login', note:'Cadastro progressivo · vínculo sessão', html:()=>phone(`
+    <div class="body">
+      <div class="w" style="min-height:48px">criar / entrar</div>
+      <div class="w">e-mail / telefone / código</div>
+      <div class="w sm">Termos + Privacidade</div>
+      <div class="w pill accent">continuar</div>
+      <div class="w sm">vincular histórico da sessão</div>
+    </div>`)},
+  {f:5, id:'TELA-24', name:'Avisos', note:'Sem preço/mídia na tela bloqueada', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">avisos</div>
+      <div class="stack" style="flex:1"><div class="w">msg / aceite</div><div class="w">close / pagamento</div><div class="w">vencimento / saque</div></div>
+      <div class="w sm">prefs por tipo</div>
+    </div>`)},
+  {f:5, id:'TELA-25', name:'Ajuda / legal', note:'Termos · LGPD · DMCA', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">ajuda / legal</div>
+      <div class="stack" style="flex:1">
+        <div class="w sm">termos · privacidade · cookies</div>
+        <div class="w sm">18+ · FAQ · contato</div>
+        <div class="w sm">LGPD · DMCA</div>
+      </div>
+    </div>`)},
+  {f:5, id:'TELA-26', name:'Denunciar / bloquear', note:'Perfil · conteúdo · sala · roleta', html:()=>phone(`
+    <div class="body">
+      <div class="w sm">denunciar</div>
+      <div class="stack" style="flex:1"><div class="w">motivo</div><div class="w">motivo</div><div class="w">motivo</div></div>
+      <div class="row2"><div class="w sm">bloquear</div><div class="w sm">silenciar</div></div>
+      <div class="w pill accent">enviar</div>
+    </div>`)},
+
+  {f:6, id:'TELA-27', name:'Onboarding criador', note:'Verificação · Pix · análise', html:()=>phone(`
+    <div class="body">
+      <div class="w purple sm">passo 1/3</div>
+      <div class="w">dados mínimos</div>
+      <div class="w">verificação / selfie doc</div>
+      <div class="w">chave Pix</div>
+      <div class="w sm">termos de criador</div>
+      <div class="w pill purple">enviar · status análise</div>
+    </div>`, true)},
+  {f:6, id:'TELA-28', name:'Studio', note:'Saldo · ofertas · extrato / saque', html:()=>phone(`
+    <div class="body">
+      <div class="w purple sm">Clozzy Studio</div>
+      <div class="row3"><div class="w sm">saldo</div><div class="w sm">vendas</div><div class="w sm">membros</div></div>
+      <div class="stack" style="flex:1">
+        <div class="w">editar perfil</div>
+        <div class="w">ofertas / conteúdos</div>
+        <div class="w close">círculos / listas</div>
+        <div class="w purple">extrato · saque Pix</div>
+      </div>
+    </div>`, true)},
+];
+
+function card(s){
+  return `<article class="card"><div class="code">${s.id}</div><div class="name">${s.name}</div><div class="note">${s.note}</div>${s.html()}</article>`;
+}
+for (let f=1; f<=6; f++){
+  document.getElementById('r'+f).innerHTML = SCREENS.filter(s=>s.f===f).map(card).join('');
+}
+</script>
+</body>
+</html>

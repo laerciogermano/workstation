@@ -16,6 +16,7 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
 | Telas | [`screens.md`](screens.md) | Tela → funcionalidades (objetivo) | Pronto (v1; `functionalities.md` ainda legado) |
+| Wireframes | [`wireframes/`](wireframes/README.md) | Estrutura visual TELA-01…28 + Landing (baixa fidelidade) | Pronto (v1) |
 | Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI para implementar | A produzir |
 | Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado | Pronto (v1, a partir de `functionalities.md` + [manual de uso da marca](../marca/uso-da-marca/README.md)) |
@@ -26,4 +27,4 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 
 ## Próximos passos
 
-→ realinhar [`functionalities.md`](functionalities.md) ao mapa de [`screens.md`](screens.md) → [`user-stories.md`](user-stories.md) (ainda não criado) por épico de [`epics.md`](epics.md)
+→ realinhar [`functionalities.md`](functionalities.md) ao mapa de [`screens.md`](screens.md) → componentes / histórias a partir de [`wireframes/`](wireframes/README.md) e [`epics.md`](epics.md)

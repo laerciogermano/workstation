@@ -37,7 +37,7 @@ Criadores e pessoas comuns já querem **se cruzar**. Ambos querem **conhecer des
 
 ## Para quem
 
-Personas separadas por aplicação (mesmo produto, dois usos).
+Personas separadas por aplicação (mesmo produto, três usos).
 
 ### Rede social (similar Instagram/TikTok)
 
@@ -56,6 +56,14 @@ Criadores / influencers que monetizam; quem compra o exclusivo.
 |---------|-----------|-------------|
 | **Cliente** (comprador) | Quem paga close, pack ou avulso | Conteúdo liberado, saber o que comprou e acompanhar no privado |
 | **Influencer** (vendedor) | Criador que já vende | Abrir close, bloquear exclusivo, oferecer, receber e liberar — no privado |
+
+### Relacionamento
+
+Quem usa a rede pra flertar e aproximar.
+
+| Persona | Para quem | Necessidade |
+|---------|-----------|-------------|
+| **Flertador** | Homem ou mulher que gosta de flertar na net | Trocar mensagens, fotos e videochamada; seguir a conversa |
 
 ## Objetivo
 

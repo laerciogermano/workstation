@@ -15,7 +15,7 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 | Épicos | [`epics.md`](epics.md) | Blocos de valor em bullets (visão atual: rede primeiro) | Proposto (alinhado à visão; functionalities a alinhar) |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
-| Telas | [`screens.md`](screens.md) | Superfícies de UI e funcionalidades por tela (visão + épicos + C-xx) | Pronto (v1 mapa; `functionalities.md` ainda legado) |
+| Telas | [`screens.md`](screens.md) | Tela → funcionalidades (objetivo) | Pronto (v1; `functionalities.md` ainda legado) |
 | Screens BDD | `screens-bdd.md` | Mesmos critérios, agrupados por tela | A produzir |
 | Componentes | `components.md` | Inventário de UI para implementar | A produzir |
 | Protótipo | [`prototype.html`](prototype.html) | Validação visual/interativa do que foi especificado | Pronto (v1, a partir de `functionalities.md` + [manual de uso da marca](../marca/uso-da-marca/README.md)) |

@@ -39,14 +39,26 @@ Criadores e pessoas comuns já querem **se cruzar**. Ambos querem **conhecer des
 
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Pessoa comum** | Usuário B2C sem obrigação de criar conteúdo pago | Entrar como numa rede social, conhecer desconhecidos, conversar e (se quiser) comprar no privado |
-| **Criador de conteúdo** | Quem publica e pode monetizar | Estar na mesma rede que pessoas comuns; conduzir close, conteúdo bloqueado e venda — sem gritar “loja” na superfície |
-| **Qualquer conta** | Toda pessoa no Clozzy | Conta própria; papéis de conhecer, comprar e/ou vender se ativam no uso |
-| **Operação / dono da plataforma** | Quem opera o Clozzy | Contas, descoberta de desconhecidos, close, pagamento, bloqueio/liberação e acesso sob controle |
+| **Seguidor** | Quem acompanha o perfil de graça | Ver o público, conhecer a pessoa e conversar — sem pagar close nem pack |
+| **Assinante** | Quem paga o close | Conteúdo exclusivo contínuo no círculo privado; saber o que está liberado |
+| **Carente** | Quem busca proximidade de verdade | Atenção e conversa; se fizer sentido, pagar pra ficar mais perto |
+| **Influencer** | Quem tem (ou quer) audiência pública | Ser encontrado por gente nova; abrir close e vender no privado sem virar loja na capa |
+| **Vendedor de conteúdos** | Quem vive de vender conteúdo | Close, bloqueio, pack/avulso, receber e liberar — ligado à relação |
+| **Agente de marketing** | Quem divulga o criador | Trazer gente nova e empurrar oferta sem transformar a capa em marketplace |
+| **Afiliado parceiro** | Parceiro de marketing digital | Indicar o criador com rastreio e comissão; produto fácil de explicar |
 
 ## Objetivo
 
 Ser a **rede social padrão onde criadores e pessoas comuns se conhecem** — estilo Instagram, focada em **desconhecidos** — com conta para cada pessoa; o pretexto é o encontro social e, por dentro, a venda de conteúdo acontece de forma **discreta** no close privado, com acesso claro ao que foi liberado.
+
+## Estratégia
+
+**Encontro social como pretexto; venda de exclusivo como motor.** A superfície não grita marketplace — a monetização mora no close e no privado.
+
+| Lado do produto | Papel |
+|-----------------|--------|
+| **Rede social de conhecer pessoas** | Capa: desconhecidos, perfil, aproximação — criador e comum no mesmo lugar |
+| **Venda de conteúdo exclusivo** | Motor: close, bloqueio, oferta e liberação no privado |
 
 ## Proposta de valor
 

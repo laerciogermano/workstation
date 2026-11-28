@@ -1,15 +1,19 @@
 // T-40 e T-41: árvore da esquerda para a direita, com criação no próprio nó, zoom e deslocamento.
 import { STATUS_LABEL, STATUSES, type Status, type TreeNode } from '@plans/domain';
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { askRemove, cancelCreate, createNode, expandAll, minimizeAll, moveNode, openSettings, renameNode, select, startCreate, toggleCollapse, type State } from '../store/app.ts';
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
+import { askRemove, cancelCreate, createNode, expandAll, minimizeAll, moveNode, openCard, openSettings, renameNode, select, startCreate, toggleCollapse, type State } from '../store/app.ts';
 import { AssigneeChip, StatusButton } from './Chips.tsx';
 import { dropTarget, edgeSpeed } from './dnd.ts';
+import { FilterBar } from './FilterBar.tsx';
+import { filterTree, isFiltering, matches, NO_FILTERS } from './filters.ts';
 import { edge, GY, layout, NEW, ROOT, W, type Box } from './layout.ts';
 import { cardHeight, useFontMetrics } from './measure.ts';
+import { PlayButton } from './PlayButton.tsx';
 import { fit, reveal, STEP, zoomAt, type View } from './viewport.ts';
 import { Icon } from '../ui/Icon.tsx';
 
 const descendants = (n: TreeNode): string[] => n.children.flatMap((c) => [c.activity.id, ...descendants(c)]);
+const flat = (nodes: TreeNode[]): TreeNode[] => nodes.flatMap((n) => [n, ...flat(n.children)]);
 /** Quantas atividades escondidas há em cada status (só os que existem). */
 const hiddenByStatus = (n: TreeNode) => {
   const all: Status[] = [];
@@ -17,6 +21,8 @@ const hiddenByStatus = (n: TreeNode) => {
   n.children.forEach(walk);
   return STATUSES.map((status) => ({ status, count: all.filter((s) => s === status).length })).filter((g) => g.count);
 };
+/** espera por um segundo clique no título antes de abrir o cartão */
+const DOUBLE_CLICK = 300;
 const heightOf = (n: TreeNode) => cardHeight(n.warning ? `⚠ ${n.activity.title}` : n.activity.title);
 
 function NewNode({ at, parent }: { at: Box; parent: string | null }) {
@@ -94,12 +100,15 @@ function Rename({ id, title, onDone }: { id: string; title: string; onDone: (ref
 }
 
 export function Tree({ app }: { app: State }) {
-  const collapsed = new Set(app.collapsed);
+  const filtering = isFiltering(app.filters);
+  const tree = filterTree(app.tree, app.filters, app.selected);
+  // filtrando, os ramos aparecem abertos para o que casa não ficar escondido; o que estava minimizado continua salvo
+  const collapsed = new Set(filtering ? [] : app.collapsed);
   useFontMetrics();
-  const { pos, order, width, height } = layout(app.tree, app.creating, collapsed, heightOf);
+  const { pos, order, width, height } = layout(tree, app.creating, collapsed, heightOf);
   const refs = useRef(new Map<string, HTMLDivElement>());
   const [renaming, setRenaming] = useState<string | null>(null);
-  const focusable = app.selected ?? order[0]?.node.activity.id;
+  const focusable = app.selected && pos.has(app.selected) ? app.selected : order[0]?.node.activity.id;
 
   const screen = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View>({ x: 0, y: 0, k: 1 });
@@ -152,13 +161,41 @@ export function Tree({ app }: { app: State }) {
     if (app.creating) show(NEW);
   }, [app.creating]);
 
+  // o filtro muda o desenho de lugar: volta ao topo e traz o primeiro resultado (ou o selecionado) à vista
+  const filtered = useRef(NO_FILTERS);
+  useEffect(() => {
+    if (filtered.current === app.filters) return;
+    filtered.current = app.filters;
+    const first = filtering ? order.find((o) => matches(o.node.activity, app.filters))?.node.activity.id : undefined;
+    const p = (app.selected ? pos.get(app.selected) : undefined) ?? (first ? pos.get(first) : undefined);
+    setView((v) => {
+      const top = { x: 0, y: 0, k: v.k };
+      return p ? reveal(top, { x: p.x, y: p.y, width: W, height: p.h }, size()) : top;
+    });
+  }, [app.filters]);
+
+  const opening = useRef<number>(undefined);
+  const cancelOpen = () => window.clearTimeout(opening.current);
+  useEffect(() => cancelOpen, []);
+  /** Um clique abre o cartão. No título há uma pausa, porque dois cliques ali renomeiam. */
+  function clickCard(e: MouseEvent, id: string) {
+    cancelOpen();
+    clicked.current = id;
+    if (renaming === id) return select(id);
+    if (app.readOnly || !(e.target as Element).closest('b')) return openCard(id);
+    select(id);
+    if (e.detail < 2) opening.current = window.setTimeout(() => openCard(id), DOUBLE_CLICK);
+  }
+
   /** cartão pressionado: vira arrasto depois de alguns pixels */
   const pressed = useRef<{ id: string; pointer: number; x: number; y: number } | null>(null);
   /** arrasto em andamento; x e y relativos à tela da árvore */
   const [carry, setCarry] = useState<{ id: string; x: number; y: number } | null>(null);
-  const found = carry && order.find((o) => o.node.activity.id === carry.id)?.node;
+  // da árvore inteira: filtrando, o que está escondido vai junto e continua contando entre os irmãos
+  const found = carry && flat(app.tree).find((n) => n.activity.id === carry.id);
+  const siblingsOf = (parent: string | null) => (parent ? (flat(app.tree).find((n) => n.activity.id === parent)?.children ?? []) : app.tree).map((n) => n.activity.id);
   const moving = new Set(found ? [carry.id, ...descendants(found)] : []);
-  const drop = found ? dropTarget(pos, order, { x: (carry.x - view.x) / view.k, y: (carry.y - view.y) / view.k }, moving) : null;
+  const drop = found ? dropTarget(pos, order, { x: (carry.x - view.x) / view.k, y: (carry.y - view.y) / view.k }, moving, siblingsOf) : null;
 
   const local = (e: PointerEvent) => {
     const box = screen.current!.getBoundingClientRect();
@@ -197,6 +234,7 @@ export function Tree({ app }: { app: State }) {
   }, [carrying]);
 
   function startPan(e: PointerEvent<HTMLDivElement>) {
+    cancelOpen();
     if (e.button !== 0 || (e.target as Element).closest('.tnode, .tnew, .first, .zoom')) return;
     drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -276,6 +314,7 @@ export function Tree({ app }: { app: State }) {
 
   function onKey(e: KeyboardEvent, index: number) {
     if (e.target !== e.currentTarget) return;
+    cancelOpen();
     const { node, parent } = order[index]!;
     const go = (id: string | null | undefined) => {
       if (!id) return;
@@ -288,11 +327,11 @@ export function Tree({ app }: { app: State }) {
       ArrowUp: () => go(order[index - 1]?.node.activity.id),
       ArrowDown: () => go(order[index + 1]?.node.activity.id),
       // como em árvores de arquivos: esquerda minimiza (ou sobe), direita expande (ou desce)
-      ArrowLeft: () => (node.children.length && !collapsed.has(node.activity.id) ? toggle(node) : go(parent)),
+      ArrowLeft: () => (!filtering && node.children.length && !collapsed.has(node.activity.id) ? toggle(node) : go(parent)),
       ArrowRight: () => (collapsed.has(node.activity.id) ? toggle(node) : go(node.children[0]?.activity.id)),
       Enter: () => !app.readOnly && startCreate(node.activity.id),
       F2: () => !app.readOnly && setRenaming(node.activity.id),
-      ' ': () => select(node.activity.id),
+      ' ': () => openCard(node.activity.id),
       Delete: () => void askRemove(node.activity.id),
       Backspace: () => void askRemove(node.activity.id),
     };
@@ -305,6 +344,7 @@ export function Tree({ app }: { app: State }) {
 
   return (
     <section className="canvas" aria-label="Árvore de execução">
+      <FilterBar app={app} />
       <div
         ref={screen}
         className={`viewport${panning ? ' panning' : ''}${carry ? ' carrying' : ''}${carry && !drop ? ' no-drop' : ''}`}
@@ -315,7 +355,8 @@ export function Tree({ app }: { app: State }) {
         onKeyDown={onZoomKey}
         onScroll={(e) => (e.currentTarget.scrollTo(0, 0))}
       >
-        {!order.length && !app.creating && !app.readOnly && (
+        {filtering && !order.length && !app.creating && <p className="no-match" role="status">Nenhuma atividade com esses filtros.</p>}
+        {!app.tree.length && !app.creating && !app.readOnly && (
           <button type="button" className="first" aria-label="Nova atividade" title="Nova atividade" onClick={() => startCreate(null)}>
             <Icon name="plus" size={34} />
           </button>
@@ -337,10 +378,10 @@ export function Tree({ app }: { app: State }) {
               <b>root</b>
               <span className="meta">
                 <span className="chip none">{app.folderName}</span>
-                <span className="count">{app.tree.length}</span>
+                <span className="count">{tree.length}</span>
               </span>
               <span className="tools">
-                <button type="button" aria-label="Configurações do projeto" title="Configurações: system prompt" onClick={(e) => (e.stopPropagation(), openSettings())}><Icon name="settings" size={14} /></button>
+                <button type="button" aria-label="Configurações do projeto" title="Configurações: system prompt e etiquetas" onClick={(e) => (e.stopPropagation(), openSettings())}><Icon name="settings" size={14} /></button>
                 {!app.readOnly && (
                   <button type="button" aria-label="Nova atividade no root" title="Nova atividade no root" onClick={(e) => (e.stopPropagation(), startCreate(null))}><Icon name="plus" size={14} /></button>
                 )}
@@ -350,6 +391,8 @@ export function Tree({ app }: { app: State }) {
           {order.map(({ node }, i) => {
             const a = node.activity;
             const p = pos.get(a.id)!;
+            /** não casa com o filtro: está ali como caminho (ou por estar selecionado) */
+            const context = filtering && !matches(a, app.filters);
             return (
               <div
                 key={a.id}
@@ -360,15 +403,15 @@ export function Tree({ app }: { app: State }) {
                 aria-expanded={node.children.length ? !collapsed.has(a.id) : undefined}
                 aria-label={a.title}
                 tabIndex={focusable === a.id ? 0 : -1}
-                className={`tnode${app.selected === a.id ? ' sel' : ''}${renaming === a.id ? ' editing' : ''}${moving.has(a.id) ? ' moving' : ''}${drop?.kind === 'child' && drop.over === a.id ? ' drop-child' : ''}`}
+                className={`tnode${context ? ' context' : ''}${app.selected === a.id ? ' sel' : ''}${renaming === a.id ? ' editing' : ''}${moving.has(a.id) ? ' moving' : ''}${drop?.kind === 'child' && drop.over === a.id ? ' drop-child' : ''}`}
                 onPointerDown={(e) => {
                   // botões e o campo de renomear não iniciam arrasto
                   if (e.button === 0 && !app.readOnly && !(e.target as Element).closest('button, textarea')) pressed.current = { id: a.id, pointer: e.pointerId, x: e.clientX, y: e.clientY };
                 }}
                 style={renaming === a.id ? { left: p.x, top: p.y, minHeight: p.h } : { left: p.x, top: p.y, height: p.h }}
-                onClick={() => ((clicked.current = a.id), select(a.id))}
+                onClick={(e) => clickCard(e, a.id)}
                 onKeyDown={(e) => onKey(e, i)}
-                title={node.warning ?? a.title}
+                title={node.warning ?? (context ? `${a.title} (fora do filtro)` : a.title)}
               >
                 {renaming === a.id ? (
                   <Rename
@@ -387,9 +430,10 @@ export function Tree({ app }: { app: State }) {
                 <span className="meta">
                   <StatusButton activity={a} disabled={app.readOnly} tabIndex={-1} />
                   <AssigneeChip id={a.assignee} assignees={app.snapshot.assignees} />
+                  <PlayButton activity={a} app={app} tabIndex={-1} />
                   {node.children.length > 0 && !collapsed.has(a.id) && <span className="count">{node.children.length}</span>}
                 </span>
-                {node.children.length > 0 && (
+                {!filtering && node.children.length > 0 && (
                   <button
                     type="button"
                     tabIndex={-1}
@@ -434,7 +478,7 @@ export function Tree({ app }: { app: State }) {
             <button type="button" aria-label="Aumentar zoom" title="Aumentar zoom (+)" onClick={() => zoomCenter(STEP)}><Icon name="plus" /></button>
             <button type="button" aria-label="Ajustar à tela" title="Ajustar à tela (0)" onClick={fitAll}><Icon name="fit" /></button>
             <i aria-hidden="true" />
-            <button type="button" aria-label="Minimizar tudo" title="Minimizar tudo" onClick={closeAll} disabled={!parents.length || parents.every((id) => collapsed.has(id))}><Icon name="collapseAll" /></button>
+            <button type="button" aria-label="Minimizar tudo" title="Minimizar tudo" onClick={closeAll} disabled={filtering || !parents.length || parents.every((id) => collapsed.has(id))}><Icon name="collapseAll" /></button>
             <button type="button" aria-label="Expandir tudo" title="Expandir tudo" onClick={openAll} disabled={!parents.some((id) => collapsed.has(id))}><Icon name="expandAll" /></button>
           </div>
         )}

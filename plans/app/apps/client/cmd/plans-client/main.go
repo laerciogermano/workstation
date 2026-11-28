@@ -25,7 +25,7 @@ import (
 	"github.com/laerciogermano/plans-client/internal/service"
 )
 
-var version = "0.1.0"
+var version = "0.2.0"
 
 const defaultHub = "wss://plans.laerciogermano.com/ws"
 
@@ -37,6 +37,8 @@ const usage = `plans-client — executa na sua máquina os comandos pedidos pelo
   plans-client allow --any-args -- <programa>             libera o programa com quaisquer argumentos
   plans-client allow --script <texto> [--shell <nome>]    libera um script exato
   plans-client allow --list | --clear                     mostra ou apaga as liberações
+  plans-client play <claude|gemini> <id da atividade>     abre um terminal com a IA na atividade
+  plans-client allow --any-args -- plans-play             libera o botão play em qualquer atividade
   plans-client start | stop                               liga ou desliga o início junto com o login
   plans-client status                                     mostra o pareamento
   plans-client unpair                                     apaga o pareamento e as liberações
@@ -66,6 +68,8 @@ func dispatch(args []string) error {
 		return run(rest)
 	case "allow":
 		return allow(rest)
+	case "play":
+		return playActivity(rest)
 	case "start":
 		return start()
 	case "stop":
@@ -260,6 +264,23 @@ func allow(args []string) error {
 	}
 	fmt.Println("Liberado:", policy.Describe(cmd))
 	return nil
+}
+
+// playActivity abre o terminal com a IA. É o que o client chama quando o front pede "plans-play".
+func playActivity(args []string) error {
+	fs := flag.NewFlagSet("play", flag.ContinueOnError)
+	dir := fs.String("dir", "", "pasta do projeto (padrão: a pareada)")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *dir == "" {
+		cfg, err := config.Load()
+		if err != nil {
+			return err
+		}
+		*dir = cfg.Dir
+	}
+	return exec.Play(*dir, fs.Args(), os.Stdout)
 }
 
 func start() error {

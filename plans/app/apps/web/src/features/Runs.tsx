@@ -1,8 +1,8 @@
-import { describeCommand, isOpenRun, tokenize } from '@plans/domain';
+import { describeCommand, isOldClientError, isOpenRun, tokenize } from '@plans/domain';
 import { useEffect, useState } from 'react';
 import type { RunView } from '../runs/runner.ts';
 import { cancelRun, openPairing, runCommand, type State } from '../store/app.ts';
-import { clientCommand } from './pairing.ts';
+import { clientCommand, oldClientHelp } from './pairing.ts';
 
 const LABEL: Record<RunView['record']['status'], string> = {
   waiting: 'aguardando aprovação no terminal', pending: 'enviado', running: 'executando', ok: 'concluído', failed: 'falhou',
@@ -35,7 +35,7 @@ function Run({ run }: { run: RunView }) {
           )}
         </div>
       )}
-      {record.status !== 'rejected' && record.error && <p className="note warn">{record.error}</p>}
+      {record.status !== 'rejected' && record.error && <p className="note warn">{isOldClientError(record) ? oldClientHelp() : record.error}</p>}
       {run.output.some((c) => c.data) && (
         <pre className="output" tabIndex={0} aria-label="Saída do comando">
           {run.output.slice(-400).map((c, i) => <span key={i} className={c.stream}>{c.data.slice(-100_000)}</span>)}
@@ -55,11 +55,13 @@ export function Runs({ app }: { app: State }) {
   const ready = app.link.state === 'ready';
   const shells = app.link.state === 'ready' ? app.link.info.shells : [];
   useEffect(() => setError(''), [line, useShell]);
-  const runs = app.runs.filter((r) => !app.selected || r.record.nodeId === app.selected);
+  /** a atividade aberta; sem nenhuma, os comandos são do projeto */
+  const node = app.opened ? app.selected : null;
+  const runs = app.runs.filter((r) => !node || r.record.nodeId === node);
 
   return (
     <section className="runs" aria-label="Comandos">
-      <h3>Comandos {app.selected ? 'desta atividade' : 'do projeto'}</h3>
+      <h3>Comandos {node ? 'desta atividade' : 'do projeto'}</h3>
       {!ready && (
         <div className="note">
           {app.link.state === 'wrong-project' ? 'O client está pareado com outra pasta.' : 'Conecte o client para executar comandos.'}{' '}
@@ -71,11 +73,11 @@ export function Runs({ app }: { app: State }) {
           e.preventDefault();
           try {
             if (!line.trim()) return;
-            if (useShell) void runCommand(app.selected, { script: line, shell: shell || shells[0] });
+            if (useShell) void runCommand(node, { script: line, shell: shell || shells[0] });
             else {
               const [program, ...args] = tokenize(line.trim());
               if (!program) return;
-              void runCommand(app.selected, { program, args });
+              void runCommand(node, { program, args });
             }
             setLine('');
           } catch (err) {

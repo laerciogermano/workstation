@@ -18,7 +18,7 @@ describe('pasta', () => {
     const project = await initFolder(root);
     expect(await inspectFolder(root)).toEqual({ state: 'ready', project });
     expect(mine.text).toBe('node_modules\n');
-    expect((await new ProjectStore(root, project).load()).assignees).toHaveLength(3);
+    expect((await new ProjectStore(root, project).load()).assignees).toHaveLength(4);
   });
 
   it('não sobrescreve um project.json inválido', async () => {
@@ -51,6 +51,19 @@ describe('EP-01', () => {
     expect(b.title).toBe('novo nome');
     expect((await activities.getFileHandle(`${a.id}.md`)).text).toContain('title: novo nome');
     await expect(store.update(a.id, b.rev, { title: '   ' })).rejects.toThrow();
+  });
+
+  it('grava a prioridade, mantém nas outras mudanças e tira quando pedido', async () => {
+    const { store, activities } = await setup();
+    const a = await store.create(null, 'x');
+    const file = await activities.getFileHandle(`${a.id}.md`);
+    const b = await store.update(a.id, a.rev, { priority: 5 });
+    expect(file.text).toContain('priority: 5');
+    const c = await store.update(a.id, b.rev, { status: 'doing' });
+    expect(c.priority).toBe(5);
+    const d = await store.update(a.id, c.rev, { priority: undefined });
+    expect(d.priority).toBeUndefined();
+    expect(file.text).not.toContain('priority');
   });
 
   it('recusa gravar por cima de uma edição externa', async () => {

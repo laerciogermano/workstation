@@ -136,6 +136,11 @@ meu-projeto/
   runs/
     <uuid>.json           comando, nó, início, término, código de saída
     <uuid>.log            saída (até 5 MB)
+  attachments/<uuid>/
+    input/<arquivo>       anexos do input
+    output/<arquivo>      anexos do output
+  comments/<uuid>/
+    <data-hora>.md        um comentário do output
   assignees.json          responsáveis disponíveis
   system-prompt.md        instruções padrão de todas as atividades (criado ao salvar)
 ```
@@ -152,6 +157,7 @@ title: Comprar celular
 parent: null
 assignee: ana
 status: doing          # todo, doing ou done; sem ele vale todo
+priority: 4            # 1 (muito baixa) a 5 (urgente); sem ele, sem prioridade
 createdAt: 2026-11-27T12:00:00Z
 order: 1500            # só depois de arrastado; sem ele vale a ordem de criação
 ---
@@ -159,6 +165,18 @@ Até R$ 3.000, câmera boa, 256 GB.
 ```
 
 Todo arquivo abre com a referência ao system prompt do projeto (a leitura aceita sem ela). O corpo é a descrição (F04). Chaves desconhecidas são preservadas. Gravação em UTF-8 com fim de linha `LF`; leitura aceita `CRLF`.
+
+**Input e output.** A descrição e `attachments/<uuid>/input/` são o que a atividade recebe; `comments/<uuid>/` e `attachments/<uuid>/output/` são o que ela devolve. Um agente responde só gravando arquivos nessas pastas. O cabeçalho do comentário é opcional (sem ele, o arquivo inteiro é o texto):
+
+```markdown
+---
+author: claude
+createdAt: 2026-11-28T12:00:00Z
+---
+Feito. O resultado está nos anexos do output.
+```
+
+O nome do anexo é limpo (sem separador de pasta nem ponto inicial) e um repetido vira `nome (2).ext`. Na tela, o tipo é decidido pela extensão: imagem, vídeo, áudio, PDF, Markdown, documento (`.docx`, só texto e tabelas) e texto têm visualização; planilhas (`.csv`, `.tsv`, `.xlsx`, `.xlsm`, `.xls`, `.ods`) abrem numa grade que também edita e salva; HTML aparece como texto; o resto é baixado. Na lista, cada anexo tem uma miniatura: a própria imagem, um quadro do vídeo, a primeira página do PDF (desenhada pelo navegador) ou o começo do texto, da tabela, da planilha ou do documento; sem prévia (áudio, binário, arquivo quebrado ou grande demais), um selo com a extensão. Remover anexo, comentário ou atividade copia os arquivos para a lixeira antes de apagar.
 
 ```json
 { "version": 1, "items": [{ "id": "ana", "name": "Ana Silva", "type": "person" }] }

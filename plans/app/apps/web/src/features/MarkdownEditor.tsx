@@ -55,6 +55,15 @@ const preview: ComponentProps<typeof MDEditor.Markdown> = {
   },
 };
 
+/** Só leitura, com as mesmas proteções da descrição (comentários e anexos .md). */
+export function MarkdownView({ source, dark }: { source: string; dark: boolean }) {
+  return (
+    <div className="md" data-color-mode={dark ? 'dark' : 'light'}>
+      <MDEditor.Markdown source={source} {...preview} />
+    </div>
+  );
+}
+
 export type MarkdownEditorProps = {
   text: MarkdownText;
   value: string;

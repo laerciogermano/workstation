@@ -1,0 +1,15 @@
+OK estado vazio; botão desativado sem texto ou só com espaços; nada gravado
+   data exibida: 28/11/2026, 09:11
+OK comentar pelo botão: arquivo gravado, autor, data e Markdown na lista, campo limpo
+OK Cmd+Enter e Ctrl+Enter salvam, sem duplicar; ordem do mais antigo ao mais novo
+OK o arquivo da atividade (descrição) não muda ao comentar
+OK rascunho continua depois de fechar (Esc) e reabrir
+OK comentários continuam depois de recarregar a página
+   estilos: {"cabecalhoComentario":["static","0px","0px"],"itemMarkdown":["list-item","disc","0px"],"cabecalhoCartao":["sticky","1px"]}
+   no topo da tela depois de rolar: "Revisar propostaRemoverFechar"
+OK cabeçalho do comentário não cobre o do cartão; listas Markdown com marcador
+OK resposta gravada por fora (agente) aparece sozinha, com autor
+   lixeira: .plans/trash/2026-11-28T12-11-47-831Z-2071ee5f/comments/2071ee5f-ff41-45e3-a010-f99190367c7b/2026-11-28T12-11-46-180Z-5d971b73.md
+OK remover leva o arquivo para a lixeira
+   largura 420px, Output scroll/client: 384 384
+OK sem erros no console

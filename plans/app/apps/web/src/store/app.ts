@@ -1,8 +1,11 @@
 // Estado da tela em memória (useSyncExternalStore). A verdade está sempre nos arquivos.
 import { useSyncExternalStore } from 'react';
-import { buildTree, type Status, type TreeNode, type UiState } from '@plans/domain';
+import { buildTree, type LabelColor, type Side, type Status, type TreeNode, type UiState } from '@plans/domain';
 import { decodePairingCode, encodePairingCode, newSecret, type Command } from '@plans/protocol';
+import { buildCardContext } from '../ai/context.ts';
+import { aiReady, generateDescription } from '../ai/describe.ts';
 import { createHubLink, type HubLink, type LinkState } from '../connection/hub.ts';
+import { matches, NO_FILTERS, type Filters } from '../features/filters.ts';
 import { askPermission, demoFolder, demoName, hasPermission, kv, pickFolder, supportsFolders } from '../folder/handles.ts';
 import { ConflictError, HasChildrenError, initFolder, inspectFolder, ProjectStore, type Patch, type Snapshot } from '../folder/project.ts';
 import type { DirLike } from '../folder/types.ts';
@@ -21,18 +24,24 @@ export type State = {
   snapshot: Snapshot;
   tree: TreeNode[];
   selected: string | null;
+  /** o cartão selecionado está aberto em tela cheia */
+  opened: boolean;
   /** nós minimizados: os filhos ficam escondidos */
   collapsed: string[];
   theme: ThemeId;
-  /** painel lateral (atividade e comandos) aberto */
+  /** painel lateral (configurações do projeto e comandos) aberto */
   panel: boolean;
   descriptionMode: UiState['descriptionMode'];
   systemPromptMode: UiState['systemPromptMode'];
   /** visão na área principal */
   view: UiState['view'];
+  /** filtro das atividades; fica só na memória: reabrir a página mostra tudo */
+  filters: Filters;
   /** nó sendo criado: pai ou 'root' */
   creating: string | null;
   removing: { id: string; count: number } | null;
+  /** cartões cuja descrição a IA está escrevendo */
+  describing: string[];
   runs: RunView[];
   link: LinkState;
   pairing: Pairing | null;
@@ -40,10 +49,10 @@ export type State = {
   error: string | null;
 };
 
-const empty: Snapshot = { activities: [], assignees: [], systemPrompt: { text: '', rev: '' }, problems: [] };
+const empty: Snapshot = { activities: [], assignees: [], labels: [], systemPrompt: { text: '', rev: '' }, problems: [] };
 let state: State = {
-  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true, descriptionMode: 'read', systemPromptMode: 'read', view: 'tree',
-  creating: null, removing: null, runs: [], link: { state: 'unpaired' }, pairing: null, pairingOpen: false, error: null,
+  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, opened: false, collapsed: [], theme: paintedTheme(), panel: true, descriptionMode: 'read', systemPromptMode: 'read', view: 'tree', filters: NO_FILTERS,
+  creating: null, removing: null, describing: [], runs: [], link: { state: 'unpaired' }, pairing: null, pairingOpen: false, error: null,
 };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
@@ -116,7 +125,7 @@ async function openFolder(h: FileSystemDirectoryHandle) {
   // projeto sem tema salvo mantém o que já está na tela
   const theme = isTheme(ui.theme) ? ui.theme : state.theme;
   applyTheme(theme);
-  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, descriptionMode: ui.descriptionMode, systemPromptMode: ui.systemPromptMode, view: ui.view, error: null });
+  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, opened: false, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, descriptionMode: ui.descriptionMode, systemPromptMode: ui.systemPromptMode, view: ui.view, filters: NO_FILTERS, error: null });
   await refresh();
   await runner.reload();
   watch(h, found.project.id);
@@ -136,6 +145,7 @@ export async function confirmInit() {
 }
 
 function close() {
+  [...describingJobs.keys()].forEach(cancelDescribe);
   stopWatching();
   stopWatching = () => {};
   link?.stop();
@@ -151,7 +161,7 @@ export async function closeFolder() {
   close();
   await kv.del('folder');
   if (demoName !== null) location.search = '';
-  set({ phase: 'welcome', snapshot: empty, tree: [], runs: [], selected: null, collapsed: [], pairing: null, pairingOpen: false, link: { state: 'unpaired' } });
+  set({ phase: 'welcome', snapshot: empty, tree: [], runs: [], selected: null, opened: false, collapsed: [], pairing: null, pairingOpen: false, link: { state: 'unpaired' }, filters: NO_FILTERS });
 }
 
 let refreshing: Promise<void> | null = null;
@@ -170,7 +180,7 @@ export function refresh(): Promise<void> {
       const snapshot = await current.load();
       if (current !== store) return;
       const exists = snapshot.activities.some((a) => a.id === state.selected);
-      set({ snapshot, tree: buildTree(snapshot.activities), selected: exists ? state.selected : null });
+      set({ snapshot, tree: buildTree(snapshot.activities), selected: exists ? state.selected : null, opened: exists && state.opened });
     } while (again);
   })()
     .catch(fail)
@@ -216,15 +226,20 @@ async function changed() {
 
 const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel, descriptionMode: state.descriptionMode, systemPromptMode: state.systemPromptMode, view: state.view }).catch(fail);
 
-export function setDescriptionMode(descriptionMode: UiState['descriptionMode']) {
-  set({ descriptionMode });
-  saveUi();
-}
-
 export function chooseView(view: UiState['view']) {
   set({ view, creating: null });
   saveUi();
 }
+
+/** Muda um ou mais critérios; os demais continuam. Se o cartão selecionado ficar de fora, a seleção sai. */
+export function setFilters(patch: Partial<Filters>) {
+  const filters = { ...state.filters, ...patch };
+  const selected = state.snapshot.activities.find((a) => a.id === state.selected);
+  const hidden = !!selected && !matches(selected, filters);
+  set({ filters, creating: null, ...(hidden ? { selected: null, opened: false } : {}) });
+  if (hidden) saveUi();
+}
+export const clearFilters = () => set({ filters: NO_FILTERS });
 
 export function setSystemPromptMode(systemPromptMode: UiState['systemPromptMode']) {
   set({ systemPromptMode });
@@ -233,7 +248,7 @@ export function setSystemPromptMode(systemPromptMode: UiState['systemPromptMode'
 
 /** Configurações do projeto: o painel sem atividade selecionada. */
 export function openSettings() {
-  set({ selected: null, creating: null, panel: true });
+  set({ selected: null, opened: false, creating: null, panel: true });
   saveUi();
 }
 
@@ -248,10 +263,19 @@ export function chooseTheme(theme: ThemeId) {
   saveUi();
 }
 
+/** Só destaca o cartão (teclado, cartão recém-criado ou movido). */
 export function select(id: string | null) {
-  set({ selected: id, creating: null });
+  set({ selected: id, opened: false, creating: null });
   saveUi();
 }
+
+/** Abre o cartão em tela cheia. */
+export function openCard(id: string) {
+  set({ selected: id, opened: true, creating: null });
+  saveUi();
+}
+/** Volta à árvore ou ao Kanban; o cartão continua selecionado. */
+export const closeCard = () => set({ opened: false });
 /** Minimiza ou expande o ramo. `hidden` são os descendentes: se o selecionado sumir, a seleção sobe. */
 export function toggleCollapse(id: string, hidden: string[]) {
   const closing = !state.collapsed.includes(id);
@@ -289,7 +313,10 @@ export async function createNode(parent: string | null, title: string) {
   try {
     const node = await store!.create(parent, title);
     set({ creating: null });
+    const ai = await aiReady().catch(() => false);
     await changed();
+    // antes de selecionar: o painel já abre esperando o texto
+    if (ai) void autoDescribe(node.id);
     select(node.id);
   } catch (e) {
     fail(e);
@@ -395,6 +422,93 @@ export async function moveNode(id: string, parent: string | null, before: string
     fail(e);
     await refresh();
   }
+}
+
+// ---------- etiquetas ----------
+/** Marca ou desmarca a partir do que o cartão tiver quando chegar a vez. */
+export const toggleLabel = (id: string, rev: string, labelId: string) =>
+  queued(() => {
+    const own = state.snapshot.activities.find((a) => a.id === id)?.labels ?? [];
+    return writeNode(id, rev, { labels: own.includes(labelId) ? own.filter((l) => l !== labelId) : [...own, labelId] });
+  });
+// na mesma fila dos cartões: remover uma etiqueta regrava os arquivos que a usam
+export const addLabel = (name: string, color: LabelColor) => queued(() => saveFiles((s) => s.addLabel(name, color)));
+export const updateLabel = (id: string, patch: { name?: string; color?: LabelColor }) => queued(() => saveFiles((s) => s.updateLabel(id, patch)));
+export const removeLabel = (id: string) => queued(() => saveFiles((s) => s.removeLabel(id)));
+
+// ---------- anexos e comentários ----------
+export const loadFiles = (id: string) => store!.loadFiles(id);
+export const readAttachment = (id: string, side: Side, name: string) => store!.readAttachment(id, side, name);
+
+/** Grava, mostra a falha se houver e relê a pasta. Devolve se deu certo. */
+async function saveFiles(write: (s: ProjectStore) => Promise<unknown>): Promise<boolean> {
+  try {
+    await write(store!);
+    return true;
+  } catch (e) {
+    fail(e);
+    return false;
+  } finally {
+    await changed();
+  }
+}
+export const addAttachments = (id: string, side: Side, files: File[]) =>
+  saveFiles(async (s) => {
+    for (const file of files) await s.addAttachment(id, side, file.name, file);
+  });
+export const removeAttachment = (id: string, side: Side, name: string) => saveFiles((s) => s.removeAttachment(id, side, name));
+// o editor de planilha mostra as falhas dentro da própria janela: por isso elas sobem
+export const saveAttachment = (id: string, side: Side, name: string, previous: Blob, data: Blob) =>
+  store!.saveAttachment(id, side, name, previous, data).finally(changed);
+/** Anexo novo (nunca sobrescreve); devolve o nome com que ficou. */
+export const addAttachmentCopy = (id: string, side: Side, name: string, data: Blob) => store!.addAttachment(id, side, name, data).finally(changed);
+export const addComment = (id: string, text: string) =>
+  // quem escreve na tela é a primeira pessoa do catálogo
+  saveFiles((s) => s.addComment(id, state.snapshot.assignees.find((a) => a.type === 'person')?.id ?? null, text));
+export const removeComment = (id: string, file: string) => saveFiles((s) => s.removeComment(id, file));
+
+/** Tudo o que o cartão sabe, para regenerar a descrição: espera o que está sendo salvo e relê a pasta. */
+export async function loadCardContext(id: string) {
+  await writing;
+  await refresh();
+  const current = store!;
+  const files = await current.loadFiles(id);
+  return buildCardContext(state.snapshot, id, files, (side, name, owner) => current.readAttachment(owner, side, name), (parent) => current.loadFiles(parent));
+}
+/** Troca a descrição só se ela ainda for `from`, o texto que a IA leu. Devolve se trocou. */
+export const replaceDescription = (id: string, from: string, description: string) =>
+  queued(async () => {
+    const node = state.snapshot.activities.find((a) => a.id === id);
+    if (!node || state.readOnly || node.description !== from) return false;
+    const result = await writeNode(id, node.rev, { description });
+    return result !== null && result !== 'conflict';
+  });
+
+// ---------- descrição automática ----------
+const describingJobs = new Map<string, AbortController>();
+const showDescribing = () => set({ describing: [...describingJobs.keys()] });
+
+/** Cartão recém-criado: a IA escreve a descrição a partir do título e do contexto. Só preenche se continuar vazia. */
+async function autoDescribe(id: string) {
+  const job = new AbortController();
+  describingJobs.set(id, job);
+  showDescribing();
+  try {
+    const context = await loadCardContext(id);
+    if (context.description.trim() || job.signal.aborted) return;
+    const text = await generateDescription(context, job.signal);
+    if (!job.signal.aborted) await replaceDescription(id, context.description, text);
+  } catch (e) {
+    // cartão removido ou pasta trocada no meio do caminho: não há o que avisar
+    if (!job.signal.aborted && state.snapshot.activities.some((a) => a.id === id)) fail(new Error(`Descrição automática: ${(e as Error).message}`));
+  } finally {
+    if (describingJobs.get(id) === job) cancelDescribe(id);
+  }
+}
+/** Para de esperar a IA: a descrição fica como está. */
+export function cancelDescribe(id: string) {
+  describingJobs.get(id)?.abort();
+  if (describingJobs.delete(id)) showDescribing();
 }
 
 // ---------- client ----------

@@ -297,6 +297,25 @@ Como **modelador de fluxo**, quero **compor estruturas de seleção (condicionai
 - [ ] Dado que o **contexto está completo**, quando executo o fluxo, então a execução ocorre conforme o roteiro.
 - [ ] Dado que troco o responsável tipado do plano, quando consulto o roteiro, então seleção, repetição, camadas e ligações de estado permanecem inalteradas.
 
+## US-34 — Separar input e output da unidade
+
+Como **condutor de projetos**, quero **abrir a unidade em duas seções, Input (descrição e anexos) e Output (comentários e anexos), podendo abrir cada anexo com a visualização do seu tipo**, para que **eu registre a resposta ou o retorno da atividade sem alterar a descrição**.
+
+### Cenários
+
+- [ ] Dado que abro o detalhe de uma unidade, quando ele aparece, então mostra a seção **Input** (descrição e anexos) e a seção **Output** (comentários e anexos).
+- [ ] Dado que registro um **comentário** no Output, quando ele é salvo, então a descrição não muda e o comentário aparece com autor e data.
+- [ ] Dado que um agente grava um texto ou um arquivo na pasta de output da unidade, quando a pasta é relida, então ele aparece no Output.
+- [ ] Dado que anexo arquivos (botão ou arrastar) numa seção, quando são gravados, então ficam listados só nela, e nomes repetidos não se sobrescrevem.
+- [ ] Dado que anexo um arquivo, quando ele aparece na lista, então vejo a miniatura (imagem, vídeo, PDF, texto, tabela, planilha ou documento) ou, sem prévia possível, um selo com a extensão.
+- [ ] Dado que abro um anexo, quando é imagem, vídeo, áudio, PDF, Markdown, documento (DOCX) ou texto, então vejo a visualização do tipo; HTML aparece como texto, sem executar.
+- [ ] Dado que abro uma planilha (CSV, TSV, XLSX, XLSM, XLS ou ODS), quando mudo células e salvo, então o arquivo é gravado e a versão anterior vai para a lixeira; no XLSX a formatação continua, e XLS e ODS viram uma cópia `.xlsx`.
+- [ ] Dado que a planilha tem alterações não salvas, quando fecho, então preciso confirmar o descarte; dado que o arquivo mudou por fora, quando salvo, então nada é sobrescrito e posso salvar uma cópia.
+- [ ] Dado que o tipo não tem visualização, quando abro o anexo, então sou avisado e posso **baixar**.
+- [ ] Dado que removo um anexo ou comentário, ou a própria unidade, quando confirmo a ação, então os arquivos vão para a lixeira do projeto.
+
+---
+
 ## Próximos passos
 
 → [`screens.md`](screens.md)

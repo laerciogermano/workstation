@@ -100,6 +100,10 @@ button.state:disabled { cursor: default; }
 .tnode textarea.rename { width: 100%; field-sizing: content; resize: none; overflow: hidden; padding: 0; border: 0; border-radius: 0; background: none; outline: none; box-shadow: 0 1px 0 var(--accent); font-weight: 600; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 .meta { display: flex; align-items: center; gap: 6px; font-size: 11px; }
 .chip { font-weight: 600; } .chip.person { color: var(--person); } .chip.ai { color: var(--ai); } .chip.machine { color: var(--machine); } .chip.none, .chip.unknown { color: var(--muted); font-weight: 400; }
+/* responsável no cartão: ícone fixo e nome numa linha só (a altura do cartão é medida assim) */
+.chip.who { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
+.chip.who .icon { flex: none; margin: 0; }
+.chip.who span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .count { margin-left: auto; margin-right: 6px; color: var(--muted); }
 .icon { display: block; margin: auto; }
 .toggle { position: absolute; left: 100%; top: 50%; translate: -50% -50%; min-width: 22px; height: 22px; padding: 0 5px; border: 1px solid var(--line-2); background: var(--paper); border-radius: 11px; color: var(--body); font-size: 14px; line-height: 1; white-space: nowrap; }
@@ -131,18 +135,122 @@ button.state:disabled { cursor: default; }
 .card small { color: var(--muted); font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .card .open { padding: 0; border: 0; background: none; text-align: left; font-weight: 600; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 
+/* filtros acima do quadro: o espaço à direita é do botão do painel */
+.board-view { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--panel); }
+.board-view > .board { flex: 1; }
+.filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 12px 54px 0 12px; background: var(--panel); }
+.filter-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.filter-group > span { font-size: 12px; font-weight: 600; color: var(--muted); }
+.filter-option { --who: var(--muted); display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; height: 30px; padding: 0 10px; border: 0; border-radius: 999px; background: var(--wash); color: var(--body); font-size: 12px; font-weight: 600; }
+.filter-option.person { --who: var(--person); } .filter-option.ai { --who: var(--ai); } .filter-option.machine { --who: var(--machine); }
+.filter-option .icon { flex: none; margin: 0; color: var(--who); }
+.filter-option span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.filter-option:hover { background: color-mix(in srgb, var(--who) 12%, var(--wash)); }
+.filter-option[aria-pressed="true"] { background: color-mix(in srgb, var(--who) 18%, var(--paper)); color: var(--ink); box-shadow: inset 0 0 0 2px var(--who); }
+.filter-bar .clear { height: 30px; padding: 0 8px; border: 0; border-radius: 7px; background: none; color: var(--accent-2); font-size: 12px; font-weight: 600; }
+.filter-bar .clear:hover { background: var(--wash); }
+.filter-option.by-status { --who: var(--state); }
+.filter-option i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--who); }
+/* árvore filtrada: o cartão que só está ali como caminho fica apagado */
+.canvas > .filter-bar { padding-bottom: 12px; }
+.tnode.context > b, .tnode.context > .meta { opacity: .45; }
+.no-match { position: absolute; top: 50%; left: 50%; translate: -50% -50%; color: var(--muted); text-align: center; }
+.column .off-note { margin: 0; padding: 0 12px 8px; color: var(--muted); font-size: 12px; }
+
+/* prioridade: escala no painel e selo no cartão do Kanban */
+.priority-0, .priority-1 { --state: var(--muted); } .priority-2 { --state: var(--ok); } .priority-3 { --state: var(--run); } .priority-4 { --state: var(--warn); } .priority-5 { --state: var(--fail); }
+.segmented.priority-scale { grid-template-columns: repeat(6, 1fr); }
+.segmented .priority-0[aria-checked="true"] { color: var(--ink); }
+.priority { flex: none; height: 17px; padding: 0 6px; border-radius: 5px; font-size: 10.5px; font-weight: 600; line-height: 15px; white-space: nowrap; color: var(--state); border: 1px solid color-mix(in srgb, var(--state) 55%, transparent); }
+
 .side { border-left: 1px solid var(--line); overflow-y: auto; min-height: 0; }
 .node-panel { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
-.node-panel header { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
-.node-panel h2 { overflow-wrap: anywhere; padding-top: 5px; }
+.node-panel > header { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+/* só o título do cartão: as janelas abertas dentro do painel (anexo, planilha) têm o seu */
+.node-panel header h2 { overflow-wrap: anywhere; padding-top: 5px; }
 .field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .field > span { font-size: 12px; font-weight: 600; color: var(--muted); }
 input:not([type="checkbox"]), select, textarea { border: 1px solid var(--line-2); border-radius: 7px; padding: 7px 9px; background: var(--paper); min-width: 0; }
 textarea { resize: vertical; }
 .status { font-size: 12px; color: var(--muted); min-height: 17px; margin-top: -8px; }
+/* responsável no painel: um cartão com ícone para cada um; o rádio fica escondido dentro do cartão */
+.assignees { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
+.assignees label { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding: 10px 6px 8px; border-radius: 9px; background: var(--wash); text-align: center; cursor: pointer; --who: var(--muted); }
+.assignees .person { --who: var(--person); } .assignees .ai { --who: var(--ai); } .assignees .machine { --who: var(--machine); }
+.assignees input { position: absolute; opacity: 0; pointer-events: none; }
+.assignees .icon { flex: none; margin: 0 0 2px; color: var(--who); }
+.assignees b { max-width: 100%; font-size: 12.5px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.assignees small { max-width: 100%; color: var(--muted); font-size: 10.5px; line-height: 1.25; overflow-wrap: anywhere; }
+.assignees label:hover { background: color-mix(in srgb, var(--who) 10%, var(--wash)); }
+.assignees label:has(:checked) { background: color-mix(in srgb, var(--who) 16%, var(--paper)); box-shadow: inset 0 0 0 2px var(--who); }
+.assignees label:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.assignees label:has(:disabled) { cursor: default; }
 .system-prompt { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 /* referência abaixo da atividade: um texto longo rola dentro da própria caixa */
 .system-prompt > .field .md-read { max-height: 260px; overflow: auto; }
+
+/* cartão: Input (o que a atividade recebe) e Output (o que ela devolve) */
+.io { display: flex; flex-direction: column; gap: 14px; padding: 12px; border-radius: 12px; background: var(--panel); }
+.io.over { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); box-shadow: inset 0 0 0 2px var(--accent); }
+.io h3 { font-size: 14px; }
+.io .md-read, .io .w-md-editor { background: var(--paper); }
+.btn.attach { display: inline-flex; align-items: center; gap: 6px; }
+.files, .comments { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.files li { display: flex; align-items: center; gap: 2px; padding-right: 4px; border-radius: 8px; background: var(--paper); }
+.file { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; padding: 6px 8px; border: 0; border-radius: 8px; background: none; text-align: left; }
+.file:hover { background: var(--wash); }
+.ftype { flex: none; width: 40px; padding: 4px 0; border-radius: 5px; background: var(--wash); color: var(--body); font: 600 10px/1.2 var(--mono); text-align: center; text-transform: uppercase; }
+/* miniatura do anexo: a prévia do arquivo ou, sem ela, o selo da extensão */
+.thumb { flex: none; position: relative; width: 48px; height: 48px; display: grid; place-items: center; overflow: hidden; border-radius: 6px; background: var(--wash); }
+.thumb > img, .thumb > video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+/* o PDF é desenhado cinco vezes maior e reduzido: numa moldura de 48px o leitor do navegador não mostra a página */
+.thumb > iframe { position: absolute; top: -3px; left: -3px; width: 240px; height: 240px; border: 0; background: #fff; transform: scale(.225); transform-origin: 0 0; pointer-events: none; }
+.thumb > .lines { align-self: start; justify-self: stretch; padding: 4px; overflow: hidden; color: var(--body); font: 5px/1.35 var(--mono); white-space: pre; }
+.thumb.pdf > .ftype, .thumb.video > .ftype, .thumb.text > .ftype { position: absolute; right: 2px; bottom: 2px; width: auto; padding: 1px 3px; background: var(--ink); color: var(--paper); font-size: 8px; }
+.fname { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 13px; font-weight: 500; }
+.file .small { flex: none; }
+.remove { flex: none; width: 26px; height: 26px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 6px; background: none; color: var(--muted); }
+.remove:hover:not(:disabled) { background: var(--wash); color: var(--fail); }
+.remove:disabled { opacity: .45; cursor: default; }
+/* só o item da lista: os itens das listas em Markdown dentro do comentário seguem o estilo do texto */
+.comments > li { display: flex; flex-direction: column; gap: 4px; padding: 6px 10px 10px; border-radius: 8px; background: var(--paper); }
+.comments header { display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+.comments header b { font-size: 12.5px; }
+.comments header .remove { margin-left: auto; margin-right: -6px; }
+.btn.send { align-self: flex-end; }
+a.btn { display: inline-flex; align-items: center; color: inherit; text-decoration: none; }
+
+/* visualização de anexo */
+.viewer { min-height: 120px; max-height: 70vh; overflow: auto; }
+.viewer.image, .viewer.video, .viewer.audio { display: flex; align-items: center; justify-content: center; }
+.viewer img, .viewer video { max-width: 100%; max-height: 70vh; object-fit: contain; }
+.viewer audio { width: 100%; }
+.viewer.pdf { overflow: hidden; }
+.viewer iframe { display: block; width: 100%; height: 70vh; border: 0; }
+.viewer pre { padding: 12px 14px; border-radius: 8px; background: var(--panel); white-space: pre-wrap; overflow-wrap: anywhere; }
+.viewer table { border-collapse: collapse; font-size: 12.5px; }
+.viewer th, .viewer td { padding: 5px 10px; border: 1px solid var(--line-2); text-align: left; vertical-align: top; white-space: pre-wrap; }
+.viewer th { position: sticky; top: 0; background: var(--wash); }
+.viewer .md-tabs { margin-bottom: 10px; max-width: 100%; overflow-x: auto; }
+.viewer article { display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0 auto; }
+.viewer article p, .viewer article h3 { white-space: pre-wrap; overflow-wrap: anywhere; }
+.viewer article h3 { font-size: 15px; margin-top: 8px; }
+
+/* editor de planilha: a grade ocupa o que sobra da janela e segue o tema */
+.sheet-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.sheet-cell { display: flex; gap: 10px; align-items: baseline; min-width: 0; flex: none; height: 20px; font-size: 12.5px; line-height: 20px; }
+.sheet-cell b { flex: none; min-width: 44px; font-family: var(--mono); }
+.sheet-cell span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: var(--mono); }
+.sheet-grid { flex: 1; min-height: 160px; display: flex; flex-direction: column; }
+.sheet-grid > .rdg {
+  flex: 1; min-height: 0; block-size: auto; border-radius: 8px; font-size: 12.5px;
+  --rdg-color: var(--ink); --rdg-background-color: var(--paper); --rdg-header-background-color: var(--wash); --rdg-border-color: var(--line-2);
+  --rdg-row-hover-background-color: var(--panel); --rdg-selection-color: var(--accent);
+}
+.sheet-grid .sheet-n { background: var(--wash); color: var(--muted); text-align: center; }
+.sheet-grid .sheet-input { width: 100%; height: 100%; border: 0; border-radius: 0; padding: 0 7px; font: inherit; background: var(--paper); color: var(--ink); outline: 2px solid var(--accent); outline-offset: -2px; }
+.sheet-tabs { max-width: 100%; flex: none; overflow-x: auto; }
+.sheet-tabs button { white-space: nowrap; }
 
 /* descrição em Markdown: o editor segue as cores do tema */
 .md-head { display: flex; align-items: center; gap: 8px; }
@@ -173,7 +281,17 @@ textarea { resize: vertical; }
 .md-local { text-decoration: underline dotted; color: var(--body); cursor: help; }
 .md-loading { padding: 12px 0; }
 .dialog.wide { width: min(1100px, calc(100% - 32px)); max-height: calc(100% - 32px); }
-.md-big .md-read { height: 62vh; overflow: auto; }
+/* tela cheia: a janela inteira, e o editor com toda a altura que sobra */
+.dialog.full { width: 100%; height: 100dvh; max-width: 100%; max-height: 100dvh; margin: 0; border: 0; border-radius: 0; padding: 14px 16px; }
+.dialog.full .actions { margin-top: 0; }
+.md-big { flex: 1; min-height: 0; }
+.md-big > div, .md-big .md { height: 100%; }
+.dialog.full .md-big .md-read { height: 100%; max-height: none; overflow: auto; }
+/* tela estreita: no modo dividido, a visualização vai para baixo do editor */
+@media (max-width: 700px) {
+  .md-big .w-md-editor-show-live .w-md-editor-input { width: 100%; height: 50%; }
+  .md-big .w-md-editor-show-live .w-md-editor-preview { width: 100%; top: 50%; box-shadow: inset 0 1px 0 var(--line-2); }
+}
 .note { background: var(--wash); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; font-size: 13px; }
 .note.warn { background: color-mix(in srgb, var(--warn) 14%, var(--paper)); color: var(--warn); }
 
@@ -196,6 +314,11 @@ pre { margin: 0; }
 .dialog[open] { display: flex; flex-direction: column; gap: 12px; }
 .dialog::backdrop { background: rgb(30 32 37 / .45); }
 .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.ai-form { display: flex; flex-direction: column; gap: 12px; }
+.ai-form .field label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.ai-form .field a { align-self: flex-start; }
+.ai-key { display: flex; gap: 8px; } .ai-key input { flex: 1; font-family: var(--mono); }
+.ai-error { color: var(--fail); font-size: 13px; }
 .link-state { font-weight: 600; font-size: 13px; }
 .link-state.ready { color: var(--ok); }
 .toast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 50; background: var(--ink); color: var(--paper); border-radius: 9px; padding: 10px 14px; display: flex; gap: 12px; align-items: center; max-width: calc(100% - 32px); }
@@ -207,4 +330,70 @@ pre { margin: 0; }
   .panel-toggle, .no-side .panel-toggle { right: 10px; }
   .side { border-left: 0; border-top: 1px solid var(--line); }
 }
+.behind { display: contents; }
+/* cartão aberto: o painel vira a tela inteira, com os campos à esquerda e a descrição (edição e visualização) à direita */
+.side.full { position: fixed; inset: 0; z-index: 20; border: 0; background: var(--paper); }
+.side.full:focus { outline: none; }
+.side.full > * { width: 100%; max-width: 1800px; margin-inline: auto; }
+.side.full .node-panel { display: grid; grid-template-columns: 320px minmax(0, 1fr); align-items: start; column-gap: 24px; padding-top: 0; }
+.side.full .node-panel > header { grid-column: 1 / -1; position: sticky; top: 0; z-index: 8; align-items: center; padding: 12px 0; background: var(--paper); border-bottom: 1px solid var(--line); }
+.side.full .node-panel header h2 { flex: 1; font-size: 20px; padding-top: 0; }
+.node-meta, .node-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.side.full .node-panel > p { grid-column: 1 / -1; }
+.side.full > .system-prompt, .side.full > .runs { padding-left: 362px; }
+@media (max-width: 900px) {
+  .side.full .node-panel { grid-template-columns: minmax(0, 1fr); }
+  .side.full > .system-prompt, .side.full > .runs { padding-left: 18px; }
+}
+@media (max-width: 700px) {
+  .node-main .w-md-editor-show-live .w-md-editor-input { width: 100%; height: 50%; }
+  .node-main .w-md-editor-show-live .w-md-editor-preview { width: 100%; top: 50%; box-shadow: inset 0 1px 0 var(--line-2); }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* regenerar descrição */
+.btn.regenerate { align-self: flex-start; margin-top: -6px; }
+.regenerated { overflow: auto; min-height: 0; max-height: 58vh; border: 1px solid var(--line-2); border-radius: 8px; padding: 12px; }
+.dialog:has(.regenerated) .actions { flex-wrap: wrap; }
+
+/* datas do cartão */
+.date-field { display: flex; gap: 8px; align-items: center; }
+.date-field input { flex: 1; }
+
+/* selo da data de entrega no cartão do Kanban */
+.card .meta { flex-wrap: wrap; }
+.due { flex: none; font-size: 10.5px; font-weight: 600; white-space: nowrap; color: var(--muted); }
+.due-late { color: var(--fail); } .due-today { color: var(--warn); }
+
+/* etiquetas: uma cor por categoria; o tom do texto e do fundo acompanha o tema */
+.label-red { --label: #e5484d; } .label-orange { --label: #f2761b; } .label-yellow { --label: #d9a400; }
+.label-green { --label: #3a9d45; } .label-teal { --label: #0f9d93; } .label-blue { --label: #3b7ded; }
+.label-purple { --label: #8b5cf6; } .label-pink { --label: #e2479a; } .label-gray { --label: #8a8f98; }
+.labels { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.label { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 1px 7px; border: 0; border-radius: 5px; font-size: 10.5px; font-weight: 600; line-height: 15px; background: color-mix(in srgb, var(--label) 20%, var(--paper)); color: color-mix(in srgb, var(--label) 55%, var(--ink)); }
+.label-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+.label-picker .label { padding: 5px 10px; font-size: 12px; }
+.label-picker .label[aria-pressed="false"] { background: var(--wash); color: var(--muted); }
+.label-picker .label[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--label); }
+.btn.label-manage { align-self: flex-start; font-size: 12px; }
+.label-settings { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.label-settings h3 { margin: 0; font-size: 12px; color: var(--muted); }
+.label-settings ul { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.label-settings li, .label-settings form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.label-settings input.label-name { font-weight: 600; background: color-mix(in srgb, var(--label) 20%, var(--paper)); }
+.swatches { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.swatches input { appearance: none; width: 20px; height: 20px; margin: 0; border: 0; border-radius: 6px; background: var(--label); cursor: pointer; }
+.swatches input:checked { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--label); }
+.swatches input:disabled { cursor: default; opacity: .5; }
+.side.full .label-picker .label { max-width: 292px; }
+
+/* play: executar a atividade com a IA responsável */
+.play { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 22px; height: 17px; margin-left: auto; padding: 0; border: 0; border-radius: 9px; color: var(--ai); background: color-mix(in srgb, var(--ai) 14%, transparent); }
+.play:hover:not(:disabled) { background: color-mix(in srgb, var(--ai) 28%, transparent); }
+.play:disabled { cursor: default; }
+.play:disabled:not(.waiting) { opacity: .45; }
+.play .icon { flex: none; margin: 0; fill: currentColor; }
+.play.waiting { animation: play-waiting 1.2s ease-in-out infinite alternate; }
+.play.failed { color: var(--fail); background: color-mix(in srgb, var(--fail) 14%, transparent); }
+.play.wide { height: 30px; margin-left: 0; padding: 0 12px; border-radius: 7px; font-weight: 600; white-space: nowrap; }
+@keyframes play-waiting { to { opacity: .35; } }

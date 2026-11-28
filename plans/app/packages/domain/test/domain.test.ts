@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { leaves, buildTree, parseActivity, planMove, serializeActivity, subtreeLeavesFirst, titleSchema, tokenize, type Activity, type TreeNode } from '../src/index.ts';
+import { leaves, buildTree, parseActivity, planMove, serializeActivity, parseComment, safeFileName, serializeComment, sortByPriority, subtreeLeavesFirst, titleSchema,tokenize, type Activity, type TreeNode } from '../src/index.ts';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const act = (n: number, parent: number | null = null): Activity => ({
@@ -30,6 +30,15 @@ describe('formato', () => {
     expect(parseActivity(text.slice(text.indexOf('---')))).toEqual(a);
     expect(serializeActivity(parseActivity(text))).toBe(text);
   });
+  it('a prioridade vai e volta; fora da escala vira problema', () => {
+    const a = { ...act(1), priority: 4 as const };
+    expect(parseActivity(serializeActivity(a))).toEqual(a);
+    expect(serializeActivity(act(1))).not.toContain('priority');
+    expect(serializeActivity({ ...a, priority: undefined })).not.toContain('priority');
+    for (const bad of ['0', '6', '2.5', 'alta']) {
+      expect(() => parseActivity(serializeActivity(a).replace('priority: 4', `priority: ${bad}`))).toThrow(/priority/);
+    }
+  });
   it('valida o título', () => {
     expect(titleSchema.parse('  ok ')).toBe('ok');
     expect(titleSchema.safeParse('   ').success).toBe(false);
@@ -42,6 +51,12 @@ describe('árvore', () => {
     const act = (id: string, parent: string | null, n: number) => ({ id, title: id, parent, assignee: null, createdAt: new Date(n * 1000).toISOString(), description: '', extra: {} });
     const found = leaves(buildTree([act('r', null, 1), act('a', 'r', 2), act('b', 'r', 3), act('a1', 'a', 4), act('s', null, 5)]));
     expect(found.map((l) => [l.activity.id, l.path])).toEqual([['a1', ['r', 'a']], ['b', ['r']], ['s', []]]);
+  });
+  it('ordena as folhas por prioridade, sem prioridade no fim e empates na ordem da árvore', () => {
+    const list = [act(1), { ...act(2), priority: 2 as const }, act(3), { ...act(4), priority: 5 as const }, { ...act(5), priority: 2 as const }];
+    const found = leaves(buildTree(list));
+    expect(sortByPriority(found).map((l) => l.activity.id)).toEqual([4, 2, 5, 1, 3].map(id));
+    expect(found.map((l) => l.activity.id)).toEqual([1, 2, 3, 4, 5].map(id));
   });
   it('ordena por criação e apaga das folhas para o nó', () => {
     const list = [act(3, 1), act(1), act(2, 1), act(4, 2), act(5)];
@@ -111,5 +126,21 @@ describe('linha de comando', () => {
     expect(tokenize(`git commit -m "primeira versão" 'a b' c\\ d`)).toEqual(['git', 'commit', '-m', 'primeira versão', 'a b', 'c d']);
     expect(tokenize('type C:\\dados\\x.txt ""')).toEqual(['type', 'C:\\dados\\x.txt', '']);
     expect(() => tokenize('echo "x')).toThrow();
+  });
+});
+
+describe('arquivos da atividade', () => {
+  it('limpa o nome do anexo sem perder a extensão', () => {
+    expect(safeFileName('a/b\\c:d?.png')).toBe('a-b-c-d-.png');
+    expect(safeFileName('..')).toBe('arquivo');
+    expect(safeFileName(' .env ')).toBe('env');
+    const long = safeFileName('é'.repeat(300) + '.pdf');
+    expect(long.endsWith('é.pdf') && new TextEncoder().encode(long).length <= 200).toBe(true);
+  });
+  it('grava e lê o comentário; sem cabeçalho válido o arquivo todo é o texto', () => {
+    const c = { author: 'eu', createdAt: '2026-11-28T10:00:00.000Z', text: '## Retorno\n\n---\nfim' };
+    expect(parseComment(serializeComment(c), '')).toEqual(c);
+    expect(parseComment('só a resposta\r\n', 'd')).toEqual({ author: null, createdAt: 'd', text: 'só a resposta' });
+    expect(parseComment('---\nx: [\n---\ny', 'd').text).toBe('---\nx: [\n---\ny');
   });
 });

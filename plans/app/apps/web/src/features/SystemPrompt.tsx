@@ -8,7 +8,7 @@ import { DraftStatus, useDraft } from './useDraft.tsx';
 export function SystemPrompt({ app }: { app: State }) {
   const { text, rev } = app.snapshot.systemPrompt;
   const draft = useDraft(text, rev, updateSystemPrompt, app.readOnly);
-  const inActivity = app.snapshot.activities.some((a) => a.id === app.selected);
+  const inActivity = app.opened && app.snapshot.activities.some((a) => a.id === app.selected);
 
   return (
     <section className="system-prompt" aria-label="Instruções padrão">

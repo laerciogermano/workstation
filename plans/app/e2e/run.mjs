@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { deflateRawSync } from 'node:zlib';
 import { chromium } from 'playwright-core';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -34,6 +35,22 @@ async function until(fn, what, ms = 15000) {
 }
 const client = (...args) => execFileSync(bin, args, { env, encoding: 'utf8' });
 const step = (s) => console.log('✓', s);
+/** zip mínimo (compactado), para montar .xlsx e .docx */
+function zip(files) {
+  const locals = [], index = [];
+  let offset = 0;
+  for (const [name, text] of Object.entries(files)) {
+    const data = deflateRawSync(Buffer.from(text)), n = Buffer.from(name);
+    const local = Buffer.alloc(30), entry = Buffer.alloc(46);
+    local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(8, 8); local.writeUInt32LE(data.length, 18); local.writeUInt16LE(n.length, 26);
+    entry.writeUInt32LE(0x02014b50, 0); entry.writeUInt16LE(8, 10); entry.writeUInt32LE(data.length, 20); entry.writeUInt16LE(n.length, 28); entry.writeUInt32LE(offset, 42);
+    locals.push(local, n, data); index.push(entry, n);
+    offset += 30 + n.length + data.length;
+  }
+  const dir = Buffer.concat(index), end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(index.length / 2, 8); end.writeUInt16LE(index.length / 2, 10); end.writeUInt32LE(dir.length, 12); end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...locals, dir, end]);
+}
 
 let browser;
 try {
@@ -58,6 +75,17 @@ try {
     const names = []; for await (const [n] of dir.entries()) names.push(n); return names.sort();
   }, rel);
   const node = (name) => page.getByRole('treeitem', { name, exact: true });
+  const cartaoAberto = page.getByRole('region', { name: 'Atividade selecionada' });
+  const fecharCartao = async () => {
+    if (await cartaoAberto.count()) await page.getByRole('button', { name: 'Fechar atividade' }).click();
+    await cartaoAberto.waitFor({ state: 'detached' });
+  };
+  /** abre o cartão em tela cheia, fechando antes o que estiver aberto */
+  const abrir = async (name) => {
+    await fecharCartao();
+    await node(name).click();
+    await cartaoAberto.getByRole('heading', { name, exact: true }).waitFor();
+  };
   const fileOf = async (title) => {
     for (const f of await fsRead('activities')) { const text = await fsRead('activities/' + f); if (text.includes(`title: ${title}\n`)) return { f, text }; }
     return null;
@@ -102,8 +130,26 @@ try {
   await node('Outra raiz').waitFor({ state: 'detached' });
   step('o + do root cria atividades no primeiro nível');
 
+  await node('Definir orçamento').press('ArrowUp');
+  await page.keyboard.press('ArrowDown');
+  assert.equal(await cartaoAberto.count(), 0, 'as setas só destacam');
+  await page.keyboard.press(' ');
+  await cartaoAberto.waitFor();
+  assert.deepEqual(await page.locator('.side').boundingBox(), { x: 0, y: 0, ...page.viewportSize() }, 'o cartão ocupa a tela inteira');
+  const dividido = () => page.getByRole('radiogroup', { name: 'Modo da descrição' }).getByRole('radio', { name: 'Dividido' }).getAttribute('aria-checked');
+  assert.equal(await dividido(), 'true', 'abre com edição e visualização lado a lado');
+  const [metade, vista] = await Promise.all(['.node-panel .w-md-editor-input', '.node-panel .w-md-editor-preview'].map((s) => page.locator(s).boundingBox()));
+  assert.ok(metade.width > 400 && vista.x >= metade.x + metade.width - 1, 'a visualização fica ao lado do editor');
+  await page.keyboard.press('Escape');
+  await cartaoAberto.waitFor({ state: 'detached' });
+  await until(async () => (await page.evaluate(() => document.activeElement?.getAttribute('aria-label'))) === 'Definir orçamento', 'o foco volta ao cartão');
+  assert.equal(await node('Definir orçamento').getAttribute('aria-selected'), 'true');
+  step('clicar ou Espaço abre o cartão em tela cheia, em modo dividido; Esc volta');
+
   await node('Definir orçamento').click();
-  await page.getByLabel('Responsável').selectOption('claude');
+  const responsavel = () => page.getByRole('radiogroup', { name: 'Responsável' });
+  assert.equal(await responsavel().locator('label svg.icon').count(), await responsavel().getByRole('radio').count(), 'cada cartão de responsável tem ícone');
+  await responsavel().getByText('Claude', { exact: true }).click();
   await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha');
   await page.getByLabel('Comando', { exact: true }).focus();
   await page.getByText('Salvo no arquivo').waitFor();
@@ -114,12 +160,15 @@ try {
   assert.equal(await marcado('To do'), 'true', 'sem status no arquivo vale To do');
   await page.getByRole('radio', { name: 'Doing' }).click();
   await until(async () => (await fileOf('Definir orçamento')).text.includes('status: doing'), 'status gravado pelo painel');
+  await fecharCartao();
   await page.getByRole('button', { name: 'Status de Definir orçamento: Doing' }).click();
   await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).waitFor();
+  assert.equal(await cartaoAberto.count(), 0, 'o botão de status não abre o cartão');
   await until(async () => (await fileOf('Definir orçamento')).text.includes('status: done'), 'status gravado pelo cartão');
-  await until(async () => (await marcado('Done')) === 'true', 'painel acompanha o cartão');
+  await abrir('Definir orçamento');
+  await until(async () => (await marcado('Done')) === 'true', 'tela cheia acompanha o cartão');
   await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha\nterceira');
-  await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).click();
+  await page.getByRole('radio', { name: 'To do', exact: true }).click();
   await until(async () => { const x = (await fileOf('Definir orçamento')).text; return x.includes('status: todo') && x.endsWith('terceira\n'); }, 'mudar o status com texto em edição salva os dois');
   assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
   await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha');
@@ -129,11 +178,11 @@ try {
 
   await page.reload();
   await node('Definir orçamento').waitFor();
-  const leitura = page.getByRole('document', { name: 'Descrição formatada' });
-  await leitura.getByText('segunda linha').waitFor();
-  await page.getByRole('radiogroup', { name: 'Modo da descrição' }).getByRole('radio', { name: 'Editar' }).click();
+  assert.equal(await cartaoAberto.count(), 0, 'recarregar volta à árvore');
+  await abrir('Definir orçamento');
+  assert.equal(await dividido(), 'true');
   assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'Até R$ 3.000\nsegunda linha');
-  assert.equal(await page.getByLabel('Responsável').inputValue(), 'claude');
+  assert.equal(await responsavel().locator('input:checked').inputValue(), 'claude');
   assert.equal(await page.getByRole('radio', { name: 'Doing' }).getAttribute('aria-checked'), 'true');
   step('tudo volta dos arquivos depois de recarregar');
 
@@ -146,13 +195,18 @@ try {
   await node('Editado fora').waitFor();
   step('edição externa do arquivo aparece na tela');
 
+  await fecharCartao();
   const field = page.getByLabel('Renomear atividade');
   const cursor = (locator) => locator.evaluate((el) => getComputedStyle(el).cursor);
   const titulo = node('Definir orçamento').getByText('Definir orçamento');
   assert.equal(await cursor(titulo), 'pointer', 'passar sobre o título não mostra cursor de texto');
   await titulo.click();
-  assert.equal(await field.count(), 0, 'um clique só seleciona');
+  await cartaoAberto.waitFor();
+  assert.equal(await field.count(), 0, 'um clique abre, sem renomear');
+  await fecharCartao();
   await titulo.dblclick();
+  await new Promise((r) => setTimeout(r, 500));
+  assert.equal(await cartaoAberto.count(), 0, 'dois cliques no título não abrem o cartão');
   assert.equal(await cursor(field), 'text');
   await field.press('Escape');
   await node('Definir orçamento').getByText('Definir orçamento').dblclick();
@@ -164,7 +218,8 @@ try {
   await field.press('Enter');
   await node('Orçamento fechado').waitFor();
   await until(async () => !!(await fileOf('Orçamento fechado'))?.text.includes('assignee: claude'), 'título novo no mesmo arquivo');
-  assert.equal(await page.getByRole('heading', { name: 'Orçamento fechado' }).count(), 1);
+  await abrir('Orçamento fechado');
+  await fecharCartao();
   await node('Orçamento fechado').press('F2');
   await field.fill('descartado');
   await field.press('Escape');
@@ -195,7 +250,8 @@ try {
   await node('Definir orçamento').waitFor();
   step('título longo aparece inteiro, o cartão cresce e nada se sobrepõe');
 
-  await node('Definir orçamento').click();
+  await abrir('Definir orçamento');
+  await fecharCartao();
   const parado = await node('Comprar celular').boundingBox();
   await page.getByRole('button', { name: 'Minimizar Comprar celular' }).click();
   await node('Definir orçamento').waitFor({ state: 'detached' });
@@ -220,7 +276,8 @@ try {
   await page.keyboard.press('Escape');
   step('minimizar e expandir, pelo botão e pelo teclado, lembrado no arquivo');
 
-  await node('Definir orçamento').click();
+  await abrir('Definir orçamento');
+  await fecharCartao();
   await page.getByRole('button', { name: 'Minimizar tudo' }).click();
   await node('Definir orçamento').waitFor({ state: 'detached' });
   assert.equal(await page.getByRole('treeitem').count(), 1);
@@ -286,7 +343,9 @@ try {
   await page.getByRole('button', { name: /Client conectado/ }).waitFor();
   step('client reinicia e a tela reconecta sozinha');
 
-  await node('Comprar celular').click();
+  await abrir('Comprar celular');
+  await fecharCartao();
+  await node('Comprar celular').focus();
   const tool = page.getByRole('button', { name: 'Remover Comprar celular' });
   await page.mouse.move(600, 700);
   assert.equal(await tool.isVisible(), false, 'sem o mouse em cima, o cartão selecionado e focado não mostra + e ×');
@@ -300,20 +359,26 @@ try {
   const selected = page.locator('[role="treeitem"][aria-selected="true"]');
   const area = await page.getByRole('region', { name: 'Árvore de execução' }).boundingBox();
   const vazio = [area.x + area.width - 80, area.y + area.height - 160];
-  await node('Comprar celular').click();
+  await abrir('Comprar celular');
+  await fecharCartao();
   await page.mouse.move(...vazio);
   await page.mouse.down();
   await page.mouse.move(vazio[0] - 60, vazio[1] + 20, { steps: 4 });
   await page.mouse.up();
   assert.equal(await selected.count(), 1, 'arrastar o fundo mantém a seleção');
-  await page.getByLabel('Descrição', { exact: true }).fill('escrita antes de clicar fora');
+  await abrir('Comprar celular');
+  await page.getByLabel('Descrição', { exact: true }).fill('escrita antes do Esc');
+  await page.keyboard.press('Escape');
+  await cartaoAberto.waitFor({ state: 'detached' });
+  await until(async () => (await fileOf('Comprar celular')).text.includes('escrita antes do Esc'), 'a descrição é salva ao fechar com Esc');
+  assert.equal(await selected.count(), 1, 'fechar mantém a seleção');
   await page.mouse.click(...vazio);
   assert.equal(await selected.count(), 0);
-  await page.getByText('Selecione uma atividade').waitFor();
-  await until(async () => (await fileOf('Comprar celular')).text.includes('escrita antes de clicar fora'), 'a descrição é salva ao clicar fora');
-  await node('Comprar celular').click();
+  await page.getByRole('heading', { name: 'Configurações do projeto' }).waitFor();
+  await abrir('Comprar celular');
+  assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'escrita antes do Esc');
+  await fecharCartao();
   assert.equal(await selected.count(), 1);
-  assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'escrita antes de clicar fora');
   await page.getByRole('button', { name: 'Ajustar à tela' }).click();
   await page.getByRole('button', { name: /^Zoom \d+%/ }).click();
   assert.equal(await selected.count(), 1, 'usar os controles não tira a seleção');
@@ -360,7 +425,8 @@ try {
   await page.screenshot({ path: path.join(root, 'test-results-zoom.png') });
   const inside = async (name) => { const b = await node(name).boundingBox(); return b.y >= canvas.y - 1 && b.y + b.height <= canvas.y + canvas.height + 1; };
   assert.ok(await inside('Comprar celular') && await inside('Extra 79') && await inside('Extra 59'));
-  await node('Comprar celular').click();
+  await abrir('Comprar celular');
+  await fecharCartao();
   await level.click();
   // o foco ficou no botão de zoom: volta para o nó antes de navegar
   await node('Comprar celular').evaluate((el) => el.focus({ preventScroll: true }));
@@ -375,7 +441,6 @@ try {
   await node('Extra 0').waitFor({ state: 'detached' });
   await page.getByRole('button', { name: 'Ajustar' }).click();
 
-  await node('Comprar celular').click();
   await node('Comprar celular').press('Delete');
   await page.getByRole('dialog').getByRole('button', { name: 'Remover 3 atividades' }).click();
   await until(async () => (await fsRead('activities')).length === 0, 'arquivos removidos');
@@ -456,24 +521,26 @@ try {
   const comandos = page.getByRole('region', { name: 'Comandos' });
   const largura = async () => (await page.getByRole('region', { name: 'Árvore de execução' }).boundingBox()).width;
   assert.equal(await node('Um').evaluate((el) => getComputedStyle(el).borderTopWidth), '0px', 'cartão sem borda');
-  await node('Três').click();
+  await abrir('Três');
+  await page.getByLabel('Descrição', { exact: true }).fill('guardada ao fechar');
+  await fecharCartao();
+  await until(async () => (await fileOf('Três')).text.includes('guardada ao fechar'), 'texto salvo ao fechar o cartão');
   // confere num cartão não selecionado: o anel de seleção é desenhado com box-shadow
   assert.notEqual(await node('Um').evaluate((el) => getComputedStyle(el).boxShadow), 'none', 'cartão com sombra');
   const estreita = await largura();
-  await page.getByLabel('Descrição', { exact: true }).fill('guardada ao minimizar');
   await page.getByRole('button', { name: 'Minimizar painel' }).click();
   assert.equal(await comandos.isVisible(), false);
   assert.ok((await largura()) - estreita > 430, 'a árvore ocupa o lugar do painel');
-  await until(async () => (await fileOf('Três')).text.includes('guardada ao minimizar'), 'texto salvo ao minimizar');
   await until(async () => JSON.parse(await fsRead('.plans/ui.json')).panel === false, 'painel minimizado em ui.json');
   await page.reload();
   await node('Três').waitFor();
   assert.equal(await comandos.isVisible(), false);
-  await node('Um').click();
-  assert.equal(await comandos.isVisible(), false, 'selecionar não reabre o painel');
+  await abrir('Um');
+  await comandos.waitFor(); // o cartão abre inteiro mesmo com o painel minimizado
+  await fecharCartao();
+  assert.equal(await comandos.isVisible(), false, 'abrir um cartão não reabre o painel');
   await page.getByRole('button', { name: 'Mostrar painel' }).click();
   await comandos.waitFor();
-  assert.equal(await page.getByRole('heading', { name: 'Um' }).count(), 1);
   step('painel lateral minimiza e volta, lembrado no arquivo');
 
   const css = (selector, prop) => page.locator(selector).first().evaluate((el, prop) => getComputedStyle(el)[prop], prop);
@@ -486,8 +553,9 @@ try {
   await page.reload();
   await node('Três').waitFor();
   assert.equal(await css('body', 'backgroundColor'), 'rgb(14, 14, 14)');
-  await node('Três').click();
+  await abrir('Três');
   await page.screenshot({ path: path.join(root, 'test-results-preto.png') });
+  await fecharCartao();
   await page.getByRole('button', { name: /^Client|Aguardando o client/ }).click();
   assert.equal(await css('.dialog', 'backgroundColor'), 'rgb(14, 14, 14)');
   await page.screenshot({ path: path.join(root, 'test-results-preto-dialogo.png') });
@@ -519,8 +587,11 @@ try {
   assert.equal(await doc.locator('a[href^="javascript"]').count(), 0);
   assert.equal(await page.evaluate(() => window.invadido), undefined);
   await until(async () => (await fileOf('Dois')).text.endsWith(fonte + '\n'), 'o Markdown vai para o arquivo como foi escrito');
-  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).descriptionMode === 'read', 'modo lembrado');
   await page.screenshot({ path: path.join(root, 'test-results-md-ler.png') });
+  await abrir('Um');
+  await abrir('Dois');
+  assert.equal(await dividido(), 'true', 'reabrir volta ao modo dividido');
+  await modo('Ler').click();
   step('descrição lida como README, sem HTML, imagens de fora nem links que saem do app');
 
   await doc.dblclick();
@@ -540,17 +611,28 @@ try {
   await page.locator('.side .wmde-markdown').getByRole('heading', { name: 'Ao vivo' }).waitFor();
   step('editar com barra de ferramentas, salvar e ver ao vivo no modo dividido');
 
+  await modo('Ler').click();
   await page.getByRole('button', { name: 'Abrir descrição em tela cheia' }).click();
   const janela = page.getByRole('dialog');
+  assert.deepEqual(await janela.boundingBox(), { x: 0, y: 0, ...page.viewportSize() }, 'ocupa a tela inteira');
+  assert.equal(await janela.getByRole('radio', { name: 'Dividido' }).getAttribute('aria-checked'), 'true', 'abre com edição e visualização, mesmo vindo da leitura');
   await janela.getByLabel('Descrição', { exact: true }).fill('# Em tela cheia\n\ntexto longo');
   await janela.getByRole('heading', { name: 'Em tela cheia' }).last().waitFor();
   await page.screenshot({ path: path.join(root, 'test-results-md-cheia.png') });
   await janela.getByRole('button', { name: 'Fechar', exact: true }).click();
   await until(async () => (await fileOf('Dois')).text.endsWith('texto longo\n'), 'salvo ao fechar a janela');
+  await page.getByRole('button', { name: 'Abrir descrição em tela cheia' }).click();
+  await janela.waitFor();
+  await page.keyboard.press('Escape');
+  await janela.waitFor({ state: 'detached' });
+  assert.equal(await cartaoAberto.count(), 1, 'Esc fecha só a janela de cima');
+  await fecharCartao();
   await page.getByRole('button', { name: 'Tema Preto' }).click();
+  await abrir('Dois');
   assert.equal(await page.locator('.node-panel .md').getAttribute('data-color-mode'), 'dark');
   await modo('Ler').click();
   await page.screenshot({ path: path.join(root, 'test-results-md-preto.png') });
+  await fecharCartao();
   await page.getByRole('button', { name: 'Tema Papel' }).click();
   step('tela cheia e tema escuro');
 
@@ -573,6 +655,9 @@ try {
   await until(async () => (await fileOf(titulo1)).text.includes('status: doing'), 'arrastar grava o status');
   await coluna('Doing').getByRole('button', { name: titulo1, exact: true }).click();
   await page.getByRole('heading', { name: titulo1, exact: true }).waitFor();
+  assert.deepEqual(await page.locator('.side').boundingBox(), { x: 0, y: 0, ...page.viewportSize() }, 'no Kanban também abre em tela cheia');
+  await page.screenshot({ path: path.join(root, 'test-results-cartao.png') });
+  await fecharCartao();
   await page.getByRole('button', { name: `Status de ${titulo1}: Doing` }).click();
   await coluna('Done').getByRole('button', { name: titulo1, exact: true }).waitFor();
   await until(async () => JSON.parse(await fsRead('.plans/ui.json')).view === 'kanban', 'visão gravada em ui.json');
@@ -598,7 +683,7 @@ try {
   await until(async () => (await fsRead('system-prompt.md')) === '## Sempre\n\nResponda em português.\n', 'system prompt gravado');
   assert.equal(await prompt.inputValue(), '## Sempre\n\nResponda em português.', 'aparece na atividade');
   await prompt.fill('## Sempre\n\nSeja breve.');
-  await node('Dois').click();
+  await abrir('Dois');
   await modoPrompt('Ler').click();
   await promptLido.getByText('Seja breve.').waitFor();
   await until(async () => (await fsRead('system-prompt.md')).endsWith('Seja breve.\n'), 'editado a partir da atividade');
@@ -611,6 +696,180 @@ try {
     assert.ok((await fsRead('activities/' + f)).startsWith('SYSTEM PROMPT\n/system-prompt.md\n\n---\n'), f);
   }
   step('system prompt configurado no root, lido e editado em cada atividade');
+
+  // ----- input e output: anexos, visualização e comentários -----
+  await node('Um').click();
+  const entrada = page.getByRole('region', { name: 'Input', exact: true });
+  const saida = page.getByRole('region', { name: 'Output', exact: true });
+  await entrada.getByRole('radiogroup', { name: 'Modo da descrição' }).waitFor();
+  await saida.getByText('Nenhum comentário.').waitFor();
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhWbm7wAAAABJRU5ErkJggg==', 'base64');
+  const arquivo = (name, body, mimeType = '') => ({ name, mimeType, buffer: Buffer.from(body) });
+  await entrada.getByLabel('Anexar em Input').setInputFiles([
+    arquivo('foto.png', png, 'image/png'),
+    arquivo('desenho.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="red"/></svg>'),
+    arquivo('tabela.csv', 'nome;nota\nAna;10\n'),
+    arquivo('notas.md', '# Título do anexo'),
+    arquivo('dados.json', '{"a":1}'),
+    arquivo('pagina.html', '<h1>oi</h1><script>alert(1)</script>', 'text/html'),
+    arquivo('pacote.zip', Buffer.from([80, 75, 3, 4, 0, 0, 0, 0])),
+    arquivo('quebrada.png', 'isto não é imagem', 'image/png'),
+  ]);
+  const lista = entrada.getByRole('list', { name: 'Anexos de Input' });
+  await until(async () => (await lista.getByRole('listitem').count()) === 8, 'oito anexos listados');
+  const janelaDe = async (nome) => {
+    await lista.getByRole('button', { name: new RegExp('^' + nome) }).click();
+    return page.getByRole('dialog', { name: nome });
+  };
+  const fechar = (d) => d.getByRole('button', { name: 'Fechar' }).click();
+  for (const nome of ['foto.png', 'desenho.svg']) {
+    const d = await janelaDe(nome);
+    await until(() => d.getByRole('img', { name: nome }).evaluate((i) => i.complete && i.naturalWidth > 0), nome);
+    await fechar(d);
+  }
+  const celulaDe = (janela, texto) => janela.getByRole('gridcell', { name: texto, exact: true });
+  await entrada.getByLabel('Anexar em Input').setInputFiles([arquivo('edicao.csv', 'nome;nota\nAna;10\n')]);
+  let d = await janelaDe('edicao.csv');
+  await celulaDe(d, 'Ana').waitFor();
+  await celulaDe(d, '10').dblclick();
+  await d.getByLabel('Célula B').fill('9,5');
+  await page.keyboard.press('Enter');
+  await d.getByRole('button', { name: 'Fechar' }).click();
+  await d.getByText('Há alterações não salvas.').waitFor();
+  await d.getByRole('button', { name: 'Continuar editando' }).click();
+  await celulaDe(d, 'Ana').click();
+  await page.keyboard.type('Bia'); // digitar por cima troca o texto
+  await page.keyboard.press('ControlOrMeta+s');
+  await d.getByText('Salvo no arquivo.', { exact: false }).waitFor();
+  const idPlanilha = (await fileOf('Um')).f.replace('.md', '');
+  assert.equal(await fsRead(`attachments/${idPlanilha}/input/edicao.csv`), 'nome;nota\nBia;9,5\n');
+  await page.screenshot({ path: path.join(work, 'anexo-tabela.png') });
+  await d.getByRole('button', { name: 'Fechar', exact: true }).click();
+  d = await janelaDe('notas.md');
+  await d.getByRole('heading', { name: 'Título do anexo' }).waitFor();
+  await fechar(d);
+  d = await janelaDe('dados.json');
+  await d.getByText('"a": 1').waitFor();
+  await fechar(d);
+  d = await janelaDe('pagina.html');
+  await d.getByText('<script>alert(1)</script>').waitFor();
+  assert.equal(await d.locator('iframe, script').count(), 0, 'HTML é mostrado como texto');
+  await fechar(d);
+  d = await janelaDe('pacote.zip');
+  await d.getByText('Sem visualização para este tipo').waitFor();
+  const [baixado] = await Promise.all([page.waitForEvent('download'), d.getByRole('link', { name: 'Baixar' }).click()]);
+  assert.equal(baixado.suggestedFilename(), 'pacote.zip');
+  await fechar(d);
+  const antes = errors.length;
+  d = await janelaDe('quebrada.png');
+  await d.getByText('O navegador não conseguiu mostrar').waitFor();
+  await fechar(d);
+  errors.splice(antes);
+  step('anexos de input listados e abertos, cada tipo com a sua visualização');
+
+  const R = 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  await entrada.getByLabel('Anexar em Input').setInputFiles([
+    arquivo('funil.xlsx', zip({
+      '[Content_Types].xml': '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+      'xl/workbook.xml': `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ${R}><sheets><sheet name="Funil" sheetId="1" r:id="rId1"/><sheet name="Resumo" sheetId="2" r:id="rId2"/></sheets></workbook>`,
+      'xl/_rels/workbook.xml.rels': '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Target="/xl/worksheets/sheet2.xml"/></Relationships>',
+      'xl/sharedStrings.xml': '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t>Cliente</t></si><si><r><t>Padaria </t></r><r><t>Sol</t></r></si></sst>',
+      'xl/styles.xml': '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cellXfs count="2"><xf numFmtId="0"/><xf numFmtId="14"/></cellXfs></styleSheet>',
+      'xl/worksheets/sheet1.xml': '<worksheet><sheetData><row r="1"><c r="A1" t="s"><v>0</v></c><c r="C1" t="inlineStr"><is><t>Data</t></is></c></row><row r="2"><c r="A2" t="s"><v>1</v></c><c r="B2"><v>1500.5</v></c><c r="D2"><f>SUM(B2:B2)</f><v></v></c><c r="C2" s="1"><v>46354</v></c></row></sheetData></worksheet>',
+      'xl/worksheets/sheet2.xml': '<worksheet><sheetData><row r="1"><c r="A1" t="str"><v>Total geral</v></c></row></sheetData></worksheet>',
+    })),
+    arquivo('proposta.docx', zip({
+      'word/document.xml': '<w:document xmlns:w="urn:w"><w:body><w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Proposta</w:t></w:r></w:p><w:p><w:r><w:t>Texto do documento.</w:t></w:r></w:p><w:tbl><w:tr><w:tc><w:p><w:r><w:t>Item</w:t></w:r></w:p></w:tc></w:tr></w:tbl></w:body></w:document>',
+    })),
+    arquivo('vazado.xlsx', 'isto não é uma planilha'),
+  ]);
+  d = await janelaDe('funil.xlsx');
+  for (const texto of ['Cliente', 'Padaria Sol', '1500,5', '28/11/2026', '=SUM(B2:B2)']) await celulaDe(d, texto).waitFor();
+  await d.getByRole('radio', { name: 'Resumo' }).click();
+  await celulaDe(d, 'Total geral').waitFor();
+  await d.getByRole('radio', { name: 'Funil' }).click();
+  await celulaDe(d, '1500,5').dblclick();
+  await d.getByLabel('Célula B').fill('2000');
+  await page.keyboard.press('Enter');
+  await d.getByRole('button', { name: 'Salvar', exact: true }).click();
+  await d.getByText('Salvo no arquivo.', { exact: false }).waitFor();
+  await d.getByRole('button', { name: 'Fechar', exact: true }).click();
+  d = await janelaDe('funil.xlsx');
+  await celulaDe(d, '2000').waitFor(); // reaberto do arquivo gravado
+  await fechar(d);
+  d = await janelaDe('proposta.docx');
+  await d.getByRole('heading', { name: 'Proposta' }).waitFor();
+  await d.getByText('Texto do documento.').waitFor();
+  await d.getByRole('cell', { name: 'Item' }).waitFor();
+  await fechar(d);
+  d = await janelaDe('vazado.xlsx');
+  await d.getByText('corrompido ou protegido').waitFor();
+  await fechar(d);
+  await d.waitFor({ state: 'detached' }); // sem nada editado, fecha de primeira
+  step('planilha e documento do Office mostrados; arquivo inválido avisa');
+
+  // miniaturas na lista, sem abrir o arquivo
+  const miniatura = (nome) => lista.getByRole('button', { name: new RegExp('^' + nome.replace('.', '\\.')) }).locator('.thumb');
+  await entrada.getByLabel('Anexar em Input').setInputFiles([arquivo('folha.pdf', '%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF')]);
+  for (const nome of ['foto.png', 'desenho.svg']) await until(() => miniatura(nome).locator('img').evaluate((i) => i.complete && i.naturalWidth > 0), 'miniatura de ' + nome);
+  for (const [nome, trecho] of [['tabela.csv', 'Ana 10'], ['notas.md', '# Título do anexo'], ['funil.xlsx', 'Padaria Sol'], ['proposta.docx', 'Texto do documento.']]) await miniatura(nome).locator('.lines', { hasText: trecho }).waitFor();
+  await miniatura('folha.pdf').locator('iframe').waitFor();
+  // sem prévia possível, fica o selo com a extensão
+  for (const [nome, selo] of [['pacote.zip', 'zip'], ['vazado.xlsx', 'xlsx'], ['quebrada.png', 'png']]) {
+    await until(async () => (await miniatura(nome).locator('img').count()) === 0 && (await miniatura(nome).innerText()).toLowerCase() === selo, 'selo de ' + nome);
+  }
+  await miniatura('folha.pdf').click(); // a moldura não segura o clique
+  await fechar(page.getByRole('dialog', { name: 'folha.pdf' }));
+  await lista.screenshot({ path: path.join(work, 'miniaturas.png') });
+  step('miniaturas de imagem, texto, planilha, documento e PDF na lista de anexos');
+
+  // soltar um arquivo na área de output
+  const solto = await page.evaluateHandle(() => {
+    const dt = new DataTransfer();
+    dt.items.add(new File(['resultado'], 'resultado.txt', { type: 'text/plain' }));
+    return dt;
+  });
+  await saida.dispatchEvent('dragover', { dataTransfer: solto });
+  await saida.dispatchEvent('drop', { dataTransfer: solto });
+  const listaSaida = saida.getByRole('list', { name: 'Anexos de Output' });
+  await listaSaida.getByRole('button', { name: /^resultado\.txt/ }).waitFor();
+  await saida.getByLabel('Novo comentário').fill('rascunho **pronto**');
+  await abrir('Dois');
+  await saida.getByText('Nenhum comentário.').waitFor();
+  assert.equal(await saida.getByLabel('Novo comentário').inputValue(), '');
+  await abrir('Um');
+  assert.equal(await saida.getByLabel('Novo comentário').inputValue(), 'rascunho **pronto**', 'o rascunho continua');
+  await saida.getByRole('button', { name: 'Comentar' }).click();
+  const comentarios = saida.getByRole('list', { name: 'Comentários' });
+  await comentarios.locator('strong', { hasText: 'pronto' }).waitFor();
+  assert.equal(await saida.getByLabel('Novo comentário').inputValue(), '');
+  const idUm = (await fileOf('Um')).f.replace('.md', '');
+  assert.equal((await fsRead(`comments/${idUm}`)).length, 1);
+  assert.deepEqual(await fsRead(`attachments/${idUm}`), ['input', 'output']);
+  // resposta gravada por fora (um agente) aparece sozinha
+  await page.evaluate(async (id) => {
+    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('demo-e2e');
+    for (const p of ['comments', id]) dir = await dir.getDirectoryHandle(p);
+    const w = await (await dir.getFileHandle('agente.md', { create: true })).createWritable(); await w.write('Resposta do agente'); await w.close();
+    window.dispatchEvent(new Event('focus'));
+  }, idUm);
+  await comentarios.getByText('Resposta do agente').waitFor();
+  await page.reload();
+  await abrir('Um');
+  await comentarios.getByText('Resposta do agente').waitFor();
+  await comentarios.locator('strong', { hasText: 'pronto' }).waitFor();
+  await page.setViewportSize({ width: 1440, height: 1300 });
+  await page.screenshot({ path: path.join(work, 'input-output.png') });
+  await page.locator('.side').evaluate((el) => (el.scrollTop = 420));
+  await page.screenshot({ path: path.join(work, 'output.png') });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await saida.getByRole('button', { name: 'Remover comentário de Sem autor' }).click();
+  await comentarios.getByText('Resposta do agente').waitFor({ state: 'detached' });
+  await listaSaida.getByRole('button', { name: 'Remover anexo resultado.txt' }).click();
+  await listaSaida.waitFor({ state: 'detached' });
+  assert.deepEqual(await fsRead(`attachments/${idUm}/output`), []);
+  assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
+  step('output com comentários e anexos; resposta gravada por fora aparece; remover');
 
   assert.deepEqual(errors, []);
   console.log('\nTudo passou.');

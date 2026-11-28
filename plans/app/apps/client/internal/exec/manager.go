@@ -171,7 +171,11 @@ func (m *Manager) run(ctx context.Context, r *Run) {
 	errw := &writer{m: m, r: r, stream: "stderr"}
 
 	exit := protocol.Exit{Type: "exec.exit", RunID: r.info.RunID, Reason: "exit", Code: -1}
-	cmd, err := build(ctx, m.root, r.info.Command)
+	var cmd *osexec.Cmd
+	command, err := resolve(m.root, r.info.Command)
+	if err == nil {
+		cmd, err = build(ctx, m.root, command)
+	}
 	if err == nil {
 		cmd.Stdout, cmd.Stderr = out, errw
 		cmd.WaitDelay = 5 * time.Second

@@ -59,6 +59,9 @@ export function leaves(nodes: TreeNode[], path: string[] = []): Leaf[] {
   return nodes.flatMap((n) => (n.children.length ? leaves(n.children, [...path, n.activity.title]) : [{ activity: n.activity, path }]));
 }
 
+/** Da maior para a menor prioridade, sem prioridade no fim; no empate, mantém a ordem recebida. */
+export const sortByPriority = (list: Leaf[]): Leaf[] => [...list].sort((a, b) => (b.activity.priority ?? 0) - (a.activity.priority ?? 0));
+
 /** O nó e toda a subárvore, das folhas para o nó — ordem segura para apagar. */
 export function subtreeLeavesFirst(activities: Activity[], id: string): Activity[] {
   const find = (nodes: TreeNode[]): TreeNode | undefined => {

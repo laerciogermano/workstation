@@ -99,7 +99,14 @@ TELA-02 Detalhe da unidade (drawer transversal)
 ├── Cabeçalho identidade (UUID + rótulo da visão)
 ├── Formulário título e contexto
 ├── Seletor de responsável (← catálogo TELA-05)
-├── Lista de saídas / artefatos
+├── Seção Input
+│   ├── Descrição
+│   └── Lista de anexos (anexar / abrir / remover)
+├── Seção Output
+│   ├── Comentários
+│   ├── Lista de anexos
+│   └── Lista de saídas / artefatos
+├── Visualizador de anexo (por tipo · baixar)
 ├── Ciclo de vida
 │   ├── Badge ativa / arquivada
 │   ├── Arquivar / desarquivar
@@ -276,12 +283,16 @@ Transversais
 | Indicador da visão ativa | Indicador | Qual tipo está preenchendo a área abaixo |
 | Persistência de contexto | Indicador | Projeto (e unidade, se houver) permanece ao trocar de tipo |
 
-### Detalhe da unidade (US-01, US-02)
+### Detalhe da unidade (US-01, US-02, US-34)
 
 | Componente | Tipo | Telas |
 |------------|------|-------|
 | Drawer compartilhado (TELA-02) | Drawer | Board, Gantt, Árvore |
 | Seletor de responsável tipado | Seletor | Drawer; catálogo (TELA-05) alimenta opções |
+| Seção Input / Output | Contêiner (área de soltar arquivos) | Drawer |
+| Lista de anexos | Lista | Drawer (Input e Output) |
+| Visualizador de anexo | Modal | Drawer |
+| Comentários | Lista + campo | Drawer (Output) |
 
 ### Explorar (painel transversal — não é tela de lista)
 

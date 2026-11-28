@@ -1,17 +1,23 @@
 // Leitura e gravação do projeto na pasta. É o único lugar que toca nos arquivos do Plans.
 import {
   assigneesSchema, DEFAULT_ASSIGNEES, DESCRIPTION_MAX, parseActivity, projectSchema, runRecordSchema, SCHEMA_VERSION,
-  planMove, serializeActivity, SYSTEM_PROMPT_FILE, subtreeLeavesFirst, titleSchema, uiSchema,
-  type Activity, type Assignee, type Project, type RunRecord, type Status, type UiState,
+  orderKey, planMove, serializeActivity, SYSTEM_PROMPT_FILE, subtreeLeavesFirst, titleSchema, uiSchema,
+  ATTACHMENTS_DIR, COMMENT_MAX, COMMENTS_DIR, parseComment, safeFileName, serializeComment, SIDES,
+  labelNameSchema, labelSchema, LABELS_FILE, labelsSchema, newLabelId, sameLabelName,
+  type Activity, type Assignee, type Comment, type Label, type LabelColor, type Priority, type Project, type RunRecord, type Side, type Status, type UiState,
 } from '@plans/domain';
 import type { DirLike } from './types.ts';
 
 export type StoredActivity = Activity & { rev: string };
 export type Problem = { file: string; message: string };
-export type Patch = { title?: string; assignee?: string | null; description?: string; status?: Status };
+export type Patch = { title?: string; createdAt?: string; assignee?: string | null; description?: string; status?: Status; /** presente e `undefined` = tirar a prioridade */ priority?: Priority | undefined; /** presente e `undefined` = tirar a data de entrega */ dueDate?: string | undefined; labels?: string[] };
 /** Instruções padrão de todas as atividades. Sem arquivo, o texto é vazio. */
 export type SystemPrompt = { text: string; rev: string };
-export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; systemPrompt: SystemPrompt; problems: Problem[] };
+export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; labels: Label[]; systemPrompt: SystemPrompt; problems: Problem[] };
+export type Attachment = { name: string; size: number };
+export type StoredComment = Comment & { file: string };
+/** O que acompanha uma atividade além da descrição: lido só quando ela é aberta. */
+export type ActivityFiles = { input: Attachment[]; output: Attachment[]; comments: StoredComment[] };
 
 export class ConflictError extends Error {
   constructor() {
@@ -43,10 +49,10 @@ async function readText(dir: DirLike, name: string): Promise<string | null> {
 }
 
 /** A mudança só aparece no arquivo quando o fechamento termina. */
-async function writeText(dir: DirLike, name: string, text: string): Promise<void> {
+async function writeFile(dir: DirLike, name: string, data: string | Blob): Promise<void> {
   const w = await (await dir.getFileHandle(name, { create: true })).createWritable();
   try {
-    await w.write(text);
+    await w.write(data);
     await w.close();
   } catch (e) {
     await w.abort().catch(() => {});
@@ -60,6 +66,79 @@ async function readSystemPrompt(root: DirLike): Promise<SystemPrompt> {
 }
 
 const json = (v: unknown) => JSON.stringify(v, null, 2) + '\n';
+
+/** Catálogo de etiquetas. Sem arquivo, vazio; com formato inválido, falha (nunca é sobrescrito). */
+async function readLabels(root: DirLike): Promise<Label[]> {
+  const raw = await readText(root, LABELS_FILE);
+  if (raw === null) return [];
+  try {
+    return labelsSchema.parse(JSON.parse(raw)).items;
+  } catch {
+    throw new Error(`${LABELS_FILE} está com formato inválido. Nada foi alterado.`);
+  }
+}
+
+/** Nome limpo e ainda não usado por outra etiqueta. */
+function freeLabelName(labels: Label[], name: string, own?: string): string {
+  const parsed = labelNameSchema.safeParse(name);
+  if (!parsed.success) throw new Error(parsed.error.issues[0]!.message);
+  if (labels.some((l) => l.id !== own && sameLabelName(l.name, parsed.data))) throw new Error(`Já existe a etiqueta “${parsed.data}”.`);
+  return parsed.data;
+}
+
+/** Subpasta pelo caminho, ou null se algum trecho não existe. */
+async function findDir(dir: DirLike, ...path: string[]): Promise<DirLike | null> {
+  try {
+    for (const name of path) dir = await dir.getDirectoryHandle(name);
+    return dir;
+  } catch (e) {
+    if (isNotFound(e)) return null;
+    throw e;
+  }
+}
+
+async function makeDir(dir: DirLike, ...path: string[]): Promise<DirLike> {
+  for (const name of path) dir = await dir.getDirectoryHandle(name, { create: true });
+  return dir;
+}
+
+/** Arquivos visíveis da pasta (ignora ocultos e os temporários de gravação do navegador). */
+async function listFiles(dir: DirLike | null) {
+  const out: { name: string; file: Blob & { readonly lastModified?: number } }[] = [];
+  if (!dir) return out;
+  for await (const [name, handle] of dir.entries()) {
+    if (handle.kind === 'file' && !name.startsWith('.') && !name.endsWith('.crswap')) out.push({ name, file: await handle.getFile() });
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
+}
+
+async function copyDir(from: DirLike, to: DirLike): Promise<void> {
+  for await (const [name, handle] of from.entries()) {
+    if (handle.kind === 'file') await writeFile(to, name, await handle.getFile());
+    else await copyDir(handle, await makeDir(to, name));
+  }
+}
+
+async function sameBytes(a: Blob, b: Blob): Promise<boolean> {
+  if (a.size !== b.size) return false;
+  const [x, y] = [new Uint8Array(await a.arrayBuffer()), new Uint8Array(await b.arrayBuffer())];
+  return x.every((v, i) => v === y[i]);
+}
+
+/** "foto.png", "foto (2).png"…: um anexo novo nunca sobrescreve outro. */
+async function freeName(dir: DirLike, name: string): Promise<string> {
+  const dot = name.lastIndexOf('.');
+  const [stem, ext] = dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, ''];
+  for (let n = 1; ; n++) {
+    const candidate = n === 1 ? name : `${stem} (${n})${ext}`;
+    try {
+      await dir.getFileHandle(candidate); // no disco do macOS e do Windows, maiúsculas não diferenciam
+    } catch (e) {
+      if (isNotFound(e)) return candidate;
+      if ((e as Error).name !== 'TypeMismatchError') throw e; // pasta com o mesmo nome: tenta o próximo
+    }
+  }
+}
 
 /** Uma gravação por vez, entre abas (Web Locks) ou, sem elas, nesta aba. */
 let chain: Promise<unknown> = Promise.resolve();
@@ -101,14 +180,14 @@ export async function initFolder(root: DirLike): Promise<Project> {
   await root.getDirectoryHandle('activities', { create: true });
   const runs = await root.getDirectoryHandle('runs', { create: true });
   // arquivos de ignorar dentro das próprias pastas: o .gitignore da pessoa não é tocado
-  await writeText(meta, '.gitignore', 'ui.json\n');
-  await writeText(runs, '.gitignore', '*\n');
+  await writeFile(meta, '.gitignore', 'ui.json\n');
+  await writeFile(runs, '.gitignore', '*\n');
   if ((await readText(root, 'assignees.json')) === null) {
-    await writeText(root, 'assignees.json', json({ version: 1, items: DEFAULT_ASSIGNEES }));
+    await writeFile(root, 'assignees.json', json({ version: 1, items: DEFAULT_ASSIGNEES }));
   }
   // vazio até a pessoa escrever: a referência de cada atividade já aponta para um arquivo que existe
-  if ((await readText(root, SYSTEM_PROMPT_FILE)) === null) await writeText(root, SYSTEM_PROMPT_FILE, '');
-  await writeText(meta, 'project.json', json(project)); // por último: marca a pasta como projeto
+  if ((await readText(root, SYSTEM_PROMPT_FILE)) === null) await writeFile(root, SYSTEM_PROMPT_FILE, '');
+  await writeFile(meta, 'project.json', json(project)); // por último: marca a pasta como projeto
   return project;
 }
 
@@ -164,8 +243,59 @@ export class ProjectStore {
         problems.push({ file: 'assignees.json', message: 'Formato inválido; nenhum responsável carregado.' });
       }
     }
+    let labels: Label[] = [];
+    try {
+      labels = await readLabels(this.root);
+    } catch (e) {
+      problems.push({ file: LABELS_FILE, message: (e as Error).message });
+    }
     problems.sort((a, b) => a.file.localeCompare(b.file));
-    return { activities, assignees, systemPrompt: await readSystemPrompt(this.root), problems };
+    return { activities, assignees, labels, systemPrompt: await readSystemPrompt(this.root), problems };
+  }
+
+  private writeLabels(items: Label[]): Promise<void> {
+    return writeFile(this.root, LABELS_FILE, json({ version: 1, items }));
+  }
+
+  addLabel(name: string, color: LabelColor): Promise<Label> {
+    return this.mutate(async () => {
+      const labels = await readLabels(this.root);
+      const free = freeLabelName(labels, name);
+      const label = labelSchema.parse({ id: newLabelId(free, labels.map((l) => l.id)), name: free, color });
+      await this.writeLabels([...labels, label]);
+      return label;
+    });
+  }
+
+  /** Renomeia ou troca a cor. O id fica, então nenhum cartão muda. */
+  updateLabel(id: string, patch: { name?: string; color?: LabelColor }): Promise<void> {
+    return this.mutate(async () => {
+      const labels = await readLabels(this.root);
+      const current = labels.find((l) => l.id === id);
+      if (!current) throw new ConflictError();
+      const next = labelSchema.parse({ ...current, ...patch, ...(patch.name === undefined ? {} : { name: freeLabelName(labels, patch.name, id) }) });
+      await this.writeLabels(labels.map((l) => (l.id === id ? next : l)));
+    });
+  }
+
+  /** Tira a etiqueta do catálogo e dos cartões que a usam; o que muda é copiado antes para a lixeira. */
+  removeLabel(id: string): Promise<void> {
+    return this.mutate(async () => {
+      const labels = await readLabels(this.root);
+      if (!labels.some((l) => l.id === id)) return; // já removida fora daqui
+      const dir = await this.activitiesDir();
+      const used = (await this.load()).activities.filter((a) => a.labels?.includes(id));
+      const bin = await this.trashBin(`etiqueta-${id.slice(0, 20)}`);
+      await writeFile(bin, LABELS_FILE, (await readText(this.root, LABELS_FILE))!);
+      for (const a of used) {
+        const text = await readText(dir, `${a.id}.md`);
+        if (text === null) continue;
+        await writeFile(await makeDir(bin, 'activities'), `${a.id}.md`, text);
+        const activity = parseActivity(text);
+        await writeFile(dir, `${a.id}.md`, serializeActivity({ ...activity, labels: activity.labels?.filter((l) => l !== id) ?? [] }));
+      }
+      await this.writeLabels(labels.filter((l) => l.id !== id)); // por último: se algo falhar, dá para repetir
+    });
   }
 
   updateSystemPrompt(rev: string, text: string): Promise<SystemPrompt> {
@@ -173,7 +303,7 @@ export class ProjectStore {
       if (text.length > DESCRIPTION_MAX) throw new Error('System prompt grande demais (máximo de 100 mil caracteres).');
       if ((await readSystemPrompt(this.root)).rev !== rev) throw new ConflictError();
       const body = text.replace(/\r\n/g, '\n');
-      await writeText(this.root, SYSTEM_PROMPT_FILE, body ? body + '\n' : '');
+      await writeFile(this.root, SYSTEM_PROMPT_FILE, body ? body + '\n' : '');
       return readSystemPrompt(this.root);
     });
   }
@@ -193,7 +323,7 @@ export class ProjectStore {
         createdAt: new Date().toISOString(), description: '', extra: {},
       };
       const text = serializeActivity(activity);
-      await writeText(dir, `${activity.id}.md`, text);
+      await writeFile(dir, `${activity.id}.md`, text);
       return { ...activity, rev: await hashText(text) };
     });
   }
@@ -206,10 +336,14 @@ export class ProjectStore {
       const dir = await this.activitiesDir();
       const { activity } = await this.read(dir, id, rev);
       const next = { ...activity, ...patch };
+      // sem `order`, a data de criação dá a posição entre os irmãos: mudar a data não pode mover o cartão
+      if (patch.createdAt !== undefined && next.order === undefined) next.order = orderKey(activity);
       if (patch.title !== undefined) next.title = titleSchema.parse(patch.title);
       const text = serializeActivity(next);
-      await writeText(dir, `${id}.md`, text);
-      return { ...parseActivity(text), rev: await hashText(text) };
+      // relido antes de gravar: um valor inválido não pode estragar o arquivo
+      const saved = parseActivity(text);
+      await writeFile(dir, `${id}.md`, text);
+      return { ...saved, rev: await hashText(text) };
     });
   }
 
@@ -221,7 +355,7 @@ export class ProjectStore {
       for (const { id: target, ...patch } of planMove((await this.load()).activities, id, parent, before)) {
         const text = await readText(dir, `${target}.md`);
         if (text === null) throw new ConflictError();
-        await writeText(dir, `${target}.md`, serializeActivity({ ...parseActivity(text), ...patch }));
+        await writeFile(dir, `${target}.md`, serializeActivity({ ...parseActivity(text), ...patch }));
       }
     });
   }
@@ -234,15 +368,118 @@ export class ProjectStore {
       if (subtree.length > 1 && !includeChildren) throw new HasChildrenError(subtree.length - 1);
 
       // primeiro copia tudo para a lixeira; só então apaga, das folhas para o nó
-      const meta = await this.root.getDirectoryHandle('.plans', { create: true });
-      const trash = await meta.getDirectoryHandle('trash', { create: true });
-      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const bin = await trash.getDirectoryHandle(`${stamp}-${id.slice(0, 8)}`, { create: true });
-      for (const a of subtree) await writeText(bin, `${a.id}.md`, (await readText(dir, `${a.id}.md`)) ?? serializeActivity(a));
-      await writeText(bin, 'manifest.json', json({ removedAt: new Date().toISOString(), root: id, ids: subtree.map((a) => a.id) }));
+      const bin = await this.trashBin(id.slice(0, 8));
+      const extras: { parent: DirLike; id: string }[] = [];
+      for (const a of subtree) {
+        await writeFile(bin, `${a.id}.md`, (await readText(dir, `${a.id}.md`)) ?? serializeActivity(a));
+        for (const folder of [ATTACHMENTS_DIR, COMMENTS_DIR]) {
+          const parent = await findDir(this.root, folder);
+          const own = parent && (await findDir(parent, a.id));
+          if (!parent || !own) continue;
+          await copyDir(own, await makeDir(bin, folder, a.id));
+          extras.push({ parent, id: a.id });
+        }
+      }
+      await writeFile(bin, 'manifest.json', json({ removedAt: new Date().toISOString(), root: id, ids: subtree.map((a) => a.id) }));
       for (const a of subtree) await dir.removeEntry(`${a.id}.md`);
+      for (const extra of extras) await extra.parent.removeEntry(extra.id, { recursive: true });
       return subtree.map((a) => a.id);
     });
+  }
+
+  private async trashBin(label: string): Promise<DirLike> {
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return makeDir(this.root, '.plans', 'trash', `${stamp}-${label}`);
+  }
+
+  /** Move um arquivo para a lixeira, repetindo lá o caminho que ele tinha no projeto. */
+  private async discard(path: string[], name: string): Promise<void> {
+    const dir = await findDir(this.root, ...path);
+    if (!dir) return;
+    let file: Blob;
+    try {
+      file = await (await dir.getFileHandle(name)).getFile();
+    } catch (e) {
+      if (isNotFound(e)) return; // já removido fora daqui
+      throw e;
+    }
+    await writeFile(await makeDir(await this.trashBin(path[1]!.slice(0, 8)), ...path), name, file);
+    await dir.removeEntry(name);
+  }
+
+  private async requireActivity(id: string): Promise<void> {
+    if ((await readText(await this.activitiesDir(), `${id}.md`)) === null) throw new ConflictError();
+  }
+
+  async loadFiles(id: string): Promise<ActivityFiles> {
+    const [input, output] = await Promise.all(
+      SIDES.map(async (side) => (await listFiles(await findDir(this.root, ATTACHMENTS_DIR, id, side))).map(({ name, file }) => ({ name, size: file.size }))),
+    );
+    const comments: StoredComment[] = [];
+    for (const { name, file } of await listFiles(await findDir(this.root, COMMENTS_DIR, id))) {
+      if (!name.toLowerCase().endsWith('.md')) continue;
+      comments.push({ ...parseComment(await file.text(), new Date(file.lastModified ?? 0).toISOString()), file: name });
+    }
+    comments.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) || a.file.localeCompare(b.file));
+    return { input: input!, output: output!, comments };
+  }
+
+  /** Copia o arquivo para a pasta da atividade e devolve o nome com que ficou. */
+  addAttachment(id: string, side: Side, name: string, data: Blob): Promise<string> {
+    return this.mutate(async () => {
+      await this.requireActivity(id);
+      const dir = await makeDir(this.root, ATTACHMENTS_DIR, id, side);
+      const target = await freeName(dir, safeFileName(name));
+      try {
+        await writeFile(dir, target, data);
+      } catch (e) {
+        await dir.removeEntry(target).catch(() => {}); // não deixa um arquivo vazio para trás
+        throw e;
+      }
+      return target;
+    });
+  }
+
+  async readAttachment(id: string, side: Side, name: string): Promise<Blob> {
+    const dir = await findDir(this.root, ATTACHMENTS_DIR, id, side);
+    if (!dir) throw new ConflictError();
+    try {
+      return await (await dir.getFileHandle(name)).getFile();
+    } catch (e) {
+      if (isNotFound(e)) throw new ConflictError();
+      throw e;
+    }
+  }
+
+  /** Grava por cima de um anexo, só se ele ainda for o que foi lido; a versão anterior vai para a lixeira. */
+  saveAttachment(id: string, side: Side, name: string, previous: Blob, data: Blob): Promise<void> {
+    return this.mutate(async () => {
+      await this.requireActivity(id);
+      const current = await this.readAttachment(id, side, name);
+      if (!(await sameBytes(current, previous))) throw new ConflictError();
+      await writeFile(await makeDir(await this.trashBin(id.slice(0, 8)), ATTACHMENTS_DIR, id, side), name, current);
+      await writeFile(await makeDir(this.root, ATTACHMENTS_DIR, id, side), name, data);
+    });
+  }
+
+  removeAttachment(id: string, side: Side, name: string): Promise<void> {
+    return this.mutate(() => this.discard([ATTACHMENTS_DIR, id, side], name));
+  }
+
+  addComment(id: string, author: string | null, text: string): Promise<void> {
+    return this.mutate(async () => {
+      const body = text.trim();
+      if (!body) throw new Error('Escreva o comentário.');
+      if (body.length > COMMENT_MAX) throw new Error('Comentário grande demais (máximo de 100 mil caracteres).');
+      await this.requireActivity(id);
+      const createdAt = new Date().toISOString();
+      const name = `${createdAt.replace(/[:.]/g, '-')}-${crypto.randomUUID().slice(0, 8)}.md`;
+      await writeFile(await makeDir(this.root, COMMENTS_DIR, id), name, serializeComment({ author, createdAt, text: body }));
+    });
+  }
+
+  removeComment(id: string, file: string): Promise<void> {
+    return this.mutate(() => this.discard([COMMENTS_DIR, id], file));
   }
 
   async loadUi(): Promise<UiState> {
@@ -256,7 +493,7 @@ export class ProjectStore {
 
   async saveUi(ui: UiState): Promise<void> {
     if (this.readOnly) return;
-    await this.mutate(async () => writeText(await this.root.getDirectoryHandle('.plans', { create: true }), 'ui.json', json(ui)));
+    await this.mutate(async () => writeFile(await this.root.getDirectoryHandle('.plans', { create: true }), 'ui.json', json(ui)));
   }
 
   private runsDir() {
@@ -266,8 +503,8 @@ export class ProjectStore {
   async saveRun(record: RunRecord, log: string): Promise<void> {
     await this.mutate(async () => {
       const dir = await this.runsDir();
-      await writeText(dir, `${record.runId}.log`, log);
-      await writeText(dir, `${record.runId}.json`, json(record));
+      await writeFile(dir, `${record.runId}.log`, log);
+      await writeFile(dir, `${record.runId}.json`, json(record));
     });
   }
 

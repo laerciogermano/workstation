@@ -17,7 +17,7 @@ Apenas a descrição no formato **Como… quero… para…**. Cenários BDD: [`b
 | Persona | Papel | Histórias |
 |---------|-------|-----------|
 | **Organizador** | Registra intenções no board, acompanha progresso e opera a árvore do Explorar (criar, abrir, renomear, mover, buscar). | US-01, US-05, US-17, US-18, US-20, US-21, US-22, US-23, US-24, US-25, US-26, US-27, US-28, US-29, US-30, US-31, US-32, US-33 |
-| **Condutor de projetos** | Configura o board, planeja ordens no Gantt, decompõe hierarquias e acompanha a mesma unidade em board, tempo, árvore e arquivos. | US-01, US-04, US-05, US-06, US-08, US-09, US-10, US-15, US-16, US-17, US-18, US-19, US-20, US-21, US-22, US-23, US-24, US-25 |
+| **Condutor de projetos** | Configura o board, planeja ordens no Gantt, decompõe hierarquias e acompanha a mesma unidade em board, tempo, árvore e arquivos. | US-01, US-04, US-05, US-06, US-08, US-09, US-10, US-15, US-16, US-17, US-18, US-19, US-20, US-21, US-22, US-23, US-24, US-25, US-34 |
 | **Orquestrador** | Atribui responsáveis tipados e dispara execução de IAs no board e no Gantt. | US-02, US-07, US-11 |
 | **Modelador de fluxo** | Modela roteiros FOP no Gantt, programa tarefas máquina, compila FOP-IR e exporta TypeScript ou Python. | US-08, US-09, US-10, US-12, US-13, US-14, US-19 |
 | **Administrador do projeto** | Mantém o catálogo de pessoas, IAs e máquinas atribuíveis no projeto. | US-03 |
@@ -161,6 +161,10 @@ Como **organizador**, quero **copiar o caminho lógico do nó e revelar/destacar
 ## US-33 — Reordenar irmãos e persistir estado da árvore
 
 Como **organizador**, quero **reordenar nós irmãos na árvore e ter o estado de expansão/recolhimento persistido entre sessões**, para que **a árvore volte como eu a deixei e a ordem entre pares reflita a organização desejada**.
+
+## US-34 — Separar input e output da unidade
+
+Como **condutor de projetos**, quero **abrir a unidade em duas seções, Input (descrição e anexos) e Output (comentários e anexos), podendo abrir cada anexo com a visualização do seu tipo**, para que **eu registre a resposta ou o retorno da atividade sem alterar a descrição**.
 
 ## Próximos passos
 

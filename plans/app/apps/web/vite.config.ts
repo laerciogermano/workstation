@@ -12,7 +12,7 @@ const csp: Plugin = {
       injectTo: 'head-prepend',
       attrs: {
         'http-equiv': 'Content-Security-Policy',
-        content: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' wss:; object-src 'none'; base-uri 'none'; form-action 'none'",
+        content: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src blob:; frame-src blob:; connect-src 'self' wss: https://generativelanguage.googleapis.com https://api.anthropic.com https://api.openai.com; object-src 'none'; base-uri 'none'; form-action 'none'",
       },
     },
   ],

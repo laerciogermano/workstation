@@ -6,15 +6,19 @@ const notFound = () => Object.assign(new Error('não encontrado'), { name: 'NotF
 export class MemFile implements FileLike {
   readonly kind = 'file';
   text = '';
+  /** conteúdo gravado como Blob (anexos); `text` vale quando é null */
+  blob: Blob | null = null;
   async getFile() {
-    const text = this.text;
-    return { text: async () => text };
+    return this.blob ?? new Blob([this.text]);
   }
   async createWritable() {
-    let buf = '';
+    let buf: string | Blob = '';
     return {
-      write: async (d: string) => void (buf += d),
-      close: async () => void (this.text = buf),
+      write: async (d: string | Blob) => void (buf = typeof d === 'string' && typeof buf === 'string' ? buf + d : d),
+      close: async () => {
+        this.blob = typeof buf === 'string' ? null : buf;
+        this.text = typeof buf === 'string' ? buf : await buf.text();
+      },
       abort: async () => {},
     };
   }

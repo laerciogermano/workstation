@@ -288,6 +288,10 @@ func (a *Agent) start(in protocol.Incoming) {
 		return
 	}
 	cmd, invalid := policy.Normalize(in.Command)
+	// pedido de IA malformado é recusado antes de perguntar a alguém
+	if invalid == nil && cmd.Program == exec.PlayProgram {
+		invalid = exec.CheckPlay(cmd.Args)
+	}
 	run, ok := a.manager.Reserve(in, cmd)
 	if !ok {
 		return

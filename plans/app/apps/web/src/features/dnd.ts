@@ -7,7 +7,14 @@ type Visible = { node: TreeNode; parent: string | null };
 
 const inside = (box: Box, point: { x: number; y: number }) => point.x >= box.x && point.x <= box.x + W && point.y >= box.y - GY / 2 && point.y <= box.y + box.h + GY / 2;
 
-export function dropTarget(pos: Map<string, Box>, order: Visible[], point: { x: number; y: number }, moving: Set<string>): Drop | null {
+/** `siblingsOf` dá todos os irmãos quando a tela mostra só parte deles (filtro): “depois de” é logo depois. */
+export function dropTarget(
+  pos: Map<string, Box>,
+  order: Visible[],
+  point: { x: number; y: number },
+  moving: Set<string>,
+  siblingsOf = (parent: string | null) => order.filter((o) => o.parent === parent).map((o) => o.node.activity.id),
+): Drop | null {
   // em cima da raiz do projeto: vai para o primeiro nível, no fim
   const root = pos.get(ROOT);
   if (root && inside(root, point)) return { kind: 'child', over: ROOT, parent: null, before: null };
@@ -20,7 +27,7 @@ export function dropTarget(pos: Map<string, Box>, order: Visible[], point: { x: 
     const where = (point.y - box.y) / box.h;
     if (where < 0.25) return { kind: 'before', over: id, parent, before: id };
     if (where <= 0.75) return { kind: 'child', over: id, parent: id, before: null };
-    const siblings = order.filter((o) => o.parent === parent).map((o) => o.node.activity.id);
+    const siblings = siblingsOf(parent);
     const next = siblings.slice(siblings.indexOf(id) + 1).find((s) => !moving.has(s));
     return { kind: 'after', over: id, parent, before: next ?? null };
   }

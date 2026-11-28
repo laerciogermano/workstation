@@ -17,6 +17,11 @@ export const STATUSES = ['todo', 'doing', 'done'] as const;
 export type Status = (typeof STATUSES)[number];
 export const STATUS_LABEL: Record<Status, string> = { todo: 'To do', doing: 'Doing', done: 'Done' };
 
+/** Escala de prioridade: quanto maior, mais urgente. */
+export const PRIORITIES = [1, 2, 3, 4, 5] as const;
+export type Priority = (typeof PRIORITIES)[number];
+export const PRIORITY_LABEL: Record<Priority, string> = { 1: 'Muito baixa', 2: 'Baixa', 3: 'Média', 4: 'Alta', 5: 'Urgente' };
+
 const headerSchema = z.looseObject({
   id: z.uuid(),
   title: z.string().min(1).max(TITLE_MAX),
@@ -25,6 +30,12 @@ const headerSchema = z.looseObject({
   createdAt: z.string().min(1),
   /** ausente = todo */
   status: z.enum(STATUSES).optional(),
+  /** ausente = sem prioridade */
+  priority: z.literal(PRIORITIES).optional(),
+  /** dia combinado para a entrega (AAAA-MM-DD, sem hora nem fuso); ausente = sem data */
+  dueDate: z.iso.date('Use uma data no formato AAAA-MM-DD').optional(),
+  /** ids das etiquetas de labels.json; ausente = nenhuma */
+  labels: z.array(z.string().min(1).max(64)).optional(),
   /** posição entre os irmãos; ausente = ordem de criação */
   order: z.number().finite().optional(),
 });
@@ -36,6 +47,9 @@ export type Activity = {
   assignee: string | null;
   createdAt: string;
   status?: Status;
+  priority?: Priority;
+  dueDate?: string;
+  labels?: string[];
   order?: number;
   description: string;
   /** chaves do cabeçalho que não conhecemos: preservadas na regravação */
@@ -57,15 +71,15 @@ export function parseActivity(text: string): Activity {
   if (!header.success) {
     throw new Error(header.error.issues.map((i) => `${i.path.join('.') || 'cabeçalho'}: ${i.message}`).join('; '));
   }
-  const { id, title, parent, assignee, createdAt, status, order, ...extra } = header.data;
+  const { id, title, parent, assignee, createdAt, status, priority, dueDate, labels, order, ...extra } = header.data;
   const description = m[2]!.replace(/\r\n/g, '\n').replace(/\n$/, '');
-  return { id, title, parent, assignee, createdAt, ...(status === undefined ? {} : { status }), ...(order === undefined ? {} : { order }), description, extra };
+  return { id, title, parent, assignee, createdAt, ...(status === undefined ? {} : { status }), ...(priority === undefined ? {} : { priority }), ...(dueDate === undefined ? {} : { dueDate }), ...(labels?.length ? { labels } : {}), ...(order === undefined ? {} : { order }), description, extra };
 }
 
 export function serializeActivity(a: Activity): string {
-  const { id, title, parent, assignee, createdAt, status, order, description, extra } = a;
+  const { id, title, parent, assignee, createdAt, status, priority, dueDate, labels, order, description, extra } = a;
   const header = toYaml(
-    { id, title, parent, assignee, ...(status === undefined ? {} : { status }), createdAt, ...(order === undefined ? {} : { order }), ...extra },
+    { id, title, parent, assignee, ...(status === undefined ? {} : { status }), ...(priority === undefined ? {} : { priority }), ...(dueDate === undefined ? {} : { dueDate }), ...(labels?.length ? { labels } : {}), createdAt, ...(order === undefined ? {} : { order }), ...extra },
     { schema: 'core', lineWidth: 0 },
   );
   const body = description.replace(/\r\n/g, '\n');
@@ -90,6 +104,7 @@ export const assigneesSchema = z.object({ version: z.literal(1), items: z.array(
 export const DEFAULT_ASSIGNEES: Assignee[] = [
   { id: 'eu', name: 'Eu', type: 'person' },
   { id: 'claude', name: 'Claude', type: 'ai' },
+  { id: 'gemini', name: 'Gemini', type: 'ai' },
   { id: 'terminal', name: 'Terminal', type: 'machine' },
 ];
 

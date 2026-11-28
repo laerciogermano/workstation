@@ -94,13 +94,16 @@ Plans
 - **Identidade:** UUID, título, vocabulário da visão de origem (card / tarefa / atividade / arquivo).
 - **Campos:** título (obrigatório), contexto (opcional).
 - **Responsável tipado:** pessoa, IA ou máquina (ou nenhum) — só itens do catálogo.
-- **Saídas / artefatos** ligados à unidade (quando existirem).
+- **Input:** descrição e anexos.
+- **Output:** comentários e anexos; saídas / artefatos ligados à unidade — US-34.
+- **Visualização de anexo:** janela própria, conforme o tipo, com opção de baixar.
 - **Ciclo de vida:** ativa, arquivada; ações excluir / arquivar / desarquivar.
 
 ### Ações
 
 - Editar título e contexto.
 - Atribuir, trocar ou remover responsável — US-02.
+- Anexar, abrir, baixar e remover anexos; comentar e remover comentários — US-34.
 - Abrir na visão pedida (Board, Gantt, Árvore, Explorar).
 - Excluir (global) ou arquivar / desarquivar — US-01.
 
@@ -213,7 +216,7 @@ Componente transversal de **navegação entre tipos de visão**, na **área de c
 
 ### Detalhe da unidade
 
-Painel/drawer compartilhado (TELA-02) a partir de Board, Gantt e Árvore — US-01, US-02. O Explorar **não** tem detalhe de arquivo.
+Painel/drawer compartilhado (TELA-02) a partir de Board, Gantt e Árvore — US-01, US-02, US-34. O Explorar **não** tem detalhe de arquivo.
 
 ### Explorar (painel transversal · Planos + Estados)
 

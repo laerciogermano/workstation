@@ -12,6 +12,11 @@
       "type": "ai"
     },
     {
+      "id": "gemini",
+      "name": "Gemini",
+      "type": "ai"
+    },
+    {
       "id": "terminal",
       "name": "Terminal",
       "type": "machine"

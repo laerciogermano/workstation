@@ -45,6 +45,10 @@
 - Exibir UUID, título e o vocabulário correspondente à visão de origem.
 - Editar título e contexto.
 - Atribuir, trocar ou remover responsável.
+- Separar o conteúdo em **Input** (descrição e anexos) e **Output** (comentários e anexos).
+- Anexar, listar, abrir com visualização por tipo, baixar e remover anexos.
+- Mostrar a miniatura de cada anexo na lista, quando o tipo permite.
+- Comentar no Output sem alterar a descrição.
 - Exibir artefatos ou saídas ligados à unidade.
 - Exibir o estado do ciclo de vida.
 - Executar excluir, arquivar, desarquivar e abrir em outra visão.
@@ -149,6 +153,7 @@
 - Trocar ou remover o responsável.
 - Não herdar automaticamente o responsável do pai.
 - Exibir entradas, saídas e artefatos vinculados quando existirem.
+- Mostrar as seções Input e Output, cada uma com seus anexos.
 - Arquivar e desarquivar a unidade.
 - Excluir a unidade globalmente.
 - Abrir a unidade em Board, Gantt, Árvore, Estados, Metas ou Explorar.

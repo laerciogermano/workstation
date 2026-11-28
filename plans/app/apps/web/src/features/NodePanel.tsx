@@ -10,6 +10,7 @@ import { DateField } from './DateField.tsx';
 import { Comments } from './Comments.tsx';
 import { Description } from './Description.tsx';
 import { LabelPicker } from './Labels.tsx';
+import { CopyMdButton } from './CopyMdButton.tsx';
 import { PlayButton } from './PlayButton.tsx';
 import { DESCRIPTION_TEXT } from './markdownText.ts';
 import { PriorityScale } from './Priority.tsx';
@@ -56,6 +57,7 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
     <section className="node-panel" aria-label="Atividade selecionada">
       <header>
         <h2>{node.title}</h2>
+        <CopyMdButton activity={node} description={draft.draft} wide />
         <PlayButton activity={node} app={app} wide />
         <button type="button" className="btn ghost danger" onClick={() => void askRemove(node.id)} disabled={app.readOnly}>Remover</button>
         <button type="button" className="btn pri" aria-label="Fechar atividade" title="Fechar (Esc)" onClick={closeCard}>Fechar</button>

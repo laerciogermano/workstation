@@ -8,6 +8,7 @@ import { FilterBar } from './FilterBar.tsx';
 import { filterTree, isFiltering, matches, NO_FILTERS } from './filters.ts';
 import { edge, GY, layout, NEW, ROOT, W, type Box } from './layout.ts';
 import { cardHeight, useFontMetrics } from './measure.ts';
+import { CopyMdButton } from './CopyMdButton.tsx';
 import { PlayButton } from './PlayButton.tsx';
 import { fit, reveal, STEP, zoomAt, type View } from './viewport.ts';
 import { Icon } from '../ui/Icon.tsx';
@@ -445,10 +446,15 @@ export function Tree({ app }: { app: State }) {
                     {collapsed.has(a.id) ? hiddenByStatus(node).map((g) => <span key={g.status} className={`status-${g.status}`}>{g.count}</span>) : <Icon name="minus" size={13} />}
                   </button>
                 )}
-                {!app.readOnly && renaming !== a.id && (
+                {renaming !== a.id && (
                   <span className="tools">
-                    <button type="button" tabIndex={-1} aria-label={`Nova atividade filha de ${a.title}`} title="Nova atividade filha" onClick={(e) => (e.stopPropagation(), startCreate(a.id))}><Icon name="plus" size={14} /></button>
-                    <button type="button" tabIndex={-1} aria-label={`Remover ${a.title}`} title="Remover" onClick={(e) => (e.stopPropagation(), void askRemove(a.id))}><Icon name="x" size={14} /></button>
+                    <CopyMdButton activity={a} tabIndex={-1} />
+                    {!app.readOnly && (
+                      <>
+                        <button type="button" tabIndex={-1} aria-label={`Nova atividade filha de ${a.title}`} title="Nova atividade filha" onClick={(e) => (e.stopPropagation(), startCreate(a.id))}><Icon name="plus" size={14} /></button>
+                        <button type="button" tabIndex={-1} aria-label={`Remover ${a.title}`} title="Remover" onClick={(e) => (e.stopPropagation(), void askRemove(a.id))}><Icon name="x" size={14} /></button>
+                      </>
+                    )}
                   </span>
                 )}
               </div>

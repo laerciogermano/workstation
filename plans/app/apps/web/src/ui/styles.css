@@ -129,9 +129,10 @@ button.state:disabled { cursor: default; }
 .column h3 { display: flex; align-items: center; padding: 11px 12px 9px; color: var(--state); }
 .column.status-todo h3 { color: var(--ink); }
 .column ul { flex: 1; list-style: none; margin: 0; padding: 2px 8px 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
-.card { flex: none; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border-radius: 9px; background: var(--card, var(--paper)); box-shadow: var(--shadow); cursor: pointer; user-select: none; }
+.card { position: relative; flex: none; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border-radius: 9px; background: var(--card, var(--paper)); box-shadow: var(--shadow); cursor: pointer; user-select: none; }
 .card:hover { background: color-mix(in srgb, var(--ink) 4%, var(--card, var(--paper))); }
 .card.sel { box-shadow: 0 0 0 2px var(--accent); }
+.card:hover .tools { display: flex; }
 .card small { color: var(--muted); font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .card .open { padding: 0; border: 0; background: none; text-align: left; font-weight: 600; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 
@@ -194,7 +195,8 @@ textarea { resize: vertical; }
 .io.over { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); box-shadow: inset 0 0 0 2px var(--accent); }
 .io h3 { font-size: 14px; }
 .io .md-read, .io .w-md-editor { background: var(--paper); }
-.btn.attach { display: inline-flex; align-items: center; gap: 6px; }
+.btn.attach, .btn.copy-md { display: inline-flex; align-items: center; gap: 6px; }
+.btn.copy-md .icon { margin: 0; }
 .files, .comments { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .files li { display: flex; align-items: center; gap: 2px; padding-right: 4px; border-radius: 8px; background: var(--paper); }
 .file { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; padding: 6px 8px; border: 0; border-radius: 8px; background: none; text-align: left; }

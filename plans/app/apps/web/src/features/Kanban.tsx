@@ -7,6 +7,7 @@ import { DueChip } from './DueDate.tsx';
 import { FilterBar } from './FilterBar.tsx';
 import { matches } from './filters.ts';
 import { LabelChips } from './Labels.tsx';
+import { CopyMdButton } from './CopyMdButton.tsx';
 import { PlayButton } from './PlayButton.tsx';
 import { PriorityChip } from './Priority.tsx';
 
@@ -65,6 +66,9 @@ export function Kanban({ app }: { app: State }) {
                     onDragEnd={() => setOver(null)}
                     onClick={() => openCard(a.id)}
                   >
+                    <span className="tools">
+                      <CopyMdButton activity={a} tabIndex={-1} />
+                    </span>
                     {path.length > 0 && <small title={path.join(' › ')}>{path.join(' › ')}</small>}
                     <button type="button" className="open" aria-pressed={app.selected === a.id}>{a.title}</button>
                     <LabelChips ids={a.labels} catalog={app.snapshot.labels} />

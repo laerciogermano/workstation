@@ -2,6 +2,7 @@
 
 | Arquivo | Uso |
 |---------|-----|
+| [`insumos-identidade-final.md`](insumos-identidade-final.md) | **Insumos para fechar a IV** — visão + linhagens A/B + timeline dos kits + decisões estáveis + forks abertos (activity reunir insumos) |
 | [`identidade-oficial/`](identidade-oficial/README.md) | **Identidade oficial** — logo do `logo-letreiro-v2` (lockup equilibrado) em preto, branco, roxo e rosa; regras de cor, paleta, tipografia, usos e aplicações; 16 páginas |
 | [`identidade-oficial-v2/`](identidade-oficial-v2/README.md) | **Identidade oficial v2** — cópia da oficial com o arco do símbolo mais grosso (9 → 11,5) para combinar com o Gabarito 800; o resto igual |
 | [`uso-da-marca/`](uso-da-marca/README.md) | **Manual de uso da marca** — a partir da oficial v2: quatro temas (preto, branco, roxo, rosa) com a cor de título, apoio, destaque e botão em cada superfície; posts, stories, landing, app, e-mail, anúncios e impressos; 30 páginas + tokens |

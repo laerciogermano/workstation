@@ -122,6 +122,37 @@ button.state:disabled { cursor: default; }
 input:not([type="checkbox"]), select, textarea { border: 1px solid var(--line-2); border-radius: 7px; padding: 7px 9px; background: var(--paper); min-width: 0; }
 textarea { resize: vertical; }
 .status { font-size: 12px; color: var(--muted); min-height: 17px; margin-top: -8px; }
+
+/* descrição em Markdown: o editor segue as cores do tema */
+.md-head { display: flex; align-items: center; gap: 8px; }
+.md-head > span { flex: 1; font-size: 12px; font-weight: 600; color: var(--muted); }
+.md-tabs { display: flex; gap: 2px; padding: 2px; background: var(--wash); border-radius: 8px; width: fit-content; }
+.md-tabs button { height: 26px; padding: 0 10px; border: 0; border-radius: 6px; background: none; color: var(--body); font-size: 12px; font-weight: 600; }
+.md-tabs button[aria-checked="true"] { background: var(--paper); color: var(--ink); box-shadow: var(--shadow); }
+.md-tabs button:disabled { opacity: .45; cursor: default; }
+.md-wide { width: 30px; height: 30px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 7px; background: none; color: var(--body); }
+.md-wide:hover { background: var(--wash); color: var(--ink); }
+.md, .md .wmde-markdown, .md .wmde-markdown-var {
+  --color-canvas-default: var(--paper); --color-canvas-subtle: var(--wash); --color-fg-default: var(--ink); --color-fg-muted: var(--muted);
+  --color-border-default: var(--line-2); --color-border-muted: var(--line); --color-accent-fg: var(--accent-2); --color-neutral-muted: var(--wash);
+  --md-editor-background-color: var(--paper); --md-editor-box-shadow-color: var(--line-2); --md-editor-font-family: var(--mono);
+}
+.md .w-md-editor { border-radius: 8px; box-shadow: 0 0 0 1px var(--line-2); color: var(--ink); }
+.md .w-md-editor:focus-within { box-shadow: 0 0 0 1px var(--accent); }
+.md .w-md-editor-toolbar { background: var(--paper); border-bottom-color: var(--line); flex-wrap: wrap; }
+.md .w-md-editor-text-pre, .md .w-md-editor-text-input, .md .w-md-editor-text { font-family: var(--mono) !important; font-size: 12.5px !important; line-height: 1.6 !important; }
+.md .w-md-editor-text-input { color: var(--ink) !important; -webkit-text-fill-color: var(--ink) !important; }
+.md .w-md-editor-text-pre { visibility: hidden; }
+.md .wmde-markdown { background: transparent; font-family: var(--font); font-size: 13.5px; line-height: 1.6; overflow-wrap: anywhere; }
+.md .wmde-markdown h1 { font-size: 1.35em; } .md .wmde-markdown h2 { font-size: 1.2em; } .md .wmde-markdown h3 { font-size: 1.05em; }
+.md .wmde-markdown ul { list-style: disc; } .md .wmde-markdown ol { list-style: decimal; }
+.md .wmde-markdown .contains-task-list { list-style: none; padding-left: 1.6em; }
+.md-read { box-shadow: 0 0 0 1px var(--line); border-radius: 8px; padding: 12px 14px; }
+.md-h { display: block; font-size: 11px; font-weight: 700; line-height: 12px; }
+.md-local { text-decoration: underline dotted; color: var(--body); cursor: help; }
+.md-loading { padding: 12px 0; }
+.dialog.wide { width: min(1100px, calc(100% - 32px)); max-height: calc(100% - 32px); }
+.md-big .md-read { height: 62vh; overflow: auto; }
 .note { background: var(--wash); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; font-size: 13px; }
 .note.warn { background: color-mix(in srgb, var(--warn) 14%, var(--paper)); color: var(--warn); }
 

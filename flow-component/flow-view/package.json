@@ -1,0 +1,36 @@
+{
+  "name": "@flow/view",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Flow View — desenha um fluxo (Flow Oriented Programming) a partir de uma árvore. Só leitura, sem dependências.",
+  "author": "Laércio Germano",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fonts.css": "./dist/fonts.css"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "build": "esbuild src/index.ts --bundle --format=esm --minify --outfile=dist/flow-view.js && esbuild src/fonts.css --bundle --minify --loader:.woff2=file --loader:.woff=file --asset-names=fonts/[name] --outfile=dist/fonts.css",
+    "demo": "npm run build && node scripts/serve.mjs",
+    "test:browser": "npm run build && node test/browser.mjs",
+    "verify": "npm run typecheck && npm test && npm run test:browser"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@types/node": "^22.20.7",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.65.1",
+    "typescript": "~6.0.2",
+    "vitest": "^5.1.2"
+  }
+}

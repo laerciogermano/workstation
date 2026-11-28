@@ -21,7 +21,7 @@ T-40, T-41.
 | F01 | Criar nó | Cria uma atividade raiz ou filha direto no nó, com título obrigatório |
 | F02 | Remover nó | Remove o nó e a subárvore, com confirmação quando houver filhos |
 | F03 | Atribuir responsável | Define, troca ou tira o responsável do nó |
-| F04 | Atribuir descrição | Escreve ou altera a descrição do nó (o campo contexto da atividade); é opcional |
+| F04 | Atribuir descrição | Escreve a descrição do nó em Markdown, com leitura formatada, edição, modo dividido e tela cheia; é opcional |
 | F05 | Zoom e pan | Aproxima e afasta a árvore, ajusta à tela e move arrastando o fundo |
 | F06 | Minimizar ramos | Esconde e mostra os filhos de um nó ou de todos de uma vez, com a contagem do que está oculto |
 | F07 | Renomear nó | Dois cliques no título (ou F2) editam o nome no próprio cartão |

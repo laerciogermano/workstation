@@ -8,6 +8,10 @@
 
 **POCs de visualização Flow:** [`pocs/`](pocs/README.md) (Plans → Flow IDE → Language editor → mountFlowView → flow-novo)
 
+**Flow View (só leitura, a partir de uma árvore):** [`flow-view/`](flow-view/README.md)
+
+**Flow Editor (criar e alterar fluxos sobre o Flow View):** [`flow-editor/`](flow-editor/README.md)
+
 **FOP (flow-novo) público:** https://fop.laerciogermano.com/ · deploy: [`deploy/README.md`](deploy/README.md)
 
 ## Relação

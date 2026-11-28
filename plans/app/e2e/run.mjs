@@ -86,7 +86,7 @@ try {
 
   await node('Definir orçamento').click();
   await page.getByLabel('Responsável').selectOption('claude');
-  await page.getByLabel('Descrição').fill('Até R$ 3.000\nsegunda linha');
+  await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha');
   await page.getByLabel('Comando', { exact: true }).focus();
   await page.getByText('Salvo no arquivo').waitFor();
   await until(async () => { const x = await fileOf('Definir orçamento'); return x.text.includes('assignee: claude') && x.text.endsWith('---\nAté R$ 3.000\nsegunda linha\n'); }, 'arquivo com responsável e descrição');
@@ -100,18 +100,21 @@ try {
   await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).waitFor();
   await until(async () => (await fileOf('Definir orçamento')).text.includes('status: done'), 'status gravado pelo cartão');
   await until(async () => (await marcado('Done')) === 'true', 'painel acompanha o cartão');
-  await page.getByLabel('Descrição').fill('Até R$ 3.000\nsegunda linha\nterceira');
+  await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha\nterceira');
   await page.getByRole('button', { name: 'Status de Definir orçamento: Done' }).click();
   await until(async () => { const x = (await fileOf('Definir orçamento')).text; return x.includes('status: todo') && x.endsWith('terceira\n'); }, 'mudar o status com texto em edição salva os dois');
   assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
-  await page.getByLabel('Descrição').fill('Até R$ 3.000\nsegunda linha');
+  await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha');
   await page.getByRole('radio', { name: 'Doing' }).click();
   await until(async () => { const x = (await fileOf('Definir orçamento')).text; return x.includes('status: doing') && x.endsWith('segunda linha\n'); }, 'volta');
   step('status To do, Doing e Done pelo painel e pelo cartão');
 
   await page.reload();
   await node('Definir orçamento').waitFor();
-  assert.equal(await page.getByLabel('Descrição').inputValue(), 'Até R$ 3.000\nsegunda linha');
+  const leitura = page.getByRole('document', { name: 'Descrição formatada' });
+  await leitura.getByText('segunda linha').waitFor();
+  await page.getByRole('radio', { name: 'Editar' }).click();
+  assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'Até R$ 3.000\nsegunda linha');
   assert.equal(await page.getByLabel('Responsável').inputValue(), 'claude');
   assert.equal(await page.getByRole('radio', { name: 'Doing' }).getAttribute('aria-checked'), 'true');
   step('tudo volta dos arquivos depois de recarregar');
@@ -283,14 +286,14 @@ try {
   await page.mouse.move(vazio[0] - 60, vazio[1] + 20, { steps: 4 });
   await page.mouse.up();
   assert.equal(await selected.count(), 1, 'arrastar o fundo mantém a seleção');
-  await page.getByLabel('Descrição').fill('escrita antes de clicar fora');
+  await page.getByLabel('Descrição', { exact: true }).fill('escrita antes de clicar fora');
   await page.mouse.click(...vazio);
   assert.equal(await selected.count(), 0);
   await page.getByText('Selecione uma atividade').waitFor();
   await until(async () => (await fileOf('Comprar celular')).text.includes('escrita antes de clicar fora'), 'a descrição é salva ao clicar fora');
   await node('Comprar celular').click();
   assert.equal(await selected.count(), 1);
-  assert.equal(await page.getByLabel('Descrição').inputValue(), 'escrita antes de clicar fora');
+  assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'escrita antes de clicar fora');
   await page.getByRole('button', { name: 'Ajustar à tela' }).click();
   await page.getByRole('button', { name: /^Zoom \d+%/ }).click();
   assert.equal(await selected.count(), 1, 'usar os controles não tira a seleção');
@@ -437,7 +440,7 @@ try {
   // confere num cartão não selecionado: o anel de seleção é desenhado com box-shadow
   assert.notEqual(await node('Um').evaluate((el) => getComputedStyle(el).boxShadow), 'none', 'cartão com sombra');
   const estreita = await largura();
-  await page.getByLabel('Descrição').fill('guardada ao minimizar');
+  await page.getByLabel('Descrição', { exact: true }).fill('guardada ao minimizar');
   await page.getByRole('button', { name: 'Minimizar painel' }).click();
   assert.equal(await comandos.isVisible(), false);
   assert.ok((await largura()) - estreita > 430, 'a árvore ocupa o lugar do painel');
@@ -472,6 +475,64 @@ try {
   await page.getByRole('button', { name: 'Tema Papel' }).click();
   assert.equal(await css('body', 'backgroundColor'), 'rgb(255, 255, 255)');
   step('bolinhas de tema no topo; o preto fica salvo no arquivo');
+
+  // ----- descrição em Markdown -----
+  await node('Dois').click();
+  const campo = page.getByLabel('Descrição', { exact: true });
+  const modo = (nome) => page.getByRole('radio', { name: nome, exact: true }).first();
+  const doc = page.getByRole('document', { name: 'Descrição formatada' });
+  await modo('Editar').click();
+  const fonte = ['## Passos', '', '- [x] cotar', '- [ ] comprar', '', '| item | preço |', '|---|---|', '| fone | 500 |', '',
+    'Veja o [site](https://exemplo.com) e o [arquivo](../docs/x.md).', '', '![foto](https://exemplo.com/f.png)', '',
+    '<img src=x onerror="window.invadido=1"><script>window.invadido=2</script>', '', '[ruim](javascript:window.invadido=3)'].join('\n');
+  await campo.fill(fonte);
+  await modo('Ler').click();
+  await doc.getByRole('heading', { name: 'Passos' }).waitFor();
+  assert.equal(await page.locator('.md-read').count(), 1, 'uma caixa de leitura só');
+  assert.equal(await doc.getByRole('checkbox').count(), 2);
+  assert.equal(await doc.getByRole('cell', { name: '500' }).count(), 1);
+  const site = doc.getByRole('link', { name: 'site' });
+  assert.equal(await site.getAttribute('target'), '_blank');
+  assert.equal(await site.getAttribute('rel'), 'noopener noreferrer');
+  assert.equal(await doc.getByRole('link', { name: 'arquivo' }).count(), 0, 'link relativo não sai do app');
+  assert.equal(await doc.locator('img, script').count(), 0, 'sem HTML nem imagem de fora');
+  assert.equal(await doc.locator('a[href^="javascript"]').count(), 0);
+  assert.equal(await page.evaluate(() => window.invadido), undefined);
+  await until(async () => (await fileOf('Dois')).text.endsWith(fonte + '\n'), 'o Markdown vai para o arquivo como foi escrito');
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).descriptionMode === 'read', 'modo lembrado');
+  await page.screenshot({ path: path.join(root, 'test-results-md-ler.png') });
+  step('descrição lida como README, sem HTML, imagens de fora nem links que saem do app');
+
+  await doc.dblclick();
+  await campo.waitFor();
+  await campo.fill('negrito aqui');
+  await campo.selectText();
+  await page.getByRole('button', { name: 'Negrito' }).click();
+  await until(async () => (await campo.inputValue()) === '**negrito aqui**', 'barra de ferramentas');
+  await page.getByLabel('Comando', { exact: true }).focus();
+  await until(async () => (await fileOf('Dois')).text.endsWith('**negrito aqui**\n'), 'salvo ao sair do editor');
+  assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
+  await campo.fill('salvo pelo atalho');
+  await campo.press('Meta+s');
+  await until(async () => (await fileOf('Dois')).text.endsWith('salvo pelo atalho\n'), 'atalho salva');
+  await modo('Dividido').click();
+  await campo.fill('# Ao vivo');
+  await page.locator('.side .wmde-markdown').getByRole('heading', { name: 'Ao vivo' }).waitFor();
+  step('editar com barra de ferramentas, salvar e ver ao vivo no modo dividido');
+
+  await page.getByRole('button', { name: 'Abrir descrição em tela cheia' }).click();
+  const janela = page.getByRole('dialog');
+  await janela.getByLabel('Descrição', { exact: true }).fill('# Em tela cheia\n\ntexto longo');
+  await janela.getByRole('heading', { name: 'Em tela cheia' }).last().waitFor();
+  await page.screenshot({ path: path.join(root, 'test-results-md-cheia.png') });
+  await janela.getByRole('button', { name: 'Fechar', exact: true }).click();
+  await until(async () => (await fileOf('Dois')).text.endsWith('texto longo\n'), 'salvo ao fechar a janela');
+  await page.getByRole('button', { name: 'Tema Preto' }).click();
+  assert.equal(await page.locator('.md').getAttribute('data-color-mode'), 'dark');
+  await modo('Ler').click();
+  await page.screenshot({ path: path.join(root, 'test-results-md-preto.png') });
+  await page.getByRole('button', { name: 'Tema Papel' }).click();
+  step('tela cheia e tema escuro');
 
   assert.deepEqual(errors, []);
   console.log('\nTudo passou.');

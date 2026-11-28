@@ -1,6 +1,6 @@
 // Estado da tela em memória (useSyncExternalStore). A verdade está sempre nos arquivos.
 import { useSyncExternalStore } from 'react';
-import { buildTree, type Status, type TreeNode } from '@plans/domain';
+import { buildTree, type Status, type TreeNode, type UiState } from '@plans/domain';
 import { decodePairingCode, encodePairingCode, newSecret, type Command } from '@plans/protocol';
 import { createHubLink, type HubLink, type LinkState } from '../connection/hub.ts';
 import { askPermission, demoFolder, demoName, hasPermission, kv, pickFolder, supportsFolders } from '../folder/handles.ts';
@@ -26,6 +26,7 @@ export type State = {
   theme: ThemeId;
   /** painel lateral (atividade e comandos) aberto */
   panel: boolean;
+  descriptionMode: UiState['descriptionMode'];
   /** nó sendo criado: pai ou 'root' */
   creating: string | null;
   removing: { id: string; count: number } | null;
@@ -38,7 +39,7 @@ export type State = {
 
 const empty: Snapshot = { activities: [], assignees: [], problems: [] };
 let state: State = {
-  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true,
+  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true, descriptionMode: 'read',
   creating: null, removing: null, runs: [], link: { state: 'unpaired' }, pairing: null, pairingOpen: false, error: null,
 };
 const listeners = new Set<() => void>();
@@ -112,7 +113,7 @@ async function openFolder(h: FileSystemDirectoryHandle) {
   // projeto sem tema salvo mantém o que já está na tela
   const theme = isTheme(ui.theme) ? ui.theme : state.theme;
   applyTheme(theme);
-  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, error: null });
+  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, descriptionMode: ui.descriptionMode, error: null });
   await refresh();
   await runner.reload();
   watch(h, found.project.id);
@@ -210,7 +211,12 @@ async function changed() {
   channel?.postMessage('changed');
 }
 
-const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel }).catch(fail);
+const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel, descriptionMode: state.descriptionMode }).catch(fail);
+
+export function setDescriptionMode(descriptionMode: UiState['descriptionMode']) {
+  set({ descriptionMode });
+  saveUi();
+}
 
 export function togglePanel() {
   set({ panel: !state.panel });

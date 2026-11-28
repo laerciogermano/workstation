@@ -2,7 +2,9 @@
 import { STATUS_LABEL, STATUSES } from '@plans/domain';
 import { useEffect, useRef, useState } from 'react';
 import type { Patch, StoredActivity } from '../folder/project.ts';
-import { askRemove, updateNode, type State } from '../store/app.ts';
+import { askRemove, setDescriptionMode, updateNode, type State } from '../store/app.ts';
+import { isDark } from '../ui/themes.ts';
+import { Description } from './Description.tsx';
 
 type Status = 'idle' | 'saving' | 'saved' | 'conflict';
 
@@ -14,8 +16,15 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
   const live = useRef({ draft, rev: node.rev });
   live.current.draft = draft;
 
+  /** texto que estamos gravando agora: quando ele volta do arquivo, não é conflito */
+  const writing = useRef<string | null>(null);
+
   useEffect(() => {
     if (node.rev === base.current.rev) return;
+    if (node.description === writing.current) {
+      base.current = { rev: node.rev, description: node.description };
+      return;
+    }
     const dirty = live.current.draft !== base.current.description;
     if (!dirty || live.current.draft === node.description) {
       base.current = { rev: node.rev, description: node.description };
@@ -31,13 +40,20 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
       const description = live.current.draft;
       if (!patch && description === base.current.description) return;
       setStatus('saving');
+      if (!patch) writing.current = description;
       const result = await updateNode(node.id, base.current.rev, patch ?? { description });
+      writing.current = null;
       if (result === 'conflict') return setStatus('conflict');
       if (!result) return setStatus('idle');
       base.current = { rev: result, description: patch ? base.current.description : description };
       setStatus('saved');
     });
   };
+
+  // o painel pode sumir com texto por salvar (outra atividade selecionada pelo teclado, por exemplo)
+  const flush = useRef(() => {});
+  flush.current = () => status !== 'conflict' && !app.readOnly && save();
+  useEffect(() => () => flush.current(), []);
 
   const reload = () => {
     base.current = { rev: node.rev, description: node.description };
@@ -72,23 +88,20 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
           ))}
         </select>
       </label>
-      <label className="field">
-        <span>Descrição</span>
-        <textarea
-          rows={6}
-          maxLength={100_000}
-          value={draft}
-          readOnly={app.readOnly}
-          placeholder="Contexto para quem vai executar"
-          onChange={(e) => (setDraft(e.target.value), setStatus((s) => (s === 'conflict' ? s : 'idle')))}
-          onBlur={() => status !== 'conflict' && save()}
-          onKeyDown={(e) => (e.metaKey || e.ctrlKey) && e.key === 'Enter' && save()}
-        />
-      </label>
+      <Description
+        title={node.title}
+        value={draft}
+        preferred={app.descriptionMode}
+        readOnly={app.readOnly}
+        dark={isDark(app.theme)}
+        onChange={(v) => (setDraft(v), setStatus((s) => (s === 'conflict' ? s : 'idle')))}
+        onSave={() => flush.current()}
+        onMode={setDescriptionMode}
+      />
       <p className="status" role="status">
         {status === 'saving' && 'Salvando…'}
         {status === 'saved' && 'Salvo no arquivo'}
-        {status === 'idle' && draft !== base.current.description && 'Alterações salvam ao sair do campo'}
+        {status === 'idle' && draft !== base.current.description && 'Salva ao sair do editor ou com ⌘S'}
       </p>
       {status === 'conflict' && (
         <div className="note warn" role="alert">

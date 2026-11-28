@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow View — demonstração</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../dist/fonts.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #050505; color: #e8e8e8; font: 13px/1.4 "IBM Plex Sans", system-ui, sans-serif; }
+  body { display: flex; flex-direction: column; }
+  body.light { background: #fff; color: #1d1f24; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #8883; align-items: center; }
+  nav a { color: inherit; text-decoration: none; padding: 5px 10px; border-radius: 99px; background: #8882; }
+  nav a[aria-current] { background: #f07167; color: #fff; font-weight: 600; }
+  nav span { margin-left: auto; opacity: .65; font-variant-numeric: tabular-nums; }
+  nav b { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; opacity: .55; margin-right: 2px; }
+  nav i { flex-basis: 100%; height: 0; }
+  main { flex: 1; min-height: 0; }
+</style>
+</head>
+<body>
+<!-- os botões são só da demonstração: a biblioteca não tem interação além da rolagem -->
+<nav aria-label="Exemplos"></nav>
+<main id="host"></main>
+<script type="module">
+  import { mountFlow } from '../dist/flow-view.js';
+  import { REAL } from './real.js';
+  import { largeFlow, SAMPLES } from './samples.js';
+
+  const query = new URLSearchParams(location.search);
+  const current = query.get('ex') ?? 'sequencial';
+  const theme = query.get('tema') === 'claro' ? 'light' : 'dark';
+  document.body.classList.toggle('light', theme === 'light');
+
+  const nav = document.querySelector('nav');
+  const link = (label, params, active) => {
+    const a = Object.assign(document.createElement('a'), { textContent: label, href: '?' + new URLSearchParams(params) });
+    if (active) a.setAttribute('aria-current', 'page');
+    nav.append(a);
+  };
+  const keep = theme === 'light' ? { tema: 'claro' } : {};
+  const group = (label, list) => {
+    nav.append(Object.assign(document.createElement('b'), { textContent: label }));
+    for (const [key, s] of Object.entries(list)) link(s.title, { ex: key, ...keep }, key === current);
+    nav.append(document.createElement('i'));
+  };
+  group('Casos reais', REAL);
+  group('Conceitos', SAMPLES);
+  link('Grande (20 mil funções)', { ex: 'grande', ...keep }, current === 'grande');
+  link(theme === 'light' ? 'Tema escuro' : 'Tema claro', { ex: current, ...(theme === 'light' ? {} : { tema: 'claro' }) });
+
+  const tree = current === 'grande' ? largeFlow(Number(query.get('n') ?? 20000)) : (SAMPLES[current] ?? REAL[current] ?? SAMPLES.sequencial).tree;
+  const began = performance.now();
+  window.view = mountFlow(document.getElementById('host'), tree, { theme });
+  window.mountedIn = performance.now() - began;
+  nav.append(Object.assign(document.createElement('span'), {
+    textContent: `${window.view.layout.rows.length.toLocaleString('pt-BR')} linhas · ${window.view.layout.steps.toLocaleString('pt-BR')} ${window.view.layout.steps === 1 ? 'passo' : 'passos'} · montado em ${Math.round(window.mountedIn)} ms`,
+  }));
+</script>
+</body>
+</html>

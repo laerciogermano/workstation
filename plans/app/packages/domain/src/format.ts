@@ -42,8 +42,15 @@ export type Activity = {
   extra: Record<string, unknown>;
 };
 
+/** Instruções padrão do projeto, na raiz da pasta. */
+export const SYSTEM_PROMPT_FILE = 'system-prompt.md';
+/** Abre todo arquivo de atividade: quem lê só o cartão sabe onde estão as instruções. */
+export const SYSTEM_PROMPT_REF = `SYSTEM PROMPT\n/${SYSTEM_PROMPT_FILE}\n\n`;
+/** A referência é opcional na leitura (arquivos antigos ou escritos à mão). */
+const REF_BLOCK = /^SYSTEM PROMPT[ \t]*\r?\n[^\r\n]+\r?\n(?:[ \t]*\r?\n)*/;
+
 export function parseActivity(text: string): Activity {
-  const m = text.replace(/^\uFEFF/, '').match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)$/);
+  const m = text.replace(/^\uFEFF/, '').replace(REF_BLOCK, '').match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)$/);
   if (!m) throw new Error('Cabeçalho entre "---" não encontrado.');
   // schema "core": só tipos básicos (datas continuam texto, sem tipos personalizados)
   const header = headerSchema.safeParse(parseYaml(m[1]!, { schema: 'core' }));
@@ -62,7 +69,7 @@ export function serializeActivity(a: Activity): string {
     { schema: 'core', lineWidth: 0 },
   );
   const body = description.replace(/\r\n/g, '\n');
-  return `---\n${header}---\n${body ? body + '\n' : ''}`;
+  return `${SYSTEM_PROMPT_REF}---\n${header}---\n${body ? body + '\n' : ''}`;
 }
 
 export const projectSchema = z.looseObject({

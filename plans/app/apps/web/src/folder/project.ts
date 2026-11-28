@@ -1,7 +1,7 @@
 // Leitura e gravação do projeto na pasta. É o único lugar que toca nos arquivos do Plans.
 import {
   assigneesSchema, DEFAULT_ASSIGNEES, DESCRIPTION_MAX, parseActivity, projectSchema, runRecordSchema, SCHEMA_VERSION,
-  planMove, serializeActivity, subtreeLeavesFirst, titleSchema, uiSchema,
+  planMove, serializeActivity, SYSTEM_PROMPT_FILE, subtreeLeavesFirst, titleSchema, uiSchema,
   type Activity, type Assignee, type Project, type RunRecord, type Status, type UiState,
 } from '@plans/domain';
 import type { DirLike } from './types.ts';
@@ -12,8 +12,6 @@ export type Patch = { title?: string; assignee?: string | null; description?: st
 /** Instruções padrão de todas as atividades. Sem arquivo, o texto é vazio. */
 export type SystemPrompt = { text: string; rev: string };
 export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; systemPrompt: SystemPrompt; problems: Problem[] };
-
-const SYSTEM_PROMPT_FILE = 'system-prompt.md';
 
 export class ConflictError extends Error {
   constructor() {
@@ -108,6 +106,8 @@ export async function initFolder(root: DirLike): Promise<Project> {
   if ((await readText(root, 'assignees.json')) === null) {
     await writeText(root, 'assignees.json', json({ version: 1, items: DEFAULT_ASSIGNEES }));
   }
+  // vazio até a pessoa escrever: a referência de cada atividade já aponta para um arquivo que existe
+  if ((await readText(root, SYSTEM_PROMPT_FILE)) === null) await writeText(root, SYSTEM_PROMPT_FILE, '');
   await writeText(meta, 'project.json', json(project)); // por último: marca a pasta como projeto
   return project;
 }

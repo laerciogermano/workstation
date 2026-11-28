@@ -109,6 +109,7 @@ describe('system prompt', () => {
     expect((await root.getFileHandle('system-prompt.md')).text).toBe('# Regras\n\nResponda em português.\n');
     expect((await store.load()).systemPrompt).toEqual(saved);
     expect((await store.load()).activities[0]!.rev).toBe(a.rev);
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${a.id}.md`)).text).toMatch(/^SYSTEM PROMPT\n\/system-prompt\.md\n\n---\n/);
     expect((await store.updateSystemPrompt(saved.rev, '')).text).toBe('');
   });
 

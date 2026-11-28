@@ -1,3 +1,6 @@
+SYSTEM PROMPT
+/system-prompt.md
+
 ---
 id: bdc9caff-7d7c-42fd-8bd1-cdc4db8a6964
 title: jobscan...

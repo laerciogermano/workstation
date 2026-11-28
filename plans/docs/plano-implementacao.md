@@ -143,6 +143,9 @@ meu-projeto/
 ### 5.3 Formatos
 
 ```markdown
+SYSTEM PROMPT
+/system-prompt.md
+
 ---
 id: 7c1f0c9e-4b7a-4a1e-9a41-2f6c0d1b8e22
 title: Comprar celular
@@ -155,7 +158,7 @@ order: 1500            # só depois de arrastado; sem ele vale a ordem de criaç
 Até R$ 3.000, câmera boa, 256 GB.
 ```
 
-O corpo é a descrição (F04). Chaves desconhecidas são preservadas. Gravação em UTF-8 com fim de linha `LF`; leitura aceita `CRLF`.
+Todo arquivo abre com a referência ao system prompt do projeto (a leitura aceita sem ela). O corpo é a descrição (F04). Chaves desconhecidas são preservadas. Gravação em UTF-8 com fim de linha `LF`; leitura aceita `CRLF`.
 
 ```json
 { "version": 1, "items": [{ "id": "ana", "name": "Ana Silva", "type": "person" }] }

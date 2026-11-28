@@ -607,6 +607,9 @@ try {
   await page.reload();
   await promptLido.getByText('Seja breve.').waitFor();
   assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
+  for (const f of await fsRead('activities')) {
+    assert.ok((await fsRead('activities/' + f)).startsWith('SYSTEM PROMPT\n/system-prompt.md\n\n---\n'), f);
+  }
   step('system prompt configurado no root, lido e editado em cada atividade');
 
   assert.deepEqual(errors, []);

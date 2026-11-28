@@ -289,6 +289,7 @@
 
 - Definir instruções padrão em Markdown, válidas para todas as unidades do projeto.
 - Mostrar essas instruções como referência no detalhe de cada unidade.
+- Abrir o arquivo de cada unidade com a referência ao system prompt.
 - Ler e editar no detalhe ou nas configurações, como a descrição; a alteração vale para todas.
 
 ### Catálogo de responsáveis

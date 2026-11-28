@@ -1,3 +1,6 @@
+SYSTEM PROMPT
+/system-prompt.md
+
 ---
 id: b53ac6a6-ad7b-49ca-bfd9-16e35772ecdb
 title: venda de conteudo exclusivos

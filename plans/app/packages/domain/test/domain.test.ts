@@ -21,6 +21,15 @@ describe('formato', () => {
     expect(() => parseActivity('texto solto')).toThrow();
     expect(() => parseActivity('---\nid: x\n---\n')).toThrow(/id/);
   });
+  it('abre o arquivo com a referência ao system prompt e lê com ou sem ela', () => {
+    const a = { ...act(1), description: 'SYSTEM PROMPT\n/outro.md' };
+    const text = serializeActivity(a);
+    expect(text.startsWith('SYSTEM PROMPT\n/system-prompt.md\n\n---\nid: ')).toBe(true);
+    expect(parseActivity(text)).toEqual(a);
+    expect(parseActivity(text.replace(/\n/g, '\r\n'))).toEqual(a);
+    expect(parseActivity(text.slice(text.indexOf('---')))).toEqual(a);
+    expect(serializeActivity(parseActivity(text))).toBe(text);
+  });
   it('valida o título', () => {
     expect(titleSchema.parse('  ok ')).toBe('ok');
     expect(titleSchema.safeParse('   ').success).toBe(false);

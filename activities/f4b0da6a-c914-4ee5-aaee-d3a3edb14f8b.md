@@ -1,3 +1,6 @@
+SYSTEM PROMPT
+/system-prompt.md
+
 ---
 id: f4b0da6a-c914-4ee5-aaee-d3a3edb14f8b
 title: Ajustar imagens

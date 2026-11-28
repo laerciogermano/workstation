@@ -1,3 +1,6 @@
+SYSTEM PROMPT
+/system-prompt.md
+
 ---
 id: 8dfcfcea-db23-4c4f-aebd-cfa16ea3e48d
 title: ziprecruiter

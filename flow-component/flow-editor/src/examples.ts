@@ -160,7 +160,10 @@ export const EXAMPLES: ExampleGroup[] = [
     examples: [
       ex('fileMesmo', 'Duas funções no mesmo arquivo', ['Várias funções podem dividir o mesmo arquivo.'], () => f('main', { source: by('file', 'app'), ...kids(f('util')) })),
       ex('fileOutro', 'Arquivos diferentes', ['Arquivos distintos são endereços distintos. Arquivo não é camada.'], () => main([f('pagar', { source: by('file', 'pagamento') })])),
-      ex('fileObjeto', 'Arquivo como objeto', ['O arquivo é uma caixa com endereço físico.'], () => main([f('lerArquivo', { out: [d('pedidos')] }), f('salvarArquivo', { in: [d('pedidos')] })])),
+      ex('fileObjeto', 'Arquivo como objeto', ['O arquivo é uma caixa com endereço físico.', 'Ele guarda dados e funções.'], () => {
+        const file = { kind: 'file', name: 'pedidos', asObject: true } as const;
+        return main([f('lerArquivo', { source: { ...file }, out: [d('pedidos')] }), f('salvarArquivo', { source: { ...file }, in: [d('pedidos')] })]);
+      }),
       ex('publica', 'Pública', ['Função pública pode ser acessada fora do arquivo (export).'], () => main([], { visibility: 'public' })),
       ex('privada', 'Privada', ['Função privada existe só dentro do arquivo ou da caixa.'], () => main([f('interna', { visibility: 'private' })])),
     ],
@@ -170,9 +173,9 @@ export const EXAMPLES: ExampleGroup[] = [
     examples: [
       ex('solidSrp', 'Responsabilidade única', ['Cada função cuida de uma só coisa; “pedido” apenas compõe.'], () => main([f('pedido', kids(f('validar'), f('cobrar'), f('enviar')))])),
       ex('solidDip', 'Depender do abstrato', ['O fluxo depende do abstrato, não de quem o implementa.'], () => main([f('cobrar', { source: null })])),
-      ex('padFactory', 'Factory', ['Factory cria e devolve um objeto já montado.'], () => main([f('criarCliente', { out: [num('id', 1), text('nome', 'Ana')] })])),
+      ex('padFactory', 'Factory', ['Factory cria e devolve um objeto já montado.'], () => main([f('criarCliente', { pattern: 'factory', out: [num('id', 1), text('nome', 'Ana')] })])),
       ex('padSingleton', 'Singleton', ['Instância única e compartilhada: os dois leem o mesmo “config”.'],
-        () => main([f('carregar', { out: [obj('config', text('tema', 'escuro'))] }), f('usarA', { in: [d('config')] }), f('usarB', { in: [d('config')], parallel: true })])),
+        () => main([f('carregar', { pattern: 'singleton', out: [obj('config', text('tema', 'escuro'))] }), f('usarA', { in: [d('config')] }), f('usarB', { in: [d('config')], parallel: true })])),
       ex('oopFlow', 'Instanciar (OOP)', ['Instanciar uma classe corresponde a um objeto responsável; cada método é um passo.'], () => main([f('adicionar', { source: by('object', 'carrinho') })])),
     ],
   },

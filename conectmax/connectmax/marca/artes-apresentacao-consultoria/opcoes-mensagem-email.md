@@ -1,6 +1,6 @@
 # Opções de e-mail de prospecção — ConectTech
 
-Escolham uma. O HTML [`email-apresentacao-conect-tech.html`](email-apresentacao-conect-tech.html) está hoje com a opção **A**.
+Escolham uma. O HTML [`email-apresentacao-conect-tech.html`](email-apresentacao-conect-tech.html) ainda usa uma variação anterior da opção **B**.
 
 Todas terminam com a mesma assinatura e rodapé:
 

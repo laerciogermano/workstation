@@ -6,7 +6,11 @@ export type SourceKind = 'file' | 'person' | 'ai' | 'machine' | 'object';
 export interface Source {
   kind: SourceKind;
   name: string;
+  /** Só em `file`: o arquivo como objeto. */
+  asObject?: boolean;
 }
+
+export type Pattern = 'factory' | 'singleton';
 
 /**
  * Tipos de dado do Flow. `abstract` é o dado ainda sem valor; `object` é a caixa chaveada,
@@ -37,6 +41,7 @@ export interface FnNode {
   source?: Source | null;
   parallel?: boolean;
   visibility?: 'public' | 'private';
+  pattern?: Pattern;
   children: FlowNode[];
 }
 
@@ -69,6 +74,8 @@ export function block(type: BlockType, props: Partial<Omit<BlockNode, 'type'>> =
 export const BLOCK_TYPES: readonly BlockType[] = ['if', 'else', 'switch', 'case', 'for', 'while', 'do-while', 'try', 'catch'];
 export const DATA_TYPES: readonly DataType[] = ['abstract', 'text', 'number', 'boolean', 'null', 'function', 'object', 'list'];
 export const SOURCE_KINDS: readonly SourceKind[] = ['file', 'person', 'ai', 'machine', 'object'];
+
+export const PATTERNS: readonly Pattern[] = ['factory', 'singleton'];
 
 export const hasFields = (type: DataType) => type === 'object' || type === 'list';
 

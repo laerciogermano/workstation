@@ -2,6 +2,7 @@
 
 | Arquivo | Uso |
 |---------|-----|
+| [`identidade-final/`](identidade-final/README.md) | **IDENTIDADE FINAL 1.0** — referência de marca atual: visão (três apps, capa discreta) + Estrela macia com verde close e letras redondas; manual 22 páginas, BRAND.md, tokens e SVGs |
 | [`insumos-identidade-final.md`](insumos-identidade-final.md) | **Insumos para fechar a IV** — visão + linhagens A/B + timeline dos kits + decisões estáveis + forks abertos (activity reunir insumos) |
 | [`identidade-oficial/`](identidade-oficial/README.md) | **Identidade oficial** — logo do `logo-letreiro-v2` (lockup equilibrado) em preto, branco, roxo e rosa; regras de cor, paleta, tipografia, usos e aplicações; 16 páginas |
 | [`identidade-oficial-v2/`](identidade-oficial-v2/README.md) | **Identidade oficial v2** — cópia da oficial com o arco do símbolo mais grosso (9 → 11,5) para combinar com o Gabarito 800; o resto igual |

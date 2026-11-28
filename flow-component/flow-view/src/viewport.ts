@@ -1,30 +1,33 @@
-// Contas de zoom e deslocamento. `x` e `y` são o canto da janela no desenho; `zoom` é a ampliação.
+// Contas de zoom e deslocamento, como no editor FOP. `x` e `y` são o ponto do desenho no canto da janela (podem ser
+// negativos: o desenho anda livre); `zoom` é a ampliação.
 export interface Camera { x: number; y: number; zoom: number }
 export interface Size { width: number; height: number }
 
-export const MIN_ZOOM = 0.1;
-export const MAX_ZOOM = 3;
-export const ZOOM_STEP = 1.25;
-/** Abaixo disto o texto não é legível: o desenho mostra só barras, blocos e guias. */
+export const MIN_ZOOM = 0.2;
+export const MAX_ZOOM = 2.5;
+export const ZOOM_STEP = 1.15;
+/** Num fluxo grande, abaixo disto o desenho mostra só barras, blocos e marcas (o texto já não se lê). */
 export const DETAIL_ZOOM = 0.4;
+/** Folga em volta do desenho ajustado à tela. */
+const GAP = 8;
+/** Em tela estreita o ajuste não encolhe até ficar ilegível: arrasta-se o desenho. */
+const NARROW = 640, NARROW_MIN = 0.55;
 
-const limit = (v: number, max: number) => Math.min(Math.max(0, v), Math.max(0, max));
+/** Ampliação válida, em passos de 1%. */
+export const limitZoom = (zoom: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(zoom * 100) / 100));
 
-/** Não deixa a janela sair do desenho. */
-export function clampCamera(c: Camera, content: Size, screen: Size): Camera {
-  const zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, c.zoom));
-  return { zoom, x: limit(c.x, content.width - screen.width / zoom), y: limit(c.y, content.height - screen.height / zoom) };
+/** Amplia mantendo parado o ponto da tela (sx, sy). */
+export function zoomAt(c: Camera, zoom: number, sx: number, sy: number): Camera {
+  const next = limitZoom(zoom);
+  return { zoom: next, x: c.x + sx / c.zoom - sx / next, y: c.y + sy / c.zoom - sy / next };
 }
 
-/** Amplia mantendo parado o ponto da tela (sx, sy), até onde o desenho permitir. */
-export function zoomAt(c: Camera, zoom: number, sx: number, sy: number, content: Size, screen: Size): Camera {
-  const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
-  return clampCamera({ zoom: next, x: c.x + sx / c.zoom - sx / next, y: c.y + sy / c.zoom - sy / next }, content, screen);
-}
-
-/** Desenho inteiro à vista, sem passar de 100%. Em fluxos enormes para no zoom mínimo, a partir do começo. */
+/** Desenho inteiro à vista, sem passar de 100%: centralizado na largura e encostado no topo. */
 export function fitCamera(content: Size, screen: Size): Camera {
-  return clampCamera({ x: 0, y: 0, zoom: Math.min(1, screen.width / content.width, screen.height / content.height) }, content, screen);
+  const floor = screen.width < NARROW ? NARROW_MIN : MIN_ZOOM;
+  const zoom = limitZoom(Math.max(floor, Math.min(1, (screen.width - GAP * 2) / content.width, (screen.height - GAP * 2) / content.height)));
+  const left = Math.max(GAP, (screen.width - content.width * zoom) / 2);
+  return { zoom, x: -left / zoom, y: -GAP / zoom };
 }
 
 export const cameraWindow = (c: Camera, screen: Size) => ({ x: c.x, y: c.y, width: screen.width / c.zoom, height: screen.height / c.zoom });

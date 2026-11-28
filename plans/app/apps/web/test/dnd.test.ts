@@ -1,7 +1,7 @@
 import { buildTree, type Activity } from '@plans/domain';
 import { describe, expect, it } from 'vitest';
 import { dropTarget, edgeSpeed } from '../src/features/dnd.ts';
-import { layout } from '../src/features/layout.ts';
+import { layout, ROOT } from '../src/features/layout.ts';
 
 const act = (id: string, parent: string | null, n: number): Activity => ({ id, title: id, parent, assignee: null, createdAt: new Date(n * 1000).toISOString(), description: '', extra: {} });
 const tree = buildTree([act('r', null, 1), act('a', 'r', 2), act('b', 'r', 3), act('c', 'r', 4), act('a1', 'a', 5)]);
@@ -18,6 +18,9 @@ describe('arrastar e soltar', () => {
     expect(at('a', 0.9, ['b'])).toEqual({ kind: 'after', over: 'a', parent: 'r', before: 'c' });
     expect(at('c', 0.9, ['a'])).toMatchObject({ before: null });
     expect(at('r', 0.1, ['b'])).toMatchObject({ parent: null, before: 'r' });
+  });
+  it('em cima da raiz do projeto, vai para o primeiro nível', () => {
+    expect(at(ROOT, 0.5, ['a1'])).toEqual({ kind: 'child', over: ROOT, parent: null, before: null });
   });
   it('não aceita o próprio cartão, descendentes nem o vazio', () => {
     expect(at('a', 0.5, ['a', 'a1'])).toBeNull();

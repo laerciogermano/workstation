@@ -1,6 +1,7 @@
 // Ícones de traço (desenhos do Lucide, licença ISC). O nome acessível fica no botão.
 const PATHS = {
   plus: 'M5 12h14M12 5v14',
+  settings: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4',
   minus: 'M5 12h14',
   x: 'M18 6 6 18M6 6l12 12',
   fit: 'M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2',

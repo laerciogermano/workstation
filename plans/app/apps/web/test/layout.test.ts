@@ -1,6 +1,6 @@
 import { buildTree, type Activity } from '@plans/domain';
 import { describe, expect, it } from 'vitest';
-import { layout, NEW } from '../src/features/layout.ts';
+import { layout, NEW, ROOT } from '../src/features/layout.ts';
 
 const act = (id: string, parent: string | null, n: number): Activity => ({ id, title: id, parent, assignee: null, createdAt: String(n).padStart(4, '0'), description: '', extra: {} });
 
@@ -33,5 +33,17 @@ describe('posição dos cartões', () => {
     const mid = (id: string) => pos.get(id)!.y + pos.get(id)!.h / 2;
     expect(mid('p')).toBe((mid('a') + mid('b')) / 2);
     expect(pos.has(NEW)).toBe(false);
+  });
+
+  it('põe a raiz do projeto no topo, antes das atividades sem pai', () => {
+    const tree = buildTree([act('a', null, 0), act('b', null, 1)]);
+    const { pos } = layout(tree, null, new Set(), () => 56);
+    expect(pos.get(ROOT)!.x).toBeLessThan(pos.get('a')!.x);
+    expect(pos.get(ROOT)!.y).toBe(pos.get('a')!.y);
+    // criando na raiz, o campo novo é mais um filho dela
+    const next = layout(tree, 'root', new Set(), () => 56).pos;
+    expect(next.get(NEW)!.x).toBe(next.get('a')!.x);
+    expect(next.get(NEW)!.y).toBeGreaterThan(next.get('b')!.y);
+    expect(layout([], null, new Set(), () => 56).pos.has(ROOT)).toBe(false);
   });
 });

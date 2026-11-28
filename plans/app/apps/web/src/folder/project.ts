@@ -9,7 +9,11 @@ import type { DirLike } from './types.ts';
 export type StoredActivity = Activity & { rev: string };
 export type Problem = { file: string; message: string };
 export type Patch = { title?: string; assignee?: string | null; description?: string; status?: Status };
-export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; problems: Problem[] };
+/** Instruções padrão de todas as atividades. Sem arquivo, o texto é vazio. */
+export type SystemPrompt = { text: string; rev: string };
+export type Snapshot = { activities: StoredActivity[]; assignees: Assignee[]; systemPrompt: SystemPrompt; problems: Problem[] };
+
+const SYSTEM_PROMPT_FILE = 'system-prompt.md';
 
 export class ConflictError extends Error {
   constructor() {
@@ -50,6 +54,11 @@ async function writeText(dir: DirLike, name: string, text: string): Promise<void
     await w.abort().catch(() => {});
     throw e;
   }
+}
+
+async function readSystemPrompt(root: DirLike): Promise<SystemPrompt> {
+  const raw = (await readText(root, SYSTEM_PROMPT_FILE)) ?? '';
+  return { text: raw.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\n$/, ''), rev: await hashText(raw) };
 }
 
 const json = (v: unknown) => JSON.stringify(v, null, 2) + '\n';
@@ -156,7 +165,17 @@ export class ProjectStore {
       }
     }
     problems.sort((a, b) => a.file.localeCompare(b.file));
-    return { activities, assignees, problems };
+    return { activities, assignees, systemPrompt: await readSystemPrompt(this.root), problems };
+  }
+
+  updateSystemPrompt(rev: string, text: string): Promise<SystemPrompt> {
+    return this.mutate(async () => {
+      if (text.length > DESCRIPTION_MAX) throw new Error('System prompt grande demais (máximo de 100 mil caracteres).');
+      if ((await readSystemPrompt(this.root)).rev !== rev) throw new ConflictError();
+      const body = text.replace(/\r\n/g, '\n');
+      await writeText(this.root, SYSTEM_PROMPT_FILE, body ? body + '\n' : '');
+      return readSystemPrompt(this.root);
+    });
   }
 
   private async read(dir: DirLike, id: string, rev: string): Promise<{ activity: Activity; text: string }> {

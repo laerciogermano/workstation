@@ -1,12 +1,12 @@
 // JSON ↔ modelo. A leitura aceita o que vier de fora, confere tudo e completa o que falta.
-import { BLOCK_TYPES, DATA_TYPES, newId, SOURCE_KINDS } from './model.ts';
-import type { BlockType, Datum, DataType, FlowNode, FnNode, SourceKind } from './model.ts';
+import { BLOCK_TYPES, DATA_TYPES, newId, PATTERNS, SOURCE_KINDS } from './model.ts';
+import type { BlockType, Datum, DataType, FlowNode, FnNode, Pattern, SourceKind } from './model.ts';
 import { checkData, EditError } from './ops.ts';
 
 const MAX_DEPTH = 100;
 
 /** As chaves saem sempre na mesma ordem, venha o nó de onde vier. */
-const ORDER = ['id', 'type', 'name', 'value', 'expr', 'item', 'kind', 'source', 'visibility', 'parallel', 'in', 'out', 'data', 'fields', 'children'];
+const ORDER = ['id', 'type', 'name', 'value', 'expr', 'item', 'kind', 'asObject', 'source', 'visibility', 'pattern', 'parallel', 'in', 'out', 'data', 'fields', 'children'];
 const ordered = (_key: string, value: unknown) =>
   value && typeof value === 'object' && !Array.isArray(value)
     ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => ORDER.indexOf(a) - ORDER.indexOf(b)))
@@ -76,8 +76,10 @@ export function fromJson(text: string): FnNode {
       const s = object(o.source, `${path}.source`);
       if (!SOURCE_KINDS.includes(s.kind as SourceKind)) fail('responsável desconhecido', path);
       result.source = { kind: s.kind as SourceKind, name: text_(s.name) || fail('responsável sem nome', path) };
+      if (s.asObject === true && s.kind === 'file') result.source.asObject = true;
     }
     if (o.visibility === 'public' || o.visibility === 'private') result.visibility = o.visibility;
+    if (PATTERNS.includes(o.pattern as Pattern)) result.pattern = o.pattern as Pattern;
     return result;
   };
 

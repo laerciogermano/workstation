@@ -1,4 +1,5 @@
 // O HTML do painel de edição: só texto, a partir do estado. Os eventos são tratados em ui.ts.
+import type { Problem } from './check.ts';
 import { DATA_TYPES, find, hasFields, isFn, names, SOURCE_KINDS } from './model.ts';
 import type { BlockNode, DataSide, Datum, FlowNode, FnNode } from './model.ts';
 import { unitAt, type Command, type InsertKind, type Where } from './ops.ts';
@@ -28,7 +29,10 @@ export interface PanelContext {
   where: Where;
   prefix: string;
   why: (command: Command) => string | null;
+  problems: Problem[];
 }
+
+export const LEVEL_NAMES = { error: 'Erro', warning: 'Atenção', tip: 'Dica' } as const;
 
 function valueField(d: Datum, attrs: string, functions: string): string {
   if (d.type === 'abstract' || d.type === 'null' || hasFields(d.type)) return '';
@@ -80,8 +84,11 @@ function properties(node: FlowNode, parent: FlowNode | null, index: number, ctx:
       <label>Nome ${input(`${attrs('name')} list="${ctx.prefix}-functions"`, node.name)}</label>
       <label>Responsável ${select(attrs('source'), [['inherit', 'herdado (arquivo de cima)'], ...SOURCE_KINDS.map((k): [string, string] => [k, SOURCE_NAMES[k]!]), ['abstract', 'abstrato (camada)']], source)}</label>
       ${node.source ? `<label>Nome do responsável ${input(attrs('sourceName'), node.source.name)}</label>` : ''}
+      ${node.source?.kind === 'file' ? `<label class="check"><input type="checkbox" ${attrs('asObject')}${node.source.asObject ? ' checked' : ''}> Arquivo como objeto (caixa no estado)</label>` : ''}
       <label>Visibilidade ${select(attrs('visibility'), [['', 'padrão'], ['public', 'pública (export)'], ['private', 'privada']], node.visibility ?? '')}</label>
-      ${parallel}`);
+      <label>Padrão ${select(attrs('pattern'), [['', 'nenhum'], ['factory', 'factory (cria o objeto)'], ['singleton', 'singleton (instância única)']], node.pattern ?? '')}</label>
+      ${parallel}
+      ${notes(node.id, ctx.problems)}`);
   }
   const known = names(ctx.tree);
   const variable = variableOf(node);
@@ -91,7 +98,18 @@ function properties(node: FlowNode, parent: FlowNode | null, index: number, ctx:
     ${node.type === 'for' ? `<label>Item ${input(attrs('item'), node.item ?? '')}</label>` : ''}
     ${label ? `<label>${label} ${input(`${attrs('expr')} list="${ctx.prefix}-data"`, node.expr ?? '')}</label>` : '<p class="hint">Este bloco não tem condição.</p>'}
     ${declared ? '' : `<div class="warn"><span><code>${e(variable!)}</code> ainda não está no estado.</span> ${button(`data-act="declare" data-target="${e(node.id)}"`, 'Declarar')}</div>`}
+    ${notes(node.id, declared ? ctx.problems : ctx.problems.filter((p) => !p.message.startsWith(`"${variable}" não está`)))}
     ${parallel}`);
+}
+
+/** Os problemas de um nó, logo abaixo dos campos. */
+const notes = (id: string, problems: Problem[]) =>
+  problems.filter((p) => p.id === id).map((p) => `<p class="note ${p.level}"><b>${LEVEL_NAMES[p.level]}:</b> ${e(p.message)}</p>`).join('');
+
+/** Todos os problemas do fluxo; clicar leva ao nó. */
+export function renderProblems(tree: FnNode, problems: Problem[]): string {
+  if (!problems.length) return '<p class="hint">Nenhum problema nas condições.</p>';
+  return problems.map((p) => button(`data-act="select" data-target="${e(p.id)}" class="problem ${p.level}"`, `<b>${LEVEL_NAMES[p.level]}</b><code>${e(titleOf(find(tree, p.id)!.node))}</code><span>${e(p.message)}</span>`)).join('');
 }
 
 function insertion(node: FlowNode, parent: FlowNode | null, ctx: PanelContext): string {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { largeFlow, SAMPLES } from '../example/samples.js';
 import { layoutFlow, metrics, renderSvg, type FlowNode } from '../src/index.ts';
-import { availableAt, clip, HEAD, ROW, STEP } from '../src/render.ts';
+import { availableAt, CARD_HEAD, clip, HEAD, ROW, STEP, stateItems } from '../src/render.ts';
 
 const draw = (tree: FlowNode, options = {}) => renderSvg(layoutFlow(tree), { id: 't', ...options });
 const count = (svg: string, tag: string) => svg.split(`<${tag}`).length - 1;
@@ -10,7 +10,7 @@ const texts = (svg: string) => [...svg.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].
 describe('desenho', () => {
   it('mostra cabeçalho, passos, funções, dados e estado', () => {
     const found = texts(draw(SAMPLES.estado.tree as FlowNode));
-    for (const t of ['SOURCE', 'FUNÇÃO', 's0', 's3', 'main', 'receber', 'cobrar', 'enviar', 'pedido', 'pagamento', 'envio']) expect(found).toContain(t);
+    for (const t of ['SOURCE', 'FUNCTION', 's0', 's3', 'main', 'receber', 'cobrar', 'enviar', 'pedido', 'pagamento', 'envio']) expect(found).toContain(t);
     expect(found).not.toContain('s4');
   });
   it('ao lado do objeto vai só o nome; os campos ficam recuados abaixo dele no estado', () => {
@@ -25,7 +25,7 @@ describe('desenho', () => {
   it('barra preenchida para sólida e contorno para abstrata', () => {
     const svg = draw(SAMPLES.abstrata.tree as FlowNode);
     expect(svg).toMatch(/<rect class="fn-o"[^>]*rx="11"/);
-    expect(texts(svg)).toContain('abstrato');
+    expect(texts(svg)).toContain('abstract');
     expect(texts(svg)).toContain('nome = &quot;Ana&quot;');
   });
   it('blocos têm faixa, rótulo e marca na cor do tipo', () => {
@@ -48,10 +48,32 @@ describe('desenho', () => {
   });
   it('corta textos longos com reticências, mantendo o nome completo na dica', () => {
     expect(clip('abcdefghij', 33)).toBe('abcd…');
-    const long = 'umNomeDeFuncaoMuitoMuitoLongo';
+    const long = `umNomeDeFuncao${'Muito'.repeat(20)}Longo`;
     const svg = draw({ name: 'main', children: [{ name: long }] });
     expect(svg).toContain(`<title>${long}</title>`);
     expect(texts(svg).some((t) => t!.startsWith('umNome') && t!.endsWith('…'))).toBe(true);
+  });
+  it('o passo cresce para o nome caber inteiro na barra', () => {
+    const long = 'umNomeDeFuncaoMuitoMuitoLongo';
+    const layout = layoutFlow({ name: 'main', children: [{ name: long }] });
+    expect(metrics(layout).step).toBeGreaterThan(STEP);
+    expect(texts(renderSvg(layout)).filter((t) => t === long)).toHaveLength(2); // na tabela e na barra
+    expect(metrics(layout, { names: 'outside' }).step).toBeLessThan(STEP);
+  });
+  it('por padrão o estado só tem dados; as funções entram com stateFunctions', () => {
+    const tree = SAMPLES.estado.tree as FlowNode;
+    const count = (o = {}) => texts(draw(tree, o)).filter((t) => t === 'receber').length;
+    expect(count({ stateFunctions: true })).toBeGreaterThan(count());
+  });
+  it('no estado "new" cada dado aparece só no passo em que chega', () => {
+    const tree = SAMPLES.estado.tree as FlowNode;
+    const count = (states: 'all' | 'new') => texts(draw(tree, { states })).filter((t) => t === 'pedido').length;
+    expect(count('new')).toBeLessThan(count('all'));
+  });
+  it('o cartão mostra o arquivo e a função no topo', () => {
+    const layout = layoutFlow(SAMPLES.estado.tree as FlowNode);
+    expect(metrics(layout, { card: true }).height).toBe(metrics(layout).height + CARD_HEAD);
+    expect(renderSvg(layout, { card: true })).toContain('class="card-title"');
   });
   it('tema claro troca as cores', () => {
     expect(draw({ name: 'm' }, { theme: 'light' })).toContain('var(--flow-bg,#ffffff)');
@@ -75,22 +97,32 @@ describe('desempenho: só o que está à vista', () => {
     expect(elements(renderSvg(layout, { view: view(0, 0) }))).toBeLessThan(elements(renderSvg(small, { view: view(0, 0) })) * 1.5);
   });
 
-  it('mostra as linhas e os passos da posição rolada, com cabeçalho e nomes fixos', () => {
+  it('mostra o trecho rolado; a tabela e o cabeçalho andam junto, nada fica fixo', () => {
     const row = layout.rows[10_000]!;
     const y = row.index * ROW - 300;
-    const x = row.start * STEP - 200;
+    const x = m.left + m.lead + row.start * m.step - 200;
     const found = texts(renderSvg(layout, { view: view(x, y) }));
     expect(found).toContain(row.name);
-    expect(found).toContain(`s${row.start}`);
-    expect(found).toContain('SOURCE');
     expect(found).not.toContain('passo0');
+    // longe do começo, o cabeçalho e as colunas ficaram para trás
+    const svg = renderSvg(layout, { view: view(x, y) });
+    const at = (label: string) => [...svg.matchAll(new RegExp(`<text x="(-?[\\d.]+)" y="(-?[\\d.]+)"[^>]*>${label}</text>`, 'g'))].map((m) => [Number(m[1]), Number(m[2])]);
+    expect(at('SOURCE')[0]![1]).toBeLessThan(0);
+    const top = renderSvg(layout, { view: view(0, 0) });
+    const moved = renderSvg(layout, { view: view(100, 40) });
+    for (const label of ['SOURCE', 'FUNCTION', 's0']) {
+      const from = new RegExp(`<text x="(-?[\\d.]+)" y="(-?[\\d.]+)"[^>]*>${label}</text>`).exec(top)!;
+      const to = new RegExp(`<text x="(-?[\\d.]+)" y="(-?[\\d.]+)"[^>]*>${label}</text>`).exec(moved)!;
+      expect([Number(from[1]) - Number(to[1]), Number(from[2]) - Number(to[2])]).toEqual([100, 40]);
+    }
   });
 
   it('o estado de um passo distante mostra só o trecho visível', () => {
     const k = layout.steps;
     expect(availableAt(layout.state, 0)).toBeLessThan(availableAt(layout.state, k));
     expect(availableAt(layout.state, k)).toBe(layout.state.length);
-    const bottom = renderSvg(layout, { view: view((k - 3) * STEP, m.height - 800) });
+    expect(stateItems(layout).length).toBeLessThan(layout.state.length);
+    const bottom = renderSvg(layout, { view: view(m.left + (k - 3) * m.step, m.height - 800) });
     expect(elements(bottom)).toBeLessThan(2500);
     expect(texts(bottom).some((t) => t!.startsWith('dado'))).toBe(true);
   });

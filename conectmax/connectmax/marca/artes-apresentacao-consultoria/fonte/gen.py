@@ -77,7 +77,7 @@ nums=[("2017","Ano de fundação"),("+1.000","Empresas atendidas"),("8","Unidade
 nc="".join(f'<div class="card"><b style="font-size:64px;color:#4A9FE0;letter-spacing:-.03em;line-height:1">{a}</b><small style="font-size:27px">{b}</small></div>' for a,b in nums)
 page("05-mesmo-parceiro","dark",f'''
 <div class="eyebrow">Quem somos</div>
-<h1 style="font-size:76px">O parceiro que abastece sua tecnologia agora <em>constrói seus sistemas.</em></h1>
+<h1 style="font-size:76px">O parceiro que abastece sua tecnologia também <em>constrói seus sistemas.</em></h1>
 <p class="sub">Consultoria e desenvolvimento de software, da cotação à implantação.</p>
 <div class="sp"></div>
 <div class="grid g2" style="margin-bottom:44px">{nc}</div>

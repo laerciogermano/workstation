@@ -1,17 +1,22 @@
 // Onde o cartão arrastado cairia: no terço de cima ou de baixo de outro, vira irmão; no meio, vira filho.
 import type { TreeNode } from '@plans/domain';
-import { GY, W, type Box } from './layout.ts';
+import { GY, ROOT, W, type Box } from './layout.ts';
 
 export type Drop = { kind: 'before' | 'after' | 'child'; over: string; parent: string | null; before: string | null };
 type Visible = { node: TreeNode; parent: string | null };
 
+const inside = (box: Box, point: { x: number; y: number }) => point.x >= box.x && point.x <= box.x + W && point.y >= box.y - GY / 2 && point.y <= box.y + box.h + GY / 2;
+
 export function dropTarget(pos: Map<string, Box>, order: Visible[], point: { x: number; y: number }, moving: Set<string>): Drop | null {
+  // em cima da raiz do projeto: vai para o primeiro nível, no fim
+  const root = pos.get(ROOT);
+  if (root && inside(root, point)) return { kind: 'child', over: ROOT, parent: null, before: null };
   for (const { node, parent } of order) {
     const id = node.activity.id;
     const box = pos.get(id)!;
     // o próprio cartão e os descendentes não são destino
     if (moving.has(id)) continue;
-    if (point.x < box.x || point.x > box.x + W || point.y < box.y - GY / 2 || point.y > box.y + box.h + GY / 2) continue;
+    if (!inside(box, point)) continue;
     const where = (point.y - box.y) / box.h;
     if (where < 0.25) return { kind: 'before', over: id, parent, before: id };
     if (where <= 0.75) return { kind: 'child', over: id, parent: id, before: null };

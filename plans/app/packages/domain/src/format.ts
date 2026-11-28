@@ -86,7 +86,7 @@ export const DEFAULT_ASSIGNEES: Assignee[] = [
   { id: 'terminal', name: 'Terminal', type: 'machine' },
 ];
 
-export const uiSchema = z.object({ selected: z.string().nullable().default(null), collapsed: z.array(z.string()).default([]), theme: z.string().optional(), panel: z.boolean().default(true), descriptionMode: z.enum(['read', 'edit', 'split']).default('read') });
+export const uiSchema = z.object({ selected: z.string().nullable().default(null), collapsed: z.array(z.string()).default([]), theme: z.string().optional(), panel: z.boolean().default(true), descriptionMode: z.enum(['read', 'edit', 'split']).default('read'), view: z.enum(['tree', 'kanban']).default('tree'), systemPromptMode: z.enum(['read', 'edit', 'split']).default('read') });
 export type UiState = z.infer<typeof uiSchema>;
 
 export const runRecordSchema = z.object({

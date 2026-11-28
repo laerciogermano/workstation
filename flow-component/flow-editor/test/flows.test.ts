@@ -1,7 +1,7 @@
 // Os exemplos do FOP e sequências aleatórias de comandos: sempre desenháveis, com código válido.
 import { describe, expect, it } from 'vitest';
 import { layoutFlow } from '@flow/view';
-import { apply, EditError, EXAMPLES, fn, fromJson, generateCode, toJson, toView, walk } from '../src/index.ts';
+import { apply, block, EditError, EXAMPLES, fn, fromJson, generateCode, toJson, toView, walk } from '../src/index.ts';
 import type { Command, FlowNode, FnNode } from '../src/index.ts';
 
 /** Confere a sintaxe do módulo gerado (sem executar). */
@@ -54,6 +54,19 @@ describe('código gerado', () => {
   it('outro arquivo é importado', () => {
     expect(code('fileOutro')).toContain('import { pagar } from "./pagamento";');
     expect(code('fileOutro')).toContain('export async function pagar() {');
+  });
+  it('pública só exporta no topo do arquivo', () => {
+    const tree = fn('main', { visibility: 'public', children: [fn('interna', { visibility: 'public' })] });
+    const generated = generateCode(tree);
+    expect(generated).toMatch(/^export async function main/);
+    expect(generated).toContain('// pública: definida aqui dentro, sem export');
+    parses(generated);
+  });
+  it('condição com erro não quebra o código', () => {
+    const tree = fn('main', { children: [block('while', { expr: 'a */ ===' })] });
+    const generated = generateCode(tree);
+    expect(generated).toContain('while (true /* a conferir: a * / === */) {');
+    parses(generated);
   });
   it('paralelas começam juntas', () => expect(code('paralela')).not.toMatch(/Promise\.all\(\[\n\s+await/));
   it('o objeto usa as variáveis que já existem', () => expect(code('sequencial')).toContain('const parcelas = { dobro, triplo };'));

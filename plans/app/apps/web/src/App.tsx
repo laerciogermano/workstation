@@ -1,14 +1,18 @@
+import { Kanban } from './features/Kanban.tsx';
 import { NodePanel } from './features/NodePanel.tsx';
 import { PairDialog } from './features/PairDialog.tsx';
 import { Runs } from './features/Runs.tsx';
+import { SystemPrompt } from './features/SystemPrompt.tsx';
 import { linkLabel } from './features/status.ts';
 import { Tree } from './features/Tree.tsx';
 import { Welcome } from './features/Welcome.tsx';
 import { demoName } from './folder/handles.ts';
-import { cancelRemove, closeFolder, confirmRemove, dismissError, openPairing, togglePanel, useApp } from './store/app.ts';
+import { cancelRemove, chooseView, closeFolder, confirmRemove, dismissError, openPairing, togglePanel, useApp } from './store/app.ts';
 import { Dialog } from './ui/Dialog.tsx';
 import { Icon } from './ui/Icon.tsx';
 import { ThemePicker } from './ui/ThemePicker.tsx';
+
+const VIEWS = [['tree', 'Árvore'], ['kanban', 'Kanban']] as const;
 
 export function App() {
   const app = useApp();
@@ -31,6 +35,11 @@ export function App() {
             <span className="logo">Plans</span>
             <span className="project" title="Projeto">{app.folderName}{demoName !== null && ' · demonstração'}</span>
             {app.readOnly && <span className="badge">somente leitura</span>}
+            <div className="md-tabs" role="radiogroup" aria-label="Visão">
+              {VIEWS.map(([view, label]) => (
+                <button key={view} type="button" role="radio" aria-checked={app.view === view} onClick={() => chooseView(view)}>{label}</button>
+              ))}
+            </div>
             <span className="spacer" />
             <ThemePicker current={app.theme} />
             <button type="button" className={`link-chip ${app.link.state}`} onClick={() => void openPairing(true)}>
@@ -45,7 +54,7 @@ export function App() {
             </details>
           )}
           <div className={`body${app.panel ? '' : ' no-side'}`}>
-            <Tree app={app} />
+            {app.view === 'kanban' ? <Kanban app={app} /> : <Tree app={app} />}
             <button
               type="button"
               className="panel-toggle"
@@ -60,6 +69,8 @@ export function App() {
             {/* escondido, não desmontado: um texto em edição não se perde */}
             <aside id="side-panel" className="side" hidden={!app.panel}>
               {selected ? <NodePanel key={selected.id} app={app} node={selected} /> : <p className="muted pad">Selecione uma atividade para definir responsável e descrição.</p>}
+              {/* um só, fora do painel da atividade: o texto em edição continua ao trocar de seleção */}
+              <SystemPrompt app={app} />
               <Runs app={app} />
             </aside>
           </div>

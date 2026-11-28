@@ -137,6 +137,7 @@ meu-projeto/
     <uuid>.json           comando, nó, início, término, código de saída
     <uuid>.log            saída (até 5 MB)
   assignees.json          responsáveis disponíveis
+  system-prompt.md        instruções padrão de todas as atividades (criado ao salvar)
 ```
 
 ### 5.3 Formatos

@@ -27,6 +27,9 @@ export type State = {
   /** painel lateral (atividade e comandos) aberto */
   panel: boolean;
   descriptionMode: UiState['descriptionMode'];
+  systemPromptMode: UiState['systemPromptMode'];
+  /** visão na área principal */
+  view: UiState['view'];
   /** nó sendo criado: pai ou 'root' */
   creating: string | null;
   removing: { id: string; count: number } | null;
@@ -37,9 +40,9 @@ export type State = {
   error: string | null;
 };
 
-const empty: Snapshot = { activities: [], assignees: [], problems: [] };
+const empty: Snapshot = { activities: [], assignees: [], systemPrompt: { text: '', rev: '' }, problems: [] };
 let state: State = {
-  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true, descriptionMode: 'read',
+  phase: 'loading', folderName: '', folderEmpty: true, readOnly: false, snapshot: empty, tree: [], selected: null, collapsed: [], theme: paintedTheme(), panel: true, descriptionMode: 'read', systemPromptMode: 'read', view: 'tree',
   creating: null, removing: null, runs: [], link: { state: 'unpaired' }, pairing: null, pairingOpen: false, error: null,
 };
 const listeners = new Set<() => void>();
@@ -113,7 +116,7 @@ async function openFolder(h: FileSystemDirectoryHandle) {
   // projeto sem tema salvo mantém o que já está na tela
   const theme = isTheme(ui.theme) ? ui.theme : state.theme;
   applyTheme(theme);
-  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, descriptionMode: ui.descriptionMode, error: null });
+  set({ phase: 'open', folderName: found.project.name, readOnly: store.readOnly, selected: ui.selected, collapsed: ui.collapsed, theme, panel: ui.panel, descriptionMode: ui.descriptionMode, systemPromptMode: ui.systemPromptMode, view: ui.view, error: null });
   await refresh();
   await runner.reload();
   watch(h, found.project.id);
@@ -211,10 +214,26 @@ async function changed() {
   channel?.postMessage('changed');
 }
 
-const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel, descriptionMode: state.descriptionMode }).catch(fail);
+const saveUi = () => void store?.saveUi({ selected: state.selected, collapsed: state.collapsed, theme: state.theme, panel: state.panel, descriptionMode: state.descriptionMode, systemPromptMode: state.systemPromptMode, view: state.view }).catch(fail);
 
 export function setDescriptionMode(descriptionMode: UiState['descriptionMode']) {
   set({ descriptionMode });
+  saveUi();
+}
+
+export function chooseView(view: UiState['view']) {
+  set({ view, creating: null });
+  saveUi();
+}
+
+export function setSystemPromptMode(systemPromptMode: UiState['systemPromptMode']) {
+  set({ systemPromptMode });
+  saveUi();
+}
+
+/** Configurações do projeto: o painel sem atividade selecionada. */
+export function openSettings() {
+  set({ selected: null, creating: null, panel: true });
   saveUi();
 }
 
@@ -314,6 +333,21 @@ function queued<T>(fn: () => Promise<T>): Promise<T> {
 
 /** Devolve a nova revisão, ou 'conflict'. */
 export const updateNode = (id: string, rev: string, patch: Patch) => queued(() => writeNode(id, rev, patch));
+
+/** Devolve a nova revisão, ou 'conflict'. */
+export const updateSystemPrompt = (rev: string, text: string) =>
+  queued(async (): Promise<string | 'conflict' | null> => {
+    try {
+      const next = await store!.updateSystemPrompt(rev, text);
+      await changed();
+      return next.rev;
+    } catch (e) {
+      await refresh();
+      if (e instanceof ConflictError) return 'conflict';
+      fail(e);
+      return null;
+    }
+  });
 
 /** Muda um campo a partir da versão que estiver na tela quando chegar a vez. */
 async function writeCurrent(id: string, patch: Patch, conflictMessage: string) {

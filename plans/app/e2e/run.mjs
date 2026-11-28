@@ -84,6 +84,24 @@ try {
   assert.equal(await page.getByRole('button', { name: 'Trocar pasta' }).evaluate((el) => getComputedStyle(el).position), 'static');
   step('F01 cria nó raiz e filhos, pelo botão e pelo teclado');
 
+  const raiz = page.getByRole('group', { name: 'root', exact: true });
+  await raiz.getByRole('button', { name: 'Nova atividade no root' }).click();
+  await page.getByLabel('Título da atividade').fill('Outra raiz');
+  await page.keyboard.press('Enter');
+  await node('Outra raiz').waitFor();
+  assert.equal(await node('Outra raiz').getAttribute('aria-level'), '1');
+  assert.match((await fileOf('Outra raiz')).text, /^parent: null$/m);
+  assert.ok((await raiz.boundingBox()).x < (await node('Outra raiz').boundingBox()).x, 'o root fica antes dos filhos');
+  // apaga o arquivo direto, para não deixar nada na lixeira conferida mais adiante
+  const { f: outra } = await fileOf('Outra raiz');
+  await page.evaluate(async (f) => {
+    const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('demo-e2e')).getDirectoryHandle('activities');
+    await dir.removeEntry(f);
+    window.dispatchEvent(new Event('focus'));
+  }, outra);
+  await node('Outra raiz').waitFor({ state: 'detached' });
+  step('o + do root cria atividades no primeiro nível');
+
   await node('Definir orçamento').click();
   await page.getByLabel('Responsável').selectOption('claude');
   await page.getByLabel('Descrição', { exact: true }).fill('Até R$ 3.000\nsegunda linha');
@@ -113,7 +131,7 @@ try {
   await node('Definir orçamento').waitFor();
   const leitura = page.getByRole('document', { name: 'Descrição formatada' });
   await leitura.getByText('segunda linha').waitFor();
-  await page.getByRole('radio', { name: 'Editar' }).click();
+  await page.getByRole('radiogroup', { name: 'Modo da descrição' }).getByRole('radio', { name: 'Editar' }).click();
   assert.equal(await page.getByLabel('Descrição', { exact: true }).inputValue(), 'Até R$ 3.000\nsegunda linha');
   assert.equal(await page.getByLabel('Responsável').inputValue(), 'claude');
   assert.equal(await page.getByRole('radio', { name: 'Doing' }).getAttribute('aria-checked'), 'true');
@@ -184,7 +202,9 @@ try {
   assert.equal(await node('Editado fora').count(), 0);
   assert.equal(await node('Comprar celular').getAttribute('aria-expanded'), 'false');
   assert.equal(await node('Comprar celular').getAttribute('aria-selected'), 'true', 'a seleção sobe para o nó minimizado');
-  assert.equal(await page.getByRole('button', { name: 'Expandir Comprar celular (2 ocultas)' }).innerText(), '+2');
+  const badges = await page.getByRole('button', { name: 'Expandir Comprar celular (2 ocultas)' }).locator('span').evaluateAll((els) => els.map((el) => [el.className, Number(el.textContent)]));
+  assert.ok(badges.every(([status]) => /^status-(todo|doing|done)$/.test(status)), 'um badge por status');
+  assert.equal(badges.reduce((total, [, count]) => total + count, 0), 2);
   const depois = await node('Comprar celular').boundingBox();
   assert.ok(Math.abs(depois.y - parado.y) < 2 && Math.abs(depois.x - parado.x) < 2, 'o nó clicado não pode pular');
   await until(async () => JSON.parse(await fsRead('.plans/ui.json')).collapsed.length === 1, 'minimizado gravado em ui.json');
@@ -488,7 +508,7 @@ try {
   await campo.fill(fonte);
   await modo('Ler').click();
   await doc.getByRole('heading', { name: 'Passos' }).waitFor();
-  assert.equal(await page.locator('.md-read').count(), 1, 'uma caixa de leitura só');
+  assert.equal(await page.locator('.node-panel .md-read').count(), 1, 'uma caixa de leitura só');
   assert.equal(await doc.getByRole('checkbox').count(), 2);
   assert.equal(await doc.getByRole('cell', { name: '500' }).count(), 1);
   const site = doc.getByRole('link', { name: 'site' });
@@ -528,11 +548,66 @@ try {
   await janela.getByRole('button', { name: 'Fechar', exact: true }).click();
   await until(async () => (await fileOf('Dois')).text.endsWith('texto longo\n'), 'salvo ao fechar a janela');
   await page.getByRole('button', { name: 'Tema Preto' }).click();
-  assert.equal(await page.locator('.md').getAttribute('data-color-mode'), 'dark');
+  assert.equal(await page.locator('.node-panel .md').getAttribute('data-color-mode'), 'dark');
   await modo('Ler').click();
   await page.screenshot({ path: path.join(root, 'test-results-md-preto.png') });
   await page.getByRole('button', { name: 'Tema Papel' }).click();
   step('tela cheia e tema escuro');
+
+  // ----- Kanban -----
+  await page.getByRole('radio', { name: 'Kanban' }).click();
+  const quadro = page.getByRole('region', { name: 'Kanban' });
+  const coluna = (nome) => quadro.getByRole('region', { name: nome, exact: true });
+  const todos = [];
+  for (const f of await fsRead('activities')) {
+    const text = await fsRead('activities/' + f);
+    todos.push({ id: text.match(/^id: (.+)$/m)[1], parent: text.match(/^parent: (.+)$/m)[1] });
+  }
+  const folhas = todos.filter((a) => !todos.some((b) => b.parent === a.id)).length;
+  assert.ok(folhas < todos.length, 'o cenário tem pais e folhas');
+  assert.equal(await quadro.getByRole('listitem').count(), folhas, 'só as folhas viram cartão');
+  const cartao = coluna('To do').getByRole('listitem').first();
+  const titulo1 = await cartao.getByRole('button').first().innerText();
+  await cartao.dragTo(coluna('Doing'));
+  await coluna('Doing').getByRole('button', { name: titulo1, exact: true }).waitFor();
+  await until(async () => (await fileOf(titulo1)).text.includes('status: doing'), 'arrastar grava o status');
+  await coluna('Doing').getByRole('button', { name: titulo1, exact: true }).click();
+  await page.getByRole('heading', { name: titulo1, exact: true }).waitFor();
+  await page.getByRole('button', { name: `Status de ${titulo1}: Doing` }).click();
+  await coluna('Done').getByRole('button', { name: titulo1, exact: true }).waitFor();
+  await until(async () => JSON.parse(await fsRead('.plans/ui.json')).view === 'kanban', 'visão gravada em ui.json');
+  await page.screenshot({ path: path.join(root, 'test-results-kanban.png') });
+  await page.reload();
+  await coluna('Done').getByRole('button', { name: titulo1, exact: true }).waitFor();
+  await page.getByRole('radio', { name: 'Árvore' }).click();
+  await node(titulo1).waitFor();
+  step('Kanban lista só as folhas; arrastar muda o status e a visão fica salva');
+
+  // ----- system prompt -----
+  await page.getByRole('button', { name: 'Minimizar painel' }).click();
+  await page.getByRole('button', { name: 'Configurações do projeto' }).click();
+  await page.getByRole('heading', { name: 'Configurações do projeto' }).waitFor();
+  const modoPrompt = (nome) => page.getByRole('radiogroup', { name: 'Modo do system prompt' }).getByRole('radio', { name: nome, exact: true });
+  const prompt = page.getByLabel('System prompt', { exact: true });
+  const promptLido = page.getByRole('document', { name: 'System prompt formatado' });
+  await promptLido.getByText('Sem system prompt.').waitFor();
+  await modoPrompt('Editar').click();
+  await prompt.fill('## Sempre\n\nResponda em português.');
+  // trocar de atividade com o texto em edição não perde nada
+  await node('Um').click();
+  await until(async () => (await fsRead('system-prompt.md')) === '## Sempre\n\nResponda em português.\n', 'system prompt gravado');
+  assert.equal(await prompt.inputValue(), '## Sempre\n\nResponda em português.', 'aparece na atividade');
+  await prompt.fill('## Sempre\n\nSeja breve.');
+  await node('Dois').click();
+  await modoPrompt('Ler').click();
+  await promptLido.getByText('Seja breve.').waitFor();
+  await until(async () => (await fsRead('system-prompt.md')).endsWith('Seja breve.\n'), 'editado a partir da atividade');
+  assert.ok(!(await fileOf('Dois')).text.includes('Seja breve'), 'não é copiado para a atividade');
+  await page.screenshot({ path: path.join(root, 'test-results-system-prompt.png') });
+  await page.reload();
+  await promptLido.getByText('Seja breve.').waitFor();
+  assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
+  step('system prompt configurado no root, lido e editado em cada atividade');
 
   assert.deepEqual(errors, []);
   console.log('\nTudo passou.');

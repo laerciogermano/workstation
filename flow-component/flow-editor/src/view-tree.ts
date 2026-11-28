@@ -37,6 +37,8 @@ export function toView(node: FlowNode): ViewNode {
     out: node.out.map(viewData),
     data: node.data.map(viewData),
     source: node.source,
+    visibility: node.visibility,
+    pattern: node.pattern,
     parallel: node.parallel,
     children,
   };

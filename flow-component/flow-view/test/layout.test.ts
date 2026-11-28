@@ -18,12 +18,24 @@ describe('passos', () => {
     const tree = f('main', { children: [f('longa', { children: [f('a'), f('b'), f('c')] }), f('curta', { parallel: true }), f('depois')] });
     expect(steps(tree)).toEqual(['main 0-4', 'longa 0-3', 'a 0-1', 'b 1-2', 'c 2-3', 'curta 0-1', 'depois 3-4']);
   });
-  it('if e else ocupam o mesmo passo', () => {
-    expect(steps(sample('ifElse'))).toEqual(['main 0-1', 'if (aprovada) 0-1', 'enviar 0-1', 'else · senão 0-1', 'revisar 0-1']);
+  it('o else vem depois do if', () => {
+    expect(steps(sample('ifElse'))).toEqual(['main 0-2', 'if (aprovada) 0-1', 'enviar 0-1', 'else 1-2', 'revisar 1-2']);
+  });
+  it('com elseParallel, if e else ocupam o mesmo passo', () => {
+    const rows = layoutFlow(sample('ifElse'), { elseParallel: true }).rows.map((r) => `${r.name} ${r.start}-${r.end}`);
+    expect(rows).toEqual(['main 0-1', 'if (aprovada) 0-1', 'enviar 0-1', 'else 0-1', 'revisar 0-1']);
+  });
+  it('um bloco que abre um else ou catch começa um passo depois dele', () => {
+    const tree = f('main', { children: [{ type: 'try' as const, children: [f('a')] }, { type: 'catch' as const, children: [{ type: 'if' as const, label: 'ok', children: [f('b')] }] }] });
+    expect(steps(tree)).toEqual(['main 0-3', 'try 0-1', 'a 0-1', 'catch 1-3', 'if (ok) 2-3', 'b 2-3']);
+  });
+  it('liga a saída de uma folha à entrada da folha do passo seguinte', () => {
+    const layout = layoutFlow(f('main', { children: [f('ler', { out: ['x', 'y'] }), f('somar', { in: ['x', 'y'], out: ['z'] }), f('esperar'), f('usar', { in: ['z'] })] }));
+    expect(layout.links).toEqual([{ from: 1, to: 2, names: ['x', 'y'] }]);
   });
   it('depois do if e else, o fluxo segue após o ramo mais longo', () => {
     const tree = f('main', { children: [{ type: 'if' as const, label: 'ok', children: [f('a')] }, { type: 'else' as const, children: [f('b'), f('c')] }, f('d')] });
-    expect(steps(tree).at(-1)).toBe('d 2-3');
+    expect(steps(tree).at(-1)).toBe('d 3-4');
   });
   it('os cases de um switch ocupam o mesmo passo', () => {
     expect(steps(sample('switch'))).toEqual(['main 0-1', 'switch (meio) 0-1', 'case "pix" 0-1', 'pagarPix 0-1', 'case "cartao" 0-1', 'pagarCartao 0-1']);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildTree, parseActivity, planMove, serializeActivity, subtreeLeavesFirst, titleSchema, tokenize, type Activity, type TreeNode } from '../src/index.ts';
+import { leaves, buildTree, parseActivity, planMove, serializeActivity, subtreeLeavesFirst, titleSchema, tokenize, type Activity, type TreeNode } from '../src/index.ts';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const act = (n: number, parent: number | null = null): Activity => ({
@@ -29,6 +29,11 @@ describe('formato', () => {
 });
 
 describe('árvore', () => {
+  it('lista só as folhas, com o caminho dos pais', () => {
+    const act = (id: string, parent: string | null, n: number) => ({ id, title: id, parent, assignee: null, createdAt: new Date(n * 1000).toISOString(), description: '', extra: {} });
+    const found = leaves(buildTree([act('r', null, 1), act('a', 'r', 2), act('b', 'r', 3), act('a1', 'a', 4), act('s', null, 5)]));
+    expect(found.map((l) => [l.activity.id, l.path])).toEqual([['a1', ['r', 'a']], ['b', ['r']], ['s', []]]);
+  });
   it('ordena por criação e apaga das folhas para o nó', () => {
     const list = [act(3, 1), act(1), act(2, 1), act(4, 2), act(5)];
     const roots = buildTree(list);

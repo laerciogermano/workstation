@@ -37,7 +37,7 @@ try {
   /** clica na linha do desenho que tem este rótulo, na coluna das funções */
   const pick = async (label) => {
     const box = await page.locator('.canvas svg g > title', { hasText: label }).last().evaluate((t) => {
-      const r = t.parentElement.querySelector(':scope > text, :scope > rect').getBoundingClientRect();
+      const r = t.parentElement.querySelector('text, :scope > rect').getBoundingClientRect();
       return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
     });
     await page.mouse.click(box.x, box.y);
@@ -74,7 +74,7 @@ try {
   // digitar e clicar em outro botão, sem confirmar: o valor vale e o clique também
   await field('prop:name').fill('cobrarPix');
   await insert('ifelse');
-  await has('cobrarPix', 'if (condicao)', 'else · senão');
+  await has('cobrarPix', 'if (condicao)', 'else', 'otherwise');
   step('clicar num botão confirma o campo e executa o clique');
 
   await act('declare');
@@ -124,7 +124,7 @@ try {
   await fill('prop:name', 'avisar');
   await field('prop:source').selectOption('abstract');
   assert.ok(await field('prop:parallel').isChecked());
-  await has('Ana', 'abstrato', 'avisar');
+  await has('Ana', 'abstract', 'avisar');
   assert.match(await code(), /await Ana\.aprovar\(\)/);
   assert.match(await code(), /Promise\.all/);
   step('responsáveis, função abstrata e paralela; código acompanha');
@@ -178,6 +178,75 @@ try {
     }
   }
   step(`os ${keys.length} exemplos abrem`);
+
+  // visibilidade, padrões e arquivo como objeto, pelo painel
+  await page.locator('[data-top=new]').click();
+  await insert('fn');
+  await fill('prop:name', 'carregar');
+  await field('prop:visibility').selectOption('public');
+  await field('prop:pattern').selectOption('singleton');
+  assert.match(await page.locator('aside .note.warning').textContent(), /adicione a saída/);
+  await page.locator('[data-section=out] button', { hasText: '+ saída' }).click();
+  await fill('out:0:name', 'config');
+  assert.equal(await page.locator('aside .note').count(), 0);
+  await insert('fn');
+  await fill('prop:name', 'criar');
+  await field('prop:visibility').selectOption('private');
+  await field('prop:pattern').selectOption('factory');
+  await page.locator('[data-section=out] button', { hasText: '+ saída' }).click();
+  await fill('out:0:name', 'cliente');
+  await field('out:0:type').selectOption('object');
+  await field('prop:source').selectOption('file');
+  await fill('prop:sourceName', 'clientes');
+  await field('prop:asObject').check();
+  await has('singleton', 'factory', 'clientes');
+  const svg = page.locator('.canvas svg');
+  assert.equal(await svg.locator('[data-visibility=public]').count(), 1);
+  assert.equal(await svg.locator('[data-visibility=private]').count(), 1);
+  assert.ok((await svg.locator('.file-object').count()) >= 1);
+  assert.ok((await svg.locator('.double').count()) >= 1);
+  assert.ok((await svg.locator('.shared').count()) >= 1);
+  await page.waitForTimeout(80);
+  await page.screenshot({ path: `${shots}formas.png` });
+  step('público, privado, singleton, factory e arquivo como objeto no desenho');
+
+  await page.locator('.crumbs button', { hasText: 'main' }).click();
+  await where('Dentro');
+  await insert('if');
+  await fill('prop:expr', 'config &&');
+  assert.match(await page.locator('aside .note.error').textContent(), /incompleta/);
+  await fill('prop:expr', 'sumiu');
+  assert.match(await page.locator('aside .warn').textContent(), /sumiu/);
+  assert.equal(await page.locator('aside .note').count(), 0);
+  await page.locator('.crumbs button', { hasText: 'main' }).click();
+  assert.equal(await page.locator('[data-tab=problems]').textContent(), 'Problemas (1)');
+  await page.locator('[data-tab=problems]').click();
+  await page.screenshot({ path: `${shots}problemas.png` });
+  await page.locator('.problem', { hasText: 'sumiu' }).click();
+  assert.equal(await crumb(), 'if (sumiu)');
+  await act('declare');
+  assert.equal(await page.locator('[data-tab=problems]').textContent(), 'Problemas');
+  step('condições conferidas, no painel e na lista de problemas');
+
+  await page.locator('[data-tab=code]').click();
+  const language = page.locator('[data-language]');
+  await language.selectOption('py');
+  assert.match(await code(), /async def main\(\):/);
+  await language.selectOption('ts');
+  assert.match(await code(), /const sumiu: boolean = true;/);
+  await page.reload();
+  await page.locator('.canvas svg text').first().waitFor();
+  assert.equal(await language.inputValue(), 'ts');
+  await language.selectOption('py');
+  await page.screenshot({ path: `${shots}python.png` });
+  await language.selectOption('js');
+  step('código em JavaScript, TypeScript e Python');
+
+  for (const key of ['fileObjeto', 'padFactory', 'padSingleton', 'privada']) {
+    await page.locator('[data-examples]').selectOption(key);
+    await page.waitForTimeout(100);
+    await page.screenshot({ path: `${shots}${key}.png` });
+  }
 
   await page.locator('[data-top=theme]').click();
   assert.equal(await page.locator('.canvas svg .bg').first().evaluate((el) => getComputedStyle(el).fill), 'rgb(255, 255, 255)');

@@ -98,3 +98,28 @@ describe('EP-01', () => {
     await expect(newer.create(null, 'x')).rejects.toThrow(/somente leitura/);
   });
 });
+
+describe('system prompt', () => {
+  it('começa vazio, é salvo em system-prompt.md e não vai para as atividades', async () => {
+    const { root, store } = await setup();
+    const a = await store.create(null, 'Um');
+    const before = (await store.load()).systemPrompt;
+    expect(before.text).toBe('');
+    const saved = await store.updateSystemPrompt(before.rev, '# Regras\r\n\r\nResponda em português.');
+    expect((await root.getFileHandle('system-prompt.md')).text).toBe('# Regras\n\nResponda em português.\n');
+    expect((await store.load()).systemPrompt).toEqual(saved);
+    expect((await store.load()).activities[0]!.rev).toBe(a.rev);
+    expect((await store.updateSystemPrompt(saved.rev, '')).text).toBe('');
+  });
+
+  it('não sobrescreve o que mudou fora da tela nem aceita texto grande demais', async () => {
+    const { root, store } = await setup();
+    const { rev } = (await store.load()).systemPrompt;
+    const file = await root.getFileHandle('system-prompt.md', { create: true });
+    file.text = 'escrito no editor\n';
+    await expect(store.updateSystemPrompt(rev, 'outro')).rejects.toBeInstanceOf(ConflictError);
+    expect(file.text).toBe('escrito no editor\n');
+    const now = (await store.load()).systemPrompt;
+    await expect(store.updateSystemPrompt(now.rev, 'a'.repeat(100_001))).rejects.toThrow('grande demais');
+  });
+});

@@ -1,8 +1,13 @@
-// Fluxo → JavaScript, no estilo dos exemplos do flow-oriented-programming.com:
+// Fluxo → JavaScript ou TypeScript (Python em code-python.ts), no estilo dos exemplos do flow-oriented-programming.com:
 // chamadas primeiro e definições depois, entrada e saída sempre em variável.
+import { generatePython } from './code-python.ts';
+import { ExprError, parseExpr } from './expr.ts';
 import { isFn, walk } from './model.ts';
 import type { BlockNode, Datum, FlowNode, FnNode, Source } from './model.ts';
 import { unitAt } from './ops.ts';
+
+export type Language = 'js' | 'ts' | 'py';
+export const LANGUAGES: readonly (readonly [Language, string])[] = [['js', 'JavaScript'], ['ts', 'TypeScript'], ['py', 'Python']];
 
 const RESERVED = new Set('await break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof let new null return super switch this throw true try typeof var void while with yield static'.split(' '));
 
@@ -30,6 +35,24 @@ export function literal(d: Datum, known: ReadonlySet<string> = new Set()): strin
   }
 }
 
+/** O tipo de um dado em TypeScript. Sem valor ainda, vale qualquer um. */
+function typeOf(d: Datum): string {
+  switch (d.type) {
+    case 'text': return 'string';
+    case 'number': return 'number';
+    case 'boolean': return 'boolean';
+    case 'null': return 'null';
+    case 'function': return '(...args: any[]) => any';
+    case 'list': {
+      const types = [...new Set((d.fields ?? []).map(typeOf))];
+      if (!types.length || types.includes('any')) return 'any[]';
+      return types.length === 1 && !types[0]!.includes('=>') ? `${types[0]}[]` : `(${types.map((t) => (t.includes('=>') ? `(${t})` : t)).join(' | ')})[]`;
+    }
+    case 'object': return d.fields?.length ? `{ ${d.fields.map((f) => `${key(f.name)}: ${typeOf(f)}`).join('; ')} }` : '{}';
+    default: return 'any';
+  }
+}
+
 const pad = (lines: string[]) => lines.map((l) => (l ? `  ${l}` : l));
 
 /** Várias entradas (ou saídas) formam um objeto. */
@@ -43,7 +66,7 @@ interface Scope {
 }
 
 /** Onde cada nome recebe valor dentro de uma função (sem entrar nas filhas dela). */
-function assignments(owner: FnNode): Map<string, { times: number; inBlock: boolean }> {
+export function assignments(owner: FnNode): Map<string, { times: number; inBlock: boolean }> {
   const result = new Map<string, { times: number; inBlock: boolean }>();
   const add = (name: string, inBlock: boolean) => {
     const entry = result.get(name) ?? { times: 0, inBlock: false };
@@ -63,7 +86,7 @@ function assignments(owner: FnNode): Map<string, { times: number; inBlock: boole
 }
 
 /** Funções chamadas direto por esta (através dos blocos). */
-function callees(owner: FnNode): FnNode[] {
+export function callees(owner: FnNode): FnNode[] {
   const result: FnNode[] = [];
   const visit = (list: FlowNode[]) => list.forEach((n) => (isFn(n) ? result.push(n) : visit(n.children)));
   visit(owner.children);
@@ -71,9 +94,28 @@ function callees(owner: FnNode): FnNode[] {
 }
 
 /** Executada fora do código: folha com responsável que não é arquivo. Com filhas, é composição e é definida aqui. */
-const external = (node: FnNode): node is FnNode & { source: Source } => !!node.source && node.source.kind !== 'file' && !node.children.length;
+export const external = (node: FnNode): node is FnNode & { source: Source } => !!node.source && node.source.kind !== 'file' && !node.children.length;
 
-export function generateCode(root: FnNode): string {
+/** Irmãs em grupos do mesmo passo; cada unidade é um nó ou o par `if`/`else`, `try`/`catch`. */
+export function steps(list: FlowNode[]): FlowNode[][][] {
+  const groups: FlowNode[][][] = [];
+  for (let i = 0; i < list.length; ) {
+    const { from, to } = unitAt(list, i);
+    const unit = list.slice(from, to);
+    if (unit[0]!.parallel && groups.length) groups.at(-1)!.push(unit);
+    else groups.push([unit]);
+    i = to;
+  }
+  return groups;
+}
+
+export function generateCode(root: FnNode, language: Language = 'js'): string {
+  if (language === 'py') return generatePython(root);
+  const typed = language === 'ts';
+  /** trecho que só existe em TypeScript */
+  const ty = (annotation: string) => (typed ? annotation : '');
+  /** em TypeScript, o que se usa sem declarar precisa de um `declare` */
+  const ambient = new Set<string>();
   const rootFile = root.source?.kind === 'file' ? root.source.name : root.name;
   /** funções que moram em outro arquivo, por arquivo */
   const files = new Map<string, Map<string, string[]>>();
@@ -88,17 +130,22 @@ export function generateCode(root: FnNode): string {
 
     // o que muda mais de uma vez, ou nasce dentro de um bloco, é declarado no topo com `let`
     const declared = new Map(node.data.map((d) => [identifier(d.name), d]));
+    const outs = new Map<string, Datum>();
+    const collect = (list: FlowNode[]) => list.forEach((n) => (isFn(n) ? n.out.forEach((d) => outs.set(identifier(d.name), d)) : collect(n.children)));
+    collect(node.children);
     for (const [name, use] of assigned) {
       if (scope.names.has(name) || (!use.inBlock && use.times === 1)) continue;
       const value = declared.has(name) ? literal(declared.get(name)!, scope.names) : undefined;
-      body.push(value === undefined ? `let ${name};` : `let ${name} = ${value};`);
+      const known = declared.get(name) ?? outs.get(name);
+      const type = ty(`: ${known ? typeOf(known) : 'any'}`);
+      body.push(value === undefined ? `let ${name}${type};` : `let ${name}${type} = ${value};`);
       scope.names.add(name);
     }
     for (const d of node.data) {
       const name = identifier(d.name);
       if (scope.names.has(name)) continue;
       const value = literal(d, scope.names);
-      body.push(value === undefined ? `let ${name}; // dado abstrato` : `const ${name} = ${value};`);
+      body.push(value === undefined ? `let ${name}${ty(`: ${typeOf(d)}`)}; // dado abstrato` : `const ${name}${ty(`: ${typeOf(d)}`)} = ${value};`);
       scope.names.add(name);
     }
 
@@ -109,7 +156,7 @@ export function generateCode(root: FnNode): string {
         const name = identifier(d.name);
         if (scope.names.has(name)) continue;
         const value = literal(d, scope.names);
-        body.push(value === undefined ? `const ${name} = undefined; // a definir` : `const ${name} = ${value};`);
+        body.push(value === undefined ? `const ${name}${ty(': any')} = undefined; // a definir` : `const ${name}${ty(`: ${typeOf(d)}`)} = ${value};`);
         scope.names.add(name);
       }
       body.push(`return ${pattern(node.out)};`);
@@ -125,7 +172,10 @@ export function generateCode(root: FnNode): string {
       if (done.has(name) || external(child)) continue;
       done.add(name);
       if (child.source === null) {
-        if (!scope.names.has(name)) body.push('', `// ${name}: camada abstrata, preenchida por quem chama`);
+        if (!scope.names.has(name)) {
+          body.push('', `// ${name}: camada abstrata, preenchida por quem chama`);
+          ambient.add(`declare function ${name}(...args: any[]): Promise<any>;`);
+        }
         continue;
       }
       if (child.source?.kind === 'file' && child.source.name !== scope.file) {
@@ -145,8 +195,12 @@ export function generateCode(root: FnNode): string {
       body.push('', ...declare(child, scope.file, false));
     }
 
-    const header = `${exported || node.visibility === 'public' ? 'export ' : ''}async function ${identifier(node.name)}(${pattern(node.in)}) {`;
-    return [header, ...pad(body), '}'];
+    const inType = node.in.length > 1 ? `{ ${node.in.map((d) => `${identifier(d.name)}: ${typeOf(d)}`).join('; ')} }` : node.in.length ? typeOf(node.in[0]!) : '';
+    const header = `${exported ? 'export ' : ''}async function ${identifier(node.name)}(${pattern(node.in)}${inType ? ty(`: ${inType}`) : ''}) {`;
+    const note = node.pattern ? [`// padrão: ${node.pattern === 'factory' ? 'factory (cria e devolve o objeto)' : 'singleton (instância única e compartilhada)'}`] : [];
+    // `export` só existe no topo do arquivo
+    if (node.visibility === 'public' && !exported) note.push('// pública: definida aqui dentro, sem export');
+    return [...note, header, ...pad(body), '}'];
   };
 
   const call = (node: FnNode, scope: Scope): { expr: string; lines: string[] } => {
@@ -156,7 +210,7 @@ export function generateCode(root: FnNode): string {
       const name = identifier(d.name);
       const value = literal(d, scope.names);
       if (scope.names.has(name) || value === undefined || (d.type === 'function' && value === name)) continue;
-      lines.push(`const ${name} = ${value};`);
+      lines.push(`const ${name}${ty(`: ${typeOf(d)}`)} = ${value};`);
       scope.names.add(name);
     }
     const target = external(node) ? `${identifier(node.source.name)}.${identifier(node.name)}` : identifier(node.name);
@@ -170,21 +224,12 @@ export function generateCode(root: FnNode): string {
     fresh.forEach((d) => scope.names.add(identifier(d.name)));
     const target = pattern(out);
     if (fresh.length === out.length) return `const ${target} = ${expr};`;
-    const lines = fresh.map((d) => `let ${identifier(d.name)};\n`).join('');
+    const lines = fresh.map((d) => `let ${identifier(d.name)}${ty(`: ${typeOf(d)}`)};\n`).join('');
     return `${lines}${out.length > 1 ? `(${target} = ${expr});` : `${target} = ${expr};`}`;
   };
 
   const statements = (list: FlowNode[], scope: Scope): string[] => {
-    // grupos: cada unidade, com as paralelas juntas
-    const groups: FlowNode[][][] = [];
-    for (let i = 0; i < list.length; ) {
-      const { from, to } = unitAt(list, i);
-      const unit = list.slice(from, to);
-      if (unit[0]!.parallel && groups.length) groups.at(-1)!.push(unit);
-      else groups.push([unit]);
-      i = to;
-    }
-    return groups.flatMap((group) => (group.length === 1 ? single(group[0]!, scope) : parallel(group, scope)));
+    return steps(list).flatMap((group) => (group.length === 1 ? single(group[0]!, scope) : parallel(group, scope)));
   };
 
   const single = (unit: FlowNode[], scope: Scope): string[] => {
@@ -222,7 +267,7 @@ export function generateCode(root: FnNode): string {
       fresh.forEach((d) => scope.names.add(identifier(d.name)));
       if (fresh.length === outs.length) open = `const [${results.join(', ')}] = ${open}`;
       else {
-        before.push(...fresh.map((d) => `let ${identifier(d.name)};`));
+        before.push(...fresh.map((d) => `let ${identifier(d.name)}${ty(`: ${typeOf(d)}`)};`));
         // o `;` protege contra a linha anterior sem ponto e vírgula
         open = `;[${results.join(', ')}] = ${open}`;
       }
@@ -232,9 +277,22 @@ export function generateCode(root: FnNode): string {
 
   const caseValue = (value: string) => (/^(-?\d+(\.\d+)?|true|false|null|".*"|'.*')$/.test(value) ? value : JSON.stringify(value));
 
+  /** A condição como foi escrita; com erro de sintaxe, fica o valor padrão e o original anotado. */
+  const condition = (source: string | undefined, empty: string): string => {
+    const text = source?.trim();
+    if (!text) return empty;
+    try {
+      parseExpr(text);
+    } catch (error) {
+      if (!(error instanceof ExprError)) throw error;
+      if (!error.unsupported) return `${empty} /* a conferir: ${text.replace(/\*\//g, '* /').replace(/\s+/g, ' ')} */`;
+    }
+    return text;
+  };
+
   const blockLines = (node: BlockNode, tail: BlockNode | undefined, scope: Scope): string[] => {
     const inner = (n: BlockNode) => pad(statements(n.children, { ...scope, names: new Set(scope.names) }));
-    const expr = node.expr?.trim() || 'true';
+    const expr = node.type === 'case' || node.type === 'for' ? '' : condition(node.expr, 'true');
     switch (node.type) {
       case 'if': {
         const lines = [`if (${expr}) {`, ...inner(node)];
@@ -254,7 +312,7 @@ export function generateCode(root: FnNode): string {
         '}',
       ];
       case 'case': return ['{', ...inner(node), '}'];
-      case 'for': return [`for (const ${identifier(node.item || 'item')} of ${node.expr?.trim() || '[]'}) {`, ...pad(statements(node.children, { ...scope, names: new Set(scope.names).add(identifier(node.item || 'item')) })), '}'];
+      case 'for': return [`for (const ${identifier(node.item || 'item')} of ${condition(node.expr, '[]')}) {`, ...pad(statements(node.children, { ...scope, names: new Set(scope.names).add(identifier(node.item || 'item')) })), '}'];
       case 'while': return [`while (${expr}) {`, ...inner(node), '}'];
       case 'do-while': return ['do {', ...inner(node), `} while (${expr});`];
       case 'try': return ['try {', ...inner(node), '} catch (error) {', ...(tail ? inner(tail) : ['  throw error;']), '}'];
@@ -264,7 +322,7 @@ export function generateCode(root: FnNode): string {
 
   const main = declare(root, rootFile, root.visibility === 'public');
   const importLines = (file: string) => [...(imports.get(file) ?? [])].map(([from, names]) => `import { ${[...names].join(', ')} } from ${JSON.stringify(`./${from.replace(/\.[cm]?[jt]s$/, '')}`)};`);
-  const fileName = (name: string) => (/\.\w+$/.test(name) ? name : `${name}.js`);
+  const fileName = (name: string) => (/\.\w+$/.test(name) ? name : `${name}.${language}`);
 
   // o cabeçalho diz quem executa de fora do código
   const objects = new Set<string>();
@@ -272,6 +330,22 @@ export function generateCode(root: FnNode): string {
     if (isFn(n) && external(n)) objects.add(`${identifier(n.source.name)} (${n.source.kind})`);
   });
   const header = objects.size ? [`// responsáveis de fora: ${[...objects].join(', ')}`] : [];
+  if (typed) {
+    walk(root, (n) => {
+      if (isFn(n) && external(n)) ambient.add(`declare const ${identifier(n.source.name)}: any;`);
+    });
+    // função usada como dado sem estar no fluxo
+    const defined = new Set<string>();
+    walk(root, (n) => isFn(n) && defined.add(identifier(n.name)));
+    const referenced = (d: Datum) => {
+      const name = identifier(d.value || d.name);
+      if (d.type === 'function' && !defined.has(name)) ambient.add(`declare const ${name}: any;`);
+      d.fields?.forEach(referenced);
+    };
+    // entrada com o mesmo nome já é declarada pela própria função
+    walk(root, (n) => isFn(n) && [...n.data, ...n.out].forEach(referenced));
+    header.push(...ambient);
+  }
 
   const sections = [[...header, ...importLines(rootFile), ...(header.length || imports.has(rootFile) ? [''] : []), ...main]];
   for (const [file, defs] of files) sections.push(['', `// ${fileName(file)}`, ...importLines(file), ...[...defs.values()].flatMap((d, i) => (i ? ['', ...d] : d))]);

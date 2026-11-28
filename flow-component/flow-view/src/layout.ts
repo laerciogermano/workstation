@@ -4,9 +4,10 @@
 //  - só a folha ocupa um passo; quem tem filhas cobre o tempo delas;
 //  - irmãs sequenciais ocupam passos consecutivos; paralelas, o mesmo passo;
 //  - o passo seguinte só começa quando todas as paralelas terminam;
-//  - `else` ocupa o passo do `if`; os `case` de um `switch` ocupam o mesmo passo;
-//  - `catch` vem depois do `try`.
-import type { BlockType, Data, DataPoint, FlowBlock, FlowFunction, FlowLayout, FlowNode, Row, Source, StateItem } from './types.ts';
+//  - `else` vem depois do `if` e `catch` depois do `try` (como no editor FOP); com `elseParallel`, o `else` ocupa o passo do `if`;
+//  - um bloco que abre um `else` ou `catch` começa um passo depois dele;
+//  - os `case` de um `switch` ocupam o mesmo passo.
+import type { BlockType, Data, DataLink, DataPoint, FlowBlock, FlowFunction, FlowLayout, FlowNode, LayoutOptions, Row, Source, StateItem } from './types.ts';
 
 export const INDENT_LIMIT = 14;
 const BLOCKS = new Set<string>(['if', 'else', 'switch', 'case', 'for', 'while', 'do-while', 'try', 'catch']);
@@ -62,7 +63,7 @@ function asOne(list: NamedData[], side: 'input' | 'output', fn: string): NamedDa
 }
 
 export const blockLabel = (type: BlockType, label = ''): string => {
-  if (type === 'else') return 'else · senão';
+  if (type === 'else') return 'else';
   if (type === 'try') return 'try';
   if (type === 'catch') return 'catch';
   if (type === 'case') return label ? `case ${label}` : 'case';
@@ -70,7 +71,10 @@ export const blockLabel = (type: BlockType, label = ''): string => {
   return label ? `${type} (${label})` : type;
 };
 
-export function layoutFlow(tree: FlowNode): FlowLayout {
+/** A variável de um `for (item of itens)`. */
+export const loopVariable = (label = ''): string | undefined => label.match(/^\s*([\p{L}_$][\p{L}\p{N}_$]*)\s+(?:of|in)\s/u)?.[1];
+
+export function layoutFlow(tree: FlowNode, options: LayoutOptions = {}): FlowLayout {
   const rows: Row[] = [];
   const pending: Pending[] = [];
   const loopVars: { name: string; since: number }[] = [];
@@ -79,6 +83,7 @@ export function layoutFlow(tree: FlowNode): FlowLayout {
   const rootSource: Source = { kind: 'file', name: (tree as FlowFunction)?.name ?? 'main' };
   let maxDepth = 0;
   let labelWidth = 0;
+  let leafWidth = 0;
 
   const stack: Frame[] = [{ items: [tree], next: 0, cursor: 0, firstStart: 0, prevStart: 0, prevType: null, parent: -1, parentType: null, path: 'raiz', node: null, file: rootSource }];
 
@@ -111,7 +116,7 @@ export function layoutFlow(tree: FlowNode): FlowLayout {
 
     let start = frame.cursor;
     if (frame.parentType === 'switch' && i > 0) start = frame.firstStart;
-    else if (type === 'else' || (node.parallel && frame.prevType !== null)) start = frame.prevStart;
+    else if ((type === 'else' && options.elseParallel) || (node.parallel && frame.prevType !== null)) start = frame.prevStart;
     if (i === 0) frame.firstStart = start;
 
     const parent = frame.parent >= 0 ? rows[frame.parent]! : null;
@@ -129,13 +134,22 @@ export function layoutFlow(tree: FlowNode): FlowLayout {
       abstract: isFn && fn.source === null,
       source,
     };
+    const visibility = isFn && (fn.visibility === 'public' || fn.visibility === 'private') ? fn.visibility : undefined;
+    const pattern = isFn && (fn.pattern === 'factory' || fn.pattern === 'singleton') ? fn.pattern : undefined;
+    // largura da linha na coluna das funções, em caracteres: recuo, seta e marca, nome e o que vem depois dele
+    const lead = isFn ? (children.length ? 6 : 3) : type === 'else' ? 17 : type === 'catch' ? 26 : 6;
+    const after = (visibility ? 3 : 0) + (pattern ? pattern.length + 1 : 0) + (node.parallel ? 2 : 0);
+    labelWidth = Math.max(labelWidth, Math.min(depth, INDENT_LIMIT) * 4 + lead + (type === 'else' || type === 'catch' ? 0 : name.length) + after);
+    if (isFn && !children.length) leafWidth = Math.max(leafWidth, name.length);
+    if (node.parallel) row.parallel = true;
+    if (visibility) row.visibility = visibility;
+    if (pattern) row.pattern = pattern;
     rows.push(row);
     maxDepth = Math.max(maxDepth, depth);
-    labelWidth = Math.max(labelWidth, Math.min(depth, INDENT_LIMIT) * 2 + name.length);
 
     if (isFn) pending.push({ row, input: asOne(dataList(fn.in, path), 'input', name), output: asOne(dataList(fn.out, path), 'output', name), declared: dataList(fn.data, path) });
     if (type === 'for') {
-      const variable = (node as FlowBlock).label?.match(/^\s*([\p{L}_$][\p{L}\p{N}_$]*)\s+(?:of|in)\s/u)?.[1];
+      const variable = loopVariable((node as FlowBlock).label);
       if (variable) loopVars.push({ name: variable, since: start });
     }
 
@@ -144,22 +158,67 @@ export function layoutFlow(tree: FlowNode): FlowLayout {
     if (children.length) {
       open.add(node);
       const file = source?.kind === 'file' ? source : frame.file;
-      stack.push({ items: children, next: 0, cursor: start, firstStart: start, prevStart: start, prevType: null, parent: row.index, parentType: type, path, node, file });
+      const first = children[0]?.type ?? 'fn';
+      const inside = (type === 'else' || type === 'catch') && first !== 'fn' ? start + 1 : start;
+      stack.push({ items: children, next: 0, cursor: inside, firstStart: inside, prevStart: inside, prevType: null, parent: row.index, parentType: type, path, node, file });
     } else frame.cursor = Math.max(frame.cursor, start + 1);
   }
 
   const state = buildState(rows, pending, loopVars);
-  return { rows, steps: rows[0]!.end, state, maxDepth, labelWidth };
+  return { rows, steps: rows[0]!.end, state, links: dataLinks(pending), maxDepth, labelWidth, leafWidth };
+}
+
+/** Ligações de dado entre passos vizinhos: a folha que produz um nome e a que o recebe no passo seguinte. */
+function dataLinks(pending: Pending[]): DataLink[] {
+  const names = (d: NamedData | undefined, into: string[] = []): string[] => {
+    if (d) {
+      into.push(d.name);
+      d.fields?.forEach((f) => names(f, into));
+    }
+    return into;
+  };
+  /** quem produz cada nome em cada limite de passo, na ordem do fluxo */
+  const made = new Map<string, number>();
+  const links = new Map<string, DataLink>();
+  for (const { row, input, output } of pending) {
+    if (row.composite) continue;
+    for (const name of names(input)) {
+      const from = made.get(`${row.start} ${name}`);
+      if (from === undefined) continue;
+      const key = `${from} ${row.index}`;
+      const link = links.get(key) ?? { from, to: row.index, names: [] };
+      link.names.push(name);
+      links.set(key, link);
+    }
+    for (const name of names(output)) made.set(`${row.end} ${name}`, row.index);
+  }
+  return [...links.values()];
 }
 
 /** O estado: funções disponíveis desde s0 e cada dado (objetos com os campos) a partir do passo em que passa a existir. */
 function buildState(rows: Row[], pending: Pending[], loopVars: { name: string; since: number }[]): StateItem[] {
   const functions = new Map<string, StateItem>();
   for (const r of rows) {
-    if (r.kind === 'fn' && !functions.has(r.name)) functions.set(r.name, { name: r.name, kind: 'function', level: 0, solid: !r.abstract, since: 0 });
+    if (r.kind === 'fn' && !functions.has(r.name)) functions.set(r.name, { name: r.name, kind: 'function', level: 0, solid: !r.abstract, since: 0, catalog: true });
   }
 
-  type Info = { since: number; solid: boolean; value?: string; fields?: NamedData[]; isFunction?: boolean };
+  type Info = { since: number; solid: boolean; value?: string; fields?: NamedData[]; isFunction?: boolean; shared?: boolean };
+
+  /** arquivos como objeto: cada um é uma caixa que guarda as funções e os dados declarados nele */
+  const boxes = new Map<string, { functions: Map<string, StateItem>; data: Set<string> }>();
+  for (const r of rows) if (r.source?.kind === 'file' && r.source.asObject) boxes.set(r.source.name, { functions: new Map(), data: new Set() });
+  if (boxes.size) {
+    // o arquivo de uma linha é o dela ou, se ela não é um arquivo, o da função acima
+    const fileOf: (string | undefined)[] = [];
+    for (const r of rows) fileOf[r.index] = r.source?.kind === 'file' ? r.source.name : fileOf[r.parent];
+    for (const { row, declared } of pending) {
+      const box = boxes.get(fileOf[row.index] ?? '');
+      if (!box || !row.source) continue;
+      const item = functions.get(row.name)!;
+      box.functions.set(row.name, item);
+      declared.forEach((d) => box.data.add(d.name));
+    }
+  }
   /** tudo que tem endereço conhecido, inclusive campos de objetos */
   const known = new Map<string, Info>();
   /** o que aparece como linha própria do estado */
@@ -200,6 +259,7 @@ function buildState(rows: Row[], pending: Pending[], loopVars: { name: string; s
     if (!output) continue;
     produce(output, row.end);
     own.set(output.name, known.get(output.name)!);
+    if (row.pattern === 'singleton') known.get(output.name)!.shared = true;
   }
 
   /** objeto montado por quem consome: existe quando todos os campos existem; sem origem, o campo vem de fora (s0) */
@@ -232,6 +292,7 @@ function buildState(rows: Row[], pending: Pending[], loopVars: { name: string; s
   const lines = (name: string, info: Info, level: number, since: number, seen: Set<string>): StateItem[] => {
     const fields = seen.has(name) ? undefined : info.fields;
     const head: StateItem = { name, level, since, solid: info.solid, kind: fields ? 'object' : info.isFunction || functions.has(name) ? 'function' : 'data' };
+    if (info.shared) head.shared = true;
     if (!fields) return [info.value === undefined ? head : { ...head, value: info.value }];
     const inside = new Set(seen).add(name);
     return [head, ...fields.flatMap((f) => {
@@ -245,11 +306,13 @@ function buildState(rows: Row[], pending: Pending[], loopVars: { name: string; s
     const info = known.get(d.name);
     const object = !!(d.fields ?? info?.fields);
     const fn = functions.get(d.name);
-    return {
+    const result: DataPoint = {
       name: d.name,
       kind: object ? 'object' : fn || info?.isFunction ? 'function' : 'data',
       solid: (fn && !object ? fn.solid : info?.solid) ?? d.value !== undefined,
     };
+    if (info?.shared) result.shared = true;
+    return result;
   };
   for (const p of pending) {
     p.row.in = point(p.input);
@@ -257,5 +320,25 @@ function buildState(rows: Row[], pending: Pending[], loopVars: { name: string; s
   }
   // funções primeiro; dados por passo (sort estável), cada objeto seguido dos campos
   const groups = [...own].sort((a, b) => a[1].since - b[1].since);
-  return [...functions.values(), ...groups.flatMap(([name, info]) => lines(name, info, 0, info.since, new Set()))];
+  // o que está guardado num arquivo-objeto aparece dentro da caixa dele, não solto no estado
+  const inBox = new Set<string>();
+  const boxed = new Set<string>();
+  const files = [...boxes].flatMap(([file, box]) => {
+    const head: StateItem = { name: file, kind: 'object', level: 0, solid: true, since: 0 };
+    const inside = [...box.functions.values()].map((f) => {
+      inBox.add(f.name);
+      const { catalog: _, ...inside } = f; // dentro da caixa, a função é conteúdo dela
+      return { ...inside, level: 1 };
+    });
+    const data = groups.filter(([name, info]) => box.data.has(name) && info.since === 0 && !boxed.has(name));
+    return [head, ...inside, ...data.flatMap(([name, info]) => {
+      boxed.add(name);
+      return lines(name, info, 1, 0, new Set());
+    })];
+  });
+  return [
+    ...[...functions.values()].filter((f) => !inBox.has(f.name)),
+    ...files,
+    ...groups.filter(([name]) => !boxed.has(name)).flatMap(([name, info]) => lines(name, info, 0, info.since, new Set())),
+  ];
 }

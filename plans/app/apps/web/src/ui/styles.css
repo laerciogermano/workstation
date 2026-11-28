@@ -104,14 +104,32 @@ button.state:disabled { cursor: default; }
 .icon { display: block; margin: auto; }
 .toggle { position: absolute; left: 100%; top: 50%; translate: -50% -50%; min-width: 22px; height: 22px; padding: 0 5px; border: 1px solid var(--line-2); background: var(--paper); border-radius: 11px; color: var(--body); font-size: 14px; line-height: 1; white-space: nowrap; }
 .toggle:hover { border-color: var(--accent); color: var(--accent); }
-.toggle.closed { translate: -11px -50%; background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-size: 11px; font-weight: 600; }
+.toggle.closed { translate: -11px -50%; display: flex; gap: 2px; padding: 0; border: 0; background: none; font-size: 11px; font-weight: 600; }
+.toggle.closed span { min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; line-height: 22px; background: var(--state); color: var(--paper); }
+.toggle.closed:hover span { filter: brightness(1.12); }
 .tools { position: absolute; right: -1px; top: -13px; display: none; gap: 2px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px; box-shadow: var(--shadow); }
 .tnode:hover .tools { display: flex; }
 .tools button { display: inline-grid; place-items: center; width: 26px; height: 24px; padding: 0; border: 0; background: none; border-radius: 4px; color: var(--muted); }
 .tools button:hover { background: var(--wash); color: var(--ink); }
+/* root: o + fica sempre à vista; o nome da pasta não quebra a linha */
+.troot .chip { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.troot .tools { display: flex; }
 .tnew { position: absolute; width: 236px; height: 56px; border: 0; background: var(--card, var(--paper)); border-radius: 9px; padding: 8px 10px; box-shadow: 0 0 0 2px var(--accent), 0 8px 20px -10px rgba(20,24,30,.35); }
 .tnew input { width: 100%; border: 0; outline: none; background: none; font-weight: 600; padding: 0; }
 .tnew small { color: var(--muted); font-size: 11px; }
+
+/* Kanban: o espaço à direita é do botão do painel */
+.board { display: grid; grid-template-columns: repeat(3, minmax(200px, 1fr)); grid-template-rows: minmax(0, 1fr); gap: 12px; min-width: 0; min-height: 0; padding: 12px 54px 12px 12px; overflow-x: auto; background: var(--panel); }
+.column { display: flex; flex-direction: column; min-height: 0; border-radius: 10px; background: var(--wash); }
+.column.over { box-shadow: inset 0 0 0 2px var(--accent); }
+.column h3 { display: flex; align-items: center; padding: 11px 12px 9px; color: var(--state); }
+.column.status-todo h3 { color: var(--ink); }
+.column ul { flex: 1; list-style: none; margin: 0; padding: 2px 8px 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.card { flex: none; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border-radius: 9px; background: var(--card, var(--paper)); box-shadow: var(--shadow); cursor: pointer; user-select: none; }
+.card:hover { background: color-mix(in srgb, var(--ink) 4%, var(--card, var(--paper))); }
+.card.sel { box-shadow: 0 0 0 2px var(--accent); }
+.card small { color: var(--muted); font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.card .open { padding: 0; border: 0; background: none; text-align: left; font-weight: 600; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 
 .side { border-left: 1px solid var(--line); overflow-y: auto; min-height: 0; }
 .node-panel { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
@@ -122,6 +140,9 @@ button.state:disabled { cursor: default; }
 input:not([type="checkbox"]), select, textarea { border: 1px solid var(--line-2); border-radius: 7px; padding: 7px 9px; background: var(--paper); min-width: 0; }
 textarea { resize: vertical; }
 .status { font-size: 12px; color: var(--muted); min-height: 17px; margin-top: -8px; }
+.system-prompt { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+/* referência abaixo da atividade: um texto longo rola dentro da própria caixa */
+.system-prompt > .field .md-read { max-height: 260px; overflow: auto; }
 
 /* descrição em Markdown: o editor segue as cores do tema */
 .md-head { display: flex; align-items: center; gap: 8px; }

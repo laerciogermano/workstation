@@ -26,12 +26,13 @@ handle.destroy();
 O elemento hospedeiro precisa ter altura. Sem tela, os comandos valem sozinhos:
 
 ```ts
-import { createEditor, fn, generateCode } from '@flow/editor';
+import { createEditor, diagnose, fn, generateCode } from '@flow/editor';
 
 const editor = createEditor(fn('main'));
 editor.run({ type: 'insert', target: editor.state.tree.id, where: 'inside', kind: 'fn' }); // { ok: true }
 editor.undo();
-generateCode(editor.state.tree); // JavaScript
+generateCode(editor.state.tree); // JavaScript; 'ts' ou 'py' no segundo argumento
+diagnose(editor.state.tree); // problemas: { id, level, message }
 ```
 
 ## O que dá para fazer
@@ -49,9 +50,14 @@ generateCode(editor.state.tree); // JavaScript
 | Use case, composição | **Dentro**, **Envolver em → uma função**, setas → e ← |
 | Responsável | arquivo, pessoa, IA, máquina, objeto, herdado ou abstrato |
 | Sólido × abstrato | dado com ou sem valor; função com ou sem responsável |
-| Público e privado | **Visibilidade** (pública vira `export`; sem forma própria no desenho) |
+| Público e privado | **Visibilidade**: seta (pública) ou cadeado (privada) ao lado do nome; pública no topo do arquivo vira `export` |
+| Arquivo como objeto | Responsável **arquivo** → **Arquivo como objeto**: cubo na origem e caixa no estado, com as funções e os dados dele |
+| Padrões de projeto | **Padrão**: factory (cubo no fim da barra) ou singleton (contorno duplo na barra e no dado) |
 | Exemplos | menu **Exemplos do FOP**: 48 pontos de partida editáveis, com as regras de cada um |
-| Código | JavaScript gerado ao vivo; JSON para copiar, editar e aplicar |
+| Condições | Conferidas a cada mudança: sintaxe, nomes no estado naquele ponto, tipos e `case` repetido; aba **Problemas** |
+| Código | JavaScript, TypeScript ou Python, gerado ao vivo; JSON para copiar, editar e aplicar |
+
+As formas de público, privado, arquivo como objeto e padrões são deste projeto: o site descreve os conceitos, mas desenha os exemplos com as formas comuns.
 
 Organizar: mover, duplicar, envolver, desfazer bloco, remover, desfazer e refazer.
 
@@ -69,7 +75,10 @@ Organizar: mover, duplicar, envolver, desfazer bloco, remover, desfazer e refaze
 | `src/ops.ts` | Comandos puros |
 | `src/editor.ts` | Seleção e histórico, sem tela |
 | `src/view-tree.ts` | Modelo → entrada do Flow View |
-| `src/code.ts` | Fluxo → JavaScript |
+| `src/expr.ts` | Lê as expressões das condições |
+| `src/check.ts` | Confere o fluxo e lista os problemas |
+| `src/code.ts` | Fluxo → JavaScript e TypeScript |
+| `src/code-python.ts` | Fluxo → Python |
 | `src/serialize.ts` | JSON com validação |
 | `src/ui.ts`, `panel.ts`, `morph.ts`, `styles.ts` | Tela |
 
@@ -77,9 +86,10 @@ No Flow View entraram só acréscimos: `onSelect`, `select`, `reveal`, a linha d
 
 ## Limites desta versão
 
-- Expressões de condição são texto livre: não são conferidas.
-- O código gerado é de leitura; condições e valores abstratos precisam ser completados para executar. Só há JavaScript.
-- Arquivo como objeto e padrões de projeto não têm forma própria no desenho.
+- A conferência cobre um recorte de JavaScript: funções e objetos escritos dentro da expressão ficam como dica, sem conferir. Ela aponta, não bloqueia.
+- O código gerado é de leitura; condições e valores abstratos precisam ser completados para executar.
+- Em Python, condição sem tradução segura vira o valor padrão com o original anotado (`# a conferir`), e lista ou objeto vazio vale falso (em JavaScript, verdadeiro).
+- Só há duas formas de padrão de projeto (factory e singleton), as que o site cita; elas não mudam o código além de um comentário.
 - O fluxo é guardado no navegador (no aplicativo de teste), sem servidor.
 - Para fluxos muito grandes, cada mudança recalcula tudo.
 

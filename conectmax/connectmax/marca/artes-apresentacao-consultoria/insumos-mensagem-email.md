@@ -38,7 +38,7 @@ Pasta: [`artes-apresentacao-consultoria/`](./) · fontes: [`fonte/`](fonte/)
 | [`arte-02-por-onde-comecar.png`](arte-02-por-onde-comecar.png) | Por onde **começar** a tecnologia da sua empresa? | Diagnóstico → Plano e proposta → Execução acompanhada (entregas quinzenais) | Peça um diagnóstico inicial |
 | [`arte-03-menos-complexidade.png`](arte-03-menos-complexidade.png) | Menos complexidade. Mais resultado. | Consultoria em tecnologia para empresas que querem fazer mais com o que já têm. | Vamos conversar? |
 | [`arte-04-do-diagnostico-ao-sistema.png`](arte-04-do-diagnostico-ao-sistema.png) | Do diagnóstico ao **sistema em produção** | Diagnóstico → Proposta → Protótipo → Desenvolvimento → Implantação | Fale com um consultor |
-| [`arte-05-mesmo-parceiro.png`](arte-05-mesmo-parceiro.png) | O parceiro que abastece sua tecnologia agora **constrói seus sistemas** | Consultoria e software, da cotação à implantação · 2017 · +1.000 empresas · PR/SC/RS/SP · B2B | Fale com um consultor |
+| [`arte-05-mesmo-parceiro.png`](arte-05-mesmo-parceiro.png) | O parceiro que abastece sua tecnologia também **constrói seus sistemas** | Consultoria e software, da cotação à implantação · 2017 · +1.000 empresas · PR/SC/RS/SP · B2B | Fale com um consultor |
 | [`arte-06-servicos-cartao.png`](arte-06-servicos-cartao.png) | Pensamos, desenhamos e **entregamos** | Consultoria · Software sob medida · Portal de compras B2B · Apps · Integrações · Dashboards · IA · Automação | Solicite uma proposta |
 
 Rodapé comum nas artes: `ConectMax · Soluções em Tecnologia · Desde 2017 · Atendimento B2B`. CTA sem ícone/número de WhatsApp (só a chamada) — ver [`fonte/gen.py`](fonte/gen.py). Antes: botão com ícone WA + `(41) 3521-0257`.

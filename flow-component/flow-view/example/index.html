@@ -1,62 +1,55 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flow View — demonstração</title>
-<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flow</title>
+<meta name="description" content="Flow Oriented Programming — flow editor">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="../dist/fonts.css">
-<style>
-  html, body { margin: 0; height: 100%; background: #050505; color: #e8e8e8; font: 13px/1.4 "IBM Plex Sans", system-ui, sans-serif; }
-  body { display: flex; flex-direction: column; }
-  body.light { background: #fff; color: #1d1f24; }
-  nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #8883; align-items: center; }
-  nav a { color: inherit; text-decoration: none; padding: 5px 10px; border-radius: 99px; background: #8882; }
-  nav a[aria-current] { background: #f07167; color: #fff; font-weight: 600; }
-  nav span { margin-left: auto; opacity: .65; font-variant-numeric: tabular-nums; }
-  nav b { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; opacity: .55; margin-right: 2px; }
-  nav i { flex-basis: 100%; height: 0; }
-  main { flex: 1; min-height: 0; }
-</style>
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
-<!-- os botões são só da demonstração: a biblioteca não tem interação além da rolagem -->
-<nav aria-label="Exemplos"></nav>
-<main id="host"></main>
-<script type="module">
-  import { mountFlow } from '../dist/flow-view.js';
-  import { REAL } from './real.js';
-  import { largeFlow, SAMPLES } from './samples.js';
-
-  const query = new URLSearchParams(location.search);
-  const current = query.get('ex') ?? 'sequencial';
-  const theme = query.get('tema') === 'claro' ? 'light' : 'dark';
-  document.body.classList.toggle('light', theme === 'light');
-
-  const nav = document.querySelector('nav');
-  const link = (label, params, active) => {
-    const a = Object.assign(document.createElement('a'), { textContent: label, href: '?' + new URLSearchParams(params) });
-    if (active) a.setAttribute('aria-current', 'page');
-    nav.append(a);
-  };
-  const keep = theme === 'light' ? { tema: 'claro' } : {};
-  const group = (label, list) => {
-    nav.append(Object.assign(document.createElement('b'), { textContent: label }));
-    for (const [key, s] of Object.entries(list)) link(s.title, { ex: key, ...keep }, key === current);
-    nav.append(document.createElement('i'));
-  };
-  group('Casos reais', REAL);
-  group('Conceitos', SAMPLES);
-  link('Grande (20 mil funções)', { ex: 'grande', ...keep }, current === 'grande');
-  link(theme === 'light' ? 'Tema escuro' : 'Tema claro', { ex: current, ...(theme === 'light' ? {} : { tema: 'claro' }) });
-
-  const tree = current === 'grande' ? largeFlow(Number(query.get('n') ?? 20000)) : (SAMPLES[current] ?? REAL[current] ?? SAMPLES.sequencial).tree;
-  const began = performance.now();
-  window.view = mountFlow(document.getElementById('host'), tree, { theme });
-  window.mountedIn = performance.now() - began;
-  nav.append(Object.assign(document.createElement('span'), {
-    textContent: `${window.view.layout.rows.length.toLocaleString('pt-BR')} linhas · ${window.view.layout.steps.toLocaleString('pt-BR')} ${window.view.layout.steps === 1 ? 'passo' : 'passos'} · montado em ${Math.round(window.mountedIn)} ms`,
-  }));
-</script>
+<header class="topbar">
+  <span class="brand"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="brand-text"><span class="brand-row"><span class="ttl">FOP - Flow Oriented Programming</span><span class="ver" title="Version 0.1">0.1</span><span class="beta" title="Under development">prototype</span></span><span class="epigraph">"Everything flows, except flow" - Heraclitus</span></span></span>
+  <span class="sp"></span>
+  <button type="button" class="ib" id="theme"></button>
+  <button type="button" class="ib" id="reset" title="Reset the view" aria-label="Reset the view"></button>
+</header>
+<div class="app" id="app">
+  <aside class="explorer" aria-label="File explorer">
+    <div class="ex-head"><span>Explorer</span><button type="button" class="ib" id="exCollapse" title="Collapse all folders" aria-label="Collapse all folders"></button></div>
+    <div class="ex-tree" id="exTree"></div>
+  </aside>
+  <div class="splitter" id="exSplitter" role="separator" aria-orientation="vertical" aria-label="Resize the explorer" tabindex="0" title="Drag to resize · double-click to reset"><i></i></div>
+  <section class="fx" aria-label="Flow">
+    <div class="fx-bar" role="toolbar" aria-label="View">
+      <button type="button" class="ib" id="exToggle" title="Show / hide the explorer (Ctrl+B)" aria-label="Explorer"></button>
+      <span class="fx-t" id="flowName"></span>
+      <span class="sp"></span>
+      <button type="button" class="ib" id="undo" title="Undo (Ctrl+Z)" aria-label="Undo" disabled></button>
+      <button type="button" class="ib" id="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled></button>
+      <i class="vsep"></i>
+      <button type="button" class="ib" id="zout" title="Zoom out (−)" aria-label="Zoom out"></button>
+      <span class="zv" id="zv">100%</span>
+      <button type="button" class="ib" id="zin" title="Zoom in (+)" aria-label="Zoom in"></button>
+      <button type="button" class="ib" id="fit" title="Fit to screen (0)" aria-label="Fit to screen"></button>
+      <i class="vsep"></i>
+      <button type="button" class="ib" id="names" title="Name inside the bar" aria-label="Name inside the bar"></button>
+      <button type="button" class="ib" id="states" aria-label="Show all available data in the states"></button>
+      <button type="button" class="ib" id="expand" title="Expand all" aria-label="Expand all"></button>
+      <button type="button" class="ib" id="collapse" title="Collapse all" aria-label="Collapse all"></button>
+    </div>
+    <main id="host"></main>
+  </section>
+</div>
+<footer class="site-foot">
+  <div class="fx-legend" aria-label="Legend">
+    <span><i class="lg fa"></i>abstract function</span><span><i class="lg fc"></i>concrete function</span><span><i class="lg da"></i>abstract data</span><span><i class="lg dc"></i>concrete data</span><span><i class="lg cb"></i>object</span>
+    <span><i class="lg dia"></i>selection</span><span><i class="lg lp">↻</i>repetition</span><span><i class="lg tr"></i>try</span><span><i class="lg ca"></i>catch</span>
+  </div>
+  <div class="foot-meta"><span>FOP</span><span class="sep">·</span><a href="LICENSE" rel="license">MIT License</a><span class="sep">·</span><a href="mailto:contact@flow-oriented-programming.com">contact@flow-oriented-programming.com</a></div>
+</footer>
+<script type="module" src="app.js"></script>
 </body>
 </html>

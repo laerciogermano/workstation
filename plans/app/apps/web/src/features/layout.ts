@@ -3,6 +3,8 @@ import type { TreeNode } from '@plans/domain';
 
 export const W = 236, H = 56, GX = 52, GY = 18, P = 28;
 export const NEW = 'novo';
+/** Nó do projeto, pai de todas as atividades sem pai. Não é arquivo: os ids de atividade são UUIDs. */
+export const ROOT = 'raiz';
 export type Box = { x: number; y: number; h: number };
 
 export function layout(roots: TreeNode[], creating: string | null, collapsed: Set<string>, heightOf: (n: TreeNode) => number) {
@@ -17,7 +19,8 @@ export function layout(roots: TreeNode[], creating: string | null, collapsed: Se
     const start = y;
     const mark = order.length;
     const h = heightOf(n);
-    const x = P + n.depth * (W + GX);
+    // a coluna 0 é da raiz do projeto
+    const x = P + (n.depth + 1) * (W + GX);
     const below = (collapsed.has(id) ? [] : n.children).map((c) => (place(c, id), c.activity.id));
     if (creating === id) {
       pos.set(NEW, { x: x + W + GX, y, h: H });
@@ -46,9 +49,11 @@ export function layout(roots: TreeNode[], creating: string | null, collapsed: Se
 
   roots.forEach((r) => (place(r, null), (y += 10)));
   if (creating === 'root') {
-    pos.set(NEW, { x: P, y, h: H });
+    pos.set(NEW, { x: P + W + GX, y, h: H });
     y += H + GY;
   }
+  // no topo, e não no meio dos filhos: com muitas atividades, continua visível ao abrir
+  if (roots.length || creating === 'root') pos.set(ROOT, { x: P, y: P, h: H });
   const width = Math.max(0, ...[...pos.values()].map((p) => p.x + W)) + P;
   return { pos, order, width, height: y + P };
 }

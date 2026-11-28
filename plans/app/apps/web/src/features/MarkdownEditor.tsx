@@ -1,9 +1,10 @@
-// Editor de Markdown da descrição (@uiw/react-md-editor). Carregado só quando um painel o usa.
+// Editor de Markdown (@uiw/react-md-editor). Carregado só quando um painel o usa.
 import '@uiw/react-markdown-preview/markdown.css';
 import '@uiw/react-md-editor/markdown-editor.css';
 import MDEditor, { commands, type ICommand } from '@uiw/react-md-editor/nohighlight';
 import type { ComponentProps, KeyboardEvent } from 'react';
 import rehypeSanitize from 'rehype-sanitize';
+import type { MarkdownText } from './markdownText.ts';
 
 export type DescriptionMode = 'read' | 'edit' | 'split';
 
@@ -55,6 +56,7 @@ const preview: ComponentProps<typeof MDEditor.Markdown> = {
 };
 
 export type MarkdownEditorProps = {
+  text: MarkdownText;
   value: string;
   mode: DescriptionMode;
   readOnly: boolean;
@@ -67,12 +69,12 @@ export type MarkdownEditorProps = {
   onEdit: () => void;
 };
 
-export default function MarkdownEditor({ value, mode, readOnly, dark, height, onChange, onSave, onEdit }: MarkdownEditorProps) {
+export default function MarkdownEditor({ text, value, mode, readOnly, dark, height, onChange, onSave, onEdit }: MarkdownEditorProps) {
   return (
     <div className={`md mode-${mode}`} data-color-mode={dark ? 'dark' : 'light'}>
       {mode === 'read' ? (
-        <div className="md-read" role="document" aria-label="Descrição formatada" onDoubleClick={() => !readOnly && onEdit()} style={{ minHeight: 80 }}>
-          {value.trim() ? <MDEditor.Markdown source={value} {...preview} /> : <p className="muted">Sem descrição.{!readOnly && ' Dois cliques para escrever.'}</p>}
+        <div className="md-read" role="document" aria-label={text.formatted} onDoubleClick={() => !readOnly && onEdit()} style={{ minHeight: 80 }}>
+          {value.trim() ? <MDEditor.Markdown source={value} {...preview} /> : <p className="muted">{text.empty}{!readOnly && ' Dois cliques para escrever.'}</p>}
         </div>
       ) : (
         <MDEditor
@@ -85,8 +87,8 @@ export default function MarkdownEditor({ value, mode, readOnly, dark, height, on
           extraCommands={[]}
           previewOptions={preview}
           textareaProps={{
-            'aria-label': 'Descrição',
-            placeholder: 'Contexto para quem vai executar (aceita Markdown)',
+            'aria-label': text.label,
+            placeholder: text.placeholder,
             maxLength: 100_000,
             readOnly,
             onKeyDown: (e: KeyboardEvent) => {

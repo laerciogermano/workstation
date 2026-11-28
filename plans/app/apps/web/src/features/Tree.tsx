@@ -1,14 +1,22 @@
 // T-40 e T-41: árvore da esquerda para a direita, com criação no próprio nó, zoom e deslocamento.
-import { STATUS_LABEL, STATUSES, type TreeNode } from '@plans/domain';
+import { STATUS_LABEL, STATUSES, type Status, type TreeNode } from '@plans/domain';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { askRemove, cancelCreate, createNode, expandAll, minimizeAll, moveNode, renameNode, select, setStatus, startCreate, toggleCollapse, type State } from '../store/app.ts';
+import { askRemove, cancelCreate, createNode, expandAll, minimizeAll, moveNode, openSettings, renameNode, select, startCreate, toggleCollapse, type State } from '../store/app.ts';
+import { AssigneeChip, StatusButton } from './Chips.tsx';
 import { dropTarget, edgeSpeed } from './dnd.ts';
-import { edge, GY, layout, NEW, W, type Box } from './layout.ts';
+import { edge, GY, layout, NEW, ROOT, W, type Box } from './layout.ts';
 import { cardHeight, useFontMetrics } from './measure.ts';
 import { fit, reveal, STEP, zoomAt, type View } from './viewport.ts';
 import { Icon } from '../ui/Icon.tsx';
 
 const descendants = (n: TreeNode): string[] => n.children.flatMap((c) => [c.activity.id, ...descendants(c)]);
+/** Quantas atividades escondidas há em cada status (só os que existem). */
+const hiddenByStatus = (n: TreeNode) => {
+  const all: Status[] = [];
+  const walk = (c: TreeNode) => (all.push(c.activity.status ?? 'todo'), c.children.forEach(walk));
+  n.children.forEach(walk);
+  return STATUSES.map((status) => ({ status, count: all.filter((s) => s === status).length })).filter((g) => g.count);
+};
 const heightOf = (n: TreeNode) => cardHeight(n.warning ? `⚠ ${n.activity.title}` : n.activity.title);
 
 function NewNode({ at, parent }: { at: Box; parent: string | null }) {
@@ -89,7 +97,6 @@ export function Tree({ app }: { app: State }) {
   const collapsed = new Set(app.collapsed);
   useFontMetrics();
   const { pos, order, width, height } = layout(app.tree, app.creating, collapsed, heightOf);
-  const names = new Map(app.snapshot.assignees.map((a) => [a.id, a]));
   const refs = useRef(new Map<string, HTMLDivElement>());
   const [renaming, setRenaming] = useState<string | null>(null);
   const focusable = app.selected ?? order[0]?.node.activity.id;
@@ -315,13 +322,34 @@ export function Tree({ app }: { app: State }) {
         )}
         <div className="tree" role="tree" style={{ width, height, transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }}>
           <svg width={width} height={height} aria-hidden="true">
-            {order.map(({ node, parent }) => parent && <path key={node.activity.id} d={edge(pos.get(parent)!, pos.get(node.activity.id)!)} />)}
-            {app.creating && app.creating !== 'root' && pos.has(NEW) && <path className="new" d={edge(pos.get(app.creating)!, pos.get(NEW)!)} />}
+            {order.map(({ node, parent }) => <path key={node.activity.id} d={edge(pos.get(parent ?? ROOT)!, pos.get(node.activity.id)!)} />)}
+            {app.creating && pos.has(NEW) && <path className="new" d={edge(pos.get(app.creating === 'root' ? ROOT : app.creating)!, pos.get(NEW)!)} />}
           </svg>
+          {pos.has(ROOT) && (
+            <div
+              className={`tnode troot${drop?.over === ROOT ? ' drop-child' : ''}`}
+              role="group"
+              aria-label="root"
+              style={{ left: pos.get(ROOT)!.x, top: pos.get(ROOT)!.y, height: pos.get(ROOT)!.h }}
+              onClick={() => select(null)}
+              title={app.folderName}
+            >
+              <b>root</b>
+              <span className="meta">
+                <span className="chip none">{app.folderName}</span>
+                <span className="count">{app.tree.length}</span>
+              </span>
+              <span className="tools">
+                <button type="button" aria-label="Configurações do projeto" title="Configurações: system prompt" onClick={(e) => (e.stopPropagation(), openSettings())}><Icon name="settings" size={14} /></button>
+                {!app.readOnly && (
+                  <button type="button" aria-label="Nova atividade no root" title="Nova atividade no root" onClick={(e) => (e.stopPropagation(), startCreate(null))}><Icon name="plus" size={14} /></button>
+                )}
+              </span>
+            </div>
+          )}
           {order.map(({ node }, i) => {
             const a = node.activity;
             const p = pos.get(a.id)!;
-            const who = a.assignee ? names.get(a.assignee) : undefined;
             return (
               <div
                 key={a.id}
@@ -357,23 +385,8 @@ export function Tree({ app }: { app: State }) {
                   </b>
                 )}
                 <span className="meta">
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    className={`state status-${a.status ?? 'todo'}`}
-                    disabled={app.readOnly}
-                    aria-label={`Status de ${a.title}: ${STATUS_LABEL[a.status ?? 'todo']}`}
-                    title="Clique para mudar o status"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // To do → Doing → Done → To do
-                      void setStatus(a.id, STATUSES[(STATUSES.indexOf(a.status ?? 'todo') + 1) % STATUSES.length]!);
-                    }}
-                    onDoubleClick={(e) => e.stopPropagation()}
-                  >
-                    {STATUS_LABEL[a.status ?? 'todo']}
-                  </button>
-                  {a.assignee ? <span className={`chip ${who?.type ?? 'unknown'}`}>{who?.name ?? `${a.assignee} (?)`}</span> : <span className="chip none">sem responsável</span>}
+                  <StatusButton activity={a} disabled={app.readOnly} tabIndex={-1} />
+                  <AssigneeChip id={a.assignee} assignees={app.snapshot.assignees} />
                   {node.children.length > 0 && !collapsed.has(a.id) && <span className="count">{node.children.length}</span>}
                 </span>
                 {node.children.length > 0 && (
@@ -382,10 +395,10 @@ export function Tree({ app }: { app: State }) {
                     tabIndex={-1}
                     className={`toggle${collapsed.has(a.id) ? ' closed' : ''}`}
                     aria-label={collapsed.has(a.id) ? `Expandir ${a.title} (${descendants(node).length} ocultas)` : `Minimizar ${a.title}`}
-                    title={collapsed.has(a.id) ? 'Expandir' : 'Minimizar'}
+                    title={collapsed.has(a.id) ? `Expandir: ${hiddenByStatus(node).map((g) => `${g.count} ${STATUS_LABEL[g.status]}`).join(', ')}` : 'Minimizar'}
                     onClick={(e) => (e.stopPropagation(), toggle(node))}
                   >
-                    {collapsed.has(a.id) ? `+${descendants(node).length}` : <Icon name="minus" size={13} />}
+                    {collapsed.has(a.id) ? hiddenByStatus(node).map((g) => <span key={g.status} className={`status-${g.status}`}>{g.count}</span>) : <Icon name="minus" size={13} />}
                   </button>
                 )}
                 {!app.readOnly && renaming !== a.id && (

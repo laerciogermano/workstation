@@ -1,7 +1,7 @@
 // Os comandos de edição. Puro: recebe uma árvore, devolve outra; nunca altera a que recebeu.
 // Garante o que o Flow exige: `else` logo depois do `if`, `catch` depois do `try`, `case` só dentro de `switch`.
 import { block, find, fn, freeName, isFn, names, newId, walk } from './model.ts';
-import type { BlockNode, BlockType, DataSide, Datum, FlowNode, FnNode, Source } from './model.ts';
+import type { BlockNode, BlockType, DataSide, Datum, FlowNode, FnNode, Pattern, Source } from './model.ts';
 
 export type InsertKind = 'fn' | 'if' | 'ifelse' | 'switch' | 'for' | 'while' | 'do-while' | 'try';
 export type WrapKind = 'fn' | 'if' | 'switch' | 'for' | 'while' | 'do-while' | 'try';
@@ -15,6 +15,9 @@ export interface Patch {
   source?: Source | null | 'inherit';
   parallel?: boolean;
   visibility?: 'public' | 'private' | null;
+  pattern?: Pattern | null;
+  /** Só para responsável arquivo: vale para todas as funções do mesmo arquivo. */
+  asObject?: boolean;
 }
 
 export type Command =
@@ -191,7 +194,25 @@ export function apply(source: FnNode, command: Command): Applied {
         else if (patch.source !== undefined) {
           if (patch.source && !patch.source.name.trim()) fail('O responsável precisa de um nome.');
           node.source = patch.source && { kind: patch.source.kind, name: patch.source.name.trim() };
+          // um arquivo que já é objeto continua sendo, para quem passa a morar nele
+          if (node.source?.kind === 'file') {
+            const name = node.source.name;
+            let boxed = false;
+            walk(tree, (n) => (boxed ||= isFn(n) && n !== node && n.source?.kind === 'file' && n.source.name === name && !!n.source.asObject));
+            if (boxed || patch.source?.asObject) node.source.asObject = true;
+          }
         }
+        if (patch.asObject !== undefined) {
+          const source = node.source;
+          if (source?.kind !== 'file') fail('Só um responsável arquivo pode ser um objeto.');
+          walk(tree, (n) => {
+            if (!isFn(n) || n.source?.kind !== 'file' || n.source.name !== source!.name) return;
+            if (patch.asObject) n.source.asObject = true;
+            else delete n.source.asObject;
+          });
+        }
+        if (patch.pattern === null) delete node.pattern;
+        else if (patch.pattern) node.pattern = patch.pattern;
         if (patch.visibility === null) delete node.visibility;
         else if (patch.visibility) node.visibility = patch.visibility;
       } else {

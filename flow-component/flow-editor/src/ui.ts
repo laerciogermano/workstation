@@ -1,13 +1,14 @@
 // O editor na tela: o desenho do Flow View, o painel de edição, o código gerado e o JSON.
 import { mountFlow, type FlowViewHandle } from '@flow/view';
-import { generateCode } from './code.ts';
+import { diagnose, type Problem } from './check.ts';
+import { generateCode, LANGUAGES, type Language } from './code.ts';
 import { createEditor, type Editor } from './editor.ts';
 import { EXAMPLES, type Example } from './examples.ts';
 import { find, fn, freeName, hasFields, names } from './model.ts';
-import type { DataSide, Datum, DataType, FnNode, Source, SourceKind } from './model.ts';
+import type { DataSide, Datum, DataType, FnNode, Pattern, Source, SourceKind } from './model.ts';
 import { morph } from './morph.ts';
 import type { Command, InsertKind, Where, WrapKind } from './ops.ts';
-import { escapeHtml, renderPanel, variableOf } from './panel.ts';
+import { escapeHtml, renderPanel, renderProblems, variableOf } from './panel.ts';
 import { fromJson, toJson } from './serialize.ts';
 import { styles } from './styles.ts';
 import { toView } from './view-tree.ts';
@@ -20,6 +21,9 @@ export interface FlowEditorOptions {
   /** Chamado a cada mudança no fluxo. */
   onChange?: (tree: FnNode) => void;
   onThemeChange?: (theme: 'dark' | 'light') => void;
+  /** Linguagem do código gerado (padrão: JavaScript). */
+  language?: Language;
+  onLanguageChange?: (language: Language) => void;
 }
 
 export interface FlowEditorHandle {
@@ -38,7 +42,10 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
   const editor = createEditor(options.tree ?? fn('main'));
   let theme = options.theme ?? 'dark';
   let where: Where = 'after';
-  let tab: 'code' | 'json' | null = 'code';
+  type Tab = 'code' | 'json' | 'problems';
+  let tab: Tab | null = 'code';
+  let language: Language = options.language ?? 'js';
+  let problems: Problem[] = diagnose(editor.state.tree);
   let example: Example | null = null;
 
   const root = doc.createElement('div');
@@ -60,12 +67,15 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
       <div class="tabs">
         <button type="button" data-tab="code">Código</button>
         <button type="button" data-tab="json">JSON</button>
+        <button type="button" data-tab="problems"></button>
         <span class="space"></span>
+        <select data-language aria-label="Linguagem do código">${LANGUAGES.map(([value, label]) => `<option value="${value}"${value === language ? ' selected' : ''}>${label}</option>`).join('')}</select>
         <button type="button" data-top="copy">Copiar</button>
         <button type="button" data-top="apply">Aplicar JSON</button>
       </div>
       <pre aria-label="Código gerado" tabindex="0"></pre>
       <textarea aria-label="Fluxo em JSON" spellcheck="false"></textarea>
+      <div class="problems" aria-label="Problemas"></div>
     </div>`;
   host.append(root);
   const $ = <T extends Element = HTMLElement>(q: string) => root.querySelector<T & Element>(q) as T;
@@ -98,7 +108,7 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
   }
 
   function renderSide() {
-    morph(panel, renderPanel({ tree: editor.state.tree, selected: editor.state.selected, where, prefix: id, why: editor.why }));
+    morph(panel, renderPanel({ tree: editor.state.tree, selected: editor.state.selected, where, prefix: id, why: editor.why, problems }));
     $<HTMLButtonElement>('[data-top=undo]').disabled = !editor.state.canUndo;
     $<HTMLButtonElement>('[data-top=redo]').disabled = !editor.state.canRedo;
     $('[data-top=theme]').textContent = theme === 'dark' ? 'Tema claro' : 'Tema escuro';
@@ -108,16 +118,22 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
   function renderDrawer() {
     code.hidden = tab !== 'code';
     json.hidden = tab !== 'json';
-    $('[data-top=copy]').hidden = tab === null;
+    $('.problems').hidden = tab !== 'problems';
+    $('[data-language]').hidden = tab !== 'code';
+    $('[data-top=copy]').hidden = tab === null || tab === 'problems';
     $('[data-top=apply]').hidden = tab !== 'json';
     for (const b of root.querySelectorAll<HTMLElement>('[data-tab]')) b.setAttribute('aria-pressed', String(b.dataset.tab === tab));
-    if (tab === 'code') code.textContent = generateCode(editor.state.tree);
+    const count = problems.filter((p) => p.level !== 'tip').length;
+    $('[data-tab=problems]').textContent = count ? `Problemas (${count})` : 'Problemas';
+    if (tab === 'problems') morph($('.problems'), renderProblems(editor.state.tree, problems));
+    if (tab === 'code') code.textContent = generateCode(editor.state.tree, language);
     if (tab === 'json') json.value = toJson(editor.state.tree);
   }
 
   const unsubscribe = editor.subscribe((state, change) => {
     if (change === 'tree') {
       toast.textContent = '';
+      problems = diagnose(state.tree);
       view.update(toView(state.tree));
       renderDrawer();
       options.onChange?.(state.tree);
@@ -198,6 +214,12 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
       view.panTo(0, 0);
       return;
     }
+    if (el.hasAttribute('data-language')) {
+      language = el.value as Language;
+      renderDrawer();
+      options.onLanguageChange?.(language);
+      return;
+    }
     const target = el.dataset.target;
     if (!target) return;
     if (el.hasAttribute('data-wrap')) {
@@ -211,10 +233,12 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
       if (!node) return;
       if (prop === 'parallel') return void run({ type: 'update', target, patch: { parallel: el.checked } });
       if (prop === 'visibility') return void run({ type: 'update', target, patch: { visibility: (el.value || null) as 'public' | 'private' | null } });
+      if (prop === 'pattern') return void run({ type: 'update', target, patch: { pattern: (el.value || null) as Pattern | null } });
+      if (prop === 'asObject') return void run({ type: 'update', target, patch: { asObject: el.checked } });
       if (prop === 'source' || prop === 'sourceName') {
         const current = node.type === 'fn' ? node.source : undefined;
         let source: Source | null | 'inherit';
-        if (prop === 'sourceName') source = { kind: current!.kind, name: el.value };
+        if (prop === 'sourceName') source = { kind: current!.kind, name: el.value, asObject: current!.asObject };
         else if (el.value === 'inherit') source = 'inherit';
         else if (el.value === 'abstract') source = null;
         else {
@@ -250,7 +274,7 @@ export function mountFlowEditor(host: HTMLElement, options: FlowEditorOptions = 
     if (!button || button.disabled) return;
     const { top, act, target, kind, side, path } = button.dataset;
     if (button.dataset.tab) {
-      tab = tab === button.dataset.tab ? null : (button.dataset.tab as 'code' | 'json');
+      tab = tab === button.dataset.tab ? null : (button.dataset.tab as Tab);
       return renderDrawer();
     }
     if (top === 'new') {

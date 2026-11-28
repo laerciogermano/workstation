@@ -7,7 +7,14 @@ export type SourceKind = 'file' | 'person' | 'ai' | 'machine' | 'object';
 export interface Source {
   kind: SourceKind;
   name: string;
+  /** Só em `file`: o arquivo como objeto, uma caixa no estado com as funções e os dados dele. */
+  asObject?: boolean;
 }
+
+/** Pública é acessada de fora do arquivo; privada, só dentro. */
+export type Access = 'public' | 'private';
+/** Padrão de projeto: `factory` cria e devolve um objeto; `singleton` é a instância única e compartilhada. */
+export type Pattern = 'factory' | 'singleton';
 
 /**
  * Um dado, pelo nome (endereço), com valor opcional. Com `fields` é um objeto: no desenho aparece o nome dele,
@@ -26,6 +33,8 @@ export interface FlowFunction {
   data?: Data[];
   /** Ausente: o arquivo mais próximo acima (na raiz, o nome dela). `null`: função abstrata (sem endereço). */
   source?: Source | null;
+  visibility?: Access;
+  pattern?: Pattern;
   /** Ocupa o mesmo passo da irmã anterior. */
   parallel?: boolean;
   children?: FlowNode[];
@@ -51,6 +60,8 @@ export interface DataPoint {
   kind: 'data' | 'object' | 'function';
   /** Preenchido quando há endereço: produzido no fluxo ou com valor. */
   solid: boolean;
+  /** Instância única (saída de um `singleton`): a marca ganha um segundo contorno. */
+  shared?: boolean;
 }
 
 export interface Row {
@@ -73,6 +84,10 @@ export interface Row {
   abstract: boolean;
   /** null em blocos e em funções abstratas. */
   source: Source | null;
+  visibility?: Access;
+  pattern?: Pattern;
+  /** Pedida para rodar junto da anterior. */
+  parallel?: boolean;
   in?: DataPoint;
   out?: DataPoint;
 }
@@ -80,12 +95,27 @@ export interface Row {
 export interface StateItem {
   name: string;
   kind: 'function' | 'data' | 'object';
+  shared?: boolean;
   /** 0 no estado; 1 ou mais para campos de um objeto, logo abaixo dele. */
   level: number;
   solid: boolean;
   value?: string;
   /** Primeiro passo em que está disponível. */
   since: number;
+  /** Função do próprio fluxo (disponível desde s0): o desenho só a lista com `stateFunctions`. */
+  catalog?: boolean;
+}
+
+/** Um dado que sai de uma folha e entra em outra no passo seguinte (índices das linhas). */
+export interface DataLink {
+  from: number;
+  to: number;
+  names: string[];
+}
+
+export interface LayoutOptions {
+  /** O `else` ocupa o mesmo passo do `if` (padrão: vem depois dele). */
+  elseParallel?: boolean;
 }
 
 export interface FlowLayout {
@@ -94,7 +124,11 @@ export interface FlowLayout {
   steps: number;
   /** Ordenado por `since`: o estado do passo k é o começo da lista. */
   state: StateItem[];
+  /** Na ordem de quem recebe. */
+  links: DataLink[];
   maxDepth: number;
-  /** Maior rótulo da coluna de funções, já contando o recuo (em caracteres). */
+  /** Maior linha da coluna de funções, já contando o recuo (em caracteres). */
   labelWidth: number;
+  /** Maior nome de folha (em caracteres): define a largura do passo. */
+  leafWidth: number;
 }

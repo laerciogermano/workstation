@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { largeFlow, SAMPLES } from '../example/samples.js';
-import { layoutFlow, metrics, renderSvg, visibleRows, type FlowNode, type Row } from '../src/index.ts';
+import { layoutFlow, metrics, renderSvg, stateItems, visibleRows, type FlowNode, type Row } from '../src/index.ts';
 import { positionOf } from '../src/collapse.ts';
 import { HEAD, ROW } from '../src/render.ts';
 
@@ -29,9 +29,9 @@ describe('minimizar', () => {
     expect(texts(svg)).not.toContain('enviar = 0');
     expect(svg).not.toContain('<title>try</title>');
     for (const s of ['s0', 's1', 's2']) expect(texts(svg)).toContain(s);
-    expect(svg).toContain('aria-label="Expandir for (item of itens)"');
-    expect(svg).toContain('aria-label="Minimizar main"');
-    expect(metrics(layout, { visible: v }).height).toBe(metrics(layout).height - 4 * ROW);
+    expect(svg).toContain('aria-label="Expand for (item of itens)"');
+    expect(svg).toContain('aria-label="Collapse main"');
+    expect(metrics(layout, { visible: v }).height).toBeLessThan(metrics(layout).height - 4 * ROW);
     expect(metrics(layout, { visible: v }).width).toBe(metrics(layout).width);
   });
   it('sem as setas no SVG exportado', () => {
@@ -54,3 +54,39 @@ describe('minimizar', () => {
     expect(layoutFlow(tree).rows[1]!.node).toBe(tree.children![0]);
   });
 });
+
+describe('estados de dentro', () => {
+  const tree: FlowNode = {
+    name: 'main',
+    children: [
+      { name: 'receber', out: ['pedido'] },
+      { name: 'processar', in: ['pedido'], out: ['nota'], data: [{ name: 'limite', value: 10 }], children: [
+        { name: 'calcular', in: ['pedido'], out: ['total'] },
+        { type: 'for', label: 'item of itens', children: [{ name: 'somar', in: ['item'], out: ['parcial'] }] },
+        { name: 'emitir', in: ['total'], out: ['nota'] },
+        { name: 'auditar', out: ['registro'] },
+      ] },
+      { name: 'guardar', in: ['registro'] },
+    ],
+  };
+  const layout = layoutFlow(tree);
+  const names = (closed: string[]) => {
+    const visible = visibleRows(layout, (r) => closed.includes(r.name));
+    return stateItems(layout, { visible }).map((s) => s.name).sort();
+  };
+
+  it('somem do estado ao minimizar; o que entra, sai ou é usado fora continua', () => {
+    expect(names([])).toEqual(['item', 'limite', 'nota', 'parcial', 'pedido', 'registro', 'total']);
+    expect(names(['processar'])).toEqual(['nota', 'pedido', 'registro']);
+  });
+  it('minimizar um for esconde a variável dele e o que nasce dentro', () => {
+    expect(names(['for (item of itens)'])).toEqual(['limite', 'nota', 'pedido', 'registro', 'total']);
+  });
+  it('os passos não mudam', () => {
+    const visible = visibleRows(layout, (r) => r.name === 'processar');
+    const found = texts(renderSvg(layout, { visible }));
+    for (let k = 0; k <= layout.steps; k++) expect(found).toContain(`s${k}`);
+    expect(found).not.toContain('total');
+  });
+});
+

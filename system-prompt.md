@@ -1,0 +1,2 @@
+- ao iniciar o card, defina o status como doing
+- ao fializar o card, defina o status como done

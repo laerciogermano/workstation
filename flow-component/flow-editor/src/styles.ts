@@ -48,9 +48,15 @@ ${s} button.danger{color:var(--accent)}
 ${s} .segmented{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
 ${s} .segmented button{border:0;background:none;padding-inline:2px}
 ${s} .segmented button[aria-checked=true]{background:var(--text);color:var(--bg);font-weight:600}
+${s} .note{margin:0;font-size:12px;color:var(--muted)}
+${s} .note.error,${s} .problem.error b{color:var(--accent)}
+${s} .note.warning,${s} .problem.warning b{color:var(--warn)}
+${s} .problems{height:clamp(150px,26vh,260px);overflow:auto;padding:6px 12px;border-top:1px solid var(--line)}
+${s} .problem{display:grid;grid-template-columns:70px minmax(80px,180px) minmax(0,1fr);gap:8px;width:100%;text-align:left;border-color:transparent;background:none;align-items:baseline}
+${s} .tabs select{width:auto}
 ${s} .warn{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--warn);font-size:12px}
 ${s} .drawer{grid-area:code;border-top:1px solid var(--line);display:flex;flex-direction:column;min-height:0;min-width:0}
-${s} .tabs{display:flex;gap:4px;padding:6px 12px;align-items:center}
+${s} .tabs{display:flex;flex-wrap:wrap;gap:4px;padding:6px 12px;align-items:center}
 ${s} .tabs button{border-color:transparent;background:none}
 ${s} .tabs button[aria-pressed=true]{border-color:var(--line);background:var(--field);font-weight:600}
 ${s} .tabs .space{flex:1}

@@ -1,9 +1,10 @@
 // O aplicativo de teste: o editor em tela cheia, guardando o fluxo neste navegador.
-import { fn, fromJson, mountFlowEditor, toJson } from '../src/index.ts';
+import { fn, fromJson, LANGUAGES, mountFlowEditor, toJson } from '../src/index.ts';
 import type { FnNode } from '../src/index.ts';
 
 const KEY = 'flow-editor:tree';
 const THEME = 'flow-editor:theme';
+const LANGUAGE = 'flow-editor:language';
 const read = (key: string) => {
   try {
     return localStorage.getItem(key);
@@ -43,5 +44,7 @@ Object.assign(window, {
     theme,
     onChange: (tree) => write(KEY, toJson(tree)),
     onThemeChange: (next) => write(THEME, next),
+    language: LANGUAGES.find(([value]) => value === read(LANGUAGE))?.[0],
+    onLanguageChange: (next) => write(LANGUAGE, next),
   }),
 });

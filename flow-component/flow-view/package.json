@@ -19,7 +19,7 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "build": "esbuild src/index.ts --bundle --format=esm --minify --outfile=dist/flow-view.js && esbuild src/fonts.css --bundle --minify --loader:.woff2=file --loader:.woff=file --asset-names=fonts/[name] --outfile=dist/fonts.css",
+    "build": "esbuild src/index.ts --bundle --format=esm --minify --outfile=dist/flow-view.js && esbuild example/edit-core.ts --bundle --format=esm --minify --outfile=dist/edit-core.js && esbuild src/fonts.css --bundle --minify --loader:.woff2=file --loader:.woff=file --asset-names=fonts/[name] --outfile=dist/fonts.css",
     "demo": "npm run build && node scripts/serve.mjs",
     "test:browser": "npm run build && node test/browser.mjs",
     "verify": "npm run typecheck && npm test && npm run test:browser"

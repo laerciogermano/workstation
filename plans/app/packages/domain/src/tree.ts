@@ -52,6 +52,13 @@ export function buildTree(activities: Activity[]): TreeNode[] {
   return (children.get(null) ?? []).sort(order).map((a) => make(a, 0));
 }
 
+export type Leaf = { activity: Activity; path: string[] };
+
+/** Só as atividades sem filhas, na ordem da árvore; `path` são os títulos dos pais, do topo para baixo. */
+export function leaves(nodes: TreeNode[], path: string[] = []): Leaf[] {
+  return nodes.flatMap((n) => (n.children.length ? leaves(n.children, [...path, n.activity.title]) : [{ activity: n.activity, path }]));
+}
+
 /** O nó e toda a subárvore, das folhas para o nó — ordem segura para apagar. */
 export function subtreeLeavesFirst(activities: Activity[], id: string): Activity[] {
   const find = (nodes: TreeNode[]): TreeNode | undefined => {

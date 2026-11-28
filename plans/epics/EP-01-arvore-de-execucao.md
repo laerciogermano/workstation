@@ -18,7 +18,7 @@ T-40, T-41.
 
 | ID | Funcionalidade | O que faz |
 |----|----------------|-----------|
-| F01 | Criar nó | Cria uma atividade raiz ou filha direto no nó, com título obrigatório |
+| F01 | Criar nó | Cria uma atividade raiz (pelo **+** do nó **root**) ou filha direto no nó, com título obrigatório |
 | F02 | Remover nó | Remove o nó e a subárvore, com confirmação quando houver filhos |
 | F03 | Atribuir responsável | Define, troca ou tira o responsável do nó |
 | F04 | Atribuir descrição | Escreve a descrição do nó em Markdown, com leitura formatada, edição, modo dividido e tela cheia; é opcional |

@@ -1,65 +1,15 @@
 // F03 e F04: responsável e descrição.
 import { STATUS_LABEL, STATUSES } from '@plans/domain';
-import { useEffect, useRef, useState } from 'react';
 import type { Patch, StoredActivity } from '../folder/project.ts';
 import { askRemove, setDescriptionMode, updateNode, type State } from '../store/app.ts';
 import { isDark } from '../ui/themes.ts';
 import { Description } from './Description.tsx';
-
-type Status = 'idle' | 'saving' | 'saved' | 'conflict';
+import { DESCRIPTION_TEXT } from './markdownText.ts';
+import { DraftStatus, useDraft } from './useDraft.tsx';
 
 export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
-  const [draft, setDraft] = useState(node.description);
-  const [status, setStatus] = useState<Status>('idle');
-  /** versão do arquivo sobre a qual o rascunho foi escrito */
-  const base = useRef({ rev: node.rev, description: node.description });
-  const live = useRef({ draft, rev: node.rev });
-  live.current.draft = draft;
-
-  /** texto que estamos gravando agora: quando ele volta do arquivo, não é conflito */
-  const writing = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (node.rev === base.current.rev) return;
-    if (node.description === writing.current) {
-      base.current = { rev: node.rev, description: node.description };
-      return;
-    }
-    const dirty = live.current.draft !== base.current.description;
-    if (!dirty || live.current.draft === node.description) {
-      base.current = { rev: node.rev, description: node.description };
-      setDraft(node.description);
-    } else if (node.description === base.current.description) {
-      base.current.rev = node.rev; // mudou outro campo: o rascunho continua válido
-    } else setStatus('conflict');
-  }, [node.rev, node.description]);
-
-  const saving = useRef<Promise<unknown>>(Promise.resolve());
-  const save = (patch?: Patch) => {
-    saving.current = saving.current.then(async () => {
-      const description = live.current.draft;
-      if (!patch && description === base.current.description) return;
-      setStatus('saving');
-      if (!patch) writing.current = description;
-      const result = await updateNode(node.id, base.current.rev, patch ?? { description });
-      writing.current = null;
-      if (result === 'conflict') return setStatus('conflict');
-      if (!result) return setStatus('idle');
-      base.current = { rev: result, description: patch ? base.current.description : description };
-      setStatus('saved');
-    });
-  };
-
-  // o painel pode sumir com texto por salvar (outra atividade selecionada pelo teclado, por exemplo)
-  const flush = useRef(() => {});
-  flush.current = () => status !== 'conflict' && !app.readOnly && save();
-  useEffect(() => () => flush.current(), []);
-
-  const reload = () => {
-    base.current = { rev: node.rev, description: node.description };
-    setDraft(node.description);
-    setStatus('idle');
-  };
+  const draft = useDraft(node.description, node.rev, (rev, description) => updateNode(node.id, rev, { description }), app.readOnly);
+  const save = (patch: Patch) => draft.save((rev) => updateNode(node.id, rev, patch));
   const known = app.snapshot.assignees.some((a) => a.id === node.assignee);
 
   return (
@@ -89,26 +39,18 @@ export function NodePanel({ app, node }: { app: State; node: StoredActivity }) {
         </select>
       </label>
       <Description
+        text={DESCRIPTION_TEXT}
         title={node.title}
-        value={draft}
+        value={draft.draft}
         preferred={app.descriptionMode}
+        openEmpty
         readOnly={app.readOnly}
         dark={isDark(app.theme)}
-        onChange={(v) => (setDraft(v), setStatus((s) => (s === 'conflict' ? s : 'idle')))}
-        onSave={() => flush.current()}
+        onChange={draft.change}
+        onSave={draft.flush}
         onMode={setDescriptionMode}
       />
-      <p className="status" role="status">
-        {status === 'saving' && 'Salvando…'}
-        {status === 'saved' && 'Salvo no arquivo'}
-        {status === 'idle' && draft !== base.current.description && 'Salva ao sair do editor ou com ⌘S'}
-      </p>
-      {status === 'conflict' && (
-        <div className="note warn" role="alert">
-          O arquivo mudou fora desta tela. Copie seu texto se quiser guardá-lo.
-          <button type="button" className="btn" onClick={reload}>Recarregar do arquivo</button>
-        </div>
-      )}
+      <DraftStatus draft={draft} />
       <p className="muted small">activities/{node.id}.md</p>
     </section>
   );

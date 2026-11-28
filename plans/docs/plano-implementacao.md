@@ -149,7 +149,8 @@ meu-projeto/
 
 ```markdown
 SYSTEM PROMPT
-/system-prompt.md
+Antes de executar, siga estas regras.
+- status doing ao iniciar; done ao finalizar
 
 ---
 id: 7c1f0c9e-4b7a-4a1e-9a41-2f6c0d1b8e22
@@ -164,7 +165,7 @@ order: 1500            # só depois de arrastado; sem ele vale a ordem de criaç
 Até R$ 3.000, câmera boa, 256 GB.
 ```
 
-Todo arquivo abre com a referência ao system prompt do projeto (a leitura aceita sem ela). O corpo é a descrição (F04). Chaves desconhecidas são preservadas. Gravação em UTF-8 com fim de linha `LF`; leitura aceita `CRLF`.
+Todo arquivo abre com o **texto completo** do system prompt colado no topo (snapshot do `system-prompt.md` na criação ou na primeira regravação de arquivo legado). Editar `system-prompt.md` depois **não** altera os cartões já gravados. A leitura ainda aceita o formato antigo `SYSTEM PROMPT` + `/system-prompt.md` e arquivos sem o bloco. O corpo é a descrição (F04). Chaves desconhecidas são preservadas. Gravação em UTF-8 com fim de linha `LF`; leitura aceita `CRLF`. **Antes → depois:** referência `/system-prompt.md` → texto embutido; para voltar ao path, reverter `packages/domain/src/format.ts` (`systemPromptPrefix` / `serializeActivity`) e o `withPromptSnapshot` em `apps/web/src/folder/project.ts`.
 
 **Input e output.** A descrição e `attachments/<uuid>/input/` são o que a atividade recebe; `comments/<uuid>/` e `attachments/<uuid>/output/` são o que ela devolve. Um agente responde só gravando arquivos nessas pastas. O cabeçalho do comentário é opcional (sem ele, o arquivo inteiro é o texto):
 

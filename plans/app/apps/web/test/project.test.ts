@@ -113,17 +113,22 @@ describe('EP-01', () => {
 });
 
 describe('system prompt', () => {
-  it('começa vazio, é salvo em system-prompt.md e não vai para as atividades', async () => {
+  it('salva em system-prompt.md; cartão novo copia o texto; editar depois não altera o já gravado', async () => {
     const { root, store } = await setup();
     const a = await store.create(null, 'Um');
     const before = (await store.load()).systemPrompt;
     expect(before.text).toBe('');
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${a.id}.md`)).text).toMatch(/^SYSTEM PROMPT\n\n---\n/);
     const saved = await store.updateSystemPrompt(before.rev, '# Regras\r\n\r\nResponda em português.');
     expect((await root.getFileHandle('system-prompt.md')).text).toBe('# Regras\n\nResponda em português.\n');
     expect((await store.load()).systemPrompt).toEqual(saved);
     expect((await store.load()).activities[0]!.rev).toBe(a.rev);
-    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${a.id}.md`)).text).toMatch(/^SYSTEM PROMPT\n\/system-prompt\.md\n\n---\n/);
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${a.id}.md`)).text).toMatch(/^SYSTEM PROMPT\n\n---\n/);
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${a.id}.md`)).text).not.toContain('Responda');
+    const b = await store.create(null, 'Dois');
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${b.id}.md`)).text).toMatch(/^SYSTEM PROMPT\n# Regras\n\nResponda em português\.\n\n---\n/);
     expect((await store.updateSystemPrompt(saved.rev, '')).text).toBe('');
+    expect((await (await root.getDirectoryHandle('activities')).getFileHandle(`${b.id}.md`)).text).toContain('Responda em português');
   });
 
   it('não sobrescreve o que mudou fora da tela nem aceita texto grande demais', async () => {

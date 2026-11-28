@@ -292,7 +292,8 @@ export class ProjectStore {
         if (text === null) continue;
         await writeFile(await makeDir(bin, 'activities'), `${a.id}.md`, text);
         const activity = parseActivity(text);
-        await writeFile(dir, `${a.id}.md`, serializeActivity({ ...activity, labels: activity.labels?.filter((l) => l !== id) ?? [] }));
+        const next = { ...activity, labels: activity.labels?.filter((l) => l !== id) ?? [] };
+        await writeFile(dir, `${a.id}.md`, serializeActivity(await this.withPromptSnapshot(next)));
       }
       await this.writeLabels(labels.filter((l) => l.id !== id)); // por último: se algo falhar, dá para repetir
     });
@@ -314,13 +315,20 @@ export class ProjectStore {
     return { activity: parseActivity(text), text };
   }
 
+  /** Garante snapshot do system prompt no cartão: preserva o que já estava; legado recebe o atual. */
+  private async withPromptSnapshot(activity: Activity): Promise<Activity> {
+    if (activity.systemPromptText !== undefined) return activity;
+    return { ...activity, systemPromptText: (await readSystemPrompt(this.root)).text };
+  }
+
   create(parent: string | null, title: string): Promise<StoredActivity> {
     return this.mutate(async () => {
       const dir = await this.activitiesDir();
       if (parent && (await readText(dir, `${parent}.md`)) === null) throw new ConflictError();
       const activity: Activity = {
         id: crypto.randomUUID(), title: titleSchema.parse(title), parent, assignee: null,
-        createdAt: new Date().toISOString(), description: '', extra: {},
+        createdAt: new Date().toISOString(), description: '',
+        systemPromptText: (await readSystemPrompt(this.root)).text, extra: {},
       };
       const text = serializeActivity(activity);
       await writeFile(dir, `${activity.id}.md`, text);
@@ -335,7 +343,7 @@ export class ProjectStore {
       }
       const dir = await this.activitiesDir();
       const { activity } = await this.read(dir, id, rev);
-      const next = { ...activity, ...patch };
+      const next = await this.withPromptSnapshot({ ...activity, ...patch });
       // sem `order`, a data de criação dá a posição entre os irmãos: mudar a data não pode mover o cartão
       if (patch.createdAt !== undefined && next.order === undefined) next.order = orderKey(activity);
       if (patch.title !== undefined) next.title = titleSchema.parse(patch.title);
@@ -355,7 +363,7 @@ export class ProjectStore {
       for (const { id: target, ...patch } of planMove((await this.load()).activities, id, parent, before)) {
         const text = await readText(dir, `${target}.md`);
         if (text === null) throw new ConflictError();
-        await writeFile(dir, `${target}.md`, serializeActivity({ ...parseActivity(text), ...patch }));
+        await writeFile(dir, `${target}.md`, serializeActivity(await this.withPromptSnapshot({ ...parseActivity(text), ...patch })));
       }
     });
   }

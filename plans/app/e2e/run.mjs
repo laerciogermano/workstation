@@ -687,13 +687,15 @@ try {
   await modoPrompt('Ler').click();
   await promptLido.getByText('Seja breve.').waitFor();
   await until(async () => (await fsRead('system-prompt.md')).endsWith('Seja breve.\n'), 'editado a partir da atividade');
-  assert.ok(!(await fileOf('Dois')).text.includes('Seja breve'), 'não é copiado para a atividade');
+  assert.ok(!(await fileOf('Dois')).text.includes('Seja breve'), 'editar o root não altera snapshot já gravado');
   await page.screenshot({ path: path.join(root, 'test-results-system-prompt.png') });
   await page.reload();
   await promptLido.getByText('Seja breve.').waitFor();
   assert.equal(await page.getByText('O arquivo mudou fora desta tela').count(), 0);
   for (const f of await fsRead('activities')) {
-    assert.ok((await fsRead('activities/' + f)).startsWith('SYSTEM PROMPT\n/system-prompt.md\n\n---\n'), f);
+    const body = await fsRead('activities/' + f);
+    assert.ok(body.startsWith('SYSTEM PROMPT\n'), f);
+    assert.ok(!body.startsWith('SYSTEM PROMPT\n/system-prompt.md'), 'sem referência de path: ' + f);
   }
   step('system prompt configurado no root, lido e editado em cada atividade');
 

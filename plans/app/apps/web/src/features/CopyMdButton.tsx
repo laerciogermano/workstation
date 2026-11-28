@@ -1,6 +1,7 @@
 // Copia o Markdown completo do cartão (mesmo formato do arquivo activities/<id>.md).
 import { serializeActivity, type Activity } from '@plans/domain';
 import { useEffect, useState } from 'react';
+import { useApp } from '../store/app.ts';
 import { Icon } from '../ui/Icon.tsx';
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function CopyMdButton({ activity, description, tabIndex, wide }: Props) {
+  const fallbackPrompt = useApp().snapshot.systemPrompt.text;
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!copied) return;
@@ -30,10 +32,13 @@ export function CopyMdButton({ activity, description, tabIndex, wide }: Props) {
       title={copied ? 'Markdown copiado' : 'Copiar o Markdown completo deste cartão'}
       onClick={(e) => {
         e.stopPropagation();
-        const text = serializeActivity({
-          ...activity,
-          ...(description !== undefined ? { description } : {}),
-        });
+        const text = serializeActivity(
+          {
+            ...activity,
+            ...(description !== undefined ? { description } : {}),
+          },
+          fallbackPrompt,
+        );
         void navigator.clipboard.writeText(text).then(() => setCopied(true));
       }}
       onDoubleClick={(e) => e.stopPropagation()}

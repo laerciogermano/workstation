@@ -4,7 +4,7 @@ import { leaves, buildTree, parseActivity, planMove, serializeActivity, parseCom
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const act = (n: number, parent: number | null = null): Activity => ({
   id: id(n), title: `nó ${n}`, parent: parent === null ? null : id(parent), assignee: null,
-  createdAt: `2026-11-27T12:00:${String(n).padStart(2, '0')}Z`, description: '', extra: {},
+  createdAt: `2026-11-27T12:00:${String(n).padStart(2, '0')}Z`, description: '', systemPromptText: '', extra: {},
 });
 
 describe('formato', () => {
@@ -21,14 +21,19 @@ describe('formato', () => {
     expect(() => parseActivity('texto solto')).toThrow();
     expect(() => parseActivity('---\nid: x\n---\n')).toThrow(/id/);
   });
-  it('abre o arquivo com a referência ao system prompt e lê com ou sem ela', () => {
-    const a = { ...act(1), description: 'SYSTEM PROMPT\n/outro.md' };
+  it('cola o system prompt completo no arquivo; lê legado com referência e sem bloco', () => {
+    const a = { ...act(1), systemPromptText: 'Seja breve.\nSem atalhos.', description: 'SYSTEM PROMPT\n/outro.md' };
     const text = serializeActivity(a);
-    expect(text.startsWith('SYSTEM PROMPT\n/system-prompt.md\n\n---\nid: ')).toBe(true);
+    expect(text.startsWith('SYSTEM PROMPT\nSeja breve.\nSem atalhos.\n\n---\nid: ')).toBe(true);
+    expect(text).not.toContain('/system-prompt.md');
     expect(parseActivity(text)).toEqual(a);
     expect(parseActivity(text.replace(/\n/g, '\r\n'))).toEqual(a);
-    expect(parseActivity(text.slice(text.indexOf('---')))).toEqual(a);
+    expect(parseActivity(text.slice(text.indexOf('---')))).toEqual({ ...a, systemPromptText: undefined });
     expect(serializeActivity(parseActivity(text))).toBe(text);
+    const legacy = serializeActivity(act(2)).replace('SYSTEM PROMPT\n\n', 'SYSTEM PROMPT\n/system-prompt.md\n\n');
+    expect(parseActivity(legacy).systemPromptText).toBeUndefined();
+    expect(serializeActivity(parseActivity(legacy), 'agora')).toContain('SYSTEM PROMPT\nagora\n\n---\n');
+    expect(() => serializeActivity({ ...act(3), systemPromptText: 'a\n---\nb' })).toThrow(/---/);
   });
   it('a prioridade vai e volta; fora da escala vira problema', () => {
     const a = { ...act(1), priority: 4 as const };

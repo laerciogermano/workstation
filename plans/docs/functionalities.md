@@ -292,10 +292,11 @@
 
 ### System prompt
 
-- Definir instruções padrão em Markdown, válidas para todas as unidades do projeto.
-- Mostrar essas instruções como referência no detalhe de cada unidade.
-- Abrir o arquivo de cada unidade com a referência ao system prompt.
-- Ler e editar no detalhe ou nas configurações, como a descrição; a alteração vale para todas.
+- Definir instruções padrão em Markdown em `system-prompt.md`.
+- Mostrar essas instruções no detalhe de cada unidade e nas configurações.
+- Ao criar (ou regravar arquivo legado), colar o texto completo no topo do arquivo da unidade — sem referência `/system-prompt.md`.
+- Editar o system prompt do projeto não reescreve os snapshots já gravados nos cartões.
+- Ler e editar no detalhe ou nas configurações, como a descrição.
 
 ### Catálogo de responsáveis
 

@@ -51,8 +51,9 @@ func CheckPlay(args []string) error {
 // playPrompt é o pedido entregue à IA. Só o id (já validado) varia.
 func playPrompt(id string) string {
 	return "Execute a atividade do arquivo activities/" + id + ".md desta pasta, um projeto do app Plans. " +
-		"Antes de começar, leia system-prompt.md, o arquivo da atividade, as atividades acima dela (campo parent) " +
-		"e os anexos em attachments/" + id + "/, se houver. Siga as instruções de system-prompt.md, " +
+		"Antes de começar, leia o arquivo da atividade (o bloco SYSTEM PROMPT no topo é o snapshot das instruções), " +
+		"as atividades acima dela (campo parent) e os anexos em attachments/" + id + "/, se houver. " +
+		"Siga o SYSTEM PROMPT embutido no arquivo da atividade, " +
 		"grave o que produzir em attachments/" + id + "/output/ e um resumo da entrega em um arquivo .md novo em comments/" + id + "/."
 }
 

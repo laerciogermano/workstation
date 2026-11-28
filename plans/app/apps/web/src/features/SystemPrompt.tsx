@@ -1,4 +1,4 @@
-// Instruções padrão do projeto: sozinhas nas configurações e como referência em cada atividade.
+// Instruções padrão do projeto: sozinhas nas configurações; cada cartão leva uma cópia no arquivo.
 import { setSystemPromptMode, updateSystemPrompt, type State } from '../store/app.ts';
 import { isDark } from '../ui/themes.ts';
 import { Description } from './Description.tsx';
@@ -26,7 +26,10 @@ export function SystemPrompt({ app }: { app: State }) {
       />
       <DraftStatus draft={draft} />
       <p className="muted small">
-        {inActivity ? 'Vale para todas as atividades: editar aqui muda em todas.' : 'Instruções padrão para todas as atividades.'} · system-prompt.md
+        {inActivity
+          ? 'Novo cartão (ou regravação de arquivo legado) copia este texto; editar aqui não altera os já gravados.'
+          : 'Instruções padrão: cada cartão novo recebe uma cópia no próprio arquivo.'}{' '}
+        · system-prompt.md
       </p>
     </section>
   );

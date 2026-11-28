@@ -12,10 +12,10 @@ Regras IA: [`config/config-ia.md`](config/config-ia.md).
 
 ## Visão
 
-O **Clozzy** é uma **rede social** (referências máximas: TikTok + Instagram Reels) com **três usos na mesma conta**:
+O **Clozzy** é uma **rede social** com **três usos na mesma conta** (referências em [Referências](#referências)):
 
 1. **Atenção** — publicar e ser visto (fotos, vídeos, reels); sem interesse em relacionamento dentro da plataforma.
-2. **Relacionamento** — conhecer gente, DM, bate-papo por salas/categorias (ref. Bate-papo UOL), foto, foto temporária, stories, ligação / videochamada; mais privado, publica pouco.
+2. **Relacionamento** — conhecer gente, DM, bate-papo por salas/categorias, foto, foto temporária, stories, ligação / videochamada; mais privado, publica pouco.
 3. **Conteúdo exclusivo** — close, packs e liberação no privado; existe, mas **não é a ideia principal**.
 
 O núcleo é **encontrar pessoas, seguir, conectar e acompanhar presença** (reels, MMTV, perfil). A venda de exclusivo fica por dentro, discreta. Na **área pública**, o site **proíbe conteúdo +18**.
@@ -54,7 +54,7 @@ O **público final** chega em geral pelo link de alguém (ex.: menina divulgando
 | Camada | Papel |
 |--------|--------|
 | **Atenção / presença** | Reels, MMTV, perfil público, seguir |
-| **Relacionamento** | DM, bate-papo (salas por categoria), mídia, stories, chamada; descoberta de gente nova |
+| **Relacionamento** | DM, bate-papo (salas), roleta/OmeTV-like, mídia, stories, chamada |
 | **Exclusivo** | Close, bloqueio, oferta e liberação no privado |
 
 ## Conta e sessão
@@ -64,21 +64,37 @@ O **público final** chega em geral pelo link de alguém (ex.: menina divulgando
 - **Vínculo** — ao completar cadastro (e-mail, telefone, sexo, identidade…), o histórico da sessão liga à conta.
 - **Progressivo** — a plataforma pede mais dados aos poucos, conforme a pessoa usa (pesquisar, ver quem visualizou, seguir, chat, etc.).
 
+## Referências
+
+O que o Clozzy **toma emprestado** de cada produto (não é cópia; é norte de UX/comportamento).
+
+| Referência | O que inspira no Clozzy |
+|------------|-------------------------|
+| **TikTok** | Abrir de cara em feed vertical (reels); rolar conteúdo de presença |
+| **Instagram** | Explorar, perfil, seguir, stories, close friends, DM |
+| **Instagram Reels** | Formato e linguagem do feed de clips |
+| **Bate-papo UOL** | Salas de chat por **categoria** — entrar, conversar, conhecer por tema |
+| **OmeTV** | Conhecer desconhecidos ao vivo (espírito roleta / videochat com gente nova) |
+| **Snapchat** | Foto temporária; leveza de mídia que some |
+| **Close Friends (IG)** | Círculo privado + listas; sensação de quem está “dentro” |
+| **OnlyFans / Privacy** (como contraste) | Venda de exclusivo **existe**, mas no Clozzy **não é a capa** — fica no privado |
+
+Referências máximas da capa: **TikTok + Instagram Reels**. Relacionamento: **Bate-papo UOL + OmeTV + IG DM**. Exclusivo: lógica de close/pack no privado, sem cartaz de marketplace.
+
 ## Superfície (o que a pessoa encontra)
 
-Referências: **TikTok** (abre em reels), **Instagram** (explorar, perfil, seguir, close friends) e **Bate-papo UOL** (salas por categoria).
-
-| Superfície | Essência |
-|------------|----------|
-| **Reels** | Feed vertical de cara (dança, clips, presença) — sem +18 |
-| **MMTV** | Canal / TV ao vivo ou grade — presença contínua forte — sem +18 |
-| **Explorar / busca** | Encontrar pessoas; pode ter limite até a conta enriquecer |
-| **Perfil** | Fotos públicas e privadas; bio; quem visualizou; seguir — área pública sem +18 |
-| **Seguir / conectar** | Público: segue direto. Privado: precisa aceitar; pode pedir seguir de volta |
-| **Close friends / listas** | Círculos e listas de transmissão; influenciador pode ter grupo — ao seguir e ser aceito, a pessoa pode entrar na lista/grupo |
-| **Bate-papo** | Salas por categoria (espírito Bate-papo UOL) — entrar, conversar, conhecer gente por tema |
-| **Relacionamento** | DM 1:1, foto, foto temporária, reação a stories, ligação / videochamada |
-| **Exclusivo** | Conteúdo trancado; close / pack / liberação no privado |
+| Superfície | Essência | Ref. principal |
+|------------|----------|----------------|
+| **Reels** | Feed vertical de cara (dança, clips, presença) — sem +18 | TikTok / IG Reels |
+| **MMTV** | Canal / TV ao vivo ou grade — presença contínua forte — sem +18 | presença contínua (TV / live) |
+| **Explorar / busca** | Encontrar pessoas; pode ter limite até a conta enriquecer | Instagram |
+| **Perfil** | Fotos públicas e privadas; bio; quem visualizou; seguir — área pública sem +18 | Instagram |
+| **Seguir / conectar** | Público: segue direto. Privado: precisa aceitar; pode pedir seguir de volta | Instagram |
+| **Close friends / listas** | Círculos e listas de transmissão; influenciador pode ter grupo — ao seguir e ser aceito, a pessoa pode entrar na lista/grupo | Close Friends (IG) |
+| **Bate-papo** | Salas por categoria — entrar, conversar, conhecer gente por tema | Bate-papo UOL |
+| **Roleta / conhecer ao vivo** | Encontro com desconhecidos (espírito videochat / roleta) | OmeTV |
+| **Relacionamento** | DM 1:1, foto, foto temporária, reação a stories, ligação / videochamada | IG DM · Snapchat · OmeTV |
+| **Exclusivo** | Conteúdo trancado; close / pack / liberação no privado | close privado (não OnlyFans-capa) |
 
 Ordem exata da home (MMTV vs Reels primeiro) fica aberta — **os dois são carro-forte**.
 
@@ -118,7 +134,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | **Sessão / conta** | Fingerprint → sessão persistente; cadastro progressivo e vínculo |
 | **Presença** | Reels, MMTV, perfil (público / privado), explorar / busca — área pública sem +18 |
 | **Grafo social** | Seguir, aceite em perfil privado, quem visualizou, close friends, listas / grupos de transmissão |
-| **Relacionamento** | DM, bate-papo (salas por categoria), foto, foto temporária, stories, ligação / videochamada |
+| **Relacionamento** | DM, bate-papo (salas), roleta (espírito OmeTV), foto, foto temporária, stories, ligação / videochamada |
 | **Exclusivo** | Close, conteúdo bloqueado, pack/avulso, checkout, biblioteca / acesso |
 | **Gestão** | Publicar, gerenciar círculos/listas, precificar, ver vendas |
 
@@ -137,7 +153,8 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | **Conta** | Identidade vinculada (dados progressivos + histórico da sessão) |
 | **Atenção** | Uso focado em publicar e ser visto |
 | **Relacionamento** | Uso focado em conhecer e conversar |
-| **Bate-papo** | Área de salas por categoria (ref. Bate-papo UOL) para conversa em grupo / tema |
+| **Bate-papo** | Área de salas por categoria (Bate-papo UOL) para conversa em grupo / tema |
+| **Roleta** | Encontro ao vivo com desconhecidos (espírito OmeTV) |
 | **Close / lista** | Círculo ou transmissão; seguir+aceite pode incluir a pessoa no grupo do criador |
 | **Conteúdo bloqueado** | Mídia trancada até close ou compra |
 | **Oferta** | Close, pack ou item com preço e regra de acesso |
@@ -158,7 +175,8 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 |-------|-------------|
 | **Atenção** | Perfil/uso de quem publica para ser visto |
 | **Relacionamento** | Uso de conhecer gente + DM / bate-papo / mídia / chamada |
-| **Bate-papo** | Salas por categoria (ref. Bate-papo UOL) — conversa temática / em grupo |
+| **Bate-papo** | Salas por categoria (Bate-papo UOL) — conversa temática / em grupo |
+| **Roleta** | Encontro ao vivo com desconhecidos (OmeTV) |
 | **Reels** | Feed vertical (espírito TikTok / IG Reels) |
 | **MMTV** | Canal / TV de presença contínua |
 | **Fingerprint** | Identificador de dispositivo que cria a sessão implícita |

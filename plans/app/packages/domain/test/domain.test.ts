@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { leaves, buildTree, parseActivity, planMove, serializeActivity, parseComment, safeFileName, serializeComment, sortByPriority, subtreeLeavesFirst, titleSchema,tokenize, type Activity, type TreeNode } from '../src/index.ts';
+import { activityAncestry, leaves, buildTree, parseActivity, planMove, serializeActivity, serializeActivityWithAncestors, parseComment, safeFileName, serializeComment, sortByPriority, subtreeLeavesFirst, titleSchema, tokenize, type Activity, type TreeNode } from '../src/index.ts';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const act = (n: number, parent: number | null = null): Activity => ({
@@ -75,6 +75,19 @@ describe('árvore', () => {
     const flat = (n: ReturnType<typeof buildTree>): string[] => n.flatMap((x) => [x.activity.id, ...flat(x.children)]);
     expect(flat(roots).sort()).toEqual([id(1), id(2), id(3), id(4)]);
     expect(roots.every((r) => r.warning)).toBe(true);
+  });
+  it('ancestrais do topo ao nó; Markdown junta pais e cartão', () => {
+    const list = [act(1), act(2, 1), { ...act(3, 2), description: 'folha' }];
+    expect(activityAncestry(list, id(3)).map((a) => a.id)).toEqual([id(1), id(2), id(3)]);
+    expect(activityAncestry(list, id(1)).map((a) => a.id)).toEqual([id(1)]);
+    expect(activityAncestry(list, id(9))).toEqual([]);
+    const text = serializeActivityWithAncestors(list, { ...list[2]!, description: 'rascunho' });
+    expect(text).toContain(`id: ${id(1)}`);
+    expect(text).toContain(`id: ${id(2)}`);
+    expect(text).toContain(`id: ${id(3)}`);
+    expect(text).toContain('rascunho');
+    expect(text.indexOf(id(1))).toBeLessThan(text.indexOf(id(2)));
+    expect(text.indexOf(id(2))).toBeLessThan(text.indexOf(id(3)));
   });
 });
 

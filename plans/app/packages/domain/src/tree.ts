@@ -1,4 +1,4 @@
-import type { Activity } from './format.ts';
+import { serializeActivity, type Activity } from './format.ts';
 
 export type TreeNode = { activity: Activity; depth: number; children: TreeNode[]; warning?: string };
 
@@ -61,6 +61,40 @@ export function leaves(nodes: TreeNode[], path: string[] = []): Leaf[] {
 
 /** Da maior para a menor prioridade, sem prioridade no fim; no empate, mantém a ordem recebida. */
 export const sortByPriority = (list: Leaf[]): Leaf[] => [...list].sort((a, b) => (b.activity.priority ?? 0) - (a.activity.priority ?? 0));
+
+/**
+ * Cadeia do topo da árvore até `id` (inclusive).
+ * Pai ausente ou ciclo: para no último nó válido.
+ */
+export function activityAncestry(activities: Activity[], id: string): Activity[] {
+  const byId = new Map(activities.map((a) => [a.id, a]));
+  const chain: Activity[] = [];
+  const seen = new Set<string>();
+  let cur: Activity | undefined = byId.get(id);
+  while (cur && !seen.has(cur.id)) {
+    seen.add(cur.id);
+    chain.unshift(cur);
+    cur = cur.parent ? byId.get(cur.parent) : undefined;
+  }
+  return chain;
+}
+
+/**
+ * Markdown do nó e de todos os pais (raiz → folha), no formato de `activities/<id>.md`.
+ * `leaf` substitui o cartão correspondente na lista (ex.: rascunho da descrição).
+ */
+export function serializeActivityWithAncestors(
+  activities: Activity[],
+  leaf: Activity,
+  fallbackPrompt = '',
+): string {
+  const list = activities.some((a) => a.id === leaf.id)
+    ? activities.map((a) => (a.id === leaf.id ? leaf : a))
+    : [...activities, leaf];
+  return activityAncestry(list, leaf.id)
+    .map((a) => serializeActivity(a, fallbackPrompt))
+    .join('\n');
+}
 
 /** O nó e toda a subárvore, das folhas para o nó — ordem segura para apagar. */
 export function subtreeLeavesFirst(activities: Activity[], id: string): Activity[] {

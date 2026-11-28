@@ -12,7 +12,7 @@ Marca / benchmarking: [`../marca/README.md`](../marca/README.md) · [concorrente
 | Artefato | Arquivo | Papel no fluxo | Status |
 |----------|---------|----------------|--------|
 | Funcionalidades | [`functionalities.md`](functionalities.md) | Capacidades de cada seção e página em bullets | Pronto (v1) |
-| Épicos | [`epics.md`](epics.md) | Blocos de entrega, releases e dependências | Proposto (decisões a confirmar) |
+| Épicos | [`epics.md`](epics.md) | Blocos de valor em bullets (visão atual: rede primeiro) | Proposto (alinhado à visão; functionalities a alinhar) |
 | Histórias de usuário | `user-stories.md` | O *quê* desejado pelo usuário (Como… quero… para…) | A produzir |
 | Cenários BDD | `bdd.md` | Critérios de aceite por história (Dado / Quando / Então) | A produzir |
 | Telas | `screens.md` | Superfícies de UI e o que cada uma faz | A produzir |

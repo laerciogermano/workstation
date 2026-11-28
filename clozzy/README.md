@@ -18,7 +18,7 @@ O **Clozzy** é uma **rede social** (referências máximas: TikTok + Instagram R
 2. **Relacionamento** — conhecer gente, chat, foto, foto temporária, stories, ligação / videochamada; mais privado, publica pouco.
 3. **Conteúdo exclusivo** — close, packs e liberação no privado; existe, mas **não é a ideia principal**.
 
-O núcleo é **encontrar pessoas, seguir, conectar e acompanhar presença** (reels, MMTV, perfil). A venda de exclusivo fica por dentro, discreta.
+O núcleo é **encontrar pessoas, seguir, conectar e acompanhar presença** (reels, MMTV, perfil). A venda de exclusivo fica por dentro, discreta. Na **área pública**, o site **proíbe conteúdo +18**.
 
 ## Problema
 
@@ -70,10 +70,10 @@ Referências: **TikTok** (abre em reels) e **Instagram** (explorar, perfil, segu
 
 | Superfície | Essência |
 |------------|----------|
-| **Reels** | Feed vertical de cara (dança, clips, presença) |
-| **MMTV** | Canal / TV ao vivo ou grade — presença contínua forte |
+| **Reels** | Feed vertical de cara (dança, clips, presença) — sem +18 |
+| **MMTV** | Canal / TV ao vivo ou grade — presença contínua forte — sem +18 |
 | **Explorar / busca** | Encontrar pessoas; pode ter limite até a conta enriquecer |
-| **Perfil** | Fotos públicas e privadas; bio; quem visualizou; seguir |
+| **Perfil** | Fotos públicas e privadas; bio; quem visualizou; seguir — área pública sem +18 |
 | **Seguir / conectar** | Público: segue direto. Privado: precisa aceitar; pode pedir seguir de volta |
 | **Close friends / listas** | Círculos e listas de transmissão; influenciador pode ter grupo — ao seguir e ser aceito, a pessoa pode entrar na lista/grupo |
 | **Relacionamento** | Chat, foto, foto temporária, reação a stories, ligação / videochamada |
@@ -92,6 +92,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | Relacionamento | Conhecer gente, chat, mídia, chamada |
 | Seguir com controle | Perfil privado + aceite; listas / close friends |
 | Exclusivo discreto | Close e packs por dentro; capa não é loja |
+| Área pública limpa | Sem conteúdo +18 na superfície pública |
 | Acesso claro | O que liberou, onde abre, sob qual regra |
 
 ## Princípios
@@ -103,8 +104,9 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 5. **Seguir com regra** — público vs privado; aceite e listas de transmissão fazem parte do close.
 6. **Relacionamento opcional** — quem só quer atenção não é forçado a chat.
 7. **Venda no privado** — oferta → pagamento → liberação no círculo próximo.
-8. **Bloqueado até liberar** — preview não entrega o pago.
-9. **Acesso delimitado** — a pessoa sabe o que pode ver e sob qual regra.
+8. **Público sem +18** — área pública (reels, MMTV, explorar, perfil público) proíbe conteúdo +18.
+9. **Bloqueado até liberar** — preview não entrega o pago.
+10. **Acesso delimitado** — a pessoa sabe o que pode ver e sob qual regra.
 
 ## Escopo da visão
 
@@ -113,7 +115,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | Área | Capacidade |
 |------|------------|
 | **Sessão / conta** | Fingerprint → sessão persistente; cadastro progressivo e vínculo |
-| **Presença** | Reels, MMTV, perfil (público / privado), explorar / busca |
+| **Presença** | Reels, MMTV, perfil (público / privado), explorar / busca — área pública sem +18 |
 | **Grafo social** | Seguir, aceite em perfil privado, quem visualizou, close friends, listas / grupos de transmissão |
 | **Relacionamento** | Chat, foto, foto temporária, stories, ligação / videochamada |
 | **Exclusivo** | Close, conteúdo bloqueado, pack/avulso, checkout, biblioteca / acesso |
@@ -141,7 +143,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 
 ## Critérios de sucesso
 
-- Pessoa chega pelo link, **vê reels/MMTV sem login** e mantém sessão por fingerprint.
+- Pessoa chega pelo link, **vê reels/MMTV sem login** (sem +18 na área pública) e mantém sessão por fingerprint.
 - Perfis de **atenção** crescem público sem serem obrigados a chat ou venda.
 - Perfis de **relacionamento** conseguem conhecer gente, conversar e usar chamada / mídia.
 - Seguir em perfil **privado** exige aceite; listas / close friends funcionam.
@@ -160,6 +162,7 @@ Não é “só marketplace de packs” nem “só dating”. É rede social de p
 | **Close** | Círculo privado (atenção exclusiva ± conteúdo liberado) |
 | **Lista de transmissão** | Grupo/lista do criador; pode incluir quem segue e foi aceito |
 | **Exclusivo** | Conteúdo pago / bloqueado |
+| **Área pública** | Superfície aberta (reels, MMTV, explorar, perfil público) — **proíbe +18** |
 | **Preview** | Trecho público que não entrega o pago |
 | **Pack** | Bundle pontual; complemento do close, não a capa |
 

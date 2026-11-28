@@ -12,11 +12,13 @@ Regras para a IA: [`config/config-ia.md`](config/config-ia.md).
 
 ## Visão
 
-O **Clozzy** é uma **rede social B2C** — no espírito de um Instagram — onde **criadores de conteúdo** e **pessoas comuns** se encontram no mesmo lugar. Cada pessoa tem uma **conta**. O foco não é a bolha de amigos e seguidores conhecidos: é **conhecer desconhecidos** — descobrir perfis novos, conversar e se aproximar.
+O **Clozzy** é **três apps em um** (mesmo produto B2C, uma conta):
 
-A superfície é rede social de pessoas (perfil, presença, descoberta). Por dentro, a mesma plataforma permite **vender conteúdo de forma discreta**: a monetização e o exclusivo vivem no privado (close, oferta, liberação), sem transformar a vitrine pública numa prateleira de packs. Conhecer desconhecidos é o **pretexto**; a venda de conteúdo é o **motor** que acontece no círculo próximo.
+1. **Rede social** — viewers e influencers anônimos se encontram no espírito Instagram/TikTok; foco em **conhecer desconhecidos**, não na bolha de amigos.
+2. **Relacionamento** — app de flerte: mensagem, foto, videochamada e aproximação.
+3. **Vendas de conteúdos exclusivos** — close, pack e liberação no privado (sem vitrine de marketplace na capa).
 
-Há conteúdo **bloqueado** (só quem entra no close ou compra vê). A unidade não é “mais um pack na prateleira”; é a **proximidade** entre pessoas — criador ↔ comum, e entre quem cria e quem paga: conversa, oferta, liberação e consumo no mesmo círculo.
+Conhecer desconhecidos / flertar é o **pretexto**; a venda de conteúdo é o **motor** no círculo próximo. Há conteúdo **bloqueado** (só close ou compra vê). A unidade é a **proximidade** — conversa, oferta, liberação e consumo no mesmo fio.
 
 ## Problema
 
@@ -37,7 +39,7 @@ Criadores e pessoas comuns já querem **se cruzar**. Ambos querem **conhecer des
 
 ## Para quem
 
-Personas separadas por aplicação (mesmo produto, três usos).
+Personas separadas por aplicação (mesmo produto, **três apps em um**).
 
 ### Rede social (similar Instagram/TikTok)
 
@@ -71,11 +73,12 @@ Ser a **rede social padrão onde criadores e pessoas comuns se conhecem** — es
 
 ## Estratégia
 
-**Encontro social como pretexto; venda de exclusivo como motor.** A superfície não grita marketplace — a monetização mora no close e no privado.
+**Encontro social / flerte como pretexto; venda de exclusivo como motor.** Três apps na mesma conta — a superfície não grita marketplace; a monetização mora no close e no privado.
 
-| Lado do produto | Papel |
-|-----------------|--------|
-| **Rede social de conhecer pessoas** | Capa: desconhecidos, perfil, aproximação — criador e comum no mesmo lugar |
+| App | Papel |
+|-----|--------|
+| **Rede social** | Viewers + influencers anônimos: desconhecidos, perfil, presença |
+| **Relacionamento** | Flerte e aproximação (mensagem, foto, videochamada) |
 | **Venda de conteúdo exclusivo** | Motor: close, bloqueio, oferta e liberação no privado |
 
 ## Proposta de valor

@@ -37,15 +37,25 @@ Criadores e pessoas comuns já querem **se cruzar**. Ambos querem **conhecer des
 
 ## Para quem
 
+Personas separadas por aplicação (mesmo produto, dois usos).
+
+### Rede social (similar Instagram/TikTok)
+
+Pessoas comuns que querem se conhecer.
+
 | Persona | Para quem | Necessidade |
 |---------|-----------|-------------|
-| **Seguidor** | Quem acompanha o perfil de graça | Ver o público, conhecer a pessoa e conversar — sem pagar close nem pack |
-| **Assinante** | Quem paga o close | Conteúdo exclusivo contínuo no círculo privado; saber o que está liberado |
-| **Carente** | Quem busca proximidade de verdade | Atenção e conversa; se fizer sentido, pagar pra ficar mais perto |
-| **Influencer** | Quem tem (ou quer) audiência pública | Ser encontrado por gente nova; abrir close e vender no privado sem virar loja na capa |
-| **Vendedor de conteúdos** | Quem vive de vender conteúdo | Close, bloqueio, pack/avulso, receber e liberar — ligado à relação |
-| **Agente de marketing** | Quem divulga o criador | Trazer gente nova e empurrar oferta sem transformar a capa em marketplace |
-| **Afiliado parceiro** | Parceiro de marketing digital | Indicar o criador com rastreio e comissão; produto fácil de explicar |
+| **Viewers** | Quem assiste e visualiza, mas não paga | Ver o público, conhecer gente e acompanhar perfis — sem close nem pack |
+| **Influencer** | Quem quer atenção e maior base, ainda **sem** vender conteúdo | Ser encontrado, crescer presença na rede |
+
+### Vendas de conteúdos exclusivos
+
+Criadores / influencers que monetizam; quem compra o exclusivo.
+
+| Persona | Para quem | Necessidade |
+|---------|-----------|-------------|
+| **Cliente** (comprador) | Quem paga close, pack ou avulso | Conteúdo liberado, saber o que comprou e acompanhar no privado |
+| **Influencer** (vendedor) | Criador que já vende | Abrir close, bloquear exclusivo, oferecer, receber e liberar — no privado |
 
 ## Objetivo
 

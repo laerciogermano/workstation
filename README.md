@@ -47,6 +47,7 @@ Hub: [**Centralizador**](centralizador/README.md) — fora do ar (código local)
 | 🌐 | [**Chines**](chines/) | Aprendizado de chinês | [docs](chines/docs/) · [config IA](chines/config/config-ia.md) |
 | 🚗 | [**Caronas**](caronas/) | Caronas compartilhadas | [visão](caronas/README.md) · [docs](caronas/docs/) · [config IA](caronas/config/config-ia.md) |
 | 🏋️ | [**Fitness**](fitness/) | Fitness e treinos | [visão](fitness/README.md) · [docs](fitness/docs/) · [config IA](fitness/config/config-ia.md) |
+| 🪞 | [**Personal Style**](personal-style/README.md) | Arquétipos, fotos, notas 0–10 e ações para a melhor versão | [visão](personal-style/README.md) · [docs](personal-style/docs/README.md) · [config IA](personal-style/config/config-ia.md) |
 | 📱 | [**screen-robot**](screen-robot/README.md) | Robô de tela Android (Node/ADB) | [visão](screen-robot/README.md) · [tasks](screen-robot/tasks/README.md) · [src](screen-robot/src/README.md) |
 | 🤖 | [**ConnectMax**](connectmax/README.md) | Agente LinkedIn + vendas (consome screen-robot) | [visão](connectmax/README.md) · [linkedin-agent](connectmax/linkedin-agent/README.md) · [vendas](connectmax/vendas/README.md) · [config IA](connectmax/config/config-ia.md) |
 | 🛠️ | [**Connect Tech**](connect-tech/README.md) | Consultoria + desenvolvimento de software (nova oferta ConectMax) | [visão](connect-tech/README.md) · [docs](connect-tech/docs/README.md) · [config IA](connect-tech/config/config-ia.md) |

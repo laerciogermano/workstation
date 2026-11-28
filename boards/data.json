@@ -1655,5 +1655,122 @@
         "status": "todo"
       }
     ]
+  },
+  "gamification": {
+    "name": "Gamification",
+    "blurb": "Metas, bônus e conduta operacional",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "gamification-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "gamification-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "Gamification operacional: metas, bônus e acompanhamento de performance — bonifica profissionais pela conduta (obrigatórios, diários e demais regras) para elevar a qualidade da operação e vender mais.",
+    "context": "A operação (prospecção, follow-up, campanhas) perde qualidade quando condutas obrigatórias e diárias não são cumpridas de forma consistente. Falta um sistema que torne a boa conduta visível, mensurável e bonificável.",
+    "objective": "Elevar a qualidade da operação e o volume de vendas bonificando quem cumpre metas e condutas (obrigatórias, diárias e demais) — prospectar leads, follow-up e campanhas com disciplina.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "discovery",
+        "title": "Discovery",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
+  },
+  "personal-style": {
+    "name": "Personal Style",
+    "blurb": "Arquétipos e evolução de estilo",
+    "columns": [
+      {
+        "id": "todo",
+        "title": "A fazer",
+        "cards": [
+          {
+            "id": "personal-style-t-0",
+            "title": "Refinar documento de visão"
+          }
+        ]
+      },
+      {
+        "id": "doing",
+        "title": "Fazendo",
+        "cards": []
+      },
+      {
+        "id": "done",
+        "title": "Feito",
+        "cards": [
+          {
+            "id": "personal-style-t-visao",
+            "title": "Documento de visão v1"
+          }
+        ]
+      }
+    ],
+    "description": "Arquétipos a partir de características, desejos e metas; fotos (corpo, rosto, dentes, olhos, cabelo); notas 0–10; ações e acompanhamento até a melhor versão.",
+    "context": "Evolução de imagem e presença fica vaga: desejo sem arquétipo, fotos soltas, nota sem plano. Falta um mapa do que a pessoa já tem e do que falta para o alvo alinhado às metas.",
+    "objective": "Ser o mapa pessoal da melhor versão: arquétipos derivados dos objetivos + gap (tens / falta) + fotos + notas 0–10 + ações acompanháveis.",
+    "sections": [
+      {
+        "id": "visao",
+        "title": "Visão / escopo",
+        "status": "doing"
+      },
+      {
+        "id": "prd",
+        "title": "PRD",
+        "status": "todo"
+      },
+      {
+        "id": "prototipo",
+        "title": "Protótipo",
+        "status": "todo"
+      },
+      {
+        "id": "implementacao",
+        "title": "Implementação",
+        "status": "todo"
+      }
+    ]
   }
 }

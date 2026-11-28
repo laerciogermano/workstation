@@ -16,7 +16,7 @@ O **Clozzy** é **três apps em um** (mesmo produto B2C, uma conta):
 
 1. **Rede social** — viewers e influencers anônimos se encontram no espírito Instagram/TikTok; foco em **conhecer desconhecidos**, não na bolha de amigos.
 2. **Relacionamento** — app de flerte: mensagem, foto, videochamada e aproximação.
-3. **Vendas de conteúdos exclusivos** — close, pack e liberação no privado (sem vitrine de marketplace na capa).
+3. **Vendas de conteúdos exclusivos (close friends)** — close, pack e liberação no privado (sem vitrine de marketplace na capa).
 
 Conhecer desconhecidos / flertar é o **pretexto**; a venda de conteúdo é o **motor** no círculo próximo. Há conteúdo **bloqueado** (só close ou compra vê). A unidade é a **proximidade** — conversa, oferta, liberação e consumo no mesmo fio.
 
@@ -50,7 +50,7 @@ Pessoas comuns que querem se conhecer.
 | **Viewers** | Quem assiste e visualiza, mas não paga | Ver o público, conhecer gente e acompanhar perfis — sem close nem pack |
 | **Influencer** | Quem quer atenção e maior base, ainda **sem** vender conteúdo | Ser encontrado, crescer presença na rede |
 
-### Vendas de conteúdos exclusivos
+### Vendas de conteúdos exclusivos (close friends)
 
 Criadores / influencers que monetizam; quem compra o exclusivo.
 
@@ -79,7 +79,7 @@ Ser a **rede social padrão onde criadores e pessoas comuns se conhecem** — es
 |-----|--------|
 | **Rede social** | Viewers + influencers anônimos: desconhecidos, perfil, presença |
 | **Relacionamento** | Flerte e aproximação (mensagem, foto, videochamada) |
-| **Venda de conteúdo exclusivo** | Motor: close, bloqueio, oferta e liberação no privado |
+| **Vendas de conteúdos exclusivos (close friends)** | Motor: close, bloqueio, oferta e liberação no privado |
 
 ## Proposta de valor
 
